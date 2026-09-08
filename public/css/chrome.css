@@ -173,6 +173,18 @@
 
 .c-header__toggle { display: none; margin-left: auto; }
 
+/* data-nav="wrapped" hides nothing. The nav simply takes a second row,
+   which flex-wrap already does; the attribute exists so the state is
+   inspectable and so the nav can be given its own row cleanly. */
+.has-js .c-header[data-nav="wrapped"] .c-nav {
+  flex-basis: 100%;
+  margin-left: 0;
+  order: 3;
+  border-top: 1px solid var(--c-sand);
+  padding-top: var(--s-3);
+  margin-top: var(--s-1);
+}
+
 .has-js .c-header[data-nav="drawer"] .c-nav,
 .has-js .c-header[data-nav="compact"] .c-nav { display: none; }
 

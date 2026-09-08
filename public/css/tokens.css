@@ -20,8 +20,14 @@
 
   /* Neutrals. Borders and disabled text on light surfaces, and the
      pressed and border tones used on navy surfaces. */
-  --c-border:#C9C2B2; --c-border-input:#B9B2A2; --c-disabled:#6E7A85;
-  --c-navy-deep:#050D18; --c-navy-edge:#4A5670; --c-navy-soft:#6B7691;
+  /* --c-border and --c-border-input both had to reach 3:1 against white for
+     SC 1.4.11, and both land on the same value, so they were never two
+     tokens. One border neutral now, set against cream rather than white:
+     cream is the darker of the two grounds a control sits on, so it is the
+     harder case, and a value that clears it clears white too. --c-navy-edge is lightened to clear 3:1
+     against navy. See the disclosed variation in docs/OPEN_ITEMS.md. */
+  --c-border:#958E7E; --c-disabled:#6E7A85;
+  --c-navy-deep:#050D18; --c-navy-edge:#5A6680; --c-navy-soft:#6B7691;
 
   /* Notice tints. Ground, rule and text for the amber, green and red
      notices. They carry the same meanings as the status colours above:

@@ -81,11 +81,10 @@ class DesignSystemTest extends TestCase
         $tokens = $this->css('css/tokens.css');
 
         foreach ([
-            '--c-border:#C9C2B2',
-            '--c-border-input:#B9B2A2',
+            '--c-border:#958E7E',
             '--c-disabled:#6E7A85',
             '--c-navy-deep:#050D18',
-            '--c-navy-edge:#4A5670',
+            '--c-navy-edge:#5A6680',
             '--c-navy-soft:#6B7691',
             '--c-amber-light:#FDF0DC',
             '--c-amber-mid:#E5BE87',
@@ -119,7 +118,7 @@ class DesignSystemTest extends TestCase
             $css = $this->css($sheet);
 
             foreach ([
-                '#C9C2B2', '#B9B2A2', '#6E7A85', '#050D18', '#4A5670', '#6B7691',
+                '#958E7E', '#6E7A85', '#050D18', '#5A6680', '#6B7691',
                 '#FDF0DC', '#E5BE87', '#5C3404', '#B6DCC5', '#E3B7B8', '#6E1A1D',
             ] as $literal) {
                 $this->assertStringNotContainsStringIgnoringCase(

@@ -41,8 +41,8 @@ These come from the approved design foundations. Do not invent values. If a valu
   --c-amber:#C2710C; --c-white:#FFFFFF;
   --c-red:#9B2226; --c-red-light:#FBEDED;
 
-  --c-border:#C9C2B2; --c-border-input:#B9B2A2; --c-disabled:#6E7A85;
-  --c-navy-deep:#050D18; --c-navy-edge:#4A5670; --c-navy-soft:#6B7691;
+  --c-border:#958E7E; --c-disabled:#6E7A85;
+  --c-navy-deep:#050D18; --c-navy-edge:#5A6680; --c-navy-soft:#6B7691;
 
   --c-amber-light:#FDF0DC; --c-amber-mid:#E5BE87; --c-amber-dark:#5C3404;
   --c-green-mid:#B6DCC5;
@@ -69,6 +69,8 @@ These come from the approved design foundations. Do not invent values. If a valu
 **Typeface roles are fixed.** Lora for headings on public surfaces. IBM Plex Sans for body. Inter for administration and dense data tables only — its neutrality is the point there. There is no heading alternate. Three families, three roles.
 
 **Radii carry meaning.** `--r-xs` on inputs and table cells, `--r-sm` on buttons, `--r-md` on panels, `--r-lg` on cards and modals, `--r-pill` on status badges only. Applying one radius everywhere flattens the hierarchy and is one of the clearest signs of a generated interface.
+
+**Contrast is a threshold, not a preference.** WCAG 2.1 AA is a contractual acceptance criterion, so where an approved foundation value fails a success criterion the standard wins and the delivered value differs. `--c-border` and `--c-navy-edge` are both lightened or darkened from the foundations for SC 1.4.11, and `--c-border-input` is deleted because it resolved to the same value as `--c-border`. Every token pair in use is measured by test.
 
 **Status pills carry fixed meanings.** Green for validated and in force. Amber for draft, pending and returned. Red for repealed, rejected and errors. Slate for archived and superseded. No screen invents a new status colour.
 

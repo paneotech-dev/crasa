@@ -236,7 +236,7 @@
 .c-pill--validated { background: var(--c-green-light); color: var(--c-green-dark); border: 1px solid var(--c-green-mid); }
 .c-pill--pending { background: var(--c-amber-light); color: var(--c-amber-dark); border: 1px solid var(--c-amber-mid); }
 .c-pill--error { background: var(--c-red-light); color: var(--c-red); border: 1px solid var(--c-red-mid); }
-.c-pill--archived { background: transparent; color: var(--c-slate); border: 1px solid var(--c-border-input); }
+.c-pill--archived { background: transparent; color: var(--c-slate); border: 1px solid var(--c-border); }
 
 /* Language badge on a document row ------------------------------------- */
 .c-lang-badge { display: inline-block; font-family: var(--f-admin); font-size: 11px; font-weight: 700; letter-spacing: .04em; padding: 3px 7px; border-radius: var(--r-xs); background: var(--c-sand); color: var(--c-charcoal); }
@@ -278,7 +278,7 @@
   font-size: 16px;
   color: var(--c-charcoal);
   background: var(--c-white);
-  border: 1.5px solid var(--c-border-input);
+  border: 1.5px solid var(--c-border);
   border-radius: var(--r-xs);
   padding: 11px 13px;
 }
@@ -326,7 +326,7 @@
 .c-pagination { margin-top: var(--s-7); }
 .c-pagination nav { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
 .c-pagination a, .c-pagination span { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0 12px; border-radius: var(--r-sm); font-size: 15px; text-decoration: none; }
-.c-pagination a { border: 1.5px solid var(--c-border-input); color: var(--c-charcoal); }
+.c-pagination a { border: 1.5px solid var(--c-border); color: var(--c-charcoal); }
 .c-pagination a:hover { border-color: var(--c-navy); color: var(--c-navy); }
 
 /* Article --------------------------------------------------------------- */

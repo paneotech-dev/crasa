@@ -125,7 +125,37 @@ before it becomes a rule in code.
 
 ---
 
-## Contrast failures found by measurement — need a ruling
+## Disclosed variation: two neutrals differ from the approved foundations
+
+**Resolved 2026-09-09. The standard wins.**
+
+WCAG 2.1 AA is a contractual acceptance criterion. Three token pairs in the
+approved design foundations fail SC 1.4.11, which requires 3:1 for the visual
+boundary of a user interface control. Where an approved value fails a success
+criterion, the delivered value differs.
+
+| Token | Foundations | Delivered | Why |
+|---|---|---|---|
+| `--c-border` | #C9C2B2 (1.77:1 on white) | **#958E7E** | 3.26:1 on white, 3.02:1 on cream |
+| `--c-border-input` | #B9B2A2 (2.11:1 on white) | **deleted** | resolved to the same value as `--c-border` once both had to clear 3:1, so it was never a separate token |
+| `--c-navy-edge` | #4A5670 (2.35:1 on navy) | **#5A6680** | 3.00:1 on navy |
+
+`--c-border` is set against **cream**, not white. Cream is the darker of the
+two grounds a control sits on, so it is the harder case, and a value that
+clears cream clears white. The first computed proposal was measured against
+white alone and failed on cream at 2.79:1 — caught by the per-pair test, not
+by the audit that produced it.
+
+`--c-disabled` #6E7A85 reads 4.06:1 against a 4.5:1 body threshold and is
+**deliberately unchanged**: SC 1.4.3 exempts text that is part of an inactive
+component. A test pins it so it is not "fixed" later.
+
+`ContrastTest` measures every pair in use, 27 cases, from the token file
+itself rather than from a copy.
+
+---
+
+## Superseded: the contrast finding that produced the above
 
 Computed 2026-09-09 against the actual token values, for the pairs actually
 used in the stylesheets. Three genuine WCAG 2.1 SC 1.4.11 failures, all on
