@@ -836,3 +836,13 @@
 .b[data-ground="navy"] .b-compare__indicator { color: var(--c-white); }
 
 .b-row__summary { font-size: 14.5px; line-height: 1.55; color: var(--c-charcoal); margin: var(--s-1) 0 var(--s-2); max-width: 68ch; }
+
+/* Search --------------------------------------------------------------- */
+.c-search__form { max-width: none; margin-bottom: var(--s-6); }
+.c-search__field { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: stretch; }
+.c-search__field .c-input { flex: 1 1 18rem; min-width: 0; }
+.c-chip__count { font-family: var(--f-admin); font-size: 12px; color: var(--c-slate); margin-left: var(--s-2); }
+.c-chip.is-active .c-chip__count, .c-chip[aria-current] .c-chip__count { color: var(--c-cream); }
+/* Matched terms in a snippet. mark has a browser default background that is
+   not in the palette, so it is set explicitly. */
+.b-row__summary mark { background: var(--c-amber-light); color: var(--c-amber-dark); padding: 0 2px; border-radius: var(--r-xs); }

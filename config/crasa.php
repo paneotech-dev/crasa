@@ -9,6 +9,19 @@ return [
     'enquiry_recipient' => env('CRASA_ENQUIRY_RECIPIENT', 'crasa@crasa.org'),
 
     /*
+     * Search.
+     *
+     * ElasticSearch is named in the specifications and cannot run on this
+     * host: no JVM, shared cPanel hosting. MariaDB InnoDB FULLTEXT ships
+     * behind App\Search\SearchDriver, so a managed ElasticSearch or
+     * OpenSearch service later is a driver class and this config line.
+     */
+    'search' => [
+        'driver' => env('CRASA_SEARCH_DRIVER', 'database'),
+        'per_page' => 12,
+    ],
+
+    /*
      * The Secretariat's location, for the contact map. Plot 143, Unit 2,
      * Gaborone International Finance Park.
      *

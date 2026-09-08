@@ -22,8 +22,10 @@ class InstrumentFactory extends Factory
         $slug = Str::slug($this->faker->unique()->words(4, true));
 
         return [
-            'country_id' => Country::factory(),
-            'sector_id' => Sector::factory(),
+            'country_id' => Country::query()->inRandomOrder()->value('id') ?? Country::factory(),
+            // Reuse a seeded sector where one exists: the slug is unique
+            // and there are only ever three.
+            'sector_id' => Sector::query()->inRandomOrder()->value('id') ?? Sector::factory(),
             'instrument_type' => $this->faker->randomElement(InstrumentType::cases()),
             'reference_number' => null,
             'enacted_on' => null,

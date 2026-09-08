@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Search\DatabaseSearchDriver;
+use App\Search\SearchDriver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -14,7 +16,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        /*
+         * The search driver, bound behind its interface.
+         *
+         * ElasticSearch cannot run on this host, so MariaDB FULLTEXT ships.
+         * Moving to a managed service later is a new class bound here, not a
+         * rewrite of the controller or the views.
+         */
+        $this->app->bind(
+            SearchDriver::class,
+            fn () => match (config('crasa.search.driver')) {
+                default => new DatabaseSearchDriver,
+            }
+        );
     }
 
     /**
