@@ -35,6 +35,7 @@
     <link rel="stylesheet" href="{{ asset('css/grid.css') }}">
     <link rel="stylesheet" href="{{ asset('css/base.css') }}">
     <link rel="stylesheet" href="{{ asset('css/chrome.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/blocks.css') }}">
     @stack('styles')
 </head>
 <body>

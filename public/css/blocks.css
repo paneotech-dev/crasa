@@ -1,0 +1,254 @@
+/* CRASA Digital Anchor Ecosystem — block library.
+ *
+ * The twelve block types from DATA_MODEL section 8. Tokens only; no colour,
+ * spacing, radius or shadow is written as a literal here.
+ *
+ * THE RULE THIS FILE EXISTS TO HOLD:
+ *
+ * Card geometry follows content. Grids use `align-items: start` so a card is
+ * as tall as its own content and no taller, rather than stretching to match
+ * the tallest sibling. A member state with four committees and one with a
+ * single committee produce different boxes, which is what CLAUDE.md requires
+ * and what uniform card heights would destroy.
+ *
+ * Column widths follow content too. Where a set is small the tracks are wide;
+ * where it is long they narrow. Nothing is pinned to a fixed pixel column,
+ * per layout invariant 5.
+ *
+ * There is no scroll-triggered entrance animation anywhere in this file.
+ * Motion answers a user action.
+ */
+
+/* Section rhythm ------------------------------------------------------- */
+/* Padding reflects content density, not the difficulty of being responsive.
+   A dense data block sits tighter than a hero. */
+
+.b { padding-block: var(--section-y); }
+.b--tight { padding-block: var(--s-7); }
+.b--flush { padding-block: 0; }
+.b__inner { max-width: var(--w-page); margin: 0 auto; padding-inline: var(--page-x); }
+.b__inner--reading { max-width: var(--w-reading); }
+
+.b__heading { margin: 0 0 var(--s-3); }
+.b__intro { font-size: var(--t-lead-size); line-height: var(--t-lead-line); color: var(--c-charcoal); max-width: 58ch; margin: 0 0 var(--s-6); }
+.b__eyebrow { font-size: var(--t-eyebrow-size); font-weight: var(--t-eyebrow-weight); color: var(--c-green-dark); margin-bottom: var(--s-2); }
+
+/* Empty states --------------------------------------------------------- */
+/* Never blank space. Every empty state names what is missing and offers the
+   action that fills it. */
+
+.b__empty {
+  border: 1px dashed var(--c-border);
+  border-radius: var(--r-md);
+  padding: var(--s-6);
+  background: var(--c-white);
+  max-width: 66ch;
+}
+.b__empty-title { font-family: var(--f-head); font-size: var(--t-h3-size); font-weight: 600; color: var(--c-navy); margin: 0 0 var(--s-2); }
+.b__empty-body { font-size: var(--t-small-size); line-height: var(--t-small-line); color: var(--c-slate); margin: 0 0 var(--s-4); max-width: 56ch; }
+.b__empty-body:last-child { margin-bottom: 0; }
+
+/* Image slots ---------------------------------------------------------- */
+/* A slot with no image renders the designed absence, never a broken img and
+   never a grey box. */
+
+.b__slot {
+  border: 1px dashed var(--c-border);
+  border-radius: var(--r-md);
+  background: var(--c-cream);
+  display: grid;
+  place-items: center;
+  padding: var(--s-5);
+  text-align: center;
+}
+.b__slot-note { font-size: var(--t-small-size); line-height: 1.5; color: var(--c-slate); max-width: 40ch; }
+.b__slot-ratio { font-family: var(--f-admin); font-size: 12px; font-weight: 600; color: var(--c-navy); margin-top: var(--s-2); }
+
+/* Hero ----------------------------------------------------------------- */
+
+.b-hero { background: var(--c-navy); color: var(--c-cream); position: relative; overflow: hidden; }
+.b-hero__inner { max-width: var(--w-page); margin: 0 auto; padding: var(--s-9) var(--page-x) var(--s-8); position: relative; }
+.b-hero__eyebrow { font-size: var(--t-eyebrow-size); font-weight: var(--t-eyebrow-weight); color: var(--c-green-light); margin-bottom: var(--s-3); }
+.b-hero__headline {
+  font-family: var(--f-head);
+  /* Fluid, so the longest of the three languages sets the size rather than
+     English setting it and French overflowing. */
+  font-size: clamp(30px, 5vw, var(--t-display-size));
+  line-height: var(--t-display-line);
+  font-weight: var(--t-display-weight);
+  letter-spacing: -.02em;
+  color: var(--c-white);
+  margin: 0 0 var(--s-5);
+  max-width: 20ch;
+  text-wrap: balance;
+}
+.b-hero__subhead { font-size: var(--t-lead-size); line-height: var(--t-lead-line); color: var(--c-sand); max-width: 58ch; margin: 0 0 var(--s-6); }
+.b-hero__actions { display: flex; flex-wrap: wrap; gap: var(--s-3); }
+.b-hero__media { margin-top: var(--s-7); }
+
+/* Key figures ---------------------------------------------------------- */
+/* Counters, no scroll animation. Figures are tabular so they align. */
+
+.b-figures__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: var(--s-5);
+  align-items: start;
+}
+.b-figure { border-top: 3px solid var(--c-green); padding-top: var(--s-4); min-width: 0; }
+.b-figure__value {
+  font-family: var(--f-head);
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.05;
+  font-weight: 600;
+  color: var(--c-navy);
+  font-variant-numeric: tabular-nums;
+}
+.b-figure__label { font-size: var(--t-small-size); line-height: 1.45; color: var(--c-charcoal); margin-top: var(--s-2); }
+.b-figure__source { font-size: 13px; line-height: 1.45; color: var(--c-slate); margin-top: var(--s-2); }
+
+/* Pillars -------------------------------------------------------------- */
+/* align-items:start is the rule. A pillar with two sentences is shorter than
+   a pillar with five, and the layout absorbs that rather than padding both
+   to a common height. */
+
+.b-pillars__grid { display: grid; gap: var(--s-6); align-items: start; }
+.b-pillars__grid[data-columns="2"] { grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); }
+.b-pillars__grid[data-columns="3"] { grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.b-pillars__grid[data-columns="4"] { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+
+.b-pillar { min-width: 0; border-top: 2px solid var(--c-navy-line); padding-top: var(--s-4); }
+.b-pillar__icon { color: var(--c-green-dark); margin-bottom: var(--s-3); }
+.b-pillar__heading { font-family: var(--f-head); font-size: var(--t-h3-size); line-height: var(--t-h3-line); font-weight: 600; color: var(--c-navy); margin: 0 0 var(--s-2); }
+.b-pillar__body { font-size: var(--t-small-size); line-height: 1.6; color: var(--c-charcoal); margin: 0; }
+.b-pillar__link { display: inline-block; margin-top: var(--s-3); font-size: var(--t-small-size); font-weight: 600; }
+
+/* Rich text ------------------------------------------------------------ */
+
+.b-richtext__body { font-size: var(--t-body-size); line-height: var(--t-body-line); max-width: 66ch; }
+.b-richtext__body > * + * { margin-top: var(--s-4); }
+.b-richtext[data-alignment="center"] .b-richtext__body { margin-inline: auto; }
+
+/* Card lists: publications, documents, news ---------------------------- */
+/* One grid serves all three. align-items:start again, and the track minimum
+   is generous enough that a long title does not force a two-character line
+   at 375px. */
+
+.b-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: var(--s-5);
+  align-items: start;
+}
+.b-card {
+  min-width: 0;
+  background: var(--c-white);
+  border: 1px solid var(--c-sand);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.b-card__media { aspect-ratio: 16 / 9; background: var(--c-cream); border-bottom: 1px solid var(--c-sand); display: grid; place-items: center; }
+.b-card__media img { width: 100%; height: 100%; object-fit: cover; }
+.b-card__body { padding: var(--s-4); display: flex; flex-direction: column; gap: var(--s-2); }
+.b-card__kicker { font-size: 12px; font-weight: 600; color: var(--c-green-dark); }
+.b-card__title { font-family: var(--f-head); font-size: 18px; line-height: 1.3; font-weight: 600; color: var(--c-navy); margin: 0; }
+.b-card__meta { font-size: 13px; line-height: 1.5; color: var(--c-slate); }
+.b-card__meta span + span::before { content: ", "; }
+
+/* Document row --------------------------------------------------------- */
+
+.b-rows { display: flex; flex-direction: column; border: 1px solid var(--c-sand); border-radius: var(--r-md); overflow: hidden; background: var(--c-white); }
+.b-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4); padding: var(--s-4); border-bottom: 1px solid var(--c-sand); min-width: 0; }
+.b-row:last-child { border-bottom: 0; }
+.b-row__main { flex: 1 1 260px; min-width: 0; }
+.b-row__title { font-weight: 600; font-size: 16px; color: var(--c-navy); }
+.b-row__meta { font-size: 13px; color: var(--c-slate); margin-top: var(--s-1); }
+.b-row__actions { flex: none; display: flex; gap: var(--s-2); align-items: center; }
+
+/* Member grid ---------------------------------------------------------- */
+/* Column width follows the content: a member with four committees needs more
+   room than one with a single committee, so tracks are auto-fit and cards
+   size to their own text. */
+
+.b-members {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: var(--s-4);
+  align-items: start;
+}
+.b-member {
+  min-width: 0;
+  border: 1px solid var(--c-sand);
+  border-radius: var(--r-md);
+  background: var(--c-white);
+  padding: var(--s-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.b-member__name { font-family: var(--f-head); font-size: 17px; font-weight: 600; color: var(--c-navy); }
+.b-member__authority { font-size: 13.5px; line-height: 1.5; color: var(--c-charcoal); }
+.b-member__committees { font-size: 13px; line-height: 1.55; color: var(--c-slate); }
+
+/* Call to action ------------------------------------------------------- */
+/* Tone from the defined palette only. Three tones, no arbitrary colour. */
+
+.b-cta__panel { border-radius: var(--r-lg); padding: var(--s-7) var(--s-6); }
+.b-cta__panel[data-tone="navy"] { background: var(--c-navy); color: var(--c-cream); }
+.b-cta__panel[data-tone="navy"] .b-cta__headline { color: var(--c-white); }
+.b-cta__panel[data-tone="green"] { background: var(--c-green-light); color: var(--c-charcoal); border: 1px solid var(--c-green-mid); }
+.b-cta__panel[data-tone="green"] .b-cta__headline { color: var(--c-green-dark); }
+.b-cta__panel[data-tone="cream"] { background: var(--c-cream); color: var(--c-charcoal); border: 1px solid var(--c-sand); }
+.b-cta__panel[data-tone="cream"] .b-cta__headline { color: var(--c-navy); }
+.b-cta__headline { font-family: var(--f-head); font-size: var(--t-h2-size); line-height: var(--t-h2-line); font-weight: 600; margin: 0 0 var(--s-3); max-width: 24ch; text-wrap: balance; }
+.b-cta__body { font-size: var(--t-body-size); line-height: 1.6; margin: 0 0 var(--s-5); max-width: 58ch; }
+
+/* Social feed ---------------------------------------------------------- */
+
+.b-social { display: flex; flex-wrap: wrap; gap: var(--s-3); }
+.b-social__link {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  min-height: 44px; padding: 10px var(--s-4);
+  border: 1.5px solid var(--c-navy); border-radius: var(--r-sm);
+  font-size: var(--t-small-size); font-weight: 600; color: var(--c-navy);
+  text-decoration: none;
+}
+.b-social__link:hover { background: var(--c-navy); color: var(--c-white); }
+
+/* Comparison ----------------------------------------------------------- */
+/* A chart always has a table equivalent. The comparator must be usable
+   without seeing the graph. */
+
+.b-compare__scroll { min-width: 0; overflow-x: auto; }
+.b-compare__table { width: 100%; min-width: 480px; border-collapse: collapse; font-size: var(--t-small-size); }
+.b-compare__table th, .b-compare__table td { padding: 11px var(--s-4); text-align: left; border-bottom: 1px solid var(--c-sand); }
+.b-compare__table thead th { background: var(--c-navy); color: var(--c-cream); font-size: 12px; font-weight: 600; }
+.b-compare__table td.is-numeric { text-align: right; font-family: var(--f-admin); font-variant-numeric: tabular-nums; }
+
+/* Status pills --------------------------------------------------------- */
+/* Fixed meanings. Green validated and in force, amber draft and pending,
+   red repealed and error, slate archived and superseded. Pill radius only. */
+
+.c-pill { display: inline-block; font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: var(--r-xs); }
+.c-pill--validated { background: var(--c-green-light); color: var(--c-green-dark); border: 1px solid var(--c-green-mid); }
+.c-pill--pending { background: var(--c-amber-light); color: var(--c-amber-dark); border: 1px solid var(--c-amber-mid); }
+.c-pill--error { background: var(--c-red-light); color: var(--c-red); border: 1px solid var(--c-red-mid); }
+.c-pill--archived { background: transparent; color: var(--c-slate); border: 1px solid var(--c-border-input); }
+
+/* Language badge on a document row ------------------------------------- */
+.c-lang-badge { display: inline-block; font-family: var(--f-admin); font-size: 11px; font-weight: 700; letter-spacing: .04em; padding: 3px 7px; border-radius: var(--r-xs); background: var(--c-sand); color: var(--c-charcoal); }
+
+/* Buttons -------------------------------------------------------------- */
+
+.c-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; font-family: var(--f-body); font-size: 16px; font-weight: 600; border-radius: var(--r-sm); padding: 11px 20px; text-decoration: none; cursor: pointer; transition: background 150ms var(--ease-in), color 150ms var(--ease-in); }
+.c-btn--primary { background: var(--c-green-dark); border: 1px solid var(--c-green-dark); color: var(--c-white); }
+.c-btn--primary:hover { background: var(--c-navy-deep); color: var(--c-white); }
+.c-btn--secondary { background: transparent; border: 1.5px solid var(--c-navy); color: var(--c-navy); }
+.c-btn--secondary:hover { background: var(--c-navy); color: var(--c-white); }
+.c-btn--on-navy { background: var(--c-cream); border: 1.5px solid var(--c-cream); color: var(--c-navy); }
+.c-btn--on-navy:hover { background: var(--c-white); color: var(--c-navy); }
+.c-btn--tertiary { background: transparent; border: none; color: var(--c-green-dark); text-decoration: underline; text-underline-offset: 4px; padding: 11px 8px; }
+.c-btn--tertiary:hover { background: var(--c-green-light); color: var(--c-navy); }
