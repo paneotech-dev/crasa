@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="icon" href="./assets/crasa-logo.svg">
+<link rel="stylesheet" href="./vendor/fonts.css">
+<style>
+:root{
+  --c-green:#1A8C5A; --c-green-dark:#0E5536; --c-green-light:#E8F4EC;
+  --c-navy:#0F1B2D; --c-navy-mid:#1A2742; --c-charcoal:#1F2937;
+  --c-slate:#5C6B7E; --c-cream:#F8F6F1; --c-sand:#E5E0D5;
+  --c-amber:#C2710C; --c-white:#FFFFFF; --c-red:#9B2226;
+  --f-head:'Lora',Georgia,serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-admin:'Inter',system-ui,sans-serif;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px; --s-9:96px;
+  --r-xs:2px; --r-sm:4px; --r-md:8px; --r-lg:14px; --r-pill:999px;
+  --e-1:0 1px 2px rgba(15,27,45,.06), 0 1px 3px rgba(15,27,45,.08);
+  --e-2:0 2px 4px rgba(15,27,45,.06), 0 6px 16px rgba(15,27,45,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;overflow-wrap:break-word;background:var(--c-cream);color:var(--c-charcoal);font-family:var(--f-body);-webkit-font-smoothing:antialiased}
+a{color:var(--c-green-dark);text-underline-offset:3px}
+a:hover{color:var(--c-navy)}
+:focus-visible{outline:3px solid var(--c-amber);outline-offset:2px}
+@page{margin:12mm}
+@media print{
+  html,body{background:#FFFFFF}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;transition:none !important;animation:none !important}
+  [style*="position:sticky"],[style*="position: sticky"],[style*="position:fixed"]{position:static !important}
+  section,figure,li,tr{break-inside:avoid}
+  h1,h2,h3{break-after:avoid}
+  thead{display:table-header-group}
+  [style*="overflow-x:auto"],[style*="overflow-x: auto"],[style*="overflow:auto"]{overflow:visible !important}
+  table{min-width:0 !important;width:100% !important;font-size:9.5pt !important}
+  img,svg{max-width:100% !important}
+  a[href]{text-decoration:underline}
+}
+</style>
+</helmet>
+
+<div style="background:var(--c-cream);min-height:100vh">
+
+  <header style="background:var(--c-white);border-bottom:1px solid var(--c-sand);box-shadow:var(--e-1)">
+    <div style="max-width:1440px;margin:0 auto;padding:var(--s-4) var(--s-7);display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap">
+      <a href="#" style="display:flex;flex:none;align-items:center;gap:var(--s-3);text-decoration:none">
+        <img src="assets/crasa-logo.svg" alt="" style="width:40px;height:40px;flex:none;display:block">
+        <span style="display:flex;flex-direction:column;min-width:0">
+          <span style="font-family:var(--f-head);font-size:20px;font-weight:600;color:var(--c-navy);line-height:1.1">CRASA</span>
+          <span style="font-size:10.5px;color:var(--c-slate);letter-spacing:.03em;line-height:1.25;max-width:230px">Communications Regulators' Association of Southern Africa</span>
+        </span>
+      </a>
+      <nav aria-label="Primary" style="display:flex;flex-wrap:wrap;gap:2px;min-width:0;margin-left:auto">
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">Home</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">About CRASA</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">Committees</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">Members</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">Publications</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">Newsroom</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">Events</a>
+        <a href="#" style="font-size:15px;font-weight:600;color:var(--c-navy);padding:9px 11px;text-decoration:none;border-bottom:2px solid var(--c-green-dark)">Comparator</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">Contact</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:var(--s-3);min-width:0">
+        <button type="button" aria-label="Search" style="flex:none;width:44px;height:44px;display:grid;place-items:center;background:transparent;border:1.5px solid #C9C2B2;border-radius:var(--r-sm);cursor:pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+        </button>
+        <div role="group" aria-label="Language" style="display:flex;flex:none;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);overflow:hidden">
+          <button type="button" lang="en" style="font-family:var(--f-body);font-size:14px;font-weight:600;padding:11px 13px;min-width:44px;border:none;cursor:pointer;background:var(--c-navy);color:var(--c-white)">EN</button>
+          <button type="button" lang="fr" style="font-family:var(--f-body);font-size:14px;font-weight:600;padding:11px 13px;min-width:44px;border:none;cursor:pointer;background:transparent;color:var(--c-navy)">FR</button>
+          <button type="button" lang="pt" style="font-family:var(--f-body);font-size:14px;font-weight:600;padding:11px 13px;min-width:44px;border:none;cursor:pointer;background:transparent;color:var(--c-navy)">PT</button>
+        </div>
+        <a href="#" style="flex:none;display:inline-flex;align-items:center;gap:7px;font-size:15px;font-weight:600;color:var(--c-white);background:var(--c-navy);padding:12px 16px;border-radius:var(--r-sm);text-decoration:none;white-space:nowrap" style-hover="background:#050d18">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect></svg>
+          Extranet
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div style="background:var(--c-white);border-bottom:1px solid var(--c-sand)">
+    <nav aria-label="Breadcrumb" style="max-width:1440px;margin:0 auto;padding:var(--s-3) var(--s-7);display:flex;align-items:center;gap:8px;font-size:15px;flex-wrap:wrap">
+      <a href="#">Home</a><span style="color:var(--c-slate)">/</span><span style="font-weight:500;color:var(--c-charcoal)">Regulatory comparator</span>
+    </nav>
+  </div>
+
+
+  <section style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-8) var(--s-7) var(--s-7)">
+    <div style="max-width:1440px;margin:0 auto;display:flex;flex-wrap:wrap;gap:var(--s-8);align-items:flex-end">
+      <div style="flex:2 1 420px;min-width:0">
+        <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:var(--s-4)">Regulatory comparator</div>
+        <h1 style="font-family:var(--f-head);font-size:clamp(31px,5.2vw,52px);line-height:1.08;font-weight:600;letter-spacing:-.02em;margin:0 0 var(--s-4)">Compare regulation across member states</h1>
+        <p style="margin:0;font-size:19px;line-height:1.6;color:var(--c-sand);max-width:62ch">Twelve indicators across three categories, for all 14 CRASA member regulators. Browse one indicator across the region, or compare up to four member states across a whole category.</p>
+      </div>
+      <div style="flex:1 1 320px;min-width:0;display:flex;gap:var(--s-3);background:rgba(194,113,12,.16);border:1px solid #7A4606;border-left:4px solid var(--c-amber);border-radius:var(--r-sm);padding:var(--s-4)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9A64A" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9L2.4 18a1.8 1.8 0 001.6 2.7h16a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"></path></svg>
+        <div style="font-size:15px;line-height:1.55;color:#F4E3C8"><strong style="color:#FFF2DC;display:block;margin-bottom:3px">Demonstration data</strong>Every value on this screen is demonstration data. It has not been validated by the member states. This notice remains in place, on screen and in every export, until each value is confirmed by its national regulator.</div>
+      </div>
+    </div>
+  </section>
+
+  <div style="max-width:1440px;margin:0 auto;padding:var(--s-7)">
+
+    <div style="display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap;margin-bottom:var(--s-6)">
+      <div role="group" aria-label="Mode" style="display:flex;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);overflow:hidden">
+        <button type="button" onClick="{{ setBrowse }}" style="{{ modeBrowseStyle }}">Browse one indicator</button>
+        <button type="button" onClick="{{ setCompare }}" style="{{ modeCompareStyle }}">Compare member states</button>
+      </div>
+      <div style="font-size:15px;color:var(--c-charcoal);max-width:56ch">{{ modeHelp }}</div>
+      <div style="margin-left:auto;display:flex;gap:var(--s-3)">
+        <button type="button" style="display:inline-flex;align-items:center;gap:7px;font-family:var(--f-body);font-size:15px;font-weight:600;color:var(--c-navy);background:transparent;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);padding:9px 15px;cursor:pointer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v12"></path><path d="M7 11l5 5 5-5"></path><path d="M4 20h16"></path></svg>Export CSV
+        </button>
+        <button type="button" style="display:inline-flex;align-items:center;gap:7px;font-family:var(--f-body);font-size:15px;font-weight:600;color:var(--c-navy);background:transparent;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);padding:9px 15px;cursor:pointer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 8V4h10v4"></path><rect x="5" y="8" width="14" height="7" rx="1"></rect><path d="M7 15h10v5H7z"></path></svg>Print
+        </button>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:var(--s-6);align-items:flex-start">
+
+      <aside style="flex:1 1 280px;max-width:340px;min-width:0;display:flex;flex-direction:column;gap:var(--s-5)">
+        <div style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);padding:var(--s-5)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-3);margin-bottom:var(--s-3)">
+            <h2 style="font-family:var(--f-head);font-size:19px;font-weight:600;margin:0">Member states</h2>
+            <span style="font-family:var(--f-admin);font-size:13px;font-weight:600;color:{{ countColor }}">{{ countLabel }}</span>
+          </div>
+          <p style="margin:0 0 var(--s-4);font-size:13.5px;line-height:1.5;color:var(--c-charcoal)">{{ selectHelp }}</p>
+          <div style="display:flex;flex-direction:column;gap:6px;max-height:430px;overflow:auto;padding-right:2px">
+            <sc-for list="{{ countries }}" as="c" hint-placeholder-count="14">
+              <button type="button" onClick="{{ c.toggle }}" aria-pressed="{{ c.pressed }}" style="{{ c.style }}">
+                <span style="{{ c.markStyle }}">{{ c.code }}</span>
+                <span style="display:flex;flex-direction:column;align-items:flex-start;min-width:0;flex:1">
+                  <span style="font-size:14.5px;font-weight:600;line-height:1.25">{{ c.name }}</span>
+                  <span style="font-size:12px;color:var(--c-slate)">{{ c.acr }}</span>
+                </span>
+                <span style="{{ c.tickStyle }}">{{ c.tick }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <button type="button" onClick="{{ clearAll }}" style="margin-top:var(--s-4);font-family:var(--f-body);font-size:14px;font-weight:600;color:var(--c-green-dark);background:transparent;border:none;padding:8px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Clear selection</button>
+        </div>
+
+        <div style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-family:var(--f-head);font-size:19px;font-weight:600;margin:0 0 var(--s-4)">Categories and indicators</h2>
+          <div style="display:flex;flex-direction:column;gap:var(--s-4)">
+            <sc-for list="{{ categories }}" as="cat" hint-placeholder-count="3">
+              <div>
+                <button type="button" onClick="{{ cat.select }}" style="{{ cat.style }}">{{ cat.name }}</button>
+                <div style="font-size:12.5px;line-height:1.5;color:var(--c-slate);margin:6px 0 8px">{{ cat.blurb }}</div>
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <sc-for list="{{ cat.indicators }}" as="ind" hint-placeholder-count="4">
+                    <button type="button" onClick="{{ ind.select }}" style="{{ ind.style }}">{{ ind.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </aside>
+
+      <main style="flex:999 1 360px;min-width:0;display:flex;flex-direction:column;gap:var(--s-6)">
+
+        <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="background:var(--c-white);border:1px dashed #B9B2A2;border-radius:var(--r-md);padding:var(--s-9) var(--s-7);text-align:center;display:flex;flex-direction:column;align-items:center;gap:var(--s-4)">
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#5C6B7E" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="M8 19v-6"></path><path d="M13 19V9"></path><path d="M18 19v-3"></path></svg>
+            <h2 style="font-family:var(--f-head);font-size:28px;font-weight:600;margin:0">Nothing selected yet</h2>
+            <p style="margin:0;font-size:17px;line-height:1.6;color:var(--c-charcoal);max-width:52ch">Choose one member state to see its values, or up to four to compare them side by side. The indicator category is already set to Spectrum Management.</p>
+            <div style="display:flex;gap:var(--s-3);flex-wrap:wrap;justify-content:center;margin-top:var(--s-2)">
+              <button type="button" onClick="{{ presetPair }}" style="font-family:var(--f-body);font-size:16px;font-weight:600;color:var(--c-white);background:var(--c-green-dark);border:1.5px solid var(--c-green-dark);border-radius:var(--r-sm);padding:12px 20px;cursor:pointer">Compare Botswana and Mozambique</button>
+              <button type="button" onClick="{{ setBrowse }}" style="font-family:var(--f-body);font-size:16px;font-weight:600;color:var(--c-navy);background:transparent;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);padding:12px 20px;cursor:pointer">Browse all 14 instead</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isBrowse }}" hint-placeholder-val="{{ false }}">
+          <div style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);overflow:hidden">
+            <div style="padding:var(--s-5) var(--s-5) var(--s-4);border-bottom:1px solid var(--c-sand)">
+              <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:6px">{{ catName }} &middot; browse mode</div>
+              <h2 style="font-family:var(--f-head);font-size:30px;font-weight:600;margin:0 0 6px">{{ indName }}</h2>
+              <div style="font-size:14.5px;color:var(--c-charcoal)">{{ indMeta }}</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(430px,1fr))">
+              <div style="border-right:1px solid var(--c-sand);min-width:0;overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:15.5px;min-width:410px">
+                  <thead>
+                    <tr style="background:var(--c-navy);color:var(--c-cream);text-align:left;position:sticky;top:0">
+                      <th scope="col" style="padding:11px var(--s-5);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600">Member state</th>
+                      <th scope="col" style="padding:11px var(--s-4);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;text-align:right">Value</th>
+                      <th scope="col" style="padding:11px var(--s-5) 11px var(--s-4);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600">Provenance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <sc-for list="{{ browseRows }}" as="r" hint-placeholder-count="14">
+                      <tr style="{{ r.rowStyle }}">
+                        <th scope="row" style="padding:11px var(--s-5);font-weight:500;text-align:left">
+                          <span style="display:flex;align-items:center;gap:10px">
+                            <span style="width:28px;height:28px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:11px;font-weight:700;flex:none">{{ r.code }}</span>
+                            {{ r.name }}
+                          </span>
+                        </th>
+                        <td style="{{ r.valueStyle }}">{{ r.display }}</td>
+                        <td style="padding:11px var(--s-5) 11px var(--s-4)">
+                          <span style="{{ r.pillStyle }}">{{ r.pill }}</span>
+                          <span style="display:block;font-size:12.5px;color:var(--c-slate);margin-top:3px">{{ r.source }}</span>
+                        </td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div style="padding:var(--s-5);min-width:0">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);margin-bottom:var(--s-4);flex-wrap:wrap">
+                  <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy)">Regional view</div>
+                  <div role="group" aria-label="Chart type" style="display:flex;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);overflow:hidden">
+                    <button type="button" onClick="{{ setBar }}" style="{{ vizBarStyle }}">Bars</button>
+                    <button type="button" onClick="{{ setMap }}" style="{{ vizMapStyle }}">Map</button>
+                  </div>
+                </div>
+                <sc-if value="{{ isBar }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex;flex-direction:column;gap:9px">
+                    <sc-for list="{{ browseRows }}" as="r" hint-placeholder-count="14">
+                      <div style="display:flex;align-items:center;gap:var(--s-3)">
+                        <span style="font-family:var(--f-admin);font-size:12px;font-weight:700;color:var(--c-charcoal);width:26px;flex:none">{{ r.code }}</span>
+                        <span style="flex:1;height:20px;background:var(--c-sand);border-radius:2px;overflow:hidden;position:relative">
+                          <span style="{{ r.barStyle }}"></span>
+                        </span>
+                        <span style="font-family:var(--f-admin);font-size:12.5px;font-weight:600;color:var(--c-charcoal);width:72px;text-align:right;flex:none">{{ r.display }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ isMap }}" hint-placeholder-val="{{ false }}">
+                  <div>
+                    <dc-import name="RegionMap" mode="choropleth" values="{{ mapValues }}" members="{{ memberList }}" hint-size="100%,860px"></dc-import>
+                      </sc-for>
+                    </div>
+                    <div style="display:none">
+                      <span>Low</span>
+                      <span style="width:26px;height:14px;background:#E8F4EC;border:1px solid #B6DCC5"></span>
+                      <span style="width:26px;height:14px;background:#9CCFB2"></span>
+                      <span style="width:26px;height:14px;background:#4FA97B"></span>
+                      <span style="width:26px;height:14px;background:#0E5536"></span>
+                      <span style="font-size:13px;color:var(--c-charcoal)">High</span>
+                      <span style="width:26px;height:14px;background:repeating-linear-gradient(135deg,#E5E0D5 0 4px,#CFC8B8 4px 8px);border:1px solid #B9B2A2;margin-left:var(--s-3)"></span>
+                      <span style="font-size:13px;color:var(--c-charcoal)">Not reported</span>
+                    </div>
+                    <div style="margin-top:var(--s-3);font-size:13px;line-height:1.55;color:var(--c-charcoal)">The regional view is a grid of the 14 member states, not a geographic projection, so every state stays legible and touch-sized at 375px. The true SADC outlines appear on the members page. Each cell states its country code, its value and its authority as text, so nothing depends on colour alone.</div>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+            <div style="padding:var(--s-4) var(--s-5);border-top:1px solid var(--c-sand);background:var(--c-cream);display:flex;gap:var(--s-5);flex-wrap:wrap;font-size:13.5px;color:var(--c-charcoal)">
+              <span><strong>Source</strong> Member state submission,  e-Form</span>
+              <span><strong>Last updated</strong> 4 August 2026</span>
+              <a href="#">Open the underlying data source</a>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isCompare }}" hint-placeholder-val="{{ true }}">
+          <div style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);overflow:hidden">
+            <div style="padding:var(--s-5);border-bottom:1px solid var(--c-sand);display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-5);flex-wrap:wrap">
+              <div>
+                <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:6px">Compare mode</div>
+                <h2 style="font-family:var(--f-head);font-size:30px;font-weight:600;margin:0">{{ catName }}</h2>
+                <div style="font-size:14.5px;color:var(--c-charcoal);margin-top:6px;max-width:70ch">{{ catBlurb }}</div>
+              </div>
+              <div style="font-size:14px;color:var(--c-charcoal)">{{ compareCountNote }}</div>
+            </div>
+            <div style="overflow-x:auto">
+              <table style="width:100%;border-collapse:collapse;font-size:15.5px;min-width:640px">
+                <thead>
+                  <tr style="background:var(--c-navy);color:var(--c-cream);text-align:left">
+                    <th scope="col" style="padding:13px var(--s-5);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;position:sticky;left:0;background:var(--c-navy);min-width:230px">Indicator</th>
+                    <sc-for list="{{ selected }}" as="s" hint-placeholder-count="2">
+                      <th scope="col" style="padding:13px var(--s-4);font-weight:600;vertical-align:bottom">
+                        <span style="display:flex;align-items:center;gap:9px">
+                          <span style="width:28px;height:28px;border-radius:var(--r-xs);background:var(--c-green);color:var(--c-white);display:grid;place-items:center;font-family:var(--f-admin);font-size:11px;font-weight:700;flex:none">{{ s.code }}</span>
+                          <span style="display:flex;flex-direction:column">
+                            <span style="font-size:15.5px;color:var(--c-white);line-height:1.2">{{ s.name }}</span>
+                            <span style="font-size:12px;font-weight:500;color:var(--c-sand)">{{ s.acr }}</span>
+                          </span>
+                          <button type="button" onClick="{{ s.remove }}" aria-label="Remove {{ s.name }}" style="margin-left:6px;width:24px;height:24px;display:grid;place-items:center;background:transparent;border:1px solid #4A5670;border-radius:var(--r-xs);color:var(--c-cream);cursor:pointer;flex:none;font-size:13px;line-height:1">&times;</button>
+                        </span>
+                      </th>
+                    </sc-for>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ compareRows }}" as="row" hint-placeholder-count="4">
+                    <tr style="border-bottom:1px solid var(--c-sand)">
+                      <th scope="row" style="padding:15px var(--s-5);text-align:left;font-weight:500;vertical-align:top;position:sticky;left:0;background:var(--c-white);border-right:1px solid var(--c-sand)">
+                        <span style="display:block;font-size:16px;line-height:1.3">{{ row.label }}</span>
+                        <span style="display:block;font-size:12.5px;color:var(--c-slate);margin-top:3px">{{ row.type }}</span>
+                      </th>
+                      <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="2">
+                        <td style="padding:15px var(--s-4);vertical-align:top">
+                          <span style="{{ cell.valueStyle }}">{{ cell.display }}</span>
+                          <span style="display:flex;align-items:center;gap:6px;margin-top:7px;flex-wrap:wrap">
+                            <span style="{{ cell.pillStyle }}">{{ cell.pill }}</span>
+                          </span>
+                          <span style="display:block;font-size:12.5px;color:var(--c-slate);margin-top:5px;line-height:1.45">{{ cell.source }}</span>
+                        </td>
+                      </sc-for>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+            <div style="padding:var(--s-4) var(--s-5);border-top:1px solid var(--c-sand);background:var(--c-cream);display:flex;gap:var(--s-5);flex-wrap:wrap;font-size:13.5px;color:var(--c-charcoal)">
+              <span><strong>Source</strong> Member state submission,  e-Form</span>
+              <span><strong>Last updated</strong> 4 August 2026</span>
+              <a href="#">Open the underlying data source</a>
+            </div>
+          </div>
+
+          <div style="background:var(--c-white);border:1px solid var(--c-sand);border-left:4px solid var(--c-navy);border-radius:var(--r-md);padding:var(--s-5);display:flex;gap:var(--s-4)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F1B2D" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5"></path><path d="M12 8h.01"></path></svg>
+            <div style="font-size:15px;line-height:1.6"><strong>How a missing value is shown.</strong> Where a member state has not reported an indicator, the cell reads <strong>Not reported</strong> with a dashed marker, and the row keeps its height. Comoros in the Roaming and Mobile category is the live example: select Comoros to see it. A blank cell would be indistinguishable from a value of zero, so no cell is ever left blank.</div>
+          </div>
+        </sc-if>
+
+        <div style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);padding:var(--s-6)">
+          <div style="display:flex;align-items:baseline;gap:var(--s-4);margin-bottom:var(--s-3)">
+            <span style="font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--c-green-dark)">APPENDIX</span>
+            <h2 style="font-family:var(--f-head);font-size:26px;font-weight:600;margin:0">The wide table at 375px</h2>
+          </div>
+          <p style="margin:0 0 var(--s-6);font-size:16px;line-height:1.65;color:var(--c-charcoal);max-width:80ch">A four-column comparison cannot be a table on a phone. Below 720px the comparison transposes: one card per indicator, member states stacked inside it as labelled rows. Every value keeps its provenance marker and its source line. Nothing is hidden behind a horizontal scroll, and nothing requires a hover.</p>
+          <div style="display:flex;gap:var(--s-6);flex-wrap:wrap;align-items:flex-start;min-width:0;overflow-x:auto">
+            <div style="flex:0 0 375px;width:375px;border:1px solid var(--c-sand);border-radius:var(--r-md);overflow:hidden;background:var(--c-cream)">
+              <div style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-4)">
+                <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:5px">Compare mode</div>
+                <div style="font-family:var(--f-head);font-size:22px;font-weight:600;line-height:1.2">Roaming and Mobile</div>
+                <div style="font-size:14px;color:var(--c-sand);margin-top:var(--s-3)">Botswana and Comoros</div>
+              </div>
+              <div style="padding:var(--s-4);display:flex;flex-direction:column;gap:var(--s-4)">
+                <div style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-sm);padding:var(--s-4)">
+                  <div style="font-size:16px;font-weight:600;line-height:1.3">Mobile Penetration</div>
+                  <div style="font-size:12.5px;color:var(--c-slate);margin-bottom:var(--s-3)">Percentage</div>
+                  <div style="display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-top:1px solid var(--c-sand)">
+                    <span style="font-size:14.5px;font-weight:500">Botswana</span>
+                    <span style="font-family:var(--f-admin);font-size:19px;font-weight:600">168.4%</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-top:1px solid var(--c-sand)">
+                    <span style="font-size:14.5px;font-weight:500">Comoros</span>
+                    <span style="font-size:15px;font-style:italic;color:var(--c-slate)">Not reported</span>
+                  </div>
+                </div>
+                <div style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-sm);padding:var(--s-4)">
+                  <div style="font-size:16px;font-weight:600;line-height:1.3">Mobile Number Portability</div>
+                  <div style="font-size:12.5px;color:var(--c-slate);margin-bottom:var(--s-3)">Yes or no</div>
+                  <div style="display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-top:1px solid var(--c-sand)">
+                    <span style="font-size:14.5px;font-weight:500">Botswana</span>
+                    <span style="font-family:var(--f-admin);font-size:18px;font-weight:600;color:var(--c-navy)">Yes</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-top:1px solid var(--c-sand)">
+                    <span style="font-size:14.5px;font-weight:500">Comoros</span>
+                    <span style="font-family:var(--f-admin);font-size:18px;font-weight:600;color:var(--c-navy)">No</span>
+                  </div>
+                </div>
+                <div style="display:flex;gap:10px;background:#FDF0DC;border:1px solid #E5BE87;border-left:4px solid var(--c-amber);border-radius:var(--r-sm);padding:var(--s-3)">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7A4606" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9L2.4 18a1.8 1.8 0 001.6 2.7h16a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"></path></svg>
+                  <div style="font-size:13px;line-height:1.5;color:#5C3404">Demonstration data, not validated by the member states.</div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1 1 340px;min-width:300px;display:flex;flex-direction:column;gap:var(--s-4)">
+              <div style="background:var(--c-cream);border:1px solid var(--c-sand);border-radius:var(--r-sm);padding:var(--s-4)">
+                <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:8px">Value types, rendered distinctly</div>
+                <div style="display:flex;flex-direction:column;gap:9px;font-size:14.5px">
+                  <div style="display:flex;justify-content:space-between;gap:var(--s-4);border-bottom:1px solid var(--c-sand);padding-bottom:8px"><span>Number</span><span style="font-family:var(--f-admin);font-weight:600;font-variant-numeric:tabular-nums">1,143</span></div>
+                  <div style="display:flex;justify-content:space-between;gap:var(--s-4);border-bottom:1px solid var(--c-sand);padding-bottom:8px"><span>Percentage</span><span style="font-family:var(--f-admin);font-weight:600;font-variant-numeric:tabular-nums">168.4%</span></div>
+                  <div style="display:flex;justify-content:space-between;gap:var(--s-4);border-bottom:1px solid var(--c-sand);padding-bottom:8px"><span>Currency</span><span style="font-family:var(--f-admin);font-weight:600;font-variant-numeric:tabular-nums">USD 0.14</span></div>
+                  <div style="display:flex;justify-content:space-between;gap:var(--s-4);border-bottom:1px solid var(--c-sand);padding-bottom:8px"><span>Boolean</span><span style="font-family:var(--f-admin);font-weight:600">Yes</span></div>
+                  <div style="display:flex;justify-content:space-between;gap:var(--s-4);border-bottom:1px solid var(--c-sand);padding-bottom:8px"><span>Year</span><span style="font-family:var(--f-admin);font-weight:600">2023</span></div>
+                  <div style="display:flex;justify-content:space-between;gap:var(--s-4)"><span>List</span><span style="text-align:right;max-width:60%;line-height:1.45">Unified licensing, Class, Individual</span></div>
+                </div>
+              </div>
+              <div style="background:var(--c-cream);border:1px solid var(--c-sand);border-radius:var(--r-sm);padding:var(--s-4);font-size:14.5px;line-height:1.6;color:var(--c-charcoal)">
+                <strong>Keyboard and static reading.</strong> Country selection, category and indicator choice, mode and chart switching are all buttons in reading order with visible focus. The map is a labelled figure whose values are duplicated in the table beside it, so the screen reads correctly as a printed page and under a screen reader.
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <footer style="background:var(--c-navy);color:var(--c-sand);padding:var(--s-7)">
+    <div style="max-width:1440px;margin:0 auto;display:flex;flex-wrap:wrap;gap:var(--s-5);align-items:center;justify-content:space-between">
+      <div style="display:flex;flex-wrap:wrap;gap:var(--s-3);align-items:center">
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">SADC</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">COMESA</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">EUROPEAN UNION</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">ITU</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">UPU</span>
+      </div>
+      <div style="font-size:13.5px;line-height:1.6;max-width:56ch">This platform is developed under the EGEE-ICT programme, funded by the European Union and implemented with COMESA. Emblem placement and the funding statement are to be confirmed against COMESA visibility requirements.</div>
+    </div>
+  </footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const COUNTRIES = [
+  {code:"AO", name:"Angola", acr:"INACOM"},
+  {code:"BW", name:"Botswana", acr:"BOCRA"},
+  {code:"KM", name:"Comoros", acr:"ANRTIC"},
+  {code:"CD", name:"DR Congo", acr:"ARPTC"},
+  {code:"SZ", name:"Eswatini", acr:"ESCCOM"},
+  {code:"LS", name:"Lesotho", acr:"LCA"},
+  {code:"MW", name:"Malawi", acr:"MACRA"},
+  {code:"MU", name:"Mauritius", acr:"ICTA"},
+  {code:"MZ", name:"Mozambique", acr:"INCM"},
+  {code:"NA", name:"Namibia", acr:"CRAN"},
+  {code:"ZA", name:"South Africa", acr:"ICASA"},
+  {code:"TZ", name:"Tanzania", acr:"TCRA"},
+  {code:"ZM", name:"Zambia", acr:"ZICTA"},
+  {code:"ZW", name:"Zimbabwe", acr:"POTRAZ"}
+];
+
+const CATS = [
+  {
+    id:"spectrum", name:"Spectrum Management",
+    blurb:"Frequency licensing, allocation and assignment frameworks across SADC member states.",
+    indicators:[
+      {id:"ops", label:"Mobile Operators Licensed", type:"number", typeLabel:"Number"},
+      {id:"lic", label:"Licensing Framework", type:"list", typeLabel:"List"},
+      {id:"g5", label:"5G Spectrum Assigned", type:"boolean", typeLabel:"Yes or no"},
+      {id:"last", label:"Last Major Spectrum Process", type:"year", typeLabel:"Year"}
+    ]
+  },
+  {
+    id:"roaming", name:"Roaming and Mobile",
+    blurb:"SADC roaming framework implementation, voice and data caps, mobile market structure.",
+    indicators:[
+      {id:"fw", label:"SADC Roaming Framework", type:"list", typeLabel:"List"},
+      {id:"mnp", label:"Mobile Number Portability", type:"boolean", typeLabel:"Yes or no"},
+      {id:"pen", label:"Mobile Penetration", type:"percentage", typeLabel:"Percentage"},
+      {id:"bb", label:"Mobile Broadband Penetration", type:"percentage", typeLabel:"Percentage"}
+    ]
+  },
+  {
+    id:"postal", name:"Postal Services",
+    blurb:"Universal service obligation status, GMS deployment, postal financial inclusion.",
+    indicators:[
+      {id:"uso", label:"USO Operator Designated", type:"boolean", typeLabel:"Yes or no"},
+      {id:"gms", label:"UPU GMS Deployed", type:"boolean", typeLabel:"Yes or no"},
+      {id:"pfs", label:"Postal Financial Services", type:"list", typeLabel:"List"},
+      {id:"out", label:"Permanent Postal Outlets", type:"number", typeLabel:"Number"}
+    ]
+  }
+];
+
+// Demonstration data only. Nothing here is validated by the member states.
+const D = {
+  AO:{ops:4,lic:"Unified licensing",g5:false,last:2022, fw:"Partial",mnp:false,pen:47.2,bb:26.4, uso:true,gms:false,pfs:"Money transfer",out:105},
+  BW:{ops:3,lic:"Unified licensing",g5:true,last:2023, fw:"Implemented",mnp:true,pen:168.4,bb:94.1, uso:true,gms:true,pfs:"Money transfer, Savings",out:127},
+  KM:{ops:2,lic:"Individual licensing",g5:false,last:2019, fw:null,mnp:false,pen:null,bb:null, uso:true,gms:false,pfs:null,out:14},
+  CD:{ops:4,lic:"Individual licensing",g5:false,last:2021, fw:"Partial",mnp:false,pen:51.8,bb:29.7, uso:true,gms:false,pfs:"Money transfer",out:82},
+  SZ:{ops:2,lic:"Unified licensing",g5:true,last:2022, fw:"Implemented",mnp:false,pen:112.6,bb:63.9, uso:true,gms:true,pfs:"Money transfer, Savings",out:56},
+  LS:{ops:2,lic:"Unified licensing",g5:false,last:2020, fw:"Implemented",mnp:false,pen:104.3,bb:52.7, uso:true,gms:true,pfs:"Money transfer",out:71},
+  MW:{ops:3,lic:"Unified licensing",g5:false,last:2021, fw:"Implemented",mnp:true,pen:71.5,bb:37.2, uso:true,gms:true,pfs:"Money transfer, Savings",out:172},
+  MU:{ops:3,lic:"Class licensing",g5:true,last:2023, fw:"Implemented",mnp:true,pen:157.9,bb:88.6, uso:true,gms:true,pfs:"Money transfer, Savings, Insurance",out:98},
+  MZ:{ops:3,lic:"Unified licensing",g5:true,last:2023, fw:"Implemented",mnp:false,pen:57.1,bb:31.8, uso:true,gms:true,pfs:"Money transfer",out:263},
+  NA:{ops:3,lic:"Unified licensing",g5:true,last:2022, fw:"Implemented",mnp:true,pen:115.2,bb:71.4, uso:true,gms:true,pfs:"Money transfer, Savings",out:132},
+  ZA:{ops:5,lic:"Individual and class",g5:true,last:2022, fw:"Implemented",mnp:true,pen:161.8,bb:112.3, uso:true,gms:true,pfs:"Money transfer, Savings, Insurance",out:1443},
+  TZ:{ops:7,lic:"Converged licensing",g5:true,last:2023, fw:"Implemented",mnp:true,pen:92.4,bb:48.9, uso:true,gms:true,pfs:"Money transfer, Savings",out:487},
+  ZM:{ops:3,lic:"Unified licensing",g5:true,last:2022, fw:"Implemented",mnp:false,pen:104.7,bb:56.2, uso:true,gms:true,pfs:"Money transfer",out:196},
+  ZW:{ops:3,lic:"Unified licensing",g5:true,last:2021, fw:"Implemented",mnp:false,pen:96.3,bb:59.8, uso:true,gms:true,pfs:"Money transfer, Savings",out:224}
+};
+
+// Provenance: which country and indicator pairs have been validated in this demonstration set.
+const VERIFIED = { BW:["pen","mnp","g5"], MZ:["pen","g5"], NA:["mnp","pen"], ZA:["pen","bb"] };
+
+const PILL_BASE = "font-size:12.5px;font-weight:600;padding:3px 9px;border-radius:2px;display:inline-block;";
+const PILL_VERIFIED = PILL_BASE + "background:#E8F4EC;color:#0E5536;border:1px solid #B6DCC5;";
+const PILL_DEMO = "font-size:12.5px;color:#5C6B7E;display:inline-block;";
+const PILL_NONE = "font-size:12.5px;color:#5C6B7E;display:inline-block;";
+
+class Component extends DCLogic {
+  state = { mode:"compare", cat:1, ind:"pen", sel:["BW","MZ"], viz:"bar" };
+
+  toggle(code){
+    const s = this.state.sel.slice();
+    const i = s.indexOf(code);
+    if (i >= 0) s.splice(i,1);
+    else if (s.length < 4) s.push(code);
+    this.setState({ sel:s });
+  }
+
+  cat(){ return CATS[this.state.cat]; }
+  indicator(){
+    const c = this.cat();
+    return c.indicators.find(i => i.id === this.state.ind) || c.indicators[0];
+  }
+
+  fmt(v, type){
+    if (v === null || v === undefined) return "Not reported";
+    if (type === "percentage") return v.toFixed(1) + "%";
+    if (type === "number") return v.toLocaleString("en-GB");
+    if (type === "boolean") return v ? "Yes" : "No";
+    return String(v);
+  }
+
+  cellFor(code, ind){
+    const v = D[code][ind.id];
+    const missing = v === null || v === undefined;
+    const verified = !missing && (VERIFIED[code] || []).indexOf(ind.id) >= 0;
+    let vs;
+    if (missing) vs = "font-size:15.5px;font-style:italic;color:#5C6B7E;display:inline-block;";
+    else if (ind.type === "boolean") vs = "font-family:'Inter',system-ui,sans-serif;font-size:19px;font-weight:600;color:#0F1B2D;display:inline-block;";
+    else if (ind.type === "list") vs = "font-size:15.5px;line-height:1.45;color:#1F2937;display:inline-block;max-width:24ch;";
+    else vs = "font-family:'Inter',system-ui,sans-serif;font-size:21px;font-weight:600;color:#0F1B2D;font-variant-numeric:tabular-nums;display:inline-block;";
+    return {
+      display: this.fmt(v, ind.type),
+      valueStyle: vs,
+      pill: missing ? "No data" : (verified ? "Verified" : "Demonstration data"),
+      pillStyle: missing ? PILL_NONE : (verified ? PILL_VERIFIED : PILL_DEMO),
+      source: missing ? "No submission received for this indicator" : (verified ? "Validated by the Secretariat, 2026 return" : "Submitted 2026, awaiting validation"),
+      raw: v, missing: missing
+    };
+  }
+
+  renderVals(){
+    const st = this.state;
+    const cat = this.cat();
+    const ind = this.indicator();
+    const nSel = st.sel.length;
+    const isEmpty = nSel === 0 && st.mode === "compare";
+
+    const modeBtn = (on) => "font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:15px;font-weight:600;padding:11px 18px;border:none;cursor:pointer;"
+      + (on ? "background:#0F1B2D;color:#FFFFFF;" : "background:transparent;color:#0F1B2D;");
+    const vizBtn = (on) => "font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13.5px;font-weight:600;padding:8px 14px;border:none;cursor:pointer;"
+      + (on ? "background:#0F1B2D;color:#FFFFFF;" : "background:transparent;color:#0F1B2D;");
+
+    const countries = COUNTRIES.map(c => {
+      const on = st.sel.indexOf(c.code) >= 0;
+      const full = !on && nSel >= 4;
+      return {
+        code:c.code, name:c.name, acr:c.acr,
+        pressed: on ? "true" : "false",
+        toggle: () => { if (!full) this.toggle(c.code); },
+        style: "display:flex;align-items:center;gap:10px;width:100%;text-align:left;font-family:'IBM Plex Sans',system-ui,sans-serif;padding:8px 10px;border-radius:4px;cursor:" + (full ? "not-allowed" : "pointer") + ";"
+          + (on ? "background:#E8F4EC;border:1.5px solid #0E5536;" : "background:#FFFFFF;border:1.5px solid #E5E0D5;")
+          + (full ? "opacity:.5;" : ""),
+        markStyle: "width:30px;height:30px;border-radius:2px;display:grid;place-items:center;font-family:'Inter',system-ui,sans-serif;font-size:11px;font-weight:700;flex:none;"
+          + (on ? "background:#0E5536;color:#FFFFFF;" : "background:#0F1B2D;color:#F8F6F1;"),
+        tick: on ? "Selected" : "",
+        tickStyle: on ? "font-size:11.5px;font-weight:700;letter-spacing:.04em;color:#0E5536;flex:none;" : "display:none;"
+      };
+    });
+
+    const categories = CATS.map((c, ci) => ({
+      name: c.name, blurb: c.blurb,
+      select: () => this.setState({ cat:ci, ind:c.indicators[0].id }),
+      style: "width:100%;text-align:left;font-family:'Lora',Georgia,serif;font-size:17px;font-weight:600;padding:9px 11px;border-radius:4px;cursor:pointer;border:none;"
+        + (ci === st.cat ? "background:#0F1B2D;color:#FFFFFF;" : "background:#F8F6F1;color:#0F1B2D;"),
+      indicators: c.indicators.map(i => ({
+        label: i.label,
+        select: () => this.setState({ cat:ci, ind:i.id, mode:"browse" }),
+        style: "width:100%;text-align:left;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:14px;padding:8px 11px;border-radius:4px;cursor:pointer;background:transparent;"
+          + (ci === st.cat && i.id === st.ind && st.mode === "browse"
+              ? "border:1.5px solid #0E5536;background:#E8F4EC;color:#0E5536;font-weight:600;"
+              : "border:1.5px solid transparent;color:#1F2937;font-weight:500;")
+      }))
+    }));
+
+    const numeric = ind.type === "percentage" || ind.type === "number" || ind.type === "year";
+    const vals = COUNTRIES.map(c => D[c.code][ind.id]).filter(v => typeof v === "number");
+    const max = vals.length ? Math.max.apply(null, vals) : 1;
+
+    const browseRows = COUNTRIES.map(c => {
+      const cell = this.cellFor(c.code, ind);
+      const on = st.sel.indexOf(c.code) >= 0;
+      let pct = 0;
+      if (numeric && typeof cell.raw === "number") pct = Math.round((cell.raw / max) * 100);
+      if (ind.type === "boolean") pct = cell.raw === true ? 100 : (cell.raw === false ? 8 : 0);
+      return {
+        code:c.code, name:c.name,
+        display: cell.display,
+        rowStyle: "border-bottom:1px solid #E5E0D5;" + (on ? "background:#E8F4EC;" : ""),
+        valueStyle: "padding:11px 16px;text-align:right;" + (cell.missing
+          ? "color:#5C6B7E;font-size:14px;"
+          : (ind.type === "list" ? "font-size:15px;" : "font-family:'Inter',system-ui,sans-serif;font-weight:600;font-variant-numeric:tabular-nums;font-size:16px;")),
+        pill: cell.pill, pillStyle: cell.pillStyle, source: cell.source,
+        barStyle: "position:absolute;left:0;top:0;bottom:0;width:" + pct + "%;background:"
+          + (cell.missing ? "repeating-linear-gradient(135deg,#E5E0D5 0 4px,#CFC8B8 4px 8px)" : "#0E5536")
+          + ";transition:width 320ms cubic-bezier(.2,.8,.2,1);"
+      };
+    });
+
+    const mapValues = {};
+    COUNTRIES.forEach(c => {
+      const raw = D[c.code][ind.id];
+      const cell = this.cellFor(c.code, ind);
+      let band = null;
+      if (raw !== null && raw !== undefined) {
+        if (typeof raw === "number") band = Math.min(3, Math.floor((raw / max) * 3.999));
+        else if (raw === true) band = 3;
+        else if (raw === false) band = 0;
+        else band = 2;
+      }
+      mapValues[c.code] = { display: cell.display, band: band };
+    });
+    const memberList = COUNTRIES.map(c => ({ code: c.code, country: c.name, acr: c.acr }));
+
+    const shades = ["#E8F4EC","#9CCFB2","#4FA97B","#0E5536"];
+    const mapCells = COUNTRIES.map((c, i) => {
+      const raw = D[c.code][ind.id];
+      const missing = raw === null || raw === undefined;
+      let fill = "url(#none)", band = 0;
+      if (!missing) {
+        if (typeof raw === "number") band = Math.min(3, Math.floor((raw / max) * 3.999));
+        else if (raw === true) band = 3;
+        else if (raw === false) band = 0;
+        else band = 2;
+      }
+      const light = !missing && band >= 2;
+      const ink = light ? "#FFFFFF" : "#0F1B2D";
+      const sub = light ? "#D8E8DE" : "#3D4A5C";
+      const cell = this.cellFor(c.code, ind);
+      return {
+        code:c.code, short:c.acr, value: cell.display,
+        cellStyle: "border-radius:3px;padding:8px 9px;display:flex;flex-direction:column;gap:2px;min-width:0;background:"
+          + (missing ? "repeating-linear-gradient(135deg,#E5E0D5 0 4px,#CFC8B8 4px 8px)" : shades[band])
+          + ";border:1px solid " + (missing ? "#B9B2A2" : "rgba(15,27,45,.12)") + ";",
+        codeStyle: "font-family:'Inter',system-ui,sans-serif;font-size:12.5px;font-weight:700;color:" + ink + ";",
+        valStyle: "font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:600;color:" + ink + ";overflow:hidden;text-overflow:ellipsis;white-space:nowrap;",
+        acrStyle: "font-family:'Inter',system-ui,sans-serif;font-size:10px;font-weight:500;color:" + sub + ";overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"
+      };
+    });
+
+    const selected = st.sel.map(code => {
+      const c = COUNTRIES.find(x => x.code === code);
+      return { code:c.code, name:c.name, acr:c.acr, remove: () => this.toggle(code) };
+    });
+
+    const compareRows = cat.indicators.map(i => ({
+      label: i.label, type: i.typeLabel,
+      cells: st.sel.map(code => this.cellFor(code, i))
+    }));
+
+    return {
+      countries, categories, browseRows, compareRows, selected, mapCells, mapValues, memberList,
+      catName: cat.name, catBlurb: cat.blurb,
+      indName: ind.label,
+      indMeta: ind.typeLabel + " \u00B7 " + cat.name + " \u00B7 all 14 member regulators",
+      isBrowse: st.mode === "browse",
+      isCompare: st.mode === "compare" && nSel > 0,
+      isEmpty: isEmpty,
+      isBar: st.viz === "bar", isMap: st.viz === "map",
+      modeBrowseStyle: modeBtn(st.mode === "browse"),
+      modeCompareStyle: modeBtn(st.mode === "compare"),
+      vizBarStyle: vizBtn(st.viz === "bar"),
+      vizMapStyle: vizBtn(st.viz === "map"),
+      setBrowse: () => this.setState({ mode:"browse" }),
+      setCompare: () => this.setState({ mode:"compare" }),
+      setBar: () => this.setState({ viz:"bar" }),
+      setMap: () => this.setState({ viz:"map" }),
+      clearAll: () => this.setState({ sel:[] }),
+      presetPair: () => this.setState({ mode:"compare", sel:["BW","MZ"], cat:1 }),
+      countLabel: nSel + " of 4 selected",
+      countColor: nSel >= 4 ? "#C2710C" : "#5C6B7E",
+      selectHelp: nSel >= 4
+        ? "Four is the maximum. Remove one to add another."
+        : "Select up to four. Browse mode ignores this selection and shows all 14, highlighting the ones you picked.",
+      compareCountNote: nSel === 1
+        ? "One member state selected. Add a second to compare."
+        : nSel + " member states compared across " + cat.indicators.length + " indicators.",
+      modeHelp: st.mode === "browse"
+        ? "One indicator, all 14 member states, as a table and a regional view."
+        : "Up to four member states, every indicator in the selected category, side by side."
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="icon" href="./assets/crasa-logo.svg">
+<link rel="stylesheet" href="./vendor/fonts.css">
+<style>
+:root{
+  --c-green:#1A8C5A; --c-green-dark:#0E5536; --c-green-light:#E8F4EC;
+  --c-navy:#0F1B2D; --c-navy-mid:#1A2742; --c-navy-line:#2C3A55; --c-charcoal:#1F2937;
+  --c-slate:#5C6B7E; --c-cream:#F8F6F1; --c-sand:#E5E0D5; --c-line:#DFDBD1;
+  --c-amber:#C2710C; --c-white:#FFFFFF; --c-red:#9B2226; --c-red-light:#FBEDED;
+  --f-head:'Lora',Georgia,serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-admin:'Inter',system-ui,sans-serif;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px; --s-9:96px;
+  --r-xs:2px; --r-sm:4px; --r-md:8px; --r-lg:14px; --r-pill:999px;
+  --e-1:0 1px 2px rgba(15,27,45,.06), 0 1px 3px rgba(15,27,45,.08);
+  --e-2:0 2px 4px rgba(15,27,45,.06), 0 6px 16px rgba(15,27,45,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;overflow-wrap:break-word;background:var(--c-cream);color:var(--c-charcoal);font-family:var(--f-body);-webkit-font-smoothing:antialiased}
+a{color:var(--c-green-dark);text-underline-offset:3px}
+a:hover{color:var(--c-navy)}
+:focus-visible{outline:3px solid var(--c-amber);outline-offset:2px}
+@keyframes crasa-rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes crasa-fade{from{opacity:0}to{opacity:1}}
+@keyframes crasa-shift{0%{transform:translateY(0)}50%{transform:translateY(-9px)}100%{transform:translateY(0)}}
+@media (prefers-reduced-motion: reduce){
+  [data-motion]{animation-name:crasa-fade !important;animation-duration:320ms !important;transform:none !important}
+  [data-motion-note]::after{content:" Your system is requesting reduced motion, so the left column is already matching the right."}
+}
+@page{margin:12mm}
+@media print{
+  html,body{background:#FFFFFF}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;transition:none !important;animation:none !important}
+  [style*="position:sticky"],[style*="position: sticky"],[style*="position:fixed"]{position:static !important}
+  section,figure,li,tr{break-inside:avoid}
+  h1,h2,h3{break-after:avoid}
+  thead{display:table-header-group}
+  [style*="overflow-x:auto"],[style*="overflow-x: auto"],[style*="overflow:auto"]{overflow:visible !important}
+  table{min-width:0 !important;width:100% !important;font-size:9.5pt !important}
+  img,svg{max-width:100% !important}
+  a[href]{text-decoration:underline}
+}
+</style>
+</helmet>
+
+<div style="background:var(--c-cream)">
+
+  <section style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-8) var(--s-7)">
+    <div style="max-width:1440px;margin:0 auto">
+      <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:var(--s-4)">Mobile first, proven</div>
+      <h1 style="font-family:var(--f-head);font-size:clamp(30px,4.6vw,46px);line-height:1.1;font-weight:600;letter-spacing:-.02em;margin:0 0 var(--s-4);max-width:26ch">Four surfaces, redrawn for the widths people actually use</h1>
+      <p style="margin:0;font-size:18.5px;line-height:1.65;color:var(--c-sand);max-width:76ch">Each composition below is a decision, not a consequence. Navigation becomes a drawer, a four-column comparison transposes into stacked cards, an administration table becomes a list of records, and a wide dashboard becomes a single column ordered by what a delegate needs first.</p>
+    </div>
+  </section>
+
+  <div style="max-width:1440px;margin:0 auto;padding:var(--s-8) var(--s-7);display:flex;flex-direction:column;gap:var(--s-9)">
+
+    <section>
+      <div style="display:flex;align-items:baseline;gap:var(--s-4);border-bottom:1px solid var(--c-sand);padding-bottom:var(--s-3);margin-bottom:var(--s-6);flex-wrap:wrap">
+        <span style="font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--c-green-dark)">01</span>
+        <h2 style="font-family:var(--f-head);font-size:clamp(24px,3.2vw,30px);font-weight:600;margin:0">Homepage</h2>
+        <span style="font-size:15px;color:var(--c-slate);margin-left:auto">375 with the drawer, 768 with the two-column hero</span>
+      </div>
+      <div style="display:flex;gap:var(--s-6);flex-wrap:wrap;align-items:flex-start;min-width:0;overflow-x:auto">
+
+        <div style="flex:0 0 375px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">375 &middot; drawer closed</div>
+          <div style="width:375px;border:1px solid var(--c-sand);border-radius:var(--r-lg);overflow:hidden;background:var(--c-white);box-shadow:var(--e-2)">
+            <div style="background:var(--c-navy);color:var(--c-cream);padding:6px var(--s-4);display:flex;justify-content:space-between;font-family:var(--f-admin);font-size:11px">
+              <span>09:41</span><span>CRASA</span><span>100%</span>
+            </div>
+            <div style="padding:var(--s-3) var(--s-4);display:flex;align-items:center;gap:var(--s-3);border-bottom:1px solid var(--c-sand)">
+              <img src="assets/crasa-logo.svg" alt="" style="width:32px;height:32px;flex:none;display:block">
+              <span style="font-family:var(--f-head);font-size:17px;font-weight:600;color:var(--c-navy);flex:1;min-width:0">CRASA</span>
+              <span style="flex:none;width:44px;height:44px;display:grid;place-items:center;border:1.5px solid #C9C2B2;border-radius:var(--r-sm)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg></span>
+              <span style="flex:none;width:44px;height:44px;display:grid;place-items:center;border:1.5px solid var(--c-navy);border-radius:var(--r-sm)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F1B2D" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg></span>
+            </div>
+            <div style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-5) var(--s-4)">
+              <div style="font-size:11px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:10px">Communications Regulators of Southern Africa</div>
+              <div style="font-family:var(--f-head);font-size:30px;line-height:1.1;font-weight:600;margin-bottom:12px;letter-spacing:-.015em">Harmonising ICT and postal regulation across Southern Africa.</div>
+              <div style="font-size:14.5px;line-height:1.55;color:var(--c-sand);margin-bottom:var(--s-4)">CRASA brings together the national regulatory authorities of 14 SADC member states.</div>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:var(--s-5)">
+                <span style="text-align:center;font-size:16px;font-weight:600;color:var(--c-white);background:var(--c-green-dark);padding:14px;border-radius:var(--r-sm)">Explore the library</span>
+                <span style="text-align:center;font-size:16px;font-weight:600;color:var(--c-cream);border:1.5px solid #6B7691;padding:13px;border-radius:var(--r-sm)">About CRASA</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-4);border-top:1px solid var(--c-navy-line);padding-top:var(--s-4)">
+                <div><div style="font-family:var(--f-head);font-size:26px;font-weight:600;color:var(--c-white);line-height:1">14</div><div style="font-size:11.5px;color:var(--c-sand);margin-top:3px">Member regulators</div></div>
+                <div><div style="font-family:var(--f-head);font-size:26px;font-weight:600;color:var(--c-white);line-height:1">1997</div><div style="font-size:11.5px;color:var(--c-sand);margin-top:3px">Established</div></div>
+                <div><div style="font-family:var(--f-head);font-size:26px;font-weight:600;color:var(--c-white);line-height:1">350M+</div><div style="font-size:11.5px;color:var(--c-sand);margin-top:3px">Citizens served</div></div>
+                <div><div style="font-family:var(--f-head);font-size:26px;font-weight:600;color:var(--c-white);line-height:1">2</div><div style="font-size:11.5px;color:var(--c-sand);margin-top:3px">Sectors regulated</div></div>
+              </div>
+            </div>
+            <div style="padding:var(--s-4)">
+              <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:7px">Regulatory comparator</div>
+              <div style="font-family:var(--f-head);font-size:21px;line-height:1.2;font-weight:600;margin-bottom:10px">Compare regulation across member states</div>
+              <div style="font-size:13.5px;line-height:1.55;color:var(--c-charcoal)">Twelve indicators, three categories, all 14 member regulators.</div>
+            </div>
+          </div>
+          <div style="font-size:13.5px;line-height:1.6;color:var(--c-charcoal);margin-top:var(--s-3)">The hero loses its map motif panel and keeps the type. Facts drop to a two-by-two grid. Both actions go full width at 44px minimum.</div>
+        </div>
+
+        <div style="flex:0 0 375px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">375 &middot; drawer open</div>
+          <div style="width:375px;border:1px solid var(--c-sand);border-radius:var(--r-lg);overflow:hidden;background:var(--c-navy);box-shadow:var(--e-2)">
+            <div style="background:var(--c-navy);color:var(--c-cream);padding:6px var(--s-4);display:flex;justify-content:space-between;font-family:var(--f-admin);font-size:11px">
+              <span>09:41</span><span>CRASA</span><span>100%</span>
+            </div>
+            <div style="padding:var(--s-3) var(--s-4);display:flex;align-items:center;gap:var(--s-3);background:var(--c-white);border-bottom:1px solid var(--c-sand)">
+              <img src="assets/crasa-logo.svg" alt="" style="width:32px;height:32px;flex:none;display:block">
+              <span style="font-family:var(--f-head);font-size:17px;font-weight:600;color:var(--c-navy);flex:1;min-width:0">CRASA</span>
+              <span style="flex:none;width:44px;height:44px;display:grid;place-items:center;border:1.5px solid var(--c-navy);border-radius:var(--r-sm)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F1B2D" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg></span>
+            </div>
+            <div style="padding:var(--s-3) var(--s-4) var(--s-5)">
+              <sc-for list="{{ drawerNav }}" as="n" hint-placeholder-count="9">
+                <div style="{{ n.style }}">{{ n.label }}</div>
+              </sc-for>
+              <div style="display:flex;gap:8px;margin-top:var(--s-4);border-top:1px solid var(--c-navy-line);padding-top:var(--s-4)">
+                <span style="flex:1;text-align:center;font-size:15px;font-weight:600;padding:13px 0;border-radius:var(--r-sm);background:var(--c-green-dark);color:var(--c-white)">EN</span>
+                <span style="flex:1;text-align:center;font-size:15px;font-weight:600;padding:13px 0;border-radius:var(--r-sm);border:1.5px solid #4A5670;color:var(--c-cream)">FR</span>
+                <span style="flex:1;text-align:center;font-size:15px;font-weight:600;padding:13px 0;border-radius:var(--r-sm);border:1.5px solid #4A5670;color:var(--c-cream)">PT</span>
+              </div>
+              <div style="margin-top:var(--s-3);display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:600;color:var(--c-navy);background:var(--c-cream);padding:14px;border-radius:var(--r-sm)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect></svg>
+                Extranet
+              </div>
+            </div>
+          </div>
+          <div style="font-size:13.5px;line-height:1.6;color:var(--c-charcoal);margin-top:var(--s-3)">All nine primary items, the switcher and the extranet action. Focus is trapped in the drawer and returns to the trigger on close.</div>
+        </div>
+
+        <div style="flex:1 1 420px;min-width:340px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">768 &middot; tablet</div>
+          <div style="border:1px solid var(--c-sand);border-radius:var(--r-md);overflow:hidden;background:var(--c-white);box-shadow:var(--e-1)">
+            <div style="padding:var(--s-3) var(--s-4);display:flex;align-items:center;gap:var(--s-3);border-bottom:1px solid var(--c-sand);flex-wrap:wrap">
+              <img src="assets/crasa-logo.svg" alt="" style="width:34px;height:34px;flex:none;display:block">
+              <span style="font-family:var(--f-head);font-size:18px;font-weight:600;color:var(--c-navy);flex:none">CRASA</span>
+              <nav aria-label="Primary, tablet" style="display:flex;flex-wrap:wrap;gap:1px;min-width:0;margin-left:auto">
+                <span style="font-size:13px;font-weight:600;color:var(--c-navy);padding:7px 8px;border-bottom:2px solid var(--c-green-dark)">Home</span>
+                <span style="font-size:13px;color:var(--c-charcoal);padding:7px 8px">About</span>
+                <span style="font-size:13px;color:var(--c-charcoal);padding:7px 8px">Members</span>
+                <span style="font-size:13px;color:var(--c-charcoal);padding:7px 8px">Publications</span>
+                <span style="font-size:13px;color:var(--c-charcoal);padding:7px 8px">Comparator</span>
+              </nav>
+              <span style="flex:none;display:flex;gap:8px;align-items:center">
+                <span style="font-size:13px;font-weight:600;color:var(--c-navy);border:1.5px solid var(--c-navy);border-radius:var(--r-sm);padding:9px 10px">EN</span>
+                <span style="font-size:13.5px;font-weight:600;color:var(--c-white);background:var(--c-navy);padding:10px 13px;border-radius:var(--r-sm);white-space:nowrap">Extranet</span>
+                <span style="width:40px;height:40px;display:grid;place-items:center;border:1.5px solid var(--c-navy);border-radius:var(--r-sm)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0F1B2D" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg></span>
+              </span>
+            </div>
+            <div style="background:var(--c-navy);color:var(--c-cream);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))">
+              <div style="padding:var(--s-5)">
+                <div style="font-size:11px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:10px">Communications Regulators of Southern Africa</div>
+                <div style="font-family:var(--f-head);font-size:32px;line-height:1.1;font-weight:600;margin-bottom:12px;letter-spacing:-.015em">Harmonising ICT and postal regulation across Southern Africa.</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <span style="font-size:14.5px;font-weight:600;color:var(--c-white);background:var(--c-green-dark);padding:12px 18px;border-radius:var(--r-sm)">Explore the library</span>
+                  <span style="font-size:14.5px;font-weight:600;color:var(--c-cream);border:1.5px solid #6B7691;padding:11px 18px;border-radius:var(--r-sm)">About CRASA</span>
+                </div>
+              </div>
+              <div style="padding:var(--s-5);display:grid;place-items:center;position:relative;overflow:hidden;background:rgba(26,140,90,.07)">
+                <svg viewBox="0 0 260 200" width="100%" style="max-width:220px" aria-hidden="true">
+                  <g fill="none" stroke="#2E9C6C" stroke-width="1.1" opacity=".8">
+                    <path d="M52 40 Q92 20 140 30 T222 66 Q232 108 200 146 T126 184 Q70 176 44 138 T52 40"></path>
+                    <path d="M60 62 Q108 46 152 60 T210 84"></path>
+                    <path d="M62 92 Q114 78 164 92 T212 112"></path>
+                    <path d="M70 122 Q118 110 166 124"></path>
+                    <path d="M104 28 Q112 96 126 184"></path>
+                  </g>
+                  <g fill="#1A8C5A"><circle cx="84" cy="58" r="4"></circle><circle cx="118" cy="76" r="4"></circle><circle cx="146" cy="60" r="4"></circle><circle cx="96" cy="96" r="4"></circle><circle cx="130" cy="108" r="4"></circle><circle cx="164" cy="92" r="4"></circle><circle cx="108" cy="130" r="4"></circle><circle cx="142" cy="140" r="4"></circle></g>
+                </svg>
+              </div>
+            </div>
+            <div style="padding:var(--s-5);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--s-5)">
+              <div style="border-top:3px solid var(--c-navy);padding-top:var(--s-3)">
+                <div style="font-family:var(--f-head);font-size:18px;font-weight:600;line-height:1.25;margin-bottom:7px">Harmonised frameworks</div>
+                <div style="font-size:14px;line-height:1.55;color:var(--c-charcoal)">Model laws and guidelines that member states adopt into national regulation.</div>
+              </div>
+              <div style="border-top:3px solid var(--c-navy);padding-top:var(--s-3)">
+                <div style="font-family:var(--f-head);font-size:18px;font-weight:600;line-height:1.25;margin-bottom:7px">Spectrum and infrastructure</div>
+                <div style="font-size:14px;line-height:1.55;color:var(--c-charcoal)">Coordinated allocation across borders, including the IMT 2020 roadmap.</div>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:13.5px;line-height:1.6;color:var(--c-charcoal);margin-top:var(--s-3)">At 768 the nav keeps five items and the rest move behind the drawer trigger, because Portuguese labels stop fitting before English does. The hero keeps its two-column split; the pillars go from four columns to two.</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div style="display:flex;align-items:baseline;gap:var(--s-4);border-bottom:1px solid var(--c-sand);padding-bottom:var(--s-3);margin-bottom:var(--s-6);flex-wrap:wrap">
+        <span style="font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--c-green-dark)">02</span>
+        <h2 style="font-family:var(--f-head);font-size:clamp(24px,3.2vw,30px);font-weight:600;margin:0">Comparator, the hard one</h2>
+        <span style="font-size:15px;color:var(--c-slate);margin-left:auto">A four-column comparison cannot be a table on a phone</span>
+      </div>
+      <div style="display:flex;gap:var(--s-6);flex-wrap:wrap;align-items:flex-start;min-width:0;overflow-x:auto">
+        <div style="flex:0 0 375px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">375 &middot; transposed to cards</div>
+          <div style="width:375px;border:1px solid var(--c-sand);border-radius:var(--r-lg);overflow:hidden;background:var(--c-cream);box-shadow:var(--e-2)">
+            <div style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-4)">
+              <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:6px">Compare mode</div>
+              <div style="font-family:var(--f-head);font-size:22px;font-weight:600;line-height:1.2;margin-bottom:10px">Roaming and Mobile</div>
+              <div style="font-size:13px;color:var(--c-sand);margin-bottom:10px">Botswana, Mozambique, Namibia and Comoros</div>
+              <div style="display:flex;gap:7px;flex-wrap:wrap">
+                <span style="font-size:13px;font-weight:600;background:var(--c-navy-mid);border:1px solid #4A5670;border-radius:var(--r-sm);padding:9px 12px;min-height:44px;display:flex;align-items:center">Change states</span>
+                <span style="font-size:13px;font-weight:600;background:var(--c-navy-mid);border:1px solid #4A5670;border-radius:var(--r-sm);padding:9px 12px;min-height:44px;display:flex;align-items:center">Category</span>
+              </div>
+            </div>
+            <div style="padding:var(--s-4);display:flex;flex-direction:column;gap:var(--s-4)">
+              <sc-for list="{{ mobileCompare }}" as="c" hint-placeholder-count="2">
+                <div style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-sm);padding:var(--s-4)">
+                  <div style="font-size:16px;font-weight:600;line-height:1.3">{{ c.label }}</div>
+                  <div style="font-size:12.5px;color:var(--c-slate);margin-bottom:var(--s-3)">{{ c.type }}</div>
+                  <sc-for list="{{ c.rows }}" as="r" hint-placeholder-count="4">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:var(--s-3);padding:10px 0;border-top:1px solid var(--c-sand)">
+                      <span style="font-size:14.5px;font-weight:500;min-width:0">{{ r.country }}</span>
+                      <span style="{{ r.valueStyle }}">{{ r.value }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-for>
+              <div style="display:flex;gap:10px;background:#FDF0DC;border:1px solid #E5BE87;border-left:4px solid var(--c-amber);border-radius:var(--r-sm);padding:var(--s-3)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7A4606" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9L2.4 18a1.8 1.8 0 001.6 2.7h16a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"></path></svg>
+                <div style="font-size:13px;line-height:1.5;color:#5C3404">Demonstration data, not validated by the member states.</div>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:13.5px;line-height:1.6;color:var(--c-charcoal);margin-top:var(--s-3)">The axes swap. One card per indicator, member states stacked inside it, so the reader never scrolls sideways and never loses the row label. Provenance stays on every value.</div>
+        </div>
+
+        <div style="flex:1 1 420px;min-width:340px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">768 &middot; two states side by side, the rest paged</div>
+          <div style="border:1px solid var(--c-sand);border-radius:var(--r-md);overflow:hidden;background:var(--c-white);box-shadow:var(--e-1)">
+            <div style="padding:var(--s-4);border-bottom:1px solid var(--c-sand);display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap">
+              <span style="font-family:var(--f-head);font-size:19px;font-weight:600;flex:1;min-width:0">Roaming and Mobile</span>
+              <span style="flex:none;display:flex;gap:6px;align-items:center">
+                <span style="width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--c-line);border-radius:var(--r-sm)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></span>
+                <span style="font-size:13px;color:var(--c-charcoal);white-space:nowrap">2 of 4 states</span>
+                <span style="width:40px;height:40px;display:grid;place-items:center;border:1.5px solid var(--c-navy);border-radius:var(--r-sm)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0F1B2D" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span>
+              </span>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:14.5px">
+              <thead>
+                <tr style="background:var(--c-navy);color:var(--c-cream);text-align:left">
+                  <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700">Indicator</th>
+                  <th scope="col" style="padding:11px var(--s-4);font-size:13.5px;font-weight:600">BW Botswana</th>
+                  <th scope="col" style="padding:11px var(--s-4);font-size:13.5px;font-weight:600">MZ Mozambique</th>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{ tabletCompare }}" as="t" hint-placeholder-count="4">
+                  <tr style="border-bottom:1px solid var(--c-sand)">
+                    <th scope="row" style="padding:12px var(--s-4);text-align:left;font-weight:500">{{ t.label }}</th>
+                    <td style="padding:12px var(--s-4);font-family:var(--f-admin);font-weight:600">{{ t.a }}</td>
+                    <td style="padding:12px var(--s-4);font-family:var(--f-admin);font-weight:600">{{ t.b }}</td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+            <div style="padding:var(--s-3) var(--s-4);background:var(--c-cream);border-top:1px solid var(--c-sand);font-size:13px;color:var(--c-charcoal)">Demonstration data. Source and date shown on the detail view for each value.</div>
+          </div>
+          <div style="font-size:13.5px;line-height:1.6;color:var(--c-charcoal);margin-top:var(--s-3)">At 768 the table survives with two member state columns and pages through the selection, rather than compressing four columns to unreadable widths.</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div style="display:flex;align-items:baseline;gap:var(--s-4);border-bottom:1px solid var(--c-sand);padding-bottom:var(--s-3);margin-bottom:var(--s-6);flex-wrap:wrap">
+        <span style="font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--c-green-dark)">03</span>
+        <h2 style="font-family:var(--f-head);font-size:clamp(24px,3.2vw,30px);font-weight:600;margin:0">Extranet dashboard and an administration table</h2>
+        <span style="font-size:15px;color:var(--c-slate);margin-left:auto">Ordered by urgency, and rows become records</span>
+      </div>
+      <div style="display:flex;gap:var(--s-6);flex-wrap:wrap;align-items:flex-start;min-width:0;overflow-x:auto">
+        <div style="flex:0 0 375px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">375 &middot; extranet dashboard</div>
+          <div style="width:375px;border:1px solid var(--c-sand);border-radius:var(--r-lg);overflow:hidden;background:var(--c-cream);box-shadow:var(--e-2)">
+            <div style="background:var(--c-navy-mid);color:var(--c-cream);padding:var(--s-3) var(--s-4);display:flex;align-items:center;gap:10px">
+              <img src="assets/crasa-logo.svg" alt="" style="width:28px;height:28px;flex:none;display:block">
+              <span style="flex:1;min-width:0;font-size:13.5px;font-weight:600;color:var(--c-white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Extranet</span>
+              <span style="flex:none;width:32px;height:32px;border-radius:var(--r-pill);background:var(--c-green-dark);color:var(--c-white);display:grid;place-items:center;font-size:11.5px;font-weight:600">BW</span>
+            </div>
+            <div style="padding:var(--s-4);display:flex;flex-direction:column;gap:var(--s-4)">
+              <div style="background:var(--c-white);border:1px solid var(--c-sand);border-left:4px solid var(--c-red);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4)">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--c-red);margin-bottom:5px">Needs you</div>
+                <div style="font-size:15px;font-weight:600;line-height:1.35;margin-bottom:5px">Two comments to resolve on Botswana's 2026 return</div>
+                <div style="font-size:13px;color:var(--c-charcoal)">Returned 28 July. Window closes 30 September.</div>
+              </div>
+              <div style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-sm);overflow:hidden">
+                <div style="padding:10px var(--s-4);border-bottom:1px solid var(--c-sand);font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--c-slate)">Next meeting</div>
+                <div style="padding:var(--s-3) var(--s-4);display:flex;gap:var(--s-3)">
+                  <span style="flex:none;width:46px;text-align:center;border-right:1px solid var(--c-sand);padding-right:10px">
+                    <span style="display:block;font-family:var(--f-head);font-size:20px;font-weight:600;color:var(--c-navy);line-height:1">14</span>
+                    <span style="display:block;font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--c-slate);margin-top:2px">Sep</span>
+                  </span>
+                  <span style="min-width:0">
+                    <span style="display:block;font-size:14.5px;font-weight:600;line-height:1.3">9th Spectrum and Frequency Management Committee</span>
+                    <span style="display:block;font-size:12.5px;color:var(--c-slate);margin-top:3px">BICC, Malawi &middot; attendance not confirmed</span>
+                  </span>
+                </div>
+              </div>
+              <div style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-sm);overflow:hidden">
+                <div style="padding:10px var(--s-4);border-bottom:1px solid var(--c-sand);font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--c-slate)">Recently filed</div>
+                <div style="padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--c-sand);display:flex;gap:10px;align-items:center">
+                  <span style="flex:none;width:24px;height:30px;background:var(--c-navy);border-radius:2px;display:grid;place-items:center"><span style="font-family:var(--f-admin);font-size:7px;font-weight:700;color:var(--c-cream)">PDF</span></span>
+                  <span style="flex:1;min-width:0;font-size:14px;font-weight:600;line-height:1.3">Allocation Plan revision 4</span>
+                  <span style="flex:none;font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:2px;background:var(--c-navy);color:var(--c-white)">Member</span>
+                </div>
+                <div style="padding:var(--s-3) var(--s-4);display:flex;gap:10px;align-items:center;background:#FBF3F3">
+                  <span style="flex:none;width:24px;height:30px;background:var(--c-red);border-radius:2px;display:grid;place-items:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" aria-hidden="true"><path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect></svg></span>
+                  <span style="flex:1;min-width:0;font-size:14px;font-weight:600;line-height:1.3">700 MHz draft resolution</span>
+                  <span style="flex:none;font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:2px;background:var(--c-red);color:var(--c-white)">Confidential</span>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <span style="flex:1;text-align:center;font-size:14px;font-weight:600;padding:13px 0;border-radius:var(--r-sm);background:var(--c-navy);color:var(--c-white)">Documents</span>
+                <span style="flex:1;text-align:center;font-size:14px;font-weight:600;padding:12px 0;border-radius:var(--r-sm);border:1.5px solid var(--c-navy);color:var(--c-navy)">Calendar</span>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:13.5px;line-height:1.6;color:var(--c-charcoal);margin-top:var(--s-3)">The single column is ordered by what needs action, not by the desktop order. The left rail becomes two primary actions at the foot.</div>
+        </div>
+
+        <div style="flex:1 1 420px;min-width:340px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">375 and 768 &middot; administration table becomes records</div>
+          <div style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--e-1)">
+            <div style="padding:var(--s-4);border-bottom:1px solid var(--c-sand);display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap">
+              <span style="font-family:var(--f-head);font-size:19px;font-weight:600;flex:1;min-width:0">Publications</span>
+              <span style="flex:none;font-size:13px;color:var(--c-charcoal)">35 records</span>
+              <span style="flex:none;font-size:13px;font-weight:600;border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 12px">Filter</span>
+            </div>
+            <sc-for list="{{ adminRecords }}" as="r" hint-placeholder-count="4">
+              <div style="{{ r.rowStyle }}">
+                <div style="display:flex;align-items:flex-start;gap:var(--s-3);margin-bottom:10px">
+                  <span style="{{ r.boxStyle }}"></span>
+                  <span style="flex:1;min-width:0;font-size:15.5px;font-weight:600;line-height:1.35">{{ r.title }}</span>
+                  <span style="{{ r.statusStyle }}">{{ r.status }}</span>
+                </div>
+                <dl style="margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,120px),1fr));gap:8px var(--s-4)">
+                  <sc-for list="{{ r.fields }}" as="f" hint-placeholder-count="4">
+                    <div style="min-width:0">
+                      <dt style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--c-slate)">{{ f.k }}</dt>
+                      <dd style="margin:2px 0 0;font-size:13.5px;color:var(--c-charcoal)">{{ f.v }}</dd>
+                    </div>
+                  </sc-for>
+                </dl>
+                <div style="display:flex;gap:var(--s-4);margin-top:11px">
+                  <a href="#" style="font-size:14px;font-weight:600">Edit</a>
+                  <a href="#" style="font-size:14px;font-weight:600">Translate</a>
+                  <a href="#" style="font-size:14px;font-weight:600;color:var(--c-slate)">More</a>
+                </div>
+              </div>
+            </sc-for>
+            <div style="padding:var(--s-3) var(--s-4);background:var(--c-cream);border-top:1px solid var(--c-sand);font-size:13px;line-height:1.6;color:var(--c-charcoal)">Below 720px each row becomes a record card: title and status on the first line, the columns you kept as a labelled definition list, actions as full-size links. Bulk selection stays, because the checkbox stays in the same place on every card.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div style="display:flex;align-items:baseline;gap:var(--s-4);border-bottom:1px solid var(--c-sand);padding-bottom:var(--s-3);margin-bottom:var(--s-6);flex-wrap:wrap">
+        <span style="font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--c-green-dark)">04</span>
+        <h2 style="font-family:var(--f-head);font-size:clamp(24px,3.2vw,30px);font-weight:600;margin:0">Installable app</h2>
+        <span style="font-size:15px;color:var(--c-slate);margin-left:auto">Install prompt, icon, splash and the offline state</span>
+      </div>
+      <div style="display:flex;gap:var(--s-6);flex-wrap:wrap;align-items:flex-start;min-width:0;overflow-x:auto">
+
+        <div style="flex:0 0 300px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">Install prompt</div>
+          <div style="width:300px;border:1px solid var(--c-sand);border-radius:var(--r-lg);overflow:hidden;background:var(--c-white);box-shadow:var(--e-2)">
+            <div style="padding:var(--s-4);background:var(--c-cream);border-bottom:1px solid var(--c-sand);font-size:13px;color:var(--c-slate)">crasa.org</div>
+            <div style="padding:var(--s-4);display:flex;flex-direction:column;gap:var(--s-4)">
+              <div style="display:flex;gap:var(--s-3);align-items:flex-start">
+                <img src="assets/crasa-logo.svg" alt="" style="width:52px;height:52px;flex:none;display:block;border-radius:10px">
+                <div style="min-width:0">
+                  <div style="font-size:15.5px;font-weight:600;line-height:1.3">Install CRASA</div>
+                  <div style="font-size:13px;color:var(--c-slate);margin-top:3px">crasa.org &middot; 2.1 MB</div>
+                </div>
+              </div>
+              <div style="font-size:14px;line-height:1.55;color:var(--c-charcoal)">Adds CRASA to your home screen. Saved documents and your meeting agendas stay available without a connection, which matters on a delegation with intermittent roaming.</div>
+              <div style="display:flex;gap:8px">
+                <span style="flex:1;text-align:center;font-size:15px;font-weight:600;padding:13px 0;border-radius:var(--r-sm);background:var(--c-green-dark);color:var(--c-white)">Install</span>
+                <span style="flex:1;text-align:center;font-size:15px;font-weight:600;padding:12px 0;border-radius:var(--r-sm);border:1.5px solid var(--c-navy);color:var(--c-navy)">Not now</span>
+              </div>
+              <div style="font-size:12.5px;color:var(--c-slate);line-height:1.5">Shown once, on the second visit, never as an interstitial over content.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:0 0 300px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">App icon and splash</div>
+          <div style="display:flex;gap:var(--s-4);flex-wrap:wrap;margin-bottom:var(--s-4)">
+            <div style="text-align:center">
+              <div style="width:88px;height:88px;border-radius:20px;background:var(--c-navy);display:grid;place-items:center;box-shadow:var(--e-2)"><img src="assets/crasa-logo.svg" alt="" style="width:64px;height:64px;display:block"></div>
+              <div style="font-size:12px;color:var(--c-charcoal);margin-top:7px">Maskable, 512px</div>
+            </div>
+            <div style="text-align:center">
+              <div style="width:56px;height:56px;border-radius:13px;background:var(--c-navy);display:grid;place-items:center"><img src="assets/crasa-logo.svg" alt="" style="width:40px;height:40px;display:block"></div>
+              <div style="font-size:12px;color:var(--c-charcoal);margin-top:7px">192px</div>
+            </div>
+            <div style="text-align:center">
+              <div style="width:36px;height:36px;border-radius:8px;background:var(--c-navy);display:grid;place-items:center"><img src="assets/crasa-logo.svg" alt="" style="width:26px;height:26px;display:block"></div>
+              <div style="font-size:12px;color:var(--c-charcoal);margin-top:7px">Favicon</div>
+            </div>
+          </div>
+          <div style="width:300px;aspect-ratio:9/16;border:1px solid var(--c-sand);border-radius:var(--r-lg);background:var(--c-navy);display:grid;place-items:center;box-shadow:var(--e-2)">
+            <div style="text-align:center;padding:var(--s-5)">
+              <img src="assets/crasa-logo.svg" alt="" style="width:96px;height:96px;display:block;margin:0 auto var(--s-4)">
+              <div style="font-family:var(--f-head);font-size:24px;font-weight:600;color:var(--c-white);line-height:1.2">CRASA</div>
+              <div style="font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--c-green-light);margin-top:8px">Digital Anchor Ecosystem</div>
+            </div>
+          </div>
+          <div style="font-size:13.5px;line-height:1.6;color:var(--c-charcoal);margin-top:var(--s-3)">The emblem sits on the navy ground at every size, with safe-area padding so a circular mask does not clip the ring.</div>
+        </div>
+
+        <div style="flex:1 1 320px;min-width:300px;display:flex;flex-direction:column;gap:var(--s-5)">
+          <div>
+            <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">Offline state</div>
+            <div style="border:1px solid var(--c-sand);border-radius:var(--r-md);overflow:hidden;background:var(--c-white);box-shadow:var(--e-1)">
+              <div style="background:var(--c-amber);color:var(--c-white);padding:11px var(--s-4);display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex:none" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M8.5 16.5a5 5 0 017 0"></path><path d="M5 13a9 9 0 013.5-2.2"></path><path d="M19 13a9 9 0 00-6-2.9"></path><path d="M2 9a13 13 0 015-3.1"></path><path d="M22 9a13 13 0 00-9.5-3.9"></path></svg>
+                Offline. Showing what is saved on this device.
+              </div>
+              <div style="padding:var(--s-5)">
+                <h3 style="font-family:var(--f-head);font-size:20px;font-weight:600;margin:0 0 var(--s-3)">Available offline</h3>
+                <sc-for list="{{ offline }}" as="o" hint-placeholder-count="4">
+                  <div style="{{ o.rowStyle }}">
+                    <span style="flex:none;width:26px;height:33px;background:{{ o.colour }};border-radius:2px;display:grid;place-items:center"><span style="font-family:var(--f-admin);font-size:7.5px;font-weight:700;color:var(--c-cream)">{{ o.format }}</span></span>
+                    <span style="flex:1;min-width:0">
+                      <span style="display:block;font-size:14.5px;font-weight:600;line-height:1.3">{{ o.title }}</span>
+                      <span style="display:block;font-size:12.5px;color:var(--c-slate);margin-top:2px">{{ o.meta }}</span>
+                    </span>
+                    <span style="{{ o.stateStyle }}">{{ o.state }}</span>
+                  </div>
+                </sc-for>
+                <div style="margin-top:var(--s-4);padding-top:var(--s-4);border-top:1px solid var(--c-sand);display:flex;gap:var(--s-3);flex-wrap:wrap">
+                  <span style="font-size:14px;font-weight:600;color:var(--c-white);background:var(--c-navy);border-radius:var(--r-sm);padding:11px 15px">Retry connection</span>
+                  <span style="font-size:14px;font-weight:600;color:var(--c-navy);border:1.5px solid var(--c-navy);border-radius:var(--r-sm);padding:10.5px 15px">Manage saved items</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);padding:var(--s-5)">
+            <h3 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin:0 0 var(--s-4)">What is cached, and what is not</h3>
+            <div style="display:flex;flex-direction:column;gap:var(--s-3);font-size:14.5px;line-height:1.6;color:var(--c-charcoal)">
+              <div><strong>Cached.</strong> The interface shell in all three languages, your agendas, and any document you explicitly save.</div>
+              <div><strong>Never cached.</strong> Documents graded Confidential or Secretariat. They require a live authenticated session, so they cannot be left on a device that is later lost.</div>
+              <div><strong>Stale-aware.</strong> Every cached page states when it was last synchronised, so a delegate never quotes a superseded revision by accident.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+
+  <section style="background:var(--c-white);border-top:1px solid var(--c-line);padding:var(--s-9) 0">
+    <div style="max-width:1320px;margin:0 auto;padding:0 var(--s-7)">
+      <div style="max-width:74ch;margin-bottom:var(--s-7)">
+        <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:var(--s-3)">Accessibility, motion</div>
+        <h2 style="font-family:var(--f-head);font-size:clamp(26px,3.6vw,38px);line-height:1.14;font-weight:600;margin:0 0 var(--s-4);letter-spacing:-.015em">The reduced-motion variant of this screen</h2>
+        <p style="margin:0;font-size:18px;line-height:1.65;color:var(--c-charcoal)" data-motion-note>Reduced motion removes movement, not feedback. Position and scale stop changing; opacity and colour transitions stay, so every state change is still visible. The preference is honoured live on this page, not simulated. Both demonstrations run once on load, in line with the motion specification, which forbids looping decoration. Reload to replay them.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:var(--s-6)">
+
+        <div style="border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden;background:var(--c-cream)">
+          <div style="background:var(--c-navy);color:var(--c-white);padding:11px var(--s-5);display:flex;align-items:baseline;gap:var(--s-3);flex-wrap:wrap">
+            <span style="font-size:15px;font-weight:600">Standard motion</span>
+            <span style="font-size:13px;color:var(--c-sand)">Default, no preference set</span>
+          </div>
+          <div style="padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-5)">
+            <div>
+              <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin-bottom:10px">Section reveal</div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <div data-motion style="animation:crasa-rise 620ms cubic-bezier(.2,.8,.2,1) both;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:11px var(--s-4);font-size:14.5px;font-weight:600">Harmonising ICT and postal regulation</div>
+                <div data-motion style="animation:crasa-rise 620ms 90ms cubic-bezier(.2,.8,.2,1) both;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:11px var(--s-4);font-size:14px;color:var(--c-charcoal)">Cards enter with a 90ms stagger, 18px of travel</div>
+              </div>
+              <p style="margin:9px 0 0;font-size:13.5px;line-height:1.55;color:var(--c-slate)">Content fades up 18px over 620ms, staggered by 90ms.</p>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin-bottom:10px">Hero parallax</div>
+              <div style="height:88px;border-radius:var(--r-sm);background:var(--c-navy);overflow:hidden;display:grid;place-items:center">
+                <span data-motion style="animation:crasa-shift 2600ms ease-in-out 1 both;font-family:var(--f-head);font-size:24px;font-weight:600;color:var(--c-white)">14 regulators</span>
+              </div>
+              <p style="margin:9px 0 0;font-size:13.5px;line-height:1.55;color:var(--c-slate)">The hero layer travels a maximum of 9px against the scroll.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="border:1px solid var(--c-green-dark);border-radius:var(--r-md);overflow:hidden;background:var(--c-cream)">
+          <div style="background:var(--c-green-dark);color:var(--c-white);padding:11px var(--s-5);display:flex;align-items:baseline;gap:var(--s-3);flex-wrap:wrap">
+            <span style="font-size:15px;font-weight:600">Reduced motion</span>
+            <span style="font-size:13px;color:#CFE7D9">prefers-reduced-motion: reduce</span>
+          </div>
+          <div style="padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-5)">
+            <div>
+              <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin-bottom:10px">Section reveal</div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <div style="animation:crasa-fade 320ms linear both;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:11px var(--s-4);font-size:14.5px;font-weight:600">Harmonising ICT and postal regulation</div>
+                <div style="animation:crasa-fade 320ms linear both;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:11px var(--s-4);font-size:14px;color:var(--c-charcoal)">The stagger is dropped, the fade is kept</div>
+              </div>
+              <p style="margin:9px 0 0;font-size:13.5px;line-height:1.55;color:var(--c-slate)">No travel and no stagger. A 320ms fade only, so arrival is still legible.</p>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin-bottom:10px">Hero parallax</div>
+              <div style="height:88px;border-radius:var(--r-sm);background:var(--c-navy);overflow:hidden;display:grid;place-items:center">
+                <span style="font-family:var(--f-head);font-size:24px;font-weight:600;color:var(--c-white)">14 regulators</span>
+              </div>
+              <p style="margin:9px 0 0;font-size:13.5px;line-height:1.55;color:var(--c-slate)">Parallax is switched off entirely. The layer holds its position.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:var(--s-6);background:var(--c-cream);border-left:3px solid var(--c-green-dark);border-radius:var(--r-sm);padding:var(--s-4) var(--s-5);font-size:15px;line-height:1.6;color:var(--c-charcoal);max-width:96ch">What is kept under the reduced preference: focus rings, hover and active colour changes, opacity transitions, loading indicators that change without moving, and every status change. What is removed: travel, scale, parallax, count-up, and the reveal stagger. The responsive screen and the homepage both carry this variant.</div>
+    </div>
+  </section>
+
+  <footer style="background:var(--c-navy);color:var(--c-sand);padding:var(--s-7)">
+    <div style="max-width:1440px;margin:0 auto;display:flex;flex-wrap:wrap;gap:var(--s-5);align-items:center;justify-content:space-between">
+      <div style="display:flex;flex-wrap:wrap;gap:var(--s-3);align-items:center">
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">SADC</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">COMESA</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">EUROPEAN UNION</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">ITU</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">UPU</span>
+      </div>
+      <div style="font-size:13.5px;line-height:1.6;max-width:56ch">This platform is developed under the EGEE-ICT programme, funded by the European Union and implemented with COMESA. Emblem placement and the funding statement are to be confirmed against COMESA visibility requirements.</div>
+    </div>
+  </footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const NAV = ["Home","About CRASA","Committees","Members","Publications","Newsroom","Events","Comparator","Contact"];
+
+const MOBILE_COMPARE = [
+  { label:"Mobile Penetration", type:"Percentage", rows:[
+    { country:"Botswana", value:"168.4%", missing:false },
+    { country:"Mozambique", value:"57.1%", missing:false },
+    { country:"Namibia", value:"115.2%", missing:false },
+    { country:"Comoros", value:"Not reported", missing:true }
+  ]},
+  { label:"Mobile Number Portability", type:"Yes or no", rows:[
+    { country:"Botswana", value:"Yes", missing:false },
+    { country:"Mozambique", value:"No", missing:false },
+    { country:"Namibia", value:"Yes", missing:false },
+    { country:"Comoros", value:"Not reported", missing:true }
+  ]}
+];
+
+const TABLET_COMPARE = [
+  { label:"SADC Roaming Framework", a:"Implemented", b:"Implemented" },
+  { label:"Mobile Number Portability", a:"Yes", b:"No" },
+  { label:"Mobile Penetration", a:"168.4%", b:"57.1%" },
+  { label:"Mobile Broadband Penetration", a:"94.1%", b:"31.8%" }
+];
+
+const RECORDS = [
+  { title:"Postal E-commerce and Trade Facilitation Guidelines", status:"Adopted", sel:true,
+    fields:[{k:"Type",v:"Guideline"},{k:"Sector",v:"Postal"},{k:"Year",v:"2023"},{k:"Languages",v:"EN FR PT"}] },
+  { title:"SADC Roaming Guidelines", status:"For Review", sel:false,
+    fields:[{k:"Type",v:"Guideline"},{k:"Sector",v:"ICT"},{k:"Year",v:"2021"},{k:"Languages",v:"EN FR"}] },
+  { title:"SADC Radio Frequency Spectrum Policy Model Framework", status:"Adopted", sel:false,
+    fields:[{k:"Type",v:"Model Law"},{k:"Sector",v:"ICT"},{k:"Year",v:"2021"},{k:"Languages",v:"EN"}] },
+  { title:"SADC Roaming Policy", status:"Superseded", sel:false,
+    fields:[{k:"Type",v:"Guideline"},{k:"Sector",v:"ICT"},{k:"Year",v:"2015"},{k:"Languages",v:"EN"}] }
+];
+
+const OFFLINE = [
+  { title:"9th Spectrum Committee agenda", meta:"Saved 2 August \u00B7 synchronised 11:40", format:"PDF", state:"Saved", colour:"#0F1B2D" },
+  { title:"Allocation Plan revision 4", meta:"Saved 2 August \u00B7 6.1 MB", format:"PDF", state:"Saved", colour:"#0F1B2D" },
+  { title:"SADC Roaming Guidelines", meta:"Saved 24 July \u00B7 revision may have changed", format:"PDF", state:"Stale", colour:"#0F1B2D" },
+  { title:"700 MHz draft resolution", meta:"Confidential \u00B7 never stored on a device", format:"LOCK", state:"Online only", colour:"#9B2226" }
+];
+
+const P = "flex:none;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:2px;white-space:nowrap;";
+const STATUS = {
+  Adopted: P + "background:#0F1B2D;color:#FFFFFF;",
+  "For Review": P + "background:#FDF0DC;color:#7A4606;border:1px solid #E5BE87;",
+  Superseded: P + "background:transparent;color:#5C6B7E;border:1px solid #B9B2A2;text-decoration:line-through;"
+};
+
+class Component extends DCLogic {
+  renderVals(){
+    return {
+      drawerNav: NAV.map((label, i) => ({
+        label: label,
+        style: "font-size:16px;padding:14px 12px;min-height:44px;display:flex;align-items:center;"
+          + (i === 0
+            ? "font-weight:600;color:#FFFFFF;background:#1A2742;border-left:3px solid #1A8C5A;border-radius:4px;"
+            : "color:#F8F6F1;")
+      })),
+      mobileCompare: MOBILE_COMPARE.map(c => ({
+        label: c.label, type: c.type,
+        rows: c.rows.map(r => ({
+          country: r.country, value: r.value,
+          valueStyle: r.missing
+            ? "flex:none;font-size:14px;font-style:italic;color:#5C6B7E;"
+            : "flex:none;font-family:'Inter',system-ui,sans-serif;font-size:18px;font-weight:600;color:#0F1B2D;"
+        }))
+      })),
+      tabletCompare: TABLET_COMPARE,
+      adminRecords: RECORDS.map((r, i) => ({
+        title: r.title, status: r.status,
+        fields: r.fields,
+        statusStyle: STATUS[r.status],
+        boxStyle: "flex:none;width:20px;height:20px;border-radius:2px;margin-top:2px;"
+          + (r.sel ? "background:#0E5536;" : "border:1.5px solid #B9B2A2;background:#FFFFFF;"),
+        rowStyle: "padding:16px;"
+          + (i < RECORDS.length - 1 ? "border-bottom:1px solid #E5E0D5;" : "")
+          + (r.sel ? "background:#E8F4EC;" : "")
+      })),
+      offline: OFFLINE.map((o, i) => ({
+        title: o.title, meta: o.meta, format: o.format, colour: o.colour, state: o.state,
+        stateStyle: "flex:none;font-size:12.5px;font-weight:600;white-space:nowrap;"
+          + (o.state === "Saved" ? "color:#0E5536;"
+            : o.state === "Stale" ? "color:#7A4606;"
+            : "color:#9B2226;"),
+        rowStyle: "display:flex;gap:12px;align-items:center;padding:12px 0;"
+          + (i < OFFLINE.length - 1 ? "border-bottom:1px solid #E5E0D5;" : "")
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

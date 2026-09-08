@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="icon" href="./assets/crasa-logo.svg">
+<link rel="stylesheet" href="./vendor/fonts.css">
+<style>
+:root{
+  --c-green:#1A8C5A; --c-green-dark:#0E5536; --c-green-light:#E8F4EC;
+  --c-navy:#0F1B2D; --c-navy-mid:#1A2742; --c-charcoal:#1F2937;
+  --c-slate:#5C6B7E; --c-cream:#F8F6F1; --c-sand:#E5E0D5; --c-line:#DFDBD1;
+  --c-amber:#C2710C; --c-white:#FFFFFF; --c-red:#9B2226;
+  --f-head:'Lora',Georgia,serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-admin:'Inter',system-ui,sans-serif;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px; --s-9:96px;
+  --r-xs:2px; --r-sm:4px; --r-md:8px; --r-pill:999px;
+  --e-1:0 1px 2px rgba(15,27,45,.06), 0 1px 3px rgba(15,27,45,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;overflow-wrap:break-word;background:var(--c-cream);color:var(--c-charcoal);font-family:var(--f-body);-webkit-font-smoothing:antialiased}
+a{color:var(--c-green-dark);text-underline-offset:3px}
+a:hover{color:var(--c-navy)}
+:focus-visible{outline:3px solid var(--c-amber);outline-offset:2px}
+@page{margin:12mm}
+@media print{
+  html,body{background:#FFFFFF}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;transition:none !important;animation:none !important}
+  [style*="position:sticky"],[style*="position: sticky"],[style*="position:fixed"]{position:static !important}
+  section,figure,li,tr{break-inside:avoid}
+  h1,h2,h3{break-after:avoid}
+  thead{display:table-header-group}
+  [style*="overflow-x:auto"],[style*="overflow-x: auto"],[style*="overflow:auto"]{overflow:visible !important}
+  table{min-width:0 !important;width:100% !important;font-size:9.5pt !important}
+  img,svg{max-width:100% !important}
+  a[href]{text-decoration:underline}
+}
+</style>
+</helmet>
+
+<div style="background:var(--c-cream)">
+
+  <header style="background:var(--c-white);border-bottom:1px solid var(--c-sand);box-shadow:var(--e-1)">
+    <div style="max-width:1440px;margin:0 auto;padding:var(--s-4) var(--s-7);display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap">
+      <a href="#" style="display:flex;flex:none;align-items:center;gap:var(--s-3);text-decoration:none">
+        <img src="assets/crasa-logo.svg" alt="" style="width:40px;height:40px;flex:none;display:block">
+        <span style="display:flex;flex-direction:column;min-width:0">
+          <span style="font-family:var(--f-head);font-size:20px;font-weight:600;color:var(--c-navy);line-height:1.1">CRASA</span>
+          <span style="font-size:10.5px;color:var(--c-slate);letter-spacing:.03em;line-height:1.25;max-width:230px">Communications Regulators' Association of Southern Africa</span>
+        </span>
+      </a>
+      <nav aria-label="Primary" style="display:flex;flex-wrap:wrap;gap:2px;min-width:0;margin-left:auto">
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">Home</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">About CRASA</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">Committees</a>
+        <a href="#" style="font-size:15px;font-weight:600;color:var(--c-navy);padding:9px 11px;text-decoration:none;border-bottom:2px solid var(--c-green-dark)">Members</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">Publications</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">Newsroom</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">Events</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">Comparator</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;text-decoration:none;border-radius:var(--r-sm)" style-hover="background:var(--c-green-light);color:var(--c-navy)">Contact</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:var(--s-3);min-width:0">
+        <button type="button" aria-label="Search" style="flex:none;width:44px;height:44px;display:grid;place-items:center;background:transparent;border:1.5px solid #C9C2B2;border-radius:var(--r-sm);cursor:pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+        </button>
+        <div role="group" aria-label="Language" style="display:flex;flex:none;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);overflow:hidden">
+          <button type="button" lang="en" style="font-family:var(--f-body);font-size:14px;font-weight:600;padding:11px 13px;min-width:44px;border:none;cursor:pointer;background:var(--c-navy);color:var(--c-white)">EN</button>
+          <button type="button" lang="fr" style="font-family:var(--f-body);font-size:14px;font-weight:600;padding:11px 13px;min-width:44px;border:none;cursor:pointer;background:transparent;color:var(--c-navy)">FR</button>
+          <button type="button" lang="pt" style="font-family:var(--f-body);font-size:14px;font-weight:600;padding:11px 13px;min-width:44px;border:none;cursor:pointer;background:transparent;color:var(--c-navy)">PT</button>
+        </div>
+        <a href="#" style="flex:none;display:inline-flex;align-items:center;gap:7px;font-size:15px;font-weight:600;color:var(--c-white);background:var(--c-navy);padding:12px 16px;border-radius:var(--r-sm);text-decoration:none;white-space:nowrap" style-hover="background:#050d18">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect></svg>
+          Extranet
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div style="background:var(--c-white);border-bottom:1px solid var(--c-sand)">
+    <nav aria-label="Breadcrumb" style="max-width:1440px;margin:0 auto;padding:var(--s-3) var(--s-7);display:flex;align-items:center;gap:8px;font-size:15px;flex-wrap:wrap">
+      <a href="#">Home</a><span style="color:var(--c-slate)">/</span><span style="font-weight:500;color:var(--c-charcoal)">Members</span>
+    </nav>
+  </div>
+
+
+  <section style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-8) var(--s-7) var(--s-7)">
+    <div style="max-width:1440px;margin:0 auto">
+      <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:var(--s-4)">Member regulators</div>
+      <h1 style="font-family:var(--f-head);font-size:clamp(32px,5.4vw,54px);line-height:1.08;font-weight:600;letter-spacing:-.02em;margin:0 0 var(--s-4);max-width:24ch">Fourteen national communications and postal authorities</h1>
+      <p style="margin:0 0 var(--s-6);font-size:19px;line-height:1.6;color:var(--c-sand);max-width:70ch">CRASA's membership covers the national regulatory authorities of 14 SADC member states. Four work in Portuguese, three in French, and all fourteen participate in the six committees and the annual general meeting.</p>
+      <dl style="margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s-5);border-top:1px solid #2C3A55;padding-top:var(--s-5);max-width:900px">
+        <div><dd style="margin:0;font-family:var(--f-head);font-size:36px;font-weight:600;color:var(--c-white);line-height:1">14</dd><dt style="font-size:13.5px;color:var(--c-sand);margin-top:6px">Member regulators</dt></div>
+        <div><dd style="margin:0;font-family:var(--f-head);font-size:36px;font-weight:600;color:var(--c-white);line-height:1">1997</dd><dt style="font-size:13.5px;color:var(--c-sand);margin-top:6px">Established</dt></div>
+        <div><dd style="margin:0;font-family:var(--f-head);font-size:36px;font-weight:600;color:var(--c-white);line-height:1">350M+</dd><dt style="font-size:13.5px;color:var(--c-sand);margin-top:6px">Citizens served</dt></div>
+        <div><dd style="margin:0;font-family:var(--f-head);font-size:36px;font-weight:600;color:var(--c-white);line-height:1">6</dd><dt style="font-size:13.5px;color:var(--c-sand);margin-top:6px">Committees</dt></div>
+      </dl>
+    </div>
+  </section>
+
+  <div style="max-width:1440px;margin:0 auto;padding:var(--s-7)">
+    <div style="display:flex;flex-wrap:wrap;gap:var(--s-7);align-items:flex-start">
+
+      <div style="flex:1 1 520px;min-width:0;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-4);margin-bottom:var(--s-4);flex-wrap:wrap">
+          <h2 style="font-family:var(--f-head);font-size:24px;font-weight:600;margin:0">The region</h2>
+          <span style="font-size:14px;color:var(--c-slate)">Select a member state</span>
+        </div>
+        <dc-import name="RegionMap" mode="select" selected="{{ sel }}" members="{{ memberList }}" on-select="{{ pick }}" hint-size="100%,900px"></dc-import>
+      </div>
+
+      <div style="flex:1 1 400px;min-width:0">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-4);margin-bottom:var(--s-4);flex-wrap:wrap">
+          <h2 style="font-family:var(--f-head);font-size:24px;font-weight:600;margin:0">Directory</h2>
+          <span style="font-size:14px;color:var(--c-slate)">14 authorities, alphabetical by country</span>
+        </div>
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+          <sc-for list="{{ directory }}" as="d" hint-placeholder-count="14">
+            <div style="{{ d.rowStyle }}">
+              <span style="{{ d.markStyle }}">{{ d.code }}</span>
+              <span style="flex:1;min-width:0">
+                <span style="display:block;font-size:16.5px;font-weight:600;line-height:1.3">{{ d.acr }}</span>
+                <span style="display:block;font-size:13.5px;color:var(--c-slate);line-height:1.4;margin-top:2px">{{ d.full }}</span>
+              </span>
+              <span style="flex:none;text-align:right;display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+                <span style="font-size:15px;font-weight:500">{{ d.country }}</span>
+                <a href="#" style="font-size:13.5px;font-weight:600">{{ d.link }}</a>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top:var(--s-4);font-size:14px;color:var(--c-charcoal);background:var(--c-white);border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:var(--s-3) var(--s-4)">Country marks are labelled placeholders carrying the correct code and acronym. The harvested authority logos replace them once rights are cleared and the white plates are removed.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-6) var(--s-7)">
+    <div style="max-width:1440px;margin:0 auto;display:flex;align-items:baseline;gap:var(--s-4);flex-wrap:wrap">
+      <span style="font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--c-green-light)">Member profile</span>
+      <span style="font-size:16px;color:var(--c-sand)">One authority opened from the map or the directory</span>
+    </div>
+  </div>
+
+  <div style="max-width:1440px;margin:0 auto;padding:var(--s-7)">
+    <nav aria-label="Breadcrumb" style="display:flex;align-items:center;gap:8px;font-size:15px;margin-bottom:var(--s-5);flex-wrap:wrap">
+      <a href="#">Home</a><span style="color:var(--c-slate)">/</span><a href="#">Members</a><span style="color:var(--c-slate)">/</span><span style="font-weight:500">Botswana, BOCRA</span>
+    </nav>
+
+    <div style="display:flex;align-items:flex-start;gap:var(--s-6);flex-wrap:wrap;margin-bottom:var(--s-7)">
+      <span style="width:96px;height:96px;border-radius:var(--r-md);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;flex:none;border:1px dashed #6B7691">
+        <span style="text-align:center"><span style="display:block;font-family:var(--f-admin);font-size:22px;font-weight:700">BW</span><span style="display:block;font-family:var(--f-admin);font-size:9px;letter-spacing:.06em;color:var(--c-sand);margin-top:2px">PLACEHOLDER</span></span>
+      </span>
+      <div style="flex:1;min-width:280px">
+        <div style="font-size:15px;color:var(--c-slate);margin-bottom:8px">Botswana &middot; Member since 1997 &middot; English</div>
+        <h1 style="font-family:var(--f-head);font-size:clamp(29px,4.4vw,44px);line-height:1.1;font-weight:600;letter-spacing:-.02em;margin:0 0 var(--s-3)">Botswana Communications Regulatory Authority</h1>
+        <div style="font-size:19px;color:var(--c-charcoal)">BOCRA</div>
+      </div>
+      <div style="flex:none;display:flex;gap:var(--s-3);flex-wrap:wrap">
+        <a href="#" style="display:inline-flex;align-items:center;gap:8px;font-size:16px;font-weight:600;color:var(--c-white);background:var(--c-green-dark);padding:12px 20px;border-radius:var(--r-sm);text-decoration:none">
+          Visit bocra.org.bw
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path><path d="M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"></path></svg>
+        </a>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:var(--s-7);align-items:flex-start">
+
+      <div style="flex:999 1 520px;min-width:0;display:flex;flex-direction:column;gap:var(--s-7)">
+        <section>
+          <h2 style="font-family:var(--f-head);font-size:28px;font-weight:600;margin:0 0 var(--s-4)">Mandate</h2>
+          <p style="margin:0 0 var(--s-4);font-size:18px;line-height:1.7;color:var(--c-charcoal);max-width:72ch">BOCRA regulates the communications sector in Botswana, covering telecommunications, internet and data services, broadcasting, postal services and radio spectrum. It licenses operators, monitors quality of service, protects consumers, and manages the national numbering and frequency plans.</p>
+          <p style="margin:0;font-size:18px;line-height:1.7;color:var(--c-charcoal);max-width:72ch">Within CRASA, BOCRA sits on all six committees and hosts the Secretariat, which is based in Gaborone.</p>
+        </section>
+
+        <section>
+          <h2 style="font-family:var(--f-head);font-size:28px;font-weight:600;margin:0 0 var(--s-4)">Committee participation</h2>
+          <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+            <table style="width:100%;border-collapse:collapse;font-size:16px">
+              <thead>
+                <tr style="background:var(--c-cream);text-align:left;border-bottom:1px solid var(--c-line)">
+                  <th scope="col" style="padding:11px var(--s-5);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--c-slate)">Committee</th>
+                  <th scope="col" style="padding:11px var(--s-4);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--c-slate)">Type</th>
+                  <th scope="col" style="padding:11px var(--s-5) 11px var(--s-4);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--c-slate)">Participant role</th>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{ participation }}" as="p" hint-placeholder-count="6">
+                  <tr style="{{ p.rowStyle }}">
+                    <th scope="row" style="padding:13px var(--s-5);text-align:left;font-weight:500"><a href="#" style="color:var(--c-navy)">{{ p.name }}</a></th>
+                    <td style="padding:13px var(--s-4);color:var(--c-charcoal)">{{ p.type }}</td>
+                    <td style="padding:13px var(--s-5) 13px var(--s-4);font-weight:500">{{ p.role }}</td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-4);margin-bottom:var(--s-4);flex-wrap:wrap">
+            <h2 style="font-family:var(--f-head);font-size:28px;font-weight:600;margin:0">Regulatory indicators</h2>
+            <a href="#" style="font-size:15.5px;font-weight:600">Open in the comparator</a>
+          </div>
+          <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+            <table style="width:100%;border-collapse:collapse;font-size:16px">
+              <thead>
+                <tr style="background:var(--c-navy);color:var(--c-cream);text-align:left">
+                  <th scope="col" style="padding:11px var(--s-5);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600">Indicator</th>
+                  <th scope="col" style="padding:11px var(--s-4);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;text-align:right">Value</th>
+                  <th scope="col" style="padding:11px var(--s-5) 11px var(--s-4);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600">Provenance</th>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{ indicators }}" as="i" hint-placeholder-count="6">
+                  <tr style="border-bottom:1px solid var(--c-line)">
+                    <th scope="row" style="padding:13px var(--s-5);text-align:left;font-weight:500">{{ i.label }}<span style="display:block;font-size:13px;color:var(--c-slate);font-weight:400;margin-top:2px">{{ i.cat }}</span></th>
+                    <td style="{{ i.valueStyle }}">{{ i.value }}</td>
+                    <td style="padding:13px var(--s-5) 13px var(--s-4)">
+                      <sc-if value="{{ i.verified }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;padding:3px 9px;border-radius:var(--r-xs);background:var(--c-green-light);color:var(--c-green-dark);border:1px solid #B6DCC5">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg>Verified
+                        </span>
+                      </sc-if>
+                      <span style="display:block;font-size:12.5px;color:var(--c-slate);margin-top:4px">{{ i.source }}</span>
+                    </td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+            <div style="padding:var(--s-4) var(--s-5);background:#FDF0DC;border-top:1px solid #E5BE87;display:flex;gap:var(--s-3)">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#7A4606" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9L2.4 18a1.8 1.8 0 001.6 2.7h16a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"></path></svg>
+              <div style="font-size:14.5px;line-height:1.6;color:#5C3404">Values without the verified marker are demonstration data and have not been confirmed by BOCRA. The notice remains until the 2026 return is validated.</div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 style="font-family:var(--f-head);font-size:28px;font-weight:600;margin:0 0 var(--s-4)">Publications and news from this member</h2>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-5)">
+            <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+              <h3 style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin:0 0 var(--s-4)">Contributed publications</h3>
+              <div style="display:flex;flex-direction:column;gap:var(--s-4)">
+                <div><a href="#" style="font-family:var(--f-head);font-size:17px;font-weight:600;line-height:1.35">SADC ICT and Broadcasting Infrastructure Sharing Guidelines</a><div style="font-size:13.5px;color:var(--c-slate);margin-top:4px">Guideline &middot; ICT &middot; 2016</div></div>
+                <div><a href="#" style="font-family:var(--f-head);font-size:17px;font-weight:600;line-height:1.35">The Digital Financial Inclusion: Key Regulatory Principles and Guidelines for Mobile Financial Services</a><div style="font-size:13.5px;color:var(--c-slate);margin-top:4px">Guideline &middot; ICT &middot; 2018</div></div>
+                <div><a href="#" style="font-family:var(--f-head);font-size:17px;font-weight:600;line-height:1.35">SADC Postal Costs and Tariff Regulation Guidelines</a><div style="font-size:13.5px;color:var(--c-slate);margin-top:4px">Guideline &middot; Postal &middot; 2016</div></div>
+              </div>
+            </div>
+            <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+              <h3 style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin:0 0 var(--s-4)">Mentioned in the newsroom</h3>
+              <div style="display:flex;flex-direction:column;gap:var(--s-4)">
+                <div><a href="#" style="font-family:var(--f-head);font-size:17px;font-weight:600;line-height:1.35">CRASA and PUASP Sign Memorandum of Understanding to Enhance Regional Cooperation in ICT and Postal Services</a><div style="font-size:13.5px;color:var(--c-slate);margin-top:4px">November 2024</div></div>
+                <div><a href="#" style="font-family:var(--f-head);font-size:17px;font-weight:600;line-height:1.35">Call for Applications for Cullen Telecoms Regulatory Masterclass Scholarships</a><div style="font-size:13.5px;color:var(--c-slate);margin-top:4px">February 2026</div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside style="flex:1 1 300px;max-width:380px;min-width:0;display:flex;flex-direction:column;gap:var(--s-5)">
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin:0 0 var(--s-4)">Authority details</h2>
+          <table style="width:100%;border-collapse:collapse;font-size:15px">
+            <tbody>
+              <tr style="border-bottom:1px solid var(--c-line)"><th scope="row" style="text-align:left;padding:10px 0;font-weight:400;color:var(--c-slate)">Country</th><td style="padding:10px 0;text-align:right;font-weight:500">Botswana</td></tr>
+              <tr style="border-bottom:1px solid var(--c-line)"><th scope="row" style="text-align:left;padding:10px 0;font-weight:400;color:var(--c-slate)">Acronym</th><td style="padding:10px 0;text-align:right;font-weight:500">BOCRA</td></tr>
+              <tr style="border-bottom:1px solid var(--c-line)"><th scope="row" style="text-align:left;padding:10px 0;font-weight:400;color:var(--c-slate)">Joined CRASA</th><td style="padding:10px 0;text-align:right;font-weight:500">1997, founding member</td></tr>
+              <tr style="border-bottom:1px solid var(--c-line)"><th scope="row" style="text-align:left;padding:10px 0;font-weight:400;color:var(--c-slate)">Sectors</th><td style="padding:10px 0;text-align:right;font-weight:500">ICT and postal</td></tr>
+              <tr><th scope="row" style="text-align:left;padding:10px 0;font-weight:400;color:var(--c-slate)">Working language</th><td style="padding:10px 0;text-align:right;font-weight:500">English</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+          <div style="padding:var(--s-5) var(--s-5) var(--s-4)">
+            <h2 style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin:0 0 var(--s-3)">Location</h2>
+            <div style="font-size:15px;line-height:1.65;color:var(--c-charcoal)">Gaborone, Botswana<br>The CRASA Secretariat is hosted in the same city, at Plot 143, Unit 2, Gaborone International Finance Park.</div>
+          </div>
+          <svg viewBox="0 0 340 190" width="100%" role="img" aria-label="Schematic locator showing Gaborone in the south east of Botswana, within the SADC region.">
+            <rect x="0" y="0" width="340" height="190" fill="var(--c-cream)"></rect>
+            <g stroke="var(--c-sand)" stroke-width="1" fill="none">
+              <path d="M0 40h340"></path><path d="M0 95h340"></path><path d="M0 150h340"></path>
+              <path d="M70 0v190"></path><path d="M170 0v190"></path><path d="M270 0v190"></path>
+            </g>
+            <path d="M92 42 L228 36 L252 96 L214 152 L118 146 L82 96 Z" fill="#E8F4EC" stroke="#0E5536" stroke-width="1.6"></path>
+            <circle cx="208" cy="132" r="7" fill="#0E5536"></circle>
+            <circle cx="208" cy="132" r="13" fill="none" stroke="#0E5536" stroke-width="1.4"></circle>
+            <text x="196" y="164" fill="#0F1B2D" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">Gaborone</text>
+            <text x="118" y="82" fill="#0E5536" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="600">Botswana</text>
+          </svg>
+          <div style="padding:var(--s-3) var(--s-5) var(--s-5);font-size:13px;color:var(--c-charcoal);line-height:1.55">Drawn as inline SVG so no third-party map tile loads, and no cookie or tracker is set before consent.</div>
+        </div>
+
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin:0 0 var(--s-4)">Representatives</h2>
+          <div style="display:flex;flex-direction:column;gap:var(--s-4)">
+            <div style="display:flex;align-items:center;gap:var(--s-3)">
+              <span style="width:40px;height:40px;border-radius:var(--r-pill);background:var(--c-sand);color:var(--c-charcoal);display:grid;place-items:center;flex:none"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"></circle><path d="M5 20a7 7 0 0114 0"></path></svg></span>
+              <div><div style="font-size:15.5px;font-weight:600;line-height:1.3">Head of Delegation</div><div style="font-size:13.5px;color:var(--c-slate)">Member State Representative</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:var(--s-3)">
+              <span style="width:40px;height:40px;border-radius:var(--r-pill);background:var(--c-sand);color:var(--c-charcoal);display:grid;place-items:center;flex:none"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"></circle><path d="M5 20a7 7 0 0114 0"></path></svg></span>
+              <div><div style="font-size:15.5px;font-weight:600;line-height:1.3">Spectrum lead</div><div style="font-size:13.5px;color:var(--c-slate)">Member, Spectrum and Frequency Management</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:var(--s-3)">
+              <span style="width:40px;height:40px;border-radius:var(--r-pill);background:var(--c-sand);color:var(--c-charcoal);display:grid;place-items:center;flex:none"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"></circle><path d="M5 20a7 7 0 0114 0"></path></svg></span>
+              <div><div style="font-size:15.5px;font-weight:600;line-height:1.3">Postal lead</div><div style="font-size:13.5px;color:var(--c-slate)">Member, Postal and Logistics</div></div>
+            </div>
+          </div>
+          <div style="margin-top:var(--s-4);padding-top:var(--s-4);border-top:1px solid var(--c-line);font-size:13.5px;line-height:1.6;color:var(--c-charcoal)">Roles are shown without names until the Secretariat confirms the current roster. Portrait slots are 4:5, warm graded, with alt text per language.</div>
+        </div>
+
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin:0 0 var(--s-4)">Contact</h2>
+          <div style="display:flex;flex-direction:column;gap:var(--s-3);font-size:15px;line-height:1.6">
+            <div><a href="#">bocra.org.bw</a></div>
+            <div style="color:var(--c-charcoal)">Public enquiries are handled by BOCRA directly. CRASA does not resolve individual consumer complaints.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--c-cream);border:1px solid var(--c-line);border-left:4px solid var(--c-navy);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin:0 0 var(--s-3)">Language handling</h2>
+          <div style="font-size:14.5px;line-height:1.65;color:var(--c-charcoal)">Authority names stay in their own language in every interface. INACOM and INCM keep their Portuguese names, ANRTIC and ARPTC keep their French names, and each carries a lang attribute so a screen reader pronounces it correctly. A translation is offered in parentheses only where the authority publishes one itself.</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <footer style="background:var(--c-navy);color:var(--c-sand);padding:var(--s-7)">
+    <div style="max-width:1440px;margin:0 auto;display:flex;flex-wrap:wrap;gap:var(--s-5);align-items:center;justify-content:space-between">
+      <div style="display:flex;flex-wrap:wrap;gap:var(--s-3);align-items:center">
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">SADC</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">COMESA</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">EUROPEAN UNION</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">ITU</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">UPU</span>
+      </div>
+      <div style="font-size:13.5px;line-height:1.6;max-width:56ch">This platform is developed under the EGEE-ICT programme, funded by the European Union and implemented with COMESA. Emblem placement and the funding statement are to be confirmed against COMESA visibility requirements.</div>
+    </div>
+  </footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+// Country outlines: Natural Earth 110m via world-atlas 2.0.2, Mercator, fitted to the
+// twelve mainland member states. Public domain. Comoros and Mauritius are absent from
+// the 110m dataset, so they are placed as labelled offshore markers at real bearings.
+// Geometry lives in assets/sadc-geometry.js and is rendered by RegionMap.dc.html.
+
+
+const MEMBERS = [
+  { code:"AO", country:"Angola", acr:"INACOM", full:"Instituto Angolano das Comunica\u00E7\u00F5es", x:52, y:118 },
+  { code:"BW", country:"Botswana", acr:"BOCRA", full:"Botswana Communications Regulatory Authority", x:150, y:274 },
+  { code:"KM", country:"Comoros", acr:"ANRTIC", full:"Autorit\u00E9 Nationale de R\u00E9gulation des TIC", x:420, y:52 },
+  { code:"CD", country:"DR Congo", acr:"ARPTC", full:"Autorit\u00E9 de R\u00E9gulation de la Poste et des T\u00E9l\u00E9communications du Congo", x:128, y:34 },
+  { code:"SZ", country:"Eswatini", acr:"ESCCOM", full:"Eswatini Communications Commission", x:296, y:288 },
+  { code:"LS", country:"Lesotho", acr:"LCA", full:"Lesotho Communications Authority", x:246, y:352 },
+  { code:"MW", country:"Malawi", acr:"MACRA", full:"Malawi Communications Regulatory Authority", x:326, y:112 },
+  { code:"MU", country:"Mauritius", acr:"ICTA", full:"Information and Communications Technologies Authority of Mauritius", x:420, y:144 },
+  { code:"MZ", country:"Mozambique", acr:"INCM", full:"Instituto Nacional das Comunica\u00E7\u00F5es de Mo\u00E7ambique", x:344, y:196 },
+  { code:"NA", country:"Namibia", acr:"CRAN", full:"Communications Regulatory Authority of Namibia", x:58, y:216 },
+  { code:"ZA", country:"South Africa", acr:"ICASA", full:"Independent Communications Authority of South Africa", x:128, y:352 },
+  { code:"TZ", country:"Tanzania", acr:"TCRA", full:"Tanzania Communications Regulatory Authority", x:296, y:34 },
+  { code:"ZM", country:"Zambia", acr:"ZICTA", full:"Zambia Information and Communications Technology Authority", x:214, y:112 },
+  { code:"ZW", country:"Zimbabwe", acr:"POTRAZ", full:"Postal and Telecommunications Regulatory Authority of Zimbabwe", x:246, y:190 }
+];
+
+const PARTICIPATION = [
+  { name:"Spectrum and Frequency Management", type:"ICT", role:"Member" },
+  { name:"Markets, Competition and Economics", type:"ICT", role:"Member" },
+  { name:"Postal and Logistics", type:"Postal", role:"Vice Chair" },
+  { name:"Consumer Affairs and Protection", type:"Cross-sector", role:"Member" },
+  { name:"Legal and Regulatory Affairs", type:"Cross-sector", role:"Rapporteur" },
+  { name:"Human and Institutional Capacity", type:"Cross-sector", role:"Member" }
+];
+
+const INDICATORS = [
+  { label:"Mobile Operators Licensed", cat:"Spectrum Management", value:"3", num:true, verified:false, source:"BOCRA licence register, June 2026" },
+  { label:"5G Spectrum Assigned", cat:"Spectrum Management", value:"Yes", num:false, verified:true, source:"Validated by the Secretariat, 2 August 2026" },
+  { label:"Mobile Penetration", cat:"Roaming and Mobile", value:"168.4%", num:true, verified:true, source:"Validated by the Secretariat, 2 August 2026" },
+  { label:"Mobile Number Portability", cat:"Roaming and Mobile", value:"Yes", num:false, verified:true, source:"Validated by the Secretariat, 2 August 2026" },
+  { label:"USO Operator Designated", cat:"Postal Services", value:"Yes", num:false, verified:false, source:"Submitted 2026, awaiting validation" },
+  { label:"Permanent Postal Outlets", cat:"Postal Services", value:"Not reported", num:false, verified:false, missing:true, source:"No submission received for this indicator" }
+];
+
+class Component extends DCLogic {
+  state = { sel: "BW" };
+
+  renderVals(){
+    const sel = this.state.sel;
+    const selMember = MEMBERS.find(m => m.code === sel);
+
+    return {
+      memberList: MEMBERS.map(m => ({ code: m.code, country: m.country, acr: m.acr })),
+      pick: (code) => this.setState({ sel: code }),
+      directory: MEMBERS.slice().sort((a,b) => a.country.localeCompare(b.country)).map((m, i, arr) => {
+        const on = m.code === sel;
+        return {
+          code:m.code, acr:m.acr, full:m.full, country:m.country,
+          link: on ? "Selected, open profile" : "Open profile",
+          rowStyle: "display:flex;align-items:center;gap:14px;padding:14px 20px;"
+            + (i < arr.length - 1 ? "border-bottom:1px solid #DFDBD1;" : "")
+            + (on ? "background:#E8F4EC;" : ""),
+          markStyle: "width:38px;height:38px;border-radius:2px;display:grid;place-items:center;font-family:'Inter',system-ui,sans-serif;font-size:12.5px;font-weight:700;flex:none;border:1px dashed #B9B2A2;"
+            + (on ? "background:#0E5536;color:#FFFFFF;border-color:#0E5536;" : "background:#0F1B2D;color:#F8F6F1;")
+        };
+      }),
+      selCountry: selMember.country,
+      participation: PARTICIPATION.map((p, i) => ({
+        name:p.name, type:p.type, role:p.role,
+        rowStyle: i < PARTICIPATION.length - 1 ? "border-bottom:1px solid #DFDBD1;" : ""
+      })),
+      indicators: INDICATORS.map(i => ({
+        label:i.label, cat:i.cat, value:i.value, verified:i.verified, demo: !i.verified, source:i.source,
+        valueStyle: "padding:13px 16px;text-align:right;" + (i.missing
+          ? "font-size:15px;font-style:italic;color:#5C6B7E;"
+          : "font-family:'Inter',system-ui,sans-serif;font-size:18px;font-weight:600;color:#0F1B2D;font-variant-numeric:tabular-nums;")
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

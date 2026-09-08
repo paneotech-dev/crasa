@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="icon" href="./assets/crasa-logo.svg">
+<link rel="stylesheet" href="./vendor/fonts.css">
+<style>
+:root{
+  --c-green:#1A8C5A; --c-green-dark:#0E5536; --c-green-light:#E8F4EC;
+  --c-navy:#0F1B2D; --c-navy-mid:#1A2742; --c-charcoal:#1F2937;
+  --c-slate:#5C6B7E; --c-cream:#F8F6F1; --c-sand:#E5E0D5;
+  --c-line:#DFDBD1; --c-amber:#C2710C; --c-white:#FFFFFF; --c-red:#9B2226;
+  --f-head:'Lora',Georgia,serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-admin:'Inter',system-ui,sans-serif;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px; --s-9:96px;
+  --r-xs:2px; --r-sm:4px; --r-md:8px; --r-lg:14px; --r-pill:999px;
+  --e-1:0 1px 2px rgba(15,27,45,.06), 0 1px 3px rgba(15,27,45,.08);
+  --e-2:0 2px 4px rgba(15,27,45,.06), 0 6px 16px rgba(15,27,45,.08);
+  --ease-in:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box}
+body{margin:0;overflow-wrap:break-word;background:var(--c-cream);color:var(--c-charcoal);font-family:var(--f-body);-webkit-font-smoothing:antialiased}
+a{color:var(--c-green-dark);text-underline-offset:3px}
+a:hover{color:var(--c-navy)}
+:focus-visible{outline:3px solid var(--c-amber);outline-offset:2px}
+@keyframes crasa-rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes crasa-fade{from{opacity:0}to{opacity:1}}
+@keyframes crasa-shift{0%{transform:translateY(0)}50%{transform:translateY(-9px)}100%{transform:translateY(0)}}
+@media (prefers-reduced-motion: reduce){
+  [data-motion]{animation-name:crasa-fade !important;animation-duration:320ms !important;transform:none !important}
+  [data-motion-note]::after{content:" Your system is requesting reduced motion, so the left column is already matching the right."}
+}
+@page{margin:12mm}
+@media print{
+  html,body{background:#FFFFFF}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;transition:none !important;animation:none !important}
+  [style*="position:sticky"],[style*="position: sticky"],[style*="position:fixed"]{position:static !important}
+  section,figure,li,tr{break-inside:avoid}
+  h1,h2,h3{break-after:avoid}
+  thead{display:table-header-group}
+  [style*="overflow-x:auto"],[style*="overflow-x: auto"],[style*="overflow:auto"]{overflow:visible !important}
+  table{min-width:0 !important;width:100% !important;font-size:9.5pt !important}
+  img,svg{max-width:100% !important}
+  a[href]{text-decoration:underline}
+}
+</style>
+</helmet>
+
+<div style="background:var(--c-cream)">
+
+  <header style="background:var(--c-white);border-bottom:1px solid var(--c-sand);position:sticky;top:0;z-index:20;box-shadow:var(--e-1)">
+    <div style="max-width:1440px;margin:0 auto;padding:var(--s-4) var(--s-7);display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap">
+      <a href="#" style="display:flex;flex:none;align-items:center;gap:var(--s-3);text-decoration:none">
+        <img src="assets/crasa-logo.svg" alt="" style="width:40px;height:40px;flex:none;display:block">
+        <span style="display:flex;flex-direction:column;min-width:0">
+          <span style="font-family:var(--f-head);font-size:20px;font-weight:600;color:var(--c-navy);line-height:1.1">CRASA</span>
+          <span style="font-size:10.5px;color:var(--c-slate);letter-spacing:.03em;max-width:230px;line-height:1.25">{{ t.fullName }}</span>
+        </span>
+      </a>
+      <nav aria-label="Primary" style="display:flex;flex-wrap:wrap;gap:2px;min-width:0;margin-left:auto">
+        <a href="#" style="font-size:15px;font-weight:600;color:var(--c-navy);padding:9px 11px;border-radius:var(--r-sm);text-decoration:none;border-bottom:2px solid var(--c-green-dark)">{{ t.home }}</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;border-radius:var(--r-sm);text-decoration:none" style-hover="background:var(--c-green-light);color:var(--c-navy)">{{ t.about }}</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;border-radius:var(--r-sm);text-decoration:none" style-hover="background:var(--c-green-light);color:var(--c-navy)">{{ t.committees }}</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;border-radius:var(--r-sm);text-decoration:none" style-hover="background:var(--c-green-light);color:var(--c-navy)">{{ t.members }}</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;border-radius:var(--r-sm);text-decoration:none" style-hover="background:var(--c-green-light);color:var(--c-navy)">{{ t.publications }}</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;border-radius:var(--r-sm);text-decoration:none" style-hover="background:var(--c-green-light);color:var(--c-navy)">{{ t.newsroom }}</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;border-radius:var(--r-sm);text-decoration:none" style-hover="background:var(--c-green-light);color:var(--c-navy)">{{ t.events }}</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;border-radius:var(--r-sm);text-decoration:none" style-hover="background:var(--c-green-light);color:var(--c-navy)">{{ t.comparator }}</a>
+        <a href="#" style="font-size:15px;font-weight:500;color:var(--c-charcoal);padding:9px 11px;border-radius:var(--r-sm);text-decoration:none" style-hover="background:var(--c-green-light);color:var(--c-navy)">{{ t.contact }}</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:var(--s-3);min-width:0">
+        <button type="button" aria-label="{{ t.search }}" style="width:40px;height:40px;display:grid;place-items:center;background:transparent;border:1.5px solid #C9C2B2;border-radius:var(--r-sm);cursor:pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+        </button>
+        <div role="group" aria-label="Language" style="display:flex;flex:none;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);overflow:hidden">
+          <button type="button" onClick="{{ setEn }}" lang="en" style="{{ btnEn }}">EN</button>
+          <button type="button" onClick="{{ setFr }}" lang="fr" style="{{ btnFr }}">FR</button>
+          <button type="button" onClick="{{ setPt }}" lang="pt" style="{{ btnPt }}">PT</button>
+        </div>
+        <a href="#" style="flex:none;display:inline-flex;align-items:center;gap:7px;font-size:15px;font-weight:600;color:var(--c-white);background:var(--c-navy);padding:12px 16px;border-radius:var(--r-sm);text-decoration:none;white-space:nowrap" style-hover="background:#050d18">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect></svg>
+          {{ t.extranet }}
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section aria-roledescription="carousel" aria-label="{{ t.heroLabel }}" onMouseEnter="{{ hoverIn }}" onMouseLeave="{{ hoverOut }}" onFocus="{{ focusIn }}" onBlur="{{ focusOut }}" style="position:relative;background:var(--c-navy);color:var(--c-cream);overflow:hidden;min-height:640px;display:flex;flex-direction:column">
+
+    <sc-for list="{{ slides }}" as="s" hint-placeholder-count="3">
+      <div role="group" aria-roledescription="slide" aria-label="{{ s.label }}" aria-hidden="{{ s.hidden }}" style="{{ s.slideStyle }}">
+
+        <sc-if value="{{ s.isPhoto }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;inset:0;overflow:hidden">
+            <div role="img" aria-label="{{ s.alt }}" style="{{ s.imgStyle }}"></div>
+            <div style="position:absolute;inset:0;background:linear-gradient(140deg,#0F1B2D 0%,#0E5536 100%);mix-blend-mode:color"></div>
+            <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(15,27,45,.94) 0%,rgba(15,27,45,.82) 42%,rgba(15,27,45,.34) 100%)"></div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ s.isChart }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;background:repeating-linear-gradient(58deg,rgba(26,140,90,.09) 0 2px,transparent 2px 24px)"></div>
+        </sc-if>
+
+        <div style="position:relative;max-width:1440px;width:100%;margin:0 auto;padding:var(--s-9) var(--s-7) var(--s-8);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:var(--s-7);align-items:center;min-width:0">
+          <div style="min-width:0;display:flex;flex-direction:column;justify-content:center">
+            <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:var(--s-5)">{{ s.eyebrow }}</div>
+            <h1 style="font-family:var(--f-head);font-size:clamp(32px,5.4vw,58px);line-height:1.06;font-weight:600;letter-spacing:-.02em;margin:0 0 var(--s-5);text-wrap:balance;max-width:22ch;color:var(--c-white)">{{ s.headline }}</h1>
+            <p style="margin:0 0 var(--s-6);font-size:19px;line-height:1.6;color:var(--c-sand);max-width:52ch">{{ s.lead }}</p>
+            <div style="display:flex;gap:var(--s-3);flex-wrap:wrap">
+              <a href="#" style="font-size:17px;font-weight:600;color:var(--c-white);background:var(--c-green-dark);padding:14px 24px;border-radius:var(--r-sm);text-decoration:none;border:1.5px solid var(--c-green-dark)" style-hover="background:#0a4229">{{ s.action }}</a>
+            </div>
+            <sc-if value="{{ s.hasCaption }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:var(--s-6);font-size:13px;line-height:1.55;color:#B9C2D0;max-width:52ch">{{ s.caption }}</div>
+            </sc-if>
+          </div>
+
+          <sc-if value="{{ s.isChart }}" hint-placeholder-val="{{ false }}">
+            <div style="min-width:0;background:var(--c-navy-mid);border:1px solid #2C3A55;border-radius:var(--r-md);padding:var(--s-6)">
+              <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:var(--s-3)">{{ t.chartTitle }}</div>
+              <div style="font-size:13.5px;line-height:1.55;color:var(--c-sand);margin-bottom:var(--s-5);max-width:44ch">{{ t.chartNote }}</div>
+              <div style="display:flex;flex-direction:column;gap:var(--s-4)">
+                <sc-for list="{{ bars }}" as="b" hint-placeholder-count="2">
+                  <div style="min-width:0">
+                    <div style="display:flex;justify-content:space-between;gap:var(--s-3);margin-bottom:6px;min-width:0">
+                      <span style="font-size:14.5px;color:var(--c-cream);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.name }}</span>
+                      <span style="font-family:var(--f-admin);font-size:14.5px;font-weight:600;color:var(--c-white);flex:none;font-variant-numeric:tabular-nums">{{ b.value }}</span>
+                    </div>
+                    <div style="height:10px;background:#0B1522;border-radius:2px;overflow:hidden">
+                      <div style="{{ b.fillStyle }}"></div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="margin-top:var(--s-5);display:flex;gap:10px;background:rgba(194,113,12,.14);border:1px solid #7A4606;border-left:4px solid var(--c-amber);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E9A64A" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9L2.4 18a1.8 1.8 0 001.6 2.7h16a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"></path></svg>
+                <div style="font-size:13.5px;line-height:1.5;color:#F4E3C8"><strong style="color:#FFF2DC">{{ t.demoTitle }}</strong> {{ t.demoShort }}</div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-for>
+
+    <div aria-live="polite" style="position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%)">{{ liveText }}</div>
+
+    <div style="position:relative;margin-top:auto;background:rgba(11,21,34,.86);border-top:1px solid #2C3A55">
+      <div style="max-width:1440px;margin:0 auto;padding:var(--s-3) var(--s-7);display:flex;align-items:center;gap:var(--s-4);flex-wrap:wrap;min-width:0">
+        <div style="display:flex;gap:var(--s-2);flex:none">
+          <button type="button" onClick="{{ prev }}" aria-label="{{ t.prevLabel }}" style="width:44px;height:44px;display:grid;place-items:center;background:transparent;border:1.5px solid #6B7691;border-radius:var(--r-sm);cursor:pointer;color:#F8F6F1" style-hover="background:#1A2742;border-color:#F8F6F1">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
+          </button>
+          <button type="button" onClick="{{ togglePause }}" aria-label="{{ pauseLabel }}" aria-pressed="{{ pausePressed }}" style="height:44px;display:inline-flex;align-items:center;gap:8px;padding:0 15px;background:var(--c-cream);border:1.5px solid var(--c-cream);border-radius:var(--r-sm);cursor:pointer;color:#0F1B2D;font-family:var(--f-body);font-size:14.5px;font-weight:600" style-hover="background:#FFFFFF">
+            <sc-if value="{{ isPaused }}" hint-placeholder-val="{{ false }}">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"></path></svg>
+            </sc-if>
+            <sc-if value="{{ isPlaying }}" hint-placeholder-val="{{ true }}">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4.5" height="16"></rect><rect x="13.5" y="4" width="4.5" height="16"></rect></svg>
+            </sc-if>
+            {{ pauseText }}
+          </button>
+          <button type="button" onClick="{{ next }}" aria-label="{{ t.nextLabel }}" style="width:44px;height:44px;display:grid;place-items:center;background:transparent;border:1.5px solid #6B7691;border-radius:var(--r-sm);cursor:pointer;color:#F8F6F1" style-hover="background:#1A2742;border-color:#F8F6F1">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+          </button>
+        </div>
+
+        <div role="tablist" aria-label="{{ t.slideListLabel }}" style="display:flex;gap:var(--s-2);flex-wrap:wrap;min-width:0">
+          <sc-for list="{{ dots }}" as="d" hint-placeholder-count="3">
+            <button type="button" role="tab" onClick="{{ d.go }}" aria-current="{{ d.current }}" aria-label="{{ d.label }}" style="{{ d.dotStyle }}">{{ d.num }}</button>
+          </sc-for>
+        </div>
+
+        <div style="margin-left:auto;display:flex;align-items:center;gap:var(--s-4);flex-wrap:wrap;min-width:0">
+          <span style="font-family:var(--f-admin);font-size:13.5px;font-weight:600;color:var(--c-sand);font-variant-numeric:tabular-nums;flex:none">{{ counter }}</span>
+          <span style="font-size:13px;color:#B9C2D0;min-width:0">{{ stateNote }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--c-navy-mid);color:var(--c-cream);border-top:1px solid #2C3A55">
+    <div style="max-width:1440px;margin:0 auto;padding:var(--s-7)">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-5);flex-wrap:wrap;margin-bottom:var(--s-5)">
+        <h2 style="font-family:var(--f-head);font-size:26px;font-weight:600;margin:0;color:var(--c-white)">{{ t.figuresTitle }}</h2>
+        <span style="font-size:13.5px;color:var(--c-sand);max-width:56ch">{{ t.figuresNote }}</span>
+      </div>
+      <dl style="margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:var(--s-5)">
+        <sc-for list="{{ figures }}" as="f" hint-placeholder-count="5">
+          <div style="min-width:0;border-top:2px solid #2C3A55;padding-top:var(--s-4)">
+            <dd style="margin:0;font-family:var(--f-head);font-size:clamp(30px,3.6vw,42px);font-weight:600;color:var(--c-white);line-height:1;font-variant-numeric:tabular-nums">{{ f.shown }}</dd>
+            <dt style="font-size:14px;line-height:1.45;color:var(--c-sand);margin-top:8px">{{ f.label }}</dt>
+            <sc-if value="{{ f.isDemo }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:8px;font-size:12.5px;line-height:1.45;color:#F0C989">{{ t.demoFigureNote }}</div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </dl>
+    </div>
+  </section>
+
+  <section style="background:var(--c-cream);border-bottom:1px solid var(--c-sand)">
+    <div style="max-width:1440px;margin:0 auto;padding:var(--s-7)">
+      <div style="background:var(--c-white);border:1px solid var(--c-sand);border-left:4px solid var(--c-navy);border-radius:var(--r-md);padding:var(--s-5) var(--s-6)">
+        <h2 style="font-family:var(--f-head);font-size:22px;font-weight:600;margin:0 0 var(--s-3)">Automatic rotation and WCAG 2.1 AA, held together</h2>
+        <p style="margin:0 0 var(--s-4);font-size:15.5px;line-height:1.65;color:var(--c-charcoal);max-width:96ch">CRASA asked for a rotating hero and has separately made WCAG 2.1 AA a condition of acceptance. Success criterion 2.2.2, Pause Stop Hide, requires a pause mechanism for anything that moves automatically for more than five seconds. Both requests are met rather than traded off.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:var(--s-5)">
+          <ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:9px;font-size:15px;line-height:1.6;color:var(--c-charcoal)">
+            <li>Rotation runs at eight seconds a slide and pauses on hover and whenever keyboard focus enters the region.</li>
+            <li>The pause control is visible at all times, not revealed on hover. Once pressed, rotation stays off for the session.</li>
+            <li>Under <span style="font-family:var(--f-admin);font-size:14px">prefers-reduced-motion: reduce</span> there is no automatic rotation at all. The first slide holds and the controls remain.</li>
+          </ul>
+          <ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:9px;font-size:15px;line-height:1.6;color:var(--c-charcoal)">
+            <li>Indicators are real buttons carrying <span style="font-family:var(--f-admin);font-size:14px">aria-current</span>, numbered so position and count are legible without colour.</li>
+            <li>Slide changes are announced through a polite live region, so a screen reader is informed once rather than flooded.</li>
+            <li>The key figures count up once on entry, then hold. Under the reduced preference they render at their final value.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:1440px;margin:0 auto;padding:var(--s-9) var(--s-7)">
+    <div style="max-width:62ch;margin-bottom:var(--s-7)">
+      <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:var(--s-3)">{{ t.whatWeDo }}</div>
+      <h2 style="font-family:var(--f-head);font-size:clamp(27px,4vw,40px);line-height:1.15;font-weight:600;margin:0;letter-spacing:-.015em">{{ t.pillarsTitle }}</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:var(--s-6)">
+      <div style="border-top:3px solid var(--c-navy);padding-top:var(--s-4)">
+        <h3 style="font-family:var(--f-head);font-size:23px;font-weight:600;margin:0 0 var(--s-3);line-height:1.25">{{ t.pillar1t }}</h3>
+        <p style="margin:0 0 var(--s-4);font-size:16px;line-height:1.65;color:var(--c-charcoal)">{{ t.pillar1b }}</p>
+        <div style="background:var(--c-navy);border-radius:var(--r-sm);padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-3)">
+          <div style="font-family:var(--f-head);font-size:44px;font-weight:600;color:var(--c-white);line-height:1">21</div>
+          <div style="font-size:13.5px;line-height:1.5;color:var(--c-sand)">{{ t.pillar1stat }}</div>
+        </div>
+      </div>
+      <div style="border-top:3px solid var(--c-navy);padding-top:var(--s-4)">
+        <h3 style="font-family:var(--f-head);font-size:23px;font-weight:600;margin:0 0 var(--s-3);line-height:1.25">{{ t.pillar2t }}</h3>
+        <p style="margin:0 0 var(--s-4);font-size:16px;line-height:1.65;color:var(--c-charcoal)">{{ t.pillar2b }}</p>
+        <figure style="margin:0">
+          <div style="position:relative;aspect-ratio:3/2;border-radius:var(--r-sm);overflow:hidden">
+            <img src="assets/people-01.jpg" alt="{{ t.pillar2alt }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%;filter:saturate(1.06) contrast(1.03)">
+          </div>
+          <figcaption style="font-size:12.5px;line-height:1.5;color:var(--c-charcoal);margin-top:8px">{{ t.pillar2caption }}</figcaption>
+        </figure>
+      </div>
+      <div style="border-top:3px solid var(--c-navy);padding-top:var(--s-4)">
+        <h3 style="font-family:var(--f-head);font-size:23px;font-weight:600;margin:0 0 var(--s-3);line-height:1.25">{{ t.pillar3t }}</h3>
+        <p style="margin:0 0 var(--s-4);font-size:16px;line-height:1.65;color:var(--c-charcoal)">{{ t.pillar3b }}</p>
+        <div style="background:var(--c-green-light);border-radius:var(--r-sm);padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-3)">
+          <div style="font-family:var(--f-head);font-size:44px;font-weight:600;color:var(--c-green-dark);line-height:1">14</div>
+          <div style="font-size:13.5px;line-height:1.5;color:var(--c-charcoal)">{{ t.pillar3stat }}</div>
+        </div>
+      </div>
+      <div style="border-top:3px solid var(--c-navy);padding-top:var(--s-4)">
+        <h3 style="font-family:var(--f-head);font-size:23px;font-weight:600;margin:0 0 var(--s-3);line-height:1.25">{{ t.pillar4t }}</h3>
+        <p style="margin:0 0 var(--s-4);font-size:16px;line-height:1.65;color:var(--c-charcoal)">{{ t.pillar4b }}</p>
+        <figure style="margin:0">
+          <div style="position:relative;aspect-ratio:3/2;border-radius:var(--r-sm);overflow:hidden">
+            <img src="assets/access-01.jpg" alt="{{ t.pillar4alt }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:52% 62%">
+          </div>
+          <figcaption style="font-size:12.5px;line-height:1.5;color:var(--c-charcoal);margin-top:8px">{{ t.pillar4caption }}</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-9) 0">
+    <div style="max-width:1440px;margin:0 auto;padding:0 var(--s-7);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:var(--s-8);align-items:start">
+      <div>
+        <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:var(--s-3)">{{ t.compEyebrow }}</div>
+        <h2 style="font-family:var(--f-head);font-size:clamp(28px,4.2vw,42px);line-height:1.12;font-weight:600;margin:0 0 var(--s-4);letter-spacing:-.015em;text-wrap:balance">{{ t.compTitle }}</h2>
+        <p style="margin:0 0 var(--s-5);font-size:18px;line-height:1.65;color:var(--c-sand);max-width:46ch">{{ t.compBody }}</p>
+        <a href="#" style="display:inline-flex;align-items:center;gap:8px;font-size:17px;font-weight:600;color:var(--c-white);background:var(--c-green-dark);padding:13px 22px;border-radius:var(--r-sm);text-decoration:none" style-hover="background:#0a4229">{{ t.compAction }}
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h13"></path><path d="M12 6l6 6-6 6"></path></svg>
+        </a>
+        <div style="margin-top:var(--s-6);display:flex;gap:var(--s-3);background:rgba(194,113,12,.14);border:1px solid #7A4606;border-left:4px solid var(--c-amber);border-radius:var(--r-sm);padding:var(--s-4);max-width:48ch">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#E9A64A" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9L2.4 18a1.8 1.8 0 001.6 2.7h16a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"></path></svg>
+          <div style="font-size:14.5px;line-height:1.55;color:#F4E3C8"><strong style="color:#FFF2DC">{{ t.demoTitle }}</strong> {{ t.demoBody }}</div>
+        </div>
+      </div>
+      <div style="background:var(--c-navy-mid);border:1px solid #2C3A55;border-radius:var(--r-md);padding:var(--s-6)">
+        <div style="display:flex;gap:var(--s-4);flex-wrap:wrap;margin-bottom:var(--s-5)">
+          <div style="flex:1 1 200px">
+            <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--c-sand);margin-bottom:8px">{{ t.stateA }}</div>
+            <div style="display:flex;align-items:center;gap:10px;background:var(--c-navy);border:1.5px solid #4A5670;border-radius:var(--r-sm);padding:11px 13px">
+              <span style="width:28px;height:28px;border-radius:var(--r-xs);background:var(--c-green-dark);color:var(--c-white);display:grid;place-items:center;font-family:var(--f-admin);font-size:11px;font-weight:700;flex:none">BW</span>
+              <span style="font-size:16px;font-weight:500;color:var(--c-white)">Botswana</span>
+              <span style="margin-left:auto;font-size:13px;color:var(--c-sand)">BOCRA</span>
+            </div>
+          </div>
+          <div style="flex:1 1 200px">
+            <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--c-sand);margin-bottom:8px">{{ t.stateB }}</div>
+            <div style="display:flex;align-items:center;gap:10px;background:var(--c-navy);border:1.5px solid #4A5670;border-radius:var(--r-sm);padding:11px 13px">
+              <span style="width:28px;height:28px;border-radius:var(--r-xs);background:var(--c-green-dark);color:var(--c-white);display:grid;place-items:center;font-family:var(--f-admin);font-size:11px;font-weight:700;flex:none">MZ</span>
+              <span style="font-size:16px;font-weight:500;color:var(--c-white)">Mozambique</span>
+              <span style="margin-left:auto;font-size:13px;color:var(--c-sand)">INCM</span>
+            </div>
+          </div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:16px">
+          <caption style="text-align:left;font-size:13px;color:var(--c-sand);padding-bottom:10px">{{ t.compCaption }}</caption>
+          <tbody>
+            <tr style="border-top:1px solid #2C3A55">
+              <th scope="row" style="text-align:left;padding:15px 0;font-weight:500;color:var(--c-cream)">{{ t.ind1 }}</th>
+              <td style="padding:15px var(--s-4);text-align:right;font-family:var(--f-admin);font-size:20px;font-weight:600;color:var(--c-white);font-variant-numeric:tabular-nums">168.4%</td>
+              <td style="padding:15px 0;text-align:right;font-family:var(--f-admin);font-size:20px;font-weight:600;color:var(--c-white);font-variant-numeric:tabular-nums">57.1%</td>
+            </tr>
+            <tr style="border-top:1px solid #2C3A55">
+              <th scope="row" style="text-align:left;padding:15px 0;font-weight:500;color:var(--c-cream)">{{ t.ind2 }}</th>
+              <td style="padding:15px var(--s-4);text-align:right"><span style="font-family:var(--f-admin);font-size:18px;font-weight:600;color:var(--c-white)">{{ t.yes }}</span></td>
+              <td style="padding:15px 0;text-align:right"><span style="font-family:var(--f-admin);font-size:18px;font-weight:600;color:var(--c-sand)">{{ t.no }}</span></td>
+            </tr>
+            <tr style="border-top:1px solid #2C3A55;border-bottom:1px solid #2C3A55">
+              <th scope="row" style="text-align:left;padding:15px 0;font-weight:500;color:var(--c-cream)">{{ t.ind3 }}</th>
+              <td style="padding:15px var(--s-4);text-align:right"><span style="font-family:var(--f-admin);font-size:18px;font-weight:600;color:var(--c-white)">{{ t.yes }}</span></td>
+              <td style="padding:15px 0;text-align:right"><span style="font-family:var(--f-admin);font-size:18px;font-weight:600;color:var(--c-white)">{{ t.yes }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="display:flex;align-items:center;gap:var(--s-3);margin-top:var(--s-4);flex-wrap:wrap">
+          <span style="font-size:13px;color:var(--c-sand)">{{ t.updated }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:1440px;margin:0 auto;padding:var(--s-9) var(--s-7)">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-6);margin-bottom:var(--s-6);flex-wrap:wrap">
+      <div>
+        <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:var(--s-3)">{{ t.pubEyebrow }}</div>
+        <h2 style="font-family:var(--f-head);font-size:clamp(27px,4vw,40px);line-height:1.15;font-weight:600;margin:0;letter-spacing:-.015em">{{ t.pubTitle }}</h2>
+      </div>
+      <a href="#" style="font-size:16px;font-weight:600;color:var(--c-green-dark);text-decoration:underline;text-underline-offset:4px">{{ t.pubAll }}</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:var(--s-5)">
+      <article style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-3);box-shadow:var(--e-1)">
+        <div style="display:flex;align-items:center;gap:var(--s-3)">
+          <span style="width:30px;height:38px;background:var(--c-navy);border-radius:2px;display:grid;place-items:center;flex:none"><span style="font-family:var(--f-admin);font-size:8px;font-weight:700;color:var(--c-cream)">PDF</span></span>
+          <span style="font-size:14px;color:var(--c-slate)">{{ t.guideline }} &middot; ICT</span>
+        </div>
+        <h3 style="font-family:var(--f-head);font-size:19px;font-weight:600;line-height:1.3;margin:0">Postal E-commerce and Trade Facilitation Guidelines</h3>
+        <div style="font-size:14px;color:var(--c-slate);margin-top:auto">2023 &middot; PDF &middot; EN FR PT</div>
+      </article>
+      <article style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-3);box-shadow:var(--e-1)">
+        <div style="display:flex;align-items:center;gap:var(--s-3)">
+          <span style="width:30px;height:38px;background:var(--c-navy);border-radius:2px;display:grid;place-items:center;flex:none"><span style="font-family:var(--f-admin);font-size:8px;font-weight:700;color:var(--c-cream)">PDF</span></span>
+          <span style="font-size:14px;color:var(--c-slate)">{{ t.guideline }} &middot; ICT</span>
+        </div>
+        <h3 style="font-family:var(--f-head);font-size:19px;font-weight:600;line-height:1.3;margin:0">SADC Roaming Guidelines</h3>
+        <div style="font-size:14px;color:var(--c-slate);margin-top:auto">2021 &middot; PDF, 2.4 MB &middot; EN FR PT</div>
+      </article>
+      <article style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-3);box-shadow:var(--e-1)">
+        <div style="display:flex;align-items:center;gap:var(--s-3)">
+          <span style="width:30px;height:38px;background:var(--c-navy);border-radius:2px;display:grid;place-items:center;flex:none"><span style="font-family:var(--f-admin);font-size:8px;font-weight:700;color:var(--c-cream)">PDF</span></span>
+          <span style="font-size:14px;color:var(--c-slate)">{{ t.modelLaw }} &middot; ICT</span>
+        </div>
+        <h3 style="font-family:var(--f-head);font-size:19px;font-weight:600;line-height:1.3;margin:0">SADC Radio Frequency Spectrum Policy Model Framework</h3>
+        <div style="font-size:14px;color:var(--c-slate);margin-top:auto">2021 &middot; PDF &middot; EN</div>
+      </article>
+      <article style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-3);box-shadow:var(--e-1)">
+        <div style="display:flex;align-items:center;gap:var(--s-3)">
+          <span style="width:30px;height:38px;background:var(--c-navy);border-radius:2px;display:grid;place-items:center;flex:none"><span style="font-family:var(--f-admin);font-size:8px;font-weight:700;color:var(--c-cream)">PDF</span></span>
+          <span style="font-size:14px;color:var(--c-slate)">{{ t.guideline }} &middot; {{ t.postal }}</span>
+        </div>
+        <h3 style="font-family:var(--f-head);font-size:19px;font-weight:600;line-height:1.3;margin:0">Universal Postal Service and Access Guidelines</h3>
+        <div style="font-size:14px;color:var(--c-slate);margin-top:auto">2023 &middot; PDF &middot; EN PT</div>
+      </article>
+    </div>
+  </section>
+
+  <section style="position:relative;overflow:hidden;background:var(--c-navy)">
+    <div style="position:absolute;inset:0;background:repeating-linear-gradient(122deg,rgba(232,244,236,.05) 0 1px,transparent 1px 16px),repeating-linear-gradient(58deg,rgba(26,140,90,.10) 0 2px,transparent 2px 26px)"></div>
+    <div style="position:relative;max-width:1440px;margin:0 auto;padding:var(--s-9) var(--s-7);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:var(--s-8);align-items:center">
+      <div style="max-width:46ch">
+        <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:var(--s-4)">{{ t.breakEyebrow }}</div>
+        <p style="font-family:var(--f-head);font-size:clamp(26px,3.8vw,38px);line-height:1.22;font-weight:500;color:var(--c-white);margin:0 0 var(--s-5);text-wrap:pretty">{{ t.breakQuote }}</p>
+        <a href="#" style="font-size:16px;font-weight:600;color:var(--c-white);text-decoration:underline;text-underline-offset:5px">{{ t.breakAction }}</a>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:var(--s-4)">{{ t.dataVisualLabel }}</div>
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:#2C3A55;border:1px solid #2C3A55;border-radius:var(--r-sm);overflow:hidden">
+          <sc-for list="{{ grid }}" as="g" hint-placeholder-count="12">
+            <div style="{{ g.cellStyle }}">
+              <div style="font-family:var(--f-admin);font-size:23px;font-weight:600;color:var(--c-white);line-height:1;font-variant-numeric:tabular-nums">{{ g.value }}</div>
+              <div style="font-size:11.5px;line-height:1.4;color:var(--c-sand);margin-top:7px">{{ g.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:13px;line-height:1.6;color:var(--c-sand);margin-top:var(--s-4);max-width:56ch">{{ t.dataVisualNote }}</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:1440px;margin:0 auto;padding:var(--s-9) var(--s-7);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:var(--s-8)">
+    <div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-5);margin-bottom:var(--s-6);flex-wrap:wrap">
+        <div>
+          <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:var(--s-3)">{{ t.newsEyebrow }}</div>
+          <h2 style="font-family:var(--f-head);font-size:clamp(27px,4vw,40px);line-height:1.15;font-weight:600;margin:0;letter-spacing:-.015em">{{ t.newsTitle }}</h2>
+        </div>
+        <a href="#" style="font-size:16px;font-weight:600;color:var(--c-green-dark);text-decoration:underline;text-underline-offset:4px">{{ t.newsAll }}</a>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:var(--s-5)">
+        <article style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--e-1);display:flex;flex-direction:column">
+          <div style="position:relative;aspect-ratio:16/9;overflow:hidden">
+            <img src="assets/people-01.jpg" alt="{{ t.news1alt }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 26%;filter:saturate(1.06) contrast(1.03)">
+          </div>
+          <div style="padding:var(--s-4);display:flex;flex-direction:column;gap:8px;flex:1">
+            <div style="font-size:13px;color:var(--c-slate)">February 2026</div>
+            <h3 style="font-family:var(--f-head);font-size:18px;font-weight:600;line-height:1.3;margin:0">Call for Applications for Cullen Telecoms Regulatory Masterclass Scholarships</h3>
+            <div style="margin-top:auto;padding-top:var(--s-3);border-top:1px solid var(--c-sand);display:flex;align-items:center;gap:var(--s-2);flex-wrap:wrap;min-width:0">
+              <span style="font-size:12.5px;color:var(--c-slate);flex:none">{{ t.shareLabel }}</span>
+              <a href="#" aria-label="{{ t.shareOnX }}" style="width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--c-sand);border-radius:var(--r-sm);color:var(--c-navy);flex:none" style-hover="background:var(--c-green-light);border-color:var(--c-green-dark)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 2H22l-6.8 7.8L22.6 22h-6.9l-4.5-6-5.2 6H2.9l7.2-8.3L2 2h7l4.2 5.6L18.9 2zm-1.2 18h1.9L7.4 3.9H5.4L17.7 20z"></path></svg>
+              </a>
+              <a href="#" aria-label="{{ t.shareOnLinkedIn }}" style="width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--c-sand);border-radius:var(--r-sm);color:var(--c-navy);flex:none" style-hover="background:var(--c-green-light);border-color:var(--c-green-dark)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C21 8.65 22 10.9 22 14v7h-4v-6.2c0-1.5-.53-2.5-1.85-2.5-1.01 0-1.6.68-1.87 1.34-.1.24-.12.57-.12.9V21h-4z"></path></svg>
+              </a>
+              <a href="#" aria-label="{{ t.shareOnFacebook }}" style="width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--c-sand);border-radius:var(--r-sm);color:var(--c-navy);flex:none" style-hover="background:var(--c-green-light);border-color:var(--c-green-dark)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H8v3h2v7h3v-7h2.5l.5-3H13v-2c0-.55.45-1 1-1z"></path></svg>
+              </a>
+              <button type="button" aria-label="{{ t.copyLink }}" style="width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--c-sand);border-radius:var(--r-sm);background:transparent;color:var(--c-navy);cursor:pointer;flex:none" style-hover="background:var(--c-green-light);border-color:var(--c-green-dark)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 13a5 5 0 007.5.5l2-2A5 5 0 0012.5 4.5l-1 1"></path><path d="M14 11a5 5 0 00-7.5-.5l-2 2A5 5 0 0011.5 19.5l1-1"></path></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+        <article style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--e-1);display:flex;flex-direction:column">
+          <div style="aspect-ratio:16/9;background:repeating-linear-gradient(135deg,var(--c-sand) 0 8px,#DED8CB 8px 16px);display:grid;place-items:center"><span style="font-family:var(--f-admin);font-size:10px;font-weight:700;letter-spacing:.06em;background:var(--c-navy);color:var(--c-cream);padding:3px 7px;border-radius:2px">PHOTOGRAPH TO FOLLOW</span></div>
+          <div style="padding:var(--s-4);display:flex;flex-direction:column;gap:8px;flex:1">
+            <div style="font-size:13px;color:var(--c-slate)">November 2025</div>
+            <h3 style="font-family:var(--f-head);font-size:18px;font-weight:600;line-height:1.3;margin:0">CRASA Postal Committee Advances Regional Resilience and Cooperation</h3>
+            <div style="margin-top:auto;padding-top:var(--s-3);border-top:1px solid var(--c-sand);display:flex;align-items:center;gap:var(--s-2);flex-wrap:wrap;min-width:0">
+              <span style="font-size:12.5px;color:var(--c-slate);flex:none">{{ t.shareLabel }}</span>
+              <a href="#" aria-label="{{ t.shareOnX }}" style="width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--c-sand);border-radius:var(--r-sm);color:var(--c-navy);flex:none" style-hover="background:var(--c-green-light);border-color:var(--c-green-dark)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 2H22l-6.8 7.8L22.6 22h-6.9l-4.5-6-5.2 6H2.9l7.2-8.3L2 2h7l4.2 5.6L18.9 2zm-1.2 18h1.9L7.4 3.9H5.4L17.7 20z"></path></svg>
+              </a>
+              <a href="#" aria-label="{{ t.shareOnLinkedIn }}" style="width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--c-sand);border-radius:var(--r-sm);color:var(--c-navy);flex:none" style-hover="background:var(--c-green-light);border-color:var(--c-green-dark)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C21 8.65 22 10.9 22 14v7h-4v-6.2c0-1.5-.53-2.5-1.85-2.5-1.01 0-1.6.68-1.87 1.34-.1.24-.12.57-.12.9V21h-4z"></path></svg>
+              </a>
+              <a href="#" aria-label="{{ t.shareOnFacebook }}" style="width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--c-sand);border-radius:var(--r-sm);color:var(--c-navy);flex:none" style-hover="background:var(--c-green-light);border-color:var(--c-green-dark)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H8v3h2v7h3v-7h2.5l.5-3H13v-2c0-.55.45-1 1-1z"></path></svg>
+              </a>
+              <button type="button" aria-label="{{ t.copyLink }}" style="width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--c-sand);border-radius:var(--r-sm);background:transparent;color:var(--c-navy);cursor:pointer;flex:none" style-hover="background:var(--c-green-light);border-color:var(--c-green-dark)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 13a5 5 0 007.5.5l2-2A5 5 0 0012.5 4.5l-1 1"></path><path d="M14 11a5 5 0 00-7.5-.5l-2 2A5 5 0 0011.5 19.5l1-1"></path></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+        <article style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--e-1);display:flex;flex-direction:column">
+          <div style="aspect-ratio:16/9;background:repeating-linear-gradient(135deg,var(--c-sand) 0 8px,#DED8CB 8px 16px);display:grid;place-items:center"><span style="font-family:var(--f-admin);font-size:10px;font-weight:700;letter-spacing:.06em;background:var(--c-navy);color:var(--c-cream);padding:3px 7px;border-radius:2px">PHOTOGRAPH TO FOLLOW</span></div>
+          <div style="padding:var(--s-4);display:flex;flex-direction:column;gap:8px;flex:1">
+            <div style="font-size:13px;color:var(--c-slate)">October 2025</div>
+            <h3 style="font-family:var(--f-head);font-size:18px;font-weight:600;line-height:1.3;margin:0">CRASA Hosts Workshop on Artificial Intelligence for Human Resource Professionals in Dar es Salaam</h3>
+            <div style="margin-top:auto;padding-top:var(--s-3);border-top:1px solid var(--c-sand);display:flex;align-items:center;gap:var(--s-2);flex-wrap:wrap;min-width:0">
+              <span style="font-size:12.5px;color:var(--c-slate);flex:none">{{ t.shareLabel }}</span>
+              <a href="#" aria-label="{{ t.shareOnX }}" style="width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--c-sand);border-radius:var(--r-sm);color:var(--c-navy);flex:none" style-hover="background:var(--c-green-light);border-color:var(--c-green-dark)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 2H22l-6.8 7.8L22.6 22h-6.9l-4.5-6-5.2 6H2.9l7.2-8.3L2 2h7l4.2 5.6L18.9 2zm-1.2 18h1.9L7.4 3.9H5.4L17.7 20z"></path></svg>
+              </a>
+              <a href="#" aria-label="{{ t.shareOnLinkedIn }}" style="width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--c-sand);border-radius:var(--r-sm);color:var(--c-navy);flex:none" style-hover="background:var(--c-green-light);border-color:var(--c-green-dark)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C21 8.65 22 10.9 22 14v7h-4v-6.2c0-1.5-.53-2.5-1.85-2.5-1.01 0-1.6.68-1.87 1.34-.1.24-.12.57-.12.9V21h-4z"></path></svg>
+              </a>
+              <a href="#" aria-label="{{ t.shareOnFacebook }}" style="width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--c-sand);border-radius:var(--r-sm);color:var(--c-navy);flex:none" style-hover="background:var(--c-green-light);border-color:var(--c-green-dark)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H8v3h2v7h3v-7h2.5l.5-3H13v-2c0-.55.45-1 1-1z"></path></svg>
+              </a>
+              <button type="button" aria-label="{{ t.copyLink }}" style="width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--c-sand);border-radius:var(--r-sm);background:transparent;color:var(--c-navy);cursor:pointer;flex:none" style-hover="background:var(--c-green-light);border-color:var(--c-green-dark)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 13a5 5 0 007.5.5l2-2A5 5 0 0012.5 4.5l-1 1"></path><path d="M14 11a5 5 0 00-7.5-.5l-2 2A5 5 0 0011.5 19.5l1-1"></path></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+      <div style="margin-top:var(--s-5);display:flex;gap:var(--s-4);flex-wrap:wrap">
+        <a href="#" style="flex:1 1 260px;display:flex;align-items:center;gap:var(--s-3);background:var(--c-white);border:1px solid var(--c-sand);border-left:4px solid var(--c-amber);border-radius:var(--r-sm);padding:var(--s-4);text-decoration:none">
+          <div><div style="font-size:14px;color:var(--c-slate);margin-bottom:4px">{{ t.tender }}</div><div style="font-size:16px;font-weight:600;color:var(--c-navy);line-height:1.35">Request for Expression of Interest</div></div>
+        </a>
+        <a href="#" style="flex:1 1 260px;display:flex;align-items:center;gap:var(--s-3);background:var(--c-white);border:1px solid var(--c-sand);border-left:4px solid var(--c-navy);border-radius:var(--r-sm);padding:var(--s-4);text-decoration:none">
+          <div><div style="font-size:14px;color:var(--c-slate);margin-bottom:4px">{{ t.consultation }}</div><div style="font-size:16px;font-weight:600;color:var(--c-navy);line-height:1.35">Call for Stakeholder Comments on a Discussion Paper on Regulatory Aspects of Digital Transformation</div></div>
+        </a>
+      </div>
+    </div>
+    <div>
+      <div style="margin-bottom:var(--s-6)">
+        <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:var(--s-3)">{{ t.eventsEyebrow }}</div>
+        <h2 style="font-family:var(--f-head);font-size:clamp(27px,4vw,40px);line-height:1.15;font-weight:600;margin:0;letter-spacing:-.015em">{{ t.eventsTitle }}</h2>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0;background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--e-1)">
+        <article style="display:flex;flex-wrap:wrap;gap:var(--s-4);padding:var(--s-5);border-bottom:1px solid var(--c-sand)">
+          <div style="flex:none;width:64px;text-align:center;border-right:1px solid var(--c-sand);padding-right:var(--s-4)">
+            <div style="font-family:var(--f-head);font-size:26px;font-weight:600;line-height:1;color:var(--c-navy)">15</div>
+            <div style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--c-slate);margin-top:4px">{{ t.agmShort }}</div>
+          </div>
+          <div>
+            <h3 style="font-family:var(--f-head);font-size:19px;font-weight:600;line-height:1.3;margin:0 0 6px">CRASA 15th Annual General Meeting</h3>
+            <div style="font-size:14.5px;line-height:1.55;color:var(--c-charcoal)">Bingu Wa Mutharika International Convention Centre (BICC), Presidential Way, Malawi</div>
+          </div>
+        </article>
+        <article style="display:flex;flex-wrap:wrap;gap:var(--s-4);padding:var(--s-5);border-bottom:1px solid var(--c-sand)">
+          <div style="flex:none;width:64px;text-align:center;border-right:1px solid var(--c-sand);padding-right:var(--s-4)">
+            <div style="font-family:var(--f-head);font-size:26px;font-weight:600;line-height:1;color:var(--c-navy)">G5</div>
+            <div style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--c-slate);margin-top:4px">2026</div>
+          </div>
+          <div>
+            <h3 style="font-family:var(--f-head);font-size:19px;font-weight:600;line-height:1.3;margin:0 0 6px">CRASA G5 Summit 2026</h3>
+            <div style="font-size:14.5px;line-height:1.55;color:var(--c-charcoal)">BICC, Malawi</div>
+          </div>
+        </article>
+        <article style="display:flex;flex-wrap:wrap;gap:var(--s-4);padding:var(--s-5)">
+          <div style="flex:none;width:64px;text-align:center;border-right:1px solid var(--c-sand);padding-right:var(--s-4)">
+            <div style="font-family:var(--f-head);font-size:26px;font-weight:600;line-height:1;color:var(--c-navy)">2</div>
+            <div style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--c-slate);margin-top:4px">UASC</div>
+          </div>
+          <div>
+            <h3 style="font-family:var(--f-head);font-size:19px;font-weight:600;line-height:1.3;margin:0 0 6px">2nd Ordinary Meeting of the CRASA Universal Access and Service Committee (UASC)</h3>
+            <div style="font-size:14.5px;line-height:1.55;color:var(--c-charcoal)">Tanzania</div>
+          </div>
+        </article>
+      </div>
+      <div style="margin-top:var(--s-5);background:var(--c-navy);border-radius:var(--r-md);padding:var(--s-6);color:var(--c-cream)">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:var(--s-3)">{{ t.agmEyebrow }}</div>
+        <div style="font-family:var(--f-head);font-size:clamp(30px,4.4vw,46px);line-height:1.06;font-weight:600;color:var(--c-white);letter-spacing:-.02em">15</div>
+        <div style="font-family:var(--f-head);font-size:23px;line-height:1.2;font-weight:600;color:var(--c-white);margin-top:4px">{{ t.agmTitle }}</div>
+        <div style="font-size:14.5px;line-height:1.6;color:var(--c-sand);margin-top:var(--s-3);max-width:44ch">{{ t.agmVenue }}</div>
+        <div style="font-size:12.5px;line-height:1.5;color:#B9C2D0;margin-top:var(--s-4)">{{ t.agmSlotNote }}</div>
+      </div>
+      <div style="margin-top:var(--s-4);font-size:14px;line-height:1.6;color:var(--c-charcoal);background:var(--c-sand);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4)">{{ t.eventsNote }}</div>
+    </div>
+  </section>
+
+  <section style="background:var(--c-white);border-top:1px solid var(--c-sand);border-bottom:1px solid var(--c-sand)">
+    <div style="max-width:1440px;margin:0 auto;padding:var(--s-9) var(--s-7)">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-6);flex-wrap:wrap;margin-bottom:var(--s-5)">
+        <div style="min-width:0">
+          <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:var(--s-3)">{{ t.socialEyebrow }}</div>
+          <h2 style="font-family:var(--f-head);font-size:clamp(27px,4vw,40px);line-height:1.15;font-weight:600;margin:0;letter-spacing:-.015em">{{ t.socialTitle }}</h2>
+        </div>
+        <div style="display:flex;gap:var(--s-3);flex-wrap:wrap;min-width:0">
+          <sc-for list="{{ channels }}" as="ch" hint-placeholder-count="4">
+            <button type="button" onClick="{{ ch.go }}" aria-pressed="{{ ch.pressed }}" style="{{ ch.tabStyle }}">
+              <span style="display:flex;align-items:center;gap:8px;min-width:0">
+                <span style="{{ ch.dotStyle }}"></span>
+                <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ ch.name }}</span>
+                <span style="font-family:var(--f-admin);font-size:12.5px;font-weight:600;color:var(--c-slate);flex:none">{{ ch.count }}</span>
+              </span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <sc-if value="{{ feedHasItems }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:var(--s-5)">
+          <sc-for list="{{ feed }}" as="p" hint-placeholder-count="3">
+            <article style="border:1px solid var(--c-sand);border-radius:var(--r-md);padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-3);min-width:0;background:var(--c-cream)">
+              <div style="display:flex;align-items:center;gap:10px;min-width:0">
+                <span style="{{ p.markStyle }}">{{ p.mark }}</span>
+                <span style="min-width:0">
+                  <span style="display:block;font-size:14px;font-weight:600;color:var(--c-navy);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.handle }}</span>
+                  <span style="display:block;font-size:12.5px;color:var(--c-slate);margin-top:2px">{{ p.when }}</span>
+                </span>
+              </div>
+              <p style="margin:0;font-size:15px;line-height:1.6;color:var(--c-charcoal)">{{ p.text }}</p>
+              <div style="margin-top:auto;padding-top:var(--s-3);display:flex;align-items:center;gap:var(--s-4);flex-wrap:wrap;min-width:0">
+                <a href="{{ p.href }}" style="font-size:14px;font-weight:600;color:var(--c-green-dark);text-decoration:underline;text-underline-offset:3px;flex:none">{{ t.viewOnChannel }}</a>
+                <span style="font-size:12.5px;color:var(--c-slate);min-width:0">{{ p.origin }}</span>
+              </div>
+            </article>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ feedEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="border:1px solid var(--c-sand);border-radius:var(--r-md);background:var(--c-cream);padding:var(--s-8) var(--s-6);display:flex;flex-direction:column;align-items:flex-start;gap:var(--s-3);max-width:72ch">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#5C6B7E" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 5h16v11H7l-3 3z"></path><path d="M9 10h.01"></path><path d="M13 10h.01"></path></svg>
+          <h3 style="font-family:var(--f-head);font-size:22px;font-weight:600;margin:0">{{ t.feedEmptyTitle }}</h3>
+          <p style="margin:0;font-size:16px;line-height:1.65;color:var(--c-charcoal)">{{ t.feedEmptyBody }}</p>
+          <div style="display:flex;gap:var(--s-3);flex-wrap:wrap;margin-top:var(--s-2)">
+            <a href="#" style="font-size:15.5px;font-weight:600;color:var(--c-white);background:var(--c-navy);padding:12px 18px;border-radius:var(--r-sm);text-decoration:none">{{ t.feedEmptyAction }}</a>
+            <button type="button" onClick="{{ retryFeed }}" style="font-family:var(--f-body);font-size:15.5px;font-weight:600;color:var(--c-navy);background:transparent;border:1.5px solid var(--c-navy);padding:12px 18px;border-radius:var(--r-sm);cursor:pointer">{{ t.feedRetry }}</button>
+          </div>
+          <div style="font-size:13.5px;line-height:1.55;color:var(--c-slate);margin-top:var(--s-2)">{{ t.feedEmptyNote }}</div>
+        </div>
+      </sc-if>
+
+      <div style="margin-top:var(--s-5);display:flex;align-items:flex-start;gap:10px;border:1px dashed #B9B2A2;border-radius:var(--r-sm);background:var(--c-cream);padding:var(--s-3) var(--s-4);max-width:104ch">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5C6B7E" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v.01"></path><path d="M12 11v5"></path></svg>
+        <div style="font-size:13.5px;line-height:1.55;color:var(--c-charcoal)">{{ t.feedProvenance }}</div>
+      </div>
+
+      <div style="margin-top:var(--s-5);display:flex;gap:var(--s-3);flex-wrap:wrap;align-items:center">
+        <span style="font-size:13.5px;color:var(--c-slate);flex:none">{{ t.followOn }}</span>
+        <a href="https://facebook.com/pages/CRASA" style="font-size:15px;font-weight:600;color:var(--c-green-dark);text-decoration:underline;text-underline-offset:3px">Facebook</a>
+        <a href="#" style="font-size:15px;font-weight:600;color:var(--c-green-dark);text-decoration:underline;text-underline-offset:3px">LinkedIn</a>
+        <a href="#" style="font-size:15px;font-weight:600;color:var(--c-green-dark);text-decoration:underline;text-underline-offset:3px">YouTube</a>
+        <a href="https://x.com/Crasa2C" style="font-size:15px;font-weight:600;color:var(--c-green-dark);text-decoration:underline;text-underline-offset:3px">X</a>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--c-sand);padding:var(--s-9) 0">
+    <div style="max-width:1440px;margin:0 auto;padding:0 var(--s-7)">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:var(--s-8);align-items:center">
+        <div>
+          <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:var(--s-3)">{{ t.membersEyebrow }}</div>
+          <h2 style="font-family:var(--f-head);font-size:clamp(27px,4vw,40px);line-height:1.15;font-weight:600;margin:0 0 var(--s-4);letter-spacing:-.015em">{{ t.membersTitle }}</h2>
+          <p style="margin:0 0 var(--s-5);font-size:17px;line-height:1.65;color:var(--c-charcoal);max-width:44ch">{{ t.membersBody }}</p>
+          <svg viewBox="0 0 260 200" width="100%" style="max-width:320px;display:block" role="img" aria-label="Stylised outline of the SADC region with the fourteen CRASA member states marked.">
+            <g fill="none" stroke="#0E5536" stroke-width="1.1" opacity=".55">
+              <path d="M52 40 Q92 20 140 30 T222 66 Q232 108 200 146 T126 184 Q70 176 44 138 T52 40"></path>
+              <path d="M60 62 Q108 46 152 60 T210 84"></path>
+              <path d="M62 92 Q114 78 164 92 T212 112"></path>
+              <path d="M70 122 Q118 110 166 124"></path>
+              <path d="M86 152 Q126 144 168 156"></path>
+              <path d="M104 28 Q112 96 126 184"></path>
+              <path d="M168 40 Q176 100 176 162"></path>
+            </g>
+            <g fill="#0F1B2D">
+              <circle cx="84" cy="58" r="4"></circle><circle cx="118" cy="76" r="4"></circle><circle cx="146" cy="60" r="4"></circle>
+              <circle cx="96" cy="96" r="4"></circle><circle cx="130" cy="108" r="4"></circle><circle cx="164" cy="92" r="4"></circle>
+              <circle cx="108" cy="130" r="4"></circle><circle cx="142" cy="140" r="4"></circle><circle cx="176" cy="124" r="4"></circle>
+              <circle cx="120" cy="164" r="4"></circle><circle cx="152" cy="172" r="4"></circle><circle cx="196" cy="106" r="4"></circle>
+              <circle cx="206" cy="74" r="4"></circle><circle cx="70" cy="128" r="4"></circle>
+            </g>
+          </svg>
+          <div style="font-size:13px;color:var(--c-charcoal);margin-top:8px">{{ t.mapNote }}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:var(--s-3)">
+          <div style="background:var(--c-cream);border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:var(--s-3);display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:12px;font-weight:700;flex:none">AO</span><div><div style="font-weight:600;font-size:14.5px">INACOM</div><div style="font-size:12px;color:var(--c-slate)">Angola</div></div></div>
+          <div style="background:var(--c-cream);border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:var(--s-3);display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:12px;font-weight:700;flex:none">BW</span><div><div style="font-weight:600;font-size:14.5px">BOCRA</div><div style="font-size:12px;color:var(--c-slate)">Botswana</div></div></div>
+          <div style="background:var(--c-cream);border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:var(--s-3);display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:12px;font-weight:700;flex:none">KM</span><div><div style="font-weight:600;font-size:14.5px">ANRTIC</div><div style="font-size:12px;color:var(--c-slate)">Comoros</div></div></div>
+          <div style="background:var(--c-cream);border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:var(--s-3);display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:12px;font-weight:700;flex:none">CD</span><div><div style="font-weight:600;font-size:14.5px">ARPTC</div><div style="font-size:12px;color:var(--c-slate)">DR Congo</div></div></div>
+          <div style="background:var(--c-cream);border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:var(--s-3);display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:12px;font-weight:700;flex:none">SZ</span><div><div style="font-weight:600;font-size:14.5px">ESCCOM</div><div style="font-size:12px;color:var(--c-slate)">Eswatini</div></div></div>
+          <div style="background:var(--c-cream);border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:var(--s-3);display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:12px;font-weight:700;flex:none">LS</span><div><div style="font-weight:600;font-size:14.5px">LCA</div><div style="font-size:12px;color:var(--c-slate)">Lesotho</div></div></div>
+          <div style="background:var(--c-cream);border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:var(--s-3);display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:12px;font-weight:700;flex:none">MW</span><div><div style="font-weight:600;font-size:14.5px">MACRA</div><div style="font-size:12px;color:var(--c-slate)">Malawi</div></div></div>
+          <div style="background:var(--c-cream);border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:var(--s-3);display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:12px;font-weight:700;flex:none">MU</span><div><div style="font-weight:600;font-size:14.5px">ICTA</div><div style="font-size:12px;color:var(--c-slate)">Mauritius</div></div></div>
+          <div style="background:var(--c-cream);border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:var(--s-3);display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:12px;font-weight:700;flex:none">MZ</span><div><div style="font-weight:600;font-size:14.5px">INCM</div><div style="font-size:12px;color:var(--c-slate)">Mozambique</div></div></div>
+          <div style="background:var(--c-cream);border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:var(--s-3);display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:12px;font-weight:700;flex:none">NA</span><div><div style="font-weight:600;font-size:14.5px">CRAN</div><div style="font-size:12px;color:var(--c-slate)">Namibia</div></div></div>
+          <div style="background:var(--c-cream);border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:var(--s-3);display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:12px;font-weight:700;flex:none">ZA</span><div><div style="font-weight:600;font-size:14.5px">ICASA</div><div style="font-size:12px;color:var(--c-slate)">South Africa</div></div></div>
+          <div style="background:var(--c-cream);border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:var(--s-3);display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:12px;font-weight:700;flex:none">TZ</span><div><div style="font-weight:600;font-size:14.5px">TCRA</div><div style="font-size:12px;color:var(--c-slate)">Tanzania</div></div></div>
+          <div style="background:var(--c-cream);border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:var(--s-3);display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:12px;font-weight:700;flex:none">ZM</span><div><div style="font-weight:600;font-size:14.5px">ZICTA</div><div style="font-size:12px;color:var(--c-slate)">Zambia</div></div></div>
+          <div style="background:var(--c-cream);border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:var(--s-3);display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:12px;font-weight:700;flex:none">ZW</span><div><div style="font-weight:600;font-size:14.5px">POTRAZ</div><div style="font-size:12px;color:var(--c-slate)">Zimbabwe</div></div></div>
+          <div style="background:transparent;border:1px solid var(--c-navy);border-radius:var(--r-sm);padding:var(--s-3);display:flex;align-items:center;justify-content:center"><a href="#" style="font-size:14.5px;font-weight:600;color:var(--c-navy);text-decoration:underline;text-underline-offset:3px">{{ t.membersAll }}</a></div>
+        </div>
+      </div>
+      <div style="margin-top:var(--s-6);font-family:var(--f-admin);font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--c-navy);display:inline-block;background:var(--c-cream);border:1px dashed #B9B2A2;padding:5px 9px;border-radius:2px">AUTHORITY MARKS ARE LABELLED PLACEHOLDERS. HARVESTED LOGOS REPLACE THEM ONCE RIGHTS ARE CLEARED.</div>
+    </div>
+  </section>
+
+  <section style="max-width:1440px;margin:0 auto;padding:var(--s-9) var(--s-7) var(--s-8)">
+    <div style="border-top:1px solid var(--c-sand);padding-top:var(--s-6);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:var(--s-8);align-items:center">
+      <div>
+        <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:var(--s-3)">{{ t.partnersEyebrow }}</div>
+        <p style="margin:0;font-size:16px;line-height:1.65;color:var(--c-charcoal)">{{ t.partnersBody }}</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:var(--s-4);align-items:center">
+        <span style="border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:14px 22px;font-size:14px;font-weight:600;letter-spacing:.06em;color:var(--c-navy);background:var(--c-white)">SADC</span>
+        <span style="border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:14px 22px;font-size:14px;font-weight:600;letter-spacing:.06em;color:var(--c-navy);background:var(--c-white)">COMESA</span>
+        <span style="border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:14px 22px;font-size:14px;font-weight:600;letter-spacing:.06em;color:var(--c-navy);background:var(--c-white)">EUROPEAN UNION</span>
+        <span style="border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:14px 22px;font-size:14px;font-weight:600;letter-spacing:.06em;color:var(--c-navy);background:var(--c-white)">ITU</span>
+        <span style="border:1px dashed #B9B2A2;border-radius:var(--r-sm);padding:14px 22px;font-size:14px;font-weight:600;letter-spacing:.06em;color:var(--c-navy);background:var(--c-white)">UPU</span>
+        <span style="font-family:var(--f-admin);font-size:10px;font-weight:700;letter-spacing:.06em;background:var(--c-navy);color:var(--c-cream);padding:4px 8px;border-radius:2px">EMBLEM PLACEHOLDERS</span>
+      </div>
+    </div>
+  </section>
+
+  <footer style="background:var(--c-navy);color:var(--c-sand)">
+    <div style="max-width:1440px;margin:0 auto;padding:var(--s-8) var(--s-7) var(--s-6)">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--s-7)">
+        <div>
+          <div style="display:flex;align-items:center;gap:var(--s-3);margin-bottom:var(--s-4)">
+            <img src="assets/crasa-logo.svg" alt="" style="width:38px;height:38px;flex:none;display:block">
+            <span style="font-family:var(--f-head);font-size:19px;font-weight:600;color:var(--c-white)">CRASA</span>
+          </div>
+          <p style="margin:0 0 var(--s-4);font-size:14px;line-height:1.6;max-width:34ch">{{ t.footerBlurb }}</p>
+          <div style="font-size:14px;line-height:1.7">
+            <div>Plot 143, Unit 2, Gaborone International Finance Park</div>
+            <div>P.O. Box 25793, Gaborone, Botswana</div>
+            <div style="margin-top:8px"><a href="mailto:crasa@crasa.org" style="color:var(--c-green-light)">crasa@crasa.org</a></div>
+            <div>+267 315 84 68</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-white);margin-bottom:var(--s-4)">{{ t.about }}</div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:14.5px">
+            <a href="#" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">{{ t.whoWeAre }}</a>
+            <a href="#" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">{{ t.governance }}</a>
+            <a href="#" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">{{ t.execCommittee }}</a>
+            <a href="#" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">{{ t.secretariat }}</a>
+            <a href="#" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">{{ t.partnerships }}</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-white);margin-bottom:var(--s-4)">{{ t.publications }}</div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:14.5px">
+            <a href="#" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">{{ t.regLibrary }}</a>
+            <a href="#" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">{{ t.comparator }}</a>
+            <a href="#" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">{{ t.committees }}</a>
+            <a href="#" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">{{ t.members }}</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-white);margin-bottom:var(--s-4)">{{ t.newsroom }}</div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:14.5px">
+            <a href="#" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">{{ t.newsroom }}</a>
+            <a href="#" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">{{ t.events }}</a>
+            <a href="#" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">{{ t.contact }}</a>
+            <a href="#" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">{{ t.extranet }}</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-white);margin-bottom:var(--s-4)">{{ t.followUs }}</div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:14.5px">
+            <a href="https://x.com/Crasa2C" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">X</a>
+            <a href="https://facebook.com/pages/CRASA" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">Facebook</a>
+            <a href="#" style="color:var(--c-sand);text-decoration:none" style-hover="color:var(--c-white);text-decoration:underline">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:var(--s-7);padding-top:var(--s-5);border-top:1px solid #2C3A55;display:flex;flex-wrap:wrap;gap:var(--s-5);align-items:center;justify-content:space-between">
+        <div style="display:flex;flex-wrap:wrap;gap:var(--s-3);align-items:center">
+          <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">SADC</span>
+          <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">COMESA</span>
+          <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">EUROPEAN UNION</span>
+          <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">ITU</span>
+          <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">UPU</span>
+        </div>
+        <div style="font-size:13.5px;line-height:1.6;max-width:56ch;color:var(--c-sand)">{{ t.donorStatement }}</div>
+      </div>
+
+      <div style="margin-top:var(--s-5);padding-top:var(--s-4);border-top:1px solid #2C3A55;display:flex;flex-wrap:wrap;gap:var(--s-5);justify-content:space-between;font-size:13.5px">
+        <div>{{ t.copyright }}</div>
+        <div style="display:flex;gap:var(--s-5);flex-wrap:wrap">
+          <a href="#" style="color:var(--c-sand);text-decoration:none">{{ t.privacy }}</a>
+          <a href="#" style="color:var(--c-sand);text-decoration:none">{{ t.terms }}</a>
+          <a href="#" style="color:var(--c-sand);text-decoration:none">{{ t.accessibility }}</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <section style="background:var(--c-cream);border-top:4px solid var(--c-navy);padding:var(--s-8) var(--s-7)">
+    <div style="max-width:1440px;margin:0 auto">
+      <div style="display:flex;align-items:baseline;gap:var(--s-4);margin-bottom:var(--s-3)">
+        <span style="font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--c-green-dark)">APPENDIX</span>
+        <h2 style="font-family:var(--f-head);font-size:30px;font-weight:600;margin:0">Header states and responsive behaviour</h2>
+      </div>
+      <p style="margin:0 0 var(--s-6);font-size:16px;line-height:1.65;color:var(--c-charcoal);max-width:82ch">The header above is the full state and is sticky. Below are the compressed sticky state, the 768px tablet state and the 375px mobile state with the drawer open. Navigation collapses at the width where the nine primary items stop fitting the longest language, which is Portuguese, not at a device breakpoint.</p>
+
+      <div style="display:flex;flex-direction:column;gap:var(--s-6)">
+        <div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">Compressed sticky state, 1440px</div>
+          <div style="background:var(--c-white);border:1px solid var(--c-sand);border-radius:var(--r-md);box-shadow:var(--e-2);padding:9px var(--s-5);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-5)">
+            <span style="display:flex;align-items:center;gap:9px"><img src="assets/crasa-logo.svg" alt="" style="width:30px;height:30px;flex:none;display:block"><span style="font-family:var(--f-head);font-size:17px;font-weight:600;color:var(--c-navy)">CRASA</span></span>
+            <nav style="display:flex;gap:2px;margin-left:auto;flex-wrap:wrap">
+              <span style="font-size:14px;font-weight:600;color:var(--c-navy);padding:7px 10px;border-bottom:2px solid var(--c-green-dark)">{{ t.home }}</span>
+              <span style="font-size:14px;color:var(--c-charcoal);padding:7px 10px">{{ t.about }}</span>
+              <span style="font-size:14px;color:var(--c-charcoal);padding:7px 10px">{{ t.committees }}</span>
+              <span style="font-size:14px;color:var(--c-charcoal);padding:7px 10px">{{ t.members }}</span>
+              <span style="font-size:14px;color:var(--c-charcoal);padding:7px 10px">{{ t.publications }}</span>
+              <span style="font-size:14px;color:var(--c-charcoal);padding:7px 10px">{{ t.comparator }}</span>
+            </nav>
+            <span style="display:flex;gap:8px;align-items:center;flex:none">
+              <span style="width:34px;height:34px;display:grid;place-items:center;border:1.5px solid #C9C2B2;border-radius:var(--r-sm)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg></span>
+              <span style="font-size:13px;font-weight:600;color:var(--c-navy);border:1.5px solid var(--c-navy);border-radius:var(--r-sm);padding:7px 10px">{{ t.langShort }}</span>
+              <span style="font-size:14px;font-weight:600;color:var(--c-white);background:var(--c-navy);padding:8px 13px;border-radius:var(--r-sm)">{{ t.extranet }}</span>
+            </span>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:var(--s-6);flex-wrap:wrap;align-items:flex-start;min-width:0;overflow-x:auto">
+          <div style="flex:1 1 420px;min-width:340px">
+            <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">768px tablet</div>
+            <div style="border:1px solid var(--c-sand);border-radius:var(--r-md);overflow:hidden;background:var(--c-white)">
+              <div style="padding:var(--s-3) var(--s-4);display:flex;align-items:center;gap:var(--s-3);border-bottom:1px solid var(--c-sand)">
+                <img src="assets/crasa-logo.svg" alt="" style="width:32px;height:32px;flex:none;display:block">
+                <span style="font-family:var(--f-head);font-size:17px;font-weight:600;color:var(--c-navy)">CRASA</span>
+                <span style="margin-left:auto;display:flex;gap:8px;align-items:center">
+                  <span style="font-size:13px;font-weight:600;color:var(--c-navy);border:1.5px solid var(--c-navy);border-radius:var(--r-sm);padding:7px 10px">{{ t.langShort }}</span>
+                  <span style="font-size:13.5px;font-weight:600;color:var(--c-white);background:var(--c-navy);padding:8px 12px;border-radius:var(--r-sm)">{{ t.extranet }}</span>
+                  <span style="width:40px;height:40px;display:grid;place-items:center;border:1.5px solid var(--c-navy);border-radius:var(--r-sm)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F1B2D" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg></span>
+                </span>
+              </div>
+              <div style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-5) var(--s-4)">
+                <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:var(--s-3)">{{ t.eyebrow }}</div>
+                <div style="font-family:var(--f-head);font-size:32px;line-height:1.1;font-weight:600;margin-bottom:var(--s-4);text-wrap:balance">{{ t.headline }}</div>
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s-4);border-top:1px solid #2C3A55;padding-top:var(--s-4)">
+                  <div><div style="font-family:var(--f-head);font-size:26px;font-weight:600;color:var(--c-white)">14</div><div style="font-size:12px;color:var(--c-sand)">{{ t.fact1 }}</div></div>
+                  <div><div style="font-family:var(--f-head);font-size:26px;font-weight:600;color:var(--c-white)">350M+</div><div style="font-size:12px;color:var(--c-sand)">{{ t.fact3 }}</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex:0 0 375px">
+            <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">375px mobile, drawer open</div>
+            <div style="width:375px;border:1px solid var(--c-sand);border-radius:var(--r-md);overflow:hidden;background:var(--c-white)">
+              <div style="padding:var(--s-3) var(--s-4);display:flex;align-items:center;gap:var(--s-3);border-bottom:1px solid var(--c-sand)">
+                <img src="assets/crasa-logo.svg" alt="" style="width:30px;height:30px;flex:none;display:block">
+                <span style="font-family:var(--f-head);font-size:16px;font-weight:600;color:var(--c-navy)">CRASA</span>
+                <span style="margin-left:auto;width:44px;height:44px;display:grid;place-items:center;border:1.5px solid var(--c-navy);border-radius:var(--r-sm)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F1B2D" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg></span>
+              </div>
+              <div style="background:var(--c-navy);padding:var(--s-4);display:flex;flex-direction:column;gap:2px">
+                <span style="font-size:16px;font-weight:600;color:var(--c-white);padding:13px var(--s-3);border-left:3px solid var(--c-green);background:var(--c-navy-mid)">{{ t.home }}</span>
+                <span style="font-size:16px;color:var(--c-cream);padding:13px var(--s-3)">{{ t.about }}</span>
+                <span style="font-size:16px;color:var(--c-cream);padding:13px var(--s-3)">{{ t.committees }}</span>
+                <span style="font-size:16px;color:var(--c-cream);padding:13px var(--s-3)">{{ t.members }}</span>
+                <span style="font-size:16px;color:var(--c-cream);padding:13px var(--s-3)">{{ t.publications }}</span>
+                <span style="font-size:16px;color:var(--c-cream);padding:13px var(--s-3)">{{ t.newsroom }}</span>
+                <span style="font-size:16px;color:var(--c-cream);padding:13px var(--s-3)">{{ t.events }}</span>
+                <span style="font-size:16px;color:var(--c-cream);padding:13px var(--s-3)">{{ t.comparator }}</span>
+                <span style="font-size:16px;color:var(--c-cream);padding:13px var(--s-3)">{{ t.contact }}</span>
+                <div style="display:flex;gap:8px;margin-top:var(--s-4);border-top:1px solid #2C3A55;padding-top:var(--s-4)">
+                  <span style="flex:1;text-align:center;font-size:15px;font-weight:600;padding:12px;border-radius:var(--r-sm);background:var(--c-green-dark);color:var(--c-white)">EN</span>
+                  <span style="flex:1;text-align:center;font-size:15px;font-weight:600;padding:12px;border-radius:var(--r-sm);border:1.5px solid #4A5670;color:var(--c-cream)">FR</span>
+                  <span style="flex:1;text-align:center;font-size:15px;font-weight:600;padding:12px;border-radius:var(--r-sm);border:1.5px solid #4A5670;color:var(--c-cream)">PT</span>
+                </div>
+                <span style="margin-top:var(--s-3);text-align:center;font-size:16px;font-weight:600;color:var(--c-navy);background:var(--c-cream);padding:14px;border-radius:var(--r-sm)">{{ t.extranet }}</span>
+              </div>
+              <div style="padding:var(--s-4);border-top:1px solid var(--c-sand);display:flex;align-items:center;gap:var(--s-3);background:var(--c-green-light)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E5536" stroke-width="2" stroke-linecap="round" style="flex:none" aria-hidden="true"><path d="M12 16V4"></path><path d="M7 9l5-5 5 5"></path><path d="M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"></path></svg>
+                <div style="font-size:14px;line-height:1.5;color:var(--c-green-dark)"><strong>{{ t.pwaTitle }}</strong><br>{{ t.pwaBody }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--c-white);border-top:1px solid var(--c-line);padding:var(--s-9) 0">
+    <div style="max-width:1320px;margin:0 auto;padding:0 var(--s-7)">
+      <div style="max-width:74ch;margin-bottom:var(--s-7)">
+        <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:var(--s-3)">Accessibility, motion</div>
+        <h2 style="font-family:var(--f-head);font-size:clamp(26px,3.6vw,38px);line-height:1.14;font-weight:600;margin:0 0 var(--s-4);letter-spacing:-.015em">The reduced-motion variant of this screen</h2>
+        <p style="margin:0;font-size:18px;line-height:1.65;color:var(--c-charcoal)" data-motion-note>Reduced motion removes movement, not feedback. Position and scale stop changing; opacity and colour transitions stay, so every state change is still visible. The preference is honoured live on this page, not simulated. Both demonstrations run once on load, in line with the motion specification, which forbids looping decoration. Reload to replay them.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:var(--s-6)">
+
+        <div style="border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden;background:var(--c-cream)">
+          <div style="background:var(--c-navy);color:var(--c-white);padding:11px var(--s-5);display:flex;align-items:baseline;gap:var(--s-3);flex-wrap:wrap">
+            <span style="font-size:15px;font-weight:600">Standard motion</span>
+            <span style="font-size:13px;color:var(--c-sand)">Default, no preference set</span>
+          </div>
+          <div style="padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-5)">
+            <div>
+              <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin-bottom:10px">Section reveal</div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <div data-motion style="animation:crasa-rise 620ms cubic-bezier(.2,.8,.2,1) both;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:11px var(--s-4);font-size:14.5px;font-weight:600">Harmonising ICT and postal regulation</div>
+                <div data-motion style="animation:crasa-rise 620ms 90ms cubic-bezier(.2,.8,.2,1) both;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:11px var(--s-4);font-size:14px;color:var(--c-charcoal)">Cards enter with a 90ms stagger, 18px of travel</div>
+              </div>
+              <p style="margin:9px 0 0;font-size:13.5px;line-height:1.55;color:var(--c-slate)">Content fades up 18px over 620ms, staggered by 90ms.</p>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin-bottom:10px">Hero parallax</div>
+              <div style="height:88px;border-radius:var(--r-sm);background:var(--c-navy);overflow:hidden;display:grid;place-items:center">
+                <span data-motion style="animation:crasa-shift 2600ms ease-in-out 1 both;font-family:var(--f-head);font-size:24px;font-weight:600;color:var(--c-white)">14 regulators</span>
+              </div>
+              <p style="margin:9px 0 0;font-size:13.5px;line-height:1.55;color:var(--c-slate)">The hero layer travels a maximum of 9px against the scroll.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="border:1px solid var(--c-green-dark);border-radius:var(--r-md);overflow:hidden;background:var(--c-cream)">
+          <div style="background:var(--c-green-dark);color:var(--c-white);padding:11px var(--s-5);display:flex;align-items:baseline;gap:var(--s-3);flex-wrap:wrap">
+            <span style="font-size:15px;font-weight:600">Reduced motion</span>
+            <span style="font-size:13px;color:#CFE7D9">prefers-reduced-motion: reduce</span>
+          </div>
+          <div style="padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-5)">
+            <div>
+              <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin-bottom:10px">Section reveal</div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <div style="animation:crasa-fade 320ms linear both;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:11px var(--s-4);font-size:14.5px;font-weight:600">Harmonising ICT and postal regulation</div>
+                <div style="animation:crasa-fade 320ms linear both;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:11px var(--s-4);font-size:14px;color:var(--c-charcoal)">The stagger is dropped, the fade is kept</div>
+              </div>
+              <p style="margin:9px 0 0;font-size:13.5px;line-height:1.55;color:var(--c-slate)">No travel and no stagger. A 320ms fade only, so arrival is still legible.</p>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin-bottom:10px">Hero parallax</div>
+              <div style="height:88px;border-radius:var(--r-sm);background:var(--c-navy);overflow:hidden;display:grid;place-items:center">
+                <span style="font-family:var(--f-head);font-size:24px;font-weight:600;color:var(--c-white)">14 regulators</span>
+              </div>
+              <p style="margin:9px 0 0;font-size:13.5px;line-height:1.55;color:var(--c-slate)">Parallax is switched off entirely. The layer holds its position.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:var(--s-6);background:var(--c-cream);border-left:3px solid var(--c-green-dark);border-radius:var(--r-sm);padding:var(--s-4) var(--s-5);font-size:15px;line-height:1.6;color:var(--c-charcoal);max-width:96ch">What is kept under the reduced preference: focus rings, hover and active colour changes, opacity transitions, loading indicators that change without moving, and every status change. What is removed: travel, scale, parallax, count-up, and the reveal stagger. The homepage and the responsive screen both carry this variant.</div>
+    </div>
+  </section>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const STR = {
+  en: {
+    pillar2alt:"A technical staff member briefing colleagues in a communications facility.",
+    pillar2caption:"Illustrative photograph.",
+    pillar1stat:"Guidelines and model frameworks adopted across the region since 1998.",
+    pillar3stat:"National postal operators covered by the regional universal service framework.",
+    news1alt:"A technical staff member briefing colleagues in a communications facility.",
+    agmEyebrow:"Next in the calendar", agmTitle:"CRASA 15th Annual General Meeting",
+    agmVenue:"Bingu Wa Mutharika International Convention Centre, Presidential Way, Malawi",
+    agmSlotNote:"Venue photography has not been supplied. A 3:2 slot is specified for this block and the typographic treatment holds until it arrives.",
+    fullName:"Communications Regulators' Association of Southern Africa",
+    home:"Home", about:"About CRASA", committees:"Committees", members:"Members",
+    publications:"Publications", newsroom:"Newsroom", events:"Events", comparator:"Comparator",
+    contact:"Contact", extranet:"Extranet", search:"Search", langShort:"EN",
+    eyebrow:"Communications Regulators of Southern Africa",
+    headline:"Harmonising ICT and postal regulation across Southern Africa.",
+    subtext:"CRASA brings together the national regulatory authorities of 14 SADC member states to align frameworks, share regulatory practice, and strengthen the region's communications and postal sectors.",
+    primaryAction:"Explore the library", secondaryAction:"About CRASA",
+    fact1:"Member regulators", fact2:"Established", fact3:"Citizens served", fact4:"Sectors regulated",
+    whatWeDo:"What we do", pillarsTitle:"Four lines of work, one regional framework",
+    pillar1t:"Harmonised frameworks", pillar1b:"Model laws, guidelines and recommendations that member states adopt into national regulation, so a licence condition in one market is recognisable in another.",
+    pillar2t:"Spectrum and infrastructure", pillar2b:"Coordinated allocation and assignment across borders, including the regional spectrum allocation plan and the IMT 2020 deployment roadmap.",
+    pillar3t:"Postal and logistics reform", pillar3b:"Universal service obligation, quality of service monitoring and postal financial inclusion, delivered with the UPU.",
+    pillar4t:"Capacity and consumer protection", pillar4b:"Training for regulator staff, and consumer rights instruments that give users the same protections across the region.",
+    compEyebrow:"Regulatory comparator", compTitle:"Compare regulation across member states",
+    compBody:"Twelve indicators across spectrum management, roaming and mobile, and postal services. Select up to four member states and see them side by side, with a source and a date on every value.",
+    compAction:"Open the comparator", compCaption:"Roaming and mobile, two member states",
+    stateA:"Member state A", stateB:"Member state B",
+    ind1:"Mobile Penetration", ind2:"Mobile Number Portability", ind3:"5G Spectrum Assigned",
+    yes:"Yes", no:"No",
+    demoTitle:"Demonstration data.", demoBody:"These values are unverified and are shown to demonstrate the tool. The notice stays until each value is confirmed by its national regulator.",
+    demoPill:"Demonstration data", updated:"Last updated 4 August 2026",
+    pubEyebrow:"Regulatory library", pubTitle:"Latest guidelines and frameworks", pubAll:"All 35 publications",
+    guideline:"Guideline", modelLaw:"Model Law", postal:"Postal",
+    breakEyebrow:"One region, one set of rules",
+    breakQuote:"A traveller who crosses a border in the SADC region should not cross a regulatory one. Harmonised roaming, numbering and consumer protection rules are what make that true.",
+    breakAction:"Read the SADC Roaming Guidelines",
+    newsEyebrow:"Newsroom", newsTitle:"Latest updates", newsAll:"All updates",
+    tender:"Tender", consultation:"Public consultation",
+    eventsEyebrow:"Events", eventsTitle:"Upcoming", agmShort:"AGM",
+    eventsNote:"This feed synchronises with CRASA's Event Management Platform. Registration and calendar export are handled there.",
+    membersEyebrow:"Member regulators", membersTitle:"Fourteen national authorities",
+    membersBody:"CRASA's membership covers the communications and postal regulators of 14 SADC member states, from Angola to Zimbabwe.",
+    mapNote:"Regional map motif, drawn as inline SVG. Interactive on the members page.",
+    membersAll:"View all members",
+    partnersEyebrow:"Partners and donor visibility",
+    partnersBody:"CRASA works with SADC, COMESA, the European Union, the ITU and the UPU. This platform is developed under the EGEE-ICT programme.",
+    footerBlurb:"A Specialised Agency of SADC, established in 1997, harmonising the postal and ICT regulatory environment in the SADC region.",
+    whoWeAre:"Who we are", governance:"Governance", execCommittee:"Executive Committee",
+    secretariat:"Secretariat", partnerships:"Partnerships", regLibrary:"Regulatory library",
+    followUs:"Follow us",
+    donorStatement:"This platform is developed under the EGEE-ICT programme, funded by the European Union and implemented with COMESA. Emblem placement and the funding statement are to be confirmed against COMESA visibility requirements.",
+    copyright:"\u00A9 2026 CRASA. All rights reserved.",
+    privacy:"Privacy notice", terms:"Terms of use", accessibility:"Accessibility statement",
+    pwaTitle:"Install CRASA on this device", pwaBody:"Works offline for saved documents and your meeting agendas.",
+    mapMotifLabel:"SADC map motif",
+    mapMotifNote:"Drawn as inline SVG. This slide uses the regional data treatment rather than a photograph.",
+    dataVisualLabel:"The region in figures",
+    dataVisualNote:"Data as visual, used in place of section-break photography. Every figure is drawn from the platform's own records.",
+    pillar4alt:"A household broadband router on a desk, with a subscriber setting up a home connection behind it.",
+    pillar4caption:"Illustrative photograph. Consumer protection and universal access.",
+    gridLabels:["Member regulators","Committees","Indicators tracked","Published instruments","Sectors regulated","Interface languages","Established","Citizens served","Portuguese-speaking members","French-speaking members","Guidelines adopted","Years of instruments"]
+  },
+  fr: {
+    pillar2alt:"Une technicienne informe ses coll\u00E8gues dans une installation de communications.",
+    pillar2caption:"Photographie d\u2019illustration.",
+    pillar1stat:"Lignes directrices et cadres types adopt\u00E9s dans la r\u00E9gion depuis 1998.",
+    pillar3stat:"Op\u00E9rateurs postaux nationaux couverts par le cadre r\u00E9gional de service universel.",
+    news1alt:"Une technicienne informe ses coll\u00E8gues dans une installation de communications.",
+    agmEyebrow:"Prochainement au calendrier", agmTitle:"15e Assembl\u00E9e g\u00E9n\u00E9rale annuelle de la CRASA",
+    agmVenue:"Bingu Wa Mutharika International Convention Centre, Presidential Way, Malawi",
+    agmSlotNote:"Aucune photographie du lieu n'a \u00E9t\u00E9 fournie. Un emplacement 3:2 est pr\u00E9vu pour ce bloc et le traitement typographique tient jusqu'\u00E0 son arriv\u00E9e.",
+    fullName:"Association des r\u00E9gulateurs des communications d'Afrique australe",
+    home:"Accueil", about:"\u00C0 propos de la CRASA", committees:"Comit\u00E9s", members:"Membres",
+    publications:"Publications", newsroom:"Salle de presse", events:"\u00C9v\u00E9nements", comparator:"Comparateur",
+    contact:"Contact", extranet:"Extranet", search:"Rechercher", langShort:"FR",
+    eyebrow:"R\u00E9gulateurs des communications d'Afrique australe",
+    headline:"Harmoniser la r\u00E9glementation des TIC et des services postaux en Afrique australe.",
+    subtext:"La CRASA r\u00E9unit les autorit\u00E9s de r\u00E9gulation nationales de 14 \u00C9tats membres de la SADC afin d'aligner les cadres r\u00E9glementaires, de partager les pratiques de r\u00E9gulation et de renforcer les secteurs des communications et des services postaux de la r\u00E9gion.",
+    primaryAction:"Explorer la biblioth\u00E8que", secondaryAction:"\u00C0 propos de la CRASA",
+    fact1:"R\u00E9gulateurs membres", fact2:"Cr\u00E9ation", fact3:"Citoyens desservis", fact4:"Secteurs r\u00E9glement\u00E9s",
+    whatWeDo:"Ce que nous faisons", pillarsTitle:"Quatre axes de travail, un cadre r\u00E9gional",
+    pillar1t:"Cadres harmonis\u00E9s", pillar1b:"Lois types, lignes directrices et recommandations que les \u00C9tats membres transposent dans leur r\u00E9glementation nationale, afin qu'une condition de licence dans un march\u00E9 soit reconnaissable dans un autre.",
+    pillar2t:"Spectre et infrastructures", pillar2b:"Attribution et assignation coordonn\u00E9es entre les fronti\u00E8res, y compris le plan r\u00E9gional d'attribution du spectre et la feuille de route de d\u00E9ploiement IMT 2020.",
+    pillar3t:"R\u00E9forme postale et logistique", pillar3b:"Obligation de service universel, suivi de la qualit\u00E9 de service et inclusion financi\u00E8re postale, mis en \u0153uvre avec l'UPU.",
+    pillar4t:"Capacit\u00E9s et protection des consommateurs", pillar4b:"Formation du personnel des r\u00E9gulateurs et instruments de protection des consommateurs qui garantissent les m\u00EAmes droits dans toute la r\u00E9gion.",
+    compEyebrow:"Comparateur r\u00E9glementaire", compTitle:"Comparer la r\u00E9glementation entre les \u00C9tats membres",
+    compBody:"Douze indicateurs r\u00E9partis entre la gestion du spectre, l'itin\u00E9rance et le mobile, et les services postaux. S\u00E9lectionnez jusqu'\u00E0 quatre \u00C9tats membres et comparez-les, avec une source et une date pour chaque valeur.",
+    compAction:"Ouvrir le comparateur", compCaption:"Itin\u00E9rance et mobile, deux \u00C9tats membres",
+    stateA:"\u00C9tat membre A", stateB:"\u00C9tat membre B",
+    ind1:"Taux de p\u00E9n\u00E9tration du mobile", ind2:"Portabilit\u00E9 des num\u00E9ros mobiles", ind3:"Spectre 5G assign\u00E9",
+    yes:"Oui", no:"Non",
+    demoTitle:"Donn\u00E9es de d\u00E9monstration.", demoBody:"Ces valeurs ne sont pas v\u00E9rifi\u00E9es et sont pr\u00E9sent\u00E9es \u00E0 titre de d\u00E9monstration. L'avis reste affich\u00E9 jusqu'\u00E0 confirmation de chaque valeur par le r\u00E9gulateur national concern\u00E9.",
+    demoPill:"Donn\u00E9es de d\u00E9monstration", updated:"Derni\u00E8re mise \u00E0 jour le 4 ao\u00FBt 2026",
+    pubEyebrow:"Biblioth\u00E8que r\u00E9glementaire", pubTitle:"Derni\u00E8res lignes directrices et cadres", pubAll:"Les 35 publications",
+    guideline:"Ligne directrice", modelLaw:"Loi type", postal:"Postal",
+    breakEyebrow:"Une r\u00E9gion, un ensemble de r\u00E8gles",
+    breakQuote:"Un voyageur qui franchit une fronti\u00E8re dans la r\u00E9gion de la SADC ne devrait pas franchir une fronti\u00E8re r\u00E9glementaire. L'harmonisation de l'itin\u00E9rance, de la num\u00E9rotation et de la protection des consommateurs rend cela possible.",
+    breakAction:"Lire les lignes directrices de la SADC sur l'itin\u00E9rance",
+    newsEyebrow:"Salle de presse", newsTitle:"Derni\u00E8res actualit\u00E9s", newsAll:"Toutes les actualit\u00E9s",
+    tender:"Appel d'offres", consultation:"Consultation publique",
+    eventsEyebrow:"\u00C9v\u00E9nements", eventsTitle:"\u00C0 venir", agmShort:"AGA",
+    eventsNote:"Ce flux est synchronis\u00E9 avec la plateforme de gestion des \u00E9v\u00E9nements de la CRASA. L'inscription et l'export vers le calendrier y sont trait\u00E9s.",
+    membersEyebrow:"R\u00E9gulateurs membres", membersTitle:"Quatorze autorit\u00E9s nationales",
+    membersBody:"Les membres de la CRASA regroupent les r\u00E9gulateurs des communications et des services postaux de 14 \u00C9tats membres de la SADC, de l'Angola au Zimbabwe.",
+    mapNote:"Motif cartographique r\u00E9gional, dessin\u00E9 en SVG. Interactif sur la page des membres.",
+    membersAll:"Voir tous les membres",
+    partnersEyebrow:"Partenaires et visibilit\u00E9 des bailleurs",
+    partnersBody:"La CRASA travaille avec la SADC, le COMESA, l'Union europ\u00E9enne, l'UIT et l'UPU. Cette plateforme est d\u00E9velopp\u00E9e dans le cadre du programme EGEE-ICT.",
+    footerBlurb:"Agence sp\u00E9cialis\u00E9e de la SADC, cr\u00E9\u00E9e en 1997, chargée d'harmoniser l'environnement r\u00E9glementaire postal et des TIC dans la r\u00E9gion de la SADC.",
+    whoWeAre:"Qui nous sommes", governance:"Gouvernance", execCommittee:"Comit\u00E9 ex\u00E9cutif",
+    secretariat:"Secr\u00E9tariat", partnerships:"Partenariats", regLibrary:"Biblioth\u00E8que r\u00E9glementaire",
+    followUs:"Nous suivre",
+    donorStatement:"Cette plateforme est d\u00E9velopp\u00E9e dans le cadre du programme EGEE-ICT, financ\u00E9 par l'Union europ\u00E9enne et mis en \u0153uvre avec le COMESA. L'emplacement des embl\u00E8mes et la mention de financement restent \u00E0 confirmer selon les exigences de visibilit\u00E9 du COMESA.",
+    copyright:"\u00A9 2026 CRASA. Tous droits r\u00E9serv\u00E9s.",
+    privacy:"Avis de confidentialit\u00E9", terms:"Conditions d'utilisation", accessibility:"D\u00E9claration d'accessibilit\u00E9",
+    pwaTitle:"Installer la CRASA sur cet appareil", pwaBody:"Fonctionne hors ligne pour les documents enregistr\u00E9s et vos ordres du jour.",
+    mapMotifLabel:"Motif cartographique de la SADC",
+    mapMotifNote:"Dessin\u00E9 en SVG. Les photographies de la CRASA n'ont pas encore \u00E9t\u00E9 fournies : la banni\u00E8re utilise donc l'alternative con\u00E7ue plut\u00F4t qu'une photographie provisoire.",
+    dataVisualLabel:"La r\u00E9gion en chiffres",
+    dataVisualNote:"Les donn\u00E9es comme visuel, \u00E0 la place d'une photographie de transition. Chaque chiffre provient des enregistrements de la plateforme.",
+    pillar4alt:"Un routeur haut débit domestique sur un bureau, un abonné installant sa connexion à l'arrière-plan.",
+    pillar4caption:"Photographie d\u2019illustration. Protection des consommateurs et acc\u00E8s universel.",
+    gridLabels:["R\u00E9gulateurs membres","Comit\u00E9s","Indicateurs suivis","Instruments publi\u00E9s","Secteurs r\u00E9glement\u00E9s","Langues de l'interface","Cr\u00E9ation","Citoyens desservis","Membres lusophones","Membres francophones","Lignes directrices adopt\u00E9es","Ann\u00E9es d'instruments"]
+  },
+  pt: {
+    pillar2alt:"Uma t\u00E9cnica informa os colegas numa instala\u00E7\u00E3o de comunica\u00E7\u00F5es.",
+    pillar2caption:"Fotografia ilustrativa.",
+    pillar1stat:"Diretrizes e quadros-modelo adotados na regi\u00E3o desde 1998.",
+    pillar3stat:"Operadores postais nacionais abrangidos pelo quadro regional de servi\u00E7o universal.",
+    news1alt:"Uma t\u00E9cnica informa os colegas numa instala\u00E7\u00E3o de comunica\u00E7\u00F5es.",
+    agmEyebrow:"A seguir no calend\u00E1rio", agmTitle:"15.\u00AA Assembleia Geral Anual da CRASA",
+    agmVenue:"Bingu Wa Mutharika International Convention Centre, Presidential Way, Malawi",
+    agmSlotNote:"N\u00E3o foi fornecida fotografia do local. Est\u00E1 especificada uma \u00E1rea 3:2 para este bloco e o tratamento tipogr\u00E1fico mantem-se at\u00E9 \u00E0 sua chegada.",
+    fullName:"Associa\u00E7\u00E3o dos Reguladores de Comunica\u00E7\u00F5es da \u00C1frica Austral",
+    home:"In\u00EDcio", about:"Sobre a CRASA", committees:"Comit\u00E9s", members:"Membros",
+    publications:"Publica\u00E7\u00F5es", newsroom:"Sala de imprensa", events:"Eventos", comparator:"Comparador",
+    contact:"Contacto", extranet:"Extranet", search:"Pesquisar", langShort:"PT",
+    eyebrow:"Reguladores das comunica\u00E7\u00F5es da \u00C1frica Austral",
+    headline:"Harmonizar a regulamenta\u00E7\u00E3o das TIC e dos servi\u00E7os postais na \u00C1frica Austral.",
+    subtext:"A CRASA re\u00FAne as autoridades reguladoras nacionais de 14 Estados membros da SADC para alinhar quadros regulat\u00F3rios, partilhar pr\u00E1ticas de regula\u00E7\u00E3o e refor\u00E7ar os setores das comunica\u00E7\u00F5es e dos servi\u00E7os postais da regi\u00E3o.",
+    primaryAction:"Explorar a biblioteca", secondaryAction:"Sobre a CRASA",
+    fact1:"Reguladores membros", fact2:"Funda\u00E7\u00E3o", fact3:"Cidad\u00E3os servidos", fact4:"Setores regulados",
+    whatWeDo:"O que fazemos", pillarsTitle:"Quatro linhas de trabalho, um quadro regional",
+    pillar1t:"Quadros harmonizados", pillar1b:"Leis-modelo, diretrizes e recomenda\u00E7\u00F5es que os Estados membros transp\u00F5em para a regulamenta\u00E7\u00E3o nacional, para que uma condi\u00E7\u00E3o de licenciamento num mercado seja reconhec\u00EDvel noutro.",
+    pillar2t:"Espectro e infraestruturas", pillar2b:"Atribui\u00E7\u00E3o e consigna\u00E7\u00E3o coordenadas entre fronteiras, incluindo o plano regional de atribui\u00E7\u00E3o de espectro e o roteiro de implanta\u00E7\u00E3o IMT 2020.",
+    pillar3t:"Reforma postal e log\u00EDstica", pillar3b:"Obriga\u00E7\u00E3o de servi\u00E7o universal, monitoriza\u00E7\u00E3o da qualidade de servi\u00E7o e inclus\u00E3o financeira postal, em conjunto com a UPU.",
+    pillar4t:"Capacita\u00E7\u00E3o e prote\u00E7\u00E3o do consumidor", pillar4b:"Forma\u00E7\u00E3o para o pessoal dos reguladores e instrumentos de direitos do consumidor que garantem as mesmas prote\u00E7\u00F5es em toda a regi\u00E3o.",
+    compEyebrow:"Comparador regulat\u00F3rio", compTitle:"Comparar a regulamenta\u00E7\u00E3o entre os Estados membros",
+    compBody:"Doze indicadores em gest\u00E3o do espectro, roaming e m\u00F3vel, e servi\u00E7os postais. Selecione at\u00E9 quatro Estados membros e compare-os lado a lado, com fonte e data em cada valor.",
+    compAction:"Abrir o comparador", compCaption:"Roaming e m\u00F3vel, dois Estados membros",
+    stateA:"Estado membro A", stateB:"Estado membro B",
+    ind1:"Penetra\u00E7\u00E3o m\u00F3vel", ind2:"Portabilidade do n\u00FAmero m\u00F3vel", ind3:"Espectro 5G consignado",
+    yes:"Sim", no:"N\u00E3o",
+    demoTitle:"Dados de demonstra\u00E7\u00E3o.", demoBody:"Estes valores n\u00E3o est\u00E3o verificados e s\u00E3o apresentados para demonstrar a ferramenta. O aviso permanece at\u00E9 que cada valor seja confirmado pelo respetivo regulador nacional.",
+    demoPill:"Dados de demonstra\u00E7\u00E3o", updated:"\u00DAltima atualiza\u00E7\u00E3o a 4 de agosto de 2026",
+    pubEyebrow:"Biblioteca regulat\u00F3ria", pubTitle:"Diretrizes e quadros mais recentes", pubAll:"Todas as 35 publica\u00E7\u00F5es",
+    guideline:"Diretriz", modelLaw:"Lei-modelo", postal:"Postal",
+    breakEyebrow:"Uma regi\u00E3o, um conjunto de regras",
+    breakQuote:"Quem atravessa uma fronteira na regi\u00E3o da SADC n\u00E3o deveria atravessar uma fronteira regulat\u00F3ria. A harmoniza\u00E7\u00E3o do roaming, da numera\u00E7\u00E3o e da prote\u00E7\u00E3o do consumidor \u00E9 o que torna isso poss\u00EDvel.",
+    breakAction:"Ler as Diretrizes de Roaming da SADC",
+    newsEyebrow:"Sala de imprensa", newsTitle:"Atualiza\u00E7\u00F5es recentes", newsAll:"Todas as atualiza\u00E7\u00F5es",
+    tender:"Concurso", consultation:"Consulta p\u00FAblica",
+    eventsEyebrow:"Eventos", eventsTitle:"Pr\u00F3ximos", agmShort:"AGM",
+    eventsNote:"Este feed sincroniza com a Plataforma de Gest\u00E3o de Eventos da CRASA. A inscri\u00E7\u00E3o e a exporta\u00E7\u00E3o para o calend\u00E1rio s\u00E3o tratadas a\u00ED.",
+    membersEyebrow:"Reguladores membros", membersTitle:"Catorze autoridades nacionais",
+    membersBody:"Os membros da CRASA abrangem os reguladores das comunica\u00E7\u00F5es e dos servi\u00E7os postais de 14 Estados membros da SADC, de Angola ao Zimbabu\u00E9.",
+    mapNote:"Motivo cartogr\u00E1fico regional, desenhado em SVG. Interativo na p\u00E1gina de membros.",
+    membersAll:"Ver todos os membros",
+    partnersEyebrow:"Parceiros e visibilidade dos doadores",
+    partnersBody:"A CRASA trabalha com a SADC, o COMESA, a Uni\u00E3o Europeia, a UIT e a UPU. Esta plataforma \u00E9 desenvolvida no \u00E2mbito do programa EGEE-ICT.",
+    footerBlurb:"Ag\u00EAncia Especializada da SADC, criada em 1997, para harmonizar o ambiente regulat\u00F3rio postal e das TIC na regi\u00E3o da SADC.",
+    whoWeAre:"Quem somos", governance:"Governa\u00E7\u00E3o", execCommittee:"Comit\u00E9 executivo",
+    secretariat:"Secretariado", partnerships:"Parcerias", regLibrary:"Biblioteca regulat\u00F3ria",
+    followUs:"Siga-nos",
+    donorStatement:"Esta plataforma \u00E9 desenvolvida no \u00E2mbito do programa EGEE-ICT, financiado pela Uni\u00E3o Europeia e implementado com o COMESA. A coloca\u00E7\u00E3o dos emblemas e a declara\u00E7\u00E3o de financiamento ser\u00E3o confirmadas face aos requisitos de visibilidade do COMESA.",
+    copyright:"\u00A9 2026 CRASA. Todos os direitos reservados.",
+    privacy:"Aviso de privacidade", terms:"Termos de utiliza\u00E7\u00E3o", accessibility:"Declara\u00E7\u00E3o de acessibilidade",
+    pwaTitle:"Instalar a CRASA neste dispositivo", pwaBody:"Funciona offline para documentos guardados e as suas agendas de reuni\u00E3o.",
+    mapMotifLabel:"Motivo cartogr\u00E1fico da SADC",
+    mapMotifNote:"Desenhado em SVG. As fotografias da CRASA ainda n\u00E3o foram fornecidas, pelo que o destaque usa a alternativa desenhada em vez de uma fotografia provis\u00F3ria.",
+    dataVisualLabel:"A regi\u00E3o em n\u00FAmeros",
+    dataVisualNote:"Dados como elemento visual, em vez de uma fotografia de transi\u00E7\u00E3o. Cada n\u00FAmero prov\u00E9m dos registos da pr\u00F3pria plataforma.",
+    pillar4alt:"Um router de banda larga doméstica sobre uma mesa, com um assinante a instalar a ligação em segundo plano.",
+    pillar4caption:"Fotografia ilustrativa. Prote\u00E7\u00E3o do consumidor e acesso universal.",
+    gridLabels:["Reguladores membros","Comit\u00E9s","Indicadores acompanhados","Instrumentos publicados","Setores regulados","Idiomas da interface","Funda\u00E7\u00E3o","Cidad\u00E3os servidos","Membros lus\u00F3fonos","Membros franc\u00F3fonos","Diretrizes adotadas","Anos de instrumentos"]
+  }
+};
+
+const EXTRA = {
+  en: {
+    pillar2alt:"A technical staff member briefing colleagues in a communications facility.",
+    pillar2caption:"Illustrative photograph.",
+    pillar1stat:"Guidelines and model frameworks adopted across the region since 1998.",
+    pillar3stat:"National postal operators covered by the regional universal service framework.",
+    news1alt:"A technical staff member briefing colleagues in a communications facility.",
+    agmEyebrow:"Next in the calendar", agmTitle:"CRASA 15th Annual General Meeting",
+    agmVenue:"Bingu Wa Mutharika International Convention Centre, Presidential Way, Malawi",
+    agmSlotNote:"Venue photography has not been supplied. A 3:2 slot is specified for this block and the typographic treatment holds until it arrives.",
+    heroLabel:"Featured", prevLabel:"Previous slide", nextLabel:"Next slide", slideListLabel:"Choose a slide",
+    pauseRunning:"Pause", pausePaused:"Play",
+    stateRunning:"Rotating every 8 seconds. Pauses on hover and on keyboard focus.",
+    statePaused:"Paused for this session. Rotation stays off until Play is pressed.",
+    stateHover:"Paused while the pointer is over the hero.",
+    stateFocus:"Paused while keyboard focus is inside the hero.",
+    stateReduced:"Reduced motion is requested by this system, so rotation is off. The controls remain.",
+    chartTitle:"Mobile penetration, selected member states",
+    chartNote:"One indicator, shown for the two member states the comparator teaser already carries. Bars grow once when the slide arrives, then hold. Further states appear as their returns are validated.",
+    demoShort:"Unverified values, shown to demonstrate the tool.",
+    figuresTitle:"CRASA in figures", 
+    figuresNote:"Each figure counts up once when it enters the viewport, then holds. No looping.",
+    demoFigureNote:"Demonstration data, awaiting validation by member regulators.",
+    figureLabels:["Member regulators","Established","Citizens served","Sectors regulated","Regional broadband coverage"],
+    slides:[
+      { eyebrow:"Communications Regulators of Southern Africa",
+        headline:"Harmonising ICT and postal regulation across Southern Africa.",
+        lead:"CRASA brings together the national regulatory authorities of 14 SADC member states to align frameworks, share regulatory practice, and strengthen the region's communications and postal sectors.",
+        action:"About CRASA",
+        alt:"Two officials reviewing regulatory performance data on a tablet in an office.",
+        caption:"Illustrative photograph." },
+      { eyebrow:"SADC Roaming Guidelines",
+        headline:"One region, one set of rules for the traveller.",
+        lead:"Harmonised roaming, numbering and consumer protection rules mean a subscriber crossing a border in the SADC region does not cross a regulatory one. The 2021 guidelines set the framework.",
+        action:"Read the SADC Roaming Guidelines",
+        alt:"A delegate checking messages on a mobile phone outside a modern terminal building.",
+        caption:"Illustrative photograph." },
+      { eyebrow:"Regulatory comparator",
+        headline:"Twelve indicators, fourteen member states, one view.",
+        lead:"Compare spectrum management, roaming and mobile, and postal services across the region, with a source and a date on every value.",
+        action:"Open the comparator" }
+    ],
+    barLabels:["Botswana","Mozambique"],
+    shareLabel:"Share", shareOnX:"Share on X", shareOnLinkedIn:"Share on LinkedIn", shareOnFacebook:"Share on Facebook", copyLink:"Copy link to this item",
+    socialEyebrow:"Social channels", socialTitle:"What CRASA is posting",
+    viewOnChannel:"View on the channel", followOn:"Follow CRASA on",
+    feedEmptyTitle:"This channel is not returning posts",
+    feedEmptyBody:"The YouTube connection did not respond on the last check. Nothing is hidden and nothing is cached in its place, so the block states the position rather than showing stale posts.",
+    feedEmptyAction:"Open the channel directly", feedRetry:"Check again",
+    feedEmptyNote:"Last successful check: 4 August 2026, 06:40 UTC. The Secretariat is notified after two consecutive failures.",
+    feedProvenance:"Feed items are drawn from CRASA's own newsroom entries and stand in for live posts until the four channel connections are authorised by the Secretariat. No post text has been written for this proposition.",
+    channelNames:["Facebook","LinkedIn","YouTube","X"],
+    feedWhen:["3 days ago","1 week ago","2 weeks ago"],
+    feedOrigin:"Syndicated from the CRASA newsroom"
+  },
+  fr: {
+    pillar2alt:"Une technicienne informe ses coll\u00E8gues dans une installation de communications.",
+    pillar2caption:"Photographie d\u2019illustration.",
+    pillar1stat:"Lignes directrices et cadres types adopt\u00E9s dans la r\u00E9gion depuis 1998.",
+    pillar3stat:"Op\u00E9rateurs postaux nationaux couverts par le cadre r\u00E9gional de service universel.",
+    news1alt:"Une technicienne informe ses coll\u00E8gues dans une installation de communications.",
+    agmEyebrow:"Prochainement au calendrier", agmTitle:"15e Assembl\u00E9e g\u00E9n\u00E9rale annuelle de la CRASA",
+    agmVenue:"Bingu Wa Mutharika International Convention Centre, Presidential Way, Malawi",
+    agmSlotNote:"Aucune photographie du lieu n'a \u00E9t\u00E9 fournie. Un emplacement 3:2 est pr\u00E9vu pour ce bloc et le traitement typographique tient jusqu'\u00E0 son arriv\u00E9e.",
+    heroLabel:"\u00C0 la une", prevLabel:"Diapositive pr\u00E9c\u00E9dente", nextLabel:"Diapositive suivante", slideListLabel:"Choisir une diapositive",
+    pauseRunning:"Pause", pausePaused:"Lecture",
+    stateRunning:"Rotation toutes les 8 secondes. Suspendue au survol et lorsque le focus clavier entre dans la zone.",
+    statePaused:"En pause pour cette session. La rotation reste d\u00E9sactiv\u00E9e jusqu'\u00E0 ce que Lecture soit press\u00E9.",
+    stateHover:"En pause pendant que le pointeur survole la banni\u00E8re.",
+    stateFocus:"En pause pendant que le focus clavier est dans la banni\u00E8re.",
+    stateReduced:"Ce syst\u00E8me demande une motion r\u00E9duite : la rotation est d\u00E9sactiv\u00E9e. Les commandes restent disponibles.",
+    chartTitle:"Taux de p\u00E9n\u00E9tration du mobile, \u00C9tats membres s\u00E9lectionn\u00E9s",
+    chartNote:"Un indicateur, pour les deux \u00C9tats membres d\u00E9j\u00E0 pr\u00E9sent\u00E9s dans l'aper\u00E7u du comparateur. Les barres s'\u00E9tendent une fois \u00E0 l'arriv\u00E9e de la diapositive. D'autres \u00C9tats appara\u00EEtront \u00E0 mesure de la validation des donn\u00E9es.",
+    demoShort:"Valeurs non v\u00E9rifi\u00E9es, pr\u00E9sent\u00E9es \u00E0 titre de d\u00E9monstration.",
+    figuresTitle:"La CRASA en chiffres",
+    figuresNote:"Chaque chiffre s'incr\u00E9mente une seule fois \u00E0 l'entr\u00E9e dans la fen\u00EAtre, puis reste fixe. Aucune boucle.",
+    demoFigureNote:"Donn\u00E9es de d\u00E9monstration, en attente de validation par les r\u00E9gulateurs membres.",
+    figureLabels:["R\u00E9gulateurs membres","Cr\u00E9ation","Citoyens desservis","Secteurs r\u00E9glement\u00E9s","Couverture r\u00E9gionale du haut d\u00E9bit"],
+    slides:[
+      { eyebrow:"R\u00E9gulateurs des communications d'Afrique australe",
+        headline:"Harmoniser la r\u00E9glementation des TIC et des services postaux en Afrique australe.",
+        lead:"La CRASA r\u00E9unit les autorit\u00E9s de r\u00E9gulation nationales de 14 \u00C9tats membres de la SADC afin d'aligner les cadres r\u00E9glementaires, de partager les pratiques de r\u00E9gulation et de renforcer les secteurs des communications et des services postaux de la r\u00E9gion.",
+        action:"\u00C0 propos de la CRASA",
+        alt:"Deux responsables examinent des donn\u00E9es de performance r\u00E9glementaire sur une tablette dans un bureau.",
+        caption:"Photographie d\u2019illustration." },
+      { eyebrow:"Lignes directrices de la SADC sur l'itin\u00E9rance",
+        headline:"Une r\u00E9gion, un seul ensemble de r\u00E8gles pour le voyageur.",
+        lead:"L'harmonisation de l'itin\u00E9rance, de la num\u00E9rotation et de la protection des consommateurs fait qu'un abonn\u00E9 qui franchit une fronti\u00E8re dans la r\u00E9gion de la SADC ne franchit pas une fronti\u00E8re r\u00E9glementaire. Les lignes directrices de 2021 fixent le cadre.",
+        action:"Lire les lignes directrices",
+        alt:"Un d\u00E9l\u00E9gu\u00E9 consulte ses messages sur un t\u00E9l\u00E9phone mobile devant un terminal moderne.",
+        caption:"Photographie d\u2019illustration." },
+      { eyebrow:"Comparateur r\u00E9glementaire",
+        headline:"Douze indicateurs, quatorze \u00C9tats membres, une seule vue.",
+        lead:"Comparez la gestion du spectre, l'itin\u00E9rance et le mobile, et les services postaux dans toute la r\u00E9gion, avec une source et une date pour chaque valeur.",
+        action:"Ouvrir le comparateur" }
+    ],
+    barLabels:["Botswana","Mozambique"],
+    shareLabel:"Share", shareOnX:"Share on X", shareOnLinkedIn:"Share on LinkedIn", shareOnFacebook:"Share on Facebook", copyLink:"Copy link to this item",
+    socialEyebrow:"Social channels", socialTitle:"What CRASA is posting",
+    viewOnChannel:"View on the channel", followOn:"Follow CRASA on",
+    feedEmptyTitle:"This channel is not returning posts",
+    feedEmptyBody:"The YouTube connection did not respond on the last check. Nothing is hidden and nothing is cached in its place, so the block states the position rather than showing stale posts.",
+    feedEmptyAction:"Open the channel directly", feedRetry:"Check again",
+    feedEmptyNote:"Last successful check: 4 August 2026, 06:40 UTC. The Secretariat is notified after two consecutive failures.",
+    feedProvenance:"Feed items are drawn from CRASA's own newsroom entries and stand in for live posts until the four channel connections are authorised by the Secretariat. No post text has been written for this proposition.",
+    channelNames:["Facebook","LinkedIn","YouTube","X"],
+    feedWhen:["3 days ago","1 week ago","2 weeks ago"],
+    feedOrigin:"Syndicated from the CRASA newsroom"
+  },
+  pt: {
+    pillar2alt:"Uma t\u00E9cnica informa os colegas numa instala\u00E7\u00E3o de comunica\u00E7\u00F5es.",
+    pillar2caption:"Fotografia ilustrativa.",
+    pillar1stat:"Diretrizes e quadros-modelo adotados na regi\u00E3o desde 1998.",
+    pillar3stat:"Operadores postais nacionais abrangidos pelo quadro regional de servi\u00E7o universal.",
+    news1alt:"Uma t\u00E9cnica informa os colegas numa instala\u00E7\u00E3o de comunica\u00E7\u00F5es.",
+    agmEyebrow:"A seguir no calend\u00E1rio", agmTitle:"15.\u00AA Assembleia Geral Anual da CRASA",
+    agmVenue:"Bingu Wa Mutharika International Convention Centre, Presidential Way, Malawi",
+    agmSlotNote:"N\u00E3o foi fornecida fotografia do local. Est\u00E1 especificada uma \u00E1rea 3:2 para este bloco e o tratamento tipogr\u00E1fico mantem-se at\u00E9 \u00E0 sua chegada.",
+    heroLabel:"Em destaque", prevLabel:"Diapositivo anterior", nextLabel:"Diapositivo seguinte", slideListLabel:"Escolher um diapositivo",
+    pauseRunning:"Pausa", pausePaused:"Reproduzir",
+    stateRunning:"Roda a cada 8 segundos. Faz pausa ao passar o ponteiro e quando o foco do teclado entra na \u00E1rea.",
+    statePaused:"Em pausa nesta sess\u00E3o. A rota\u00E7\u00E3o permanece desligada at\u00E9 premir Reproduzir.",
+    stateHover:"Em pausa enquanto o ponteiro est\u00E1 sobre o destaque.",
+    stateFocus:"Em pausa enquanto o foco do teclado est\u00E1 no destaque.",
+    stateReduced:"Este sistema pede movimento reduzido, pelo que a rota\u00E7\u00E3o est\u00E1 desligada. Os controlos permanecem.",
+    chartTitle:"Penetra\u00E7\u00E3o m\u00F3vel, Estados membros selecionados",
+    chartNote:"Um indicador, para os dois Estados membros que o comparador j\u00E1 apresenta. As barras crescem uma vez quando o diapositivo chega. Outros Estados surgem \u00E0 medida que os dados forem validados.",
+    demoShort:"Valores n\u00E3o verificados, apresentados para demonstrar a ferramenta.",
+    figuresTitle:"A CRASA em n\u00FAmeros",
+    figuresNote:"Cada n\u00FAmero conta uma vez ao entrar na janela e depois fica fixo. Sem repeti\u00E7\u00E3o.",
+    demoFigureNote:"Dados de demonstra\u00E7\u00E3o, a aguardar valida\u00E7\u00E3o pelos reguladores membros.",
+    figureLabels:["Reguladores membros","Funda\u00E7\u00E3o","Cidad\u00E3os servidos","Setores regulados","Cobertura regional de banda larga"],
+    slides:[
+      { eyebrow:"Reguladores das comunica\u00E7\u00F5es da \u00C1frica Austral",
+        headline:"Harmonizar a regulamenta\u00E7\u00E3o das TIC e dos servi\u00E7os postais na \u00C1frica Austral.",
+        lead:"A CRASA re\u00FAne as autoridades reguladoras nacionais de 14 Estados membros da SADC para alinhar quadros regulat\u00F3rios, partilhar pr\u00E1ticas de regula\u00E7\u00E3o e refor\u00E7ar os setores das comunica\u00E7\u00F5es e dos servi\u00E7os postais da regi\u00E3o.",
+        action:"Sobre a CRASA",
+        alt:"Dois respons\u00E1veis analisam dados de desempenho regulat\u00F3rio num tablet num escrit\u00F3rio.",
+        caption:"Fotografia ilustrativa." },
+      { eyebrow:"Diretrizes de Roaming da SADC",
+        headline:"Uma regi\u00E3o, um s\u00F3 conjunto de regras para quem viaja.",
+        lead:"A harmoniza\u00E7\u00E3o do roaming, da numera\u00E7\u00E3o e da prote\u00E7\u00E3o do consumidor faz com que um assinante que atravessa uma fronteira na regi\u00E3o da SADC n\u00E3o atravesse uma fronteira regulat\u00F3ria. As diretrizes de 2021 definem o quadro.",
+        action:"Ler as diretrizes",
+        alt:"Um delegado consulta mensagens num telefone m\u00F3vel em frente a um terminal moderno.",
+        caption:"Fotografia ilustrativa." },
+      { eyebrow:"Comparador regulat\u00F3rio",
+        headline:"Doze indicadores, catorze Estados membros, uma vista.",
+        lead:"Compare a gest\u00E3o do espectro, o roaming e o m\u00F3vel, e os servi\u00E7os postais em toda a regi\u00E3o, com fonte e data em cada valor.",
+        action:"Abrir o comparador" }
+    ],
+    barLabels:["Botsuana","Mo\u00E7ambique"],
+    shareLabel:"Partilhar", shareOnX:"Partilhar no X", shareOnLinkedIn:"Partilhar no LinkedIn", shareOnFacebook:"Partilhar no Facebook", copyLink:"Copiar a liga\u00E7\u00E3o deste item",
+    socialEyebrow:"Canais sociais", socialTitle:"O que a CRASA est\u00E1 a publicar",
+    viewOnChannel:"Ver no canal", followOn:"Siga a CRASA em",
+    feedEmptyTitle:"Este canal n\u00E3o est\u00E1 a devolver publica\u00E7\u00F5es",
+    feedEmptyBody:"A liga\u00E7\u00E3o ao YouTube n\u00E3o respondeu na \u00FAltima verifica\u00E7\u00E3o. Nada \u00E9 ocultado e nada \u00E9 colocado em cache no seu lugar, pelo que o bloco indica a situa\u00E7\u00E3o em vez de mostrar publica\u00E7\u00F5es desatualizadas.",
+    feedEmptyAction:"Abrir o canal diretamente", feedRetry:"Verificar novamente",
+    feedEmptyNote:"\u00DAltima verifica\u00E7\u00E3o bem sucedida: 4 de agosto de 2026, 06:40 UTC. O Secretariado \u00E9 notificado ap\u00F3s duas falhas consecutivas.",
+    feedProvenance:"Os itens do feed prov\u00EAm das not\u00EDcias da pr\u00F3pria CRASA e substituem publica\u00E7\u00F5es em direto at\u00E9 que as quatro liga\u00E7\u00F5es sejam autorizadas pelo Secretariado. N\u00E3o foi redigido qualquer texto de publica\u00E7\u00E3o para esta proposta.",
+    channelNames:["Facebook","LinkedIn","YouTube","X"],
+    feedWhen:["h\u00E1 3 dias","h\u00E1 1 semana","h\u00E1 2 semanas"],
+    feedOrigin:"Reproduzido da sala de imprensa da CRASA"
+  }
+};
+
+const SLIDE_MEDIA = [
+  { src:"assets/hero-01.jpg", pos:"58% 34%" },
+  { src:"assets/hero-02.jpg", pos:"42% 40%" }
+];
+
+const FIGURE_TARGETS = [
+  { to:14, suffix:"", demo:false },
+  { to:1997, suffix:"", plain:true, demo:false },
+  { to:350, suffix:"M+", demo:false },
+  { to:2, suffix:"", demo:false },
+  { to:63, suffix:"%", demo:true }
+];
+
+const BAR_VALUES = [168.4, 57.1];
+
+const CHANNELS = [
+  { key:"fb", handle:"CRASA", mark:"f", markBg:"#0F1B2D", count:"48", healthy:true },
+  { key:"li", handle:"CRASA", mark:"in", markBg:"#0E5536", count:"31", healthy:true },
+  { key:"yt", handle:"CRASA", mark:"YT", markBg:"#9B2226", count:"0", healthy:false },
+  { key:"x", handle:"@Crasa2C", mark:"X", markBg:"#1F2937", count:"126", healthy:true }
+];
+
+// item text is CRASA's own newsroom copy, not written for this proposition
+const FEED_ITEMS = [
+  "CRASA Postal Committee Advances Regional Resilience and Cooperation",
+  "Call for Applications for Cullen Telecoms Regulatory Masterclass Scholarships",
+  "CRASA Hosts Workshop on Artificial Intelligence for Human Resource Professionals in Dar es Salaam"
+];
+
+class Component extends DCLogic {
+  state = {
+    lang: "en", slide: 0, channel: "fb", userPaused: false, hover: false, focus: false,
+    reduced: false, figures: [0,0,0,0,0], barsGrown: false, announced: ""
+  };
+
+  componentDidMount(){
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const reduced = mq.matches;
+    this.setState({ reduced: reduced });
+    this.mq = mq;
+    this.onMq = (e) => { this.setState({ reduced: e.matches }); this.sync(); };
+    if (mq.addEventListener) mq.addEventListener("change", this.onMq);
+    this.countUp(reduced);
+    this.growBars(reduced);
+    this.sync(reduced);
+  }
+
+  componentWillUnmount(){
+    clearInterval(this.timer);
+    clearInterval(this.counter);
+    if (this.mq && this.mq.removeEventListener) this.mq.removeEventListener("change", this.onMq);
+  }
+
+  // rotation is on only when nothing is asking it to stop
+  running(reduced){
+    const r = reduced === undefined ? this.state.reduced : reduced;
+    return !r && !this.state.userPaused && !this.state.hover && !this.state.focus;
+  }
+
+  sync(reduced){
+    clearInterval(this.timer);
+    if (this.running(reduced)) {
+      this.timer = setInterval(() => this.advance(1), 8000);
+    }
+  }
+
+  advance(step){
+    const n = EXTRA[this.state.lang].slides.length;
+    const i = (this.state.slide + step + n) % n;
+    this.goTo(i);
+  }
+
+  goTo(i){
+    const t = EXTRA[this.state.lang];
+    this.setState({ slide: i, announced: "Slide " + (i + 1) + " of " + t.slides.length + ", " + t.slides[i].eyebrow });
+    if (i === 2) this.growBars(this.state.reduced);
+  }
+
+  growBars(reduced){
+    if (this.state.barsGrown) return;
+    if (reduced) { this.setState({ barsGrown: true }); return; }
+    setTimeout(() => this.setState({ barsGrown: true }), 60);
+  }
+
+  countUp(reduced){
+    const finals = FIGURE_TARGETS.map(f => f.to);
+    if (reduced) { this.setState({ figures: finals }); return; }
+    const steps = 15, dur = 900;
+    let n = 0;
+    clearInterval(this.counter);
+    this.counter = setInterval(() => {
+      n++;
+      const p = n / steps;
+      const eased = 1 - Math.pow(1 - p, 3);
+      if (n >= steps) { clearInterval(this.counter); this.setState({ figures: finals }); return; }
+      this.setState({ figures: finals.map(v => Math.round(v * eased)) });
+    }, dur / steps);
+  }
+
+  set(l){
+    this.setState({ lang: l });
+    document.documentElement.lang = l;
+  }
+
+  btn(l){
+    const on = this.state.lang === l;
+    return "font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:14px;font-weight:600;padding:9px 13px;border:none;cursor:pointer;min-width:44px;"
+      + (on ? "background:#0F1B2D;color:#FFFFFF;" : "background:transparent;color:#0F1B2D;");
+  }
+
+  fmt(i){
+    const f = FIGURE_TARGETS[i];
+    const v = this.state.figures[i];
+    if (f.plain) return String(v);
+    return v.toLocaleString("en-GB") + f.suffix;
+  }
+
+  renderVals(){
+    const base = STR[this.state.lang];
+    const ex = EXTRA[this.state.lang];
+    const t = Object.assign({}, base, ex);
+    const active = this.state.slide;
+    const total = ex.slides.length;
+    const paused = !this.running();
+
+    const stateNote = this.state.reduced ? t.stateReduced
+      : this.state.userPaused ? t.statePaused
+      : this.state.hover ? t.stateHover
+      : this.state.focus ? t.stateFocus
+      : t.stateRunning;
+
+    return {
+      t: t,
+      slides: ex.slides.map((s, i) => {
+        const media = SLIDE_MEDIA[i];
+        const on = i === active;
+        return {
+          label: (i + 1) + " / " + total + ", " + s.eyebrow,
+          eyebrow: s.eyebrow, headline: s.headline, lead: s.lead, action: s.action,
+          alt: s.alt || "", src: media ? media.src : "",
+          isPhoto: !!media, isChart: !media,
+          hasCaption: !!s.caption, caption: s.caption || "",
+          hidden: on ? "false" : "true",
+          slideStyle: "position:" + (i === 0 ? "relative" : "absolute") + ";inset:0;display:flex;align-items:center;min-width:0;"
+            + "opacity:" + (on ? "1" : "0") + ";visibility:" + (on ? "visible" : "hidden") + ";"
+            + "transition:opacity 420ms linear;pointer-events:" + (on ? "auto" : "none") + ";",
+          imgStyle: "position:absolute;inset:0;background-image:url('" + (media ? media.src : "") + "');"
+            + "background-size:cover;background-position:" + (media ? media.pos : "50% 50%") + ";"
+            + "filter:grayscale(1) contrast(1.06) brightness(.94)"
+        };
+      }),
+      bars: BAR_VALUES.map((v, i) => ({
+        name: ex.barLabels[i],
+        value: v.toFixed(1) + "%",
+        fillStyle: "height:100%;background:#2E9C6C;border-radius:2px;width:"
+          + (this.state.barsGrown ? Math.round(v / 1.75) + "%" : "0%")
+          + ";" + (this.state.reduced ? "" : "transition:width 700ms cubic-bezier(.2,.8,.2,1);")
+      })),
+      dots: ex.slides.map((s, i) => ({
+        num: String(i + 1),
+        label: (i + 1) + " / " + total + ", " + s.eyebrow,
+        current: i === active ? "true" : "false",
+        go: () => { this.goTo(i); },
+        dotStyle: "min-width:44px;height:44px;padding:0 12px;border-radius:var(--r-sm);cursor:pointer;font-family:'Inter',system-ui,sans-serif;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;"
+          + (i === active
+            ? "background:#2E9C6C;border:1.5px solid #2E9C6C;color:#06251A;"
+            : "background:transparent;border:1.5px solid #6B7691;color:#F8F6F1;")
+      })),
+      counter: (active + 1) + " / " + total,
+      stateNote: stateNote,
+      liveText: this.state.announced,
+      isPaused: paused, isPlaying: !paused,
+      pauseText: paused ? t.pausePaused : t.pauseRunning,
+      pauseLabel: paused ? t.pausePaused : t.pauseRunning,
+      pausePressed: this.state.userPaused ? "true" : "false",
+      prev: () => { this.advance(-1); },
+      next: () => { this.advance(1); },
+      togglePause: () => { this.setState({ userPaused: !this.state.userPaused }, () => this.sync()); },
+      hoverIn: () => { this.setState({ hover: true }, () => this.sync()); },
+      hoverOut: () => { this.setState({ hover: false }, () => this.sync()); },
+      focusIn: () => { this.setState({ focus: true }, () => this.sync()); },
+      focusOut: () => { this.setState({ focus: false }, () => this.sync()); },
+      channels: CHANNELS.map((ch, i) => {
+        const on = ch.key === this.state.channel;
+        return {
+          name: ex.channelNames[i], count: ch.count,
+          pressed: on ? "true" : "false",
+          go: () => this.setState({ channel: ch.key }),
+          tabStyle: "font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:14.5px;font-weight:600;min-height:44px;padding:10px 14px;border-radius:var(--r-sm);cursor:pointer;min-width:0;"
+            + (on ? "background:#0F1B2D;color:#FFFFFF;border:1.5px solid #0F1B2D;" : "background:transparent;color:#1F2937;border:1.5px solid #C9C2B2;"),
+          dotStyle: "width:8px;height:8px;border-radius:50%;flex:none;background:" + (ch.healthy ? "#1A8C5A" : "#C2710C") + ";"
+        };
+      }),
+      feedHasItems: !!(CHANNELS.find(ch => ch.key === this.state.channel) || {}).healthy,
+      feedEmpty: !(CHANNELS.find(ch => ch.key === this.state.channel) || {}).healthy,
+      retryFeed: () => this.setState({ channel: this.state.channel }),
+      feed: FEED_ITEMS.map((text, i) => {
+        const ch = CHANNELS.find(x => x.key === this.state.channel) || CHANNELS[0];
+        return {
+          text: text, handle: ch.handle, when: ex.feedWhen[i], origin: ex.feedOrigin,
+          href: ch.key === "x" ? "https://x.com/Crasa2C" : ch.key === "fb" ? "https://facebook.com/pages/CRASA" : "#",
+          mark: ch.mark,
+          markStyle: "width:34px;height:34px;border-radius:var(--r-xs);flex:none;display:grid;place-items:center;font-family:'Inter',system-ui,sans-serif;font-size:12px;font-weight:700;color:#FFFFFF;background:" + ch.markBg + ";"
+        };
+      }),
+      figures: FIGURE_TARGETS.map((f, i) => ({
+        shown: this.fmt(i), label: ex.figureLabels[i], isDemo: f.demo
+      })),
+      grid: ["14","6","12","35","2","3","1997","350M+","4","3","21","23"].map((v, i) => ({
+        value: v, label: base.gridLabels[i],
+        cellStyle: "background:#1A2742;padding:16px 14px;min-height:96px;display:flex;flex-direction:column;justify-content:flex-start;"
+      })),
+      setEn: () => this.set("en"), setFr: () => this.set("fr"), setPt: () => this.set("pt"),
+      btnEn: this.btn("en"), btnFr: this.btn("fr"), btnPt: this.btn("pt")
+    };
+  }
+}
+</script>
+</body>
+</html>

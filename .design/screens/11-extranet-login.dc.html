@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="icon" href="./assets/crasa-logo.svg">
+<link rel="stylesheet" href="./vendor/fonts.css">
+<style>
+:root{
+  --c-green:#1A8C5A; --c-green-dark:#0E5536; --c-green-light:#E8F4EC;
+  --c-navy:#0F1B2D; --c-navy-mid:#1A2742; --c-navy-line:#2C3A55; --c-charcoal:#1F2937;
+  --c-slate:#5C6B7E; --c-cream:#F8F6F1; --c-sand:#E5E0D5; --c-line:#DFDBD1;
+  --c-amber:#C2710C; --c-white:#FFFFFF; --c-red:#9B2226; --c-red-light:#FBEDED; --c-red-deep:#4A1315;
+  --f-head:'Lora',Georgia,serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-admin:'Inter',system-ui,sans-serif;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px;
+  --r-xs:2px; --r-sm:4px; --r-md:8px; --r-pill:999px;
+  --e-1:0 1px 2px rgba(15,27,45,.06), 0 1px 3px rgba(15,27,45,.08);
+  --e-3:0 12px 32px rgba(15,27,45,.16);
+}
+*{box-sizing:border-box}
+body{margin:0;overflow-wrap:break-word;background:var(--c-cream);color:var(--c-charcoal);font-family:var(--f-body);-webkit-font-smoothing:antialiased}
+a{color:var(--c-green-dark);text-underline-offset:3px}
+a:hover{color:var(--c-navy)}
+:focus-visible{outline:3px solid var(--c-amber);outline-offset:2px}
+@page{margin:12mm}
+@media print{
+  html,body{background:#FFFFFF}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;transition:none !important;animation:none !important}
+  [style*="position:sticky"],[style*="position: sticky"],[style*="position:fixed"]{position:static !important}
+  section,figure,li,tr{break-inside:avoid}
+  h1,h2,h3{break-after:avoid}
+  thead{display:table-header-group}
+  [style*="overflow-x:auto"],[style*="overflow-x: auto"],[style*="overflow:auto"]{overflow:visible !important}
+  table{min-width:0 !important;width:100% !important;font-size:9.5pt !important}
+  img,svg{max-width:100% !important}
+  a[href]{text-decoration:underline}
+}
+</style>
+</helmet>
+
+<div style="background:var(--c-cream)">
+
+  <section style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-8) var(--s-7)">
+    <div style="max-width:1440px;margin:0 auto;display:flex;flex-wrap:wrap;gap:var(--s-8);align-items:flex-start">
+
+      <div style="flex:1 1 380px;min-width:0;max-width:520px">
+        <div style="display:flex;align-items:center;gap:var(--s-3);margin-bottom:var(--s-7)">
+          <img src="assets/crasa-logo.svg" alt="" style="width:48px;height:48px;flex:none;display:block">
+          <span style="display:flex;flex-direction:column;min-width:0">
+            <span style="font-family:var(--f-head);font-size:21px;font-weight:600;color:var(--c-white);line-height:1.1">CRASA</span>
+            <span style="font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--c-green-light)">Members' extranet</span>
+          </span>
+        </div>
+        <h1 style="font-family:var(--f-head);font-size:clamp(30px,4.4vw,42px);line-height:1.12;font-weight:600;letter-spacing:-.02em;margin:0 0 var(--s-4)">Sign in to the members' workspace</h1>
+        <p style="margin:0 0 var(--s-6);font-size:17.5px;line-height:1.65;color:var(--c-sand);max-width:52ch">One login reaches the extranet, the Event Management Platform and the Monitoring and Evaluation system. Access is granted by the Secretariat on the instruction of your authority.</p>
+        <div style="display:flex;gap:var(--s-3);background:rgba(155,34,38,.16);border:1px solid #7A2226;border-left:4px solid var(--c-red);border-radius:var(--r-sm);padding:var(--s-4);max-width:52ch">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#F3B7B9" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect><path d="M12 14v2"></path></svg>
+          <div style="font-size:14.5px;line-height:1.6;color:#F5DADB"><strong style="color:#FFECEC">Confidentiality notice.</strong> This workspace holds material graded up to Confidential. Do not forward, print or store documents outside your authority's systems. Access attempts and downloads are logged against your account.</div>
+        </div>
+      </div>
+
+      <div style="flex:1 1 320px;min-width:0;max-width:420px;background:var(--c-white);color:var(--c-charcoal);border-radius:var(--r-md);padding:var(--s-6);box-shadow:var(--e-3)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--s-3);margin-bottom:var(--s-5);flex-wrap:wrap">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate)">Step 1 of 2</div>
+          <div role="group" aria-label="Language" style="display:flex;flex:none;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);overflow:hidden">
+            <button type="button" lang="en" style="font-family:var(--f-body);font-size:14px;font-weight:600;padding:11px 13px;min-width:44px;border:none;cursor:pointer;background:var(--c-navy);color:var(--c-white)">EN</button>
+            <button type="button" lang="fr" style="font-family:var(--f-body);font-size:14px;font-weight:600;padding:11px 13px;min-width:44px;border:none;cursor:pointer;background:transparent;color:var(--c-navy)">FR</button>
+            <button type="button" lang="pt" style="font-family:var(--f-body);font-size:14px;font-weight:600;padding:11px 13px;min-width:44px;border:none;cursor:pointer;background:transparent;color:var(--c-navy)">PT</button>
+          </div>
+        </div>
+        <h2 style="font-family:var(--f-head);font-size:25px;font-weight:600;margin:0 0 var(--s-5)">Email and password</h2>
+        <div style="display:flex;flex-direction:column;gap:var(--s-4)">
+          <div>
+            <label for="l-email" style="display:block;font-size:14px;font-weight:600;margin-bottom:6px">Work email address</label>
+            <input id="l-email" type="email" value="representative@bocra.org.bw" style="width:100%;min-width:0;font-family:var(--f-body);font-size:16px;color:var(--c-charcoal);background:var(--c-white);border:1.5px solid #B9B2A2;border-radius:var(--r-sm);padding:12px 13px">
+            <div style="font-size:12.5px;color:var(--c-slate);margin-top:5px">Your authority's domain, not a personal address.</div>
+          </div>
+          <div>
+            <label for="l-pass" style="display:block;font-size:14px;font-weight:600;margin-bottom:6px">Password</label>
+            <div style="display:flex;align-items:center;border:1.5px solid #B9B2A2;border-radius:var(--r-sm);background:var(--c-white);overflow:hidden">
+              <input id="l-pass" type="password" size="8" value="............" style="flex:1;min-width:0;font-family:var(--f-body);font-size:16px;color:var(--c-charcoal);border:none;outline:none;padding:12px 13px;background:transparent">
+              <span style="flex:none;white-space:nowrap;font-size:13.5px;font-weight:600;color:var(--c-green-dark);padding:0 13px;border-left:1px solid var(--c-line);align-self:stretch;display:grid;place-items:center;background:var(--c-cream)">Show</span>
+            </div>
+          </div>
+          <label style="display:flex;align-items:center;gap:10px;font-size:15px;cursor:pointer">
+            <span style="width:20px;height:20px;border-radius:var(--r-xs);border:1.5px solid #B9B2A2;background:var(--c-white);flex:none"></span>
+            Keep me signed in on this device
+          </label>
+          <button type="button" style="font-family:var(--f-body);font-size:16.5px;font-weight:600;color:var(--c-white);background:var(--c-green-dark);border:1.5px solid var(--c-green-dark);border-radius:var(--r-sm);padding:13px;cursor:pointer">Continue</button>
+          <div style="display:flex;align-items:center;gap:var(--s-3)">
+            <span style="flex:1;height:1px;background:var(--c-line)"></span>
+            <span style="font-size:13px;color:var(--c-slate)">or</span>
+            <span style="flex:1;height:1px;background:var(--c-line)"></span>
+          </div>
+          <button type="button" style="display:flex;align-items:center;justify-content:center;gap:9px;font-family:var(--f-body);font-size:16px;font-weight:600;color:var(--c-navy);background:transparent;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);padding:12px;cursor:pointer">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"></path><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path></svg>
+            Single Sign-On with your authority
+          </button>
+          <div style="display:flex;justify-content:space-between;gap:var(--s-3);flex-wrap:wrap;font-size:14.5px">
+            <a href="#">Forgotten your password?</a>
+            <a href="#">Request access</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:1 1 300px;min-width:0;max-width:400px;display:flex;flex-direction:column;gap:var(--s-5)">
+        <div style="background:var(--c-white);color:var(--c-charcoal);border-radius:var(--r-md);padding:var(--s-6);border-top:4px solid var(--c-red)">
+          <div style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin-bottom:var(--s-3)">State &middot; sign-in error</div>
+          <h2 style="font-family:var(--f-head);font-size:21px;font-weight:600;margin:0 0 var(--s-4)">Credentials not recognised</h2>
+          <div style="display:flex;gap:var(--s-3);background:var(--c-red-light);border:1px solid #E3B7B8;border-radius:var(--r-sm);padding:var(--s-3) var(--s-4);margin-bottom:var(--s-4)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9B2226" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+            <div style="font-size:14px;line-height:1.55;color:#6E1A1D">That email address and password do not match an active account. Two attempts remain before the account is locked for 30 minutes.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:var(--s-3)">
+            <div>
+              <label style="display:block;font-size:13.5px;font-weight:600;margin-bottom:5px">Work email address</label>
+              <div style="border:1.5px solid var(--c-red);background:var(--c-red-light);border-radius:var(--r-sm);padding:11px 13px;font-size:15px">representative@bocra.org.bw</div>
+            </div>
+            <div>
+              <label style="display:block;font-size:13.5px;font-weight:600;margin-bottom:5px">Password</label>
+              <div style="border:1.5px solid var(--c-red);background:var(--c-red-light);border-radius:var(--r-sm);padding:11px 13px;font-size:15px;color:var(--c-slate)">........</div>
+            </div>
+          </div>
+          <div style="font-size:13px;line-height:1.6;color:var(--c-charcoal);margin-top:var(--s-4)">The message never states which of the two was wrong, and the wording is identical for an unknown address, so the form cannot be used to discover who holds an account.</div>
+        </div>
+
+        <div style="background:var(--c-white);color:var(--c-charcoal);border-radius:var(--r-md);padding:var(--s-6)">
+          <div style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin-bottom:var(--s-3)">Step 2 of 2 &middot; two-factor</div>
+          <h2 style="font-family:var(--f-head);font-size:21px;font-weight:600;margin:0 0 var(--s-3)">Enter your authenticator code</h2>
+          <p style="margin:0 0 var(--s-4);font-size:14.5px;line-height:1.6;color:var(--c-charcoal)">Six digits from the authenticator app registered to this account. Two-factor authentication is enforced for Secretariat and Administrator accounts.</p>
+          <div style="display:flex;gap:8px;margin-bottom:var(--s-4);flex-wrap:wrap">
+            <span style="width:44px;height:52px;display:grid;place-items:center;border:1.5px solid var(--c-green-dark);border-radius:var(--r-sm);font-family:var(--f-admin);font-size:21px;font-weight:600">4</span>
+            <span style="width:44px;height:52px;display:grid;place-items:center;border:1.5px solid var(--c-green-dark);border-radius:var(--r-sm);font-family:var(--f-admin);font-size:21px;font-weight:600">1</span>
+            <span style="width:44px;height:52px;display:grid;place-items:center;border:1.5px solid var(--c-green-dark);border-radius:var(--r-sm);font-family:var(--f-admin);font-size:21px;font-weight:600">7</span>
+            <span style="width:44px;height:52px;display:grid;place-items:center;border:1.5px solid #B9B2A2;border-radius:var(--r-sm);font-family:var(--f-admin);font-size:21px;font-weight:600;outline:3px solid var(--c-amber);outline-offset:2px"></span>
+            <span style="width:44px;height:52px;display:grid;place-items:center;border:1.5px solid #B9B2A2;border-radius:var(--r-sm)"></span>
+            <span style="width:44px;height:52px;display:grid;place-items:center;border:1.5px solid #B9B2A2;border-radius:var(--r-sm)"></span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:14.5px">
+            <a href="#">Use a recovery code instead</a>
+            <a href="#">Lost your device? Contact the Secretariat</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div style="background:var(--c-navy-mid);color:var(--c-sand);padding:var(--s-4) var(--s-7);font-size:14px;line-height:1.6">
+    <div style="max-width:1440px;margin:0 auto">The dashboards below are the same screen rendered for two user categories. What each user sees is decided on the server by their category and their authority, not by hiding cards in the browser.</div>
+  </div>
+
+  <sc-for list="{{ dashboards }}" as="d" hint-placeholder-count="2">
+    <section style="{{ d.sectionStyle }}">
+      <header style="background:var(--c-navy-mid);color:var(--c-cream);padding:var(--s-3) var(--s-6);display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap;border-bottom:1px solid var(--c-navy-line)">
+        <span style="display:flex;flex:none;align-items:center;gap:10px">
+          <img src="assets/crasa-logo.svg" alt="" style="width:32px;height:32px;flex:none;display:block">
+          <span style="font-size:14.5px;font-weight:600;color:var(--c-white)">CRASA Extranet</span>
+        </span>
+        <div style="display:flex;align-items:center;gap:10px;background:var(--c-navy);border:1.5px solid #4A5670;border-radius:var(--r-sm);padding:10px 12px;flex:1 1 240px;min-width:0">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#B9C2D0" stroke-width="2" stroke-linecap="round" style="flex:none" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+          <span style="font-size:14.5px;color:#B9C2D0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Search documents, meetings and members</span>
+        </div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:var(--s-4);min-width:0">
+          <span style="flex:none;position:relative;display:grid;place-items:center;width:44px;height:44px;border:1.5px solid #4A5670;border-radius:var(--r-sm)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F8F6F1" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 9a6 6 0 1112 0c0 4 2 5 2 5H4s2-1 2-5z"></path><path d="M10 19a2 2 0 004 0"></path></svg>
+          </span>
+          <div style="display:flex;flex:none;border:1.5px solid #4A5670;border-radius:var(--r-sm);overflow:hidden">
+            <span style="font-size:13.5px;font-weight:600;padding:11px 13px;min-width:44px;text-align:center;background:var(--c-green-dark);color:var(--c-white)">EN</span>
+            <span style="font-size:13.5px;font-weight:600;padding:11px 13px;min-width:44px;text-align:center;color:var(--c-cream)">FR</span>
+            <span style="font-size:13.5px;font-weight:600;padding:11px 13px;min-width:44px;text-align:center;color:var(--c-cream)">PT</span>
+          </div>
+          <div style="display:flex;flex:0 1 auto;min-width:0;align-items:center;gap:10px;padding-left:var(--s-4);border-left:1px solid var(--c-navy-line)">
+            <span style="{{ d.barAvatarStyle }}">{{ d.avatar }}</span>
+            <span style="display:flex;flex-direction:column;min-width:0">
+              <span style="display:block;font-size:14px;font-weight:600;line-height:1.2;color:var(--c-white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ d.category }}</span>
+              <span style="display:block;font-size:12.5px;color:var(--c-sand);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ d.org }}</span>
+            </span>
+          </div>
+        </div>
+      </header>
+      <div style="max-width:1440px;margin:0 auto;padding:var(--s-7)">
+
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s-5);flex-wrap:wrap;margin-bottom:var(--s-6)">
+          <div style="min-width:0">
+            <div style="font-size:12px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:8px">{{ d.tag }}</div>
+            <h2 style="font-family:var(--f-head);font-size:clamp(26px,3.4vw,34px);line-height:1.15;font-weight:600;margin:0 0 8px">{{ d.greeting }}</h2>
+            <div style="font-size:15.5px;color:var(--c-charcoal)">{{ d.scope }}</div>
+          </div>
+          <div style="flex:none;display:inline-flex;align-items:center;gap:8px;font-size:14.5px;font-weight:600;color:var(--c-navy);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:11px 14px;white-space:nowrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect></svg>
+            {{ d.clearance }}
+          </div>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:var(--s-5);align-items:flex-start">
+
+          <div style="flex:999 1 420px;min-width:0;display:flex;flex-direction:column;gap:var(--s-5)">
+
+            <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+              <div style="padding:var(--s-4) var(--s-5);border-bottom:1px solid var(--c-line);display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-4);flex-wrap:wrap">
+                <h3 style="font-family:var(--f-head);font-size:20px;font-weight:600;margin:0">Your next meetings</h3>
+                <a href="#" style="font-size:14px;font-weight:600">Open the calendar</a>
+              </div>
+              <sc-for list="{{ d.meetings }}" as="m" hint-placeholder-count="3">
+                <div style="{{ m.rowStyle }}">
+                  <span style="flex:none;width:56px;text-align:center;border-right:1px solid var(--c-line);padding-right:var(--s-3)">
+                    <span style="display:block;font-family:var(--f-head);font-size:22px;font-weight:600;color:var(--c-navy);line-height:1">{{ m.day }}</span>
+                    <span style="display:block;font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-slate);margin-top:3px">{{ m.month }}</span>
+                  </span>
+                  <span style="flex:1;min-width:0">
+                    <span style="display:block;font-size:16px;font-weight:600;line-height:1.35">{{ m.title }}</span>
+                    <span style="display:block;font-size:13.5px;color:var(--c-slate);margin-top:3px">{{ m.meta }}</span>
+                  </span>
+                  <span style="{{ m.pillStyle }}">{{ m.status }}</span>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+              <div style="padding:var(--s-4) var(--s-5);border-bottom:1px solid var(--c-line);display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-4);flex-wrap:wrap">
+                <h3 style="font-family:var(--f-head);font-size:20px;font-weight:600;margin:0">Recently filed in your committees</h3>
+                <a href="#" style="font-size:14px;font-weight:600">All documents</a>
+              </div>
+              <sc-for list="{{ d.documents }}" as="f" hint-placeholder-count="4">
+                <div style="{{ f.rowStyle }}">
+                  <span style="flex:none;width:30px;height:38px;background:{{ f.tabColour }};border-radius:2px;display:grid;place-items:center">
+                    <span style="font-family:var(--f-admin);font-size:8px;font-weight:700;color:var(--c-cream)">{{ f.format }}</span>
+                  </span>
+                  <span style="flex:1;min-width:0">
+                    <span style="display:block;font-size:15.5px;font-weight:600;line-height:1.35">{{ f.title }}</span>
+                    <span style="display:block;font-size:13px;color:var(--c-slate);margin-top:3px">{{ f.meta }}</span>
+                  </span>
+                  <span style="{{ f.visStyle }}">{{ f.visibility }}</span>
+                  <span style="{{ f.statusStyle }}">{{ f.status }}</span>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+              <div style="padding:var(--s-4) var(--s-5);border-bottom:1px solid var(--c-line)">
+                <h3 style="font-family:var(--f-head);font-size:20px;font-weight:600;margin:0 0 4px">{{ d.reviewTitle }}</h3>
+                <div style="font-size:14px;color:var(--c-slate)">{{ d.reviewNote }}</div>
+              </div>
+              <sc-for list="{{ d.review }}" as="r" hint-placeholder-count="3">
+                <div style="{{ r.rowStyle }}">
+                  <span style="flex:1;min-width:0">
+                    <span style="display:block;font-size:15.5px;font-weight:600;line-height:1.35">{{ r.title }}</span>
+                    <span style="display:block;font-size:13px;color:var(--c-slate);margin-top:3px">{{ r.meta }}</span>
+                  </span>
+                  <span style="flex:none;font-size:14px;font-weight:600;color:var(--c-green-dark);text-decoration:underline;text-underline-offset:3px">{{ r.action }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="flex:1 1 300px;min-width:0;max-width:400px;display:flex;flex-direction:column;gap:var(--s-5)">
+
+            <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:var(--s-4)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" style="flex:none" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+                <span style="font-size:14.5px;color:var(--c-slate)">Search documents and meetings</span>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <span style="font-size:13px;font-weight:600;border:1px solid var(--c-line);border-radius:var(--r-sm);padding:7px 11px">Agendas</span>
+                <span style="font-size:13px;font-weight:600;border:1px solid var(--c-line);border-radius:var(--r-sm);padding:7px 11px">Minutes</span>
+                <span style="font-size:13px;font-weight:600;border:1px solid var(--c-line);border-radius:var(--r-sm);padding:7px 11px">Resolutions</span>
+              </div>
+            </div>
+
+            <div style="{{ d.submissionStyle }}">
+              <div style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:{{ d.submissionLabelColour }};margin-bottom:var(--s-3)">{{ d.submissionHeading }}</div>
+              <div style="font-family:var(--f-head);font-size:22px;font-weight:600;line-height:1.2;margin-bottom:var(--s-3);color:{{ d.submissionInk }}">{{ d.submissionTitle }}</div>
+              <p style="margin:0 0 var(--s-4);font-size:14.5px;line-height:1.6;color:{{ d.submissionBodyInk }}">{{ d.submissionBody }}</p>
+              <sc-for list="{{ d.submissionRows }}" as="s" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid {{ s.rule }}">
+                  <span style="font-family:var(--f-admin);font-size:11.5px;font-weight:700;width:26px;flex:none;color:{{ s.ink }}">{{ s.code }}</span>
+                  <span style="flex:1;height:10px;border-radius:var(--r-pill);background:{{ s.track }};overflow:hidden"><span style="{{ s.barStyle }}"></span></span>
+                  <span style="font-size:12.5px;color:{{ s.ink }};width:92px;text-align:right;flex:none">{{ s.state }}</span>
+                </div>
+              </sc-for>
+              <a href="#" style="display:inline-block;margin-top:var(--s-4);font-size:14.5px;font-weight:600;color:{{ d.submissionLinkInk }};text-decoration:underline;text-underline-offset:4px">{{ d.submissionAction }}</a>
+            </div>
+
+            <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+              <h3 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin:0 0 var(--s-4)">Workplan items due</h3>
+              <sc-for list="{{ d.workplan }}" as="w" hint-placeholder-count="3">
+                <div style="{{ w.rowStyle }}">
+                  <div style="display:flex;justify-content:space-between;gap:var(--s-3);margin-bottom:6px">
+                    <span style="font-size:14.5px;font-weight:600;line-height:1.3;min-width:0">{{ w.title }}</span>
+                    <span style="flex:none;font-size:12.5px;font-weight:600;color:{{ w.dueInk }}">{{ w.due }}</span>
+                  </div>
+                  <div style="height:8px;border-radius:var(--r-pill);background:var(--c-sand);overflow:hidden"><span style="{{ w.barStyle }}"></span></div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-3);margin-bottom:var(--s-4)">
+                <h3 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin:0">Notifications</h3>
+                <span style="font-size:13px;color:var(--c-slate)">{{ d.notificationCount }}</span>
+              </div>
+              <sc-for list="{{ d.notifications }}" as="n" hint-placeholder-count="4">
+                <div style="{{ n.rowStyle }}">
+                  <span style="flex:none;width:8px;height:8px;border-radius:var(--r-pill);background:{{ n.dot }};margin-top:7px"></span>
+                  <span style="flex:1;min-width:0">
+                    <span style="display:block;font-size:14.5px;line-height:1.5">{{ n.text }}</span>
+                    <span style="display:block;font-size:12.5px;color:var(--c-slate);margin-top:3px">{{ n.time }}</span>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="{{ d.permissionStyle }}">
+              <div style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:{{ d.permissionLabelInk }};margin-bottom:var(--s-3)">What this category cannot reach</div>
+              <ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:9px;font-size:14.5px;line-height:1.55;color:{{ d.permissionBodyInk }}">
+                <sc-for list="{{ d.restrictions }}" as="r" hint-placeholder-count="3">
+                  <li>{{ r.text }}</li>
+                </sc-for>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </sc-for>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const P = "flex:none;font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:2px;white-space:nowrap;";
+const PILL = {
+  Scheduled: P + "background:#E8F4EC;color:#0E5536;border:1px solid #B6DCC5;",
+  "In Progress": P + "background:#0E5536;color:#FFFFFF;",
+  Completed: P + "background:#E5E0D5;color:#1F2937;",
+  Postponed: P + "background:#FDF0DC;color:#7A4606;border:1px solid #E5BE87;",
+  Draft: P + "background:#E5E0D5;color:#1F2937;border:1px solid #C9C2B2;",
+  "For Review": P + "background:#FDF0DC;color:#7A4606;border:1px solid #E5BE87;",
+  Final: P + "background:#E8F4EC;color:#0E5536;border:1px solid #B6DCC5;",
+  Adopted: P + "background:#0F1B2D;color:#FFFFFF;",
+  Public: P + "background:transparent;color:#1F2937;border:1px solid #B9B2A2;",
+  Member: P + "background:#0F1B2D;color:#FFFFFF;",
+  Confidential: P + "background:#9B2226;color:#FFFFFF;",
+  Secretariat: P + "background:#4A1315;color:#FFFFFF;"
+};
+
+const SUBS = [
+  { code:"AO", pct:100, state:"Submitted" }, { code:"BW", pct:83, state:"Draft" },
+  { code:"KM", pct:0, state:"Not started" }, { code:"MZ", pct:92, state:"Returned" },
+  { code:"NA", pct:100, state:"Validated" }, { code:"ZM", pct:0, state:"Not started" }
+];
+
+const DASH = [
+  {
+    key: "rep",
+    tag: "Dashboard as a Member State Representative",
+    greeting: "Botswana's workspace",
+    scope: "You see your own committees, your authority's folders, and material graded Public or Member.",
+    avatar: "BW", category: "Member State Representative", org: "BOCRA, Botswana",
+    clearance: "Member clearance",
+    ground: "#F8F6F1",
+    meetings: [
+      { day:"14", month:"Sep", title:"9th Meeting of the Spectrum and Frequency Management Committee", meta:"BICC, Malawi \u00B7 you are a Member \u00B7 attendance not yet confirmed", status:"Scheduled" },
+      { day:"02", month:"Oct", title:"2nd Ordinary Meeting of the Universal Access and Service Committee", meta:"Tanzania \u00B7 you are a Member", status:"Scheduled" },
+      { day:"19", month:"Nov", title:"CRASA 15th Annual General Meeting", meta:"BICC, Presidential Way, Malawi \u00B7 Head of Delegation required", status:"Scheduled" }
+    ],
+    documents: [
+      { title:"SADC Radio Frequency Spectrum Allocation Plan, revision 4", meta:"Working Paper \u00B7 Spectrum and Frequency Management \u00B7 2 August", format:"PDF", visibility:"Member", status:"For Review" },
+      { title:"Draft Minutes, 8th Committee Meeting", meta:"Minutes \u00B7 Spectrum and Frequency Management \u00B7 28 July", format:"DOCX", visibility:"Member", status:"Draft" },
+      { title:"Postal Quality of Service monitoring return, Q2", meta:"Report \u00B7 Postal and Logistics \u00B7 24 July", format:"XLSX", visibility:"Member", status:"Final" },
+      { title:"SADC Framework for Harmonisation of PPDR Spectrum", meta:"Report \u00B7 published to the public library \u00B7 18 July", format:"PDF", visibility:"Public", status:"Adopted" }
+    ],
+    reviewTitle: "Awaiting your response",
+    reviewNote: "Items where your authority is the one holding things up.",
+    review: [
+      { title:"Confirm attendance, 9th Spectrum Committee Meeting", meta:"Requested by the Secretariat, 28 July", action:"Confirm" },
+      { title:"Resolve two comments on Botswana's 2026 regulatory return", meta:"Returned by the Secretariat, 28 July", action:"Open the return" },
+      { title:"Nominate a rapporteur for the Legal and Regulatory Affairs Committee", meta:"Requested by the Committee Chair, 21 July", action:"Nominate" }
+    ],
+    submissionHeading: "Your country's submission",
+    submissionTitle: "Botswana, 2026 return",
+    submissionBody: "Ten of twelve indicators complete. Two fields need attention before you can submit. The window closes on 30 September.",
+    submissionAction: "Open the e-Form",
+    submissionRows: [{ code:"BW", pct:83, state:"Draft" }],
+    workplan: [
+      { title:"Botswana input to the spectrum plan review", due:"Due 12 Sep", pct:60, over:false },
+      { title:"National consumer protection alignment report", due:"Due 30 Sep", pct:35, over:false },
+      { title:"PPDR harmonisation national position", due:"Overdue", pct:88, over:true }
+    ],
+    notificationCount: "3 unread",
+    notifications: [
+      { text:"Your 2026 regulatory return was returned with two comments.", time:"28 July, 09:16", unread:true },
+      { text:"Allocation Plan revision 4 was filed in the Spectrum Committee.", time:"2 August, 11:40", unread:true },
+      { text:"A document you requested access to is still with the Committee Chair.", time:"1 August, 15:02", unread:true },
+      { text:"Namibia's 2026 return was validated and published.", time:"2 August, 08:30", unread:false }
+    ],
+    restrictions: [
+      { text:"Documents graded Confidential or Secretariat, including the 700 MHz draft resolution in your own committee." },
+      { text:"Other member states' country folders and their unvalidated submissions." },
+      { text:"The review queue, the audit log, and any action that validates or publishes data." }
+    ]
+  },
+  {
+    key: "sec",
+    tag: "The same dashboard as a Secretariat user",
+    greeting: "Secretariat workspace, Gaborone",
+    scope: "You see every committee, all fourteen submissions, and material graded up to Secretariat.",
+    avatar: "GB", category: "Secretariat", org: "CRASA Secretariat, Gaborone",
+    clearance: "Secretariat clearance",
+    ground: "#EFEDE6",
+    meetings: [
+      { day:"14", month:"Sep", title:"9th Meeting of the Spectrum and Frequency Management Committee", meta:"BICC, Malawi \u00B7 you are Secretariat \u00B7 agenda published", status:"Scheduled" },
+      { day:"22", month:"Sep", title:"Executive Committee Meeting", meta:"Gaborone \u00B7 papers due 8 September", status:"Scheduled" },
+      { day:"04", month:"Oct", title:"Extraordinary Meeting, roaming implementation", meta:"Online \u00B7 called at the request of three member states", status:"Postponed" }
+    ],
+    documents: [
+      { title:"Draft Resolution on cross-border interference, 700 MHz", meta:"Resolution \u00B7 Spectrum and Frequency Management \u00B7 3 August", format:"DOCX", visibility:"Confidential", status:"Draft" },
+      { title:"Executive Committee briefing, programme delivery", meta:"Working Paper \u00B7 Executive Committee \u00B7 3 August", format:"PDF", visibility:"Secretariat", status:"Draft" },
+      { title:"SADC Radio Frequency Spectrum Allocation Plan, revision 4", meta:"Working Paper \u00B7 Spectrum and Frequency Management \u00B7 2 August", format:"PDF", visibility:"Member", status:"For Review" },
+      { title:"Mozambique 2026 return, reviewer comments", meta:"Report \u00B7 Regulatory data \u00B7 14 July", format:"PDF", visibility:"Secretariat", status:"Final" }
+    ],
+    reviewTitle: "Awaiting your review",
+    reviewNote: "Work queued to the Secretariat across all fourteen member states.",
+    review: [
+      { title:"Six 2026 submissions awaiting validation", meta:"Angola, DR Congo, Lesotho, South Africa, Tanzania, Botswana", action:"Open the queue" },
+      { title:"Portuguese translation incomplete on SADC Roaming Guidelines", meta:"One field untranslated, two machine drafts", action:"Open the editor" },
+      { title:"Access request, 700 MHz draft resolution", meta:"From BOCRA, Botswana \u00B7 needs the Chair's decision", action:"Review request" }
+    ],
+    submissionHeading: "Submission activity, all members",
+    submissionTitle: "2026 cycle, 14 member states",
+    submissionBody: "Four validated, six submitted, one returned, three not started. Reminders go out automatically 21 days before the window closes.",
+    submissionAction: "Open the review queue",
+    submissionRows: SUBS,
+    workplan: [
+      { title:"Spectrum Allocation Plan revision, Secretariat sign-off", due:"Due 12 Dec", pct:72, over:false },
+      { title:"Annual Report 2026, drafting", due:"Due 31 Oct", pct:45, over:false },
+      { title:"PPDR harmonisation review, regional consolidation", due:"Overdue", pct:88, over:true }
+    ],
+    notificationCount: "9 unread",
+    notifications: [
+      { text:"Tanzania submitted its 2026 return. Six now await validation.", time:"25 July, 16:44", unread:true },
+      { text:"BOCRA requested access to a Confidential resolution.", time:"1 August, 15:02", unread:true },
+      { text:"Two Portuguese fields on a publication are machine drafts.", time:"4 August, 14:32", unread:true },
+      { text:"Namibia's 2026 return was validated and published.", time:"2 August, 08:30", unread:false }
+    ],
+    restrictions: [
+      { text:"Nothing in the extranet is hidden from this category, so the card states that plainly rather than showing an empty list." },
+      { text:"Administrator-only actions remain separate: roles, permissions and the audit log live in the back office, not here." },
+      { text:"Every document opened at Confidential or Secretariat level is written to the audit log against this account." }
+    ]
+  }
+];
+
+class Component extends DCLogic {
+  renderVals(){
+    return {
+      dashboards: DASH.map((d, di) => ({
+        tag: d.tag, greeting: d.greeting, scope: d.scope,
+        avatar: d.avatar, category: d.category, org: d.org, clearance: d.clearance,
+        sectionStyle: "background:" + d.ground + ";" + (di > 0 ? "border-top:4px solid #0F1B2D;" : ""),
+        avatarStyle: "flex:none;width:34px;height:34px;border-radius:999px;display:grid;place-items:center;font-weight:600;font-size:13px;"
+          + (d.key === "sec" ? "background:#0F1B2D;color:#F8F6F1;" : "background:#0E5536;color:#FFFFFF;"),
+        barAvatarStyle: "flex:none;width:36px;height:36px;border-radius:999px;display:grid;place-items:center;font-weight:600;font-size:13.5px;"
+          + (d.key === "sec" ? "background:#F8F6F1;color:#0F1B2D;" : "background:#0E5536;color:#FFFFFF;"),
+
+        meetings: d.meetings.map((m, i) => ({
+          day:m.day, month:m.month, title:m.title, meta:m.meta, status:m.status,
+          pillStyle: PILL[m.status],
+          rowStyle: "display:flex;gap:16px;align-items:center;padding:16px 24px;"
+            + (i < d.meetings.length - 1 ? "border-bottom:1px solid #DFDBD1;" : "")
+        })),
+
+        documents: d.documents.map((f, i) => ({
+          title:f.title, meta:f.meta, format:f.format, visibility:f.visibility, status:f.status,
+          tabColour: f.visibility === "Confidential" ? "#9B2226" : f.visibility === "Secretariat" ? "#4A1315" : "#0F1B2D",
+          visStyle: PILL[f.visibility], statusStyle: PILL[f.status],
+          rowStyle: "display:flex;gap:14px;align-items:center;padding:14px 24px;flex-wrap:wrap;"
+            + (i < d.documents.length - 1 ? "border-bottom:1px solid #DFDBD1;" : "")
+            + (f.visibility === "Confidential" || f.visibility === "Secretariat" ? "background:#FBF3F3;" : "")
+        })),
+
+        reviewTitle: d.reviewTitle, reviewNote: d.reviewNote,
+        review: d.review.map((r, i) => ({
+          title:r.title, meta:r.meta, action:r.action,
+          rowStyle: "display:flex;gap:16px;align-items:center;padding:14px 24px;flex-wrap:wrap;"
+            + (i < d.review.length - 1 ? "border-bottom:1px solid #DFDBD1;" : "")
+        })),
+
+        submissionHeading: d.submissionHeading, submissionTitle: d.submissionTitle,
+        submissionBody: d.submissionBody, submissionAction: d.submissionAction,
+        submissionStyle: d.key === "sec"
+          ? "background:#0F1B2D;border-radius:8px;padding:24px"
+          : "background:#FFFFFF;border:1px solid #DFDBD1;border-left:4px solid #C2710C;border-radius:8px;padding:24px",
+        submissionLabelColour: d.key === "sec" ? "#9CCFB2" : "#C2710C",
+        submissionInk: d.key === "sec" ? "#FFFFFF" : "#1F2937",
+        submissionBodyInk: d.key === "sec" ? "#E5E0D5" : "#1F2937",
+        submissionLinkInk: d.key === "sec" ? "#9CCFB2" : "#0E5536",
+        submissionRows: d.submissionRows.map(s => ({
+          code:s.code, state:s.state,
+          rule: d.key === "sec" ? "#2C3A55" : "#DFDBD1",
+          ink: d.key === "sec" ? "#E5E0D5" : "#1F2937",
+          track: d.key === "sec" ? "#1A2742" : "#E5E0D5",
+          barStyle: "display:block;height:100%;width:" + s.pct + "%;background:"
+            + (s.state === "Validated" ? "#1A8C5A" : s.state === "Returned" ? "#9B2226" : s.state === "Submitted" ? "#C2710C" : "#B9B2A2") + ";"
+        })),
+
+        workplan: d.workplan.map((w, i) => ({
+          title:w.title, due:w.due,
+          dueInk: w.over ? "#9B2226" : "#5C6B7E",
+          barStyle: "display:block;height:100%;width:" + w.pct + "%;background:" + (w.over ? "#C2710C" : "#0E5536") + ";",
+          rowStyle: "padding:12px 0;" + (i < d.workplan.length - 1 ? "border-bottom:1px solid #DFDBD1;" : "")
+        })),
+
+        notificationCount: d.notificationCount,
+        notifications: d.notifications.map((n, i) => ({
+          text:n.text, time:n.time,
+          dot: n.unread ? "#C2710C" : "#B9B2A2",
+          rowStyle: "display:flex;gap:11px;align-items:flex-start;padding:11px 0;"
+            + (i < d.notifications.length - 1 ? "border-bottom:1px solid #DFDBD1;" : "")
+        })),
+
+        permissionStyle: d.key === "sec"
+          ? "background:#E8F4EC;border:1px solid #B6DCC5;border-radius:8px;padding:24px"
+          : "background:#FBEDED;border:1px solid #E3B7B8;border-radius:8px;padding:24px",
+        permissionLabelInk: d.key === "sec" ? "#0E5536" : "#9B2226",
+        permissionBodyInk: d.key === "sec" ? "#0B4229" : "#6E1A1D",
+        restrictions: d.restrictions
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

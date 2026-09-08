@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>SADC geometry generator, 50m pass</title>
+<script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/topojson-client@3.1.0/dist/topojson-client.min.js" integrity="sha384-Ukv1p/xTma6P4/2bY5KzWBw+ydSpXmhCMtyciIQVDJ1RmOxtCYNMF1uXT9T63H67" crossorigin="anonymous"></script>
+<style>body{font:12px system-ui;margin:12px}svg{border:1px solid #ccc;margin-right:8px}</style>
+</head>
+<body>
+<div id="status">loading…</div>
+<svg id="main" viewBox="0 0 700 660" width="500"></svg>
+<svg id="km" viewBox="0 0 120 96" width="120"></svg>
+<svg id="mu" viewBox="0 0 120 96" width="120"></svg>
+<script>
+// mainland twelve, used only to reproduce the existing main projection exactly
+const MAINLAND = {"Angola":"AO","Botswana":"BW","Dem. Rep. Congo":"CD","eSwatini":"SZ","Eswatini":"SZ","Swaziland":"SZ","Lesotho":"LS","Malawi":"MW","Mozambique":"MZ","Namibia":"NA","South Africa":"ZA","Tanzania":"TZ","Zambia":"ZM","Zimbabwe":"ZW"};
+const EXTRA = {"Comoros":"KM","Mauritius":"MU","Madagascar":"MG","Seychelles":"SC"};
+const round = (s, q) => s.replace(/-?\d+\.?\d*/g, n => (Math.round(parseFloat(n) * q) / q).toString());
+
+(async () => {
+  const t110 = await d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json");
+  const t50 = await d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json");
+  const f110 = topojson.feature(t110, t110.objects.countries).features;
+  const f50 = topojson.feature(t50, t50.objects.countries).features;
+
+  const mainFeats = [];
+  const seen = {};
+  f110.forEach(f => { const c = MAINLAND[f.properties.name]; if (c && !seen[c]) { seen[c] = 1; mainFeats.push(f); } });
+  const proj = d3.geoMercator().fitExtent([[14, 14], [686, 646]], { type: "FeatureCollection", features: mainFeats });
+  const path = d3.geoPath(proj);
+
+  const out = { context: [], insets: {} };
+  const svgMain = document.getElementById("main");
+
+  ["Madagascar", "Seychelles"].forEach(name => {
+    const f = f50.find(x => x.properties.name === name);
+    if (!f) { out.context.push({ code: EXTRA[name], name: name, missing: true }); return; }
+    const d = round(path(f), 2);
+    const c = path.centroid(f);
+    out.context.push({ code: EXTRA[name], name: name, d: d, cx: Math.round(c[0]), cy: Math.round(c[1]), chars: d.length });
+    const el = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    el.setAttribute("d", d); el.setAttribute("fill", "#E5E0D5"); el.setAttribute("stroke", "#B9B2A2");
+    svgMain.appendChild(el);
+  });
+
+  [["Comoros", "km"], ["Mauritius", "mu"]].forEach(([name, id]) => {
+    const f = f50.find(x => x.properties.name === name);
+    if (!f) { out.insets[EXTRA[name]] = { missing: true }; return; }
+    const p2 = d3.geoMercator().fitExtent([[16, 16], [104, 80]], f);
+    const d = round(d3.geoPath(p2)(f), 2);
+    const c = d3.geoPath(p2).centroid(f);
+    out.insets[EXTRA[name]] = { d: d, cx: Math.round(c[0]), cy: Math.round(c[1]), chars: d.length };
+    const svg = document.getElementById(id);
+    const el = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    el.setAttribute("d", d); el.setAttribute("fill", "#E8F4EC"); el.setAttribute("stroke", "#0E5536");
+    svg.appendChild(el);
+  });
+
+  window.__out = out;
+  document.getElementById("status").textContent = "ready " + JSON.stringify(out.context.map(c => c.code + ":" + (c.chars || "missing"))) + " insets " + JSON.stringify(Object.keys(out.insets).map(k => k + ":" + (out.insets[k].chars || "missing")));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="{{ wrapStyle }}">
+  <div style="position:relative;container-type:inline-size">
+    <svg viewBox="0 0 820 660" width="100%" style="display:block" role="img" aria-label="{{ svgLabel }}">
+      <g fill="none" stroke="#E5E0D5" stroke-width="0.8">
+        <path d="M0 90h820M0 200h820M0 310h820M0 420h820M0 530h820M120 0v660M240 0v660M360 0v660M480 0v660M600 0v660M720 0v660"></path>
+      </g>
+      <sc-for list="{{ contextShapes }}" as="c" hint-placeholder-count="2">
+        <g aria-hidden="true" style="pointer-events:none">
+          <path d="{{ c.d }}" fill="#E5E0D5" stroke="#B9B2A2" stroke-width="0.9" stroke-linejoin="round"></path>
+        </g>
+      </sc-for>
+      <sc-for list="{{ shapes }}" as="m" hint-placeholder-count="12">
+        <g onClick="{{ m.select }}" aria-hidden="true" style="{{ m.gStyle }}">
+          <path d="{{ m.d }}" fill="{{ m.fill }}" stroke="{{ m.stroke }}" stroke-width="{{ m.sw }}" stroke-linejoin="round"></path>
+        </g>
+      </sc-for>
+    </svg>
+    <div style="position:absolute;inset:0;pointer-events:none">
+      <sc-for list="{{ labels }}" as="l" hint-placeholder-count="12">
+        <button type="button" onClick="{{ l.select }}" aria-pressed="{{ l.pressed }}" aria-label="{{ l.aria }}" disabled="{{ l.disabled }}" style="{{ l.style }}">
+          <span style="{{ l.codeStyle }}">{{ l.code }}</span>
+          <span style="{{ l.subStyle }}">{{ l.sub }}</span>
+        </button>
+      </sc-for>
+      <sc-for list="{{ contextLabels }}" as="c" hint-placeholder-count="2">
+        <div aria-hidden="true" style="{{ c.style }}">{{ c.name }}</div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="margin-top:24px;border-top:1px solid #DFDBD1;padding-top:16px">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap">
+      <h3 style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0F1B2D;margin:0">Island member states</h3>
+      <span style="font-size:13px;color:#5C6B7E">Shown at larger scale</span>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <sc-for list="{{ insets }}" as="i" hint-placeholder-count="2">
+        <button type="button" onClick="{{ i.select }}" aria-pressed="{{ i.pressed }}" aria-label="{{ i.aria }}" disabled="{{ i.disabled }}" style="{{ i.panelStyle }}">
+          <span style="display:flex;align-items:center;gap:12px">
+            <svg viewBox="0 0 120 96" width="66" height="53" style="flex:none;display:block" aria-hidden="true">
+              <path d="{{ i.d }}" fill="{{ i.fill }}" stroke="{{ i.stroke }}" stroke-width="{{ i.sw }}" stroke-linejoin="round"></path>
+            </svg>
+            <span style="display:flex;flex-direction:column;min-width:0;gap:2px;text-align:left">
+              <span style="font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:700;color:#0F1B2D">{{ i.code }}</span>
+              <span style="font-family:'Inter',system-ui,sans-serif;font-size:10.5px;font-weight:500;color:#3D4A5C">{{ i.acr }}</span>
+              <span style="font-size:12.5px;color:#1F2937;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ i.detail }}</span>
+            </span>
+          </span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="margin-top:16px;padding-top:16px;border-top:1px solid #DFDBD1;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.5;color:#1F2937">
+      <span style="{{ legendSwatch }}"></span>
+      <span><strong>{{ legendTitle }}</strong> {{ legendBody }}</span>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.5;color:#1F2937">
+      <span style="flex:none;width:20px;height:14px;margin-top:2px;background:#E5E0D5;border:1.5px solid #B9B2A2;border-radius:2px"></span>
+      <span><strong>SADC member without a CRASA regulator.</strong> SADC has 16 member states, CRASA has 14 member regulators. Madagascar and Seychelles are shown for geographic context only and are not selectable.</span>
+    </div>
+    <sc-if value="{{ showScale }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13.5px;color:#1F2937">
+        <span>Low</span>
+        <span style="width:26px;height:14px;background:#E8F4EC;border:1px solid #B6DCC5"></span>
+        <span style="width:26px;height:14px;background:#9CCFB2"></span>
+        <span style="width:26px;height:14px;background:#4FA97B"></span>
+        <span style="width:26px;height:14px;background:#0E5536"></span>
+        <span>High</span>
+        <span style="width:26px;height:14px;background:repeating-linear-gradient(135deg,#E5E0D5 0 4px,#CFC8B8 4px 8px);border:1px solid #B9B2A2;margin-left:12px"></span>
+        <span>Not reported</span>
+      </div>
+    </sc-if>
+    <div style="font-size:13.5px;line-height:1.6;color:#1F2937;border-top:1px solid #DFDBD1;padding-top:12px">Real geometry, not a drawing. Mainland outlines are Natural Earth 1:110m, the island states and the context states are Natural Earth 1:50m, all on one Mercator projection fitted to the region. Comoros and Mauritius are enlarged into their own panels because their true extent is smaller than one pixel at regional scale, and both are styled, selected and reached by keyboard exactly as the mainland twelve are. Labels are an HTML layer over the geometry, so they scale with the map and stay legible at 375px.</div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:760,&quot;height&quot;:900},&quot;mode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;select&quot;,&quot;choropleth&quot;],&quot;default&quot;:&quot;select&quot;,&quot;tsType&quot;:&quot;'select' | 'choropleth'&quot;},&quot;selected&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;BW&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;values&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;Record&lt;string, {display: string, band: number | null}&gt;&quot;},&quot;members&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;Array&lt;{code: string, country: string, acr: string}&gt;&quot;},&quot;onSelect&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(code: string) =&gt; void&quot;}}">
+const SHADES = ["#E8F4EC", "#9CCFB2", "#4FA97B", "#0E5536"];
+const MISSING_FILL = "repeating-linear-gradient(135deg,#E5E0D5 0 4px,#CFC8B8 4px 8px)";
+
+class Component extends DCLogic {
+  state = { geo: null };
+
+  componentDidMount(){
+    import("./assets/sadc-geometry.js").then(m => this.setState({ geo: m }));
+  }
+
+  renderVals(){
+    const g = this.state.geo;
+    const mode = this.props.mode || "select";
+    const choropleth = mode === "choropleth";
+    const sel = this.props.selected || "";
+    const values = this.props.values || {};
+    const onSelect = this.props.onSelect;
+    const members = this.props.members || [];
+
+    if (!g) {
+      return {
+        wrapStyle: "min-height:320px", svgLabel: "Map of the SADC region, loading",
+        shapes: [], labels: [], contextShapes: [], contextLabels: [], insets: [],
+        showScale: choropleth,
+        legendSwatch: "flex:none;width:20px;height:14px;margin-top:2px;background:#E8F4EC;border:1.5px solid #0E5536;border-radius:2px",
+        legendTitle: "CRASA member regulator.", legendBody: "Fourteen sovereign member states."
+      };
+    }
+
+    const info = (code) => members.find(m => m.code === code) || { code: code, country: code, acr: code };
+    const pick = (code) => () => { if (!choropleth && onSelect) onSelect(code); };
+
+    const fillFor = (code) => {
+      if (!choropleth) return code === sel ? "#0E5536" : "#E8F4EC";
+      const v = values[code];
+      if (!v || v.band === null || v.band === undefined) return MISSING_FILL;
+      return SHADES[Math.max(0, Math.min(3, v.band))];
+    };
+    const inkFor = (code) => {
+      if (!choropleth) return code === sel ? "#FFFFFF" : "#0F1B2D";
+      const v = values[code];
+      return (v && v.band >= 2) ? "#FFFFFF" : "#0F1B2D";
+    };
+    const subInkFor = (code) => {
+      if (!choropleth) return code === sel ? "#D8E8DE" : "#3D4A5C";
+      const v = values[code];
+      return (v && v.band >= 2) ? "#D8E8DE" : "#3D4A5C";
+    };
+
+    const codes = Object.keys(g.GEO);
+
+    return {
+      wrapStyle: "min-width:0",
+      svgLabel: choropleth
+        ? "Map of the SADC region shading each member state by its value for the selected indicator. The table beside it carries the same values."
+        : "Map of the SADC region. The fourteen CRASA member regulators are selectable. Madagascar and Seychelles are SADC members without a CRASA regulator and are shown for geographic context only.",
+      showScale: choropleth,
+      legendSwatch: "flex:none;width:20px;height:14px;margin-top:2px;background:"
+        + (choropleth ? "#4FA97B" : "#E8F4EC") + ";border:1.5px solid #0E5536;border-radius:2px",
+      legendTitle: "CRASA member regulator.",
+      legendBody: choropleth
+        ? "Fourteen sovereign member states, shaded by the selected indicator. Every state states its value as text as well as a shade."
+        : "Fourteen sovereign member states, each selectable by click or keyboard and cross-linked to the directory.",
+
+      shapes: codes.map(code => ({
+        code: code, d: g.GEO[code],
+        fill: fillFor(code),
+        stroke: (!choropleth && code === sel) ? "#0A3D26" : "#0E5536",
+        sw: (!choropleth && code === sel) ? 2 : 0.9,
+        gStyle: choropleth ? "pointer-events:none" : "cursor:pointer",
+        select: pick(code)
+      })),
+
+      labels: codes.map(code => {
+        const m = info(code);
+        const p = g.LABELS[code];
+        const v = values[code];
+        return {
+          code: code,
+          sub: choropleth ? (v ? v.display : "Not reported") : m.acr,
+          pressed: code === sel ? "true" : "false",
+          disabled: choropleth ? "true" : "",
+          aria: choropleth
+            ? m.country + ", " + (v ? v.display : "not reported")
+            : m.country + ", " + m.acr,
+          select: pick(code),
+          style: "position:absolute;pointer-events:" + (choropleth ? "none" : "auto")
+            + ";background:transparent;border:none;padding:4px 6px;cursor:" + (choropleth ? "default" : "pointer")
+            + ";left:" + (p[0] / g.MAP_W * 100).toFixed(2) + "%;top:" + (p[1] / g.MAP_H * 100).toFixed(2)
+            + "%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;line-height:1.15;white-space:nowrap",
+          codeStyle: "font-family:'Inter',system-ui,sans-serif;font-size:clamp(7px,2.25cqw,14px);font-weight:700;color:" + inkFor(code),
+          subStyle: "font-family:'Inter',system-ui,sans-serif;font-size:clamp(5.5px,1.8cqw,11px);font-weight:" + (choropleth ? "600" : "500") + ";color:" + subInkFor(code)
+        };
+      }),
+
+      contextShapes: g.CONTEXT,
+      contextLabels: g.CONTEXT.map(c => ({
+        name: c.name,
+        style: "position:absolute;left:" + (c.lx / g.MAP_W * 100).toFixed(2)
+          + "%;top:" + (c.ly / g.MAP_H * 100).toFixed(2)
+          + "%;transform:translate(-50%,-50%);font-family:'Inter',system-ui,sans-serif;font-size:clamp(6px,1.7cqw,11px);font-weight:600;color:#5C6B7E;white-space:nowrap"
+      })),
+
+      insets: g.INSETS.map(i => {
+        const m = info(i.code);
+        const on = i.code === sel;
+        const v = values[i.code];
+        return {
+          code: i.code, acr: m.acr, d: i.d,
+          detail: choropleth ? (v ? v.display : "Not reported") : m.country,
+          fill: fillFor(i.code),
+          stroke: (!choropleth && on) ? "#0A3D26" : "#0E5536",
+          sw: (!choropleth && on) ? 2 : 1.1,
+          pressed: on ? "true" : "false",
+          disabled: choropleth ? "true" : "",
+          aria: m.country + ", " + m.acr + ", shown at larger scale"
+            + (choropleth ? ", " + (v ? v.display : "not reported") : ""),
+          select: pick(i.code),
+          panelStyle: "flex:1 1 150px;min-width:0;border-radius:4px;padding:10px;text-align:left;font-family:'IBM Plex Sans',system-ui,sans-serif;cursor:"
+            + (choropleth ? "default" : "pointer") + ";"
+            + (on ? "background:#E8F4EC;border:1.5px solid #0E5536;" : "background:#FFFFFF;border:1.5px solid #E5E0D5;")
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

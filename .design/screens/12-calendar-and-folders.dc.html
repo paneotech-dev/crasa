@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="icon" href="./assets/crasa-logo.svg">
+<link rel="stylesheet" href="./vendor/fonts.css">
+<style>
+:root{
+  --c-green:#1A8C5A; --c-green-dark:#0E5536; --c-green-light:#E8F4EC;
+  --c-navy:#0F1B2D; --c-navy-mid:#1A2742; --c-navy-line:#2C3A55; --c-charcoal:#1F2937;
+  --c-slate:#5C6B7E; --c-cream:#F8F6F1; --c-sand:#E5E0D5; --c-line:#DFDBD1;
+  --c-amber:#C2710C; --c-white:#FFFFFF; --c-red:#9B2226; --c-red-light:#FBEDED; --c-red-deep:#4A1315;
+  --f-head:'Lora',Georgia,serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-admin:'Inter',system-ui,sans-serif;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px;
+  --r-xs:2px; --r-sm:4px; --r-md:8px; --r-pill:999px;
+  --e-1:0 1px 2px rgba(15,27,45,.06), 0 1px 3px rgba(15,27,45,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;overflow-wrap:break-word;background:var(--c-cream);color:var(--c-charcoal);font-family:var(--f-body);-webkit-font-smoothing:antialiased}
+a{color:var(--c-green-dark);text-underline-offset:3px}
+a:hover{color:var(--c-navy)}
+:focus-visible{outline:3px solid var(--c-amber);outline-offset:2px}
+@page{margin:12mm}
+@media print{
+  html,body{background:#FFFFFF}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;transition:none !important;animation:none !important}
+  [style*="position:sticky"],[style*="position: sticky"],[style*="position:fixed"]{position:static !important}
+  section,figure,li,tr{break-inside:avoid}
+  h1,h2,h3{break-after:avoid}
+  thead{display:table-header-group}
+  [style*="overflow-x:auto"],[style*="overflow-x: auto"],[style*="overflow:auto"]{overflow:visible !important}
+  table{min-width:0 !important;width:100% !important;font-size:9.5pt !important}
+  img,svg{max-width:100% !important}
+  a[href]{text-decoration:underline}
+}
+</style>
+</helmet>
+
+<div style="background:var(--c-cream)">
+
+  <header style="background:var(--c-navy-mid);color:var(--c-cream);padding:var(--s-3) var(--s-6);display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap;border-bottom:1px solid var(--c-navy-line)">
+    <span style="display:flex;flex:none;align-items:center;gap:10px">
+      <img src="assets/crasa-logo.svg" alt="" style="width:32px;height:32px;flex:none;display:block">
+      <span style="font-size:14.5px;font-weight:600;color:var(--c-white)">CRASA Extranet</span>
+    </span>
+    <div style="display:flex;align-items:center;gap:10px;background:var(--c-navy);border:1.5px solid #4A5670;border-radius:var(--r-sm);padding:10px 12px;flex:1 1 240px;min-width:0">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#B9C2D0" stroke-width="2" stroke-linecap="round" style="flex:none" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+      <span style="font-size:14.5px;color:#B9C2D0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Search documents, meetings and members</span>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:var(--s-4);min-width:0">
+      <span style="flex:none;display:grid;place-items:center;width:44px;height:44px;border:1.5px solid #4A5670;border-radius:var(--r-sm)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F8F6F1" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 9a6 6 0 1112 0c0 4 2 5 2 5H4s2-1 2-5z"></path><path d="M10 19a2 2 0 004 0"></path></svg>
+      </span>
+      <div style="display:flex;flex:none;border:1.5px solid #4A5670;border-radius:var(--r-sm);overflow:hidden">
+        <span style="font-size:13.5px;font-weight:600;padding:11px 13px;min-width:44px;text-align:center;background:var(--c-green-dark);color:var(--c-white)">EN</span>
+        <span style="font-size:13.5px;font-weight:600;padding:11px 13px;min-width:44px;text-align:center;color:var(--c-cream)">FR</span>
+        <span style="font-size:13.5px;font-weight:600;padding:11px 13px;min-width:44px;text-align:center;color:var(--c-cream)">PT</span>
+      </div>
+      <div style="display:flex;flex:0 1 auto;min-width:0;align-items:center;gap:10px;padding-left:var(--s-4);border-left:1px solid var(--c-navy-line)">
+        <span style="flex:none;width:36px;height:36px;border-radius:var(--r-pill);background:var(--c-green-dark);color:var(--c-white);display:grid;place-items:center;font-weight:600;font-size:13.5px">BW</span>
+        <span style="display:flex;flex-direction:column;min-width:0">
+          <span style="display:block;font-size:14px;font-weight:600;line-height:1.2;color:var(--c-white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Member State Representative</span>
+          <span style="display:block;font-size:12.5px;color:var(--c-sand);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">BOCRA, Botswana</span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <div style="max-width:1480px;margin:0 auto;padding:var(--s-6) var(--s-6) var(--s-8);display:flex;flex-direction:column;gap:var(--s-6)">
+
+    <div>
+      <nav aria-label="Breadcrumb" style="display:flex;align-items:center;gap:8px;font-size:14px;margin-bottom:var(--s-3);flex-wrap:wrap">
+        <a href="#">Dashboard</a><span style="color:var(--c-slate)">/</span><span style="font-weight:500">Calendar</span>
+      </nav>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-5);flex-wrap:wrap">
+        <div style="min-width:0">
+          <h1 style="font-family:var(--f-head);font-size:clamp(28px,3.8vw,38px);line-height:1.12;font-weight:600;margin:0 0 6px;letter-spacing:-.015em">Meetings calendar</h1>
+          <div style="font-size:15.5px;color:var(--c-charcoal)">Committee meetings, working groups and governance meetings across the 2026 cycle.</div>
+        </div>
+        <div style="display:flex;gap:var(--s-3);flex-wrap:wrap;align-items:center">
+          <button type="button" style="display:inline-flex;align-items:center;gap:7px;font-family:var(--f-body);font-size:15px;font-weight:600;color:var(--c-navy);background:var(--c-white);border:1.5px solid var(--c-navy);border-radius:var(--r-sm);padding:10px 15px;cursor:pointer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v12"></path><path d="M7 11l5 5 5-5"></path><path d="M4 20h16"></path></svg>
+            Export to calendar
+          </button>
+          <div role="group" aria-label="Calendar view" style="display:flex;flex:none;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);overflow:hidden">
+            <button type="button" onClick="{{ setMonth }}" style="{{ monthStyle }}">Month</button>
+            <button type="button" onClick="{{ setWeek }}" style="{{ weekStyle }}">Week</button>
+            <button type="button" onClick="{{ setList }}" style="{{ listStyle }}">List</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:var(--s-4);flex-wrap:wrap;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-3) var(--s-4)">
+      <span style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);flex:none">Committee</span>
+      <div style="display:flex;gap:var(--s-2);flex-wrap:wrap;min-width:0">
+        <sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+          <button type="button" onClick="{{ f.toggle }}" aria-pressed="{{ f.pressed }}" style="{{ f.style }}">
+            <span style="{{ f.dotStyle }}"></span>{{ f.name }}
+          </button>
+        </sc-for>
+      </div>
+      <span style="margin-left:auto;font-size:14px;color:var(--c-charcoal);flex:none">{{ filterNote }}</span>
+    </div>
+
+    <sc-if value="{{ isMonth }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-wrap:wrap;gap:var(--s-6);align-items:flex-start">
+        <div style="flex:999 1 520px;min-width:0;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+          <div style="padding:var(--s-4) var(--s-5);border-bottom:1px solid var(--c-line);display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);flex-wrap:wrap">
+            <h2 style="font-family:var(--f-head);font-size:22px;font-weight:600;margin:0">September 2026</h2>
+            <div style="display:flex;align-items:center;gap:var(--s-3)">
+              <span style="font-size:14px;color:var(--c-charcoal)">7 meetings</span>
+              <span style="display:flex;gap:6px">
+                <span style="width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--c-line);border-radius:var(--r-sm)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></span>
+                <span style="width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--c-line);border-radius:var(--r-sm)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span>
+              </span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));background:var(--c-cream);border-bottom:1px solid var(--c-line)">
+            <sc-for list="{{ weekdays }}" as="w" hint-placeholder-count="7">
+              <div style="padding:9px 8px;font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--c-slate);text-align:center">{{ w.label }}</div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr))">
+            <sc-for list="{{ busyDays }}" as="d" hint-placeholder-count="35">
+              <div style="{{ d.cellStyle }}">
+                <div style="{{ d.numStyle }}">{{ d.num }}</div>
+                <sc-for list="{{ d.events }}" as="e" hint-placeholder-count="1">
+                  <div style="{{ e.style }}">{{ e.label }}</div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="flex:1 1 300px;min-width:0;max-width:380px;display:flex;flex-direction:column;gap:var(--s-5)">
+          <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+            <h3 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin:0 0 var(--s-4)">Meeting type</h3>
+            <div style="display:flex;flex-direction:column;gap:11px;font-size:14.5px">
+              <div style="display:flex;align-items:center;gap:10px"><span style="width:16px;height:16px;border-radius:2px;background:var(--c-navy);flex:none"></span>Annual General Meeting</div>
+              <div style="display:flex;align-items:center;gap:10px"><span style="width:16px;height:16px;border-radius:2px;background:var(--c-green-dark);flex:none"></span>Executive Committee Meeting</div>
+              <div style="display:flex;align-items:center;gap:10px"><span style="width:16px;height:16px;border-radius:2px;background:var(--c-green);flex:none"></span>Committee Meeting</div>
+              <div style="display:flex;align-items:center;gap:10px"><span style="width:16px;height:16px;border-radius:2px;background:#4A6C86;flex:none"></span>Working Group Session</div>
+              <div style="display:flex;align-items:center;gap:10px"><span style="width:16px;height:16px;border-radius:2px;background:var(--c-amber);flex:none"></span>Extraordinary Meeting</div>
+            </div>
+            <div style="margin-top:var(--s-4);padding-top:var(--s-4);border-top:1px solid var(--c-line);font-size:13.5px;line-height:1.6;color:var(--c-charcoal)">Type is carried by colour and by the label in every cell. Status is carried by the badge, never by colour alone: a cancelled meeting keeps its type colour and gains a Cancelled badge with a struck-through title.</div>
+          </div>
+
+          <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+            <div style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin-bottom:var(--s-3)">State &middot; empty month</div>
+            <h3 style="font-family:var(--f-head);font-size:20px;font-weight:600;margin:0 0 var(--s-3)">December 2026</h3>
+            <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-bottom:var(--s-4)">
+              <sc-for list="{{ emptyDays }}" as="d" hint-placeholder-count="31">
+                <div style="{{ d.style }}">{{ d.num }}</div>
+              </sc-for>
+            </div>
+            <p style="margin:0 0 var(--s-3);font-size:14.5px;line-height:1.6;color:var(--c-charcoal)">No meetings scheduled. The regional calendar closes over the December recess, and the next cycle opens with the Executive Committee in February.</p>
+            <a href="#" style="font-size:14.5px;font-weight:600">Jump to February 2027</a>
+          </div>
+
+          <div style="background:var(--c-navy);color:var(--c-cream);border-radius:var(--r-md);padding:var(--s-5)">
+            <h3 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-green-light);margin:0 0 var(--s-3)">Export</h3>
+            <p style="margin:0 0 var(--s-4);font-size:14.5px;line-height:1.6;color:var(--c-sand)">Subscribe once and your own calendar stays in step. The feed carries only the meetings your category can see.</p>
+            <div style="display:flex;gap:var(--s-2);flex-wrap:wrap">
+              <span style="font-size:13.5px;font-weight:600;border:1.5px solid #4A5670;border-radius:var(--r-sm);padding:9px 13px">Subscribe, ICS</span>
+              <span style="font-size:13.5px;font-weight:600;border:1.5px solid #4A5670;border-radius:var(--r-sm);padding:9px 13px">Download this month</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isWeek }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+        <div style="padding:var(--s-4) var(--s-5);border-bottom:1px solid var(--c-line);display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-4);flex-wrap:wrap">
+          <h2 style="font-family:var(--f-head);font-size:22px;font-weight:600;margin:0">14 to 18 September 2026</h2>
+          <span style="font-size:14px;color:var(--c-charcoal)">Spectrum Committee week, Malawi</span>
+        </div>
+        <div style="overflow-x:auto;min-width:0">
+          <div style="min-width:720px">
+            <div style="display:grid;grid-template-columns:72px repeat(5,minmax(0,1fr));background:var(--c-cream);border-bottom:1px solid var(--c-line)">
+              <div></div>
+              <sc-for list="{{ weekHeads }}" as="h" hint-placeholder-count="5">
+                <div style="padding:9px 10px;border-left:1px solid var(--c-line)">
+                  <div style="font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--c-slate)">{{ h.day }}</div>
+                  <div style="font-family:var(--f-head);font-size:19px;font-weight:600;color:var(--c-navy);margin-top:2px">{{ h.num }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ weekRows }}" as="r" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:72px repeat(5,minmax(0,1fr));border-bottom:1px solid var(--c-line);min-height:58px">
+                <div style="padding:8px 10px;font-family:var(--f-admin);font-size:12px;color:var(--c-slate);text-align:right">{{ r.time }}</div>
+                <sc-for list="{{ r.slots }}" as="s" hint-placeholder-count="5">
+                  <div style="border-left:1px solid var(--c-line);padding:5px">
+                    <sc-if value="{{ s.has }}" hint-placeholder-val="{{ false }}">
+                      <div style="{{ s.style }}">
+                        <span style="display:block;font-size:12.5px;font-weight:700">{{ s.title }}</span>
+                        <span style="display:block;font-size:11.5px;margin-top:2px;opacity:.9">{{ s.meta }}</span>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isList }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+        <div style="padding:var(--s-4) var(--s-5);border-bottom:1px solid var(--c-line);display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-4);flex-wrap:wrap">
+          <h2 style="font-family:var(--f-head);font-size:22px;font-weight:600;margin:0">Upcoming, next six months</h2>
+          <span style="font-size:14px;color:var(--c-charcoal)">Sorted by date. Reference codes shown for minute-taking.</span>
+        </div>
+        <sc-for list="{{ listRows }}" as="l" hint-placeholder-count="7">
+          <div style="{{ l.rowStyle }}">
+            <span style="flex:none;width:66px;text-align:center;border-right:1px solid var(--c-line);padding-right:var(--s-3)">
+              <span style="display:block;font-family:var(--f-head);font-size:21px;font-weight:600;color:var(--c-navy);line-height:1">{{ l.day }}</span>
+              <span style="display:block;font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-slate);margin-top:3px">{{ l.month }}</span>
+            </span>
+            <span style="flex:none;width:5px;align-self:stretch;border-radius:2px;background:{{ l.typeColour }}"></span>
+            <span style="flex:1;min-width:0">
+              <span style="display:block;font-family:var(--f-admin);font-size:12.5px;font-weight:600;color:var(--c-slate);letter-spacing:.03em">{{ l.ref }}</span>
+              <span style="{{ l.titleStyle }}">{{ l.title }}</span>
+              <span style="display:block;font-size:13.5px;color:var(--c-charcoal);margin-top:3px">{{ l.meta }}</span>
+            </span>
+            <span style="{{ l.statusStyle }}">{{ l.status }}</span>
+            <a href="#" style="flex:none;font-size:14px;font-weight:600">Open</a>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <div style="border-top:4px solid var(--c-navy);padding-top:var(--s-6)">
+      <div style="display:flex;align-items:baseline;gap:var(--s-4);margin-bottom:var(--s-3);flex-wrap:wrap">
+        
+        <h2 style="font-family:var(--f-head);font-size:clamp(26px,3.4vw,34px);font-weight:600;margin:0">Secure country folders</h2>
+      </div>
+      <p style="margin:0 0 var(--s-6);font-size:17px;line-height:1.65;color:var(--c-charcoal);max-width:88ch">Each member state reaches only its own folders. The boundary is enforced on the server, and it is stated on screen rather than left to be inferred from an empty list.</p>
+
+      <div style="display:flex;flex-wrap:wrap;gap:var(--s-6);align-items:flex-start">
+        <div style="flex:999 1 460px;min-width:0;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+          <div style="padding:var(--s-4) var(--s-5);border-bottom:1px solid var(--c-line);display:flex;align-items:center;gap:var(--s-4);flex-wrap:wrap">
+            <nav aria-label="Folder breadcrumb" style="display:flex;align-items:center;gap:8px;font-size:15px;flex-wrap:wrap;min-width:0">
+              <span style="display:inline-flex;align-items:center;gap:7px;font-weight:600;color:var(--c-navy)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect></svg>
+                Botswana
+              </span>
+              <span style="color:var(--c-slate)">/</span><a href="#">2026 cycle</a>
+              <span style="color:var(--c-slate)">/</span><span style="font-weight:500">Regulatory data evidence</span>
+            </nav>
+            <span style="margin-left:auto;font-size:14px;color:var(--c-charcoal);flex:none">4 files, 9.4 MB</span>
+          </div>
+
+          <div style="padding:var(--s-5);border-bottom:1px solid var(--c-line)">
+            <div style="border:1.5px dashed #B9B2A2;border-radius:var(--r-md);padding:var(--s-5);text-align:center;background:var(--c-cream);margin-bottom:var(--s-4)">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0E5536" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4"></path><path d="M7 9l5-5 5 5"></path><path d="M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"></path></svg>
+              <div style="font-size:15.5px;font-weight:600;margin-top:var(--s-2)">Drop files here, or <span style="color:var(--c-green-dark);text-decoration:underline">choose from your device</span></div>
+              <div style="font-size:13px;color:var(--c-slate);margin-top:4px">PDF, DOCX, XLSX or CSV. Maximum 25 MB per file. Uploads are encrypted in transit and at rest.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:var(--s-3)">
+              <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4)">
+                <div style="display:flex;align-items:center;gap:var(--s-3);margin-bottom:8px;flex-wrap:wrap">
+                  <span style="font-size:14.5px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">operator-market-report-q2-2026.pdf</span>
+                  <span style="flex:none;font-family:var(--f-admin);font-size:13px;color:var(--c-slate)">4.1 MB</span>
+                  <span style="flex:none;font-family:var(--f-admin);font-size:13px;font-weight:600;color:var(--c-green-dark)">68%</span>
+                </div>
+                <div style="height:8px;border-radius:var(--r-pill);background:var(--c-sand);overflow:hidden"><span style="display:block;height:100%;width:68%;background:var(--c-green-dark)"></span></div>
+              </div>
+              <div style="background:var(--c-red-light);border:1px solid #E3B7B8;border-left:4px solid var(--c-red);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4)">
+                <div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap">
+                  <span style="font-size:14.5px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">spectrum-award-archive.zip</span>
+                  <span style="flex:none;font-family:var(--f-admin);font-size:13px;color:#6E1A1D">86 MB</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:7px;margin-top:7px">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9B2226" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+                  <div style="font-size:14px;font-weight:500;color:var(--c-red);line-height:1.45">Rejected. Archives are not accepted and the file is 61 MB over the limit. Upload the documents individually.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <table style="width:100%;border-collapse:collapse;font-size:15px">
+            <thead>
+              <tr style="background:var(--c-cream);text-align:left;border-bottom:1px solid var(--c-line)">
+                <th scope="col" style="padding:10px var(--s-5);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">File</th>
+                <th scope="col" style="padding:10px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Owner</th>
+                <th scope="col" style="padding:10px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Uploaded</th>
+                <th scope="col" style="padding:10px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate);text-align:right">Size</th>
+                <th scope="col" style="padding:10px var(--s-5) 10px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ files }}" as="f" hint-placeholder-count="4">
+                <tr style="{{ f.rowStyle }}">
+                  <th scope="row" style="padding:13px var(--s-5);text-align:left;font-weight:500">
+                    <span style="display:flex;align-items:center;gap:11px;min-width:0">
+                      <span style="flex:none;width:26px;height:33px;background:var(--c-navy);border-radius:2px;display:grid;place-items:center"><span style="font-family:var(--f-admin);font-size:7.5px;font-weight:700;color:var(--c-cream)">{{ f.format }}</span></span>
+                      <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.name }}</span>
+                    </span>
+                  </th>
+                  <td style="padding:13px var(--s-4);color:var(--c-charcoal)">{{ f.owner }}</td>
+                  <td style="padding:13px var(--s-4);font-family:var(--f-admin);font-size:13.5px;color:var(--c-slate)">{{ f.date }}</td>
+                  <td style="padding:13px var(--s-4);text-align:right;font-family:var(--f-admin);font-size:13.5px;font-variant-numeric:tabular-nums">{{ f.size }}</td>
+                  <td style="padding:13px var(--s-5) 13px var(--s-4)"><a href="#" style="font-size:14px;font-weight:600">Download</a></td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="flex:1 1 300px;min-width:0;max-width:400px;display:flex;flex-direction:column;gap:var(--s-5)">
+          <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+            <div style="padding:var(--s-4) var(--s-5);border-bottom:1px solid var(--c-line)">
+              <h3 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin:0">Folder tree</h3>
+            </div>
+            <sc-for list="{{ tree }}" as="t" hint-placeholder-count="8">
+              <div style="{{ t.rowStyle }}">
+                <span style="{{ t.iconStyle }}">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a1 1 0 011-1h5l2 2h9a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1z"></path></svg>
+                </span>
+                <span style="{{ t.labelStyle }}">{{ t.label }}</span>
+                <span style="{{ t.metaStyle }}">{{ t.meta }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="background:var(--c-red-light);border:1px solid #E3B7B8;border-left:4px solid var(--c-red);border-radius:var(--r-md);padding:var(--s-5)">
+            <div style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-red);margin-bottom:var(--s-3)">The access boundary</div>
+            <div style="display:flex;gap:var(--s-3);margin-bottom:var(--s-4)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9B2226" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect><path d="M12 14v2"></path></svg>
+              <div style="font-size:15px;line-height:1.6;color:#6E1A1D"><strong>You are inside Botswana's folders.</strong> The other thirteen member states' folders are not listed above, are not searchable, and are not reachable by guessing a URL. Zero trust: the server rejects the request before any file name is returned.</div>
+            </div>
+            <div style="background:var(--c-white);border:1px dashed #E3B7B8;border-radius:var(--r-sm);padding:var(--s-3) var(--s-4);font-size:14px;line-height:1.55;color:var(--c-charcoal)">
+              <div style="font-family:var(--f-admin);font-size:12.5px;color:var(--c-red);margin-bottom:5px">GET /folders/mz/2026/evidence</div>
+              403. Not your authority. Logged against your account with the timestamp and the path requested.
+            </div>
+          </div>
+
+          <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+            <h3 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin:0 0 var(--s-4)">Who can see this folder</h3>
+            <div style="display:flex;flex-direction:column;gap:var(--s-3);font-size:14.5px;line-height:1.5">
+              <div style="display:flex;align-items:center;gap:10px"><span style="flex:none;width:30px;height:30px;border-radius:var(--r-pill);background:var(--c-green-dark);color:var(--c-white);display:grid;place-items:center;font-size:11.5px;font-weight:600">BW</span><span>BOCRA representatives, upload and download</span></div>
+              <div style="display:flex;align-items:center;gap:10px"><span style="flex:none;width:30px;height:30px;border-radius:var(--r-pill);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-size:11.5px;font-weight:600">GB</span><span>CRASA Secretariat, read and validate</span></div>
+              <div style="display:flex;align-items:center;gap:10px"><span style="flex:none;width:30px;height:30px;border-radius:var(--r-pill);background:var(--c-sand);color:var(--c-charcoal);display:grid;place-items:center;font-size:11.5px;font-weight:600">EC</span><span>Executive Committee, read on request</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const TYPES = {
+  agm: { name:"Annual General Meeting", colour:"#0F1B2D" },
+  exco: { name:"Executive Committee Meeting", colour:"#0E5536" },
+  cttee: { name:"Committee Meeting", colour:"#1A8C5A" },
+  wg: { name:"Working Group Session", colour:"#4A6C86" },
+  extra: { name:"Extraordinary Meeting", colour:"#C2710C" }
+};
+
+const COMMITTEES = [
+  { id:"spectrum", name:"Spectrum and Frequency Management", colour:"#1A8C5A" },
+  { id:"markets", name:"Markets, Competition and Economics", colour:"#4A6C86" },
+  { id:"postal", name:"Postal and Logistics", colour:"#0E5536" },
+  { id:"governance", name:"Governance", colour:"#0F1B2D" }
+];
+
+// September 2026 starts on a Tuesday, 30 days
+const SEPT_EVENTS = {
+  2:  [{ label:"Working Group, roaming", type:"wg" }],
+  8:  [{ label:"Papers due, ExCo", type:"exco" }],
+  14: [{ label:"Spectrum Committee", type:"cttee" }],
+  15: [{ label:"Spectrum Committee", type:"cttee" }],
+  16: [{ label:"Spectrum Committee", type:"cttee" }],
+  22: [{ label:"Executive Committee", type:"exco" }],
+  25: [{ label:"Postal Working Group", type:"wg" }],
+  30: [{ label:"Submission window closes", type:"extra" }]
+};
+
+const LIST = [
+  { day:"02", month:"Sep", ref:"WG/RM/2026/03", title:"Working Group Session on roaming implementation", meta:"Online \u00B7 Markets, Competition and Economics", type:"wg", status:"Scheduled" },
+  { day:"14", month:"Sep", ref:"SFM/2026/09", title:"9th Meeting of the Spectrum and Frequency Management Committee", meta:"BICC, Presidential Way, Malawi \u00B7 host MACRA \u00B7 14 to 16 September", type:"cttee", status:"Scheduled" },
+  { day:"22", month:"Sep", ref:"EXCO/2026/04", title:"Executive Committee Meeting", meta:"Secretariat, Gaborone \u00B7 papers due 8 September", type:"exco", status:"Scheduled" },
+  { day:"25", month:"Sep", ref:"WG/PL/2026/02", title:"Postal and Logistics Working Group Session", meta:"Online \u00B7 quality of service monitoring", type:"wg", status:"Scheduled" },
+  { day:"04", month:"Oct", ref:"EXT/2026/01", title:"Extraordinary Meeting, roaming implementation", meta:"Online \u00B7 called by three member states", type:"extra", status:"Postponed" },
+  { day:"12", month:"Oct", ref:"UASC/2026/02", title:"2nd Ordinary Meeting of the Universal Access and Service Committee", meta:"Tanzania \u00B7 host TCRA", type:"cttee", status:"Scheduled" },
+  { day:"19", month:"Nov", ref:"AGM/2026/15", title:"CRASA 15th Annual General Meeting", meta:"BICC, Presidential Way, Malawi", type:"agm", status:"Scheduled" },
+  { day:"03", month:"Dec", ref:"WG/LR/2026/05", title:"Legal and Regulatory Affairs drafting session", meta:"Online \u00B7 cancelled, merged into the February cycle", type:"wg", status:"Cancelled" }
+];
+
+const FILES = [
+  { name:"operator-market-report-q2-2026.pdf", owner:"Member State Representative", date:"2 Aug 2026", size:"4.1 MB", format:"PDF" },
+  { name:"mnp-regulations-2019.pdf", owner:"Member State Representative", date:"24 Jul 2026", size:"1.8 MB", format:"PDF" },
+  { name:"spectrum-assignment-notice-3500mhz.pdf", owner:"Member State Representative", date:"24 Jul 2026", size:"920 KB", format:"PDF" },
+  { name:"postal-outlets-count-2026.xlsx", owner:"Secretariat", date:"18 Jul 2026", size:"2.6 MB", format:"XLSX" }
+];
+
+const TREE = [
+  { label:"Botswana", meta:"your authority", depth:0, root:true },
+  { label:"2026 cycle", meta:"", depth:1, open:true },
+  { label:"Regulatory data evidence", meta:"4 files", depth:2, current:true },
+  { label:"Meeting papers", meta:"11 files", depth:2 },
+  { label:"Correspondence", meta:"6 files", depth:2 },
+  { label:"2025 cycle", meta:"archived", depth:1 },
+  { label:"2024 cycle", meta:"archived", depth:1 },
+  { label:"Other member states", meta:"not available to you", depth:1, denied:true }
+];
+
+const P = "flex:none;font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:2px;white-space:nowrap;";
+const STATUS = {
+  Scheduled: P + "background:#E8F4EC;color:#0E5536;border:1px solid #B6DCC5;",
+  "In Progress": P + "background:#0E5536;color:#FFFFFF;",
+  Completed: P + "background:#E5E0D5;color:#1F2937;",
+  Cancelled: P + "background:#FBEDED;color:#9B2226;border:1px solid #E3B7B8;",
+  Postponed: P + "background:#FDF0DC;color:#7A4606;border:1px solid #E5BE87;"
+};
+
+class Component extends DCLogic {
+  state = { view: "month", off: [] };
+
+  toggle(id){
+    const o = this.state.off.slice();
+    const i = o.indexOf(id);
+    if (i >= 0) o.splice(i, 1); else o.push(id);
+    this.setState({ off: o });
+  }
+
+  renderVals(){
+    const view = this.state.view;
+    const off = this.state.off;
+    const btn = (on) => "font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:15px;font-weight:600;padding:11px 17px;border:none;cursor:pointer;"
+      + (on ? "background:#0F1B2D;color:#FFFFFF;" : "background:transparent;color:#0F1B2D;");
+
+    const weekdays = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(d => ({ label: d }));
+
+    // September 2026: 1st is a Tuesday, so one leading blank
+    const busy = [];
+    for (let i = 0; i < 35; i++) {
+      const num = i - 0;
+      const day = num;
+      const inMonth = day >= 1 && day <= 30;
+      const evs = (inMonth && SEPT_EVENTS[day]) ? SEPT_EVENTS[day] : [];
+      const visible = evs.filter(e => off.indexOf(this.typeToCommittee(e.type)) < 0);
+      busy.push({
+        num: inMonth ? String(day) : "",
+        cellStyle: "min-height:88px;padding:7px;border-right:1px solid #DFDBD1;border-bottom:1px solid #DFDBD1;min-width:0;"
+          + (inMonth ? "background:#FFFFFF;" : "background:#F8F6F1;"),
+        numStyle: "font-family:'Inter',system-ui,sans-serif;font-size:12.5px;font-weight:600;margin-bottom:5px;color:"
+          + (day === 4 ? "#0E5536" : "#5C6B7E"),
+        events: visible.map(e => ({
+          label: e.label,
+          style: "font-size:11.5px;font-weight:600;line-height:1.3;color:#FFFFFF;border-radius:2px;padding:4px 6px;margin-bottom:3px;background:"
+            + TYPES[e.type].colour
+        }))
+      });
+    }
+
+    const emptyDays = [];
+    for (let i = 1; i <= 31; i++) {
+      emptyDays.push({
+        num: String(i),
+        style: "aspect-ratio:1;display:grid;place-items:center;font-family:'Inter',system-ui,sans-serif;font-size:11px;color:#5C6B7E;background:#F8F6F1;border-radius:2px"
+      });
+    }
+
+    const weekHeads = [
+      { day:"Mon", num:"14" }, { day:"Tue", num:"15" }, { day:"Wed", num:"16" },
+      { day:"Thu", num:"17" }, { day:"Fri", num:"18" }
+    ];
+    const slotAt = (row, col) => {
+      const plan = {
+        "0-0": { title:"Opening and adoption of the agenda", meta:"Chair", type:"cttee" },
+        "1-0": { title:"Allocation Plan review, 470 to 694 MHz", meta:"Secretariat", type:"cttee" },
+        "1-1": { title:"Cross-border interference, 700 MHz", meta:"Confidential session", type:"cttee" },
+        "2-1": { title:"IMT 2020 roadmap progress", meta:"Rapporteur, TCRA", type:"cttee" },
+        "3-2": { title:"PPDR member state updates", meta:"All delegations", type:"cttee" },
+        "4-3": { title:"Drafting group", meta:"Working Group Session", type:"wg" },
+        "5-4": { title:"Adoption of resolutions and close", meta:"Chair", type:"cttee" }
+      };
+      return plan[row + "-" + col] || null;
+    };
+    const weekRows = ["09:00","10:30","12:00","14:00","15:30","17:00"].map((time, r) => ({
+      time: time,
+      slots: [0,1,2,3,4].map(c => {
+        const s = slotAt(r, c);
+        return {
+          has: !!s,
+          title: s ? s.title : "",
+          meta: s ? s.meta : "",
+          style: s ? "border-radius:3px;padding:6px 7px;color:#FFFFFF;background:" + TYPES[s.type].colour : ""
+        };
+      })
+    }));
+
+    return {
+      isMonth: view === "month", isWeek: view === "week", isList: view === "list",
+      monthStyle: btn(view === "month"), weekStyle: btn(view === "week"), listStyle: btn(view === "list"),
+      setMonth: () => this.setState({ view:"month" }),
+      setWeek: () => this.setState({ view:"week" }),
+      setList: () => this.setState({ view:"list" }),
+      filters: COMMITTEES.map(c => {
+        const on = off.indexOf(c.id) < 0;
+        return {
+          name: c.name,
+          pressed: on ? "true" : "false",
+          toggle: () => this.toggle(c.id),
+          style: "display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13.5px;font-weight:600;border-radius:4px;padding:8px 12px;cursor:pointer;"
+            + (on ? "border:1.5px solid #0F1B2D;background:#FFFFFF;color:#0F1B2D;" : "border:1.5px solid #DFDBD1;background:#F8F6F1;color:#5C6B7E;"),
+          dotStyle: "width:10px;height:10px;border-radius:2px;flex:none;background:" + (on ? c.colour : "#B9B2A2")
+        };
+      }),
+      filterNote: off.length === 0
+        ? "All committees shown"
+        : (COMMITTEES.length - off.length) + " of " + COMMITTEES.length + " committees shown",
+      weekdays: weekdays,
+      busyDays: busy,
+      emptyDays: emptyDays,
+      weekHeads: weekHeads,
+      weekRows: weekRows,
+      listRows: LIST.map((l, i) => ({
+        day:l.day, month:l.month, ref:l.ref, title:l.title, meta:l.meta, status:l.status,
+        typeColour: TYPES[l.type].colour,
+        statusStyle: STATUS[l.status],
+        titleStyle: "display:block;font-size:16.5px;font-weight:600;line-height:1.35;margin-top:2px;"
+          + (l.status === "Cancelled" ? "text-decoration:line-through;color:#5C6B7E;" : "color:#1F2937;"),
+        rowStyle: "display:flex;gap:14px;align-items:center;padding:16px 24px;flex-wrap:wrap;"
+          + (i < LIST.length - 1 ? "border-bottom:1px solid #DFDBD1;" : "")
+          + (l.status === "Cancelled" ? "background:#F8F6F1;" : "")
+      })),
+      files: FILES.map((f, i) => ({
+        name:f.name, owner:f.owner, date:f.date, size:f.size, format:f.format,
+        rowStyle: i < FILES.length - 1 ? "border-bottom:1px solid #DFDBD1;" : ""
+      })),
+      tree: TREE.map(t => ({
+        label:t.label, meta:t.meta,
+        rowStyle: "display:flex;align-items:center;gap:10px;padding:11px 24px;padding-left:" + (24 + t.depth * 18) + "px;"
+          + (t.current ? "background:#E8F4EC;" : "") + (t.denied ? "background:#FBEDED;" : ""),
+        iconStyle: "flex:none;color:" + (t.denied ? "#9B2226" : t.current ? "#0E5536" : "#5C6B7E"),
+        labelStyle: "flex:1;min-width:0;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:"
+          + (t.current || t.root ? "600" : "400") + ";color:" + (t.denied ? "#9B2226" : "#1F2937"),
+        metaStyle: "flex:none;font-size:12.5px;color:" + (t.denied ? "#9B2226" : "#5C6B7E")
+      }))
+    };
+  }
+
+  typeToCommittee(type){
+    if (type === "cttee") return "spectrum";
+    if (type === "wg") return "markets";
+    if (type === "exco" || type === "agm") return "governance";
+    return "postal";
+  }
+}
+</script>
+</body>
+</html>

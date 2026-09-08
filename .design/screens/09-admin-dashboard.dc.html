@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="icon" href="./assets/crasa-logo.svg">
+<link rel="stylesheet" href="./vendor/fonts.css">
+<style>
+:root{
+  --c-green:#1A8C5A; --c-green-dark:#0E5536; --c-green-light:#E8F4EC;
+  --c-navy:#0F1B2D; --c-navy-mid:#1A2742; --c-navy-line:#2C3A55; --c-charcoal:#1F2937;
+  --c-slate:#5C6B7E; --c-cream:#F8F6F1; --c-sand:#E5E0D5; --c-line:#DFDBD1;
+  --c-amber:#C2710C; --c-white:#FFFFFF; --c-red:#9B2226;
+  --c-admin-bg:#F4F3F0;
+  --d-bg:#0B1220; --d-surface:#141E30; --d-line:#26334A; --d-ink:#E8EDF4; --d-ink-dim:#9DAABF;
+  --f-head:'Lora',Georgia,serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-admin:'Inter',system-ui,sans-serif;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px;
+  --r-xs:2px; --r-sm:4px; --r-md:8px; --r-pill:999px;
+  --e-1:0 1px 2px rgba(15,27,45,.06), 0 1px 3px rgba(15,27,45,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;overflow-wrap:break-word;background:var(--c-admin-bg);color:var(--c-charcoal);font-family:var(--f-admin);-webkit-font-smoothing:antialiased}
+a{color:var(--c-green-dark);text-underline-offset:3px}
+a:hover{color:var(--c-navy)}
+:focus-visible{outline:3px solid var(--c-amber);outline-offset:2px}
+@page{margin:12mm}
+@media print{
+  html,body{background:#FFFFFF}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;transition:none !important;animation:none !important}
+  [style*="position:sticky"],[style*="position: sticky"],[style*="position:fixed"]{position:static !important}
+  section,figure,li,tr{break-inside:avoid}
+  h1,h2,h3{break-after:avoid}
+  thead{display:table-header-group}
+  [style*="overflow-x:auto"],[style*="overflow-x: auto"],[style*="overflow:auto"]{overflow:visible !important}
+  table{min-width:0 !important;width:100% !important;font-size:9.5pt !important}
+  img,svg{max-width:100% !important}
+  a[href]{text-decoration:underline}
+}
+</style>
+</helmet>
+
+<div>
+
+  <div style="background:var(--c-admin-bg);padding-bottom:var(--s-7)">
+
+    <header style="background:var(--c-white);border-bottom:1px solid var(--c-line);padding:var(--s-3) var(--s-6);display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap">
+      <span style="display:flex;align-items:center;gap:10px;flex:none">
+        <img src="assets/crasa-logo.svg" alt="" style="width:32px;height:32px;flex:none;display:block">
+        <span style="font-size:14.5px;font-weight:600;color:var(--c-navy)">CRASA Administration</span>
+      </span>
+      <nav aria-label="Back office" style="display:flex;flex-wrap:wrap;gap:2px;min-width:0;margin-left:var(--s-4)">
+        <span style="font-size:14px;font-weight:600;color:var(--c-navy);padding:8px 12px;border-radius:var(--r-sm);background:var(--c-green-light)">Dashboard</span>
+        <span style="font-size:14px;color:var(--c-charcoal);padding:8px 12px">Content</span>
+        <span style="font-size:14px;color:var(--c-charcoal);padding:8px 12px">Media</span>
+        <span style="font-size:14px;color:var(--c-charcoal);padding:8px 12px">Regulatory data</span>
+        <span style="font-size:14px;color:var(--c-charcoal);padding:8px 12px">Users</span>
+        <span style="font-size:14px;color:var(--c-charcoal);padding:8px 12px">Settings</span>
+      </nav>
+      <div style="margin-left:auto;display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-4);min-width:0">
+        <span style="flex:none;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500;border:1px solid var(--c-line);border-radius:var(--r-sm);padding:7px 11px;background:var(--c-white)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a15 15 0 010 18"></path></svg>
+          Interface: English
+        </span>
+        <span style="flex:none;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500;border:1px solid var(--c-line);border-radius:var(--r-sm);padding:7px 11px;background:var(--c-white)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"></circle><path d="M12 3v2"></path><path d="M12 19v2"></path><path d="M3 12h2"></path><path d="M19 12h2"></path></svg>
+          Light
+        </span>
+        <span style="display:flex;flex:0 1 auto;min-width:0;align-items:center;gap:9px">
+          <span style="flex:none;width:32px;height:32px;border-radius:var(--r-pill);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-size:12px;font-weight:600">GB</span>
+          <span style="display:flex;flex-direction:column;min-width:0"><span style="display:block;font-size:13.5px;font-weight:600;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Administrator</span><span style="display:block;font-size:12px;color:var(--c-slate);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Secretariat, Gaborone</span></span>
+        </span>
+      </div>
+    </header>
+
+    <div style="max-width:1560px;margin:0 auto;padding:var(--s-6) var(--s-6) 0;display:flex;flex-direction:column;gap:var(--s-5);min-width:0">
+
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-5);flex-wrap:wrap">
+        <div>
+          <h1 style="font-family:var(--f-head);font-size:clamp(25px,3.4vw,34px);line-height:1.15;font-weight:600;margin:0 0 5px;letter-spacing:-.01em">Dashboard</h1>
+          <div style="font-size:14.5px;color:var(--c-slate)">Tuesday 4 August 2026. Content, submissions and traffic across the three surfaces.</div>
+        </div>
+        <div style="display:flex;gap:var(--s-3);flex-wrap:wrap">
+          <span style="font-size:14px;font-weight:600;color:var(--c-charcoal);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 14px">Last 30 days</span>
+          <span style="font-size:14px;font-weight:600;color:var(--c-white);background:var(--c-green-dark);border-radius:var(--r-sm);padding:9px 14px">New publication</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,236px),1fr));gap:var(--s-4)">
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="6">
+          <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-4)">
+            <div style="font-family:var(--f-admin);font-size:32px;font-weight:600;line-height:1;color:var(--c-navy);font-variant-numeric:tabular-nums">{{ s.n }}</div>
+            <div style="font-size:13.5px;font-weight:600;margin-top:7px">{{ s.label }}</div>
+            <div style="font-size:12.5px;color:var(--c-slate);margin-top:3px;line-height:1.4">{{ s.note }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:var(--s-5)">
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-4);margin-bottom:var(--s-5);flex-wrap:wrap">
+            <h2 style="font-family:var(--f-head);font-size:20px;font-weight:600;margin:0">Publications by year of adoption</h2>
+            <span style="font-size:13.5px;color:var(--c-slate)">35 documents, 2000 to 2023</span>
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:5px;height:170px">
+            <sc-for list="{{ byYear }}" as="y" hint-placeholder-count="12">
+              <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;height:100%">
+                <span style="font-family:var(--f-admin);font-size:11px;font-weight:600;color:var(--c-charcoal)">{{ y.n }}</span>
+                <span style="{{ y.barStyle }}"></span>
+                <span style="font-family:var(--f-admin);font-size:10.5px;color:var(--c-slate);writing-mode:vertical-rl;transform:rotate(180deg)">{{ y.year }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:var(--s-4);padding-top:var(--s-4);border-top:1px solid var(--c-line);display:flex;gap:var(--s-5);flex-wrap:wrap;font-size:13.5px;color:var(--c-charcoal)">
+            <span style="display:inline-flex;align-items:center;gap:7px"><span style="width:14px;height:14px;background:var(--c-green-dark);border-radius:2px"></span>ICT, 28</span>
+            <span style="display:inline-flex;align-items:center;gap:7px"><span style="width:14px;height:14px;background:var(--c-navy);border-radius:2px"></span>Postal, 7</span>
+            <span style="margin-left:auto">Every bar states its count, so the chart reads without colour.</span>
+          </div>
+        </div>
+
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-family:var(--f-head);font-size:20px;font-weight:600;margin:0 0 var(--s-5)">Publications by sector and instrument type</h2>
+          <div style="display:flex;flex-direction:column;gap:var(--s-4)">
+            <sc-for list="{{ bySector }}" as="b" hint-placeholder-count="7">
+              <div>
+                <div style="display:flex;justify-content:space-between;gap:var(--s-3);font-size:14px;margin-bottom:6px">
+                  <span style="font-weight:500">{{ b.label }}</span>
+                  <span style="font-family:var(--f-admin);color:var(--c-slate)">{{ b.n }}</span>
+                </div>
+                <div style="height:12px;border-radius:2px;background:var(--c-sand);overflow:hidden;display:flex">
+                  <span style="{{ b.ictStyle }}"></span>
+                  <span style="{{ b.postStyle }}"></span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:var(--s-5)">
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-3);margin-bottom:var(--s-4)">
+            <h2 style="font-family:var(--f-head);font-size:20px;font-weight:600;margin:0">Visitors</h2>
+            <span style="font-size:13.5px;color:var(--c-slate)">30 days</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:var(--s-4);margin-bottom:var(--s-4);flex-wrap:wrap">
+            <span style="font-family:var(--f-admin);font-size:clamp(25px,3.4vw,34px);font-weight:600;color:var(--c-navy);line-height:1;font-variant-numeric:tabular-nums">18,412</span>
+            <span style="font-size:14px;color:var(--c-charcoal)">sessions, up 9.4 percent on the previous 30 days</span>
+          </div>
+          <svg viewBox="0 0 320 90" width="100%" role="img" aria-label="Sessions over the last thirty days, rising from about 480 a day to about 720 a day, with weekend dips.">
+            <polyline fill="none" stroke="#0E5536" stroke-width="2.2" points="{{ traffic }}"></polyline>
+            <line x1="0" y1="88" x2="320" y2="88" stroke="#DFDBD1" stroke-width="1"></line>
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--c-slate);margin-top:6px"><span>6 July</span><span>4 August</span></div>
+          <div style="margin-top:var(--s-4);padding-top:var(--s-4);border-top:1px solid var(--c-line);display:flex;flex-direction:column;gap:9px;font-size:14px">
+            <div style="display:flex;justify-content:space-between;gap:var(--s-3)"><span style="color:var(--c-slate)">English</span><span style="font-family:var(--f-admin);font-weight:600">71%</span></div>
+            <div style="display:flex;justify-content:space-between;gap:var(--s-3)"><span style="color:var(--c-slate)">Portuguese</span><span style="font-family:var(--f-admin);font-weight:600">17%</span></div>
+            <div style="display:flex;justify-content:space-between;gap:var(--s-3)"><span style="color:var(--c-slate)">French</span><span style="font-family:var(--f-admin);font-weight:600">12%</span></div>
+          </div>
+        </div>
+
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-family:var(--f-head);font-size:20px;font-weight:600;margin:0 0 var(--s-4)">Popular pages</h2>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <sc-for list="{{ pages }}" as="p" hint-placeholder-count="6">
+              <div style="{{ p.rowStyle }}">
+                <span style="flex:1;min-width:0;font-size:14.5px;line-height:1.4">{{ p.path }}</span>
+                <span style="font-family:var(--f-admin);font-size:14px;font-weight:600;flex:none;font-variant-numeric:tabular-nums">{{ p.n }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <h2 style="font-family:var(--f-head);font-size:20px;font-weight:600;margin:var(--s-5) 0 var(--s-4)">Popular search terms</h2>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <sc-for list="{{ terms }}" as="t" hint-placeholder-count="6">
+              <div style="{{ t.rowStyle }}">
+                <span style="flex:1;min-width:0;font-size:14.5px">{{ t.term }}</span>
+                <span style="font-family:var(--f-admin);font-size:14px;font-weight:600;flex:none;font-variant-numeric:tabular-nums">{{ t.n }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-3);margin-bottom:var(--s-4)">
+            <h2 style="font-family:var(--f-head);font-size:20px;font-weight:600;margin:0">Submission activity</h2>
+            <a href="#" style="font-size:13.5px;font-weight:600">Review queue</a>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <sc-for list="{{ submissions }}" as="s" hint-placeholder-count="14">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="font-family:var(--f-admin);font-size:11.5px;font-weight:700;width:26px;flex:none;color:var(--c-charcoal)">{{ s.code }}</span>
+                <span style="flex:1;height:14px;background:var(--c-sand);border-radius:2px;overflow:hidden"><span style="{{ s.barStyle }}"></span></span>
+                <span style="font-size:12.5px;color:var(--c-charcoal);width:96px;text-align:right;flex:none">{{ s.state }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:var(--s-4);padding-top:var(--s-4);border-top:1px solid var(--c-line);font-size:13px;line-height:1.6;color:var(--c-charcoal)">Bar length is the share of the twelve indicators submitted. The state is written out beside every bar.</div>
+        </div>
+      </div>
+
+      <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+        <h2 style="font-family:var(--f-head);font-size:20px;font-weight:600;margin:0 0 var(--s-4)">Recent activity</h2>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <sc-for list="{{ activity }}" as="a" hint-placeholder-count="6">
+            <div style="{{ a.rowStyle }}">
+              <span style="font-family:var(--f-admin);font-size:13px;color:var(--c-slate);width:100px;flex:none">{{ a.time }}</span>
+              <span style="flex:1;min-width:0;font-size:14.5px;line-height:1.5">{{ a.text }}</span>
+              <span style="font-size:13.5px;color:var(--c-slate);flex:none">{{ a.who }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden;min-width:0">
+        <div style="padding:var(--s-5);border-bottom:1px solid var(--c-line)">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-5);flex-wrap:wrap;margin-bottom:var(--s-4)">
+            <div>
+              <h2 style="font-family:var(--f-head);font-size:26px;font-weight:600;margin:0 0 5px">Publications</h2>
+              <div style="font-size:14.5px;color:var(--c-slate)">The repeating resource table. Every content type in the back office uses this pattern.</div>
+            </div>
+            <div style="display:flex;gap:var(--s-3);flex-wrap:wrap">
+              <span style="font-size:14px;font-weight:600;color:var(--c-charcoal);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 14px">Columns</span>
+              <span style="font-size:14px;font-weight:600;color:var(--c-charcoal);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 14px">Export</span>
+              <span style="font-size:14px;font-weight:600;color:var(--c-white);background:var(--c-green-dark);border-radius:var(--r-sm);padding:9px 14px">New publication</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:var(--s-3);flex-wrap:wrap;align-items:center">
+            <span style="display:flex;align-items:center;gap:9px;border:1.5px solid #B9B2A2;border-radius:var(--r-sm);padding:0 12px;background:var(--c-white);flex:1 1 260px;max-width:340px">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C6B7E" stroke-width="2" stroke-linecap="round" style="flex:none" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+              <span style="font-size:14.5px;color:var(--c-slate);padding:10px 0">Search titles and summaries</span>
+            </span>
+            <span style="font-size:14px;font-weight:500;color:var(--c-charcoal);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 13px">Sector: all</span>
+            <span style="font-size:14px;font-weight:500;color:var(--c-charcoal);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 13px">Type: all</span>
+            <span style="font-size:14px;font-weight:500;color:var(--c-charcoal);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 13px">Status: all</span>
+            <span style="font-size:14px;font-weight:500;color:var(--c-charcoal);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 13px">Year: all</span>
+          </div>
+        </div>
+
+        <div style="padding:var(--s-3) var(--s-5);background:var(--c-green-light);border-bottom:1px solid var(--c-line);display:flex;align-items:center;gap:var(--s-4);flex-wrap:wrap">
+          <span style="font-size:14.5px;font-weight:600;color:var(--c-green-dark)">3 selected</span>
+          <span style="display:flex;gap:var(--s-3);flex-wrap:wrap">
+            <span style="font-size:13.5px;font-weight:600;color:var(--c-navy);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:7px 12px">Change status</span>
+            <span style="font-size:13.5px;font-weight:600;color:var(--c-navy);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:7px 12px">Assign committee</span>
+            <span style="font-size:13.5px;font-weight:600;color:var(--c-navy);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:7px 12px">Export selection</span>
+            <span style="font-size:13.5px;font-weight:600;color:var(--c-red);background:var(--c-white);border:1px solid #E3B7B8;border-radius:var(--r-sm);padding:7px 12px">Delete</span>
+          </span>
+          <a href="#" style="font-size:13.5px;font-weight:600;margin-left:auto">Clear selection</a>
+        </div>
+
+        <div style="overflow-x:auto;min-width:0">
+          <table style="width:100%;border-collapse:collapse;font-size:14.5px;min-width:900px">
+            <thead>
+              <tr style="background:var(--c-cream);text-align:left;border-bottom:1px solid var(--c-line)">
+                <th scope="col" style="padding:11px var(--s-5);width:40px"><span style="width:18px;height:18px;border-radius:2px;border:1.5px solid #B9B2A2;background:var(--c-white);display:inline-block"></span></th>
+                <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Title</th>
+                <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Type</th>
+                <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Sector</th>
+                <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate);text-align:right">Year</th>
+                <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Languages</th>
+                <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Status</th>
+                <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Updated</th>
+                <th scope="col" style="padding:11px var(--s-5) 11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ rows }}" as="r" hint-placeholder-count="10">
+                <tr style="{{ r.rowStyle }}">
+                  <td style="padding:12px var(--s-5)"><span style="{{ r.boxStyle }}"><sc-if value="{{ r.sel }}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg></sc-if></span></td>
+                  <th scope="row" style="padding:12px var(--s-4);text-align:left;font-weight:500;max-width:420px"><a href="#" style="color:var(--c-navy)">{{ r.title }}</a></th>
+                  <td style="padding:12px var(--s-4);color:var(--c-charcoal)">{{ r.type }}</td>
+                  <td style="padding:12px var(--s-4);color:var(--c-charcoal)">{{ r.sector }}</td>
+                  <td style="padding:12px var(--s-4);text-align:right;font-family:var(--f-admin);font-variant-numeric:tabular-nums">{{ r.year }}</td>
+                  <td style="padding:12px var(--s-4);font-family:var(--f-admin);font-size:13px;letter-spacing:.04em;color:var(--c-charcoal)">{{ r.langs }}</td>
+                  <td style="padding:12px var(--s-4)"><span style="{{ r.pillStyle }}">{{ r.status }}</span></td>
+                  <td style="padding:12px var(--s-4);font-family:var(--f-admin);font-size:13px;color:var(--c-slate)">{{ r.updated }}</td>
+                  <td style="padding:12px var(--s-5) 12px var(--s-4)">
+                    <span style="display:flex;gap:var(--s-3)"><a href="#" style="font-size:13.5px;font-weight:600">Edit</a><a href="#" style="font-size:13.5px;font-weight:600">Translate</a><a href="#" style="font-size:13.5px;font-weight:600;color:var(--c-slate)">More</a></span>
+                  </td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="padding:var(--s-4) var(--s-5);display:flex;align-items:center;gap:var(--s-4);flex-wrap:wrap;background:var(--c-cream);border-top:1px solid var(--c-line)">
+          <span style="font-size:14px;color:var(--c-charcoal)">Showing 1 to 10 of 35</span>
+          <span style="display:flex;align-items:center;gap:6px;margin-left:auto;flex-wrap:wrap">
+            <span style="min-width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--c-line);border-radius:var(--r-sm);font-size:14px;color:#6E7A85;padding:0 12px;background:var(--c-white)">Previous</span>
+            <span style="min-width:40px;height:40px;display:grid;place-items:center;border-radius:var(--r-sm);background:var(--c-navy);color:var(--c-white);font-weight:600;font-size:14px">1</span>
+            <span style="min-width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--c-line);border-radius:var(--r-sm);font-size:14px;background:var(--c-white)">2</span>
+            <span style="min-width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--c-line);border-radius:var(--r-sm);font-size:14px;background:var(--c-white)">3</span>
+            <span style="min-width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--c-line);border-radius:var(--r-sm);font-size:14px;background:var(--c-white)">4</span>
+            <span style="min-width:40px;height:40px;display:grid;place-items:center;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);font-size:14px;font-weight:600;color:var(--c-navy);padding:0 14px;background:var(--c-white)">Next</span>
+          </span>
+          <label style="display:flex;align-items:center;gap:9px;font-size:14px;color:var(--c-charcoal)">Rows
+            <span style="border:1px solid var(--c-line);border-radius:var(--r-sm);padding:8px 12px;background:var(--c-white);font-weight:600">10</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--d-bg);color:var(--d-ink);padding:var(--s-7) var(--s-6) var(--s-8)">
+    <div style="max-width:1560px;margin:0 auto">
+      <div style="display:flex;align-items:baseline;gap:var(--s-4);margin-bottom:var(--s-3);flex-wrap:wrap">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#7FC79E">Dark mode</span>
+        <h2 style="font-family:var(--f-head);font-size:28px;font-weight:600;margin:0;color:var(--c-white)">The same dashboard, dark surface set</h2>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;border:1px dashed #7FC79E;border-radius:var(--r-sm);padding:12px var(--s-4);margin-bottom:var(--s-5);background:rgba(127,199,158,.07)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7FC79E" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v.01"></path><path d="M12 11v5"></path></svg>
+        <div style="font-size:14px;line-height:1.55;color:#D6E4DC"><strong style="color:var(--c-white)">Static rendition.</strong> The panel below shows the dark surface set as a fixed illustration.</div>
+      </div>
+      <p style="margin:0 0 var(--s-6);font-size:15.5px;line-height:1.65;color:var(--d-ink-dim);max-width:88ch">Dark mode is the same tokens with a different set of surface and ink values, not a second design. Contrast is measured the same way: body ink at 12.4:1 on the page ground, dimmed ink at 6.8:1, and the green raised to #2FA76F so it clears AA against the dark surface. The Secretariat sets it per account, and it follows the operating system by default.</p>
+
+      <div style="background:var(--d-surface);border:1px solid var(--d-line);border-radius:var(--r-md);padding:var(--s-3) var(--s-5);display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap;margin-bottom:var(--s-5)">
+        <span style="display:flex;align-items:center;gap:10px;flex:none">
+          <img src="assets/crasa-logo.svg" alt="" style="width:30px;height:30px;flex:none;display:block">
+          <span style="font-size:14px;font-weight:600;color:var(--c-white)">CRASA Administration</span>
+        </span>
+        <nav aria-label="Sections, dark mode" style="display:flex;flex-wrap:wrap;gap:2px;min-width:0">
+          <span style="font-size:13.5px;font-weight:600;color:var(--c-white);padding:7px 11px;border-radius:var(--r-sm);background:#1D3A2B">Dashboard</span>
+          <span style="font-size:13.5px;color:var(--d-ink-dim);padding:7px 11px">Content</span>
+          <span style="font-size:13.5px;color:var(--d-ink-dim);padding:7px 11px">Media</span>
+          <span style="font-size:13.5px;color:var(--d-ink-dim);padding:7px 11px">Regulatory data</span>
+          <span style="font-size:13.5px;color:var(--d-ink-dim);padding:7px 11px">Users</span>
+        </nav>
+        <span style="margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;border:1px solid var(--d-line);border-radius:var(--r-sm);padding:7px 11px;color:var(--d-ink)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"></path></svg>
+          Dark, shown fixed
+        </span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,236px),1fr));gap:var(--s-4);margin-bottom:var(--s-5)">
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="6">
+          <div style="background:var(--d-surface);border:1px solid var(--d-line);border-radius:var(--r-md);padding:var(--s-4)">
+            <div style="font-family:var(--f-admin);font-size:30px;font-weight:600;line-height:1;color:var(--c-white);font-variant-numeric:tabular-nums">{{ s.n }}</div>
+            <div style="font-size:13px;font-weight:600;margin-top:7px;color:var(--d-ink)">{{ s.label }}</div>
+            <div style="font-size:12.5px;color:var(--d-ink-dim);margin-top:3px;line-height:1.4">{{ s.note }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:var(--s-5)">
+        <div style="background:var(--d-surface);border:1px solid var(--d-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-4);margin-bottom:var(--s-5);flex-wrap:wrap">
+            <h3 style="font-family:var(--f-head);font-size:19px;font-weight:600;margin:0;color:var(--c-white)">Publications by year of adoption</h3>
+            <span style="font-size:13px;color:var(--d-ink-dim)">35 documents</span>
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:5px;height:150px">
+            <sc-for list="{{ byYearDark }}" as="y" hint-placeholder-count="12">
+              <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;height:100%">
+                <span style="font-family:var(--f-admin);font-size:10.5px;font-weight:600;color:var(--d-ink)">{{ y.n }}</span>
+                <span style="{{ y.barStyle }}"></span>
+                <span style="font-family:var(--f-admin);font-size:10px;color:var(--d-ink-dim);writing-mode:vertical-rl;transform:rotate(180deg)">{{ y.year }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:var(--d-surface);border:1px solid var(--d-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <h3 style="font-family:var(--f-head);font-size:19px;font-weight:600;margin:0 0 var(--s-4);color:var(--c-white)">Publications table, dark</h3>
+          <table style="width:100%;border-collapse:collapse;font-size:14px">
+            <thead>
+              <tr style="text-align:left;border-bottom:1px solid var(--d-line)">
+                <th scope="col" style="padding:9px 0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--d-ink-dim)">Title</th>
+                <th scope="col" style="padding:9px var(--s-3);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--d-ink-dim)">Year</th>
+                <th scope="col" style="padding:9px 0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--d-ink-dim)">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ rowsDark }}" as="r" hint-placeholder-count="5">
+                <tr style="border-bottom:1px solid var(--d-line)">
+                  <th scope="row" style="padding:11px 0;text-align:left;font-weight:500;color:var(--d-ink);max-width:280px">{{ r.title }}</th>
+                  <td style="padding:11px var(--s-3);font-family:var(--f-admin);color:var(--d-ink-dim);font-variant-numeric:tabular-nums">{{ r.year }}</td>
+                  <td style="padding:11px 0"><span style="{{ r.pillStyle }}">{{ r.status }}</span></td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+          <div style="margin-top:var(--s-4);padding-top:var(--s-4);border-top:1px solid var(--d-line);font-size:13px;line-height:1.6;color:var(--d-ink-dim)">Status badges keep their meaning in dark mode, with the fills lightened so text on them stays above 4.5:1. No badge is introduced or removed by the theme.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const STATS = [
+  { n:"35", label:"Publications", note:"28 ICT, 7 postal" },
+  { n:"26", label:"News items", note:"6 published this year" },
+  { n:"6", label:"Committees", note:"3 ICT, 1 postal, 2 cross-sector" },
+  { n:"14", label:"Member regulators", note:"All profiles complete" },
+  { n:"3", label:"Upcoming events", note:"Synced from the events platform" },
+  { n:"4", label:"Projects", note:"2 current, 2 past" }
+];
+
+const YEARS = [
+  { year:"2000", ict:1, post:0 }, { year:"2002", ict:1, post:0 }, { year:"2003", ict:1, post:0 },
+  { year:"2006", ict:2, post:0 }, { year:"2009", ict:1, post:1 }, { year:"2012", ict:2, post:0 },
+  { year:"2015", ict:2, post:1 }, { year:"2016", ict:2, post:3 }, { year:"2018", ict:3, post:1 },
+  { year:"2019", ict:4, post:2 }, { year:"2020", ict:3, post:0 }, { year:"2021", ict:5, post:0 },
+  { year:"2023", ict:1, post:3 }
+];
+
+const SECTORS = [
+  { label:"Guideline", ict:16, post:5 },
+  { label:"Model Law", ict:2, post:0 },
+  { label:"Recommendation", ict:2, post:1 },
+  { label:"Toolkit", ict:2, post:0 },
+  { label:"Strategy", ict:2, post:0 },
+  { label:"DRM Framework", ict:1, post:0 },
+  { label:"General Publication", ict:3, post:1 }
+];
+
+const PAGES = [
+  { path:"/publications", n:"3,214" },
+  { path:"/comparator", n:"2,867" },
+  { path:"/ (homepage)", n:"2,410" },
+  { path:"/publications/sadc-roaming-guidelines", n:"1,942" },
+  { path:"/members", n:"1,388" },
+  { path:"/pt/publicacoes", n:"1,104" }
+];
+
+const TERMS = [
+  { term:"roaming", n:"418" },
+  { term:"spectrum allocation", n:"307" },
+  { term:"annual report", n:"264" },
+  { term:"postal quality of service", n:"211" },
+  { term:"5G", n:"188" },
+  { term:"universal service", n:"152" }
+];
+
+const SUBS = [
+  { code:"AO", pct:100, state:"Submitted" }, { code:"BW", pct:83, state:"Draft" },
+  { code:"KM", pct:0, state:"Not started" }, { code:"CD", pct:100, state:"Submitted" },
+  { code:"SZ", pct:100, state:"Validated" }, { code:"LS", pct:100, state:"Submitted" },
+  { code:"MW", pct:100, state:"Validated" }, { code:"MU", pct:100, state:"Validated" },
+  { code:"MZ", pct:92, state:"Returned" }, { code:"NA", pct:100, state:"Validated" },
+  { code:"ZA", pct:100, state:"Submitted" }, { code:"TZ", pct:100, state:"Submitted" },
+  { code:"ZM", pct:0, state:"Not started" }, { code:"ZW", pct:0, state:"Not started" }
+];
+
+const ACTIVITY = [
+  { time:"14:32", text:"SADC Roaming Guidelines, Portuguese summary left untranslated on save", who:"Editor" },
+  { time:"11:08", text:"Botswana 2026 return, Mobile Penetration changed from 161.2% to 168.4%", who:"BOCRA" },
+  { time:"09:16", text:"Mozambique 2026 return returned with two comments", who:"Secretariat" },
+  { time:"Yesterday", text:"Homepage hero subtext edited in all three languages", who:"Administrator" },
+  { time:"Yesterday", text:"Postal E-commerce and Trade Facilitation Guidelines published", who:"Editor" },
+  { time:"2 Aug", text:"Namibia 2026 return validated and published to the comparator", who:"Secretariat" }
+];
+
+const ROWS = [
+  { title:"Postal E-commerce and Trade Facilitation Guidelines", type:"Guideline", sector:"Postal", year:"2023", langs:"EN FR PT", status:"Adopted", updated:"2 Aug 2026", sel:true },
+  { title:"Universal Postal Service and Access Guidelines", type:"Guideline", sector:"Postal", year:"2023", langs:"EN PT", status:"Adopted", updated:"2 Aug 2026", sel:true },
+  { title:"SADC Postal Market Definition and Licensing Guidelines", type:"Guideline", sector:"Postal", year:"2023", langs:"EN", status:"Final", updated:"28 Jul 2026", sel:true },
+  { title:"SADC Roaming Guidelines", type:"Guideline", sector:"ICT", year:"2021", langs:"EN FR", status:"For Review", updated:"4 Aug 2026", sel:false },
+  { title:"SADC Radio Frequency Spectrum Policy Model Framework", type:"Model Law", sector:"ICT", year:"2021", langs:"EN", status:"Adopted", updated:"14 Jul 2026", sel:false },
+  { title:"Consumer Rights and Protection Guidelines for the Electronic Communications Sector in SADC", type:"Guideline", sector:"ICT", year:"2021", langs:"EN FR", status:"Adopted", updated:"11 Jul 2026", sel:false },
+  { title:"Universal Access and Service for Electronic Communications Sector in SADC Guidelines", type:"Guideline", sector:"ICT", year:"2021", langs:"EN FR PT", status:"Adopted", updated:"9 Jul 2026", sel:false },
+  { title:"SADC Radio Frequency Spectrum Allocation Plan (RFSAP)", type:"Strategy", sector:"ICT", year:"2020", langs:"EN", status:"Adopted", updated:"3 Jul 2026", sel:false },
+  { title:"SADC Roaming Policy", type:"Guideline", sector:"ICT", year:"2015", langs:"EN", status:"Superseded", updated:"1 Jul 2026", sel:false },
+  { title:"Guidelines on Interconnection for SADC Countries", type:"Guideline", sector:"ICT", year:"2000", langs:"EN", status:"Superseded", updated:"28 Jun 2026", sel:false }
+];
+
+const P = "font-size:12px;font-weight:600;padding:3px 9px;border-radius:2px;display:inline-block;white-space:nowrap;";
+const PILLS = {
+  "Draft": P + "background:#E5E0D5;color:#1F2937;border:1px solid #C9C2B2;",
+  "For Review": P + "background:#FDF0DC;color:#7A4606;border:1px solid #E5BE87;",
+  "Final": P + "background:#E8F4EC;color:#0E5536;border:1px solid #B6DCC5;",
+  "Adopted": P + "background:#0F1B2D;color:#FFFFFF;",
+  "Superseded": P + "background:transparent;color:#5C6B7E;border:1px solid #B9B2A2;text-decoration:line-through;"
+};
+const PILLS_DARK = {
+  "Draft": P + "background:#26334A;color:#E8EDF4;",
+  "For Review": P + "background:#F0C989;color:#3A2100;",
+  "Final": P + "background:#2FA76F;color:#062015;",
+  "Adopted": P + "background:#E8EDF4;color:#0B1220;",
+  "Superseded": P + "background:transparent;color:#9DAABF;border:1px solid #3B4A64;text-decoration:line-through;"
+};
+
+class Component extends DCLogic {
+  renderVals(){
+    const maxYear = 6;
+    const bar = (n, colour, h) => "display:block;width:100%;border-radius:2px 2px 0 0;background:" + colour
+      + ";height:" + Math.max(3, Math.round((n / maxYear) * h)) + "px;";
+
+    const sectorMax = 21;
+    const traffic = [];
+    const pts = [22,30,26,44,38,52,34,29,48,55,41,60,50,44,63,58,47,66,71,55,49,74,68,58,79,73,62,84,77,88];
+    pts.forEach((v, i) => traffic.push((i * (320 / (pts.length - 1))).toFixed(1) + "," + (88 - v * 0.86).toFixed(1)));
+
+    return {
+      stats: STATS,
+      traffic: traffic.join(" "),
+      byYear: YEARS.map(y => ({
+        year:y.year, n: y.ict + y.post,
+        barStyle: bar(y.ict + y.post, y.post > y.ict ? "#0F1B2D" : "#0E5536", 118)
+      })),
+      byYearDark: YEARS.map(y => ({
+        year:y.year, n: y.ict + y.post,
+        barStyle: bar(y.ict + y.post, y.post > y.ict ? "#8FA3C4" : "#2FA76F", 100)
+      })),
+      bySector: SECTORS.map(s => ({
+        label:s.label, n: s.ict + s.post,
+        ictStyle: "display:block;height:100%;background:#0E5536;width:" + Math.round((s.ict / sectorMax) * 100) + "%;",
+        postStyle: "display:block;height:100%;background:#0F1B2D;width:" + Math.round((s.post / sectorMax) * 100) + "%;"
+      })),
+      pages: PAGES.map((p, i) => ({
+        path:p.path, n:p.n,
+        rowStyle: "display:flex;gap:16px;padding:9px 0;align-items:baseline;" + (i < PAGES.length - 1 ? "border-bottom:1px solid #DFDBD1;" : "")
+      })),
+      terms: TERMS.map((t, i) => ({
+        term:t.term, n:t.n,
+        rowStyle: "display:flex;gap:16px;padding:9px 0;align-items:baseline;" + (i < TERMS.length - 1 ? "border-bottom:1px solid #DFDBD1;" : "")
+      })),
+      submissions: SUBS.map(s => ({
+        code:s.code, state:s.state,
+        barStyle: "display:block;height:100%;width:" + s.pct + "%;background:"
+          + (s.state === "Validated" ? "#0E5536" : s.state === "Returned" ? "#9B2226" : s.state === "Submitted" ? "#C2710C" : "#B9B2A2") + ";"
+      })),
+      activity: ACTIVITY.map((a, i) => ({
+        time:a.time, text:a.text, who:a.who,
+        rowStyle: "display:flex;gap:16px;padding:12px 0;align-items:flex-start;" + (i < ACTIVITY.length - 1 ? "border-bottom:1px solid #DFDBD1;" : "")
+      })),
+      rows: ROWS.map((r, i) => ({
+        title:r.title, type:r.type, sector:r.sector, year:r.year, langs:r.langs, status:r.status, updated:r.updated, sel:r.sel,
+        pillStyle: PILLS[r.status],
+        boxStyle: "width:18px;height:18px;border-radius:2px;display:grid;place-items:center;"
+          + (r.sel ? "background:#0E5536;" : "border:1.5px solid #B9B2A2;background:#FFFFFF;"),
+        rowStyle: (i < ROWS.length - 1 ? "border-bottom:1px solid #DFDBD1;" : "") + (r.sel ? "background:#E8F4EC;" : "")
+      })),
+      rowsDark: ROWS.slice(0, 5).map(r => ({
+        title:r.title, year:r.year, status:r.status, pillStyle: PILLS_DARK[r.status]
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

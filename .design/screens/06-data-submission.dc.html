@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="icon" href="./assets/crasa-logo.svg">
+<link rel="stylesheet" href="./vendor/fonts.css">
+<style>
+:root{
+  --c-green:#1A8C5A; --c-green-dark:#0E5536; --c-green-light:#E8F4EC;
+  --c-navy:#0F1B2D; --c-navy-mid:#1A2742; --c-navy-line:#2C3A55; --c-charcoal:#1F2937;
+  --c-slate:#5C6B7E; --c-cream:#F8F6F1; --c-sand:#E5E0D5; --c-line:#DFDBD1;
+  --c-amber:#C2710C; --c-white:#FFFFFF; --c-red:#9B2226; --c-red-light:#FBEDED;
+  --f-head:'Lora',Georgia,serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-admin:'Inter',system-ui,sans-serif;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px;
+  --r-xs:2px; --r-sm:4px; --r-md:8px; --r-pill:999px;
+  --e-1:0 1px 2px rgba(15,27,45,.06), 0 1px 3px rgba(15,27,45,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;overflow-wrap:break-word;background:var(--c-cream);color:var(--c-charcoal);font-family:var(--f-body);-webkit-font-smoothing:antialiased}
+a{color:var(--c-green-dark);text-underline-offset:3px}
+a:hover{color:var(--c-navy)}
+:focus-visible{outline:3px solid var(--c-amber);outline-offset:2px}
+@page{margin:12mm}
+@media print{
+  html,body{background:#FFFFFF}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;transition:none !important;animation:none !important}
+  [style*="position:sticky"],[style*="position: sticky"],[style*="position:fixed"]{position:static !important}
+  section,figure,li,tr{break-inside:avoid}
+  h1,h2,h3{break-after:avoid}
+  thead{display:table-header-group}
+  [style*="overflow-x:auto"],[style*="overflow-x: auto"],[style*="overflow:auto"]{overflow:visible !important}
+  table{min-width:0 !important;width:100% !important;font-size:9.5pt !important}
+  img,svg{max-width:100% !important}
+  a[href]{text-decoration:underline}
+}
+</style>
+</helmet>
+
+<div style="background:var(--c-cream);min-height:100vh">
+
+  <header style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-3) var(--s-6);display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap">
+    <span style="display:flex;align-items:center;gap:10px;flex:none">
+      <img src="assets/crasa-logo.svg" alt="" style="width:32px;height:32px;flex:none;display:block">
+      <span style="font-size:14.5px;font-weight:600;color:var(--c-white)">CRASA Extranet</span>
+    </span>
+    <nav aria-label="Sections" style="display:flex;gap:2px;margin-left:var(--s-4);min-width:0;flex-wrap:wrap">
+      <span style="font-size:14px;color:var(--c-cream);padding:8px 12px">Dashboard</span>
+      <span style="font-size:14px;color:var(--c-cream);padding:8px 12px">Committees</span>
+      <span style="font-size:14px;color:var(--c-cream);padding:8px 12px">Meetings</span>
+      <span style="font-size:14px;font-weight:600;color:var(--c-white);padding:8px 12px;background:var(--c-navy-mid);border-radius:var(--r-sm);border-bottom:2px solid var(--c-green)">Regulatory data</span>
+    </nav>
+    <div style="display:flex;align-items:center;gap:10px;background:var(--c-navy);border:1.5px solid #4A5670;border-radius:var(--r-sm);padding:10px 12px;flex:1 1 240px;min-width:0">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#B9C2D0" stroke-width="2" stroke-linecap="round" style="flex:none" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+      <span style="font-size:14.5px;color:#B9C2D0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Search documents, meetings and members</span>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:var(--s-4);min-width:0">
+      <span style="flex:none;display:grid;place-items:center;width:44px;height:44px;border:1.5px solid #4A5670;border-radius:var(--r-sm)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F8F6F1" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 9a6 6 0 1112 0c0 4 2 5 2 5H4s2-1 2-5z"></path><path d="M10 19a2 2 0 004 0"></path></svg>
+      </span>
+      <div style="display:flex;flex:none;border:1.5px solid #4A5670;border-radius:var(--r-sm);overflow:hidden">
+        <span style="font-size:13.5px;font-weight:600;padding:8px 12px;background:var(--c-green-dark);color:var(--c-white)">EN</span>
+        <span style="font-size:13.5px;font-weight:600;padding:8px 12px;color:var(--c-cream)">FR</span>
+        <span style="font-size:13.5px;font-weight:600;padding:8px 12px;color:var(--c-cream)">PT</span>
+      </div>
+      <span style="display:flex;flex:0 1 auto;min-width:0;align-items:center;gap:9px;padding-left:var(--s-4);border-left:1px solid var(--c-navy-line)">
+        <span style="width:32px;height:32px;border-radius:var(--r-pill);background:var(--c-green-dark);color:var(--c-white);display:grid;place-items:center;font-size:12px;font-weight:600">BW</span>
+        <span style="display:flex;flex-direction:column;min-width:0"><span style="display:block;font-size:13.5px;font-weight:600;line-height:1.2;color:var(--c-white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Member State Representative</span><span style="display:block;font-size:12px;color:var(--c-sand);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">BOCRA, Botswana</span></span>
+      </span>
+    </div>
+  </header>
+
+  <div style="max-width:1480px;margin:0 auto;padding:var(--s-6) var(--s-6) var(--s-8);display:flex;flex-direction:column;gap:var(--s-6)">
+
+    <div>
+      <nav aria-label="Breadcrumb" style="display:flex;align-items:center;gap:8px;font-size:14px;margin-bottom:var(--s-3)">
+        <a href="#">Regulatory data</a><span style="color:var(--c-slate)">/</span><a href="#">Botswana</a><span style="color:var(--c-slate)">/</span><span style="font-weight:500">2026 return</span>
+      </nav>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s-6);flex-wrap:wrap">
+        <div>
+          <div style="font-size:15px;color:var(--c-slate);margin-bottom:8px">Botswana &middot; BOCRA &middot; Annual regulatory return, 2026 cycle</div>
+          <h1 style="font-family:var(--f-head);font-size:clamp(27px,4vw,40px);line-height:1.1;font-weight:600;margin:0;letter-spacing:-.015em">Regulatory data submission</h1>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:13px;color:var(--c-slate);margin-bottom:6px">Submission window closes 30 September 2026</div>
+          <div style="font-size:15px;color:var(--c-charcoal)">10 of 12 indicators complete</div>
+        </div>
+      </div>
+    </div>
+
+    <section style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+      <h2 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin:0 0 var(--s-4)">Workflow, all four states</h2>
+      <div style="display:flex;gap:var(--s-3);flex-wrap:wrap">
+        <sc-for list="{{ stages }}" as="s" hint-placeholder-count="4">
+          <button type="button" onClick="{{ s.select }}" aria-pressed="{{ s.pressed }}" style="{{ s.style }}">
+            <span style="{{ s.numStyle }}">{{ s.num }}</span>
+            <span style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0">
+              <span style="font-size:16px;font-weight:600;line-height:1.2">{{ s.name }}</span>
+              <span style="{{ s.subStyle }}">{{ s.sub }}</span>
+            </span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="margin-top:var(--s-4);padding-top:var(--s-4);border-top:1px solid var(--c-line);display:flex;gap:var(--s-4);align-items:flex-start">
+        <span style="{{ bannerIconStyle }}">
+          <sc-if value="{{ isDraft }}" hint-placeholder-val="{{ true }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4l10-10a2.5 2.5 0 00-3.5-3.5L4 16.5V20z"></path></svg>
+          </sc-if>
+          <sc-if value="{{ isSubmitted }}" hint-placeholder-val="{{ false }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5V12l3.5 2"></path></svg>
+          </sc-if>
+          <sc-if value="{{ isValidated }}" hint-placeholder-val="{{ false }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg>
+          </sc-if>
+          <sc-if value="{{ isReturned }}" hint-placeholder-val="{{ false }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 8.5v4"></path><path d="M12 16.5h.01"></path><path d="M10.3 3.9L2.4 18a1.8 1.8 0 001.6 2.7h16a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"></path></svg>
+          </sc-if>
+        </span>
+        <div>
+          <div style="font-size:17px;font-weight:600;margin-bottom:4px">{{ bannerTitle }}</div>
+          <div style="font-size:15.5px;line-height:1.6;color:var(--c-charcoal);max-width:96ch">{{ bannerBody }}</div>
+        </div>
+      </div>
+    </section>
+
+    <sc-if value="{{ isReturned }}" hint-placeholder-val="{{ false }}">
+      <section style="background:var(--c-red-light);border:1px solid #E3B7B8;border-left:4px solid var(--c-red);border-radius:var(--r-md);padding:var(--s-5)">
+        <h2 style="font-family:var(--f-head);font-size:22px;font-weight:600;margin:0 0 var(--s-3);color:#6E1A1D">Returned with two comments</h2>
+        <p style="margin:0 0 var(--s-5);font-size:15.5px;line-height:1.6;color:#6E1A1D;max-width:90ch">The Secretariat has returned this submission. Comments are attached to specific fields, not to the submission as a whole, so you can go straight to what needs changing. The published values have not changed.</p>
+        <div style="display:flex;flex-direction:column;gap:var(--s-3)">
+          <div style="background:var(--c-white);border:1px solid #E3B7B8;border-radius:var(--r-sm);padding:var(--s-4);display:flex;gap:var(--s-4);flex-wrap:wrap">
+            <div style="flex:1 1 260px;min-width:0">
+              <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c-slate);margin-bottom:5px">Mobile Broadband Penetration</div>
+              <div style="font-size:15.5px;line-height:1.6;color:var(--c-charcoal)">The submitted figure of 94.1 percent is materially above the 2025 return of 71.4 percent. Please attach the operator data behind the revision, or correct the figure.</div>
+            </div>
+            <div style="flex:0 0 200px;font-size:13.5px;color:var(--c-slate);line-height:1.6">Secretariat, Head of Electronic Communications<br>28 July 2026, 09:14</div>
+          </div>
+          <div style="background:var(--c-white);border:1px solid #E3B7B8;border-radius:var(--r-sm);padding:var(--s-4);display:flex;gap:var(--s-4);flex-wrap:wrap">
+            <div style="flex:1 1 260px;min-width:0">
+              <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c-slate);margin-bottom:5px">Permanent Postal Outlets</div>
+              <div style="font-size:15.5px;line-height:1.6;color:var(--c-charcoal)">Left empty. If the count is genuinely unchanged from 2025, enter it again and note that in the source field. An empty value is published as Not reported.</div>
+            </div>
+            <div style="flex:0 0 200px;font-size:13.5px;color:var(--c-slate);line-height:1.6">Secretariat, Head of Electronic Communications<br>28 July 2026, 09:16</div>
+          </div>
+        </div>
+      </section>
+    </sc-if>
+
+    <div style="display:flex;flex-wrap:wrap;gap:var(--s-6);align-items:flex-start">
+
+      <section style="flex:999 1 520px;min-width:0;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+        <div style="padding:var(--s-5);border-bottom:1px solid var(--c-line);display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-5);flex-wrap:wrap">
+          <div>
+            <h2 style="font-family:var(--f-head);font-size:26px;font-weight:600;margin:0 0 5px">The e-Form</h2>
+            <div style="font-size:14.5px;color:var(--c-slate)">Twelve indicators in three categories. Every value carries a source, and may carry evidence.</div>
+          </div>
+          <div style="font-size:14px;color:var(--c-charcoal)">{{ formMode }}</div>
+        </div>
+
+        <sc-if value="{{ showErrors }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;gap:var(--s-3);background:var(--c-red-light);border-bottom:1px solid #E3B7B8;padding:var(--s-4) var(--s-5)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9B2226" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--c-red)">Two fields need attention before you can submit</div>
+              <ol style="margin:6px 0 0;padding-left:20px;font-size:15px;line-height:1.6;color:#6E1A1D">
+                <li><a href="#" style="color:#6E1A1D">Mobile Broadband Penetration</a> is above 100 percent with no source note.</li>
+                <li><a href="#" style="color:#6E1A1D">Permanent Postal Outlets</a> is empty.</li>
+              </ol>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="padding:var(--s-5);border-bottom:1px solid var(--c-line)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-4);margin-bottom:var(--s-5);flex-wrap:wrap">
+            <h3 style="font-family:var(--f-head);font-size:21px;font-weight:600;margin:0">Spectrum Management</h3>
+            <span style="font-size:14px;color:var(--c-slate)">4 of 4 complete</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-5)">
+            <div>
+              <label for="f-ops" style="display:block;font-size:14px;font-weight:600;margin-bottom:6px">Mobile Operators Licensed</label>
+              <input id="f-ops" type="text" value="3" style="width:100%;font-family:var(--f-admin);font-size:16px;color:var(--c-charcoal);background:var(--c-white);border:1.5px solid #B9B2A2;border-radius:var(--r-sm);padding:11px 13px">
+              <div style="font-size:12.5px;color:var(--c-slate);margin-top:5px">Whole number. Active licences only.</div>
+              <input type="text" value="BOCRA licence register, June 2026" aria-label="Source for Mobile Operators Licensed" style="width:100%;margin-top:8px;font-family:var(--f-body);font-size:14px;color:var(--c-charcoal);background:var(--c-cream);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 11px">
+            </div>
+            <div>
+              <label for="f-lic" style="display:block;font-size:14px;font-weight:600;margin-bottom:6px">Licensing Framework</label>
+              <div style="position:relative">
+                <select id="f-lic" style="width:100%;font-family:var(--f-body);font-size:16px;color:var(--c-charcoal);background:var(--c-white);border:1.5px solid #B9B2A2;border-radius:var(--r-sm);padding:11px 40px 11px 13px;appearance:none">
+                  <option>Unified licensing</option><option>Class licensing</option><option>Individual licensing</option><option>Converged licensing</option>
+                </select>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" style="position:absolute;right:13px;top:13px;pointer-events:none" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+              </div>
+              <div style="font-size:12.5px;color:var(--c-slate);margin-top:5px">Select all that apply. Published as a list.</div>
+              <input type="text" value="Communications Regulatory Authority Act, section 41" aria-label="Source for Licensing Framework" style="width:100%;margin-top:8px;font-family:var(--f-body);font-size:14px;color:var(--c-charcoal);background:var(--c-cream);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 11px">
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:600;margin-bottom:8px">5G Spectrum Assigned</div>
+              <div style="display:flex;gap:var(--s-5)">
+                <label style="display:flex;align-items:center;gap:9px;font-size:16px;cursor:pointer"><span style="width:20px;height:20px;border-radius:var(--r-pill);border:1.5px solid var(--c-green-dark);display:grid;place-items:center;flex:none"><span style="width:10px;height:10px;border-radius:var(--r-pill);background:var(--c-green-dark)"></span></span>Yes</label>
+                <label style="display:flex;align-items:center;gap:9px;font-size:16px;cursor:pointer"><span style="width:20px;height:20px;border-radius:var(--r-pill);border:1.5px solid #B9B2A2;flex:none"></span>No</label>
+              </div>
+              <input type="text" value="Assignment notice, 3.5 GHz, March 2023" aria-label="Source for 5G Spectrum Assigned" style="width:100%;margin-top:12px;font-family:var(--f-body);font-size:14px;color:var(--c-charcoal);background:var(--c-cream);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 11px">
+            </div>
+            <div>
+              <label for="f-yr" style="display:block;font-size:14px;font-weight:600;margin-bottom:6px">Last Major Spectrum Process</label>
+              <input id="f-yr" type="text" value="2023" style="width:100%;font-family:var(--f-admin);font-size:16px;color:var(--c-charcoal);background:var(--c-white);border:1.5px solid #B9B2A2;border-radius:var(--r-sm);padding:11px 13px">
+              <div style="font-size:12.5px;color:var(--c-slate);margin-top:5px">Four digit year, 1990 to 2026.</div>
+              <input type="text" value="Spectrum award report, 2023" aria-label="Source for Last Major Spectrum Process" style="width:100%;margin-top:8px;font-family:var(--f-body);font-size:14px;color:var(--c-charcoal);background:var(--c-cream);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 11px">
+            </div>
+          </div>
+        </div>
+
+        <div style="padding:var(--s-5);border-bottom:1px solid var(--c-line)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-4);margin-bottom:var(--s-5);flex-wrap:wrap">
+            <h3 style="font-family:var(--f-head);font-size:21px;font-weight:600;margin:0">Roaming and Mobile</h3>
+            <span style="font-size:14px;color:var(--c-slate)">4 of 4 entered, 1 needs attention</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-5)">
+            <div>
+              <label for="f-pen" style="display:block;font-size:14px;font-weight:600;margin-bottom:6px">Mobile Penetration</label>
+              <div style="display:flex;align-items:center;gap:0;border:1.5px solid #B9B2A2;border-radius:var(--r-sm);background:var(--c-white);overflow:hidden">
+                <input id="f-pen" type="text" size="6" value="168.4" style="flex:1;min-width:0;font-family:var(--f-admin);font-size:16px;color:var(--c-charcoal);border:none;outline:none;padding:11px 13px;background:transparent">
+                <span style="flex:none;white-space:nowrap;font-family:var(--f-admin);font-size:15px;color:var(--c-slate);padding:0 13px;border-left:1px solid var(--c-line);align-self:stretch;display:grid;place-items:center;background:var(--c-cream)">%</span>
+              </div>
+              <div style="font-size:12.5px;color:var(--c-slate);margin-top:5px">Active SIMs per 100 inhabitants. May exceed 100.</div>
+              <input type="text" value="Quarterly market report Q2 2026" aria-label="Source for Mobile Penetration" style="width:100%;margin-top:8px;font-family:var(--f-body);font-size:14px;color:var(--c-charcoal);background:var(--c-cream);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 11px">
+            </div>
+            <div>
+              <label for="f-bb" style="display:block;font-size:14px;font-weight:600;margin-bottom:6px">Mobile Broadband Penetration <span style="color:var(--c-red)">*</span></label>
+              <div style="display:flex;align-items:center;gap:0;border:1.5px solid var(--c-red);border-radius:var(--r-sm);background:var(--c-red-light);overflow:hidden">
+                <input id="f-bb" type="text" size="6" value="94.1" aria-describedby="f-bb-err" style="flex:1;min-width:0;font-family:var(--f-admin);font-size:16px;color:var(--c-charcoal);border:none;outline:none;padding:11px 13px;background:transparent">
+                <span style="flex:none;white-space:nowrap;font-family:var(--f-admin);font-size:15px;color:#6E1A1D;padding:0 13px;border-left:1px solid #E3B7B8;align-self:stretch;display:grid;place-items:center">%</span>
+              </div>
+              <div id="f-bb-err" style="display:flex;align-items:flex-start;gap:6px;margin-top:6px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9B2226" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+                <div style="font-size:14px;font-weight:500;color:var(--c-red);line-height:1.45">This is 22.7 points above your 2025 figure. Add a source note explaining the revision.</div>
+              </div>
+              <input type="text" placeholder="Source note required" aria-label="Source for Mobile Broadband Penetration" style="width:100%;margin-top:8px;font-family:var(--f-body);font-size:14px;color:var(--c-charcoal);background:var(--c-white);border:1.5px solid var(--c-red);border-radius:var(--r-sm);padding:9px 11px">
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:600;margin-bottom:8px">Mobile Number Portability</div>
+              <div style="display:flex;gap:var(--s-5)">
+                <label style="display:flex;align-items:center;gap:9px;font-size:16px;cursor:pointer"><span style="width:20px;height:20px;border-radius:var(--r-pill);border:1.5px solid var(--c-green-dark);display:grid;place-items:center;flex:none"><span style="width:10px;height:10px;border-radius:var(--r-pill);background:var(--c-green-dark)"></span></span>Yes</label>
+                <label style="display:flex;align-items:center;gap:9px;font-size:16px;cursor:pointer"><span style="width:20px;height:20px;border-radius:var(--r-pill);border:1.5px solid #B9B2A2;flex:none"></span>No</label>
+              </div>
+              <input type="text" value="MNP Regulations, 2019" aria-label="Source for Mobile Number Portability" style="width:100%;margin-top:12px;font-family:var(--f-body);font-size:14px;color:var(--c-charcoal);background:var(--c-cream);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 11px">
+            </div>
+            <div>
+              <label for="f-fw" style="display:block;font-size:14px;font-weight:600;margin-bottom:6px">SADC Roaming Framework</label>
+              <div style="position:relative">
+                <select id="f-fw" style="width:100%;font-family:var(--f-body);font-size:16px;color:var(--c-charcoal);background:var(--c-white);border:1.5px solid #B9B2A2;border-radius:var(--r-sm);padding:11px 40px 11px 13px;appearance:none">
+                  <option>Implemented</option><option>Partial</option><option>Not implemented</option>
+                </select>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" style="position:absolute;right:13px;top:13px;pointer-events:none" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+              </div>
+              <div style="margin-top:12px;display:flex;align-items:center;gap:10px;border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 11px;background:var(--c-cream)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0E5536" stroke-width="2" stroke-linejoin="round" style="flex:none" aria-hidden="true"><path d="M14 3H7a1 1 0 00-1 1v16a1 1 0 001 1h10a1 1 0 001-1V7z"></path><path d="M14 3v4h4"></path></svg>
+                <span style="font-size:13.5px;flex:1;min-width:0">roaming-implementation-report-2026.pdf</span>
+                <span style="font-size:12.5px;color:var(--c-slate);flex:none">1.2 MB</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding:var(--s-5)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-4);margin-bottom:var(--s-5);flex-wrap:wrap">
+            <h3 style="font-family:var(--f-head);font-size:21px;font-weight:600;margin:0">Postal Services</h3>
+            <span style="font-size:14px;color:var(--c-slate)">3 of 4 entered, 1 empty</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-5)">
+            <div>
+              <label for="f-out" style="display:block;font-size:14px;font-weight:600;margin-bottom:6px">Permanent Postal Outlets <span style="color:var(--c-red)">*</span></label>
+              <input id="f-out" type="text" value="" placeholder="Required" aria-describedby="f-out-err" style="width:100%;font-family:var(--f-admin);font-size:16px;color:var(--c-charcoal);background:var(--c-red-light);border:1.5px solid var(--c-red);border-radius:var(--r-sm);padding:11px 13px">
+              <div id="f-out-err" style="display:flex;align-items:flex-start;gap:6px;margin-top:6px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9B2226" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+                <div style="font-size:14px;font-weight:500;color:var(--c-red);line-height:1.45">Enter a count. Your 2025 return recorded 127.</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:600;margin-bottom:8px">USO Operator Designated</div>
+              <div style="display:flex;gap:var(--s-5)">
+                <label style="display:flex;align-items:center;gap:9px;font-size:16px;cursor:pointer"><span style="width:20px;height:20px;border-radius:var(--r-pill);border:1.5px solid var(--c-green-dark);display:grid;place-items:center;flex:none"><span style="width:10px;height:10px;border-radius:var(--r-pill);background:var(--c-green-dark)"></span></span>Yes</label>
+                <label style="display:flex;align-items:center;gap:9px;font-size:16px;cursor:pointer"><span style="width:20px;height:20px;border-radius:var(--r-pill);border:1.5px solid #B9B2A2;flex:none"></span>No</label>
+              </div>
+              <input type="text" value="Botswana Post designation order" aria-label="Source for USO Operator Designated" style="width:100%;margin-top:12px;font-family:var(--f-body);font-size:14px;color:var(--c-charcoal);background:var(--c-cream);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 11px">
+            </div>
+          </div>
+          <div style="margin-top:var(--s-5);padding-top:var(--s-5);border-top:1px solid var(--c-line);display:flex;align-items:center;gap:var(--s-4);flex-wrap:wrap">
+            <span style="font-size:14px;color:var(--c-slate);flex:1;min-width:200px">Autosaved 14:32. Your draft is kept for 90 days and only your authority can see it.</span>
+            <button type="button" style="font-family:var(--f-body);font-size:16px;font-weight:600;color:var(--c-navy);background:transparent;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);padding:11px 18px;cursor:pointer">Save draft</button>
+            <button type="button" style="{{ submitStyle }}">{{ submitLabel }}</button>
+          </div>
+        </div>
+      </section>
+
+      <aside style="flex:1 1 290px;max-width:340px;min-width:0;display:flex;flex-direction:column;gap:var(--s-5)">
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin:0 0 var(--s-4)">Progress by category</h2>
+          <div style="display:flex;flex-direction:column;gap:var(--s-4)">
+            <div>
+              <div style="display:flex;justify-content:space-between;gap:var(--s-3);font-size:14.5px;margin-bottom:6px"><span style="font-weight:600">Spectrum Management</span><span style="color:var(--c-slate)">4 of 4</span></div>
+              <div style="height:8px;border-radius:var(--r-pill);background:var(--c-sand);overflow:hidden"><div style="width:100%;height:100%;background:var(--c-green-dark)"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;gap:var(--s-3);font-size:14.5px;margin-bottom:6px"><span style="font-weight:600">Roaming and Mobile</span><span style="color:var(--c-slate)">4 of 4</span></div>
+              <div style="height:8px;border-radius:var(--r-pill);background:var(--c-sand);overflow:hidden"><div style="width:100%;height:100%;background:var(--c-amber)"></div></div>
+              <div style="font-size:12.5px;color:var(--c-charcoal);margin-top:5px">One field needs a source note.</div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;gap:var(--s-3);font-size:14.5px;margin-bottom:6px"><span style="font-weight:600">Postal Services</span><span style="color:var(--c-slate)">3 of 4</span></div>
+              <div style="height:8px;border-radius:var(--r-pill);background:var(--c-sand);overflow:hidden"><div style="width:75%;height:100%;background:var(--c-red)"></div></div>
+              <div style="font-size:12.5px;color:var(--c-charcoal);margin-top:5px">One field empty.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin:0 0 var(--s-4)">Version history, Mobile Penetration</h2>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <div style="border-left:2px solid var(--c-green-dark);padding:0 0 var(--s-4) var(--s-4);position:relative">
+              <div style="font-size:14.5px;font-weight:600">168.4% <span style="font-weight:400;color:var(--c-slate)">from 161.2%</span></div>
+              <div style="font-size:13px;color:var(--c-charcoal);margin-top:3px;line-height:1.5">Member State Representative, BOCRA<br>24 July 2026, 11:08</div>
+            </div>
+            <div style="border-left:2px solid var(--c-sand);padding:0 0 var(--s-4) var(--s-4)">
+              <div style="font-size:14.5px;font-weight:600">161.2% <span style="font-weight:400;color:var(--c-slate)">from 154.9%</span></div>
+              <div style="font-size:13px;color:var(--c-charcoal);margin-top:3px;line-height:1.5">Secretariat, validated<br>3 September 2025, 15:41</div>
+              <a href="#" style="display:inline-block;font-size:13.5px;font-weight:600;margin-top:6px">Restore this value</a>
+            </div>
+            <div style="border-left:2px solid var(--c-sand);padding:0 0 0 var(--s-4)">
+              <div style="font-size:14.5px;font-weight:600">154.9% <span style="font-weight:400;color:var(--c-slate)">first entry</span></div>
+              <div style="font-size:13px;color:var(--c-charcoal);margin-top:3px;line-height:1.5">Member State Representative, BOCRA<br>19 August 2024, 08:52</div>
+            </div>
+          </div>
+          <div style="margin-top:var(--s-4);padding-top:var(--s-4);border-top:1px solid var(--c-line);font-size:13px;line-height:1.6;color:var(--c-charcoal)">Every change to a regulatory value keeps its author, timestamp, previous value and new value. Nothing is overwritten in place.</div>
+        </div>
+
+        <div style="background:var(--c-navy);color:var(--c-cream);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-green-light);margin:0 0 var(--s-3)">Reports</h2>
+          <p style="margin:0 0 var(--s-4);font-size:14.5px;line-height:1.6;color:var(--c-sand)">Generate a return summary for one country, one category or the whole region, preview it, and export.</p>
+          <div style="display:flex;gap:var(--s-2);flex-wrap:wrap">
+            <span style="font-size:13.5px;font-weight:600;border:1.5px solid #4A5670;border-radius:var(--r-sm);padding:8px 13px">CSV</span>
+            <span style="font-size:13.5px;font-weight:600;border:1.5px solid #4A5670;border-radius:var(--r-sm);padding:8px 13px">JSON</span>
+            <span style="font-size:13.5px;font-weight:600;border:1.5px solid #4A5670;border-radius:var(--r-sm);padding:8px 13px">Print</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+      <div style="padding:var(--s-5);border-bottom:1px solid var(--c-line);display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-5);flex-wrap:wrap">
+        <div>
+          <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:6px">As the Secretariat sees it</div>
+          <h2 style="font-family:var(--f-head);font-size:28px;font-weight:600;margin:0 0 5px">Review queue, 2026 cycle</h2>
+          <div style="font-size:14.5px;color:var(--c-slate)">All 14 member states. Sorted by submission date, oldest first.</div>
+        </div>
+        <div style="display:flex;gap:var(--s-5);flex-wrap:wrap;font-size:14.5px;color:var(--c-charcoal)">
+          <span><strong>4</strong> validated</span><span><strong>6</strong> submitted</span><span><strong>1</strong> returned</span><span><strong>3</strong> not started</span>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:15px;min-width:820px">
+          <thead>
+            <tr style="background:var(--c-navy);color:var(--c-cream);text-align:left">
+              <th scope="col" style="padding:11px var(--s-5);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600">Member state</th>
+              <th scope="col" style="padding:11px var(--s-4);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600">State</th>
+              <th scope="col" style="padding:11px var(--s-4);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600">Submitted</th>
+              <th scope="col" style="padding:11px var(--s-4);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600">Submitted by</th>
+              <th scope="col" style="padding:11px var(--s-4);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;text-align:right">Fields changed</th>
+              <th scope="col" style="padding:11px var(--s-5) 11px var(--s-4);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ queue }}" as="q" hint-placeholder-count="14">
+              <tr style="{{ q.rowStyle }}">
+                <th scope="row" style="padding:11px var(--s-5);text-align:left;font-weight:500">
+                  <span style="display:flex;align-items:center;gap:10px">
+                    <span style="width:28px;height:28px;border-radius:var(--r-xs);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-family:var(--f-admin);font-size:11px;font-weight:700;flex:none">{{ q.code }}</span>
+                    <span style="display:flex;flex-direction:column"><span>{{ q.name }}</span><span style="font-size:12.5px;color:var(--c-slate)">{{ q.acr }}</span></span>
+                  </span>
+                </th>
+                <td style="padding:11px var(--s-4)"><span style="{{ q.pillStyle }}">{{ q.state }}</span></td>
+                <td style="padding:11px var(--s-4);font-family:var(--f-admin);font-size:14px;color:var(--c-charcoal)">{{ q.date }}</td>
+                <td style="padding:11px var(--s-4);font-size:14px;color:var(--c-charcoal)">{{ q.by }}</td>
+                <td style="padding:11px var(--s-4);text-align:right;font-family:var(--f-admin);font-size:15px;font-variant-numeric:tabular-nums">{{ q.changed }}</td>
+                <td style="padding:11px var(--s-5) 11px var(--s-4)"><span style="{{ q.actionStyle }}">{{ q.action }}</span></td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:var(--s-4) var(--s-5);border-top:1px solid var(--c-line);background:var(--c-cream);font-size:14px;color:var(--c-charcoal)">Sticky header on scroll. Row hover is a tint only; the action is a real link in every row, so nothing depends on hovering.</div>
+    </section>
+
+    <section style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+      <div style="padding:var(--s-5);border-bottom:1px solid var(--c-line)">
+        <h2 style="font-family:var(--f-head);font-size:26px;font-weight:600;margin:0 0 5px">Submitted against published, Botswana</h2>
+        <div style="font-size:14.5px;color:var(--c-slate);max-width:90ch">The reviewer sees exactly what changed before validating. Unchanged values are collapsed by default and stated as unchanged rather than hidden.</div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:15.5px">
+        <thead>
+          <tr style="background:var(--c-cream);text-align:left;border-bottom:1px solid var(--c-line)">
+            <th scope="col" style="padding:11px var(--s-5);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--c-slate)">Indicator</th>
+            <th scope="col" style="padding:11px var(--s-4);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--c-slate);text-align:right">Published, 2025</th>
+            <th scope="col" style="padding:11px var(--s-4);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--c-slate);text-align:right">Submitted, 2026</th>
+            <th scope="col" style="padding:11px var(--s-5) 11px var(--s-4);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--c-slate)">Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--c-line)">
+            <th scope="row" style="padding:13px var(--s-5);text-align:left;font-weight:500">Mobile Penetration</th>
+            <td style="padding:13px var(--s-4);text-align:right;font-family:var(--f-admin);font-variant-numeric:tabular-nums;color:var(--c-slate)">161.2%</td>
+            <td style="padding:13px var(--s-4);text-align:right;font-family:var(--f-admin);font-weight:600;font-variant-numeric:tabular-nums">168.4%</td>
+            <td style="padding:13px var(--s-5) 13px var(--s-4);font-size:14.5px;color:var(--c-charcoal)">Up 7.2 points. In line with the trend.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--c-line);background:var(--c-red-light)">
+            <th scope="row" style="padding:13px var(--s-5);text-align:left;font-weight:500">Mobile Broadband Penetration</th>
+            <td style="padding:13px var(--s-4);text-align:right;font-family:var(--f-admin);font-variant-numeric:tabular-nums;color:var(--c-slate)">71.4%</td>
+            <td style="padding:13px var(--s-4);text-align:right;font-family:var(--f-admin);font-weight:600;font-variant-numeric:tabular-nums;color:var(--c-red)">94.1%</td>
+            <td style="padding:13px var(--s-5) 13px var(--s-4);font-size:14.5px;color:#6E1A1D;font-weight:500">Up 22.7 points with no source note. Query before validating.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--c-line)">
+            <th scope="row" style="padding:13px var(--s-5);text-align:left;font-weight:500">5G Spectrum Assigned</th>
+            <td style="padding:13px var(--s-4);text-align:right;font-family:var(--f-admin);color:var(--c-slate)">No</td>
+            <td style="padding:13px var(--s-4);text-align:right;font-family:var(--f-admin);font-weight:600">Yes</td>
+            <td style="padding:13px var(--s-5) 13px var(--s-4);font-size:14.5px;color:var(--c-charcoal)">Changed. Assignment notice attached.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--c-line)">
+            <th scope="row" style="padding:13px var(--s-5);text-align:left;font-weight:500">Permanent Postal Outlets</th>
+            <td style="padding:13px var(--s-4);text-align:right;font-family:var(--f-admin);font-variant-numeric:tabular-nums;color:var(--c-slate)">127</td>
+            <td style="padding:13px var(--s-4);text-align:right;font-size:15px;font-style:italic;color:var(--c-slate)">Empty</td>
+            <td style="padding:13px var(--s-5) 13px var(--s-4);font-size:14.5px;color:#6E1A1D;font-weight:500">Would publish as Not reported. Return for completion.</td>
+          </tr>
+          <tr>
+            <th scope="row" style="padding:13px var(--s-5);text-align:left;font-weight:500;color:var(--c-slate)">Eight further indicators</th>
+            <td style="padding:13px var(--s-4);text-align:right;color:var(--c-slate)" colspan="2">Unchanged from the published values</td>
+            <td style="padding:13px var(--s-5) 13px var(--s-4);font-size:14.5px"><a href="#">Show all eight</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="padding:var(--s-4) var(--s-5);border-top:1px solid var(--c-line);display:flex;gap:var(--s-3);flex-wrap:wrap;justify-content:flex-end;background:var(--c-cream)">
+        <button type="button" style="font-family:var(--f-body);font-size:15.5px;font-weight:600;color:var(--c-red);background:var(--c-white);border:1.5px solid var(--c-red);border-radius:var(--r-sm);padding:11px 18px;cursor:pointer">Return with comments</button>
+        <button type="button" style="font-family:var(--f-body);font-size:15.5px;font-weight:600;color:var(--c-white);background:var(--c-green-dark);border:1.5px solid var(--c-green-dark);border-radius:var(--r-sm);padding:11px 18px;cursor:pointer">Validate and publish</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const STAGES = [
+  { id:"draft", num:"1", name:"Draft", sub:"Editable by BOCRA only" },
+  { id:"submitted", num:"2", name:"Submitted", sub:"Locked, awaiting the Secretariat" },
+  { id:"validated", num:"3", name:"Validated", sub:"Published to the comparator" },
+  { id:"returned", num:"4", name:"Returned", sub:"Comments against two fields" }
+];
+
+const BANNER = {
+  draft: {
+    title: "Draft, not yet submitted",
+    body: "Only your authority can see this return. Autosave keeps your work as you go. Two fields must be resolved before the submit action becomes available.",
+    tone: "amber"
+  },
+  submitted: {
+    title: "Submitted 26 July 2026, awaiting validation",
+    body: "The return is locked while the Secretariat reviews it. You can still see every value and its history, and you will be notified when it is validated or returned. The comparator continues to show the previously published values until validation.",
+    tone: "navy"
+  },
+  validated: {
+    title: "Validated 2 August 2026 and published",
+    body: "The Secretariat has accepted this return. All twelve values now carry the verified marker in the comparator, and the demonstration-data notice no longer applies to Botswana.",
+    tone: "green"
+  },
+  returned: {
+    title: "Returned 28 July 2026 with two comments",
+    body: "The return is editable again. Resolve the two comments below and submit a second time. The previously published values remain in place on the public comparator.",
+    tone: "red"
+  }
+};
+
+const QUEUE = [
+  { code:"AO", name:"Angola", acr:"INACOM", state:"Submitted", date:"12 Jul 2026", by:"Member State Representative", changed:5 },
+  { code:"BW", name:"Botswana", acr:"BOCRA", state:"__self", date:"26 Jul 2026", by:"Member State Representative", changed:4 },
+  { code:"KM", name:"Comoros", acr:"ANRTIC", state:"Not started", date:"", by:"", changed:0 },
+  { code:"CD", name:"DR Congo", acr:"ARPTC", state:"Submitted", date:"18 Jul 2026", by:"Member State Representative", changed:7 },
+  { code:"SZ", name:"Eswatini", acr:"ESCCOM", state:"Validated", date:"2 Jul 2026", by:"Member State Representative", changed:3 },
+  { code:"LS", name:"Lesotho", acr:"LCA", state:"Submitted", date:"21 Jul 2026", by:"Member State Representative", changed:2 },
+  { code:"MW", name:"Malawi", acr:"MACRA", state:"Validated", date:"8 Jul 2026", by:"Member State Representative", changed:6 },
+  { code:"MU", name:"Mauritius", acr:"ICTA", state:"Validated", date:"1 Jul 2026", by:"Member State Representative", changed:4 },
+  { code:"MZ", name:"Mozambique", acr:"INCM", state:"Returned", date:"14 Jul 2026", by:"Member State Representative", changed:9 },
+  { code:"NA", name:"Namibia", acr:"CRAN", state:"Validated", date:"4 Jul 2026", by:"Member State Representative", changed:5 },
+  { code:"ZA", name:"South Africa", acr:"ICASA", state:"Submitted", date:"23 Jul 2026", by:"Member State Representative", changed:8 },
+  { code:"TZ", name:"Tanzania", acr:"TCRA", state:"Submitted", date:"25 Jul 2026", by:"Member State Representative", changed:6 },
+  { code:"ZM", name:"Zambia", acr:"ZICTA", state:"Not started", date:"", by:"", changed:0 },
+  { code:"ZW", name:"Zimbabwe", acr:"POTRAZ", state:"Not started", date:"", by:"", changed:0 }
+];
+
+const P = "font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:2px;display:inline-block;";
+const PILLS = {
+  "Draft": P + "background:#E5E0D5;color:#1F2937;border:1px solid #C9C2B2;",
+  "Submitted": P + "background:#FDF0DC;color:#7A4606;border:1px solid #E5BE87;",
+  "Validated": P + "background:#E8F4EC;color:#0E5536;border:1px solid #B6DCC5;",
+  "Returned": P + "background:#FBEDED;color:#9B2226;border:1px solid #E3B7B8;"
+};
+const TONE = {
+  amber: "background:#FDF0DC;color:#7A4606;",
+  navy: "background:#0F1B2D;color:#F8F6F1;",
+  green: "background:#0E5536;color:#FFFFFF;",
+  red: "background:#9B2226;color:#FFFFFF;"
+};
+
+class Component extends DCLogic {
+  state = { stage: "draft" };
+
+  renderVals(){
+    const cur = this.state.stage;
+    const b = BANNER[cur];
+
+    return {
+      stages: STAGES.map(s => {
+        const on = s.id === cur;
+        return {
+          num:s.num, name:s.name, sub:s.sub,
+          pressed: on ? "true" : "false",
+          select: () => this.setState({ stage:s.id }),
+          style: "flex:1 1 210px;display:flex;align-items:center;gap:13px;text-align:left;font-family:'IBM Plex Sans',system-ui,sans-serif;padding:14px 16px;border-radius:4px;cursor:pointer;"
+            + (on ? "background:#0F1B2D;color:#FFFFFF;border:1.5px solid #0F1B2D;" : "background:#F8F6F1;color:#1F2937;border:1.5px solid #DFDBD1;"),
+          numStyle: "width:30px;height:30px;border-radius:999px;display:grid;place-items:center;font-family:'Inter',system-ui,sans-serif;font-size:14px;font-weight:700;flex:none;"
+            + (on ? "background:#1A8C5A;color:#FFFFFF;" : "background:#E5E0D5;color:#1F2937;"),
+          subStyle: "font-size:13px;line-height:1.4;" + (on ? "color:#E5E0D5;" : "color:#5C6B7E;")
+        };
+      }),
+      bannerTitle: b.title,
+      bannerBody: b.body,
+      bannerIconStyle: "width:34px;height:34px;border-radius:999px;display:grid;place-items:center;flex:none;" + TONE[b.tone],
+      isDraft: cur === "draft",
+      isSubmitted: cur === "submitted",
+      isValidated: cur === "validated",
+      isReturned: cur === "returned",
+      showErrors: cur === "draft" || cur === "returned",
+      formMode: cur === "draft" ? "Editable"
+        : cur === "returned" ? "Editable again, two comments to resolve"
+        : cur === "submitted" ? "Read only while under review"
+        : "Read only, validated and published",
+      submitLabel: cur === "draft" ? "Submit for validation"
+        : cur === "returned" ? "Resubmit for validation"
+        : cur === "submitted" ? "Submitted, awaiting the Secretariat"
+        : "Validated and published",
+      submitStyle: (cur === "draft" || cur === "returned")
+        ? "font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:16px;font-weight:600;color:#6E7A85;background:#E5E0D5;border:1px solid #D6D0C2;border-radius:4px;padding:11px 18px;cursor:not-allowed;"
+        : "font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:16px;font-weight:600;color:#FFFFFF;background:#0E5536;border:1.5px solid #0E5536;border-radius:4px;padding:11px 18px;cursor:default;",
+      queue: QUEUE.map(q => {
+        const isSelf = q.state === "__self";
+        const state = isSelf ? (cur === "draft" ? "Draft" : cur === "submitted" ? "Submitted" : cur === "validated" ? "Validated" : "Returned") : q.state;
+        const known = !!PILLS[state];
+        return {
+          code:q.code, name:q.name, acr:q.acr, state:state,
+          date: q.date || "Not submitted",
+          by: q.by || "No submitter yet",
+          changed: q.changed ? q.changed : "0",
+          pillStyle: known ? PILLS[state] : "font-size:13.5px;color:#5C6B7E;",
+          rowStyle: "border-bottom:1px solid #DFDBD1;" + (isSelf ? "background:#E8F4EC;" : ""),
+          action: state === "Submitted" ? "Review" : state === "Validated" ? "View" : state === "Returned" ? "Awaiting resubmission" : state === "Draft" ? "Not yet submitted" : "Send a reminder",
+          actionStyle: (state === "Submitted")
+            ? "font-size:14.5px;font-weight:600;color:#0E5536;text-decoration:underline;text-underline-offset:3px;"
+            : "font-size:14.5px;color:#5C6B7E;"
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

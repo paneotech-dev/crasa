@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="icon" href="./assets/crasa-logo.svg">
+<link rel="stylesheet" href="./vendor/fonts.css">
+<style>
+:root{
+  --c-green:#1A8C5A; --c-green-dark:#0E5536; --c-green-light:#E8F4EC;
+  --c-navy:#0F1B2D; --c-navy-mid:#1A2742; --c-navy-line:#2C3A55; --c-charcoal:#1F2937;
+  --c-slate:#5C6B7E; --c-cream:#F8F6F1; --c-sand:#E5E0D5; --c-line:#DFDBD1;
+  --c-amber:#C2710C; --c-white:#FFFFFF; --c-red:#9B2226;
+  --f-head:'Lora',Georgia,serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-admin:'Inter',system-ui,sans-serif;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px; --s-9:96px;
+  --r-xs:2px; --r-sm:4px; --r-md:8px; --r-pill:999px;
+  --e-1:0 1px 2px rgba(15,27,45,.06), 0 1px 3px rgba(15,27,45,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;overflow-wrap:break-word;background:var(--c-cream);color:var(--c-charcoal);font-family:var(--f-body);-webkit-font-smoothing:antialiased}
+a{color:var(--c-green-dark);text-underline-offset:3px}
+a:hover{color:var(--c-navy)}
+:focus-visible{outline:3px solid var(--c-amber);outline-offset:2px}
+@page{margin:12mm}
+@media print{
+  html,body{background:#FFFFFF}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;transition:none !important;animation:none !important}
+  [style*="position:sticky"],[style*="position: sticky"],[style*="position:fixed"]{position:static !important}
+  section,figure,li,tr{break-inside:avoid}
+  h1,h2,h3{break-after:avoid}
+  thead{display:table-header-group}
+  [style*="overflow-x:auto"],[style*="overflow-x: auto"],[style*="overflow:auto"]{overflow:visible !important}
+  table{min-width:0 !important;width:100% !important;font-size:9.5pt !important}
+  img,svg{max-width:100% !important}
+  a[href]{text-decoration:underline}
+}
+</style>
+</helmet>
+
+<div style="background:var(--c-cream)">
+
+  <section style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-9) var(--s-7)">
+    <div style="max-width:1320px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:var(--s-9);align-items:start">
+      <div>
+        <div style="display:flex;align-items:center;gap:var(--s-4);margin-bottom:var(--s-8)">
+          <img src="assets/crasa-logo.svg" alt="" style="width:56px;height:56px;flex:none;display:block">
+          <span style="display:flex;flex-direction:column;gap:3px">
+            <span style="font-family:var(--f-head);font-size:26px;font-weight:600;color:var(--c-white);line-height:1.05">CRASA</span>
+            <span style="font-size:13px;color:var(--c-sand);letter-spacing:.02em">Communications Regulators' Association of Southern Africa</span>
+          </span>
+        </div>
+        <div style="font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:var(--s-5)">User interface design proposition</div>
+        <h1 style="font-family:var(--f-head);font-size:clamp(34px,6vw,64px);line-height:1.04;font-weight:600;letter-spacing:-.025em;margin:0 0 var(--s-5);max-width:22ch">Design and Re-Development of the CRASA Website</h1>
+        <p style="margin:0 0 var(--s-7);font-size:21px;line-height:1.55;color:var(--c-sand);max-width:56ch">Public corporate website, members' extranet and administration back office. One design system, three surfaces, trilingual in English, French and Portuguese.</p>
+        <dl style="margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:var(--s-5) var(--s-7);max-width:640px;border-top:1px solid var(--c-navy-line);padding-top:var(--s-5)">
+          <div><dt style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:6px">Programme</dt><dd style="margin:0;font-size:16.5px;line-height:1.5">EGEE-ICT, funded by the European Union and implemented with COMESA</dd></div>
+          <div><dt style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:6px">Client</dt><dd style="margin:0;font-size:16.5px;line-height:1.5">CRASA Secretariat, Gaborone, Botswana</dd></div>
+          <div><dt style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:6px">Date</dt><dd style="margin:0;font-size:16.5px;line-height:1.5">August 2026</dd></div>
+          <div><dt style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:6px">Scope of this pack</dt><dd style="margin:0;font-size:16.5px;line-height:1.5">Interface design only. Not a built system.</dd></div>
+        </dl>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:var(--s-6)">
+        
+
+        <div style="border-left:3px solid var(--c-amber);padding-left:var(--s-5)">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-amber);margin-bottom:var(--s-3)">Data and content notes</div>
+          <p style="margin:0 0 var(--s-3);font-size:15.5px;line-height:1.65;color:var(--c-sand)">CRASA's official emblem is used throughout.</p>
+          <p style="margin:0;font-size:15.5px;line-height:1.65;color:var(--c-sand)">Comparator values are demonstration data and carry a visible notice until each is validated by its national regulator. Leadership is shown by role rather than by name until the Secretariat confirms the roster.</p>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:var(--s-4)">Donor visibility</div>
+          <div style="display:flex;flex-wrap:wrap;gap:var(--s-3);align-items:center;margin-bottom:var(--s-4)">
+            <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:11px 16px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">SADC</span>
+            <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:11px 16px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">COMESA</span>
+            <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:11px 16px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">EUROPEAN UNION</span>
+            <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:11px 16px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">ITU</span>
+            <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:11px 16px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">UPU</span>
+          </div>
+          <div style="font-family:var(--f-admin);font-size:10px;font-weight:700;letter-spacing:.06em;background:var(--c-cream);color:var(--c-navy);padding:4px 8px;border-radius:2px;display:inline-block;margin-bottom:var(--s-3)">EMBLEM PLACEHOLDERS</div>
+          <p style="margin:0;font-size:14.5px;line-height:1.6;color:var(--c-sand);max-width:52ch">Official emblems replace these placeholders once COMESA confirms the visibility requirements, including minimum sizes and the exact funding statement wording.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:1320px;margin:0 auto;padding:var(--s-9) var(--s-7)">
+    <div style="max-width:74ch;margin-bottom:var(--s-7)">
+      <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:var(--s-3)">How it fits together</div>
+      <h2 style="font-family:var(--f-head);font-size:clamp(28px,4.2vw,42px);line-height:1.12;font-weight:600;margin:0 0 var(--s-4);letter-spacing:-.015em">One platform, three surfaces, one content core</h2>
+      <p style="margin:0;font-size:19px;line-height:1.65;color:var(--c-charcoal)">Every surface reads and writes the same content core. The trilingual layer sits inside that core, so a translation entered once appears wherever the content appears. Single Sign-On connects the three existing CRASA systems, so a member logs in once.</p>
+    </div>
+
+    <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-6)">
+      <svg viewBox="0 0 1180 700" width="100%" role="img" aria-label="System map. Three user-facing surfaces, the public website, the members' extranet and the administration back office, all connect to a shared Laravel and MySQL core. A trilingual content layer runs across the core. A Single Sign-On bridge connects the existing Extranet, the Event Management Platform and the Monitoring and Evaluation system.">
+        <g font-family="IBM Plex Sans, system-ui, sans-serif">
+
+          <text x="0" y="18" font-size="13" font-weight="700" letter-spacing="1.6" fill="#5C6B7E">USERS</text>
+          <g>
+            <rect x="0" y="34" width="250" height="72" rx="6" fill="#F8F6F1" stroke="#DFDBD1" stroke-width="1.4"></rect>
+            <text x="18" y="62" font-size="16" font-weight="600" fill="#0F1B2D">Public visitors</text>
+            <text x="18" y="84" font-size="13.5" fill="#5C6B7E">Industry, researchers, journalists, citizens</text>
+          </g>
+          <g>
+            <rect x="292" y="34" width="250" height="72" rx="6" fill="#F8F6F1" stroke="#DFDBD1" stroke-width="1.4"></rect>
+            <text x="310" y="62" font-size="16" font-weight="600" fill="#0F1B2D">Member states</text>
+            <text x="310" y="84" font-size="13.5" fill="#5C6B7E">14 regulators, committee members</text>
+          </g>
+          <g>
+            <rect x="584" y="34" width="250" height="72" rx="6" fill="#F8F6F1" stroke="#DFDBD1" stroke-width="1.4"></rect>
+            <text x="602" y="62" font-size="16" font-weight="600" fill="#0F1B2D">Secretariat</text>
+            <text x="602" y="84" font-size="13.5" fill="#5C6B7E">Editors and administrators, Gaborone</text>
+          </g>
+          <g>
+            <rect x="876" y="34" width="250" height="72" rx="6" fill="#F8F6F1" stroke="#DFDBD1" stroke-width="1.4"></rect>
+            <text x="894" y="62" font-size="16" font-weight="600" fill="#0F1B2D">Partners</text>
+            <text x="894" y="84" font-size="13.5" fill="#5C6B7E">SADC, COMESA, EU, ITU, UPU</text>
+          </g>
+
+          <g stroke="#B9B2A2" stroke-width="1.6" fill="none">
+            <path d="M125 106 V150"></path><path d="M417 106 V150"></path><path d="M709 106 V150"></path><path d="M1001 106 V126 H125"></path>
+          </g>
+
+          <text x="0" y="176" font-size="13" font-weight="700" letter-spacing="1.6" fill="#5C6B7E">SURFACES DESIGNED IN THIS PACK</text>
+          <g>
+            <rect x="0" y="192" width="374" height="116" rx="6" fill="#0F1B2D"></rect>
+            <text x="20" y="222" font-size="18" font-weight="600" fill="#FFFFFF">Public corporate website</text>
+            <text x="20" y="248" font-size="13.5" fill="#E5E0D5">Homepage, comparator, library, members,</text>
+            <text x="20" y="268" font-size="13.5" fill="#E5E0D5">committees, newsroom, events, search</text>
+            <text x="20" y="294" font-size="12" font-weight="700" letter-spacing="0.8" fill="#9CCFB2">Platform surface</text>
+          </g>
+          <g>
+            <rect x="403" y="192" width="374" height="116" rx="6" fill="#1A2742"></rect>
+            <text x="423" y="222" font-size="18" font-weight="600" fill="#FFFFFF">Members' extranet</text>
+            <text x="423" y="248" font-size="13.5" fill="#E5E0D5">Committee workspaces, meetings, graded</text>
+            <text x="423" y="268" font-size="13.5" fill="#E5E0D5">documents, calendar, country folders</text>
+            <text x="423" y="294" font-size="12" font-weight="700" letter-spacing="0.8" fill="#9CCFB2">Platform surface</text>
+          </g>
+          <g>
+            <rect x="806" y="192" width="374" height="116" rx="6" fill="#1F2937"></rect>
+            <text x="826" y="222" font-size="18" font-weight="600" fill="#FFFFFF">Administration back office</text>
+            <text x="826" y="248" font-size="13.5" fill="#E5E0D5">Content and translation editing, media,</text>
+            <text x="826" y="268" font-size="13.5" fill="#E5E0D5">regulatory data review, users and audit</text>
+            <text x="826" y="294" font-size="12" font-weight="700" letter-spacing="0.8" fill="#9CCFB2"> to ,  to </text>
+          </g>
+
+          <g stroke="#0E5536" stroke-width="2" fill="none">
+            <path d="M187 308 V352"></path><path d="M590 308 V352"></path><path d="M993 308 V352"></path>
+          </g>
+
+          <g>
+            <rect x="0" y="352" width="1180" height="54" rx="6" fill="#E8F4EC" stroke="#0E5536" stroke-width="1.6"></rect>
+            <text x="20" y="378" font-size="16" font-weight="600" fill="#0E5536">Trilingual content layer</text>
+            <text x="20" y="396" font-size="13.5" fill="#0E5536">English at the root, French under /fr, Portuguese under /pt. Per-field translation status, English fallback where a field is untranslated, alt text per language.</text>
+          </g>
+
+          <g stroke="#0E5536" stroke-width="2" fill="none">
+            <path d="M590 406 V446"></path>
+          </g>
+
+          <g>
+            <rect x="0" y="446" width="1180" height="128" rx="6" fill="#F8F6F1" stroke="#0F1B2D" stroke-width="1.8"></rect>
+            <text x="20" y="474" font-size="13" font-weight="700" letter-spacing="1.6" fill="#5C6B7E">SHARED CORE</text>
+            <text x="20" y="502" font-size="19" font-weight="600" fill="#0F1B2D">Laravel application and MySQL database</text>
+            <g>
+              <rect x="20" y="516" width="212" height="42" rx="4" fill="#FFFFFF" stroke="#DFDBD1"></rect>
+              <text x="34" y="542" font-size="13.5" fill="#1F2937">Content and publications</text>
+            </g>
+            <g>
+              <rect x="248" y="516" width="212" height="42" rx="4" fill="#FFFFFF" stroke="#DFDBD1"></rect>
+              <text x="262" y="542" font-size="13.5" fill="#1F2937">Regulatory indicators</text>
+            </g>
+            <g>
+              <rect x="476" y="516" width="212" height="42" rx="4" fill="#FFFFFF" stroke="#DFDBD1"></rect>
+              <text x="490" y="542" font-size="13.5" fill="#1F2937">Documents and access rules</text>
+            </g>
+            <g>
+              <rect x="704" y="516" width="212" height="42" rx="4" fill="#FFFFFF" stroke="#DFDBD1"></rect>
+              <text x="718" y="542" font-size="13.5" fill="#1F2937">Users, roles and audit</text>
+            </g>
+            <g>
+              <rect x="932" y="516" width="228" height="42" rx="4" fill="#FFFFFF" stroke="#DFDBD1"></rect>
+              <text x="946" y="542" font-size="13.5" fill="#1F2937">Media library and renditions</text>
+            </g>
+          </g>
+
+          <g stroke="#C2710C" stroke-width="2" stroke-dasharray="6 4" fill="none">
+            <path d="M590 574 V612"></path>
+          </g>
+
+          <g>
+            <rect x="0" y="612" width="1180" height="82" rx="6" fill="#FDF0DC" stroke="#C2710C" stroke-width="1.6"></rect>
+            <text x="20" y="638" font-size="15.5" font-weight="600" fill="#7A4606">Single Sign-On bridge to systems CRASA already runs</text>
+            <g>
+              <rect x="20" y="648" width="248" height="34" rx="4" fill="#FFFFFF" stroke="#E5BE87"></rect>
+              <text x="34" y="670" font-size="13.5" fill="#5C3404">Existing Extranet</text>
+            </g>
+            <g>
+              <rect x="284" y="648" width="288" height="34" rx="4" fill="#FFFFFF" stroke="#E5BE87"></rect>
+              <text x="298" y="670" font-size="13.5" fill="#5C3404">Event Management Platform</text>
+            </g>
+            <g>
+              <rect x="588" y="648" width="332" height="34" rx="4" fill="#FFFFFF" stroke="#E5BE87"></rect>
+              <text x="602" y="670" font-size="13.5" fill="#5C3404">Monitoring and Evaluation system</text>
+            </g>
+            <text x="936" y="670" font-size="13" fill="#5C3404">One login, three systems</text>
+          </g>
+        </g>
+      </svg>
+      <div style="margin-top:var(--s-5);padding-top:var(--s-5);border-top:1px solid var(--c-line);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-5);font-size:14.5px;line-height:1.65;color:var(--c-charcoal)">
+        <div><strong>Read the green band as content.</strong> Anything published, in any language, passes through the trilingual layer, so a French page is the same record as its English original, not a separate copy.</div>
+        <div><strong>Read the amber band as identity.</strong> The Single Sign-On bridge means a committee chair reaches the extranet and the events platform with one credential, and access is revoked in one place.</div>
+        <div><strong>Read the dark row as surfaces.</strong> Each is a distinct interface with its own density and chrome, and all three are built from the one design system in this pack.</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--c-sand);padding:var(--s-9) 0">
+    <div style="max-width:1320px;margin:0 auto;padding:0 var(--s-7)">
+      <div style="max-width:74ch;margin-bottom:var(--s-7)">
+        <div style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:var(--s-3)">Trilingual proof</div>
+        <h2 style="font-family:var(--f-head);font-size:clamp(28px,4.2vw,42px);line-height:1.12;font-weight:600;margin:0 0 var(--s-4);letter-spacing:-.015em">The same homepage, three times</h2>
+        <p style="margin:0;font-size:19px;line-height:1.65;color:var(--c-charcoal)">French runs about 18 percent longer than English, Portuguese about 21 percent. Nothing here is a separate layout: the same components absorb the expansion because headings wrap on a balanced measure, buttons size to their label, and the navigation collapses at the width where the longest language stops fitting.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:var(--s-5)">
+        <sc-for list="{{ langs }}" as="l" hint-placeholder-count="3">
+          <div style="background:var(--c-cream);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+            <div style="{{ l.tagStyle }}">
+              <span style="font-family:var(--f-admin);font-size:12px;font-weight:700;letter-spacing:.1em">{{ l.code }}</span>
+              <span style="font-size:13px">{{ l.name }}</span>
+              <span style="margin-left:auto;font-family:var(--f-admin);font-size:12px;font-weight:600">{{ l.len }}</span>
+            </div>
+            <div style="background:var(--c-white);border-bottom:1px solid var(--c-line);padding:10px 12px;display:flex;align-items:center;gap:9px">
+              <img src="assets/crasa-logo.svg" alt="" style="width:24px;height:24px;flex:none;display:block">
+              <span style="display:flex;gap:1px;flex-wrap:wrap;flex:1;min-width:0">
+                <span style="font-size:10.5px;font-weight:600;color:var(--c-navy);padding:3px 4px">{{ l.nav1 }}</span>
+                <span style="font-size:10.5px;color:var(--c-charcoal);padding:3px 4px">{{ l.nav2 }}</span>
+                <span style="font-size:10.5px;color:var(--c-charcoal);padding:3px 4px">{{ l.nav3 }}</span>
+                <span style="font-size:10.5px;color:var(--c-charcoal);padding:3px 4px">{{ l.nav4 }}</span>
+              </span>
+              <span style="display:flex;border:1px solid var(--c-navy);border-radius:2px;overflow:hidden;flex:none">
+                <span style="{{ l.enStyle }}">EN</span><span style="{{ l.frStyle }}">FR</span><span style="{{ l.ptStyle }}">PT</span>
+              </span>
+            </div>
+            <div style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-5) var(--s-4)">
+              <div style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:10px" lang="{{ l.lang }}">{{ l.eyebrow }}</div>
+              <div style="font-family:var(--f-head);font-size:26px;line-height:1.14;font-weight:600;margin-bottom:11px;text-wrap:balance" lang="{{ l.lang }}">{{ l.headline }}</div>
+              <div style="font-size:13px;line-height:1.55;color:var(--c-sand);margin-bottom:var(--s-4)" lang="{{ l.lang }}">{{ l.subtext }}</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:var(--s-5)">
+                <span style="font-size:12.5px;font-weight:600;color:var(--c-white);background:var(--c-green-dark);padding:9px 13px;border-radius:2px" lang="{{ l.lang }}">{{ l.cta1 }}</span>
+                <span style="font-size:12.5px;font-weight:600;color:var(--c-cream);border:1px solid #6B7691;padding:8px 13px;border-radius:2px" lang="{{ l.lang }}">{{ l.cta2 }}</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-3);border-top:1px solid var(--c-navy-line);padding-top:var(--s-4)">
+                <div><div style="font-family:var(--f-head);font-size:22px;font-weight:600;color:var(--c-white);line-height:1">14</div><div style="font-size:11px;color:var(--c-sand);margin-top:3px;line-height:1.35" lang="{{ l.lang }}">{{ l.fact1 }}</div></div>
+                <div><div style="font-family:var(--f-head);font-size:22px;font-weight:600;color:var(--c-white);line-height:1">350M+</div><div style="font-size:11px;color:var(--c-sand);margin-top:3px;line-height:1.35" lang="{{ l.lang }}">{{ l.fact3 }}</div></div>
+              </div>
+            </div>
+            <div style="padding:var(--s-4)">
+              <div style="font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:7px" lang="{{ l.lang }}">{{ l.compEyebrow }}</div>
+              <div style="font-family:var(--f-head);font-size:19px;line-height:1.2;font-weight:600;margin-bottom:10px" lang="{{ l.lang }}">{{ l.compTitle }}</div>
+              <div style="font-size:12.5px;color:var(--c-charcoal);line-height:1.55" lang="{{ l.lang }}">{{ l.compBody }}</div>
+              <div style="margin-top:var(--s-4);padding-top:var(--s-3);border-top:1px solid var(--c-line);font-size:12px;color:var(--c-slate)">{{ l.url }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:1320px;margin:0 auto;padding:var(--s-9) var(--s-7)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:var(--s-7)">
+
+      <div>
+        <h2 style="font-family:var(--f-head);font-size:32px;font-weight:600;margin:0 0 var(--s-4)">The extranet in French</h2>
+        <p style="margin:0 0 var(--s-5);font-size:16.5px;line-height:1.65;color:var(--c-charcoal);max-width:62ch">The private surface carries the same language layer. The navigation rail, the top bar and every status label are translated. Committee names use the approved French strings.</p>
+        <div style="border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr))">
+            <div style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-4) var(--s-3);display:flex;flex-direction:column;gap:2px" lang="fr">
+              <div style="display:flex;align-items:center;gap:9px;padding:0 8px var(--s-4)">
+                <img src="assets/crasa-logo.svg" alt="" style="width:26px;height:26px;flex:none;display:block">
+                <span style="font-size:13px;font-weight:600;color:var(--c-white)">Extranet</span>
+              </div>
+              <span style="font-size:13px;color:var(--c-cream);padding:9px 8px">Tableau de bord</span>
+              <span style="font-size:13px;font-weight:600;color:var(--c-white);padding:9px 8px;background:var(--c-navy-mid);border-left:3px solid var(--c-green);border-radius:2px">Comités</span>
+              <span style="font-size:13px;color:var(--c-cream);padding:9px 8px">Réunions</span>
+              <span style="font-size:13px;color:var(--c-cream);padding:9px 8px">Calendrier</span>
+              <span style="font-size:13px;color:var(--c-cream);padding:9px 8px">Documents</span>
+              <span style="font-size:13px;color:var(--c-cream);padding:9px 8px">Données réglementaires</span>
+              <span style="font-size:13px;color:var(--c-cream);padding:9px 8px">Rechercher</span>
+            </div>
+            <div lang="fr">
+              <div style="background:var(--c-navy-mid);color:var(--c-cream);padding:10px var(--s-4);display:flex;align-items:center;gap:var(--s-3)">
+                <span style="font-size:12.5px;color:#B9C2D0;border:1px solid #4A5670;border-radius:2px;padding:6px 10px;flex:1;min-width:0">Rechercher des documents et des réunions</span>
+                <span style="display:flex;border:1px solid #4A5670;border-radius:2px;overflow:hidden;flex:none">
+                  <span style="font-size:11.5px;font-weight:600;padding:6px 9px;color:var(--c-cream)">EN</span>
+                  <span style="font-size:11.5px;font-weight:600;padding:6px 9px;background:var(--c-green-dark);color:var(--c-white)">FR</span>
+                  <span style="font-size:11.5px;font-weight:600;padding:6px 9px;color:var(--c-cream)">PT</span>
+                </span>
+              </div>
+              <div style="padding:var(--s-4);background:var(--c-cream)">
+                <div style="font-size:12px;color:var(--c-slate);margin-bottom:6px">Comités &middot; TIC &middot; Cycle stratégique 2023-2028</div>
+                <div style="font-family:var(--f-head);font-size:23px;font-weight:600;line-height:1.15;margin-bottom:var(--s-4)">Gestion du spectre et des fréquences</div>
+                <div style="display:flex;flex-wrap:wrap;gap:0;border-bottom:2px solid var(--c-sand);margin-bottom:var(--s-4);flex-wrap:wrap">
+                  <span style="font-size:13px;font-weight:600;padding:8px 11px;color:var(--c-navy);border-bottom:2px solid var(--c-green-dark);margin-bottom:-2px">Aperçu</span>
+                  <span style="font-size:13px;padding:8px 11px;color:var(--c-charcoal)">Membres</span>
+                  <span style="font-size:13px;padding:8px 11px;color:var(--c-charcoal)">Réunions</span>
+                  <span style="font-size:13px;padding:8px 11px;color:var(--c-charcoal)">Documents</span>
+                  <span style="font-size:13px;padding:8px 11px;color:var(--c-charcoal)">Plan de travail</span>
+                </div>
+                <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);overflow:hidden">
+                  <div style="display:flex;align-items:center;gap:11px;padding:11px var(--s-4);border-bottom:1px solid var(--c-line)">
+                    <span style="width:26px;height:34px;background:var(--c-navy);border-radius:2px;display:grid;place-items:center;flex:none"><span style="font-family:var(--f-admin);font-size:7.5px;font-weight:700;color:var(--c-cream)">PDF</span></span>
+                    <span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:600;line-height:1.3">Plan d'attribution des fréquences radioélectriques de la SADC, révision 4</span><span style="display:block;font-size:11.5px;color:var(--c-slate);margin-top:2px">Document de travail &middot; PDF, 6,1 Mo</span></span>
+                    <span style="font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:2px;background:#FDF0DC;color:#7A4606;border:1px solid #E5BE87;flex:none">En révision</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:11px;padding:11px var(--s-4);background:#FBF3F3">
+                    <span style="width:26px;height:34px;background:var(--c-red);border-radius:2px;display:grid;place-items:center;flex:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" aria-hidden="true"><path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect></svg></span>
+                    <span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:600;line-height:1.3">Projet de résolution sur les brouillages transfrontaliers, 700 MHz</span><span style="display:block;font-size:11.5px;color:var(--c-red);margin-top:2px">Au-delà de votre niveau d'habilitation</span></span>
+                    <span style="font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:2px;background:var(--c-red);color:var(--c-white);flex:none">Confidentiel</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 style="font-family:var(--f-head);font-size:32px;font-weight:600;margin:0 0 var(--s-4)">The extranet in Portuguese</h2>
+        <p style="margin:0 0 var(--s-5);font-size:16.5px;line-height:1.65;color:var(--c-charcoal);max-width:62ch">Portuguese is the working language of INACOM in Angola and INCM in Mozambique, so the private surface is proven in it as well as in French. The rail, the top bar and every status label carry the same language layer.</p>
+        <div style="display:flex;align-items:flex-start;gap:9px;border:1px dashed var(--c-amber);border-radius:var(--r-sm);background:#FEFAF3;padding:10px var(--s-4);margin-bottom:var(--s-4)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C2710C" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M12 4l9 16H3z"></path><path d="M12 10v4"></path><path d="M12 17h.01"></path></svg>
+          <div style="font-size:13.5px;line-height:1.5;color:#5C3404">Unverified draft. The Portuguese interface strings on this panel are machine drafts, not values taken from the client database. They are shown to prove layout and expansion, and are to be confirmed by the Secretariat before publication.</div>
+        </div>
+        <div style="border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr))">
+            <div style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-4) var(--s-3);display:flex;flex-direction:column;gap:2px" lang="pt">
+              <div style="display:flex;align-items:center;gap:9px;padding:0 8px var(--s-4)">
+                <img src="assets/crasa-logo.svg" alt="" style="width:26px;height:26px;flex:none;display:block">
+                <span style="font-size:13px;font-weight:600;color:var(--c-white)">Extranet</span>
+              </div>
+              <span style="font-size:13px;color:var(--c-cream);padding:9px 8px">Painel</span>
+              <span style="font-size:13px;font-weight:600;color:var(--c-white);padding:9px 8px;background:var(--c-navy-mid);border-left:3px solid var(--c-green);border-radius:2px">Comités</span>
+              <span style="font-size:13px;color:var(--c-cream);padding:9px 8px">Reuniões</span>
+              <span style="font-size:13px;color:var(--c-cream);padding:9px 8px">Calendário</span>
+              <span style="font-size:13px;color:var(--c-cream);padding:9px 8px">Documentos</span>
+              <span style="font-size:13px;color:var(--c-cream);padding:9px 8px">Dados regulatórios</span>
+              <span style="font-size:13px;color:var(--c-cream);padding:9px 8px">Pesquisar</span>
+            </div>
+            <div lang="pt">
+              <div style="background:var(--c-navy-mid);color:var(--c-cream);padding:10px var(--s-4);display:flex;align-items:center;gap:var(--s-3)">
+                <span style="font-size:12.5px;color:#B9C2D0;border:1px solid #4A5670;border-radius:2px;padding:6px 10px;flex:1;min-width:0">Pesquisar documentos e reuniões</span>
+                <span style="display:flex;border:1px solid #4A5670;border-radius:2px;overflow:hidden;flex:none">
+                  <span style="font-size:11.5px;font-weight:600;padding:6px 9px;color:var(--c-cream)">EN</span>
+                  <span style="font-size:11.5px;font-weight:600;padding:6px 9px;color:var(--c-cream)">FR</span>
+                  <span style="font-size:11.5px;font-weight:600;padding:6px 9px;background:var(--c-green-dark);color:var(--c-white)">PT</span>
+                </span>
+              </div>
+              <div style="padding:var(--s-4);background:var(--c-cream)">
+                <div style="font-size:12px;color:var(--c-slate);margin-bottom:6px">Comités &middot; TIC &middot; Ciclo estratégico 2023-2028</div>
+                <div style="font-family:var(--f-head);font-size:23px;font-weight:600;line-height:1.15;margin-bottom:var(--s-4)">Gestão do Espectro e das Frequências</div>
+                <div style="display:flex;flex-wrap:wrap;gap:0;border-bottom:2px solid var(--c-sand);margin-bottom:var(--s-4)">
+                  <span style="font-size:13px;font-weight:600;padding:8px 11px;color:var(--c-navy);border-bottom:2px solid var(--c-green-dark);margin-bottom:-2px">Visão geral</span>
+                  <span style="font-size:13px;padding:8px 11px;color:var(--c-charcoal)">Membros</span>
+                  <span style="font-size:13px;padding:8px 11px;color:var(--c-charcoal)">Reuniões</span>
+                  <span style="font-size:13px;padding:8px 11px;color:var(--c-charcoal)">Documentos</span>
+                  <span style="font-size:13px;padding:8px 11px;color:var(--c-charcoal)">Plano de trabalho</span>
+                </div>
+                <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);overflow:hidden">
+                  <div style="display:flex;align-items:center;gap:11px;padding:11px var(--s-4);border-bottom:1px solid var(--c-line)">
+                    <span style="width:26px;height:34px;background:var(--c-navy);border-radius:2px;display:grid;place-items:center;flex:none"><span style="font-family:var(--f-admin);font-size:7.5px;font-weight:700;color:var(--c-cream)">PDF</span></span>
+                    <span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:600;line-height:1.3">Plano de Atribuição de Frequências Radioelétricas da SADC, revisão 4</span><span style="display:block;font-size:11.5px;color:var(--c-slate);margin-top:2px">Documento de trabalho &middot; PDF, 6,1 MB</span></span>
+                    <span style="font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:2px;background:#FDF0DC;color:#7A4606;border:1px solid #E5BE87;flex:none">Em revisão</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:11px;padding:11px var(--s-4);background:#FBF3F3">
+                    <span style="width:26px;height:34px;background:var(--c-red);border-radius:2px;display:grid;place-items:center;flex:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" aria-hidden="true"><path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect></svg></span>
+                    <span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:600;line-height:1.3">Projeto de resolução sobre interferências transfronteiriças, 700 MHz</span><span style="display:block;font-size:11.5px;color:var(--c-red);margin-top:2px">Acima do seu nível de acesso</span></span>
+                    <span style="font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:2px;background:var(--c-red);color:var(--c-white);flex:none">Confidencial</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 style="font-family:var(--f-head);font-size:32px;font-weight:600;margin:0 0 var(--s-4)">The back office in Portuguese</h2>
+        <p style="margin:0 0 var(--s-5);font-size:16.5px;line-height:1.65;color:var(--c-charcoal);max-width:62ch">The interface language and the content language are separate choices. Here an editor at INCM in Mozambique works in a Portuguese interface on the translations of an English source document.</p>
+        <div style="border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden;background:var(--c-white)" lang="pt">
+          <div style="padding:10px var(--s-4);border-bottom:1px solid var(--c-line);display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap">
+            <img src="assets/crasa-logo.svg" alt="" style="width:26px;height:26px;flex:none;display:block">
+            <span style="font-size:13px;font-weight:600;color:var(--c-navy)">Administração da CRASA</span>
+            <span style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;border:1px solid var(--c-line);border-radius:2px;padding:6px 10px">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a15 15 0 010 18"></path></svg>
+              Interface: português
+            </span>
+          </div>
+          <div style="padding:var(--s-4)">
+            <div style="font-size:11.5px;color:var(--c-slate);margin-bottom:6px">Conteúdo / Publicações / Diretrizes de Roaming da SADC</div>
+            <div style="font-family:var(--f-head);font-size:22px;font-weight:600;line-height:1.15;margin-bottom:var(--s-4)">Diretrizes de Roaming da SADC</div>
+            <div style="display:flex;gap:var(--s-3);flex-wrap:wrap;margin-bottom:var(--s-4)">
+              <span style="font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:2px;background:var(--c-navy);color:var(--c-white)">Lado a lado, os três</span>
+              <span style="font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:2px;border:1.5px solid var(--c-navy);color:var(--c-navy)">EN para FR</span>
+              <span style="font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:2px;border:1.5px solid var(--c-navy);color:var(--c-navy)">EN para PT</span>
+            </div>
+            <div style="border:1px solid var(--c-line);border-radius:var(--r-sm);overflow:hidden">
+              <div style="display:grid;grid-template-columns:minmax(0,90px) repeat(3,minmax(0,1fr));background:var(--c-cream);border-bottom:1px solid var(--c-line)">
+                <div style="padding:8px 10px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c-slate)">Campo</div>
+                <div style="padding:8px 10px;font-size:11.5px;font-weight:700;color:var(--c-navy);border-left:1px solid var(--c-line)">Inglês</div>
+                <div style="padding:8px 10px;font-size:11.5px;font-weight:700;color:var(--c-navy);border-left:1px solid var(--c-line)">Francês</div>
+                <div style="padding:8px 10px;font-size:11.5px;font-weight:700;color:var(--c-navy);border-left:1px solid var(--c-line)">Português</div>
+              </div>
+              <div style="display:grid;grid-template-columns:minmax(0,90px) repeat(3,minmax(0,1fr));border-bottom:1px solid var(--c-line)">
+                <div style="padding:10px;font-size:12.5px;font-weight:600;background:var(--c-cream)">Título</div>
+                <div style="padding:10px;border-left:1px solid var(--c-line);font-size:12px;line-height:1.45" lang="en">SADC Roaming Guidelines</div>
+                <div style="padding:10px;border-left:1px solid var(--c-line);font-size:12px;line-height:1.45">Lignes directrices de la SADC sur l'itinérance</div>
+                <div style="padding:10px;border-left:1px solid var(--c-line);font-size:12px;line-height:1.45" lang="pt">Diretrizes de Roaming da SADC</div>
+              </div>
+              <div style="display:grid;grid-template-columns:minmax(0,90px) repeat(3,minmax(0,1fr))">
+                <div style="padding:10px;font-size:12.5px;font-weight:600;background:var(--c-cream)">Resumo</div>
+                <div style="padding:10px;border-left:1px solid var(--c-line);font-size:12px;line-height:1.45" lang="en">These Guidelines set out the regional framework for the regulation of roaming services.</div>
+                <div style="padding:10px;border-left:1px solid var(--c-line);font-size:12px;line-height:1.45">Ces lignes directrices établissent le cadre régional de régulation des services d'itinérance.</div>
+                <div style="padding:10px;border-left:1px solid var(--c-line);background:#FBEDED">
+                  <span style="font-size:10.5px;font-weight:700;color:#6E1A1D;display:block;margin-bottom:4px">Não traduzido, recuo para inglês</span>
+                  <span style="font-size:12px;line-height:1.45;color:var(--c-slate);font-style:italic" lang="en">These Guidelines set out the regional framework for the regulation of roaming services.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--c-white);border-top:1px solid var(--c-line);border-bottom:1px solid var(--c-line);padding:var(--s-9) 0">
+    <div style="max-width:1320px;margin:0 auto;padding:0 var(--s-7);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:var(--s-7)">
+      <div>
+        <h2 style="font-family:var(--f-head);font-size:32px;font-weight:600;margin:0 0 var(--s-5)">The language switcher, every state</h2>
+        <div style="display:flex;flex-direction:column;gap:var(--s-6)">
+          <div>
+            <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">Public header, segmented</div>
+            <div style="display:flex;gap:var(--s-5);flex-wrap:wrap;align-items:flex-start">
+              <div><div style="display:flex;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);overflow:hidden"><span style="font-size:14px;font-weight:600;padding:9px 13px;background:var(--c-navy);color:var(--c-white)">EN</span><span style="font-size:14px;font-weight:600;padding:9px 13px;color:var(--c-navy)">FR</span><span style="font-size:14px;font-weight:600;padding:9px 13px;color:var(--c-navy)">PT</span></div><div style="font-size:12.5px;color:var(--c-slate);margin-top:6px">Default, English current</div></div>
+              <div><div style="display:flex;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);overflow:hidden"><span style="font-size:14px;font-weight:600;padding:9px 13px;background:var(--c-navy);color:var(--c-white)">EN</span><span style="font-size:14px;font-weight:600;padding:9px 13px;color:var(--c-navy);background:var(--c-green-light)">FR</span><span style="font-size:14px;font-weight:600;padding:9px 13px;color:var(--c-navy)">PT</span></div><div style="font-size:12.5px;color:var(--c-slate);margin-top:6px">Hover on French</div></div>
+              <div><div style="display:flex;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);overflow:hidden"><span style="font-size:14px;font-weight:600;padding:9px 13px;background:var(--c-navy);color:var(--c-white)">EN</span><span style="font-size:14px;font-weight:600;padding:9px 13px;color:var(--c-navy)">FR</span><span style="font-size:14px;font-weight:600;padding:9px 13px;color:var(--c-navy);outline:3px solid var(--c-amber);outline-offset:-1px">PT</span></div><div style="font-size:12.5px;color:var(--c-slate);margin-top:6px">Keyboard focus on Portuguese</div></div>
+              <div><div style="display:flex;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);overflow:hidden"><span style="font-size:14px;font-weight:600;padding:9px 13px;color:var(--c-navy)">EN</span><span style="font-size:14px;font-weight:600;padding:9px 13px;background:var(--c-navy);color:var(--c-white)">FR</span><span style="font-size:14px;font-weight:600;padding:9px 13px;color:var(--c-navy)">PT</span></div><div style="font-size:12.5px;color:var(--c-slate);margin-top:6px">French current</div></div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">Extranet top bar, on navy</div>
+            <div style="background:var(--c-navy-mid);border-radius:var(--r-sm);padding:var(--s-4);display:flex;gap:var(--s-5);flex-wrap:wrap">
+              <div><div style="display:flex;border:1.5px solid #4A5670;border-radius:var(--r-sm);overflow:hidden"><span style="font-size:14px;font-weight:600;padding:8px 12px;background:var(--c-green-dark);color:var(--c-white)">EN</span><span style="font-size:14px;font-weight:600;padding:8px 12px;color:var(--c-cream)">FR</span><span style="font-size:14px;font-weight:600;padding:8px 12px;color:var(--c-cream)">PT</span></div><div style="font-size:12.5px;color:var(--c-sand);margin-top:6px">Default</div></div>
+              <div><div style="display:flex;border:1.5px solid #4A5670;border-radius:var(--r-sm);overflow:hidden"><span style="font-size:14px;font-weight:600;padding:8px 12px;background:var(--c-green-dark);color:var(--c-white)">EN</span><span style="font-size:14px;font-weight:600;padding:8px 12px;color:var(--c-white);background:var(--c-navy)">FR</span><span style="font-size:14px;font-weight:600;padding:8px 12px;color:var(--c-cream)">PT</span></div><div style="font-size:12.5px;color:var(--c-sand);margin-top:6px">Hover</div></div>
+              <div><div style="display:flex;border:1.5px solid #4A5670;border-radius:var(--r-sm);overflow:hidden"><span style="font-size:14px;font-weight:600;padding:8px 12px;background:var(--c-green-dark);color:var(--c-white)">EN</span><span style="font-size:14px;font-weight:600;padding:8px 12px;color:var(--c-cream);outline:3px solid var(--c-amber);outline-offset:-1px">FR</span><span style="font-size:14px;font-weight:600;padding:8px 12px;color:var(--c-cream)">PT</span></div><div style="font-size:12.5px;color:var(--c-sand);margin-top:6px">Focus</div></div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-navy);margin-bottom:var(--s-3)">Administration bar, menu</div>
+            <div style="display:flex;gap:var(--s-5);flex-wrap:wrap;align-items:flex-start">
+              <div>
+                <span style="display:inline-flex;align-items:center;gap:7px;font-family:var(--f-admin);font-size:14px;font-weight:500;border:1px solid var(--c-line);border-radius:var(--r-sm);padding:8px 12px;background:var(--c-white)">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a15 15 0 010 18"></path></svg>Interface: English
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+                </span>
+                <div style="font-size:12.5px;color:var(--c-slate);margin-top:6px">Closed</div>
+              </div>
+              <div>
+                <div style="border:1px solid var(--c-line);border-radius:var(--r-sm);background:var(--c-white);box-shadow:0 6px 16px rgba(15,27,45,.12);overflow:hidden;min-width:190px">
+                  <span style="display:flex;align-items:center;gap:9px;font-family:var(--f-admin);font-size:14px;padding:10px 12px;background:var(--c-green-light);font-weight:600;color:var(--c-green-dark)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg>English</span>
+                  <span style="display:flex;align-items:center;gap:9px;font-family:var(--f-admin);font-size:14px;padding:10px 12px;color:var(--c-charcoal);padding-left:35px">Français</span>
+                  <span style="display:flex;align-items:center;gap:9px;font-family:var(--f-admin);font-size:14px;padding:10px 12px;color:var(--c-charcoal);padding-left:35px">Português</span>
+                </div>
+                <div style="font-size:12.5px;color:var(--c-slate);margin-top:6px">Open, current language ticked</div>
+              </div>
+              <div>
+                <div style="width:180px;background:var(--c-navy);border-radius:var(--r-sm);padding:var(--s-3);display:flex;gap:7px">
+                  <span style="flex:1;text-align:center;font-size:14px;font-weight:600;padding:11px 0;border-radius:var(--r-sm);background:var(--c-green-dark);color:var(--c-white)">EN</span>
+                  <span style="flex:1;text-align:center;font-size:14px;font-weight:600;padding:11px 0;border-radius:var(--r-sm);border:1.5px solid #4A5670;color:var(--c-cream)">FR</span>
+                  <span style="flex:1;text-align:center;font-size:14px;font-weight:600;padding:11px 0;border-radius:var(--r-sm);border:1.5px solid #4A5670;color:var(--c-cream)">PT</span>
+                </div>
+                <div style="font-size:12.5px;color:var(--c-slate);margin-top:6px">Mobile drawer, 44px targets</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:var(--s-6)">
+        <div>
+          <h2 style="font-family:var(--f-head);font-size:32px;font-weight:600;margin:0 0 var(--s-4)">URL scheme</h2>
+          <div style="border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+            <table style="width:100%;border-collapse:collapse;font-size:15px">
+              <thead>
+                <tr style="background:var(--c-cream);text-align:left;border-bottom:1px solid var(--c-line)">
+                  <th scope="col" style="padding:10px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Language</th>
+                  <th scope="col" style="padding:10px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Homepage</th>
+                  <th scope="col" style="padding:10px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">A publication</th>
+                </tr>
+              </thead>
+              <tbody style="font-family:var(--f-admin);font-size:13.5px">
+                <tr style="border-bottom:1px solid var(--c-line)"><th scope="row" style="padding:11px var(--s-4);text-align:left;font-family:var(--f-body);font-size:15px;font-weight:500">English</th><td style="padding:11px var(--s-4)">crasa.org/</td><td style="padding:11px var(--s-4)">/publications/sadc-roaming-guidelines</td></tr>
+                <tr style="border-bottom:1px solid var(--c-line)"><th scope="row" style="padding:11px var(--s-4);text-align:left;font-family:var(--f-body);font-size:15px;font-weight:500">Français</th><td style="padding:11px var(--s-4)">crasa.org/fr</td><td style="padding:11px var(--s-4)">/fr/publications/lignes-directrices-itinerance</td></tr>
+                <tr><th scope="row" style="padding:11px var(--s-4);text-align:left;font-family:var(--f-body);font-size:15px;font-weight:500">Português</th><td style="padding:11px var(--s-4)">crasa.org/pt</td><td style="padding:11px var(--s-4)">/pt/publicacoes/diretrizes-roaming-sadc</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="font-size:14.5px;line-height:1.65;color:var(--c-charcoal);margin-top:var(--s-4)">English sits at the root, so existing links keep working. Slugs are translated per language, and each page emits alternate language links for its published translations only. Switching language keeps you on the same content, not back at the homepage.</div>
+        </div>
+
+        <div>
+          <h2 style="font-family:var(--f-head);font-size:32px;font-weight:600;margin:0 0 var(--s-4)">How the language layer works</h2>
+          <ol style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:var(--s-3);font-size:16px;line-height:1.65;color:var(--c-charcoal)">
+            <li><strong>One record, three fields.</strong> A publication is a single record with a value per language for each translatable field. A French page is not a copy of the English page, so metadata, files and relationships stay in step automatically.</li>
+            <li><strong>Interface and content are separate.</strong> The interface language comes from the URL. The content language comes from what has been published. A French visitor reading an English-only document sees French chrome and English text, each correctly marked.</li>
+            <li><strong>Fallback is stated, never silent.</strong> Where a field has no translation, the English text is shown with a notice in the reader's language and a lang attribute on the text itself, so screen readers switch voice.</li>
+            <li><strong>Machine drafts are marked.</strong> A machine-translated field is labelled as a draft in the editor and cannot be published as approved copy until a speaker of that language approves it.</li>
+            <li><strong>Expansion is designed for.</strong> No fixed widths on labels or buttons, balanced heading wraps, and navigation that collapses on measured width rather than a device breakpoint.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+
+  <footer style="background:var(--c-navy);color:var(--c-sand);padding:var(--s-7)">
+    <div style="max-width:1320px;margin:0 auto;display:flex;flex-wrap:wrap;gap:var(--s-5);align-items:center;justify-content:space-between">
+      <div style="display:flex;flex-wrap:wrap;gap:var(--s-3);align-items:center">
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">SADC</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">COMESA</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">EUROPEAN UNION</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">ITU</span>
+        <span style="border:1px dashed #6B7691;border-radius:var(--r-sm);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--c-cream)">UPU</span>
+      </div>
+      <div style="font-size:13.5px;line-height:1.6;max-width:56ch">This platform is developed under the EGEE-ICT programme, funded by the European Union and implemented with COMESA. Emblem placement and the funding statement are to be confirmed against COMESA visibility requirements.</div>
+    </div>
+  </footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const CONTENTS = [
+  { g:"Foundation", num:"01", title:"Design system and token layer", note:"Colour, type, spacing, components, states, image and motion specification", refs:", " },
+  { g:"Public website", num:"17", title:"Public homepage", note:"Hero slider with pause and play, key figures, pillars, comparator teaser, library, newsroom, social channels, events, members, donor row", refs:", , " },
+  { g:"Public website", num:"03", title:"Regulatory comparator", note:"Browse and compare modes, regional view, provenance, mobile pattern", refs:", " },
+  { g:"Public website", num:"07", title:"Publications library and detail", note:"Faceted filtering, 35 documents, supersession lineage, no results", refs:"" },
+  { g:"Public website", num:"08", title:"Members index and profile", note:"Regional map, directory, one full authority profile", refs:"" },
+  { g:"Public website", num:"15", title:"Responsive compositions and the installable app", note:"375, 768 and 1440px, offline availability, reduced motion variant", refs:", " },
+  { g:"Members' extranet", num:"11", title:"Extranet login and personalised dashboard", note:"Login, error and two-factor states, two permission levels", refs:", " },
+  { g:"Members' extranet", num:"04", title:"Committee workspace and meeting detail", note:"Documents, meeting detail, viewer, workplan, permission denied", refs:", " },
+  { g:"Members' extranet", num:"12", title:"Calendar and secure country folders", note:"Month, week and list views, per-country folder access, upload validation", refs:", " },
+  { g:"Across extranet and back office", num:"06", title:"Regulatory data submission and validation", note:"The e-Form is extranet. The review queue, version history and reports are back office.", refs:",  to " },
+  { g:"Administration back office", num:"05", title:"Translation editor", note:"Side-by-side editing, per-field status, machine drafts, English fallback", refs:", " },
+  { g:"Administration back office", num:"09", title:"Dashboard and content list", note:"Statistics, charts, analytics, submission activity, the resource table, dark surface set", refs:", " },
+  { g:"Administration back office", num:"13", title:"Users, roles, security and audit", note:"Permission matrix, two-factor enrolment, audit log, notification preferences", refs:", , " },
+  { g:"Administration back office", num:"14", title:"Media library, navigation and page settings", note:"Grid and list, alt text per language, renditions, menu builder, editable copy", refs:", , " },
+  { g:"Proof and trace", num:"10", title:"Trilingual proof, cover and system map", note:"This screen. Three-language render, URL scheme, fallback, architecture", refs:", " },
+  { g:"Proof and trace", num:"16", title:"Requirement trace", note:"Every WS, RP, IN and CM code against the screen that evidences it, gaps included", refs:"All series" }
+];
+
+const LANGS = [
+  {
+    code:"EN", name:"English", lang:"en", len:"100%", cur:"en", url:"crasa.org/",
+    nav1:"Home", nav2:"About CRASA", nav3:"Committees", nav4:"Members",
+    eyebrow:"Communications Regulators of Southern Africa",
+    headline:"Harmonising ICT and postal regulation across Southern Africa.",
+    subtext:"CRASA brings together the national regulatory authorities of 14 SADC member states to align frameworks and share regulatory practice.",
+    cta1:"Explore the library", cta2:"About CRASA",
+    fact1:"Member regulators", fact3:"Citizens served",
+    compEyebrow:"Regulatory comparator", compTitle:"Compare regulation across member states",
+    compBody:"Twelve indicators across three categories, for all 14 member regulators."
+  },
+  {
+    code:"FR", name:"Fran\u00E7ais", lang:"fr", len:"118%", cur:"fr", url:"crasa.org/fr",
+    nav1:"Accueil", nav2:"\u00C0 propos de la CRASA", nav3:"Comit\u00E9s", nav4:"Membres",
+    eyebrow:"R\u00E9gulateurs des communications d'Afrique australe",
+    headline:"Harmoniser la r\u00E9glementation des TIC et des services postaux en Afrique australe.",
+    subtext:"La CRASA r\u00E9unit les autorit\u00E9s de r\u00E9gulation nationales de 14 \u00C9tats membres de la SADC afin d'aligner les cadres et de partager les pratiques de r\u00E9gulation.",
+    cta1:"Explorer la biblioth\u00E8que", cta2:"\u00C0 propos de la CRASA",
+    fact1:"R\u00E9gulateurs membres", fact3:"Citoyens desservis",
+    compEyebrow:"Comparateur r\u00E9glementaire", compTitle:"Comparer la r\u00E9glementation entre les \u00C9tats membres",
+    compBody:"Douze indicateurs r\u00E9partis en trois cat\u00E9gories, pour les 14 r\u00E9gulateurs membres."
+  },
+  {
+    code:"PT", name:"Portugu\u00EAs", lang:"pt", len:"121%", cur:"pt", url:"crasa.org/pt",
+    nav1:"In\u00EDcio", nav2:"Sobre a CRASA", nav3:"Comit\u00E9s", nav4:"Membros",
+    eyebrow:"Reguladores das comunica\u00E7\u00F5es da \u00C1frica Austral",
+    headline:"Harmonizar a regulamenta\u00E7\u00E3o das TIC e dos servi\u00E7os postais na \u00C1frica Austral.",
+    subtext:"A CRASA re\u00FAne as autoridades reguladoras nacionais de 14 Estados membros da SADC para alinhar quadros e partilhar pr\u00E1ticas de regula\u00E7\u00E3o.",
+    cta1:"Explorar a biblioteca", cta2:"Sobre a CRASA",
+    fact1:"Reguladores membros", fact3:"Cidad\u00E3os servidos",
+    compEyebrow:"Comparador regulat\u00F3rio", compTitle:"Comparar a regulamenta\u00E7\u00E3o entre os Estados membros",
+    compBody:"Doze indicadores em tr\u00EAs categorias, para os 14 reguladores membros."
+  }
+];
+
+const TAG = {
+  en:"background:#0F1B2D;color:#F8F6F1;",
+  fr:"background:#0E5536;color:#FFFFFF;",
+  pt:"background:#C2710C;color:#FFFFFF;"
+};
+
+class Component extends DCLogic {
+  renderVals(){
+    const seg = (on) => "font-size:10.5px;font-weight:700;padding:5px 7px;"
+      + (on ? "background:#0F1B2D;color:#FFFFFF;" : "color:#0F1B2D;");
+    return {
+      contents: CONTENTS.map((c, i) => ({
+        num:c.num, title:c.title, note:c.note, refs:c.refs,
+        newGroup: i === 0 || CONTENTS[i - 1].g !== c.g,
+        groupLabel: c.g,
+        groupStyle: "display:block;font-family:'Inter',system-ui,sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7FC79E;margin-bottom:9px;"
+          + (i === 0 ? "" : "padding-top:14px;"),
+        liStyle: "padding:9px 0;" + (i < CONTENTS.length - 1 ? "border-bottom:1px solid #2C3A55;" : "")
+      })),
+      langs: LANGS.map(l => ({
+        code:l.code, name:l.name, lang:l.lang, len:l.len, url:l.url,
+        nav1:l.nav1, nav2:l.nav2, nav3:l.nav3, nav4:l.nav4,
+        eyebrow:l.eyebrow, headline:l.headline, subtext:l.subtext,
+        cta1:l.cta1, cta2:l.cta2, fact1:l.fact1, fact3:l.fact3,
+        compEyebrow:l.compEyebrow, compTitle:l.compTitle, compBody:l.compBody,
+        tagStyle: "display:flex;align-items:center;gap:9px;padding:8px 12px;" + TAG[l.cur],
+        enStyle: seg(l.cur === "en"), frStyle: seg(l.cur === "fr"), ptStyle: seg(l.cur === "pt")
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

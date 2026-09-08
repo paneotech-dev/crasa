@@ -116,7 +116,8 @@ accepted trade-off.
 
 ## Repository
 
-**The design archive `.design/` is untracked.** It is the approved source of
-truth for every screen and is currently outside git. Committing it adds
-roughly 1 MB of HTML plus the bundled font files. Worth a decision either
-way rather than leaving it untracked by accident.
+**The design archive `.design/` is in git**, committed 2026-09-08. It is the
+approved baseline every remaining screen is checked against, and losing it
+would lose the reference for the whole build. It is committed whole,
+including the bundled fonts and the React and Babel builds the previews
+load, so the screens still render offline years from now.

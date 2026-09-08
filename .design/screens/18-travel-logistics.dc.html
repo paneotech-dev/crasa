@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Travel logistics, CRASA</title>
+<link rel="icon" href="./assets/crasa-logo.svg">
+<link rel="stylesheet" href="./vendor/fonts.css">
+<style>
+:root{
+  --c-green:#1A8C5A; --c-green-dark:#0E5536; --c-green-light:#E8F4EC;
+  --c-navy:#0F1B2D; --c-navy-mid:#1A2742; --c-navy-line:#2C3A55;
+  --c-charcoal:#1F2937; --c-slate:#5C6B7E; --c-cream:#F8F6F1; --c-sand:#E5E0D5;
+  --c-line:#DFDBD1; --c-amber:#C2710C; --c-white:#fff;
+  --f-head:'Lora',Georgia,serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-admin:'Inter',system-ui,sans-serif;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px;
+  --r-1:4px; --r-2:8px; --r-3:12px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--c-cream);color:var(--c-charcoal);font-family:var(--f-body);font-size:15.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--f-head);font-weight:600;margin:0;letter-spacing:-.01em;color:var(--c-navy)}
+:focus-visible{outline:3px solid var(--c-amber);outline-offset:2px}
+button,input,select,textarea{font-family:inherit;font-size:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 var(--s-6)}
+@media(max-width:640px){.wrap{padding:0 var(--s-4)}}
+
+/* extranet chrome */
+.top{background:var(--c-navy);color:var(--c-sand);border-bottom:1px solid var(--c-navy-line)}
+.top .wrap{display:flex;align-items:center;gap:var(--s-5);padding-top:var(--s-3);padding-bottom:var(--s-3);min-width:0}
+.mark{display:flex;align-items:center;gap:var(--s-3);flex:none;min-width:0}
+.mark img{width:34px;height:34px}
+.mark b{font-family:var(--f-head);font-size:18px;color:#fff}
+.mark span{display:block;font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--c-green-light)}
+.top nav{display:flex;gap:var(--s-5);margin-left:auto;min-width:0;flex-wrap:wrap}
+.top nav a{color:var(--c-sand);text-decoration:none;font-size:14px;padding:6px 0;border-bottom:2px solid transparent}
+.top nav a[aria-current="page"]{color:#fff;border-bottom-color:var(--c-green)}
+.who{margin-left:auto;min-width:0;display:flex;align-items:center;gap:var(--s-3);flex:0 1 auto}
+.who .nm{min-width:0;text-align:right}
+.who .nm b{display:block;font-size:13.5px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who .nm span{display:block;font-size:12px;color:#9DAAC0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.av{width:34px;height:34px;flex:none;border-radius:50%;background:var(--c-green-dark);color:#fff;display:grid;place-items:center;font-size:12.5px;font-weight:600}
+
+/* surface switch */
+.switch{background:var(--c-navy-mid);border-bottom:1px solid var(--c-navy-line);padding:var(--s-3) 0}
+.switch .wrap{display:flex;gap:var(--s-4);align-items:center;flex-wrap:wrap}
+.switch p{margin:0;color:#9DAAC0;font-size:13px}
+.seg{display:flex;background:var(--c-navy);border:1px solid var(--c-navy-line);border-radius:var(--r-2);overflow:hidden}
+.seg button{background:none;border:0;color:#B7C3D4;font-size:13.5px;font-weight:500;padding:9px 16px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--c-green-dark);color:#fff}
+
+/* page head */
+.head{background:var(--c-navy);color:var(--c-sand);padding:var(--s-7) 0 var(--s-7)}
+.head .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--c-green-light);margin-bottom:var(--s-3)}
+.head h1{color:#fff;font-size:clamp(27px,3.4vw,40px);line-height:1.12;margin-bottom:var(--s-4);max-width:22ch}
+.head .meta{display:flex;flex-wrap:wrap;gap:var(--s-5);margin-top:var(--s-5);padding-top:var(--s-5);border-top:1px solid var(--c-navy-line)}
+.head .meta div span{display:block;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:#8E9CB2;margin-bottom:2px}
+.head .meta div b{font-size:15px;color:#fff;font-weight:600}
+
+/* notice */
+.notice{background:#FBF3E6;border-left:4px solid var(--c-amber);padding:var(--s-4) var(--s-5);margin:var(--s-6) 0;border-radius:0 var(--r-2) var(--r-2) 0}
+.notice b{display:block;font-size:14px;color:#8A4F08;margin-bottom:2px}
+.notice p{margin:0;font-size:14px;color:#5D3A0B;line-height:1.55}
+
+/* panels */
+main{padding:var(--s-7) 0 var(--s-8)}
+.panel{background:#fff;border:1px solid var(--c-line);border-radius:var(--r-3);overflow:hidden;margin-bottom:var(--s-6)}
+.panel>header{padding:var(--s-5);border-bottom:1px solid var(--c-line);display:flex;gap:var(--s-4);align-items:flex-start;flex-wrap:wrap}
+.panel>header .t{min-width:0;flex:1 1 260px}
+.panel>header h2{font-size:20px;margin-bottom:2px}
+.panel>header p{margin:0;font-size:14px;color:var(--c-slate)}
+.panel .body{padding:var(--s-5)}
+.sect{font-size:11.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--c-slate);margin:var(--s-5) 0 var(--s-3);padding-bottom:6px;border-bottom:1px solid var(--c-line)}
+.sect:first-child{margin-top:0}
+
+/* status, permitted family: submission state */
+.st{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:999px;border:1px solid;white-space:nowrap}
+.st-draft{color:#5C6B7E;border-color:#C6CDD6;background:#F1F3F5}
+.st-submitted{color:#0E5536;border-color:#9DCBB3;background:var(--c-green-light)}
+.st-returned{color:#8A4F08;border-color:#E3BE86;background:#FBF3E6}
+.st-validated{color:#0E5536;border-color:var(--c-green-dark);background:var(--c-green-dark);color:#fff}
+
+/* form */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:var(--s-4)}
+.f{min-width:0}
+.f label{display:block;font-size:13.5px;font-weight:600;color:var(--c-charcoal);margin-bottom:5px}
+.f .req{color:var(--c-amber);font-weight:700}
+.f .hint{font-size:12.5px;color:var(--c-slate);margin-top:4px;line-height:1.45}
+.f input,.f select,.f textarea{width:100%;padding:10px 12px;border:1px solid #C6CDD6;border-radius:var(--r-1);background:#fff;color:var(--c-charcoal)}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--c-green);box-shadow:0 0 0 3px rgba(26,140,90,.15);outline:none}
+.f.err input,.f.err select{border-color:#B42318;background:#FEF6F5}
+.f .msg{display:none;font-size:12.5px;color:#B42318;font-weight:600;margin-top:5px}
+.f.err .msg{display:flex;gap:5px;align-items:flex-start}
+.check{display:flex;gap:var(--s-3);align-items:flex-start;padding:var(--s-3) 0}
+.check input{width:18px;height:18px;flex:none;margin-top:2px;accent-color:var(--c-green-dark)}
+.check .tx{min-width:0}
+.check .tx b{display:block;font-size:14px;font-weight:600}
+.check .tx span{display:block;font-size:12.5px;color:var(--c-slate);line-height:1.45}
+.actions{display:flex;gap:var(--s-3);flex-wrap:wrap;align-items:center;padding-top:var(--s-5);margin-top:var(--s-5);border-top:1px solid var(--c-line)}
+.btn{border:1px solid var(--c-green-dark);background:var(--c-green-dark);color:#fff;font-size:14.5px;font-weight:600;padding:11px 20px;border-radius:var(--r-1);cursor:pointer}
+.btn:hover{background:var(--c-green)}
+.btn.sec{background:#fff;color:var(--c-green-dark)}
+.btn.sec:hover{background:var(--c-green-light)}
+.btn.q{background:#fff;color:var(--c-slate);border-color:#C6CDD6}
+.btn.q:hover{background:#F1F3F5;color:var(--c-charcoal)}
+.saved{font-size:13px;color:var(--c-slate);margin-left:auto}
+
+/* summary read-back */
+.rb{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:var(--s-4) var(--s-5)}
+.rb div span{display:block;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--c-slate);margin-bottom:3px}
+.rb div b{font-size:15px;font-weight:600;color:var(--c-charcoal)}
+.rb div b.none{font-weight:400;color:var(--c-slate)}
+
+/* stats strip */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0;border:1px solid var(--c-line);border-radius:var(--r-3);background:#fff;overflow:hidden;margin-bottom:var(--s-6)}
+.stats div{padding:var(--s-5);border-right:1px solid var(--c-line);min-width:0}
+.stats div:last-child{border-right:0}
+.stats b{display:block;font-family:var(--f-head);font-size:31px;line-height:1.05;color:var(--c-navy)}
+.stats span{display:block;font-size:13px;color:var(--c-slate);margin-top:4px}
+.stats .warn b{color:var(--c-amber)}
+
+/* table */
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+caption{text-align:left;font-size:13px;color:var(--c-slate);padding:0 0 var(--s-3)}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--c-line);vertical-align:top}
+thead th{background:var(--c-navy);color:#fff;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;position:sticky;top:0}
+tbody tr:nth-child(even){background:#FAF9F6}
+td .auth{font-weight:600;color:var(--c-navy)}
+td .cc{display:inline-grid;place-items:center;width:26px;height:20px;border-radius:3px;background:var(--c-navy);color:#fff;font-size:10.5px;font-weight:700;margin-right:8px;flex:none}
+td .sub{display:block;font-size:12.5px;color:var(--c-slate)}
+.flag{color:var(--c-amber);font-weight:600}
+.awaiting{color:var(--c-slate);font-style:italic}
+.sortbtn{background:none;border:0;color:#fff;font:inherit;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;padding:0;display:inline-flex;gap:5px;align-items:center}
+.sortbtn[aria-sort="ascending"]::after{content:"\2191"}
+.sortbtn[aria-sort="descending"]::after{content:"\2193"}
+
+.toolbar{display:flex;gap:var(--s-3);flex-wrap:wrap;align-items:center;padding:var(--s-4) var(--s-5);border-bottom:1px solid var(--c-line);background:#FAF9F6}
+.toolbar select{padding:8px 10px;border:1px solid #C6CDD6;border-radius:var(--r-1);background:#fff;font-size:13.5px}
+.toolbar .sp{margin-left:auto;display:flex;gap:var(--s-3);flex-wrap:wrap}
+
+.hide{display:none!important}
+.foot{background:var(--c-navy);color:#8E9CB2;padding:var(--s-5) 0;font-size:12.5px}
+.foot .wrap{display:flex;gap:var(--s-4);flex-wrap:wrap;justify-content:space-between}
+
+/* admin surface tone */
+body.admin{background:#F4F5F7}
+body.admin main{font-family:var(--f-admin)}
+body.admin .panel{border-radius:var(--r-2)}
+
+@media(max-width:760px){
+  .top nav{display:none}
+  .head{padding:var(--s-6) 0}
+  thead th{position:static}
+}
+@media print{
+  .switch,.toolbar .sp{display:none}
+  body{background:#fff}
+  .head{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .panel{break-inside:avoid;border-color:#999}
+  tr{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="mark">
+      <img src="./assets/crasa-logo.svg" alt="">
+      <div><b>CRASA</b><span id="chromeLabel">Members' extranet</span></div>
+    </div>
+    <nav id="extranetNav" aria-label="Extranet">
+      <a href="#">Dashboard</a>
+      <a href="#">Committees</a>
+      <a href="#" aria-current="page">Meetings</a>
+      <a href="#">Calendar</a>
+      <a href="#">Documents</a>
+    </nav>
+    <div class="who">
+      <div class="nm"><b id="whoName">Member State Representative</b><span id="whoOrg">MACRA, Malawi</span></div>
+      <div class="av" id="whoAv" aria-hidden="true">MW</div>
+    </div>
+  </div>
+</header>
+
+<div class="switch">
+  <div class="wrap">
+    <div class="seg" role="group" aria-label="Choose a view">
+      <button id="bDel" aria-pressed="true">Delegate view</button>
+      <button id="bSec" aria-pressed="false">Secretariat view</button>
+    </div>
+    <p id="switchNote">The delegate submits their own travel details. Switch views to see what the Secretariat works from.</p>
+  </div>
+</div>
+
+<div class="head">
+  <div class="wrap">
+    <div class="eyebrow">Travel logistics</div>
+    <h1 id="pageTitle">CRASA 15th Annual General Meeting</h1>
+    <p style="margin:0;max-width:62ch;color:var(--c-sand);font-size:16.5px" id="pageLead">Submit your arrival and departure details so the Secretariat can arrange transfers, accommodation and visa support.</p>
+    <div class="meta">
+      <div><span>Venue</span><b>Bingu Wa Mutharika International Convention Centre</b></div>
+      <div><span>City</span><b>Lilongwe, Malawi</b></div>
+      <div><span>Host authority</span><b>MACRA</b></div>
+      <div><span>Arrival airport</span><b>Kamuzu International, LLW</b></div>
+      <div><span>Travel details close</span><b>4 September 2026</b></div>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <div class="notice">
+    <b>Demonstration data</b>
+    <p>Delegate names are shown by authority and role rather than by individual, and all travel details on this screen are illustrative. Nothing here has been supplied by a member state.</p>
+  </div>
+
+  <!-- ================= DELEGATE ================= -->
+  <section id="viewDelegate">
+
+    <!-- FORM STATE -->
+    <div class="panel" id="formPanel">
+      <header>
+        <div class="t">
+          <h2>Your travel details</h2>
+          <p>MACRA, Malawi. Amendable until 4 September 2026.</p>
+        </div>
+        <span class="st st-draft" id="formStatus">Draft</span>
+      </header>
+      <div class="body">
+        <div class="sect">Arrival</div>
+        <div class="grid">
+          <div class="f">
+            <label for="aAir">Arrival airport <span class="req" aria-hidden="true">*</span></label>
+            <select id="aAir">
+              <option>Kamuzu International, Lilongwe (LLW)</option>
+              <option>Chileka International, Blantyre (BLZ)</option>
+              <option>Arriving overland, no flight</option>
+            </select>
+          </div>
+          <div class="f">
+            <label for="aDate">Arrival date <span class="req" aria-hidden="true">*</span></label>
+            <input id="aDate" type="date" value="2026-09-14">
+          </div>
+          <div class="f err" id="fATime">
+            <label for="aTime">Arrival time <span class="req" aria-hidden="true">*</span></label>
+            <input id="aTime" type="time" value="">
+            <div class="msg" role="alert"><span aria-hidden="true">!</span><span>Required. Transfers are scheduled from arrival time.</span></div>
+          </div>
+          <div class="f">
+            <label for="aFlight">Flight or carrier reference</label>
+            <input id="aFlight" type="text" value="" placeholder="For example KQ 794">
+            <div class="hint">Leave blank if arriving overland.</div>
+          </div>
+        </div>
+
+        <div class="sect">Departure</div>
+        <div class="grid">
+          <div class="f">
+            <label for="dDate">Departure date <span class="req" aria-hidden="true">*</span></label>
+            <input id="dDate" type="date" value="2026-09-18">
+          </div>
+          <div class="f">
+            <label for="dTime">Departure time</label>
+            <input id="dTime" type="time" value="19:40">
+          </div>
+          <div class="f">
+            <label for="dFlight">Flight or carrier reference</label>
+            <input id="dFlight" type="text" value="KQ 795">
+          </div>
+        </div>
+
+        <div class="sect">Accommodation and requirements</div>
+        <div class="grid">
+          <div class="f">
+            <label for="acc">Accommodation <span class="req" aria-hidden="true">*</span></label>
+            <select id="acc">
+              <option>Book through the Secretariat, single room</option>
+              <option>Book through the Secretariat, twin room</option>
+              <option>Arranging my own accommodation</option>
+            </select>
+          </div>
+          <div class="f err" id="fNights">
+            <label for="nights">Nights required <span class="req" aria-hidden="true">*</span></label>
+            <input id="nights" type="number" min="1" max="14" value="9">
+            <div class="msg" role="alert"><span aria-hidden="true">!</span><span>Nine nights exceeds the meeting window of 14 to 18 September. Confirm or reduce to four.</span></div>
+          </div>
+          <div class="f">
+            <label for="diet">Dietary requirements</label>
+            <input id="diet" type="text" value="Vegetarian">
+          </div>
+        </div>
+
+        <div class="check">
+          <input type="checkbox" id="visa" checked>
+          <div class="tx"><b>I require a visa support letter</b><span>The Secretariat issues an invitation letter for the Malawian mission. Allow fifteen working days.</span></div>
+        </div>
+        <div class="check">
+          <input type="checkbox" id="access">
+          <div class="tx"><b>I have accessibility requirements</b><span>Step-free access, assistance at the airport, hearing loop or interpretation support.</span></div>
+        </div>
+
+        <div class="f" style="margin-top:var(--s-4)">
+          <label for="notes">Anything else the Secretariat should know</label>
+          <textarea id="notes" rows="3" placeholder="Optional"></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="btnSubmit">Submit travel details</button>
+          <button class="btn q" id="btnDraft">Save as draft</button>
+          <span class="saved" id="savedNote">Draft saved automatically at 09:42</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMITTED STATE -->
+    <div class="panel hide" id="donePanel">
+      <header>
+        <div class="t">
+          <h2>Your travel details</h2>
+          <p>Submitted 17 August 2026. Amendable until 4 September 2026.</p>
+        </div>
+        <span class="st st-submitted">Submitted</span>
+      </header>
+      <div class="body">
+        <div class="rb">
+          <div><span>Arrival</span><b>14 September 2026, 14:25</b></div>
+          <div><span>Arrival airport</span><b>Kamuzu International, LLW</b></div>
+          <div><span>Arrival flight</span><b>KQ 794</b></div>
+          <div><span>Departure</span><b>18 September 2026, 19:40</b></div>
+          <div><span>Departure flight</span><b>KQ 795</b></div>
+          <div><span>Accommodation</span><b>Secretariat, single room, 4 nights</b></div>
+          <div><span>Dietary requirements</span><b>Vegetarian</b></div>
+          <div><span>Visa support letter</span><b>Requested</b></div>
+          <div><span>Accessibility requirements</span><b class="none">None stated</b></div>
+        </div>
+        <div class="actions">
+          <button class="btn sec" id="btnAmend">Amend details</button>
+          <button class="btn q" onclick="window.print()">Print for your records</button>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= SECRETARIAT ================= -->
+  <section id="viewSecretariat" class="hide">
+
+    <div class="stats">
+      <div><b id="kConf">9</b><span>Travel details submitted</span></div>
+      <div class="warn"><b id="kAwait">5</b><span>Awaiting travel details</span></div>
+      <div><b id="kVisa">6</b><span>Visa support letters required</span></div>
+      <div class="warn"><b id="kAcc">2</b><span>Accessibility requirements flagged</span></div>
+    </div>
+
+    <div class="panel">
+      <header>
+        <div class="t">
+          <h2>Arrivals roster</h2>
+          <p>CRASA 15th Annual General Meeting. Fourteen member authorities invited.</p>
+        </div>
+      </header>
+      <div class="toolbar">
+        <label for="fltStatus" style="font-size:13.5px;font-weight:600">Show</label>
+        <select id="fltStatus">
+          <option value="all">All authorities</option>
+          <option value="sub">Submitted only</option>
+          <option value="await">Awaiting details only</option>
+          <option value="visa">Visa support required</option>
+          <option value="acc">Accessibility flagged</option>
+        </select>
+        <div class="sp">
+          <button class="btn q" id="btnCsv">Export CSV</button>
+          <button class="btn q" onclick="window.print()">Print roster</button>
+        </div>
+      </div>
+      <div class="scroll">
+        <table>
+          <caption>Sorted by arrival time. Select a column heading to change the order.</caption>
+          <thead>
+            <tr>
+              <th scope="col"><button class="sortbtn" data-k="auth">Authority</button></th>
+              <th scope="col"><button class="sortbtn" data-k="role">Role</button></th>
+              <th scope="col"><button class="sortbtn" data-k="arr" aria-sort="ascending">Arrival</button></th>
+              <th scope="col">Flight</th>
+              <th scope="col"><button class="sortbtn" data-k="dep">Departure</button></th>
+              <th scope="col">Accommodation</th>
+              <th scope="col">Requirements</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody id="rosterBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <header>
+        <div class="t">
+          <h2>Transfer schedule, 14 September</h2>
+          <p>Grouped where arrivals fall within forty minutes of each other, so one vehicle serves several delegates.</p>
+        </div>
+      </header>
+      <div class="body">
+        <div id="transfers"></div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>CRASA, Communications Regulators' Association of Southern Africa</span>
+    <span>Design and Re-Development of the CRASA Website (EGEE-ICT)</span>
+  </div>
+</footer>
+
+<script>
+var ROSTER=[
+ {cc:'MW',auth:'MACRA',country:'Malawi',role:'Chair',arr:'2026-09-13 11:05',flt:'Host authority',dep:'2026-09-18 00:00',acc:'Local, not required',req:[],st:'sub'},
+ {cc:'BW',auth:'BOCRA',country:'Botswana',role:'Treasurer',arr:'2026-09-14 09:15',flt:'KQ 780',dep:'2026-09-18 16:20',acc:'Secretariat, single, 4 nights',req:['Visa support'],st:'sub'},
+ {cc:'ZA',auth:'ICASA',country:'South Africa',role:'Member',arr:'2026-09-14 09:40',flt:'SA 178',dep:'2026-09-18 17:05',acc:'Secretariat, single, 4 nights',req:[],st:'sub'},
+ {cc:'ZW',auth:'POTRAZ',country:'Zimbabwe',role:'Member',arr:'2026-09-14 10:20',flt:'UM 462',dep:'2026-09-18 15:30',acc:'Own arrangement',req:['Visa support'],st:'sub'},
+ {cc:'ZM',auth:'ZICTA',country:'Zambia',role:'Rapporteur',arr:'2026-09-14 12:55',flt:'QZ 214',dep:'2026-09-19 08:10',acc:'Secretariat, single, 5 nights',req:['Step-free access'],st:'sub'},
+ {cc:'MZ',auth:'INCM',country:'Mozambique',role:'Member',arr:'2026-09-14 13:30',flt:'TM 116',dep:'2026-09-18 18:45',acc:'Secretariat, twin, 4 nights',req:['Visa support'],st:'sub'},
+ {cc:'TZ',auth:'TCRA',country:'Tanzania',role:'Vice Chair',arr:'2026-09-14 14:25',flt:'KQ 794',dep:'2026-09-18 19:40',acc:'Secretariat, single, 4 nights',req:['Visa support','Vegetarian'],st:'sub'},
+ {cc:'NA',auth:'CRAN',country:'Namibia',role:'Member',arr:'2026-09-14 16:10',flt:'SW 703',dep:'2026-09-18 14:50',acc:'Secretariat, single, 4 nights',req:[],st:'sub'},
+ {cc:'LS',auth:'LCA',country:'Lesotho',role:'Member',arr:'2026-09-15 08:45',flt:'SA 182',dep:'2026-09-18 17:05',acc:'Secretariat, single, 3 nights',req:['Visa support','Hearing loop'],st:'sub'},
+ {cc:'AO',auth:'INACOM',country:'Angola',role:'Member',arr:'',flt:'',dep:'',acc:'',req:[],st:'await'},
+ {cc:'KM',auth:'ANRTIC',country:'Comoros',role:'Member',arr:'',flt:'',dep:'',acc:'',req:[],st:'await'},
+ {cc:'CD',auth:'ARPTC',country:'DR Congo',role:'Member',arr:'',flt:'',dep:'',acc:'',req:[],st:'await'},
+ {cc:'SZ',auth:'ESCCOM',country:'Eswatini',role:'Member',arr:'',flt:'',dep:'',acc:'',req:[],st:'await'},
+ {cc:'MU',auth:'ICTA',country:'Mauritius',role:'Member',arr:'',flt:'',dep:'',acc:'',req:[],st:'await'}
+];
+var MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function fmt(s){ if(!s) return ''; var d=s.split(' '), p=d[0].split('-');
+  var t=d[1]==='00:00'?'':(' '+d[1]);
+  return parseInt(p[2],10)+' '+MON[parseInt(p[1],10)-1].slice(0,3)+t; }
+
+var sortKey='arr', sortDir=1, filter='all';
+function pass(r){
+  if(filter==='all') return true;
+  if(filter==='sub') return r.st==='sub';
+  if(filter==='await') return r.st==='await';
+  if(filter==='visa') return r.req.indexOf('Visa support')>-1;
+  if(filter==='acc') return r.req.some(function(x){return x==='Step-free access'||x==='Hearing loop';});
+  return true;
+}
+function render(){
+  var rows=ROSTER.filter(pass).slice().sort(function(a,b){
+    var av=a[sortKey]||'zzz', bv=b[sortKey]||'zzz';
+    if(sortKey==='auth'||sortKey==='role'){ av=a[sortKey]; bv=b[sortKey]; }
+    return av<bv?-sortDir:av>bv?sortDir:0;
+  });
+  var h='';
+  rows.forEach(function(r){
+    var awaiting=r.st==='await';
+    h+='<tr>'
+      +'<td><span class="cc">'+r.cc+'</span><span class="auth">'+r.auth+'</span><span class="sub">'+r.country+'</span></td>'
+      +'<td>'+r.role+'</td>'
+      +'<td>'+(awaiting?'<span class="awaiting">Not yet supplied</span>':fmt(r.arr))+'</td>'
+      +'<td>'+(awaiting?'<span class="awaiting">&mdash;</span>'.replace('&mdash;','')+'<span class="awaiting">Not supplied</span>':r.flt)+'</td>'
+      +'<td>'+(awaiting?'<span class="awaiting">Not yet supplied</span>':fmt(r.dep))+'</td>'
+      +'<td>'+(awaiting?'<span class="awaiting">Not yet supplied</span>':r.acc)+'</td>'
+      +'<td>'+(r.req.length?'<span class="flag">'+r.req.join('</span><span class="sub">')+'</span>':'<span class="awaiting">None stated</span>')+'</td>'
+      +'<td>'+(awaiting?'<span class="st st-draft">Draft</span>':'<span class="st st-submitted">Submitted</span>')+'</td>'
+      +'</tr>';
+  });
+  document.getElementById('rosterBody').innerHTML=h;
+
+  // transfers on 14 September, grouped within 40 minutes
+  var day=ROSTER.filter(function(r){return r.st==='sub' && r.arr.indexOf('2026-09-14')===0;})
+    .sort(function(a,b){return a.arr<b.arr?-1:1;});
+  var groups=[], cur=null;
+  day.forEach(function(r){
+    var mins=parseInt(r.arr.split(' ')[1].split(':')[0],10)*60+parseInt(r.arr.split(' ')[1].split(':')[1],10);
+    if(cur && mins-cur.last<=40){ cur.items.push(r); cur.last=mins; }
+    else { cur={items:[r],last:mins,start:r.arr.split(' ')[1]}; groups.push(cur); }
+  });
+  var t='';
+  groups.forEach(function(g,i){
+    t+='<div style="display:flex;gap:var(--s-4);padding:var(--s-4) 0;border-bottom:1px solid var(--c-line);flex-wrap:wrap">'
+      +'<div style="flex:none;width:96px"><b style="font-family:var(--f-head);font-size:19px;color:var(--c-navy)">'+g.start+'</b>'
+      +'<span style="display:block;font-size:12px;color:var(--c-slate)">Vehicle '+(i+1)+'</span></div>'
+      +'<div style="min-width:0;flex:1 1 240px">'
+      +g.items.map(function(r){return '<span class="cc">'+r.cc+'</span><b style="font-size:14.5px">'+r.auth+'</b> <span style="font-size:13px;color:var(--c-slate)">'+r.flt+', '+r.arr.split(' ')[1]+'</span>';}).join('<br>')
+      +'</div>'
+      +'<div style="flex:none;font-size:13px;color:var(--c-slate)">'+g.items.length+' delegate'+(g.items.length>1?'s':'')+'</div>'
+      +'</div>';
+  });
+  document.getElementById('transfers').innerHTML=t;
+}
+document.querySelectorAll('.sortbtn').forEach(function(b){
+  b.onclick=function(){
+    var k=b.getAttribute('data-k');
+    sortDir = (k===sortKey) ? -sortDir : 1;
+    sortKey=k;
+    document.querySelectorAll('.sortbtn').forEach(function(o){o.removeAttribute('aria-sort');});
+    b.setAttribute('aria-sort', sortDir===1?'ascending':'descending');
+    render();
+  };
+});
+document.getElementById('fltStatus').onchange=function(e){ filter=e.target.value; render(); };
+document.getElementById('btnCsv').onclick=function(){
+  alert('In the built platform this downloads the roster as CSV, including every field shown and the delegate contact details.');
+};
+
+// view switch
+var bDel=document.getElementById('bDel'), bSec=document.getElementById('bSec');
+function setView(sec){
+  bDel.setAttribute('aria-pressed',String(!sec));
+  bSec.setAttribute('aria-pressed',String(sec));
+  document.getElementById('viewDelegate').classList.toggle('hide',sec);
+  document.getElementById('viewSecretariat').classList.toggle('hide',!sec);
+  document.body.classList.toggle('admin',sec);
+  document.getElementById('chromeLabel').textContent = sec?'Administration':"Members' extranet";
+  document.getElementById('whoName').textContent = sec?'Secretariat':'Member State Representative';
+  document.getElementById('whoOrg').textContent = sec?'CRASA Secretariat, Gaborone':'MACRA, Malawi';
+  document.getElementById('whoAv').textContent = sec?'CS':'MW';
+  document.getElementById('extranetNav').classList.toggle('hide',sec);
+  document.getElementById('pageLead').textContent = sec
+    ? 'Every invited authority, their arrival and departure, and what each delegate needs on the ground.'
+    : 'Submit your arrival and departure details so the Secretariat can arrange transfers, accommodation and visa support.';
+  document.getElementById('switchNote').textContent = sec
+    ? 'This is the roster a logistics officer works from. Switch back to see what the delegate fills in.'
+    : 'The delegate submits their own travel details. Switch views to see what the Secretariat works from.';
+}
+bDel.onclick=function(){setView(false);};
+bSec.onclick=function(){setView(true);};
+
+// form transitions
+document.getElementById('btnSubmit').onclick=function(){
+  var bad=document.querySelectorAll('#formPanel .f.err');
+  if(bad.length){
+    bad[0].querySelector('input,select').focus();
+    bad[0].scrollIntoView({block:'center',behavior:'smooth'});
+    return;
+  }
+  document.getElementById('formPanel').classList.add('hide');
+  document.getElementById('donePanel').classList.remove('hide');
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+document.getElementById('btnDraft').onclick=function(){
+  document.getElementById('savedNote').textContent='Draft saved just now';
+};
+document.getElementById('btnAmend').onclick=function(){
+  document.getElementById('donePanel').classList.add('hide');
+  document.getElementById('formPanel').classList.remove('hide');
+};
+// clearing an error field resolves it, so the submit path is demonstrable
+['aTime','nights'].forEach(function(id){
+  var el=document.getElementById(id);
+  el.addEventListener('input',function(){
+    var f=el.closest('.f');
+    if(id==='aTime' && el.value) f.classList.remove('err');
+    if(id==='nights' && Number(el.value)<=5) f.classList.remove('err');
+  });
+});
+render();
+</script>
+</body>
+</html>

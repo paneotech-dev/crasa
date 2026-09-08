@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="icon" href="./assets/crasa-logo.svg">
+<link rel="stylesheet" href="./vendor/fonts.css">
+<style>
+:root{
+  --c-green:#1A8C5A; --c-green-dark:#0E5536; --c-green-light:#E8F4EC;
+  --c-navy:#0F1B2D; --c-navy-mid:#1A2742; --c-charcoal:#1F2937;
+  --c-slate:#5C6B7E; --c-cream:#F8F6F1; --c-sand:#E5E0D5;
+  --c-amber:#C2710C; --c-white:#FFFFFF; --c-red:#9B2226;
+  --c-line:#DFDBD1; --c-admin-bg:#F4F3F0;
+  --f-head:'Lora',Georgia,serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-admin:'Inter',system-ui,sans-serif;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px;
+  --r-xs:2px; --r-sm:4px; --r-md:8px; --r-pill:999px;
+  --e-1:0 1px 2px rgba(15,27,45,.06), 0 1px 3px rgba(15,27,45,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;overflow-wrap:break-word;background:var(--c-admin-bg);color:var(--c-charcoal);font-family:var(--f-admin);-webkit-font-smoothing:antialiased}
+a{color:var(--c-green-dark);text-underline-offset:3px}
+a:hover{color:var(--c-navy)}
+:focus-visible{outline:3px solid var(--c-amber);outline-offset:2px}
+@page{margin:12mm}
+@media print{
+  html,body{background:#FFFFFF}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;transition:none !important;animation:none !important}
+  [style*="position:sticky"],[style*="position: sticky"],[style*="position:fixed"]{position:static !important}
+  section,figure,li,tr{break-inside:avoid}
+  h1,h2,h3{break-after:avoid}
+  thead{display:table-header-group}
+  [style*="overflow-x:auto"],[style*="overflow-x: auto"],[style*="overflow:auto"]{overflow:visible !important}
+  table{min-width:0 !important;width:100% !important;font-size:9.5pt !important}
+  img,svg{max-width:100% !important}
+  a[href]{text-decoration:underline}
+}
+</style>
+</helmet>
+
+<div style="background:var(--c-admin-bg);min-height:100vh">
+
+  <header style="background:var(--c-white);border-bottom:1px solid var(--c-line);padding:var(--s-3) var(--s-6);display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap">
+    <span style="display:flex;align-items:center;gap:10px;flex:none">
+      <img src="assets/crasa-logo.svg" alt="" style="width:32px;height:32px;flex:none;display:block">
+      <span style="font-size:14.5px;font-weight:600;color:var(--c-navy)">CRASA Administration</span>
+    </span>
+    <nav aria-label="Back office" style="display:flex;flex-wrap:wrap;gap:2px;min-width:0;margin-left:var(--s-4)">
+      <span style="font-size:14px;font-weight:500;color:var(--c-charcoal);padding:8px 12px;border-radius:var(--r-sm)">Dashboard</span>
+      <span style="font-size:14px;font-weight:600;color:var(--c-navy);padding:8px 12px;border-radius:var(--r-sm);background:var(--c-green-light)">Content</span>
+      <span style="font-size:14px;font-weight:500;color:var(--c-charcoal);padding:8px 12px;border-radius:var(--r-sm)">Media</span>
+      <span style="font-size:14px;font-weight:500;color:var(--c-charcoal);padding:8px 12px;border-radius:var(--r-sm)">Regulatory data</span>
+      <span style="font-size:14px;font-weight:500;color:var(--c-charcoal);padding:8px 12px;border-radius:var(--r-sm)">Users</span>
+      <span style="font-size:14px;font-weight:500;color:var(--c-charcoal);padding:8px 12px;border-radius:var(--r-sm)">Settings</span>
+    </nav>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:var(--s-4);min-width:0">
+      <span style="flex:none;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500;border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 11px;background:var(--c-white)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a15 15 0 010 18"></path></svg>
+        Interface: English
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+      </span>
+      <span style="display:flex;flex:0 1 auto;min-width:0;align-items:center;gap:9px">
+        <span style="flex:none;width:32px;height:32px;border-radius:var(--r-pill);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-size:12px;font-weight:600">GB</span>
+        <span style="display:flex;flex-direction:column;min-width:0"><span style="display:block;font-size:13.5px;font-weight:600;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Editor</span><span style="display:block;font-size:12px;color:var(--c-slate);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Secretariat, Gaborone</span></span>
+      </span>
+    </div>
+  </header>
+
+  <div style="padding:var(--s-5) var(--s-6) var(--s-7);max-width:1560px;margin:0 auto;display:flex;flex-direction:column;gap:var(--s-5)">
+
+    <div>
+      <nav aria-label="Breadcrumb" style="display:flex;align-items:center;gap:8px;font-size:13.5px;margin-bottom:var(--s-3)">
+        <a href="#">Content</a><span style="color:var(--c-slate)">/</span><a href="#">Publications</a><span style="color:var(--c-slate)">/</span><span style="color:var(--c-charcoal);font-weight:500">SADC Roaming Guidelines</span>
+      </nav>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s-5);flex-wrap:wrap">
+        <div>
+          <div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap;margin-bottom:8px">
+            <span style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate)">Publication &middot; Guideline &middot; ICT &middot; 2021</span>
+            <span style="font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:var(--r-xs);background:#FDF0DC;color:#7A4606;border:1px solid #E5BE87">For Review</span>
+            <span style="font-size:13.5px;color:var(--c-slate)">Autosaved 14:32</span>
+          </div>
+          <h1 style="font-family:var(--f-head);font-size:clamp(25px,3.4vw,34px);line-height:1.15;font-weight:600;margin:0;letter-spacing:-.01em">SADC Roaming Guidelines</h1>
+        </div>
+        <div style="display:flex;gap:var(--s-3);flex-wrap:wrap;align-items:center">
+          <button type="button" style="font-family:var(--f-admin);font-size:14px;font-weight:600;color:var(--c-charcoal);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:10px 15px;cursor:pointer">Preview</button>
+          <button type="button" style="font-family:var(--f-admin);font-size:14px;font-weight:600;color:var(--c-navy);background:var(--c-white);border:1.5px solid var(--c-navy);border-radius:var(--r-sm);padding:9.5px 15px;cursor:pointer">Save draft</button>
+          <button type="button" style="font-family:var(--f-admin);font-size:14px;font-weight:600;color:var(--c-white);background:var(--c-green-dark);border:1.5px solid var(--c-green-dark);border-radius:var(--r-sm);padding:9.5px 16px;cursor:pointer">Publish all languages</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:var(--s-4);flex-wrap:wrap;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-3) var(--s-4)">
+      <div role="group" aria-label="Editing view" style="display:flex;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);overflow:hidden">
+        <button type="button" onClick="{{ setSide }}" style="{{ sideStyle }}">Side by side, all three</button>
+        <button type="button" onClick="{{ setFr }}" style="{{ frStyle }}">EN to FR</button>
+        <button type="button" onClick="{{ setPt }}" style="{{ ptStyle }}">EN to PT</button>
+      </div>
+      <div style="font-size:13.5px;color:var(--c-charcoal);max-width:52ch">{{ viewHelp }}</div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:12.5px;font-weight:600;color:var(--c-slate)">FR</span>
+          <span style="width:110px;height:8px;border-radius:var(--r-pill);background:var(--c-sand);overflow:hidden;display:inline-block"><span style="display:block;width:100%;height:100%;background:var(--c-green-dark)"></span></span>
+          <span style="font-size:12.5px;font-weight:600;color:var(--c-green-dark)">5 of 5 approved</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:12.5px;font-weight:600;color:var(--c-slate)">PT</span>
+          <span style="width:110px;height:8px;border-radius:var(--r-pill);background:var(--c-sand);overflow:hidden;display:inline-block"><span style="display:block;width:40%;height:100%;background:var(--c-amber)"></span></span>
+          <span style="font-size:12.5px;font-weight:600;color:var(--c-amber)">2 approved, 2 machine drafts, 1 untranslated</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:var(--s-3);background:#FDF0DC;border:1px solid #E5BE87;border-left:4px solid var(--c-amber);border-radius:var(--r-md);padding:var(--s-4) var(--s-5)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A4606" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9L2.4 18a1.8 1.8 0 001.6 2.7h16a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"></path></svg>
+      <div style="font-size:14.5px;line-height:1.6;color:#5C3404"><strong style="color:#4A2A03">Portuguese is not ready to publish.</strong> Two fields hold machine drafts and one field has no translation at all. Machine drafts are never published as approved copy for this client. Publishing now would put the English fallback in front of a Portuguese-speaking reader, which the platform marks honestly rather than hiding.</div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:var(--s-5);align-items:flex-start">
+
+      <div style="flex:999 1 520px;min-width:0;display:flex;flex-direction:column;gap:var(--s-4)">
+
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+          <div style="display:grid;grid-template-columns:{{ gridCols }};border-bottom:1px solid var(--c-line);background:var(--c-cream)">
+            <div style="padding:var(--s-3) var(--s-4);font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate)">Field</div>
+            <sc-for list="{{ columns }}" as="col" hint-placeholder-count="3">
+              <div style="{{ col.headStyle }}">
+                <span style="font-size:13px;font-weight:700;color:var(--c-navy)">{{ col.label }}</span>
+                <span style="font-size:11.5px;font-weight:500;color:var(--c-slate)">{{ col.note }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <sc-for list="{{ fields }}" as="f" hint-placeholder-count="5">
+            <div style="{{ f.rowStyle }}">
+              <div style="padding:var(--s-4);border-right:1px solid var(--c-line);background:var(--c-cream)">
+                <div style="font-size:14px;font-weight:600;line-height:1.35">{{ f.label }}</div>
+                <div style="font-size:12px;color:var(--c-slate);margin-top:4px;line-height:1.45">{{ f.hint }}</div>
+                <sc-if value="{{ f.rich }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;gap:4px;margin-top:10px;flex-wrap:wrap">
+                    <span style="width:26px;height:26px;display:grid;place-items:center;border:1px solid var(--c-line);border-radius:var(--r-xs);font-size:12px;font-weight:700;background:var(--c-white)">B</span>
+                    <span style="width:26px;height:26px;display:grid;place-items:center;border:1px solid var(--c-line);border-radius:var(--r-xs);font-size:12px;font-weight:600;font-style:italic;background:var(--c-white)">I</span>
+                    <span style="width:26px;height:26px;display:grid;place-items:center;border:1px solid var(--c-line);border-radius:var(--r-xs);font-size:11px;font-weight:700;background:var(--c-white)">H2</span>
+                    <span style="width:26px;height:26px;display:grid;place-items:center;border:1px solid var(--c-line);border-radius:var(--r-xs);background:var(--c-white)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 7h11"></path><path d="M9 12h11"></path><path d="M9 17h11"></path><path d="M4 7h.01"></path><path d="M4 12h.01"></path><path d="M4 17h.01"></path></svg></span>
+                    <span style="width:26px;height:26px;display:grid;place-items:center;border:1px solid var(--c-line);border-radius:var(--r-xs);background:var(--c-white)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"></path><path d="M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"></path></svg></span>
+                  </div>
+                </sc-if>
+              </div>
+              <sc-for list="{{ f.cells }}" as="c" hint-placeholder-count="3">
+                <div style="{{ c.cellStyle }}">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;flex-wrap:wrap">
+                    <span style="{{ c.statusStyle }}">{{ c.status }}</span>
+                    <span style="font-size:11.5px;color:var(--c-slate)">{{ c.meta }}</span>
+                  </div>
+                  <div style="{{ c.boxStyle }}" lang="{{ c.lang }}">{{ c.value }}</div>
+                  <sc-if value="{{ c.fallback }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;gap:9px;margin-top:10px;background:#FBEDED;border:1px solid #E3B7B8;border-left:3px solid var(--c-red);border-radius:var(--r-sm);padding:10px 12px">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9B2226" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:1px" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+                      <div style="font-size:12.5px;line-height:1.5;color:#6E1A1D"><strong>No Portuguese translation.</strong> A reader on the Portuguese site sees the English text above, marked as English, with a notice that this field is not yet available in Portuguese.</div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ c.machine }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;align-items:center;gap:9px;margin-top:10px;flex-wrap:wrap">
+                      <span style="font-size:12.5px;color:#5C3404;line-height:1.5;flex:1;min-width:200px">Machine draft, not approved. Needs a Portuguese speaker to confirm before publication.</span>
+                      <span style="font-size:12.5px;font-weight:600;color:var(--c-green-dark);border:1.5px solid var(--c-green-dark);border-radius:var(--r-sm);padding:5px 11px;background:var(--c-white)">Approve</span>
+                      <span style="font-size:12.5px;font-weight:600;color:var(--c-charcoal);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:5px 11px;background:var(--c-white)">Rewrite</span>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-family:var(--f-head);font-size:20px;font-weight:600;margin:0 0 var(--s-4)">Cover image and media</h2>
+          <div style="display:flex;gap:var(--s-5);flex-wrap:wrap">
+            <div style="flex:0 0 168px">
+              <div style="aspect-ratio:3/4;background:repeating-linear-gradient(135deg,var(--c-sand) 0 8px,#DED8CB 8px 16px);border:1px solid var(--c-line);border-radius:var(--r-sm);display:grid;place-items:center">
+                <span style="font-size:10px;font-weight:700;letter-spacing:.06em;background:var(--c-navy);color:var(--c-cream);padding:3px 7px;border-radius:2px">PLACEHOLDER 3:4</span>
+              </div>
+              <button type="button" style="width:100%;margin-top:10px;font-family:var(--f-admin);font-size:13.5px;font-weight:600;color:var(--c-navy);background:var(--c-white);border:1.5px solid var(--c-navy);border-radius:var(--r-sm);padding:9px;cursor:pointer">Choose from media library</button>
+            </div>
+            <div style="flex:1 1 340px;display:flex;flex-direction:column;gap:var(--s-4)">
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">Alt text, English <span style="color:var(--c-red)">*</span></label>
+                <div style="border:1.5px solid #B9B2A2;border-radius:var(--r-sm);padding:10px 12px;font-size:14.5px;background:var(--c-white)">Cover of the SADC Roaming Guidelines, 2021 revision.</div>
+              </div>
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">Alt text, French <span style="color:var(--c-red)">*</span></label>
+                <div style="border:1.5px solid #B9B2A2;border-radius:var(--r-sm);padding:10px 12px;font-size:14.5px;background:var(--c-white)" lang="fr">Couverture des lignes directrices de la SADC sur l'itinérance, révision 2021.</div>
+              </div>
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">Alt text, Portuguese <span style="color:var(--c-red)">*</span></label>
+                <div style="border:1.5px solid var(--c-red);background:#FBEDED;border-radius:var(--r-sm);padding:10px 12px;font-size:14.5px;color:#6E1A1D">Required before this publication can be published in Portuguese.</div>
+              </div>
+              <div style="font-size:13px;line-height:1.6;color:var(--c-charcoal);background:var(--c-cream);border-radius:var(--r-sm);padding:10px 12px">Alt text is required per language. Renditions generated: 1600, 1200, 800 and 400px WebP with a JPEG fallback, served through a picture element with lazy loading below the fold.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside style="flex:1 1 290px;max-width:340px;min-width:0;display:flex;flex-direction:column;gap:var(--s-4)">
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin:0 0 var(--s-4)">Workflow</h2>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <div style="display:flex;gap:var(--s-3);align-items:flex-start;padding-bottom:var(--s-4)">
+              <span style="width:22px;height:22px;border-radius:var(--r-pill);background:var(--c-green-dark);color:var(--c-white);display:grid;place-items:center;flex:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg></span>
+              <div><div style="font-size:14px;font-weight:600">Draft</div><div style="font-size:12.5px;color:var(--c-slate);line-height:1.45">English complete, 11 July 2026</div></div>
+            </div>
+            <div style="display:flex;gap:var(--s-3);align-items:flex-start;padding-bottom:var(--s-4)">
+              <span style="width:22px;height:22px;border-radius:var(--r-pill);background:var(--c-amber);color:var(--c-white);display:grid;place-items:center;flex:none;font-size:12px;font-weight:700">2</span>
+              <div><div style="font-size:14px;font-weight:600">For Review</div><div style="font-size:12.5px;color:var(--c-slate);line-height:1.45">Current step. Portuguese incomplete.</div></div>
+            </div>
+            <div style="display:flex;gap:var(--s-3);align-items:flex-start;padding-bottom:var(--s-4);opacity:.6">
+              <span style="width:22px;height:22px;border-radius:var(--r-pill);border:1.5px solid #B9B2A2;color:var(--c-slate);display:grid;place-items:center;flex:none;font-size:12px;font-weight:700">3</span>
+              <div><div style="font-size:14px;font-weight:600">Published</div><div style="font-size:12.5px;color:var(--c-slate);line-height:1.45">Per language, not all at once</div></div>
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--c-line);padding-top:var(--s-4);display:flex;flex-direction:column;gap:var(--s-3)">
+            <button type="button" style="font-family:var(--f-admin);font-size:14px;font-weight:600;color:var(--c-white);background:var(--c-green-dark);border:1.5px solid var(--c-green-dark);border-radius:var(--r-sm);padding:10px;cursor:pointer">Publish English and French</button>
+            <button type="button" disabled="disabled" style="font-family:var(--f-admin);font-size:14px;font-weight:600;color:#6E7A85;background:var(--c-sand);border:1px solid #D6D0C2;border-radius:var(--r-sm);padding:10px;cursor:not-allowed">Publish Portuguese</button>
+            <div style="font-size:12.5px;line-height:1.5;color:var(--c-charcoal)">Portuguese cannot be published while a required field is untranslated and alt text is missing.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin:0 0 var(--s-4)">Metadata, shared across languages</h2>
+          <div style="display:flex;flex-direction:column;gap:var(--s-3);font-size:14px">
+            <div style="display:flex;justify-content:space-between;gap:var(--s-3);border-bottom:1px solid var(--c-line);padding-bottom:9px"><span style="color:var(--c-slate)">Instrument type</span><span style="font-weight:600">Guideline</span></div>
+            <div style="display:flex;justify-content:space-between;gap:var(--s-3);border-bottom:1px solid var(--c-line);padding-bottom:9px"><span style="color:var(--c-slate)">Sector</span><span style="font-weight:600">ICT</span></div>
+            <div style="display:flex;justify-content:space-between;gap:var(--s-3);border-bottom:1px solid var(--c-line);padding-bottom:9px"><span style="color:var(--c-slate)">Year</span><span style="font-weight:600">2021</span></div>
+            <div style="display:flex;justify-content:space-between;gap:var(--s-3);border-bottom:1px solid var(--c-line);padding-bottom:9px"><span style="color:var(--c-slate)">Owning committee</span><span style="font-weight:600;text-align:right;max-width:60%">Markets, Competition and Economics</span></div>
+            <div style="display:flex;justify-content:space-between;gap:var(--s-3);border-bottom:1px solid var(--c-line);padding-bottom:9px"><span style="color:var(--c-slate)">File</span><span style="font-weight:600">PDF, 2.4 MB, 48 pages</span></div>
+            <div style="display:flex;justify-content:space-between;gap:var(--s-3)"><span style="color:var(--c-slate)">Supersedes</span><span style="font-weight:600;text-align:right;max-width:60%">SADC Roaming Policy (2015)</span></div>
+          </div>
+        </div>
+
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin:0 0 var(--s-4)">SEO, per language</h2>
+          <div style="display:flex;flex-direction:column;gap:var(--s-4)">
+            <div>
+              <div style="display:flex;justify-content:space-between;gap:var(--s-3);margin-bottom:5px"><span style="font-size:13px;font-weight:600">Slug, English</span><span style="font-size:12px;color:var(--c-green-dark);font-weight:600">/publications/sadc-roaming-guidelines</span></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;gap:var(--s-3);margin-bottom:5px"><span style="font-size:13px;font-weight:600">Slug, French</span><span style="font-size:12px;color:var(--c-green-dark);font-weight:600">/fr/publications/lignes-directrices-itinerance</span></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;gap:var(--s-3);margin-bottom:5px"><span style="font-size:13px;font-weight:600">Slug, Portuguese</span><span style="font-size:12px;color:var(--c-amber);font-weight:600">Not set</span></div>
+            </div>
+            <div style="font-size:12.5px;line-height:1.6;color:var(--c-charcoal);background:var(--c-cream);border-radius:var(--r-sm);padding:10px 12px">English lives at the root, French under /fr, Portuguese under /pt. Alternate language links are emitted for every published translation, and never for an unpublished one.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--c-navy);color:var(--c-cream);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-green-light);margin:0 0 var(--s-3)">Content editability</h2>
+          <p style="margin:0;font-size:14px;line-height:1.6;color:var(--c-sand)">Every field on this screen, the homepage hero copy, section introductions and calls to action are editable here without a developer. The target is 80 percent of site content under Secretariat control, and this editor is where that target is met.</p>
+        </div>
+      </aside>
+    </div>
+
+    <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-6)">
+      <div style="display:flex;align-items:baseline;gap:var(--s-4);margin-bottom:var(--s-3)">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--c-green-dark)">APPENDIX</span>
+        <h2 style="font-family:var(--f-head);font-size:24px;font-weight:600;margin:0">What the reader sees when a field falls back</h2>
+      </div>
+      <p style="margin:0 0 var(--s-5);font-size:15.5px;line-height:1.65;color:var(--c-charcoal);max-width:86ch">The same publication rendered on the public site with the interface in Portuguese. The summary has no Portuguese translation, so the English text is shown, marked as English with a lang attribute so a screen reader switches voice, and preceded by a plain notice. It is never left blank, and never machine translated on the fly.</p>
+      <div style="max-width:760px;border:1px solid var(--c-sand);border-radius:var(--r-md);overflow:hidden">
+        <div style="background:var(--c-navy);color:var(--c-cream);padding:var(--s-3) var(--s-4);display:flex;align-items:center;gap:var(--s-3);font-family:var(--f-body)">
+          <span style="font-family:var(--f-head);font-size:16px;font-weight:600;color:var(--c-white)">CRASA</span>
+          <span style="margin-left:auto;display:flex;border:1.5px solid #4A5670;border-radius:var(--r-sm);overflow:hidden">
+            <span style="font-size:12.5px;font-weight:600;padding:6px 10px;color:var(--c-cream)">EN</span>
+            <span style="font-size:12.5px;font-weight:600;padding:6px 10px;color:var(--c-cream)">FR</span>
+            <span style="font-size:12.5px;font-weight:600;padding:6px 10px;background:var(--c-green-dark);color:var(--c-white)">PT</span>
+          </span>
+        </div>
+        <div style="padding:var(--s-5);font-family:var(--f-body);background:var(--c-cream)">
+          <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:8px" lang="pt">Biblioteca regulatória</div>
+          <h3 style="font-family:var(--f-head);font-size:28px;font-weight:600;line-height:1.2;margin:0 0 var(--s-3)" lang="pt">Diretrizes de Roaming da SADC</h3>
+          <div style="display:flex;gap:var(--s-3);background:var(--c-white);border:1px solid var(--c-sand);border-left:4px solid var(--c-navy);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4);margin-bottom:var(--s-4)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F1B2D" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5"></path><path d="M12 8h.01"></path></svg>
+            <div style="font-size:14px;line-height:1.55" lang="pt">Este resumo ainda não está disponível em português. O texto abaixo é apresentado em inglês, a sua língua original.</div>
+          </div>
+          <p style="margin:0;font-size:16.5px;line-height:1.65;color:var(--c-charcoal)" lang="en">These Guidelines set out the regional framework for the regulation of roaming services between SADC member states, covering wholesale and retail price principles, transparency obligations towards consumers, and the reporting member states provide to CRASA on implementation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const FIELDS = [
+  {
+    label:"Title", hint:"Plain text. Appears in search results and the library list.", rich:false,
+    en:"SADC Roaming Guidelines",
+    fr:{ v:"Lignes directrices de la SADC sur l'itin\u00E9rance", s:"approved", meta:"Approved 18 July 2026" },
+    pt:{ v:"Diretrizes de Roaming da SADC", s:"approved", meta:"Approved 22 July 2026" }
+  },
+  {
+    label:"Summary", hint:"Rich text. Shown on the detail page above the download.", rich:true,
+    en:"These Guidelines set out the regional framework for the regulation of roaming services between SADC member states, covering wholesale and retail price principles, transparency obligations towards consumers, and the reporting member states provide to CRASA on implementation.",
+    fr:{ v:"Ces lignes directrices \u00E9tablissent le cadre r\u00E9gional de r\u00E9gulation des services d'itin\u00E9rance entre les \u00C9tats membres de la SADC. Elles couvrent les principes tarifaires de gros et de d\u00E9tail, les obligations de transparence envers les consommateurs, et les rapports que les \u00C9tats membres transmettent \u00E0 la CRASA sur leur mise en \u0153uvre.", s:"approved", meta:"Approved 18 July 2026" },
+    pt:{ v:"", s:"untranslated", meta:"No translation" }
+  },
+  {
+    label:"Instrument type label", hint:"Displayed as the eyebrow on cards and rows.", rich:false,
+    en:"Guideline",
+    fr:{ v:"Ligne directrice", s:"approved", meta:"Approved 18 July 2026" },
+    pt:{ v:"Diretriz", s:"approved", meta:"Approved 22 July 2026" }
+  },
+  {
+    label:"Download label", hint:"Button text on the detail page. Keep under 28 characters.", rich:false,
+    en:"Download the Guidelines, PDF",
+    fr:{ v:"T\u00E9l\u00E9charger les lignes directrices, PDF", s:"approved", meta:"Approved 18 July 2026" },
+    pt:{ v:"Descarregar as diretrizes, PDF", s:"machine", meta:"Machine draft, 22 July 2026" }
+  },
+  {
+    label:"Search meta description", hint:"Up to 155 characters. Used by search engines and the site search snippet.", rich:false,
+    en:"The SADC regional framework for roaming regulation: wholesale and retail price principles, consumer transparency, and member state reporting to CRASA.",
+    fr:{ v:"Le cadre r\u00E9gional de la SADC pour la r\u00E9gulation de l'itin\u00E9rance : principes tarifaires, transparence pour les consommateurs et rapports des \u00C9tats membres.", s:"approved", meta:"Approved 18 July 2026" },
+    pt:{ v:"O quadro regional da SADC para a regula\u00E7\u00E3o do roaming: princ\u00EDpios tarif\u00E1rios, transpar\u00EAncia para o consumidor e relat\u00F3rios dos Estados membros.", s:"machine", meta:"Machine draft, 22 July 2026" }
+  }
+];
+
+const PILL = "font-size:11.5px;font-weight:700;letter-spacing:.03em;padding:3px 8px;border-radius:2px;display:inline-block;";
+const STATUS = {
+  approved: { label:"Approved", style: PILL + "background:#E8F4EC;color:#0E5536;border:1px solid #B6DCC5;" },
+  machine:  { label:"Machine draft", style: PILL + "background:#C2710C;color:#FFFFFF;" },
+  untranslated: { label:"Untranslated, EN fallback", style: PILL + "background:transparent;color:#1F2937;border:1px dashed #5C6B7E;" },
+  source:   { label:"Source language", style: PILL + "background:#0F1B2D;color:#FFFFFF;" }
+};
+
+const BOX = "font-size:14.5px;line-height:1.6;border-radius:4px;padding:11px 13px;min-height:46px;";
+
+class Component extends DCLogic {
+  state = { view: "side" };
+
+  cols(){
+    if (this.state.view === "side") return ["en","fr","pt"];
+    return ["en", this.state.view];
+  }
+
+  colMeta(code){
+    if (code === "en") return { label:"English, source", note:"Root URL, always complete" };
+    if (code === "fr") return { label:"Fran\u00E7ais", note:"/fr, 5 of 5 fields approved" };
+    return { label:"Portugu\u00EAs", note:"/pt, incomplete" };
+  }
+
+  cellFor(f, code){
+    if (code === "en") {
+      return {
+        lang:"en", value:f.en,
+        status:STATUS.source.label, statusStyle:STATUS.source.style,
+        meta:"Locked as the reference text",
+        boxStyle: BOX + "background:#F8F6F1;border:1.5px solid #DFDBD1;color:#1F2937;",
+        cellStyle: "padding:16px;border-right:1px solid #DFDBD1;",
+        fallback:false, machine:false
+      };
+    }
+    const d = f[code];
+    const st = STATUS[d.s];
+    const untranslated = d.s === "untranslated";
+    let box;
+    if (untranslated) box = BOX + "background:#F8F6F1;border:1.5px dashed #9B2226;color:#5C6B7E;font-style:italic;";
+    else if (d.s === "machine") box = BOX + "background:#FFFFFF;border:1.5px solid #C2710C;color:#1F2937;";
+    else box = BOX + "background:#FFFFFF;border:1.5px solid #B9B2A2;color:#1F2937;";
+    return {
+      lang: untranslated ? "en" : code,
+      value: untranslated ? f.en : d.v,
+      status: st.label, statusStyle: st.style, meta: d.meta,
+      boxStyle: box,
+      cellStyle: "padding:16px;" + (code === "fr" && this.state.view === "side" ? "border-right:1px solid #DFDBD1;" : ""),
+      fallback: untranslated,
+      machine: d.s === "machine"
+    };
+  }
+
+  renderVals(){
+    const view = this.state.view;
+    const cols = this.cols();
+    const btn = (on) => "font-family:'Inter',system-ui,sans-serif;font-size:13.5px;font-weight:600;padding:9px 14px;border:none;cursor:pointer;"
+      + (on ? "background:#0F1B2D;color:#FFFFFF;" : "background:transparent;color:#0F1B2D;");
+    const gridCols = view === "side" ? "220px repeat(3,minmax(0,1fr))" : "220px repeat(2,minmax(0,1fr))";
+
+    return {
+      gridCols: gridCols,
+      columns: cols.map((c, i) => {
+        const m = this.colMeta(c);
+        return {
+          label:m.label, note:m.note,
+          headStyle: "padding:12px 16px;display:flex;flex-direction:column;gap:3px;" + (i < cols.length - 1 ? "border-right:1px solid #DFDBD1;" : "")
+        };
+      }),
+      fields: FIELDS.map((f, i) => ({
+        label:f.label, hint:f.hint, rich:f.rich,
+        rowStyle: "display:grid;grid-template-columns:" + gridCols + ";" + (i < FIELDS.length - 1 ? "border-bottom:1px solid #DFDBD1;" : ""),
+        cells: cols.map(c => this.cellFor(f, c))
+      })),
+      setSide: () => this.setState({ view:"side" }),
+      setFr: () => this.setState({ view:"fr" }),
+      setPt: () => this.setState({ view:"pt" }),
+      sideStyle: btn(view === "side"), frStyle: btn(view === "fr"), ptStyle: btn(view === "pt"),
+      viewHelp: view === "side"
+        ? "All three languages editable together, so an editor sees the source and both translations without switching screens."
+        : "A single language pair, for a translator working through one language at a time on a narrower screen."
+    };
+  }
+}
+</script>
+</body>
+</html>

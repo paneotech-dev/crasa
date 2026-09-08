@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="icon" href="./assets/crasa-logo.svg">
+<link rel="stylesheet" href="./vendor/fonts.css">
+<style>
+:root{
+  --c-green:#1A8C5A; --c-green-dark:#0E5536; --c-green-light:#E8F4EC;
+  --c-navy:#0F1B2D; --c-navy-mid:#1A2742; --c-navy-line:#2C3A55; --c-charcoal:#1F2937;
+  --c-slate:#5C6B7E; --c-cream:#F8F6F1; --c-sand:#E5E0D5; --c-line:#DFDBD1;
+  --c-amber:#C2710C; --c-white:#FFFFFF; --c-red:#9B2226; --c-red-light:#FBEDED; --c-red-deep:#4A1315;
+  --c-admin-bg:#F4F3F0;
+  --f-head:'Lora',Georgia,serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-admin:'Inter',system-ui,sans-serif;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px;
+  --r-xs:2px; --r-sm:4px; --r-md:8px; --r-pill:999px;
+  --e-1:0 1px 2px rgba(15,27,45,.06), 0 1px 3px rgba(15,27,45,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;overflow-wrap:break-word;background:var(--c-admin-bg);color:var(--c-charcoal);font-family:var(--f-admin);-webkit-font-smoothing:antialiased}
+a{color:var(--c-green-dark);text-underline-offset:3px}
+a:hover{color:var(--c-navy)}
+:focus-visible{outline:3px solid var(--c-amber);outline-offset:2px}
+@page{margin:12mm}
+@media print{
+  html,body{background:#FFFFFF}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;transition:none !important;animation:none !important}
+  [style*="position:sticky"],[style*="position: sticky"],[style*="position:fixed"]{position:static !important}
+  section,figure,li,tr{break-inside:avoid}
+  h1,h2,h3{break-after:avoid}
+  thead{display:table-header-group}
+  [style*="overflow-x:auto"],[style*="overflow-x: auto"],[style*="overflow:auto"]{overflow:visible !important}
+  table{min-width:0 !important;width:100% !important;font-size:9.5pt !important}
+  img,svg{max-width:100% !important}
+  a[href]{text-decoration:underline}
+}
+</style>
+</helmet>
+
+<div>
+
+  <header style="background:var(--c-white);border-bottom:1px solid var(--c-line);padding:var(--s-3) var(--s-6);display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap">
+    <span style="display:flex;flex:none;align-items:center;gap:10px">
+      <img src="assets/crasa-logo.svg" alt="" style="width:32px;height:32px;flex:none;display:block">
+      <span style="font-size:14.5px;font-weight:600;color:var(--c-navy)">CRASA Administration</span>
+    </span>
+    <nav aria-label="Back office" style="display:flex;flex-wrap:wrap;gap:2px;min-width:0;margin-left:var(--s-4)">
+      <span style="font-size:14px;color:var(--c-charcoal);padding:8px 12px">Dashboard</span>
+      <span style="font-size:14px;color:var(--c-charcoal);padding:8px 12px">Content</span>
+      <span style="font-size:14px;color:var(--c-charcoal);padding:8px 12px">Media</span>
+      <span style="font-size:14px;color:var(--c-charcoal);padding:8px 12px">Regulatory data</span>
+      <span style="font-size:14px;font-weight:600;color:var(--c-navy);padding:8px 12px;border-radius:var(--r-sm);background:var(--c-green-light)">Users</span>
+      <span style="font-size:14px;color:var(--c-charcoal);padding:8px 12px">Settings</span>
+    </nav>
+    <div style="margin-left:auto;display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-4);min-width:0">
+      <span style="flex:none;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500;border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 11px;background:var(--c-white)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a15 15 0 010 18"></path></svg>
+        Interface: English
+      </span>
+      <span style="display:flex;flex:0 1 auto;min-width:0;align-items:center;gap:9px">
+        <span style="flex:none;width:32px;height:32px;border-radius:var(--r-pill);background:var(--c-navy);color:var(--c-cream);display:grid;place-items:center;font-size:12px;font-weight:600">GB</span>
+        <span style="display:flex;flex-direction:column;min-width:0">
+          <span style="display:block;font-size:13.5px;font-weight:600;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Administrator</span>
+          <span style="display:block;font-size:12px;color:var(--c-slate);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Secretariat, Gaborone</span>
+        </span>
+      </span>
+    </div>
+  </header>
+
+  <div style="max-width:1560px;margin:0 auto;padding:var(--s-6) var(--s-6) var(--s-8);display:flex;flex-direction:column;gap:var(--s-6);min-width:0">
+
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-5);flex-wrap:wrap">
+      <div style="min-width:0">
+        <h1 style="font-family:var(--f-head);font-size:clamp(26px,3.4vw,34px);line-height:1.15;font-weight:600;margin:0 0 5px;letter-spacing:-.01em">Users and access</h1>
+        <div style="font-size:14.5px;color:var(--c-slate)">38 accounts across the Secretariat, the Executive Committee and the 14 member regulators.</div>
+      </div>
+      <div style="display:flex;gap:var(--s-3);flex-wrap:wrap">
+        <span style="font-size:14px;font-weight:600;color:var(--c-charcoal);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:10px 14px">Export list</span>
+        <span style="font-size:14px;font-weight:600;color:var(--c-white);background:var(--c-green-dark);border-radius:var(--r-sm);padding:10px 14px">Invite a user</span>
+      </div>
+    </div>
+
+    <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden;min-width:0">
+      <div style="padding:var(--s-4) var(--s-5);border-bottom:1px solid var(--c-line);display:flex;gap:var(--s-3);flex-wrap:wrap;align-items:center">
+        <span style="display:flex;align-items:center;gap:9px;border:1.5px solid #B9B2A2;border-radius:var(--r-sm);padding:0 12px;background:var(--c-white);flex:1 1 240px;max-width:320px;min-width:0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C6B7E" stroke-width="2" stroke-linecap="round" style="flex:none" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+          <span style="font-size:14.5px;color:var(--c-slate);padding:10px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Search name, email or authority</span>
+        </span>
+        <span style="font-size:14px;font-weight:500;color:var(--c-charcoal);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 13px">Role: all</span>
+        <span style="font-size:14px;font-weight:500;color:var(--c-charcoal);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 13px">Category: all</span>
+        <span style="font-size:14px;font-weight:500;color:var(--c-charcoal);background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 13px">Member state: all</span>
+        <span style="font-size:14px;font-weight:600;color:var(--c-amber);background:#FDF0DC;border:1px solid #E5BE87;border-radius:var(--r-sm);padding:9px 13px">Two-factor: not enrolled (4)</span>
+      </div>
+      <div style="overflow-x:auto;min-width:0">
+        <table style="width:100%;border-collapse:collapse;font-size:14.5px;min-width:900px">
+          <thead>
+            <tr style="background:var(--c-cream);text-align:left;border-bottom:1px solid var(--c-line)">
+              <th scope="col" style="padding:11px var(--s-5);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Account</th>
+              <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Platform role</th>
+              <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">User category</th>
+              <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Member state</th>
+              <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Last login</th>
+              <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Two-factor</th>
+              <th scope="col" style="padding:11px var(--s-5) 11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ users }}" as="u" hint-placeholder-count="9">
+              <tr style="{{ u.rowStyle }}">
+                <th scope="row" style="padding:12px var(--s-5);text-align:left;font-weight:500">
+                  <span style="display:flex;align-items:center;gap:11px;min-width:0">
+                    <span style="{{ u.avatarStyle }}">{{ u.code }}</span>
+                    <span style="display:flex;flex-direction:column;min-width:0">
+                      <span style="display:block;font-size:15px;font-weight:600;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ u.title }}</span>
+                      <span style="display:block;font-size:12.5px;color:var(--c-slate);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ u.email }}</span>
+                    </span>
+                  </span>
+                </th>
+                <td style="padding:12px var(--s-4)"><span style="{{ u.roleStyle }}">{{ u.role }}</span></td>
+                <td style="padding:12px var(--s-4);color:var(--c-charcoal)">{{ u.category }}</td>
+                <td style="padding:12px var(--s-4);color:var(--c-charcoal)">{{ u.state }}</td>
+                <td style="padding:12px var(--s-4);font-family:var(--f-admin);font-size:13.5px;color:var(--c-slate)">{{ u.login }}</td>
+                <td style="padding:12px var(--s-4)"><span style="{{ u.twoFaStyle }}">{{ u.twoFa }}</span></td>
+                <td style="padding:12px var(--s-5) 12px var(--s-4)"><span style="display:flex;gap:var(--s-3)"><a href="#" style="font-size:13.5px;font-weight:600">Edit</a><a href="#" style="font-size:13.5px;font-weight:600;color:var(--c-slate)">Suspend</a></span></td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:var(--s-4) var(--s-5);background:var(--c-cream);border-top:1px solid var(--c-line);font-size:14px;color:var(--c-charcoal)">Showing 1 to 9 of 38. Role sets what a user may do in the platform. Category sets which body they represent, and drives what the extranet shows them. The two are separate on purpose: a Committee Chair may hold the Viewer role.</div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:var(--s-6);align-items:flex-start">
+
+      <div style="flex:999 1 520px;min-width:0;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+        <div style="padding:var(--s-5);border-bottom:1px solid var(--c-line)">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-4);flex-wrap:wrap;margin-bottom:var(--s-4)">
+            <div style="min-width:0">
+              <h2 style="font-family:var(--f-head);font-size:24px;font-weight:600;margin:0 0 5px">Roles and permissions</h2>
+              <div style="font-size:14.5px;color:var(--c-slate);max-width:70ch">The four contracted roles against every permission the platform grants.</div>
+            </div>
+            <div role="group" aria-label="Matrix grouping" style="display:flex;flex:none;border:1.5px solid var(--c-navy);border-radius:var(--r-sm);overflow:hidden">
+              <button type="button" onClick="{{ showAll }}" style="{{ allStyle }}">All groups</button>
+              <sc-for list="{{ groupTabs }}" as="g" hint-placeholder-count="4">
+                <button type="button" onClick="{{ g.select }}" style="{{ g.style }}">{{ g.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:flex;gap:var(--s-5);flex-wrap:wrap;font-size:13.5px;color:var(--c-charcoal)">
+            <span style="display:inline-flex;align-items:center;gap:7px"><span style="width:18px;height:18px;border-radius:2px;background:var(--c-green-dark);display:grid;place-items:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg></span>Granted</span>
+            <span style="display:inline-flex;align-items:center;gap:7px"><span style="width:18px;height:18px;border-radius:2px;background:#FDF0DC;border:1px solid #E5BE87;display:grid;place-items:center;font-family:var(--f-admin);font-size:11px;font-weight:700;color:#7A4606">C</span>Conditional, own authority only</span>
+            <span style="display:inline-flex;align-items:center;gap:7px"><span style="width:18px;height:18px;border-radius:2px;border:1px solid #C9C2B2;background:var(--c-white)"></span>Not granted</span>
+          </div>
+        </div>
+        <div style="overflow-x:auto;min-width:0">
+          <table style="width:100%;border-collapse:collapse;font-size:14.5px;min-width:640px">
+            <thead>
+              <tr style="background:var(--c-navy);color:var(--c-cream);text-align:left">
+                <th scope="col" style="padding:12px var(--s-5);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;position:sticky;left:0;background:var(--c-navy);min-width:260px">Permission</th>
+                <sc-for list="{{ roleHeads }}" as="r" hint-placeholder-count="4">
+                  <th scope="col" style="padding:12px var(--s-3);text-align:center;font-weight:600;min-width:96px">
+                    <span style="display:block;font-size:14px;color:var(--c-white);line-height:1.2">{{ r.name }}</span>
+                    <span style="display:block;font-size:11.5px;font-weight:500;color:var(--c-sand);margin-top:3px">{{ r.count }}</span>
+                  </th>
+                </sc-for>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ matrix }}" as="row" hint-placeholder-count="14">
+                <tr style="{{ row.rowStyle }}">
+                  <th scope="row" style="{{ row.headStyle }}">
+                    <sc-if value="{{ row.isGroup }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--c-navy)">{{ row.label }}</span>
+                    </sc-if>
+                    <sc-if value="{{ row.isPerm }}" hint-placeholder-val="{{ true }}">
+                      <span style="display:block;font-size:14.5px;font-weight:500;line-height:1.35">{{ row.label }}</span>
+                    </sc-if>
+                  </th>
+                  <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="4">
+                    <td style="{{ c.tdStyle }}"><span style="{{ c.markStyle }}">{{ c.mark }}</span></td>
+                  </sc-for>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:var(--s-4) var(--s-5);background:var(--c-cream);border-top:1px solid var(--c-line);font-size:14px;line-height:1.6;color:var(--c-charcoal)">A matrix this size becomes readable through grouping, a sticky first column and a three-state mark rather than a tick or a blank. Every cell states its state as a character as well as a colour, and the group filter narrows the rows rather than scrolling the reader through all of them.</div>
+      </div>
+
+      <div style="flex:1 1 320px;min-width:0;max-width:420px;display:flex;flex-direction:column;gap:var(--s-5)">
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-family:var(--f-head);font-size:21px;font-weight:600;margin:0 0 var(--s-3)">Two-factor enrolment</h2>
+          <p style="margin:0 0 var(--s-4);font-size:14.5px;line-height:1.6;color:var(--c-charcoal)">Scan the code with an authenticator app, then confirm the first six digits. Enforced for Administrator and Secretariat accounts.</p>
+          <div style="display:flex;gap:var(--s-4);flex-wrap:wrap;align-items:flex-start">
+            <div style="flex:none;width:132px;height:132px;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:8px">
+              <svg viewBox="0 0 21 21" width="100%" height="100%" role="img" aria-label="Authenticator enrolment code. A text setup key is provided below for anyone who cannot scan it.">
+                <rect width="21" height="21" fill="#FFFFFF"></rect>
+                <g fill="#0F1B2D">
+                  <sc-for list="{{ qr }}" as="q" hint-placeholder-count="120">
+                    <rect x="{{ q.x }}" y="{{ q.y }}" width="1" height="1"></rect>
+                  </sc-for>
+                </g>
+              </svg>
+            </div>
+            <div style="flex:1 1 150px;min-width:0">
+              <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c-slate);margin-bottom:6px">Setup key</div>
+              <div style="font-family:var(--f-admin);font-size:13.5px;font-weight:600;letter-spacing:.06em;background:var(--c-cream);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 11px;margin-bottom:var(--s-3);overflow-wrap:anywhere">K7QF 2M4X 9PBT WZLN</div>
+              <div style="font-size:13px;line-height:1.55;color:var(--c-charcoal)">Offered as text as well as a code, because a delegate on a shared device cannot always scan.</div>
+            </div>
+          </div>
+          <div style="margin-top:var(--s-4);padding-top:var(--s-4);border-top:1px solid var(--c-line)">
+            <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c-slate);margin-bottom:var(--s-3)">Recovery codes</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,110px),1fr));gap:7px;margin-bottom:var(--s-3)">
+              <sc-for list="{{ recovery }}" as="c" hint-placeholder-count="8">
+                <span style="{{ c.style }}">{{ c.code }}</span>
+              </sc-for>
+            </div>
+            <div style="font-size:13px;line-height:1.55;color:var(--c-charcoal)">Each code works once. Store them outside this platform. Used codes are struck through and cannot be shown again.</div>
+          </div>
+          <div style="margin-top:var(--s-4);display:flex;gap:var(--s-3);flex-wrap:wrap">
+            <span style="font-size:14px;font-weight:600;color:var(--c-white);background:var(--c-green-dark);border-radius:var(--r-sm);padding:10px 15px">Confirm and enable</span>
+            <span style="font-size:14px;font-weight:600;color:var(--c-navy);border:1.5px solid var(--c-navy);border-radius:var(--r-sm);padding:9.5px 15px">Download codes</span>
+          </div>
+        </div>
+
+        <div style="background:#FDF0DC;border:1px solid #E5BE87;border-left:4px solid var(--c-amber);border-radius:var(--r-md);padding:var(--s-5)">
+          <div style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#7A4606;margin-bottom:var(--s-3)">Enforced for administrators</div>
+          <div style="font-size:14.5px;line-height:1.6;color:#5C3404">Four Administrator and Secretariat accounts have not enrolled. They keep read access but cannot publish, validate a submission or change a role until they do. The list above filters to them in one click.</div>
+        </div>
+
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--s-5)">
+          <h2 style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin:0 0 var(--s-4)">Notification preferences</h2>
+          <div style="font-size:13.5px;color:var(--c-charcoal);line-height:1.6;margin-bottom:var(--s-4)">Set by role and by country, so a representative is not copied on every other member state's activity.</div>
+          <sc-for list="{{ prefs }}" as="p" hint-placeholder-count="4">
+            <div style="{{ p.rowStyle }}">
+              <span style="flex:1;min-width:0;font-size:14.5px;line-height:1.4">{{ p.label }}</span>
+              <span style="{{ p.toggleStyle }}"><span style="{{ p.knobStyle }}"></span></span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden;min-width:0">
+      <div style="padding:var(--s-5);border-bottom:1px solid var(--c-line)">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-4);flex-wrap:wrap;margin-bottom:var(--s-4)">
+          <div style="min-width:0">
+            <h2 style="font-family:var(--f-head);font-size:24px;font-weight:600;margin:0 0 5px">Audit log</h2>
+            <div style="font-size:14.5px;color:var(--c-slate)">Every action that changes data or reaches restricted material. Retained for the life of the programme.</div>
+          </div>
+          <span style="font-size:14px;font-weight:600;color:var(--c-navy);border:1.5px solid var(--c-navy);border-radius:var(--r-sm);padding:9.5px 14px;flex:none">Export the log</span>
+        </div>
+        <div style="display:flex;gap:var(--s-3);flex-wrap:wrap">
+          <span style="font-size:14px;font-weight:500;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 13px">Actor: all</span>
+          <span style="font-size:14px;font-weight:500;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 13px">Action: all</span>
+          <span style="font-size:14px;font-weight:500;background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-sm);padding:9px 13px">Resource: all</span>
+          <span style="font-size:14px;font-weight:600;background:var(--c-green-light);border:1.5px solid var(--c-green-dark);color:var(--c-green-dark);border-radius:var(--r-sm);padding:8.5px 13px">Date: 1 to 4 August 2026</span>
+        </div>
+      </div>
+      <div style="overflow-x:auto;min-width:0">
+        <table style="width:100%;border-collapse:collapse;font-size:14.5px;min-width:820px">
+          <thead>
+            <tr style="background:var(--c-cream);text-align:left;border-bottom:1px solid var(--c-line)">
+              <th scope="col" style="padding:11px var(--s-5);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">When</th>
+              <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Actor</th>
+              <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Action</th>
+              <th scope="col" style="padding:11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)">Resource</th>
+              <th scope="col" style="padding:11px var(--s-5) 11px var(--s-4);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--c-slate)"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ audit }}" as="a" hint-placeholder-count="7">
+              <tr style="{{ a.rowStyle }}">
+                <th scope="row" style="padding:12px var(--s-5);text-align:left;font-family:var(--f-admin);font-size:13.5px;font-weight:500;color:var(--c-charcoal);white-space:nowrap">{{ a.when }}</th>
+                <td style="padding:12px var(--s-4)">
+                  <span style="display:block;font-size:14.5px;font-weight:500;line-height:1.3">{{ a.actor }}</span>
+                  <span style="display:block;font-size:12.5px;color:var(--c-slate)">{{ a.actorOrg }}</span>
+                </td>
+                <td style="padding:12px var(--s-4)"><span style="{{ a.actionStyle }}">{{ a.action }}</span></td>
+                <td style="padding:12px var(--s-4);color:var(--c-charcoal)">{{ a.resource }}</td>
+                <td style="padding:12px var(--s-5) 12px var(--s-4)"><a href="#" style="font-size:13.5px;font-weight:600">Detail</a></td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:var(--s-5);border-top:1px solid var(--c-line);background:var(--c-cream)">
+        <div style="font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-slate);margin-bottom:var(--s-3)">Entry detail &middot; before and after</div>
+        <div style="background:var(--c-white);border:1px solid var(--c-line);border-radius:var(--r-md);overflow:hidden">
+          <div style="padding:var(--s-4) var(--s-5);border-bottom:1px solid var(--c-line);display:flex;gap:var(--s-5);flex-wrap:wrap;font-size:14px;color:var(--c-charcoal)">
+            <span><strong>Actor</strong> Member State Representative, BOCRA</span>
+            <span><strong>Action</strong> Updated a regulatory value</span>
+            <span><strong>Resource</strong> Botswana 2026 return, Mobile Penetration</span>
+            <span><strong>When</strong> 24 July 2026, 11:08 UTC+2</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))">
+            <div style="padding:var(--s-5);border-right:1px solid var(--c-line)">
+              <div style="font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c-slate);margin-bottom:var(--s-3)">Before</div>
+              <div style="font-family:var(--f-admin);font-size:26px;font-weight:600;color:var(--c-slate);margin-bottom:var(--s-3)">161.2%</div>
+              <div style="font-size:13.5px;line-height:1.6;color:var(--c-charcoal)">Source: Quarterly market report Q2 2025<br>Validated by the Secretariat, 3 September 2025</div>
+            </div>
+            <div style="padding:var(--s-5);background:var(--c-green-light)">
+              <div style="font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c-green-dark);margin-bottom:var(--s-3)">After</div>
+              <div style="font-family:var(--f-admin);font-size:26px;font-weight:600;color:var(--c-green-dark);margin-bottom:var(--s-3)">168.4%</div>
+              <div style="font-size:13.5px;line-height:1.6;color:#0B4229">Source: Quarterly market report Q2 2026<br>Submitted, awaiting validation</div>
+            </div>
+          </div>
+          <div style="padding:var(--s-4) var(--s-5);border-top:1px solid var(--c-line);font-size:13.5px;line-height:1.6;color:var(--c-charcoal)">The log records the value, its source note and the account that changed it. Entries are append-only: an administrator can read and export them but cannot edit or delete one.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const ROLES = [
+  { id:"admin", name:"Administrator", count:"3 accounts" },
+  { id:"editor", name:"Editor", count:"5 accounts" },
+  { id:"rep", name:"Member State Representative", count:"26 accounts" },
+  { id:"viewer", name:"Viewer", count:"4 accounts" }
+];
+
+const GROUPS = [
+  { id:"content", label:"Content", perms:[
+    { label:"View published content", g:{ admin:1, editor:1, rep:1, viewer:1 } },
+    { label:"Create and edit publications, news and events", g:{ admin:1, editor:1, rep:0, viewer:0 } },
+    { label:"Edit translations and approve machine drafts", g:{ admin:1, editor:1, rep:0, viewer:0 } },
+    { label:"Publish or unpublish content", g:{ admin:1, editor:1, rep:0, viewer:0 } },
+    { label:"Edit homepage copy, section intros and calls to action", g:{ admin:1, editor:1, rep:0, viewer:0 } },
+    { label:"Delete content permanently", g:{ admin:1, editor:0, rep:0, viewer:0 } }
+  ]},
+  { id:"data", label:"Regulatory data", perms:[
+    { label:"View published indicator values", g:{ admin:1, editor:1, rep:1, viewer:1 } },
+    { label:"Submit a country return", g:{ admin:0, editor:0, rep:2, viewer:0 } },
+    { label:"Validate or return a submission", g:{ admin:1, editor:0, rep:0, viewer:0 } },
+    { label:"Restore a previous value from history", g:{ admin:1, editor:0, rep:0, viewer:0 } },
+    { label:"Generate and export reports", g:{ admin:1, editor:1, rep:2, viewer:0 } }
+  ]},
+  { id:"extranet", label:"Extranet", perms:[
+    { label:"Reach committee workspaces", g:{ admin:1, editor:1, rep:2, viewer:0 } },
+    { label:"Open documents graded Member", g:{ admin:1, editor:1, rep:2, viewer:0 } },
+    { label:"Open documents graded Confidential", g:{ admin:1, editor:0, rep:0, viewer:0 } },
+    { label:"Open documents graded Secretariat", g:{ admin:1, editor:0, rep:0, viewer:0 } },
+    { label:"Upload to a country folder", g:{ admin:1, editor:0, rep:2, viewer:0 } },
+    { label:"Schedule and edit meetings", g:{ admin:1, editor:1, rep:0, viewer:0 } }
+  ]},
+  { id:"security", label:"Users and security", perms:[
+    { label:"Invite or suspend a user", g:{ admin:1, editor:0, rep:0, viewer:0 } },
+    { label:"Assign roles and committee membership", g:{ admin:1, editor:0, rep:0, viewer:0 } },
+    { label:"Read the audit log", g:{ admin:1, editor:0, rep:0, viewer:0 } },
+    { label:"Change platform settings", g:{ admin:1, editor:0, rep:0, viewer:0 } }
+  ]}
+];
+
+const USERS = [
+  { code:"GB", title:"Executive Secretary and CEO", email:"secretariat@crasa.org", role:"Administrator", category:"Secretariat", state:"Botswana", login:"4 Aug, 08:12", twoFa:"Enabled" },
+  { code:"GB", title:"Head of Electronic Communications", email:"electronic@crasa.org", role:"Administrator", category:"Secretariat", state:"Botswana", login:"4 Aug, 07:55", twoFa:"Enabled" },
+  { code:"GB", title:"Human Resources and Administration Officer", email:"hr@crasa.org", role:"Editor", category:"Secretariat", state:"Botswana", login:"3 Aug, 16:40", twoFa:"Not enrolled" },
+  { code:"GB", title:"Administrative Assistant", email:"admin@crasa.org", role:"Editor", category:"Secretariat", state:"Botswana", login:"4 Aug, 09:02", twoFa:"Enabled" },
+  { code:"ZA", title:"Chair, Spectrum and Frequency Management", email:"chair.sfm@icasa.org.za", role:"Member State Representative", category:"Committee Chair", state:"South Africa", login:"2 Aug, 14:20", twoFa:"Enabled" },
+  { code:"BW", title:"Head of Delegation", email:"representative@bocra.org.bw", role:"Member State Representative", category:"Member State Representative", state:"Botswana", login:"4 Aug, 11:08", twoFa:"Enabled" },
+  { code:"MZ", title:"Head of Delegation", email:"delegacao@incm.gov.mz", role:"Member State Representative", category:"Member State Representative", state:"Mozambique", login:"14 Jul, 09:31", twoFa:"Not enrolled" },
+  { code:"NA", title:"First Vice Chairperson", email:"exco@cran.na", role:"Member State Representative", category:"Executive Committee Member", state:"Namibia", login:"1 Aug, 13:44", twoFa:"Enabled" },
+  { code:"ITU", title:"ITU Regional Office", email:"observer@itu.int", role:"Viewer", category:"Observer", state:"Not applicable", login:"22 Jul, 10:05", twoFa:"Not required" }
+];
+
+const AUDIT = [
+  { when:"4 Aug, 14:32", actor:"Editor", actorOrg:"Secretariat, Gaborone", action:"Saved a translation", resource:"SADC Roaming Guidelines, Portuguese summary" },
+  { when:"4 Aug, 11:08", actor:"Member State Representative", actorOrg:"BOCRA, Botswana", action:"Updated a value", resource:"Botswana 2026 return, Mobile Penetration", highlight:true },
+  { when:"3 Aug, 16:04", actor:"Member State Representative", actorOrg:"BOCRA, Botswana", action:"Access denied", resource:"Draft Resolution, 700 MHz, Confidential", denied:true },
+  { when:"2 Aug, 15:12", actor:"Administrator", actorOrg:"Secretariat, Gaborone", action:"Validated a submission", resource:"Namibia 2026 return, 12 indicators" },
+  { when:"2 Aug, 11:40", actor:"Administrator", actorOrg:"Secretariat, Gaborone", action:"Filed a document", resource:"Allocation Plan revision 4, Member" },
+  { when:"1 Aug, 09:18", actor:"Administrator", actorOrg:"Secretariat, Gaborone", action:"Changed a role", resource:"Account: hr@crasa.org, Viewer to Editor" },
+  { when:"1 Aug, 08:47", actor:"Member State Representative", actorOrg:"INCM, Mozambique", action:"Signed in", resource:"Extranet, Single Sign-On" }
+];
+
+const PREFS = [
+  { label:"Submission returned or validated, your country only", on:true },
+  { label:"New document filed in a committee you sit on", on:true },
+  { label:"Meeting scheduled, changed or cancelled", on:true },
+  { label:"Every submission across all fourteen member states", on:false }
+];
+
+const P = "font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:2px;display:inline-block;white-space:nowrap;";
+const ROLE_PILL = {
+  Administrator: P + "background:#0F1B2D;color:#FFFFFF;",
+  Editor: P + "background:#E8F4EC;color:#0E5536;border:1px solid #B6DCC5;",
+  "Member State Representative": P + "background:#E5E0D5;color:#1F2937;",
+  Viewer: P + "background:transparent;color:#5C6B7E;border:1px solid #B9B2A2;"
+};
+
+class Component extends DCLogic {
+  state = { group: "all" };
+
+  renderVals(){
+    const active = this.state.group;
+    const btn = (on) => "font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:600;padding:9px 12px;border:none;cursor:pointer;white-space:nowrap;"
+      + (on ? "background:#0F1B2D;color:#FFFFFF;" : "background:transparent;color:#0F1B2D;");
+
+    const shown = GROUPS.filter(g => active === "all" || g.id === active);
+    const rows = [];
+    shown.forEach(g => {
+      rows.push({
+        isGroup: true, isPerm: false, label: g.label,
+        headStyle: "padding:10px 24px;text-align:left;background:#F8F6F1;position:sticky;left:0;border-bottom:1px solid #DFDBD1;",
+        rowStyle: "background:#F8F6F1;",
+        cells: ROLES.map(() => ({ mark: "", markStyle: "display:none", tdStyle: "background:#F8F6F1;border-bottom:1px solid #DFDBD1;" }))
+      });
+      g.perms.forEach(p => {
+        rows.push({
+          isGroup: false, isPerm: true, label: p.label,
+          headStyle: "padding:12px 24px;text-align:left;font-weight:500;background:#FFFFFF;position:sticky;left:0;border-right:1px solid #DFDBD1;border-bottom:1px solid #DFDBD1;",
+          rowStyle: "",
+          cells: ROLES.map(r => {
+            const v = p.g[r.id];
+            const base = "width:22px;height:22px;border-radius:2px;display:inline-grid;place-items:center;font-family:'Inter',system-ui,sans-serif;font-size:11.5px;font-weight:700;";
+            if (v === 1) return { mark: "Y", markStyle: base + "background:#0E5536;color:#FFFFFF;", tdStyle: "padding:12px;text-align:center;border-bottom:1px solid #DFDBD1;" };
+            if (v === 2) return { mark: "C", markStyle: base + "background:#FDF0DC;color:#7A4606;border:1px solid #E5BE87;", tdStyle: "padding:12px;text-align:center;border-bottom:1px solid #DFDBD1;background:#FEFAF3;" };
+            return { mark: "\u2013", markStyle: base + "border:1px solid #C9C2B2;background:#FFFFFF;color:#8A93A0;", tdStyle: "padding:12px;text-align:center;border-bottom:1px solid #DFDBD1;" };
+          })
+        });
+      });
+    });
+
+    // deterministic finder-pattern QR stand-in
+    const qr = [];
+    const seedOn = (x, y) => {
+      const inFinder = (fx, fy) => x >= fx && x < fx + 7 && y >= fy && y < fy + 7
+        && (x === fx || x === fx + 6 || y === fy || y === fy + 6 || (x >= fx + 2 && x <= fx + 4 && y >= fy + 2 && y <= fy + 4));
+      if (inFinder(0, 0) || inFinder(14, 0) || inFinder(0, 14)) return true;
+      if (x < 8 && y < 8) return false;
+      if (x > 13 && y < 8) return false;
+      if (x < 8 && y > 13) return false;
+      return ((x * 7 + y * 13 + ((x * y) % 5)) % 3) === 0;
+    };
+    for (let y = 0; y < 21; y++) for (let x = 0; x < 21; x++) if (seedOn(x, y)) qr.push({ x: x, y: y });
+
+    const codes = ["4KQ2-9WMB","J7RX-2LPD","8ZTV-6NCK","Q3HM-5YFW","B9DL-7XRT","N2GK-4VSP","W6PJ-8QZC","R5TB-3MHN"];
+
+    return {
+      users: USERS.map((u, i) => ({
+        code:u.code, title:u.title, email:u.email, role:u.role, category:u.category, state:u.state, login:u.login, twoFa:u.twoFa,
+        roleStyle: ROLE_PILL[u.role],
+        twoFaStyle: u.twoFa === "Enabled"
+          ? "font-size:13.5px;font-weight:600;color:#0E5536;"
+          : u.twoFa === "Not enrolled"
+            ? "font-size:13.5px;font-weight:600;color:#9B2226;"
+            : "font-size:13.5px;color:#5C6B7E;",
+        avatarStyle: "flex:none;width:32px;height:32px;border-radius:999px;display:grid;place-items:center;font-size:11.5px;font-weight:600;"
+          + (u.category === "Secretariat" ? "background:#0F1B2D;color:#F8F6F1;" : u.category === "Observer" ? "background:#E5E0D5;color:#1F2937;" : "background:#0E5536;color:#FFFFFF;"),
+        rowStyle: (i < USERS.length - 1 ? "border-bottom:1px solid #DFDBD1;" : "")
+          + (u.twoFa === "Not enrolled" ? "background:#FDF7F7;" : "")
+      })),
+      roleHeads: ROLES,
+      matrix: rows,
+      groupTabs: GROUPS.map(g => ({
+        label: g.label,
+        select: () => this.setState({ group: g.id }),
+        style: btn(active === g.id)
+      })),
+      allStyle: btn(active === "all"),
+      showAll: () => this.setState({ group: "all" }),
+      qr: qr,
+      recovery: codes.map((c, i) => ({
+        code: c,
+        style: "font-family:'Inter',system-ui,sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.03em;background:#F8F6F1;border:1px solid #DFDBD1;border-radius:2px;padding:7px 9px;text-align:center;overflow-wrap:anywhere;"
+          + (i < 2 ? "text-decoration:line-through;color:#8A93A0;" : "color:#1F2937;")
+      })),
+      audit: AUDIT.map((a, i) => ({
+        when:a.when, actor:a.actor, actorOrg:a.actorOrg, action:a.action, resource:a.resource,
+        actionStyle: a.denied
+          ? "font-size:13.5px;font-weight:600;color:#9B2226;"
+          : "font-size:14px;color:#1F2937;",
+        rowStyle: (i < AUDIT.length - 1 ? "border-bottom:1px solid #DFDBD1;" : "")
+          + (a.denied ? "background:#FBEDED;" : a.highlight ? "background:#E8F4EC;" : "")
+      })),
+      prefs: PREFS.map((p, i) => ({
+        label: p.label,
+        rowStyle: "display:flex;align-items:center;gap:14px;padding:11px 0;" + (i < PREFS.length - 1 ? "border-bottom:1px solid #DFDBD1;" : ""),
+        toggleStyle: "flex:none;width:44px;height:24px;border-radius:999px;padding:3px;display:flex;justify-content:"
+          + (p.on ? "flex-end" : "flex-start") + ";background:" + (p.on ? "#0E5536" : "#C9C2B2"),
+        knobStyle: "width:18px;height:18px;border-radius:999px;background:#FFFFFF;display:block"
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>
