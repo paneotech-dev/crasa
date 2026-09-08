@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             ReferenceDataSeeder::class,
             HomepageSeeder::class,
             PublicPagesSeeder::class,
+            NewsroomSeeder::class,
         ]);
     }
 }

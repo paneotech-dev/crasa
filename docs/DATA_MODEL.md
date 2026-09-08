@@ -286,8 +286,31 @@ When a record is displayed in a fallback language, the view must show the inline
 | sector_id | bigint FK nullable |
 | hero_image_path | varchar(255) |
 | author_name | varchar(120) |
+| category | enum: news, tender, consultation, communique — added 2026-09-08 |
 | status | enum: draft, review, published |
 | is_sample | boolean |
+
+`category` was not in the original column list. The newsroom is contracted
+with category filtering, the approved screens carry Tender and Public
+consultation as kickers, and a tender notice is not the same kind of item as
+a news story.
+
+### tags and taggables
+
+Polymorphic tags, added 2026-09-08. Not in the original specification; the
+newsroom is contracted with tag filtering and no table was given. Publications
+and instruments can use the same table later.
+
+| Column | Type |
+|---|---|
+| tags.slug | varchar(80) unique |
+| tags.is_sample | boolean |
+| taggables.tag_id | bigint FK |
+| taggables.taggable_type | varchar |
+| taggables.taggable_id | bigint |
+
+Tag names are translatable through the translations table, like every other
+piece of text on the platform.
 
 ### events
 

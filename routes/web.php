@@ -3,6 +3,7 @@
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\LocaleRedirectController;
+use App\Http\Controllers\NewsroomController;
 use App\Http\Controllers\PageController;
 use App\Http\Middleware\SetLocale;
 use App\Support\Locales;
@@ -47,6 +48,12 @@ Route::prefix('{locale}')
         Route::get('about', [PageController::class, 'show'])->defaults('slug', 'about')->name('about');
         Route::get('committees', [PageController::class, 'show'])->defaults('slug', 'committees')->name('committees');
         Route::get('members', [PageController::class, 'show'])->defaults('slug', 'members')->name('members');
+
+        /*
+         * Newsroom. WS-06.
+         */
+        Route::get('newsroom', [NewsroomController::class, 'index'])->name('newsroom');
+        Route::get('newsroom/{slug}', [NewsroomController::class, 'show'])->name('newsroom.show');
 
         /*
          * Contact. The rate limit is per IP and deliberately loose: six an
