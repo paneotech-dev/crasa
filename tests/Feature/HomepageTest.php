@@ -7,6 +7,7 @@ use App\Models\Page;
 use App\Support\ImageLibrary;
 use App\Support\Locales;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\Concerns\SeedsComposedPages;
 use Tests\TestCase;
 
@@ -146,7 +147,7 @@ class HomepageTest extends TestCase
     {
         // The archive original is 20 MB. Nothing that size reaches a page.
         $path = ImageLibrary::derivativePath('hero', 480, 'webp');
-        $bytes = \Illuminate\Support\Facades\Storage::disk('public')->size($path);
+        $bytes = Storage::disk('public')->size($path);
 
         $this->assertLessThan(120_000, $bytes, 'The 480px hero derivative is too heavy for a mobile connection.');
     }
@@ -198,8 +199,9 @@ class HomepageTest extends TestCase
 
         // Fluid size: the longest language sets it, not English.
         $this->assertStringContainsString('clamp(', $rule);
-        // No fixed height or width to overflow out of.
-        $this->assertStringNotContainsString('height:', $rule);
+        // No fixed height or width to overflow out of. Matched on a word
+        // boundary so line-height does not read as a fixed height.
+        $this->assertDoesNotMatchRegularExpression('/(?<!line-)height:\s*\d/', $rule);
         $this->assertStringNotContainsString('white-space: nowrap', $rule);
         $this->assertStringContainsString('text-wrap: balance', $rule);
 

@@ -186,11 +186,16 @@ class HomepageSeeder extends Seeder
         // subscriber totals, which would need a source CRASA has not given.
         $this->block($page, BlockType::KeyFigures, $position++, [
             'items' => [
-                ['value' => '14', 'label' => $t['en']['fact1'], 'source' => null],
-                ['value' => '1997', 'label' => $t['en']['fact2'], 'source' => null],
-                ['value' => '3', 'label' => $t['en']['fact4'], 'source' => null],
+                ['value' => '14'],
+                ['value' => '1997'],
+                ['value' => '3'],
             ],
-        ], fn (string $l) => ['heading' => $t[$l]['whatWeDo']]);
+        ], fn (string $l) => [
+            'heading' => $t[$l]['whatWeDo'],
+            'item_0_label' => $t[$l]['fact1'],
+            'item_1_label' => $t[$l]['fact2'],
+            'item_2_label' => $t[$l]['fact4'],
+        ]);
 
         // 3. Pillars. Four lines of work, from the approved screen.
         $this->block($page, BlockType::Pillars, $position++, [

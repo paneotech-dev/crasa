@@ -88,10 +88,12 @@ enum BlockType: string
                 'rotation_items.*.image' => ['nullable', 'string', 'max:255'],
             ],
             self::KeyFigures => [
+                // The figure itself only. A numeric indicator is not
+                // per-language, per CLAUDE.md. Its label and its source are
+                // text, so they live in the translations table as
+                // item_N_label and item_N_source.
                 'items' => ['nullable', 'array', 'max:8'],
                 'items.*.value' => ['required', 'string', 'max:20'],
-                'items.*.label' => ['required', 'string', 'max:80'],
-                'items.*.source' => ['nullable', 'string', 'max:200'],
             ],
             self::Pillars => [
                 // Two to four. Not five, whatever the request says.

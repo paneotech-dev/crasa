@@ -142,17 +142,44 @@ class BlockLibraryTest extends TestCase
         $this->assertStringNotContainsString('b__empty', $html);
     }
 
+    /**
+     * The figure is a numeric indicator and is not per-language. Its label
+     * and its source are text and live in the translations table, so the
+     * settings JSON carries the value alone.
+     */
     public function test_a_configured_key_figures_block_shows_its_figures(): void
     {
-        $html = $this->render($this->block(BlockType::KeyFigures, [
-            'items' => [
-                ['value' => '14', 'label' => 'Member regulators', 'source' => 'CRASA membership'],
-            ],
-        ]));
+        $block = $this->block(
+            BlockType::KeyFigures,
+            ['items' => [['value' => '14']]],
+            ['en' => ['item_0_label' => 'Member regulators', 'item_0_source' => 'CRASA membership']]
+        );
+
+        $html = $this->render($block);
 
         $this->assertStringContainsString('14', $html);
         $this->assertStringContainsString('Member regulators', $html);
         $this->assertStringNotContainsString('b__empty', $html);
+    }
+
+    public function test_a_key_figure_label_is_translatable_but_the_figure_is_not(): void
+    {
+        $block = $this->block(
+            BlockType::KeyFigures,
+            ['items' => [['value' => '14']]],
+            [
+                'en' => ['item_0_label' => 'Member regulators'],
+                'fr' => ['item_0_label' => 'Régulateurs membres'],
+            ]
+        );
+
+        app()->setLocale('fr');
+        $html = $this->render($block);
+
+        $this->assertStringContainsString('Régulateurs membres', $html);
+        // The number is the same in every language.
+        $this->assertStringContainsString('14', $html);
+        $this->assertStringNotContainsString('Member regulators', $html);
     }
 
     public function test_a_pillars_block_cannot_be_given_five_columns(): void

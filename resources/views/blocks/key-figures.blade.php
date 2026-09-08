@@ -17,12 +17,19 @@
             ])
         @else
             <div class="b-figures__grid">
-                @foreach ($items as $item)
+                @foreach ($items as $index => $item)
+                    @php
+                        $label = $block->translate('item_'.$index.'_label');
+                        $source = $block->translate('item_'.$index.'_source');
+                    @endphp
                     <div class="b-figure">
+                        {{-- The figure is not per-language. Its label is. --}}
                         <div class="b-figure__value">{{ $item['value'] }}</div>
-                        <div class="b-figure__label">{{ $item['label'] ?? '' }}</div>
-                        @if (filled($item['source'] ?? null))
-                            <div class="b-figure__source">{{ $item['source'] }}</div>
+                        @if ($label)
+                            <div class="b-figure__label">{{ $label->value }}</div>
+                        @endif
+                        @if ($source)
+                            <div class="b-figure__source">{{ $source->value }}</div>
                         @endif
                     </div>
                 @endforeach
