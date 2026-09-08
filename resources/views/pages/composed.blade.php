@@ -27,7 +27,18 @@
         </div>
     @endunless
 
+    @php
+        // Alternate the ground so a page is not one undifferentiated column.
+        // The hero carries its own navy, so the count starts after it.
+        $groundIndex = 0;
+    @endphp
+
     @foreach ($page->visibleBlocks as $block)
-        <x-block :block="$block" />
+        @php
+            $isHero = $block->type() === \App\Enums\BlockType::Hero;
+            $ground = $isHero ? null : ['cream', 'white'][$groundIndex++ % 2];
+        @endphp
+
+        <x-block :block="$block" :ground="$ground" />
     @endforeach
 @endsection

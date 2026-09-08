@@ -81,12 +81,16 @@ class NewsItem extends Model
      * not show the same placeholder four times in a row, which is what makes
      * a grid look generated.
      */
-    public function fallbackImageSlot(): string
+    public function fallbackImageSlot(): ?string
     {
         return match ($this->sector?->slug) {
             'telecommunications' => 'sector-telecom',
             'postal' => 'sector-postal',
-            'broadcasting' => 'people',
+            // Broadcasting has no supplied image. Substituting one from
+            // another sector would caption a telecoms lab as broadcasting,
+            // so the designed empty state renders instead and the gap is on
+            // the Secretariat list.
+            'broadcasting' => null,
             default => 'institutional',
         };
     }

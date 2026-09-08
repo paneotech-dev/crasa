@@ -561,3 +561,154 @@
 /* A page title where no hero carries it. Tighter than a section, because it
    sits directly above the first block's own heading. */
 .c-section--title { padding-block: var(--section-y) 0; }
+
+/* The region map ------------------------------------------------------- */
+/* The members page's one bold moment. Everything else on that page stays
+   quiet, per CLAUDE.md: spend boldness in one place. */
+
+.c-map-region { margin: 0 0 var(--s-7); }
+.c-map-region__svg { display: block; width: 100%; height: auto; }
+
+/* Neighbours in sand, so the region reads as sitting in a continent rather
+   than floating. Deliberately flat: they are context, not content. */
+.c-map-region__context { fill: var(--c-sand); stroke: var(--c-border); stroke-width: .9; stroke-linejoin: round; }
+.c-map-region__context-label { fill: var(--c-slate); font-family: var(--f-admin); font-size: 12px; }
+
+/* Members in the green that means "in force" everywhere else on the
+   platform. The map is not inventing a colour meaning; it is using the one
+   the status pills already established. */
+.c-map-region__member path {
+  fill: var(--c-green-light);
+  stroke: var(--c-green-dark);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  transition: fill 150ms var(--ease-in);
+}
+.c-map-region__member:hover path { fill: var(--c-green); }
+.c-map-region__member:focus-visible path { fill: var(--c-green); }
+.c-map-region__member:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
+
+.c-map-region__code {
+  fill: var(--c-green-dark);
+  font-family: var(--f-admin);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  pointer-events: none;
+}
+
+.c-map-region__insets { display: flex; flex-wrap: wrap; gap: var(--s-4); margin-top: var(--s-4); }
+.c-map-region__inset {
+  display: flex; align-items: center; gap: var(--s-2);
+  min-height: 44px; padding: var(--s-2) var(--s-3);
+  border: 1px solid var(--c-sand); border-radius: var(--r-md);
+  background: var(--c-white); text-decoration: none;
+}
+.c-map-region__inset:hover { border-color: var(--c-green-dark); }
+.c-map-region__inset svg { width: 34px; height: 30px; }
+.c-map-region__inset path { fill: var(--c-green-light); stroke: var(--c-green-dark); stroke-width: 1.5; }
+.c-map-region__inset-code { font-family: var(--f-admin); font-size: 13px; font-weight: 700; color: var(--c-green-dark); }
+
+.c-map-region__caption { font-size: 13px; line-height: 1.55; color: var(--c-slate); margin-top: var(--s-3); }
+
+/* Section grounds ------------------------------------------------------ */
+/* Screen 02 alternates cream, white and navy. Everything on one ground is
+   what makes a page read as a single undifferentiated column, and it is the
+   flatness that no amount of card styling fixes.
+ *
+ * The ground follows the block's position in the page and is applied by the
+ * composed template, so an editor reordering blocks gets a coherent
+ * alternation rather than having to choose colours. */
+
+.b[data-ground="cream"] { background: var(--c-cream); }
+.b[data-ground="white"] { background: var(--c-white); }
+.b[data-ground="navy"] { background: var(--c-navy); color: var(--c-sand); }
+.b[data-ground="navy"] h2,
+.b[data-ground="navy"] .b__heading { color: var(--c-white); }
+.b[data-ground="navy"] .b__intro { color: var(--c-sand); }
+.b[data-ground="navy"] .b-figure { border-top-color: var(--c-navy-line); }
+.b[data-ground="navy"] .b-figure__value { color: var(--c-white); }
+.b[data-ground="navy"] .b-figure__label { color: var(--c-sand); }
+.b[data-ground="navy"] .b-pillar { border-top-color: var(--c-navy-line); }
+.b[data-ground="navy"] .b-pillar__heading { color: var(--c-white); }
+.b[data-ground="navy"] .b-pillar__body { color: var(--c-sand); }
+
+/* Featured-and-rest. Three equal cards say all three matter equally, which
+   is usually not what the data says. The first item takes the width it
+   deserves and the rest sit beside it: more interesting to look at, and
+   more truthful about hierarchy. */
+@media (min-width: 760px) {
+  .b-cards--featured { grid-template-columns: 3fr 2fr; }
+  .b-cards--featured > :first-child { grid-row: span 2; }
+  .b-cards--featured > :first-child .b-card__title { font-size: 22px; line-height: 1.25; }
+  .b-cards--featured > :first-child .b-card__media { aspect-ratio: 3 / 2; }
+  .b-cards--featured > :not(:first-child) .b-card__media { display: none; }
+}
+
+/* Typography ----------------------------------------------------------- */
+/* The scale from design foundations section 02, used as a scale rather than
+   as one size relabelled. A hero headline and a card heading are different
+   typographic gestures, not the same one scaled.
+ *
+ * Lora carries display and headings on public surfaces; Inter carries data
+ * and administration, where its neutrality is the point. */
+
+.b__heading {
+  font-family: var(--f-head);
+  font-size: var(--t-h2-size);
+  line-height: var(--t-h2-line);
+  font-weight: var(--t-h2-weight);
+  letter-spacing: -.01em;
+  color: var(--c-navy);
+  max-width: 24ch;
+  text-wrap: balance;
+}
+
+/* A section heading that has to carry a page on its own, where there is no
+   photograph. The type treatment is the design, not a delivery vehicle. */
+.b__heading--display {
+  font-size: clamp(28px, 4.2vw, var(--t-h1-size));
+  line-height: var(--t-h1-line);
+  letter-spacing: -.015em;
+  max-width: 18ch;
+}
+
+/* A pull statement: Lora at display size, set against a rule rather than in
+   a box. Used once per page at most. */
+.b-statement {
+  font-family: var(--f-head);
+  font-size: clamp(22px, 3.2vw, 32px);
+  line-height: 1.28;
+  font-weight: 500;
+  color: var(--c-navy);
+  max-width: 30ch;
+  border-left: 3px solid var(--c-green);
+  padding-left: var(--s-5);
+  margin: 0;
+}
+.b[data-ground="navy"] .b-statement { color: var(--c-white); border-left-color: var(--c-green); }
+
+/* Designed absence ----------------------------------------------------- */
+/* Where a sector has no supplied photograph. Well-set type in the space
+   beats a grey box with an icon, and beats borrowing a photograph from a
+   sector the article is not about. */
+
+.b-card__typeslot,
+.c-article__typeslot {
+  width: 100%; height: 100%;
+  display: grid; place-items: center;
+  background: var(--c-navy);
+  padding: var(--s-5);
+}
+.c-article__typeslot { aspect-ratio: 16 / 9; }
+.b-card__typeslot-sector,
+.c-article__typeslot span {
+  font-family: var(--f-head);
+  font-size: clamp(18px, 3vw, 30px);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--c-white);
+  text-align: center;
+  text-wrap: balance;
+  max-width: 14ch;
+}

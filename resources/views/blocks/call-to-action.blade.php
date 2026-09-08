@@ -7,7 +7,7 @@
     $tone = $block->setting('tone', 'navy');
 @endphp
 
-<section class="b b--medium">
+<section class="b b--medium" @if (! empty($ground)) data-ground="{{ $ground }}" @endif>
     <div class="b__inner">
         <div class="b-cta__panel" data-tone="{{ in_array($tone, ['navy', 'green', 'cream'], true) ? $tone : 'navy' }}">
             @if ($headline)

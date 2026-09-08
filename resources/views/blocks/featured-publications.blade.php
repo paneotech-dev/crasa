@@ -9,7 +9,7 @@
     $items = $items ?? collect();
 @endphp
 
-<section class="b b--medium">
+<section class="b b--medium" @if (! empty($ground)) data-ground="{{ $ground }}" @endif>
     <div class="b__inner">
         @if ($heading)
             <h2 class="b__heading">{{ $heading->value }}</h2>
@@ -26,7 +26,10 @@
                 'actionUrl' => \App\Support\Navigation::url('publications'),
             ])
         @else
-            <div class="b-cards">
+            {{-- Featured-and-rest rather than equal thirds. The newest
+                 item is the one a reader wants, and equal cards would be
+                 saying all three matter the same, which is not true. --}}
+            <div class="b-cards @if ($items->count() >= 3) b-cards--featured @endif">
                 @foreach ($items as $item)
                     <article class="b-card">
                         <div class="b-card__body">

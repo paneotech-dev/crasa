@@ -9,10 +9,17 @@
         @if ($item->hero_image_path)
             <img class="c-img c-img--cover" src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($item->hero_image_path) }}"
                  alt="" loading="lazy" decoding="async">
-        @else
+        @elseif ($slot)
             {{-- Differentiated by sector, so a grid of untouched articles
                  does not repeat one placeholder four times in a row. --}}
             <x-responsive-image :name="$slot" :alt="__('images.'.$slot)" sizes="(max-width: 700px) 100vw, 33vw" class="c-img--cover" />
+        @else
+            {{-- Broadcasting has no supplied image. Well-set type in the
+                 space beats a grey box, and beats borrowing a photograph
+                 from a sector this article is not about. --}}
+            <div class="b-card__typeslot">
+                <span class="b-card__typeslot-sector">{{ $item->sector?->name ?? __('news.title') }}</span>
+            </div>
         @endif
     </div>
     <div class="b-card__body">

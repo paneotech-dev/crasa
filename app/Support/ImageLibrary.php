@@ -58,6 +58,34 @@ final class ImageLibrary
         ],
     ];
 
+    /**
+     * The aspect a slot is cropped to at a given width.
+     *
+     * Art direction rather than resizing. The hero is designed around a wide
+     * band, but a wide band at 375 is a strip of sky with the subject cut
+     * out of it, so narrow renditions get a squarer crop that keeps the
+     * person in frame. Null means keep the original proportions.
+     */
+    public static function aspectFor(string $slot, int $width): ?float
+    {
+        $orientation = self::orientation($slot);
+
+        // Portrait originals are card and sidebar images; cropping them to a
+        // band would be inventing a composition nobody approved.
+        if ($orientation === 'portrait') {
+            return null;
+        }
+
+        return match (true) {
+            // Phone: nearly square, subject-first.
+            $width <= 480 => 4 / 3,
+            // Tablet: a gentler band.
+            $width <= 960 => 16 / 9,
+            // Desktop: the band the hero is designed around.
+            default => 21 / 9,
+        };
+    }
+
     /** @return list<string> */
     public static function slots(): array
     {
@@ -100,10 +128,16 @@ final class ImageLibrary
     }
 
     /**
-     * Everything a template needs to render one slot responsibly, or null if
-     * the slot has no image and the empty state should render instead.
+     * The renditions for one slot, grouped by the breakpoint each is cropped
+     * for, or null if the slot has no image and the empty state should
+     * render instead.
      *
-     * @return array{src: string, srcset: string, webpsrcset: string, orientation: string}|null
+     * Grouped rather than one flat srcset because the crops differ: a single
+     * srcset with w descriptors tells the browser these are the same image
+     * at different sizes, and picking a 21:9 candidate where a 4:3 one was
+     * laid out produces a jump. Art direction needs media-gated sources.
+     *
+     * @return array{sources: list<array{media: string|null, type: string, srcset: string}>, src: string, orientation: string}|null
      */
     public static function resolve(string $slot): ?array
     {
@@ -111,33 +145,51 @@ final class ImageLibrary
             return null;
         }
 
-        $jpeg = [];
-        $webp = [];
+        $groups = [
+            ['media' => '(max-width: 480px)', 'widths' => [480]],
+            ['media' => '(max-width: 960px)', 'widths' => [960]],
+            ['media' => null, 'widths' => [1440, 1920]],
+        ];
 
-        foreach (self::WIDTHS as $width) {
-            $jpegPath = self::derivativePath($slot, $width, 'jpg');
-            $webpPath = self::derivativePath($slot, $width, 'webp');
+        $sources = [];
+        $fallback = null;
 
-            if (Storage::disk('public')->exists($jpegPath)) {
-                $jpeg[$width] = Storage::disk('public')->url($jpegPath).' '.$width.'w';
-            }
+        foreach ($groups as $group) {
+            foreach (['webp', 'jpg'] as $extension) {
+                $candidates = [];
 
-            if (Storage::disk('public')->exists($webpPath)) {
-                $webp[$width] = Storage::disk('public')->url($webpPath).' '.$width.'w';
+                foreach ($group['widths'] as $width) {
+                    $path = self::derivativePath($slot, $width, $extension);
+
+                    if ($path !== null && Storage::disk('public')->exists($path)) {
+                        $candidates[] = Storage::disk('public')->url($path).' '.$width.'w';
+
+                        if ($extension === 'jpg' && $fallback === null) {
+                            $fallback = Storage::disk('public')->url($path);
+                        }
+                    }
+                }
+
+                if ($candidates !== []) {
+                    $sources[] = [
+                        'media' => $group['media'],
+                        'type' => $extension === 'webp' ? 'image/webp' : 'image/jpeg',
+                        'srcset' => implode(', ', $candidates),
+                    ];
+                }
             }
         }
 
         // Derivatives have not been built. Rendering the original would ship
         // a 20 MB hero, so the slot reports empty and the designed absence
         // renders instead.
-        if ($jpeg === []) {
+        if ($fallback === null) {
             return null;
         }
 
         return [
-            'src' => Storage::disk('public')->url(self::derivativePath($slot, 960, 'jpg')),
-            'srcset' => implode(', ', $jpeg),
-            'webpsrcset' => implode(', ', $webp),
+            'sources' => $sources,
+            'src' => $fallback,
             'orientation' => self::orientation($slot) ?? 'landscape',
         ];
     }

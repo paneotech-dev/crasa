@@ -147,7 +147,7 @@ class PublicPagesSeeder extends Seeder
 
         $position = 0;
 
-        $this->block($page, BlockType::MemberGrid, $position++, ['show_map' => false, 'filter' => []], [
+        $this->block($page, BlockType::MemberGrid, $position++, ['show_map' => true, 'filter' => []], [
             'en' => ['heading' => 'Fourteen national authorities', 'intro' => "CRASA's membership covers the communications and postal regulators of fourteen SADC member states, from Angola to Zimbabwe."],
             'fr' => ['heading' => 'Quatorze autorités nationales', 'intro' => "La CRASA réunit les régulateurs des communications et des services postaux de quatorze États membres de la SADC, de l'Angola au Zimbabwe."],
             'pt' => ['heading' => 'Catorze autoridades nacionais', 'intro' => 'A CRASA reúne os reguladores das comunicações e dos serviços postais de catorze Estados membros da SADC, de Angola ao Zimbabué.'],

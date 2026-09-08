@@ -7,7 +7,7 @@
     $documents = $documents ?? collect();
 @endphp
 
-<section class="b b--tight">
+<section class="b b--tight" @if (! empty($ground)) data-ground="{{ $ground }}" @endif>
     <div class="b__inner">
         @if ($heading)
             <h2 class="b__heading">{{ $heading->value }}</h2>

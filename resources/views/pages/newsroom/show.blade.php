@@ -41,9 +41,13 @@
                 @if ($item->hero_image_path)
                     <img class="c-img" src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($item->hero_image_path) }}"
                          alt="" loading="eager" decoding="async">
-                @else
+                @elseif ($slot)
                     <x-responsive-image :name="$slot" :alt="__('images.'.$slot)" sizes="(max-width: 1240px) 100vw, 1240px" loading="eager" />
                     <figcaption class="c-article__caption">{{ __('images.illustrative') }}</figcaption>
+                @else
+                    <div class="c-article__typeslot">
+                        <span>{{ $item->sector?->name ?? __('news.title') }}</span>
+                    </div>
                 @endif
             </figure>
 

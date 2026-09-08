@@ -58,7 +58,23 @@ class BuildImageDerivatives extends Command
                         // coordinates and a photographer's name, neither of
                         // which belongs on a public page.
                         $image->stripImage();
-                        $image->thumbnailImage($width, 0);
+
+                        /*
+                         * Art direction, not just resizing. A 21:9 band of
+                         * the Cape Town market at 1440 and the same photo at
+                         * 375 are different images: at phone width a wide
+                         * crop leaves a strip of sky and no subject. Narrow
+                         * widths get a squarer crop that keeps the person in
+                         * frame; wide widths get the band the hero is
+                         * designed around.
+                         */
+                        $ratio = ImageLibrary::aspectFor($slot, $width);
+
+                        if ($ratio !== null) {
+                            $image->cropThumbnailImage($width, (int) round($width / $ratio));
+                        } else {
+                            $image->thumbnailImage($width, 0);
+                        }
                         $image->setImageFormat($extension === 'webp' ? 'webp' : 'jpeg');
                         $image->setImageCompressionQuality($extension === 'webp' ? 80 : 82);
                         $image->setInterlaceScheme(Imagick::INTERLACE_PLANE);

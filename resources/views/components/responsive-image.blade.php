@@ -1,17 +1,19 @@
 {{--
-    One image slot, served as width-stepped derivatives with a WebP source
-    and a JPEG fallback. Never the archive original: the best of those is
-    20 MB, which is not something to send a reader on a mobile connection.
+    One image slot, art-directed.
 
-    A slot with no image renders nothing here; the calling block renders the
-    designed absence instead.
+    Each breakpoint gets its own crop, not just its own width: the hero is a
+    21:9 band at desktop and 4:3 at phone, because a wide band on a phone is
+    a strip of sky with the subject cropped out of it. That needs media-gated
+    sources — a single srcset would tell the browser these are the same image
+    at different sizes and let it pick a crop the layout was not built for.
 
-    Alt text is required in all three languages. There is no default: an
-    image without alt text does not render.
+    Never the archive original: the best of those is 20 MB.
+
+    Alt text is required. There is no default, and a slot with no alt text
+    does not render, because an image nobody described is worse than no
+    image.
 --}}
 @props([
-    // Not "slot": that name is reserved by Blade for a component's content
-    // slot, and a prop of that name is silently swallowed.
     'name',
     'alt',
     'sizes' => '100vw',
@@ -24,13 +26,16 @@
 
 @if ($image && filled($alt))
     <picture>
-        @if ($image['webpsrcset'] !== '')
-            <source type="image/webp" srcset="{{ $image['webpsrcset'] }}" sizes="{{ $sizes }}">
-        @endif
+        @foreach ($image['sources'] as $source)
+            <source
+                type="{{ $source['type'] }}"
+                srcset="{{ $source['srcset'] }}"
+                @if ($source['media']) media="{{ $source['media'] }}" @endif
+                sizes="{{ $sizes }}"
+            >
+        @endforeach
         <img
             src="{{ $image['src'] }}"
-            srcset="{{ $image['srcset'] }}"
-            sizes="{{ $sizes }}"
             alt="{{ $alt }}"
             loading="{{ $loading }}"
             decoding="async"

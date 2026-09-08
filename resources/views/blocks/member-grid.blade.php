@@ -11,13 +11,20 @@
     $countries = $countries ?? \App\Models\Country::with(['authority.sectors', 'committees'])->orderBy('name')->get();
 @endphp
 
-<section class="b">
+<section class="b" @if (! empty($ground)) data-ground="{{ $ground }}" @endif>
     <div class="b__inner">
         @if ($heading)
             <h2 class="b__heading">{{ $heading->value }}</h2>
         @endif
         @if ($intro)
             <p class="b__intro">{{ $intro->value }}</p>
+        @endif
+
+        {{-- The map is the page's one bold moment; the list below it stays
+             quiet. It renders only when the block asks for it, so the same
+             component can appear on the homepage without it. --}}
+        @if ($block->setting('show_map') && $countries->isNotEmpty())
+            <x-region-map :countries="$countries" />
         @endif
 
         @if ($countries->isEmpty())
@@ -28,7 +35,7 @@
         @else
             <ul class="b-members" role="list">
                 @foreach ($countries as $country)
-                    <li class="b-member" data-span="{{ $country->cardSpan() }}">
+                    <li class="b-member" id="member-{{ $country->iso_code }}" data-span="{{ $country->cardSpan() }}">
                         <span class="b-member__name">{{ $country->name }}</span>
                         @if ($country->authority)
                             <span class="b-member__authority">{{ $country->authority->name }}</span>

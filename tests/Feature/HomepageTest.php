@@ -6,10 +6,12 @@ use App\Enums\BlockType;
 use App\Models\NewsItem;
 use App\Models\Page;
 use App\Models\Publication;
+use App\Models\Sector;
 use App\Support\ImageLibrary;
 use App\Support\Locales;
 use Database\Seeders\NewsroomSeeder;
 use Database\Seeders\PublicationSeeder;
+use Database\Seeders\SectorSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Tests\Concerns\SeedsComposedPages;
@@ -138,6 +140,51 @@ class HomepageTest extends TestCase
         $this->assertStringContainsString('.jpg', $html);
         $this->assertStringContainsString('srcset=', $html);
         $this->assertStringContainsString('sizes=', $html);
+    }
+
+    /**
+     * Art direction, not resizing. A 21:9 band at desktop is a strip of sky
+     * with the subject cropped out of it at phone width, so narrow
+     * renditions are cut squarer and each crop is gated by its own media
+     * query. A single srcset would tell the browser these are the same image
+     * at different sizes and let it pick a crop the layout was not built for.
+     */
+    public function test_the_hero_is_art_directed_per_breakpoint(): void
+    {
+        $html = $this->get('/en')->getContent();
+
+        $this->assertStringContainsString('media="(max-width: 480px)"', $html);
+        $this->assertStringContainsString('media="(max-width: 960px)"', $html);
+    }
+
+    public function test_each_breakpoint_gets_its_own_crop(): void
+    {
+        $ratios = [];
+
+        foreach ([480, 960, 1440] as $width) {
+            $path = ImageLibrary::derivativePath('hero', $width, 'jpg');
+            $size = getimagesize(Storage::disk('public')->path($path));
+            $ratios[$width] = round($size[0] / $size[1], 2);
+        }
+
+        // Squarer at phone width, wider at desktop.
+        $this->assertLessThan($ratios[960], $ratios[480]);
+        $this->assertLessThan($ratios[1440], $ratios[960]);
+    }
+
+    /**
+     * Broadcasting has no supplied photograph, and borrowing one from
+     * telecoms would caption a laboratory as broadcasting.
+     */
+    public function test_no_sector_borrows_another_sectors_photograph(): void
+    {
+        $this->seed(SectorSeeder::class);
+
+        $broadcasting = NewsItem::factory()->create([
+            'sector_id' => Sector::where('slug', 'broadcasting')->value('id'),
+        ]);
+
+        $this->assertNull($broadcasting->fallbackImageSlot());
     }
 
     public function test_alt_text_is_present_in_all_three_languages(): void
