@@ -4,7 +4,7 @@
     $alignment = $block->setting('alignment', 'start');
 @endphp
 
-<section class="b b-richtext" @if (! empty($ground)) data-ground="{{ $ground }}" @endif data-alignment="{{ $alignment === 'center' ? 'center' : 'start' }}">
+<section class="b b-richtext" @if ($block->anchor) id="{{ $block->anchor }}" @endif @if (! empty($ground)) data-ground="{{ $ground }}" @endif data-alignment="{{ $alignment === 'center' ? 'center' : 'start' }}">
     <div class="b__inner b__inner--reading">
         @if ($heading)
             <h2 class="b__heading">{{ $heading->value }}</h2>

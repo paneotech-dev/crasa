@@ -37,6 +37,54 @@ class PublicPagesSeeder extends Seeder
         $this->about();
         $this->committees();
         $this->membership();
+        $this->awaitingFeature();
+    }
+
+    /* Pages the footer links to whose feature is a later phase ------------- */
+
+    /**
+     * Screen 02 draws a comparator link and an events link in the footer,
+     * and draws every footer link as href="#". The screen is therefore
+     * silent on where they go, but it is not silent on whether they exist.
+     * Removing them would be a change to the approved design; leaving them
+     * pointing at nothing is a 404 on every page of the site.
+     *
+     * So both slugs resolve, and each says plainly that the feature is being
+     * prepared. Neither invents what the feature will contain. When the
+     * comparator (WS-05) and the public events section (WS-07) are built,
+     * these two pages are deleted, not edited.
+     */
+    private function awaitingFeature(): void
+    {
+        $this->page('comparator', [
+            'en' => ['title' => 'Regulatory comparator', 'meta_description' => 'Compare regulatory indicators across the fourteen CRASA member states.'],
+            'fr' => ['title' => 'Comparateur réglementaire', 'meta_description' => 'Comparer les indicateurs réglementaires des quatorze États membres de la CRASA.'],
+            'pt' => ['title' => 'Comparador regulatório', 'meta_description' => 'Comparar indicadores regulatórios nos catorze Estados membros da CRASA.'],
+        ]);
+
+        $this->placeholder(
+            Page::where('slug', 'comparator')->first(),
+            BlockType::RichText,
+            0,
+            ['alignment' => 'start'],
+            'Comparator tool (WS-05): side-by-side indicator comparison across member states, with the chart and its table equivalent. Not built in this phase. The indicator data it reads is already in place.',
+            []
+        );
+
+        $this->page('events', [
+            'en' => ['title' => 'Events', 'meta_description' => 'CRASA meetings, workshops and regional events.'],
+            'fr' => ['title' => 'Événements', 'meta_description' => 'Réunions, ateliers et événements régionaux de la CRASA.'],
+            'pt' => ['title' => 'Eventos', 'meta_description' => 'Reuniões, seminários e eventos regionais da CRASA.'],
+        ]);
+
+        $this->placeholder(
+            Page::where('slug', 'events')->first(),
+            BlockType::RichText,
+            0,
+            ['alignment' => 'start'],
+            'Public events section (WS-07): upcoming and past meetings, workshops and regional events. Not built in this phase. Delegate registration and travel are a separate commercial addendum and are not part of this codebase.',
+            []
+        );
     }
 
     /* About ---------------------------------------------------------------- */
@@ -66,21 +114,72 @@ class PublicPagesSeeder extends Seeder
                 'heading' => 'Quem somos',
                 'body' => "A CRASA é uma Agência Especializada da Comunidade de Desenvolvimento da África Austral, criada em 1997 ao abrigo do Protocolo sobre Transportes, Comunicações e Meteorologia.\n\nO seu mandato é a harmonização do ambiente regulatório postal e das tecnologias de informação e comunicação na região da SADC. Reúne as autoridades reguladoras nacionais de catorze Estados membros, de Angola ao Zimbabué, e abrange três setores: telecomunicações, radiodifusão e serviços postais.",
             ],
-        ]);
+        ], 'who-we-are');
 
-        // Not sourceable. Governance structure, office holders and the
-        // meeting cycle are not in any source available to this build.
+        // Not sourceable. The governance structure, who holds each office
+        // and the meeting cycle are not in any source available to this
+        // build. The Executive Committee and the Secretariat get their own
+        // sections below because the footer links to each of them
+        // separately.
         $this->placeholder(
             $page,
             BlockType::RichText,
             $position++,
             ['alignment' => 'start'],
-            'Governance: the structure of the Annual General Meeting, the Executive Committee and the Secretariat, who currently holds each office, and the meeting cycle.',
+            'Governance: the structure of the Annual General Meeting and how decisions pass between it, the Executive Committee and the Secretariat. The meeting cycle and the current office holders.',
             [
                 'en' => ['heading' => 'Governance'],
                 'fr' => ['heading' => 'Gouvernance'],
                 'pt' => ['heading' => 'Governação'],
-            ]
+            ],
+            'governance'
+        );
+
+        $this->placeholder(
+            $page,
+            BlockType::RichText,
+            $position++,
+            ['alignment' => 'start'],
+            'Executive Committee: how many members it has, how they are elected and for how long, which authorities currently hold the chair and the vice-chair, and what the committee decides rather than recommends.',
+            [
+                'en' => ['heading' => 'Executive Committee'],
+                'fr' => ['heading' => 'Comité exécutif'],
+                'pt' => ['heading' => 'Comité Executivo'],
+            ],
+            'executive-committee'
+        );
+
+        $this->placeholder(
+            $page,
+            BlockType::RichText,
+            $position++,
+            ['alignment' => 'start'],
+            'Secretariat: where it is based, its establishment, the Executive Secretary and the functional roles, and the contact route for each. The contact page carries the general address already; this section is the standing description.',
+            [
+                'en' => ['heading' => 'Secretariat'],
+                'fr' => ['heading' => 'Secrétariat'],
+                'pt' => ['heading' => 'Secretariado'],
+            ],
+            'secretariat'
+        );
+
+        // Partner and funder attribution is supplied by the client. See the
+        // writing rules in CLAUDE.md: the EU emblem in particular has
+        // binding rules on proportion, clear space and wording, and a wrong
+        // one on a donor-funded platform is raised formally. Nothing is
+        // drafted here, not even a placeholder sentence naming a partner.
+        $this->placeholder(
+            $page,
+            BlockType::RichText,
+            $position++,
+            ['alignment' => 'start'],
+            'Partnerships: which organisations CRASA works with, in what capacity, and the attribution wording and marks each one requires. Client-supplied without exception.',
+            [
+                'en' => ['heading' => 'Partnerships'],
+                'fr' => ['heading' => 'Partenariats'],
+                'pt' => ['heading' => 'Parcerias'],
+            ],
+            'partnerships'
         );
 
         $this->placeholder(
@@ -93,7 +192,8 @@ class PublicPagesSeeder extends Seeder
                 'en' => ['heading' => 'Strategic priorities'],
                 'fr' => ['heading' => 'Priorités stratégiques'],
                 'pt' => ['heading' => 'Prioridades estratégicas'],
-            ]
+            ],
+            'strategic-priorities'
         );
 
         $this->block($page, BlockType::CallToAction, $position++, ['tone' => 'navy', 'cta_url' => '/members'], [
@@ -185,12 +285,13 @@ class PublicPagesSeeder extends Seeder
         return $page;
     }
 
-    private function block(Page $page, BlockType $type, int $position, array $settings, array $text): PageBlock
+    private function block(Page $page, BlockType $type, int $position, array $settings, array $text, ?string $anchor = null): PageBlock
     {
         $block = PageBlock::create([
             'page_id' => $page->id,
             'block_type' => $type,
             'position' => $position,
+            'anchor' => $anchor,
             'is_visible' => true,
             'settings' => $settings,
             'is_sample' => true,
@@ -209,7 +310,7 @@ class PublicPagesSeeder extends Seeder
      * A block whose copy is not yet writable. It carries its heading, so the
      * page structure is real, and an honest note in place of body copy.
      */
-    private function placeholder(Page $page, BlockType $type, int $position, array $settings, string $note, array $text): void
+    private function placeholder(Page $page, BlockType $type, int $position, array $settings, string $note, array $text, ?string $anchor = null): void
     {
         // Written into the field this block type actually renders. A note
         // in a field the block ignores is a flag nobody ever sees.
@@ -221,7 +322,7 @@ class PublicPagesSeeder extends Seeder
             }
         }
 
-        $block = $this->block($page, $type, $position, $settings, $text);
+        $block = $this->block($page, $type, $position, $settings, $text, $anchor);
         $block->update(['needs_content' => true, 'content_note' => $note]);
     }
 }

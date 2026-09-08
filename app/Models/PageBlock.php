@@ -19,7 +19,7 @@ class PageBlock extends Model
     use Auditable, HasFactory, HasTranslations, MarksSampleData;
 
     protected $fillable = [
-        'page_id', 'block_type', 'position', 'is_visible', 'settings',
+        'page_id', 'block_type', 'position', 'anchor', 'is_visible', 'settings',
         'is_sample', 'needs_content', 'content_note',
     ];
 

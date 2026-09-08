@@ -3,11 +3,11 @@
     $headline = $block->translate('headline');
     $body = $block->translate('body');
     $ctaLabel = $block->translate('cta_label');
-    $ctaUrl = $block->setting('cta_url');
+    $ctaUrl = \App\Support\Navigation::resolve($block->setting('cta_url'));
     $tone = $block->setting('tone', 'navy');
 @endphp
 
-<section class="b b--medium" @if (! empty($ground)) data-ground="{{ $ground }}" @endif>
+<section class="b b--medium" @if ($block->anchor) id="{{ $block->anchor }}" @endif @if (! empty($ground)) data-ground="{{ $ground }}" @endif>
     <div class="b__inner">
         <div class="b-cta__panel" data-tone="{{ in_array($tone, ['navy', 'green', 'cream'], true) ? $tone : 'navy' }}">
             @if ($headline)

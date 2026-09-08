@@ -14,6 +14,7 @@ use App\Http\Controllers\LocaleRedirectController;
 use App\Http\Controllers\NewsroomController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PublicationController;
+use App\Http\Controllers\SearchController;
 use App\Http\Middleware\SetLocale;
 use App\Support\Locales;
 use Illuminate\Support\Facades\Route;
@@ -50,6 +51,37 @@ Route::prefix('{locale}')
         Route::get('about', [PageController::class, 'show'])->defaults('slug', 'about')->name('about');
         Route::get('committees', [PageController::class, 'show'])->defaults('slug', 'committees')->name('committees');
         Route::get('members', [PageController::class, 'show'])->defaults('slug', 'members')->name('members');
+
+        /*
+         * Legal pages. Linked from the footer on every page, so they must
+         * not 404.
+         */
+        /*
+         * Drawn in the screen 02 footer; the feature itself is a later
+         * phase. See PublicPagesSeeder::awaitingFeature().
+         */
+        Route::get('comparator', [PageController::class, 'show'])->defaults('slug', 'comparator')->name('comparator');
+        Route::get('events', [PageController::class, 'show'])->defaults('slug', 'events')->name('events');
+
+        Route::get('privacy', [PageController::class, 'show'])->defaults('slug', 'privacy')->name('privacy');
+        Route::get('terms', [PageController::class, 'show'])->defaults('slug', 'terms')->name('terms');
+        Route::get('accessibility', [PageController::class, 'show'])->defaults('slug', 'accessibility')->name('accessibility');
+
+        /*
+         * The extranet is phase 3. Its entry point is the sign-in page,
+         * which is where the header action and the footer link both go
+         * rather than to a 404.
+         */
+        Route::get('extranet', fn () => redirect()->route('login', ['locale' => app()->getLocale()]))
+            ->name('extranet');
+
+        /*
+         * Search. WS-04. Behind a driver interface, so a managed
+         * ElasticSearch service later is a config change.
+         */
+        Route::get('search', [SearchController::class, 'index'])->name('search');
+        Route::get('search/suggest', [SearchController::class, 'suggest'])
+            ->middleware('throttle:60,1')->name('search.suggest');
 
         /*
          * The regulatory library. WS-05.

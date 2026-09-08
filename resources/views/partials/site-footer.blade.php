@@ -31,10 +31,10 @@
                 <h2 class="c-footer__heading">{{ __('footer.about') }}</h2>
                 <div class="c-footer__links">
                     <a href="{{ $nav('about') }}">{{ __('footer.who_we_are') }}</a>
-                    <a href="{{ $nav('about/governance') }}">{{ __('footer.governance') }}</a>
-                    <a href="{{ $nav('about/executive-committee') }}">{{ __('footer.executive_committee') }}</a>
-                    <a href="{{ $nav('about/secretariat') }}">{{ __('footer.secretariat') }}</a>
-                    <a href="{{ $nav('about/partnerships') }}">{{ __('footer.partnerships') }}</a>
+                    <a href="{{ $nav('about').'#governance' }}">{{ __('footer.governance') }}</a>
+                    <a href="{{ $nav('about').'#executive-committee' }}">{{ __('footer.executive_committee') }}</a>
+                    <a href="{{ $nav('about').'#secretariat' }}">{{ __('footer.secretariat') }}</a>
+                    <a href="{{ $nav('about').'#partnerships' }}">{{ __('footer.partnerships') }}</a>
                 </div>
             </nav>
 

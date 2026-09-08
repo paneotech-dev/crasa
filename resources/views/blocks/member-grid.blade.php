@@ -11,7 +11,7 @@
     $countries = $countries ?? \App\Models\Country::with(['authority.sectors', 'committees'])->orderBy('name')->get();
 @endphp
 
-<section class="b" @if (! empty($ground)) data-ground="{{ $ground }}" @endif>
+<section class="b" @if ($block->anchor) id="{{ $block->anchor }}" @endif @if (! empty($ground)) data-ground="{{ $ground }}" @endif>
     <div class="b__inner">
         @if ($heading)
             <h2 class="b__heading">{{ $heading->value }}</h2>

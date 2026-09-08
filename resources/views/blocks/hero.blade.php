@@ -20,7 +20,7 @@
         'headline' => $block->translate('headline'),
         'subhead' => $block->translate('subhead'),
         'cta_label' => $block->translate('cta_label'),
-        'cta_url' => $block->setting('cta_url'),
+        'cta_url' => \App\Support\Navigation::resolve($block->setting('cta_url')),
         'image' => $block->setting('image'),
     ];
 
@@ -29,7 +29,7 @@
             'headline' => $block->translate('slide_'.$i.'_headline'),
             'subhead' => $block->translate('slide_'.$i.'_subhead'),
             'cta_label' => $block->translate('slide_'.$i.'_cta_label'),
-            'cta_url' => $slide['cta_url'] ?? null,
+            'cta_url' => \App\Support\Navigation::resolve($slide['cta_url'] ?? null),
             'image' => $slide['image'] ?? null,
         ])
     )->filter(fn ($s) => $s['headline'] !== null)->values();
@@ -48,6 +48,7 @@
 
 <section
     class="b-hero"
+    @if ($block->anchor) id="{{ $block->anchor }}" @endif
     @if ($multiple)
         data-hero
         aria-roledescription="carousel"
