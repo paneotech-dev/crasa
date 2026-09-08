@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Auditable;
 use Database\Factories\SectorFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Sector extends Model
 {
     /** @use HasFactory<SectorFactory> */
-    use HasFactory;
+    use Auditable, HasFactory;
 
     public const TELECOMMUNICATIONS = 'telecommunications';
 

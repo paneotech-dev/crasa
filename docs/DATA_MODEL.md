@@ -150,7 +150,8 @@ Files attached to instruments, publications or committees.
 | size_bytes | bigint | |
 | locale | char(5) | the language the document itself is in |
 | thumbnail_path | varchar(255) | generated from page 1 for PDFs |
-| is_public | boolean | false means member-only |
+| clearance | enum | public, member, confidential, secretariat — replaces the original `is_public` boolean, which cannot express the four grades screen 13 grants separately |
+| committee_id | bigint FK | nullable — the committee that owns a confidential document, which is what answers who may open it |
 | is_sample | boolean | |
 
 **Never serve documents by direct filesystem URL.** Route through a controller that checks role and country scope. This is what makes the Extranet zero-trust requirement real.
@@ -335,12 +336,30 @@ Standard Laravel table plus:
 | country_id | bigint FK | nullable — null for Secretariat and admins |
 | authority_id | bigint FK | nullable |
 | role | enum | administrator, editor, member_state_rep, committee_member, viewer |
+| status | enum | invited, active, suspended — default active. Added 2026-09-08: screen 13 grants invite and suspend, so both need storage. A suspended account authenticates and reaches only the page telling the holder who to contact. |
 | two_factor_secret | text | nullable, encrypted |
 | two_factor_confirmed_at | timestamp | nullable |
 | preferred_locale | char(2) | default en |
 | last_seen_at | timestamp | |
 
-2FA is mandatory for `administrator`. Enforce at login, not just in settings.
+2FA is mandatory for `administrator`. Enforce at login, not just in settings. Enforced in two layers: middleware on the whole web group redirects an unenrolled administrator to enrolment, and `User::hasPermission()` withholds the privileged abilities regardless of how a request arrived, so a route added later without the middleware still cannot publish, validate a submission or change a role.
+
+An account's `authority_id` must belong to its `country_id`. Enforced on the model, on create and on update.
+
+### committee_user (pivot)
+
+Which people hold which seat on which committee. Added 2026-09-08.
+
+| Column | Type | Notes |
+|---|---|---|
+| committee_id | bigint FK | |
+| user_id | bigint FK | |
+| role | enum | member, chair, observer |
+| is_sample | boolean | |
+
+Unique index on `(committee_id, user_id)`.
+
+**Clearance is per-committee-role, not per-user.** A person's access to a `confidential` document derives from the seat they hold on the committee that owns it. An observer attends but does not hold the committee's confidential papers. Per-user grants become an unmaintainable access list within a year, and the Secretariat has one administrative assistant to maintain it.
 
 ### audit_log
 
@@ -366,7 +385,9 @@ Extranet secure storage — screen 12, IN-02.
 | name | varchar(160) | |
 | country_id | bigint FK | nullable — non-null means country-scoped |
 | committee_id | bigint FK | nullable |
-| clearance | enum | public, member, committee, restricted |
+| clearance | enum | public, member, confidential, secretariat |
+
+**Clearance vocabulary corrected 2026-09-08.** This table previously read `public, member, committee, restricted`. That set was drafting and was never shown to the client. The four grades above are the ones CRASA has seen and accepted: they are drawn as the confidentiality badge set in screen 01 and granted by name in screen 13's permission matrix. The same four grades apply to documents.
 
 Access check is server-side on every request. A Member State user reaches only their own country's folders. Hiding the UI is not access control.
 
@@ -447,5 +468,5 @@ Each step: migration, model with relationships, factory, seeder with `is_sample`
 1. ~~**MariaDB vs MySQL**~~ — **resolved 2026-09-08. MariaDB 10.11 stays.** CLAUDE.md and this document both name it. All tables are InnoDB, utf8mb4_unicode_ci.
 2. **Indicator taxonomy** — the list in section 4 needs its actual contents drafted from ITU and SADC sources before the workshop.
 3. **Period format** — annual only, or quarterly for some indicators? Affects the unique index and the completeness dashboard.
-4. **Committee document clearance** — is `restricted` per-user or per-committee-role?
+4. ~~**Committee document clearance**~~ — **resolved 2026-09-08. Per-committee-role.** Derived from the seat held in `committee_user` on the committee that owns the document. See section 7.
 5. **Instrument body** — full text stored in the platform, or metadata plus an attached PDF? Affects search indexing substantially.

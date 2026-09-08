@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Auditable;
 use App\Models\Concerns\MarksSampleData;
 use Database\Factories\CommitteeFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Committee extends Model
 {
     /** @use HasFactory<CommitteeFactory> */
-    use HasFactory;
+    use Auditable, HasFactory;
 
     use MarksSampleData;
 
@@ -59,6 +60,14 @@ class Committee extends Model
     public function chairAuthority(): BelongsTo
     {
         return $this->belongsTo(Authority::class, 'chair_authority_id');
+    }
+
+    /** The people who hold seats on this committee. Ruling 2. */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)
+            ->withPivot(['role', 'is_sample'])
+            ->withTimestamps();
     }
 
     public function countries(): BelongsToMany

@@ -60,6 +60,30 @@ Search itself is not built yet. It is Task 6.
 
 ---
 
+## Corrections to the specification
+
+**Clearance vocabulary, corrected 2026-09-08.** DATA_MODEL section 7 carried
+`public / member / committee / restricted` for `folders.clearance`. That set
+was drafting and had never been shown to the client. The accepted vocabulary
+is `Public / Member / Confidential / Secretariat`, drawn as the
+confidentiality badge set in screen 01 and granted by name in screen 13's
+permission matrix. DATA_MODEL now matches the screens, and the same four
+grades apply to documents, replacing the `is_public` boolean which cannot
+express grades that screen 13 grants separately.
+
+There is no `folders` table to migrate: the extranet is phase 3. The
+correction lands in the specification and in the `Clearance` enum now, so
+the table is built right when it arrives.
+
+**Clearance is per-committee-role.** Access to a Confidential document comes
+from the seat held on the committee that owns it, through `committee_user`.
+An observer attends but does not hold the papers.
+
+**users.status added.** Screen 13 grants invite and suspend; section 7 had
+no column for either.
+
+---
+
 ## Deferred to a later phase
 
 **Selenium four-width regression suite — D3 testing phase, infrastructure TBD.**

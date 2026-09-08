@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\EnsureAccountActive;
+use App\Http\Middleware\EnsureTwoFactorEnrolled;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,7 +14,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Both run on the whole web group, so neither can be forgotten on a
+        // route added later. A suspended account reaches only the page
+        // telling the holder who to contact, and an administrator who has
+        // not confirmed two-factor enrolment reaches only enrolment.
+        $middleware->web(append: [
+            EnsureAccountActive::class,
+            EnsureTwoFactorEnrolled::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

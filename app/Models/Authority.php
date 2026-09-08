@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Auditable;
 use App\Models\Concerns\MarksSampleData;
 use Database\Factories\AuthorityFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Authority extends Model
 {
     /** @use HasFactory<AuthorityFactory> */
-    use HasFactory;
+    use Auditable, HasFactory;
 
     use MarksSampleData;
 
