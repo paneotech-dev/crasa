@@ -34,6 +34,15 @@
         ])
     )->filter(fn ($s) => $s['headline'] !== null)->values();
 
+    /*
+     * Rotation runs only with more than one slide.
+     *
+     * The library has one usable image and it is not institutional. Screen 02
+     * draws the hero with a photograph, so the hero keeps a photograph and
+     * the rotation is built and ready; it simply has nothing to rotate.
+     * Repeating the same photograph three times to manufacture a slider
+     * would be worse than a static slide.
+     */
     $multiple = $rendered->count() > 1;
 @endphp
 
@@ -75,6 +84,9 @@
                         class="c-img--cover"
                     />
                 </div>
+                {{-- Screen 02 draws a colour-blend tint and then the
+                     readability scrim, in that order. --}}
+                <div class="b-hero__tint" aria-hidden="true"></div>
                 <div class="b-hero__scrim" aria-hidden="true"></div>
                 <div class="b-hero__weave" aria-hidden="true"></div>
             @endif

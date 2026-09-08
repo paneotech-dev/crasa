@@ -96,24 +96,56 @@
             @endif
 
             @if ($lineage->count() > 1)
-                <h2>{{ __('publications.lineage') }}</h2>
-                <p class="c-small">{{ __('publications.lineage_note') }}</p>
-                <ol class="c-lineage">
-                    @foreach ($lineage as $step)
-                        <li class="c-lineage__step @if ($step->is($publication)) is-current @endif">
-                            @if ($step->is($publication))
-                                <span class="c-lineage__title">{{ $step->translated('title', $step->slug) }}</span>
-                                <span class="c-pill c-pill--validated">{{ __('publications.you_are_here') }}</span>
-                            @else
-                                <a class="c-lineage__title" href="{{ route('publications.show', ['locale' => app()->getLocale(), 'slug' => $step->slug]) }}">
-                                    {{ $step->translated('title', $step->slug) }}
-                                </a>
-                            @endif
-                            <span class="c-lineage__date">{{ $step->published_on->format('Y') }}</span>
-                        </li>
-                    @endforeach
-                </ol>
+                {{--
+                    The lineage is this page's one bold moment.
+
+                    Regulators care about this more than anything else here:
+                    which edition is in force, what it replaced, and what
+                    replaced it. An indented list states that; a spine with
+                    the current edition marked shows it, and shows the shape
+                    of the chain at a glance.
+                --}}
+                <section class="c-lineage" aria-labelledby="lineage-heading">
+                    <h2 id="lineage-heading" class="b__heading">{{ __('publications.lineage') }}</h2>
+                    <p class="c-small">{{ __('publications.lineage_note') }}</p>
+
+                    <ol class="c-lineage__track">
+                        @foreach ($lineage as $index => $step)
+                            @php
+                                $isCurrent = $step->is($publication);
+                                $isLatest = $step->supersededBy->isEmpty();
+                            @endphp
+                            <li class="c-lineage__node @if ($isCurrent) is-current @endif @if ($isLatest) is-latest @endif">
+                                <span class="c-lineage__year c-num">{{ $step->published_on->format('Y') }}</span>
+
+                                <span class="c-lineage__marker" aria-hidden="true"></span>
+
+                                <span class="c-lineage__body">
+                                    @if ($isCurrent)
+                                        <span class="c-lineage__title">{{ $step->translated('title', $step->slug) }}</span>
+                                    @else
+                                        <a class="c-lineage__title" href="{{ route('publications.show', ['locale' => app()->getLocale(), 'slug' => $step->slug]) }}">
+                                            {{ $step->translated('title', $step->slug) }}
+                                        </a>
+                                    @endif
+
+                                    <span class="c-lineage__state">
+                                        @if ($isLatest)
+                                            <span class="c-pill c-pill--validated">{{ __('publications.in_force') }}</span>
+                                        @else
+                                            <span class="c-pill c-pill--archived">{{ __('publications.superseded') }}</span>
+                                        @endif
+                                        @if ($isCurrent)
+                                            <span class="c-lineage__here">{{ __('publications.you_are_here') }}</span>
+                                        @endif
+                                    </span>
+                                </span>
+                            </li>
+                        @endforeach
+                    </ol>
+                </section>
             @endif
+
         </div>
     </div>
 @endsection

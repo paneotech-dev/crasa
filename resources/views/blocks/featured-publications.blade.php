@@ -29,23 +29,42 @@
             {{-- Featured-and-rest rather than equal thirds. The newest
                  item is the one a reader wants, and equal cards would be
                  saying all three matter the same, which is not true. --}}
-            <div class="b-cards @if ($items->count() >= 3) b-cards--featured @endif">
+            <div class="b-rows">
                 @foreach ($items as $item)
-                    <article class="b-card">
-                        <div class="b-card__body">
-                            <div class="b-card__kicker">{{ $item['kicker'] ?? '' }}</div>
-                            <h3 class="b-card__title">
-                                @if (! empty($item['url']))
-                                    <a href="{{ $item['url'] }}">{{ $item['title'] }}</a>
-                                @else
-                                    {{ $item['title'] }}
-                                @endif
-                            </h3>
-                            <div class="b-card__meta">{{ $item['meta'] ?? '' }}</div>
+                    <div class="b-row">
+                        <div class="b-row__thumb">
+                            @if (! empty($item['thumbnail']))
+                                <img class="c-img" src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($item['thumbnail']) }}"
+                                     alt="" loading="lazy" decoding="async" width="64">
+                            @elseif (! empty($item['filetype']))
+                                <span class="c-filetype" aria-hidden="true">{{ $item['filetype'] }}</span>
+                            @endif
                         </div>
-                    </article>
+
+                        <div class="b-row__main">
+                            <div class="b-row__title">
+                                <a href="{{ $item['url'] }}">{{ $item['title'] }}</a>
+                            </div>
+                            @if (! empty($item['summary']))
+                                <p class="b-row__summary">{{ \Illuminate\Support\Str::limit($item['summary'], 160) }}</p>
+                            @endif
+                            <div class="b-row__meta">
+                                <span>{{ $item['kicker'] }}</span>
+                                <span>{{ $item['meta'] }}</span>
+                                @if (! empty($item['size']))<span>{{ $item['filetype'] }}, {{ $item['size'] }}</span>@endif
+                                @if (! empty($item['locale']))<span class="c-lang-badge">{{ strtoupper($item['locale']) }}</span>@endif
+                            </div>
+                        </div>
+
+                        @if (! empty($item['superseded']))
+                            <div class="b-row__actions">
+                                <span class="c-pill c-pill--archived">{{ __('publications.superseded') }}</span>
+                            </div>
+                        @endif
+                    </div>
                 @endforeach
             </div>
+
         @endif
     </div>
 </section>

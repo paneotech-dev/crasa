@@ -5,6 +5,8 @@ namespace App\Support;
 use App\Enums\BlockType;
 use App\Models\Country;
 use App\Models\Document;
+use App\Models\Indicator;
+use App\Models\IndicatorValue;
 use App\Models\NewsItem;
 use App\Models\PageBlock;
 use App\Models\Publication;
@@ -32,14 +34,63 @@ final class BlockData
             BlockType::NewsroomStrip => ['items' => self::news($block)],
             BlockType::DocumentList => ['documents' => self::documents($block)],
             BlockType::MemberGrid => ['countries' => self::countries()],
-            // Indicators arrive with the completeness dashboard. Until then
-            // the empty state is the honest answer, not a bug.
-            BlockType::FeaturedComparison => ['rows' => collect()],
+            BlockType::FeaturedComparison => self::comparison($block),
             // The events mirror is reserved scope: the platform displays
             // events, it does not manage them, and nothing syncs yet.
             BlockType::EventsStrip => ['items' => collect()],
             default => [],
         };
+    }
+
+    /**
+     * A pinned comparison, from the sourced indicators.
+     *
+     * A section whose only content is an empty state is a section that is
+     * not ready. The comparator tool itself is phase 3, but the indicators
+     * and their values exist, so the homepage can show a real pinned
+     * comparison rather than an empty box.
+     *
+     * @return array{rows: Collection<int, array<string, mixed>>, indicator: Indicator|null}
+     */
+    private static function comparison(PageBlock $block): array
+    {
+        $indicator = Indicator::active()
+            ->when($block->setting('indicator_id'), fn ($q, $id) => $q->whereKey($id))
+            // Failing that, the indicator with the widest reporting, because
+            // a comparison of four blanks demonstrates nothing.
+            ->withCount('values')
+            ->orderByDesc('values_count')
+            ->orderBy('display_order')
+            ->first();
+
+        if ($indicator === null) {
+            return ['rows' => collect(), 'indicator' => null];
+        }
+
+        $pinned = collect($block->setting('country_ids', []))->filter();
+
+        $values = IndicatorValue::where('indicator_id', $indicator->id)
+            ->with('country')
+            ->when($pinned->isNotEmpty(), fn ($q) => $q->whereIn('country_id', $pinned->all()))
+            ->orderByDesc('period')
+            ->get()
+            ->unique('country_id')
+            ->sortByDesc('value_numeric')
+            ->take(4);
+
+        return [
+            'indicator' => $indicator,
+            'rows' => $values->map(fn (IndicatorValue $v) => [
+                'country' => $v->country?->name,
+                'value' => $v->value_numeric !== null
+                    ? rtrim(rtrim(number_format((float) $v->value_numeric, 1), '0'), '.')
+                    : null,
+                'unit' => $indicator->unit,
+                'period' => $v->period,
+                'confidence' => $v->confidence,
+                'is_sample' => $v->is_sample,
+            ])->values(),
+        ];
     }
 
     /** @return Collection<int, array<string, string>> */
@@ -48,7 +99,7 @@ final class BlockData
         $filter = $block->setting('filter', []) ?? [];
 
         return Publication::listed()
-            ->with(['translations', 'sector', 'country'])
+            ->with(['translations', 'sector', 'country', 'documents', 'supersededBy'])
             ->when($filter['sector'] ?? null, fn ($q, $v) => $q->whereHas('sector', fn ($s) => $s->where('slug', $v)))
             ->when($filter['country'] ?? null, fn ($q, $v) => $q->where('country_id', $v))
             ->when($filter['committee'] ?? null, fn ($q, $v) => $q->where('committee_id', $v))
@@ -59,6 +110,17 @@ final class BlockData
             ->map(fn (Publication $p) => [
                 'kicker' => __($p->publication_type->labelKey()),
                 'title' => $p->translated('title', $p->slug),
+                // Screen 07's document row carries a summary and a
+                // thumbnail, not a label and a date. A third of the page
+                // width should hold more than a line and a half.
+                'summary' => $p->translated('summary', ''),
+                'thumbnail' => $p->primaryDocument()?->thumbnail_path,
+                'filetype' => $p->primaryDocument()
+                    ? strtoupper(pathinfo($p->primaryDocument()->original_filename, PATHINFO_EXTENSION))
+                    : null,
+                'size' => $p->primaryDocument()?->readableSize(),
+                'locale' => $p->primaryDocument()?->locale,
+                'superseded' => $p->supersededBy->isNotEmpty(),
                 'meta' => collect([
                     $p->country?->name,
                     $p->sector?->name,
@@ -82,6 +144,10 @@ final class BlockData
             ->map(fn (NewsItem $n) => [
                 'kicker' => __($n->category->labelKey()),
                 'title' => $n->translated('title', $n->slug),
+                'summary' => $n->translated('summary', ''),
+                'image_slot' => $n->fallbackImageSlot(),
+                'hero' => $n->hero_image_path,
+                'sector' => $n->sector?->name,
                 'meta' => collect([
                     $n->published_at?->translatedFormat('j F Y'),
                     $n->sector?->name,

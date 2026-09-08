@@ -172,13 +172,28 @@ class HomepageSeeder extends Seeder
         $position = 0;
 
         // 1. Hero.
-        $this->block($page, BlockType::Hero, $position++, [
+        //
+        // The image slot is flagged as placeholder. The strongest available
+        // photograph is a woman using a phone at a Cape Town market: a good
+        // image in the wrong register for a treaty-based intergovernmental
+        // body whose readers are regulators and ministry officials. The
+        // brief for what should replace it is in docs/QUESTIONS.md.
+        $hero = $this->block($page, BlockType::Hero, $position++, [
             'image' => 'hero',
             'cta_url' => '/publications',
         ], fn (string $l) => [
             'headline' => $t[$l]['headline'],
             'subhead' => $t[$l]['subtext'],
             'cta_label' => $t[$l]['primaryAction'],
+        ]);
+
+        $hero->update([
+            'needs_content' => true,
+            'content_note' => 'Hero photography. The current image is consumer register, not '
+                .'institutional. Needs delegates in session, a signing, a plenary hall, telecom '
+                .'infrastructure at scale or a regulator building. Landscape, 3000px minimum on '
+                .'the long edge, subject and interest in the RIGHT two thirds because the type '
+                .'sits left. Three images would enable the rotation. See docs/QUESTIONS.md.',
         ]);
 
         // 2. Key figures. Counts that the platform can stand behind: the
@@ -241,8 +256,10 @@ class HomepageSeeder extends Seeder
         ], fn (string $l) => ['heading' => $t[$l]['newsTitle']]);
 
         // 7. Member grid.
+        // 7. Member states. The map leads the section: fourteen countries
+        // are the subject, and a map of them says more than fourteen cards.
         $this->block($page, BlockType::MemberGrid, $position++, [
-            'show_map' => false,
+            'show_map' => true,
             'filter' => [],
         ], fn (string $l) => [
             'heading' => $t[$l]['membersTitle'],
@@ -256,7 +273,7 @@ class HomepageSeeder extends Seeder
         ], fn (string $l) => ['heading' => $t[$l]['followUs']]);
     }
 
-    private function block(Page $page, BlockType $type, int $position, array $settings, callable $text): void
+    private function block(Page $page, BlockType $type, int $position, array $settings, callable $text): PageBlock
     {
         $block = PageBlock::create([
             'page_id' => $page->id,
@@ -270,5 +287,7 @@ class HomepageSeeder extends Seeder
         foreach (Locales::SUPPORTED as $locale) {
             $block->setTranslations($locale, array_filter($text($locale), fn ($v) => filled($v)));
         }
+
+        return $block;
     }
 }

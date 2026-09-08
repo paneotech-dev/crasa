@@ -8,6 +8,7 @@
     $heading = $block->translate('heading');
     $intro = $block->translate('intro');
     $rows = $rows ?? collect();
+    $indicator = $indicator ?? null;
 @endphp
 
 <section class="b" @if (! empty($ground)) data-ground="{{ $ground }}" @endif>
@@ -25,25 +26,52 @@
                 'body' => __('blocks.comparison_empty_body'),
             ])
         @else
+            @if ($indicator)
+                <p class="b-compare__indicator">{{ $indicator->name }}</p>
+            @endif
+
             <div class="b-compare__scroll">
                 <table class="b-compare__table">
-                    <caption class="c-sr">{{ $heading?->value ?? __('blocks.comparison_caption') }}</caption>
+                    <caption class="c-sr">{{ $indicator?->name ?? __('blocks.comparison_caption') }}</caption>
                     <thead>
                         <tr>
                             <th scope="col">{{ __('blocks.member_state') }}</th>
                             <th scope="col">{{ __('blocks.value') }}</th>
+                            <th scope="col">{{ __('publications.published') }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($rows as $row)
                             <tr>
                                 <th scope="row">{{ $row['country'] }}</th>
-                                <td class="is-numeric">{{ $row['value'] ?? __('blocks.not_reported') }}</td>
+                                <td class="is-numeric">
+                                    {{ $row['value'] ?? __('blocks.not_reported') }}
+                                    @if ($row['confidence'] !== 'reported')
+                                        <span class="c-pill c-pill--pending">{{ $row['confidence'] }}</span>
+                                    @endif
+                                </td>
+                                <td class="is-numeric">{{ $row['period'] }}</td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
+
+            @if ($indicator)
+                {{-- Every figure on this platform says where its definition
+                     came from. A comparison without one is a number without
+                     provenance. --}}
+                <p class="c-source">{{ $indicator->source_standard }}</p>
+            @endif
+
+            @if ($rows->contains(fn ($r) => $r['is_sample']))
+                <div class="c-notice c-notice--pending" role="status">
+                    <div>
+                        <div class="c-notice__title">{{ __('indicators.demo_title') }}</div>
+                        <div class="c-notice__body">{{ __('indicators.demo_body') }}</div>
+                    </div>
+                </div>
+            @endif
         @endif
     </div>
 </section>

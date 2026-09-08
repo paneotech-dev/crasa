@@ -36,7 +36,10 @@
     @foreach ($page->visibleBlocks as $block)
         @php
             $isHero = $block->type() === \App\Enums\BlockType::Hero;
-            $ground = $isHero ? null : ['cream', 'white'][$groundIndex++ % 2];
+            // Screen 02 alternates navy, cream, sand and white down the
+            // page rather than sitting everything on one ground. The hero
+            // carries its own navy, so the rotation starts after it.
+            $ground = $isHero ? null : ['cream', 'white', 'sand', 'white'][$groundIndex++ % 4];
         @endphp
 
         <x-block :block="$block" :ground="$ground" />

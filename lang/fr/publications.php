@@ -14,6 +14,7 @@ return [
     'empty_body' => 'Élargissez le filtre par type, État membre, comité ou année, ou effacez-les et recommencez.',
     'clear_filters' => 'Effacer les filtres',
 
+    'in_force' => 'En vigueur',
     'superseded' => 'Remplacé',
     'superseded_title' => 'Une version plus récente de ce document existe',
     'lineage' => 'Historique des versions',

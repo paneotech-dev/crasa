@@ -14,6 +14,7 @@ return [
     'empty_body' => 'Alargue o filtro por tipo, Estado membro, comité ou ano, ou limpe-os e comece de novo.',
     'clear_filters' => 'Limpar os filtros',
 
+    'in_force' => 'Em vigor',
     'superseded' => 'Substituído',
     'superseded_title' => 'Existe uma versão mais recente deste documento',
     'lineage' => 'Histórico de versões',

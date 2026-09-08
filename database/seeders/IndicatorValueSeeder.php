@@ -77,7 +77,7 @@ class IndicatorValueSeeder extends Seeder
                             'period' => $period,
                         ],
                         [
-                            'value_numeric' => $this->plausibleValue($indicator, $index),
+                            'value_numeric' => $this->plausibleValue($indicator, $index, $iso),
                             'source_note' => self::NOTE,
                             'confidence' => $index % 5 === 0 ? 'estimated' : 'reported',
                             'is_sample' => true,
@@ -91,9 +91,15 @@ class IndicatorValueSeeder extends Seeder
     /**
      * A figure of the right order of magnitude for its unit, so a column of
      * them reads correctly. Not a claim about any member state.
+     *
+     * The seed mixes the indicator and the country, because varying by
+     * indicator alone gave every member state the same figure and a
+     * comparison of four identical numbers demonstrates nothing.
      */
-    private function plausibleValue(Indicator $indicator, int $seed): float
+    private function plausibleValue(Indicator $indicator, int $index, string $iso): float
     {
+        $seed = $index * 31 + (ord($iso[0]) * 7) + ord($iso[1]);
+
         return match ($indicator->unit) {
             'percent' => round(45 + (($seed * 7) % 50), 1),
             'subscriptions_per_100' => round(3 + (($seed * 17) % 150), 1),

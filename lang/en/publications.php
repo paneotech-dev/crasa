@@ -14,6 +14,7 @@ return [
     'empty_body' => 'Widen the type, member state, committee or year filter, or clear them and start again.',
     'clear_filters' => 'Clear the filters',
 
+    'in_force' => 'In force',
     'superseded' => 'Superseded',
     'superseded_title' => 'A later version of this document exists',
     'lineage' => 'Version lineage',
