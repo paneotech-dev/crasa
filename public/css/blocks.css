@@ -252,3 +252,13 @@
 .c-btn--on-navy:hover { background: var(--c-white); color: var(--c-navy); }
 .c-btn--tertiary { background: transparent; border: none; color: var(--c-green-dark); text-decoration: underline; text-underline-offset: 4px; padding: 11px 8px; }
 .c-btn--tertiary:hover { background: var(--c-green-light); color: var(--c-navy); }
+
+/* Images --------------------------------------------------------------- */
+/* Served as width-stepped derivatives, never the archive original. */
+
+.c-img { display: block; width: 100%; height: auto; }
+.c-img--cover { height: 100%; object-fit: cover; }
+
+.b-hero__figure { margin: var(--s-7) 0 0; border-radius: var(--r-lg); overflow: hidden; }
+.b-hero__figure img { aspect-ratio: 21 / 9; object-fit: cover; }
+.b-hero__caption { font-size: 13px; line-height: 1.5; color: var(--c-sand); margin-top: var(--s-2); }

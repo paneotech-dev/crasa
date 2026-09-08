@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\LocaleRedirectController;
+use App\Http\Controllers\PageController;
 use App\Http\Middleware\SetLocale;
 use App\Support\Locales;
 use Illuminate\Support\Facades\Route;
@@ -18,7 +19,7 @@ Route::prefix('{locale}')
     ->whereIn('locale', Locales::SUPPORTED)
     ->middleware(SetLocale::class)
     ->group(function () {
-        Route::view('/', 'pages.home')->name('home');
+        Route::get('/', [PageController::class, 'home'])->name('home');
 
         /*
          * Redirect target for EnsureTwoFactorEnrolled. The enrolment flow

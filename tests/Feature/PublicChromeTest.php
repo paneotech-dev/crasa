@@ -2,10 +2,21 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\SeedsComposedPages;
 use Tests\TestCase;
 
 class PublicChromeTest extends TestCase
 {
+    use RefreshDatabase;
+    use SeedsComposedPages;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seedComposedPages();
+    }
+
     public function test_the_header_carries_the_identity_navigation_and_extranet_action(): void
     {
         $response = $this->get('/en');

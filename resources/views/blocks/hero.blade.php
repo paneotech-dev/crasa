@@ -32,7 +32,17 @@
             </div>
         @endif
 
-        @if (! $image)
+        @if ($image && \App\Support\ImageLibrary::resolve($image))
+            <figure class="b-hero__figure">
+                <x-responsive-image
+                    :name="$image"
+                    :alt="__('images.'.$image)"
+                    sizes="(max-width: 1440px) 100vw, 1440px"
+                    loading="eager"
+                    class="c-img--cover"
+                />
+            </figure>
+        @else
             <div class="b-hero__media">
                 @include('blocks._slot', ['note' => __('blocks.hero_slot_note'), 'ratio' => '21:9'])
             </div>

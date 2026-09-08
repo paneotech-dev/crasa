@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Support\Locales;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\SeedsComposedPages;
 use Tests\TestCase;
 
 /**
@@ -18,6 +20,15 @@ use Tests\TestCase;
  */
 class ContentHygieneTest extends TestCase
 {
+    use RefreshDatabase;
+    use SeedsComposedPages;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seedComposedPages();
+    }
+
     /**
      * Terms that must never reach a rendered page.
      *

@@ -3,11 +3,22 @@
 namespace Tests\Feature;
 
 use App\Support\Locales;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
+use Tests\Concerns\SeedsComposedPages;
 use Tests\TestCase;
 
 class LocalisationTest extends TestCase
 {
+    use RefreshDatabase;
+    use SeedsComposedPages;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seedComposedPages();
+    }
+
     public function test_the_root_redirects_to_a_language(): void
     {
         $this->get('/')->assertRedirect('http://localhost:8000/en');
