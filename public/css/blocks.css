@@ -23,9 +23,25 @@
 /* Padding reflects content density, not the difficulty of being responsive.
    A dense data block sits tighter than a hero. */
 
-.b { padding-block: var(--section-y); }
-.b--tight { padding-block: var(--s-7); }
+/* Section rhythm. Three tiers, not one, and not two.
+ *
+ * Screen 02 spaces its sections at --s-9, --s-8 and --s-7 depending on what
+ * they hold: a band of prose breathes, a strip of cards does not need to,
+ * and a dense row of figures needs least of all. Uniform padding on every
+ * section regardless of density is named in CLAUDE.md as a generated-UI
+ * fingerprint, and two tiers was still closer to that than to the screen.
+ *
+ * The tier is a property of the block type, not a choice per page. */
+
+.b { padding-block: var(--section-y); }          /* 96 desktop, 48 mobile */
+.b--medium { padding-block: var(--s-8); }        /* 64: card strips */
+.b--tight { padding-block: var(--s-7); }         /* 48: dense rows, figures */
 .b--flush { padding-block: 0; }
+
+@media (max-width: 767px) {
+  .b--medium { padding-block: var(--s-6); }
+  .b--tight { padding-block: var(--s-5); }
+}
 .b__inner { max-width: var(--w-page); margin: 0 auto; padding-inline: var(--page-x); }
 .b__inner--reading { max-width: var(--w-reading); }
 
@@ -65,26 +81,146 @@
 .b__slot-ratio { font-family: var(--f-admin); font-size: 12px; font-weight: 600; color: var(--c-navy); margin-top: var(--s-2); }
 
 /* Hero ----------------------------------------------------------------- */
+/* Screen 02: a full-bleed navy band, the photograph behind a scrim, the
+   copy on top. Not an image in a box below the headline. */
 
-.b-hero { background: var(--c-navy); color: var(--c-cream); position: relative; overflow: hidden; }
-.b-hero__inner { max-width: var(--w-page); margin: 0 auto; padding: var(--s-9) var(--page-x) var(--s-8); position: relative; }
-.b-hero__eyebrow { font-size: var(--t-eyebrow-size); font-weight: var(--t-eyebrow-weight); color: var(--c-green-light); margin-bottom: var(--s-3); }
+.b-hero {
+  position: relative;
+  background: var(--c-navy);
+  color: var(--c-cream);
+  overflow: hidden;
+  min-height: 34rem;
+  display: grid;
+}
+
+/* Slides stack on one grid cell so the band does not resize as they change.
+   [hidden] on an inactive slide is what actually removes it from the
+   accessibility tree; the grid placement only stops a layout jump. */
+.b-hero__slide { grid-area: 1 / 1; position: relative; display: flex; align-items: center; min-width: 0; }
+.b-hero__slide[hidden] { display: none; }
+
+.b-hero__media { position: absolute; inset: 0; overflow: hidden; }
+.b-hero__media picture, .b-hero__media img { width: 100%; height: 100%; object-fit: cover; }
+
+/* The scrim is what makes a headline readable over an unknown photograph:
+   near-opaque where the text sits, clearing towards the far edge so the
+   image is still visible. */
+.b-hero__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    rgba(15, 27, 45, .95) 0%,
+    rgba(15, 27, 45, .84) 42%,
+    rgba(15, 27, 45, .38) 100%);
+}
+
+/* A faint diagonal weave, from the approved screen. Structure, not
+   decoration: it ties the band to the region map motif used elsewhere. */
+.b-hero__weave {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(58deg,
+    rgba(26, 140, 90, .09) 0 2px,
+    transparent 2px 24px);
+}
+
+.b-hero__inner {
+  position: relative;
+  width: 100%;
+  max-width: var(--w-page);
+  margin: 0 auto;
+  padding: var(--s-9) var(--page-x) var(--s-8);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: var(--s-7);
+  align-items: center;
+  min-width: 0;
+}
+
+.b-hero__copy { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+
+.b-hero__eyebrow { font-size: var(--t-eyebrow-size); font-weight: 600; color: var(--c-green-light); margin-bottom: var(--s-4); }
+
 .b-hero__headline {
   font-family: var(--f-head);
   /* Fluid, so the longest of the three languages sets the size rather than
      English setting it and French overflowing. */
-  font-size: clamp(30px, 5vw, var(--t-display-size));
-  line-height: var(--t-display-line);
-  font-weight: var(--t-display-weight);
+  font-size: clamp(30px, 5.4vw, 58px);
+  line-height: 1.06;
+  font-weight: 600;
   letter-spacing: -.02em;
   color: var(--c-white);
   margin: 0 0 var(--s-5);
-  max-width: 20ch;
+  max-width: 22ch;
   text-wrap: balance;
 }
-.b-hero__subhead { font-size: var(--t-lead-size); line-height: var(--t-lead-line); color: var(--c-sand); max-width: 58ch; margin: 0 0 var(--s-6); }
+
+.b-hero__subhead { font-size: 19px; line-height: 1.6; color: var(--c-sand); max-width: 52ch; margin: 0 0 var(--s-6); }
 .b-hero__actions { display: flex; flex-wrap: wrap; gap: var(--s-3); }
-.b-hero__media { margin-top: var(--s-7); }
+.b-hero__aside { min-width: 0; }
+
+/* Controls. Always visible, never hover-revealed: meaning carried by hover
+   alone is meaning a touch or keyboard reader never gets. */
+.b-hero__controls {
+  position: relative;
+  z-index: 2;
+  grid-area: 1 / 1;
+  align-self: end;
+  justify-self: start;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+  margin: 0 0 var(--s-5) var(--page-x);
+}
+
+.b-hero__arrow {
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: 1.5px solid var(--c-navy-edge);
+  border-radius: var(--r-sm);
+  color: var(--c-cream);
+  cursor: pointer;
+}
+.b-hero__arrow:hover { background: var(--c-navy-mid); color: var(--c-white); }
+
+.b-hero__dots { display: flex; gap: var(--s-1); align-items: center; }
+.b-hero__dot {
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  background: transparent; border: 0; cursor: pointer;
+  padding: 0;
+}
+/* The 44px target is the button; the mark inside it is small. */
+.b-hero__dot::before {
+  content: "";
+  width: 10px; height: 10px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--c-cream);
+}
+.b-hero__dot[aria-selected="true"]::before { background: var(--c-cream); }
+
+.b-hero__pause {
+  min-height: 44px;
+  padding: 0 var(--s-4);
+  background: transparent;
+  border: 1.5px solid var(--c-navy-edge);
+  border-radius: var(--r-sm);
+  color: var(--c-cream);
+  font-family: var(--f-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.b-hero__pause:hover { background: var(--c-navy-mid); color: var(--c-white); }
+
+/* Under a reduced-motion preference the hero does not rotate at all and the
+   controls have nothing to control, so they are removed rather than left
+   inert. The first slide stands alone. */
+@media (prefers-reduced-motion: reduce) {
+  .b-hero__controls { display: none; }
+}
 
 /* Key figures ---------------------------------------------------------- */
 /* Counters, no scroll animation. Figures are tabular so they align. */
@@ -275,9 +411,6 @@
 .c-img { display: block; width: 100%; height: auto; }
 .c-img--cover { height: 100%; object-fit: cover; }
 
-.b-hero__figure { margin: var(--s-7) 0 0; border-radius: var(--r-lg); overflow: hidden; }
-.b-hero__figure img { aspect-ratio: 21 / 9; object-fit: cover; }
-.b-hero__caption { font-size: 13px; line-height: 1.5; color: var(--c-sand); margin-top: var(--s-2); }
 
 /* Forms ---------------------------------------------------------------- */
 /* Every field has a real label. The placeholder is never the label. */

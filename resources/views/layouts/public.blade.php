@@ -51,6 +51,7 @@
     @include('partials.site-footer')
 
     <script src="{{ asset('js/chrome.js') }}" defer></script>
+    <script src="{{ asset('js/hero.js') }}" defer></script>
     @stack('scripts')
 </body>
 </html>

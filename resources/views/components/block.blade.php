@@ -9,5 +9,5 @@
 @endphp
 
 @if (view()->exists($view))
-    @include($view, ['block' => $block])
+    @include($view, ['block' => $block] + \App\Support\BlockData::for($block))
 @endif

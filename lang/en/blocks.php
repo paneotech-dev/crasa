@@ -14,6 +14,15 @@ return [
     'comparison_caption' => 'Indicator values by member state',
     'committee_count' => '{1} Sits on one committee|[2,*] Sits on :count committees',
 
+    'hero_carousel' => 'Featured',
+    'hero_slide' => 'slide',
+    'hero_slide_of' => 'Slide :index of :total',
+    'hero_previous' => 'Previous slide',
+    'hero_next' => 'Next slide',
+    'hero_choose' => 'Choose a slide',
+    'hero_pause' => 'Pause',
+    'hero_play' => 'Play',
+
     'hero_empty_title' => 'Nothing set for this banner yet',
     'hero_empty_body' => 'Add a headline and a standfirst, and choose where the primary action goes.',
     'hero_slot_note' => 'No banner photograph has been supplied. The typographic treatment holds until one arrives.',

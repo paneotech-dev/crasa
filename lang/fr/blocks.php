@@ -9,6 +9,15 @@ return [
     'comparison_caption' => 'Valeurs des indicateurs par État membre',
     'committee_count' => '{1} Siège dans un comité|[2,*] Siège dans :count comités',
 
+    'hero_carousel' => 'À la une',
+    'hero_slide' => 'diapositive',
+    'hero_slide_of' => 'Diapositive :index sur :total',
+    'hero_previous' => 'Diapositive précédente',
+    'hero_next' => 'Diapositive suivante',
+    'hero_choose' => 'Choisir une diapositive',
+    'hero_pause' => 'Pause',
+    'hero_play' => 'Lecture',
+
     'hero_empty_title' => "Rien n'est encore défini pour cette bannière",
     'hero_empty_body' => "Ajoutez un titre et un chapeau, puis indiquez la destination de l'action principale.",
     'hero_slot_note' => "Aucune photographie de bannière n'a été fournie. Le traitement typographique tient jusqu'à son arrivée.",

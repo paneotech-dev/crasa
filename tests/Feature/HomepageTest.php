@@ -3,9 +3,13 @@
 namespace Tests\Feature;
 
 use App\Enums\BlockType;
+use App\Models\NewsItem;
 use App\Models\Page;
+use App\Models\Publication;
 use App\Support\ImageLibrary;
 use App\Support\Locales;
+use Database\Seeders\NewsroomSeeder;
+use Database\Seeders\PublicationSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Tests\Concerns\SeedsComposedPages;
@@ -170,13 +174,51 @@ class HomepageTest extends TestCase
 
     /* Empty states --------------------------------------------------------- */
 
-    public function test_blocks_with_no_source_data_yet_show_their_empty_state(): void
+    /**
+     * An empty state is correct when there is no data and a bug when there
+     * is. The blocks were written with their empty states first and never
+     * given a source, so a fully seeded database still rendered "No
+     * publications match this filter" three times down the homepage.
+     */
+    public function test_a_seeded_database_never_renders_an_empty_publications_or_news_block(): void
+    {
+        $this->seed(PublicationSeeder::class);
+        $this->seed(NewsroomSeeder::class);
+
+        $this->assertGreaterThan(0, Publication::listed()->count());
+        $this->assertGreaterThan(0, NewsItem::published()->count());
+
+        $html = $this->get('/en')->getContent();
+
+        $this->assertStringNotContainsString('No publications match this filter', $html);
+        $this->assertStringNotContainsString('No updates yet', $html);
+    }
+
+    public function test_the_seeded_blocks_render_real_records(): void
+    {
+        $this->seed(PublicationSeeder::class);
+        $this->seed(NewsroomSeeder::class);
+
+        $html = $this->get('/en')->getContent();
+
+        $newest = Publication::listed()->orderByDesc('published_on')->first();
+        $this->assertStringContainsString($newest->translated('title', $newest->slug), $html);
+
+        $latest = NewsItem::published()->orderByDesc('published_at')->first();
+        $this->assertStringContainsString($latest->translated('title', $latest->slug), $html);
+    }
+
+    /**
+     * The converse still has to hold: with nothing seeded, the empty state
+     * is the right answer and must still appear.
+     */
+    public function test_an_unseeded_block_still_shows_its_empty_state(): void
     {
         $html = $this->get('/en')->getContent();
 
-        // Publications, news and indicators arrive in later stages.
         $this->assertStringContainsString('No publications match this filter', $html);
         $this->assertStringContainsString('No updates yet', $html);
+        // Indicators arrive with the completeness dashboard.
         $this->assertStringContainsString('Nothing selected yet', $html);
     }
 

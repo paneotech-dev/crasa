@@ -9,6 +9,15 @@ return [
     'comparison_caption' => 'Valores dos indicadores por Estado membro',
     'committee_count' => '{1} Integra um comité|[2,*] Integra :count comités',
 
+    'hero_carousel' => 'Em destaque',
+    'hero_slide' => 'diapositivo',
+    'hero_slide_of' => 'Diapositivo :index de :total',
+    'hero_previous' => 'Diapositivo anterior',
+    'hero_next' => 'Diapositivo seguinte',
+    'hero_choose' => 'Escolher um diapositivo',
+    'hero_pause' => 'Pausa',
+    'hero_play' => 'Reproduzir',
+
     'hero_empty_title' => 'Ainda não há nada definido para este destaque',
     'hero_empty_body' => 'Adicione um título e um subtítulo, e indique o destino da ação principal.',
     'hero_slot_note' => 'Não foi fornecida fotografia para o destaque. O tratamento tipográfico mantém-se até à sua chegada.',
