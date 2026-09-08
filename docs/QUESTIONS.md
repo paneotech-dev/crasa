@@ -62,10 +62,65 @@ uniform.
 
 ---
 
-## 4. Indicator taxonomy: what could not be sourced
+## 4. Indicator taxonomy: two categories could not be sourced
 
-See stage D notes below. Every seeded indicator carries a `source_standard`
-citing a published definition. Anything without one was left out rather than
-guessed, and is listed there.
+**Question:** where do the spectrum and interconnection indicator definitions
+come from?
+
+DATA_MODEL section 4 names six categories. Fourteen indicators were sourced
+and seeded, covering four of them: licensing, market, quality and universal
+access. **Spectrum and interconnection have none.**
+
+ITU's Core List and the UPU technical notes, both fetched and read for this
+build, define subscriptions, coverage, bandwidth, postal traffic, offices,
+staff and quality of service. Neither publishes a definition for spectrum
+assignment or for interconnection and termination rates at the level a
+regulator would report against. Those are regionally specific, and the most
+likely source is the SADC guidelines rather than ITU or UPU.
+
+**Recommendation:** ask the Secretariat for the SADC guideline references for
+spectrum and interconnection before Lilongwe. If none exists, those two
+categories are a workshop agenda item rather than a reporting gap: the
+regulators define them together.
+
+**Done in the meantime:** both categories are seeded empty and a test pins
+them empty, so nobody fills them by invention later. Twenty sourced beats
+forty with a dozen invented.
+
+---
+
+## 5. Stage F, search, was not reached
+
+**Question:** none, reporting a stage not done.
+
+The night went to the homepage fix, the design pass, the contrast rulings,
+stage H and stage G. Search is the one numbered stage untouched.
+
+**Recommendation:** it is the next thing. The decision is already made and
+recorded — Scout on MariaDB FULLTEXT behind a driver interface — and the
+facet and result patterns it must reuse already exist in the publications
+library. The one thing to hold onto from the brief: the country scope must
+apply to search results exactly as it does everywhere else, and that needs
+its own explicit test, because search is the classic hole in an otherwise
+sound authorisation layer.
+
+**Done in the meantime:** nothing. Flagged rather than half-built.
+
+---
+
+## 6. Tracked caps in the hero conflict with your own carve-out
+
+**Question:** does the hero eyebrow keep its tracked caps?
+
+Screen 02 sets the hero eyebrow in tracked uppercase. Your ruling says the
+footer column headings are the only exception, and names section eyebrows
+explicitly as not exempt.
+
+**Recommendation:** the ruling should win, as it did for contrast. It is
+later than the screen and it is unambiguous.
+
+**Done in the meantime:** the hero renders no eyebrow at all rather than
+choosing between them. The headline carries the slide, which is what the
+approved copy does anyway.
 
 ---

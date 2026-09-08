@@ -309,9 +309,6 @@
 .b-row__actions { flex: none; display: flex; gap: var(--s-2); align-items: center; }
 
 /* Member grid ---------------------------------------------------------- */
-/* Column width follows the content: a member with four committees needs more
-   room than one with a single committee, so tracks are auto-fit and cards
-   size to their own text. */
 
 /* Ruling 2. auto-fit with equal fractions gives every card the same width
    whatever it holds, which is a formula rather than a layout. auto-fill on a
