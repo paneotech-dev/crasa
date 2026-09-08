@@ -20,6 +20,46 @@ Nothing in this file appears on the rendered site.
 
 ---
 
+## Disclosed deviations from the specifications
+
+These three depart from the written specifications and go to the client in
+writing. Each is a hosting or platform reality, not a preference.
+
+| # | Specification says | Built as | Why |
+|---|---|---|---|
+| 1 | Laravel 11 | **Laravel 13.30.1** | The base install predates this build. Laravel 11 is out of active support; downgrading a working install to an older major would add risk and no benefit. |
+| 2 | MySQL 8.0 | **MariaDB 10.11** | The server runs MariaDB. All tables are InnoDB, utf8mb4_unicode_ci. Behaviour differences that matter to this build are limited to the SET column type, addressed in DATA_MODEL section 2. |
+| 3 | ElasticSearch | **Laravel Scout on MariaDB InnoDB FULLTEXT**, behind a driver interface | Resolved 2026-09-08. See below. |
+
+### 3. Search driver — resolved 2026-09-08
+
+**Decision: Laravel Scout on MariaDB InnoDB FULLTEXT, built behind a driver
+interface.**
+
+ElasticSearch is not installable on this host, not merely absent. The check
+on 2026-09-08 found ports 9200, 9300, 7700 and 8108 closed, no ElasticSearch,
+OpenSearch, Meilisearch or Solr process or binary, and **no Java runtime**.
+Both ElasticSearch and OpenSearch require a JVM, so neither can run here even
+with root access. This is shared cPanel hosting; a JVM is not something to add
+to it.
+
+MariaDB InnoDB `FULLTEXT` was tested on the live database and works in both
+natural language and boolean modes. `laravel/scout` installs from packagist.
+
+The accepted trade-off is reduced faceting: faceted counts across country,
+sector, type and year are more expensive in SQL than in an inverted index, and
+predictive suggestions are simpler. The contracted search behaviour is
+deliverable; the query cost is higher.
+
+The implementation sits behind a driver interface, so moving to a managed
+ElasticSearch or OpenSearch service over HTTP later is a configuration change
+and a new driver class, not a rewrite. That option stays open if the client
+wants to fund a managed service.
+
+Search itself is not built yet. It is Task 6.
+
+---
+
 ## Deferred to a later phase
 
 **Selenium four-width regression suite — D3 testing phase, infrastructure TBD.**
@@ -50,11 +90,13 @@ Checked 2026-09-08 on the live host.
 | Live PDF page 1 to PNG round trip | **succeeds**, 150 dpi, verified |
 
 Poppler (`pdftoppm`, `pdftocairo`), MuPDF and qpdf are all absent, but
-Imagick with the Ghostscript delegate covers the requirement. The
-instruments task can generate thumbnails directly; the stub-and-report path
-in its brief is not needed.
+Imagick with the Ghostscript delegate covers the requirement.
 
-### Search — ElasticSearch not available, decision required
+**The stub-and-report path in the instruments task is cancelled, confirmed
+2026-09-08.** Thumbnail generation is built properly against Imagick when
+that task is reached.
+
+### Search — ElasticSearch not installable, driver decided
 
 | Check | Result |
 |---|---|
@@ -66,11 +108,9 @@ in its brief is not needed.
 | `laravel/scout` installable from packagist | yes |
 
 No JVM means ElasticSearch and OpenSearch cannot be installed on this host
-even with root. The realistic options are a managed ElasticSearch or
-OpenSearch service reached over HTTP, or Laravel Scout on a MariaDB
-full-text driver accepting reduced faceting. This is a decision for the
-search task; either way the implementation sits behind a driver interface so
-swapping is a config change.
+even with root. **Resolved: Scout on MariaDB FULLTEXT behind a driver
+interface.** See the disclosed deviations above for the reasoning and the
+accepted trade-off.
 
 ---
 
