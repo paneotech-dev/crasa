@@ -8,7 +8,7 @@
 @php
     $heading = $block->translate('heading');
     $intro = $block->translate('intro');
-    $countries = $countries ?? \App\Models\Country::with(['authority', 'committees'])->orderBy('name')->get();
+    $countries = $countries ?? \App\Models\Country::with(['authority.sectors', 'committees'])->orderBy('name')->get();
 @endphp
 
 <section class="b">
@@ -28,14 +28,24 @@
         @else
             <ul class="b-members" role="list">
                 @foreach ($countries as $country)
-                    <li class="b-member">
+                    <li class="b-member" data-span="{{ $country->cardSpan() }}">
                         <span class="b-member__name">{{ $country->name }}</span>
                         @if ($country->authority)
                             <span class="b-member__authority">{{ $country->authority->name }}</span>
                         @endif
+                        {{-- Only when there is a real seat to report. An
+                             invented committee count reads as fabricated
+                             data, and every state showing the same number
+                             reads as fabricated data loudly. --}}
                         @if ($country->committees->isNotEmpty())
                             <span class="b-member__committees">
                                 {{ trans_choice('blocks.committee_count', $country->committees->count(), ['count' => $country->committees->count()]) }}
+                            </span>
+                        @endif
+
+                        @if ($country->authority?->sectors->isNotEmpty())
+                            <span class="b-member__sectors">
+                                {{ $country->authority->sectors->pluck('name')->implode(', ') }}
                             </span>
                         @endif
                     </li>

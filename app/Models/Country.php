@@ -59,6 +59,30 @@ class Country extends Model
     }
 
     /**
+     * How much room this member state's card needs.
+     *
+     * Ruling 2: an authority sitting on three sector mandates with a
+     * fifty-character name does not belong in the same column width as ICTA
+     * with one. Returns 1 or 2 grid columns, decided from the content that
+     * actually exists rather than from a formula applied to every card.
+     */
+    public function cardSpan(): int
+    {
+        $authority = $this->relationLoaded('authority') ? $this->authority : null;
+
+        if ($authority === null) {
+            return 1;
+        }
+
+        $nameLength = mb_strlen($authority->name);
+        $sectorCount = $authority->relationLoaded('sectors') ? $authority->sectors->count() : 0;
+
+        // A long name needs the width to avoid four-word wrapping; three
+        // mandates need the width to keep the list on one or two lines.
+        return ($nameLength >= 42 || $sectorCount >= 3) ? 2 : 1;
+    }
+
+    /**
      * The platform locales this member state is served in.
      *
      * @return list<string>

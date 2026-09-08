@@ -9,6 +9,7 @@ use App\Models\Sector;
 use App\Support\Locales;
 use Database\Seeders\ReferenceDataSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 /**
@@ -164,24 +165,53 @@ class ReferenceDataTest extends TestCase
         $this->assertFalse(Committee::where('slug', 'postal-and-logistics')->sole()->isCrossSector());
     }
 
-    public function test_committee_membership_is_recorded_with_a_role_and_the_sample_flag(): void
+    /**
+     * No committee membership is seeded at all.
+     *
+     * An earlier version attached all fourteen states to all six committees,
+     * which rendered as "Sits on 6 committees" fourteen times identically.
+     * On a platform cited in ministerial briefs, fabricated uniformity is
+     * worse than an acknowledged blank. The register comes from the
+     * Secretariat.
+     */
+    public function test_no_committee_membership_is_invented(): void
     {
         $this->seed_reference_data();
 
-        $committee = Committee::with('countries')->where('slug', 'economics')->sole();
+        $this->assertSame(0, DB::table('committee_country')->count());
 
-        $this->assertSame(14, $committee->countries->count());
-
-        $member = $committee->countries->first();
-        $this->assertSame('member', $member->pivot->role);
-        $this->assertTrue((bool) $member->pivot->is_sample);
+        foreach (Committee::with('countries')->get() as $committee) {
+            $this->assertCount(0, $committee->countries, $committee->slug.' has invented members.');
+        }
     }
 
-    public function test_a_country_reaches_its_committees(): void
+    /**
+     * The pivot still works. What is refused is inventing its contents, not
+     * the mechanism, so real membership drops straight in when it arrives.
+     */
+    public function test_membership_records_a_role_and_the_sample_flag_when_it_is_supplied(): void
     {
         $this->seed_reference_data();
 
-        $this->assertSame(6, Country::where('iso_code', 'zm')->sole()->committees()->count());
+        $committee = Committee::where('slug', 'economics')->sole();
+        $namibia = Country::where('iso_code', 'na')->sole();
+
+        $committee->countries()->attach($namibia, ['role' => 'chair', 'is_sample' => true]);
+
+        $seat = $committee->fresh()->countries->sole();
+        $this->assertSame('chair', $seat->pivot->role);
+        $this->assertTrue((bool) $seat->pivot->is_sample);
+    }
+
+    public function test_a_country_reaches_its_committees_once_it_has_any(): void
+    {
+        $this->seed_reference_data();
+
+        $zambia = Country::where('iso_code', 'zm')->sole();
+        $this->assertSame(0, $zambia->committees()->count());
+
+        $zambia->committees()->attach(Committee::first(), ['role' => 'member']);
+        $this->assertSame(1, $zambia->fresh()->committees()->count());
     }
 
     public function test_seeding_twice_does_not_duplicate_reference_data(): void
@@ -193,18 +223,22 @@ class ReferenceDataTest extends TestCase
         $this->assertSame(3, Sector::count());
         $this->assertSame(14, Authority::count());
         $this->assertSame(6, Committee::count());
-        $this->assertSame(14 * 6, \DB::table('committee_country')->count());
+        $this->assertSame(0, DB::table('committee_country')->count());
     }
 
     public function test_deleting_a_country_removes_its_authority_and_committee_seats(): void
     {
         $this->seed_reference_data();
 
-        Country::where('iso_code', 'zm')->sole()->delete();
+        $zambia = Country::where('iso_code', 'zm')->sole();
+        $zambia->committees()->attach(Committee::first(), ['role' => 'member']);
+        $this->assertSame(1, DB::table('committee_country')->count());
+
+        $zambia->delete();
 
         $this->assertSame(13, Country::count());
         $this->assertSame(13, Authority::count());
-        $this->assertSame(13 * 6, \DB::table('committee_country')->count());
+        $this->assertSame(0, DB::table('committee_country')->count());
     }
 
     public function test_a_country_may_restructure_its_regulator_and_the_old_one_survives(): void

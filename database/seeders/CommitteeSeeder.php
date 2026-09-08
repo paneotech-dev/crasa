@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Committee;
-use App\Models\Country;
 use App\Models\Sector;
 use Illuminate\Database\Seeder;
 
@@ -19,12 +18,18 @@ use Illuminate\Database\Seeder;
  * Affairs and Protection, and Postal and Logistics. The names are therefore
  * client-supplied rather than invented.
  *
- * The mandates, chairs and membership are not. They are written here to
- * exercise the relationships and give the committee screens something to
- * render. No chair is assigned, because assigning one would assert something
- * about a named regulator that this build cannot support. Every member state
- * is attached to every committee as a plain member, which is a placeholder
- * shape, not a claim about who actually sits where.
+ * The mandates, chairs and membership are not, so none of them is seeded.
+ *
+ * An earlier version attached every one of the fourteen member states to
+ * every one of the six committees. That rendered as "Sits on 6 committees"
+ * fourteen times identically, which reads as fabricated data, and on a
+ * platform that will be cited in ministerial briefs fabricated uniformity is
+ * worse than an acknowledged blank. It also gave the member grid nothing
+ * real to vary against.
+ *
+ * No membership is seeded at all now. The committee register comes from the
+ * Secretariat; until it does, the member card says nothing about committees
+ * rather than something untrue.
  *
  * Broadcasting has no committee here. That is not an omission: no
  * broadcasting committee appears in any approved screen, and the nullable
@@ -75,7 +80,6 @@ class CommitteeSeeder extends Seeder
     public function run(): void
     {
         $sectors = Sector::pluck('id', 'slug');
-        $countryIds = Country::pluck('id');
 
         foreach (self::COMMITTEES as $details) {
             $committee = Committee::updateOrCreate(
@@ -90,11 +94,10 @@ class CommitteeSeeder extends Seeder
                 ]
             );
 
-            $committee->countries()->sync(
-                $countryIds->mapWithKeys(fn (int $id) => [
-                    $id => ['role' => 'member', 'is_sample' => true],
-                ])->all()
-            );
+            // Deliberately empty. See the note above: inventing which member
+            // states sit on which committee is the one thing this seeder
+            // must not do.
+            $committee->countries()->sync([]);
         }
     }
 }

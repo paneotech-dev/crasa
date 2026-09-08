@@ -3,9 +3,13 @@
 namespace Tests\Feature;
 
 use App\Enums\BlockType;
+use App\Models\Country;
 use App\Models\Page;
 use App\Models\PageBlock;
 use App\Support\Locales;
+use Database\Seeders\AuthoritySeeder;
+use Database\Seeders\CountrySeeder;
+use Database\Seeders\SectorSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\View;
 use Illuminate\Validation\ValidationException;
@@ -323,6 +327,49 @@ class BlockLibraryTest extends TestCase
                 $selector.' stretches its cards to a common height.'
             );
         }
+    }
+
+    /**
+     * Ruling 2. A grid of equal fractions gives every card the same width
+     * whatever it holds. Where content genuinely varies, the layout has to
+     * respond to it.
+     */
+    public function test_the_member_grid_gives_more_room_to_cards_that_earn_it(): void
+    {
+        $this->seed(CountrySeeder::class);
+        $this->seed(SectorSeeder::class);
+        $this->seed(AuthoritySeeder::class);
+
+        $spans = Country::with('authority.sectors')->get()
+            ->map(fn ($country) => $country->cardSpan());
+
+        $this->assertGreaterThan(1, $spans->unique()->count(), 'Every member card claims the same width.');
+        $this->assertContains(1, $spans->all());
+        $this->assertContains(2, $spans->all());
+    }
+
+    public function test_the_member_grid_uses_auto_fill_so_a_span_is_possible(): void
+    {
+        $css = file_get_contents(public_path('css/blocks.css'));
+        $rule = substr($css, strpos($css, '.b-members {'));
+        $rule = substr($rule, 0, strpos($rule, '}'));
+
+        // auto-fit collapses empty tracks, which makes a span meaningless.
+        $this->assertStringContainsString('auto-fill', $rule);
+        $this->assertStringNotContainsString('auto-fit', $rule);
+    }
+
+    /**
+     * The figure accent was --c-green on all four identically. An accent that
+     * draws no distinction is decoration, which CLAUDE.md forbids.
+     */
+    public function test_the_key_figures_carry_no_decorative_accent(): void
+    {
+        $css = file_get_contents(public_path('css/blocks.css'));
+        $rule = substr($css, strpos($css, '.b-figure {'));
+        $rule = substr($rule, 0, strpos($rule, '}'));
+
+        $this->assertStringNotContainsString('--c-green', $rule);
     }
 
     public function test_no_block_carries_a_scroll_entrance_animation(): void

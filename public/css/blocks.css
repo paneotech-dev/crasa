@@ -95,7 +95,11 @@
   gap: var(--s-5);
   align-items: start;
 }
-.b-figure { border-top: 3px solid var(--c-green); padding-top: var(--s-4); min-width: 0; }
+/* The border here was 3px of --c-green on every figure identically, which
+   encoded nothing: four figures, one colour, no distinction drawn. Ruling 2
+   says it either means something or it goes. It goes, replaced by a hairline
+   that groups the figures as a set without pretending to classify them. */
+.b-figure { border-top: 1px solid var(--c-sand); padding-top: var(--s-4); min-width: 0; }
 .b-figure__value {
   font-family: var(--f-head);
   font-size: clamp(30px, 4vw, 44px);
@@ -173,11 +177,22 @@
    room than one with a single committee, so tracks are auto-fit and cards
    size to their own text. */
 
+/* Ruling 2. auto-fit with equal fractions gives every card the same width
+   whatever it holds, which is a formula rather than a layout. auto-fill on a
+   narrower track lets a card claim two columns when its content earns them:
+   a long authority name, or three sector mandates rather than one.
+
+   The span only applies once there is room for two tracks. Below that every
+   card is full width and the attribute is ignored. */
 .b-members {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
   gap: var(--s-4);
   align-items: start;
+}
+
+@media (min-width: 560px) {
+  .b-member[data-span="2"] { grid-column: span 2; }
 }
 .b-member {
   min-width: 0;
@@ -192,6 +207,7 @@
 .b-member__name { font-family: var(--f-head); font-size: 17px; font-weight: 600; color: var(--c-navy); }
 .b-member__authority { font-size: 13.5px; line-height: 1.5; color: var(--c-charcoal); }
 .b-member__committees { font-size: 13px; line-height: 1.55; color: var(--c-slate); }
+.b-member__sectors { font-size: 13px; line-height: 1.55; color: var(--c-slate); }
 
 /* Call to action ------------------------------------------------------- */
 /* Tone from the defined palette only. Three tones, no arbitrary colour. */
