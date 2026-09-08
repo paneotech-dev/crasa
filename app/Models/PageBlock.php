@@ -18,7 +18,10 @@ class PageBlock extends Model
     /** @use HasFactory<PageBlockFactory> */
     use Auditable, HasFactory, HasTranslations, MarksSampleData;
 
-    protected $fillable = ['page_id', 'block_type', 'position', 'is_visible', 'settings', 'is_sample'];
+    protected $fillable = [
+        'page_id', 'block_type', 'position', 'is_visible', 'settings',
+        'is_sample', 'needs_content', 'content_note',
+    ];
 
     protected function casts(): array
     {
@@ -27,6 +30,7 @@ class PageBlock extends Model
             'settings' => 'array',
             'is_visible' => 'boolean',
             'is_sample' => 'boolean',
+            'needs_content' => 'boolean',
         ];
     }
 

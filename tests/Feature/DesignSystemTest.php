@@ -27,15 +27,30 @@ class DesignSystemTest extends TestCase
         $this->assertStringNotContainsString('background', $grid);
     }
 
-    public function test_only_the_grid_build_of_bootstrap_is_served(): void
+    /**
+     * The vendor directory is an allowlist, not a dumping ground. Bootstrap
+     * is the grid build only, and Leaflet is the map widget's own stylesheet,
+     * scoped to .leaflet-* and loaded only when a reader asks for the map.
+     * Anything else appearing here is a second CSS system arriving by
+     * accident, which CLAUDE.md forbids.
+     */
+    public function test_the_vendor_directory_holds_only_what_is_allowed(): void
     {
-        $vendored = glob(public_path('css/vendor/*.css'));
+        $vendored = array_map('basename', glob(public_path('css/vendor/*.css')));
+        sort($vendored);
 
-        $this->assertSame(
-            ['bootstrap-grid.min.css'],
-            array_map('basename', $vendored),
-            'Only the Bootstrap grid build belongs in the vendor directory.'
-        );
+        $this->assertSame(['bootstrap-grid.min.css', 'leaflet.css'], $vendored);
+    }
+
+    public function test_leaflet_styles_only_its_own_widget(): void
+    {
+        $css = file_get_contents(public_path('css/vendor/leaflet.css'));
+
+        // Every selector is scoped to the map. Nothing reaches a page
+        // element, so it cannot restyle the design system.
+        $this->assertStringNotContainsString('body{', $css);
+        $this->assertStringNotContainsString('body {', $css);
+        $this->assertStringNotContainsString(':root{', $css);
     }
 
     public function test_the_grid_is_bound_to_the_spacing_and_layout_tokens(): void

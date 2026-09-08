@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\LocaleRedirectController;
 use App\Http\Controllers\PageController;
@@ -37,6 +38,26 @@ Route::prefix('{locale}')
             'This account is suspended. Contact the CRASA Secretariat to restore access.',
             403
         ))->name('account.suspended');
+
+        /*
+         * Composed public pages: About, Committees, Membership. Each is a
+         * page record with blocks, so the Secretariat edits them from the
+         * back office rather than through a deploy.
+         */
+        Route::get('about', [PageController::class, 'show'])->defaults('slug', 'about')->name('about');
+        Route::get('committees', [PageController::class, 'show'])->defaults('slug', 'committees')->name('committees');
+        Route::get('members', [PageController::class, 'show'])->defaults('slug', 'members')->name('members');
+
+        /*
+         * Contact. The rate limit is per IP and deliberately loose: six an
+         * hour stops a script without stopping a regulator who sends two
+         * enquiries in a morning. No CAPTCHA, which WCAG 2.1 AA and
+         * CLAUDE.md both point away from.
+         */
+        Route::get('contact', [ContactController::class, 'show'])->name('contact');
+        Route::post('contact', [ContactController::class, 'store'])
+            ->middleware('throttle:enquiries')
+            ->name('contact.store');
 
         /*
          * Documents are never served from the filesystem. Every file goes

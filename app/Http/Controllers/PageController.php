@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Page;
+use Illuminate\Http\Request;
 
 /**
  * Renders a composed page from its block records.
@@ -17,9 +18,9 @@ class PageController extends Controller
         return $this->render('home');
     }
 
-    public function show(string $slug)
+    public function show(Request $request)
     {
-        return $this->render($slug);
+        return $this->render($request->route()->defaults['slug']);
     }
 
     private function render(string $slug)

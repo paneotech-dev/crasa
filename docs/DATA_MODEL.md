@@ -304,6 +304,33 @@ Read-only mirror of the Event Management Platform — WS-07. The website display
 
 **Do not build event creation or management here.** That is reserved scope.
 
+### enquiries
+
+Contact form submissions. WS-10. Added 2026-09-08: the contact form is
+contracted but this table was never specified.
+
+| Column | Type | Notes |
+|---|---|---|
+| name | varchar(160) | |
+| email | varchar(160) | |
+| organisation | varchar(200) | nullable |
+| country_id | bigint FK | nullable |
+| subject | varchar(200) | |
+| message | text | |
+| locale | char(2) | the language the sender wrote in |
+| ip_address | varchar(45) | |
+| delivered_at | timestamp | nullable — when the Secretariat notification was queued |
+| handled_at | timestamp | nullable |
+
+The submission is stored before the notification is queued, so a mail
+failure delays the notification rather than losing the enquiry.
+`Enquiry::undelivered()` finds anything stored but never notified, which is
+what to check after a mail outage.
+
+No CAPTCHA. A honeypot and a per-IP rate limit do the same job; a puzzle a
+screen reader user cannot solve fails WCAG 2.1 AA and excludes the people
+most likely to need to make contact.
+
 ### delegate_registrations
 
 Screen 18, renamed. A form, not a logistics system.

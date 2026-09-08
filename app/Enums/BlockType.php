@@ -73,6 +73,24 @@ enum BlockType: string
     }
 
     /**
+     * The field this block type renders as its body copy.
+     *
+     * Used by the placeholder flag: writing "awaiting content" into a field
+     * the block does not render leaves the flag invisible on the page, which
+     * is the exact failure the flag exists to prevent.
+     */
+    public function bodyField(): ?string
+    {
+        return match ($this) {
+            self::RichText, self::CallToAction => 'body',
+            self::Hero => 'subhead',
+            self::Pillars, self::FeaturedPublications,
+            self::FeaturedComparison, self::MemberGrid => 'intro',
+            default => null,
+        };
+    }
+
+    /**
      * Server-side validation for the settings JSON. An editor cannot give a
      * pillars block five columns, whatever the request body says.
      *
