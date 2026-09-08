@@ -712,3 +712,15 @@
   text-wrap: balance;
   max-width: 14ch;
 }
+
+/* Completeness matrix -------------------------------------------------- */
+/* The gaps are the point, so a gap is the loudest thing in the grid. */
+
+.c-completeness__cell, .c-completeness__total { text-align: right; white-space: nowrap; }
+.c-completeness__cell[data-state="complete"], .c-completeness__total[data-state="complete"] { background: var(--c-green-light); color: var(--c-green-dark); }
+.c-completeness__cell[data-state="partial"], .c-completeness__total[data-state="partial"] { background: var(--c-amber-light); color: var(--c-amber-dark); }
+/* Empty reads as a gap rather than as a zero: a zero is a figure. */
+.c-completeness__cell[data-state="empty"], .c-completeness__total[data-state="empty"] { background: var(--c-red-light); }
+.c-completeness__gap { font-size: 12.5px; color: var(--c-red-dark); font-style: normal; }
+.c-completeness__total { font-weight: 700; }
+.c-source { font-size: 12.5px; line-height: 1.5; color: var(--c-slate); margin: var(--s-2) 0 0; }

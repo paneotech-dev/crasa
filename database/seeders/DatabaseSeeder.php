@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
             PublicPagesSeeder::class,
             NewsroomSeeder::class,
             PublicationSeeder::class,
+            IndicatorSeeder::class,
+            IndicatorValueSeeder::class,
         ]);
     }
 }

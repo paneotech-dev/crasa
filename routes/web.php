@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\Auth\TwoFactorEnrolmentController;
+use App\Http\Controllers\CompletenessController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\LocaleRedirectController;
@@ -111,6 +112,13 @@ Route::prefix('{locale}')
         Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
 
         Route::middleware('auth')->group(function () {
+            /*
+             * The completeness matrix. BUILD_SPEC 6.1: visible to the
+             * Secretariat and to members, which is any signed-in account
+             * that can read published indicators.
+             */
+            Route::get('completeness', [CompletenessController::class, 'index'])->name('completeness');
+
             Route::get('account', [AccountController::class, 'show'])->name('account');
             Route::put('account', [AccountController::class, 'update'])->name('account.update');
             Route::put('account/password', [AccountController::class, 'updatePassword'])->name('account.password');
