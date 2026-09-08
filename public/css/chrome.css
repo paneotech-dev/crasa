@@ -273,32 +273,8 @@
 .c-footer__links a { color: var(--c-sand); text-decoration: none; }
 .c-footer__links a:hover { color: var(--c-white); text-decoration: underline; }
 
-.c-footer__partners {
-  margin-top: var(--s-7);
-  padding-top: var(--s-5);
-  border-top: 1px solid var(--c-navy-line);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s-5);
-  align-items: center;
-  justify-content: space-between;
-}
-.c-footer__emblems { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: center; }
-/* Dashed until the supplied emblem files replace them. Marked as placeholders
-   rather than approximated with look-alike marks. */
-.c-footer__emblem {
-  border: 1px dashed var(--c-navy-soft);
-  border-radius: var(--r-sm);
-  padding: 9px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: .06em;
-  color: var(--c-cream);
-}
-.c-footer__donor { margin: 0; font-size: 13.5px; line-height: 1.6; max-width: 56ch; color: var(--c-sand); }
-
 .c-footer__legal {
-  margin-top: var(--s-5);
+  margin-top: var(--s-7);
   padding-top: var(--s-4);
   border-top: 1px solid var(--c-navy-line);
   display: flex;

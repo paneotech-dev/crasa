@@ -108,6 +108,8 @@ The copy is where generated pages give themselves away fastest, and it is the pa
 
 - **Sentence case everywhere.** No title case headings, no ALL CAPS labels.
 - **One carve-out for caps: footer column headings.** The four link-group headings in the site footer are set in tracked caps, 12px, weight 700, `letter-spacing: .1em`, as drawn in screen 02. Nothing else on any surface takes this treatment — not section eyebrows, not table headers, not card labels, not navigation. If you find yourself reaching for tracked caps anywhere but the footer, the answer is sentence case.
+- **The rendered site carries only content CRASA would publish.** Project, contract and programme information stays in `docs/`. No contract number, deliverable reference, work-stream code, Terms of Reference, milestone date, supplier name or focal point ever appears in a Blade template, a lang file, a page title, a meta description, alt text or an aria-label. The reader is a regulator or a member of the public, not a programme officer.
+- **Partner and funder attribution is supplied by the client.** Never draft it, never guess it, never approximate a logo or a funding statement. The EU emblem in particular has binding rules on proportion, clear space and accompanying wording, and a wrong one on a donor-funded platform is raised formally. Leave the space empty until CRASA supplies the copy and the marks.
 - **Straight quotes in code and content fields.** Curly quotes pasted from a generator are a tell.
 - **Em dashes: at most one per page of copy.** Use full stops. Short declarative sentences are the house voice.
 - **Active voice, and buttons say what happens.** "Submit data", not "Submit". The button that says "Publish" produces a message that says "Published".

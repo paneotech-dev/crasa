@@ -30,14 +30,14 @@ class PublicChromeTest extends TestCase
         $this->get('/en')->assertSee('aria-current="page"', false);
     }
 
-    public function test_the_footer_carries_the_secretariat_address_and_donor_statement(): void
+    public function test_the_footer_carries_the_secretariat_address_and_the_legal_row(): void
     {
         $response = $this->get('/en');
 
         $response->assertSee('P.O. Box 25793, Gaborone, Botswana');
         $response->assertSee('crasa@crasa.org');
-        $response->assertSee('EGEE-ICT');
         $response->assertSee('© '.now()->year.' CRASA. All rights reserved.', false);
+        $response->assertSee('Accessibility statement');
     }
 
     public function test_every_page_opens_with_a_skip_link(): void

@@ -22,9 +22,6 @@ return [
     'newsroom' => 'Salle de presse',
     'follow_us' => 'Nous suivre',
 
-    'partners_label' => 'Partenaires et bailleurs',
-    'donor_statement' => 'Cette plateforme est développée dans le cadre du programme EGEE-ICT, financé par l\'Union européenne et mis en œuvre avec le COMESA. L\'emplacement des emblèmes et la mention de financement restent à confirmer selon les exigences de visibilité du COMESA.',
-
     'copyright' => '© :year CRASA. Tous droits réservés.',
     'legal_label' => 'Mentions légales',
     'privacy' => 'Avis de confidentialité',

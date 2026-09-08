@@ -22,9 +22,6 @@ return [
     'newsroom' => 'Newsroom',
     'follow_us' => 'Follow us',
 
-    'partners_label' => 'Partners and donors',
-    'donor_statement' => 'This platform is developed under the EGEE-ICT programme, funded by the European Union and implemented with COMESA. Emblem placement and the funding statement are to be confirmed against COMESA visibility requirements.',
-
     'copyright' => '© :year CRASA. All rights reserved.',
     'legal_label' => 'Legal',
     'privacy' => 'Privacy notice',

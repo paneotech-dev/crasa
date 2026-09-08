@@ -17,5 +17,5 @@ Route::prefix('{locale}')
     ->whereIn('locale', Locales::SUPPORTED)
     ->middleware(SetLocale::class)
     ->group(function () {
-        Route::view('/', 'pages.foundation')->name('home');
+        Route::view('/', 'pages.home')->name('home');
     });

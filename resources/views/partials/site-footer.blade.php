@@ -1,10 +1,9 @@
 {{--
-    Site footer. Contact, four link columns, partner emblem placeholders,
-    the donor statement and the legal row.
+    Site footer. Contact, four link columns and the legal row.
 
-    The emblem boxes are marked as placeholders rather than filled with
-    approximations. They are replaced when COMESA confirms the visibility
-    requirements.
+    No partner or funder attribution appears here. That copy is supplied by
+    CRASA and is never drafted or guessed. See the writing rules in
+    CLAUDE.md: the rendered site carries only content CRASA would publish.
 --}}
 @php
     $nav = fn (string $path) => \App\Support\Navigation::url($path);
@@ -67,17 +66,6 @@
                     <a href="https://www.linkedin.com/company/crasa" rel="noopener">LinkedIn</a>
                 </div>
             </nav>
-        </div>
-
-        <div class="c-footer__partners">
-            <div class="c-footer__emblems" role="list" aria-label="{{ __('footer.partners_label') }}">
-                <span class="c-footer__emblem" role="listitem">SADC</span>
-                <span class="c-footer__emblem" role="listitem">COMESA</span>
-                <span class="c-footer__emblem" role="listitem">European Union</span>
-                <span class="c-footer__emblem" role="listitem">ITU</span>
-                <span class="c-footer__emblem" role="listitem">UPU</span>
-            </div>
-            <p class="c-footer__donor">{{ __('footer.donor_statement') }}</p>
         </div>
 
         <div class="c-footer__legal">
