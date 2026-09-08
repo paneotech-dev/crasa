@@ -14,7 +14,7 @@
     $searchUrl = \App\Support\Navigation::url(config('navigation.search_path'));
 @endphp
 
-<header class="c-header" data-header data-nav="inline">
+<header class="c-header" data-header>
     <div class="c-header__inner" data-header-inner>
 
         <a class="c-header__identity" href="{{ \App\Support\Navigation::url('') }}" data-header-identity>
@@ -84,11 +84,9 @@
             <a class="c-drawer__link" href="{{ $searchUrl }}">{{ __('nav.search') }}</a>
         </nav>
 
-        <div data-drawer-lang>
-            @include('partials.language-switcher', ['variant' => 'drawer'])
-        </div>
+        @include('partials.language-switcher', ['variant' => 'drawer'])
 
-        <a class="c-drawer__extranet" data-drawer-extranet href="{{ $extranetUrl }}">
+        <a class="c-drawer__extranet" href="{{ $extranetUrl }}">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect>
             </svg>

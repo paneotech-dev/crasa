@@ -155,46 +155,64 @@
 .c-lang--on-navy .c-lang__option[aria-current]:hover { background: var(--c-green-dark); color: var(--c-white); }
 
 /* Drawer --------------------------------------------------------------- */
-/* Navigation collapses at the width where the primary items stop fitting the
-   rendered language, measured at runtime, not at a device breakpoint.
-   Without JavaScript the header keeps every item and wraps to a second row. */
-
-/* Two stages, as screen 01 draws them.
+/*
+ * Breakpoints, from screen 01's canonical chrome notes verbatim:
  *
- * data-nav="drawer": the nav collapses, and the search, the switcher and the
- * extranet action STAY on the first row. This is the 768px state.
+ *   "1440px. One row, all nine items, full identity lockup."
+ *   "768px. Nav wraps to a second row or collapses to the drawer ...
+ *    The switcher and the extranet action stay on the first row."
+ *   "375px. Identity, drawer trigger. Nav, switcher and extranet action
+ *    move into the drawer, each at a 44px target."
  *
- * data-nav="compact": everything moves into the drawer, leaving the identity
- * and the trigger. This is the 375px state.
+ * Plain media queries, not a runtime measurement. Three attempts at
+ * measuring the header failed three different ways, each time collapsing a
+ * navigation that fitted. A media query cannot be wrong about the viewport
+ * width.
  *
- * Collapsing straight to compact is what broke the live header: in French
- * the nine items stop fitting well above 768px, so hiding the whole
- * utilities block at that point left nothing but the logo. */
+ *   1024 and up   full inline navigation. Never a hamburger.
+ *   768 to 1023   nav wraps to its own row; switcher and extranet stay up.
+ *   below 768     drawer.
+ *
+ * The 1024 boundary is a disclosed variation: screen 01 names 1440, 768 and
+ * 375 and is silent between 768 and 1440. See OPEN_ITEMS.md.
+ */
 
-.c-header__toggle { display: none; margin-left: auto; }
+/* Default, and 1024 and up: everything inline. */
+.c-header__toggle { display: none; }
+.c-drawer { display: none; }
 
-/* data-nav="wrapped" hides nothing. The nav simply takes a second row,
-   which flex-wrap already does; the attribute exists so the state is
-   inspectable and so the nav can be given its own row cleanly. */
-.has-js .c-header[data-nav="wrapped"] .c-nav {
-  flex-basis: 100%;
-  margin-left: 0;
-  order: 3;
-  border-top: 1px solid var(--c-sand);
-  padding-top: var(--s-3);
-  margin-top: var(--s-1);
+/* 768 to 1023. The nav takes its own row. Screen 01: the switcher and the
+   extranet action stay on the first row. */
+@media (max-width: 1023.98px) and (min-width: 768px) {
+  .c-nav {
+    flex-basis: 100%;
+    margin-left: 0;
+    order: 3;
+    border-top: 1px solid var(--c-sand);
+    padding-top: var(--s-3);
+    margin-top: var(--s-1);
+  }
 }
 
-.has-js .c-header[data-nav="drawer"] .c-nav,
-.has-js .c-header[data-nav="compact"] .c-nav { display: none; }
+/* Below 768. Identity and the drawer trigger only; nav, switcher and
+   extranet move into the drawer. */
+@media (max-width: 767.98px) {
+  .c-nav,
+  .c-header__utilities { display: none; }
 
-.has-js .c-header[data-nav="compact"] .c-header__utilities { display: none; }
+  .has-js .c-header__toggle { display: inline-flex; margin-left: auto; }
+  .c-drawer { display: flex; }
+  .c-drawer[hidden] { display: none; }
+}
 
-.has-js .c-header[data-nav="drawer"] .c-header__toggle,
-.has-js .c-header[data-nav="compact"] .c-header__toggle { display: inline-flex; }
+/* Without JavaScript there is no drawer to open, so the nav stays visible
+   and wraps. Layout invariant 6: wrapping beats the alternative. */
+@media (max-width: 767.98px) {
+  html:not(.has-js) .c-nav,
+  html:not(.has-js) .c-header__utilities { display: flex; }
+  html:not(.has-js) .c-nav { flex-basis: 100%; margin-left: 0; order: 3; }
+}
 
-/* The trigger is labelled, not a bare icon. A lone hamburger next to a logo
-   reads as an empty header, which is how this was reported. */
 .c-header__toggle {
   gap: var(--s-2);
   width: auto;
@@ -209,22 +227,13 @@
 }
 .c-header__toggle-label { white-space: nowrap; }
 
-/* In drawer stage the trigger sits before the utilities, not pushed to the
-   far edge, so the switcher and extranet keep the right-hand end. */
-.has-js .c-header[data-nav="drawer"] .c-header__toggle { margin-left: auto; order: -1; }
-.has-js .c-header[data-nav="drawer"] .c-header__utilities { margin-left: 0; }
-
 .c-drawer {
-  /* --e-3 is defined for modals and drawers. This is a drawer, and it
-     overlays the page, so it sits above everything at the top elevation. */
   box-shadow: var(--e-3);
   background: var(--c-navy);
   padding: var(--s-4) var(--page-x) var(--s-5);
-  display: flex;
   flex-direction: column;
   gap: 2px;
 }
-.c-drawer[hidden] { display: none; }
 
 .c-drawer__nav { display: flex; flex-direction: column; gap: 2px; }
 

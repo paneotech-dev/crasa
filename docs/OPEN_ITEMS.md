@@ -125,6 +125,27 @@ before it becomes a rule in code.
 
 ---
 
+## Disclosed variation: the 1024 header breakpoint
+
+**Reason 2 — the screen is silent on a case that must be handled.**
+
+Screen 01's canonical chrome names three widths and what the header does at
+each: 1440 one row with all nine items, 768 the nav wraps with the switcher
+and extranet staying on the first row, 375 everything into the drawer. It
+says nothing about where the boundary between the 1440 behaviour and the 768
+behaviour falls, and a media query has to be given a number.
+
+**Delivered: 1024px.** Below it the nav takes its own row; at and above it
+everything is inline. 1024 is the conventional tablet-landscape boundary and
+it is comfortably above the width at which nine items in Portuguese stop
+fitting one row alongside the identity and the utilities.
+
+This replaces a runtime measurement that failed three times, each time
+collapsing a navigation that fitted. The measurement is deleted rather than
+fixed: a media query cannot be wrong about the viewport width.
+
+---
+
 ## Disclosed variation: two neutrals differ from the approved foundations
 
 **Resolved 2026-09-09. The standard wins.**
