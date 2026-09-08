@@ -203,6 +203,9 @@
 .has-js .c-header[data-nav="drawer"] .c-header__utilities { margin-left: 0; }
 
 .c-drawer {
+  /* --e-3 is defined for modals and drawers. This is a drawer, and it
+     overlays the page, so it sits above everything at the top elevation. */
+  box-shadow: var(--e-3);
   background: var(--c-navy);
   padding: var(--s-4) var(--page-x) var(--s-5);
   display: flex;

@@ -125,6 +125,31 @@ before it becomes a rule in code.
 
 ---
 
+## Contrast failures found by measurement — need a ruling
+
+Computed 2026-09-09 against the actual token values, for the pairs actually
+used in the stylesheets. Three genuine WCAG 2.1 SC 1.4.11 failures, all on
+control boundaries at 3:1. These are approved token values, so they are not
+changed without a decision.
+
+| Token | Used for | Current | Needs | Smallest fix on the same hue |
+|---|---|---|---|---|
+| `--c-border-input` | input and select borders | #B9B2A2 on white, **2.11:1** | 3:1 | **#9B9484** (3.02:1) |
+| `--c-border` | icon-button and chip borders | #C9C2B2 on white, **1.77:1** | 3:1 | **#9B9484** (3.02:1) |
+| `--c-navy-edge` | switcher border on navy | #4A5670 on navy, **2.35:1** | 3:1 | **#5A6680** (3.00:1) |
+
+The two light neutrals converge on the same value at 3:1, which is worth
+knowing: they may not need to stay two separate tokens.
+
+`--c-disabled` #6E7A85 on cream is 4.06:1 against a 4.5:1 body-text
+threshold, but **this is not a failure**. WCAG 2.1 SC 1.4.3 exempts text
+that is part of an inactive user interface component. No change proposed.
+
+Every other pair passes, most comfortably: body text 13.59:1, headings
+16.00:1, the amber focus ring 3.43:1 on cream and 4.66:1 on navy.
+
+---
+
 ## Deferred to a later phase
 
 **Selenium four-width regression suite — D3 testing phase, infrastructure TBD.**

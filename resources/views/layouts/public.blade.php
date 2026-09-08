@@ -36,6 +36,7 @@
     <link rel="stylesheet" href="{{ asset('css/base.css') }}">
     <link rel="stylesheet" href="{{ asset('css/chrome.css') }}">
     <link rel="stylesheet" href="{{ asset('css/blocks.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/print.css') }}" media="print">
     @stack('styles')
 </head>
 <body>

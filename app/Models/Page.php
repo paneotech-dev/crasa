@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\BlockType;
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\MarksSampleData;
@@ -49,6 +50,20 @@ class Page extends Model
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', 'published');
+    }
+
+    /**
+     * Whether a block on this page already renders the h1.
+     *
+     * Only the hero does. A page built from rich text and grids alone has
+     * headings starting at level 2 and no page title in the document
+     * outline, which is a structure failure under WCAG 2.1 AA and against
+     * the one-h1-per-page rule in the design foundations.
+     */
+    public function blocksRenderH1(): bool
+    {
+        return $this->visibleBlocks
+            ->contains(fn (PageBlock $block) => $block->type() === BlockType::Hero);
     }
 
     public function isPublished(): bool

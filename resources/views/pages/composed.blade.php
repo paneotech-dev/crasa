@@ -16,6 +16,17 @@
 @endif
 
 @section('content')
+    @unless ($page->blocksRenderH1())
+        {{-- The hero carries the h1 where there is one. Without a hero the
+             page needs its own, or its headings start at level 2 and the
+             document outline has no title. --}}
+        <div class="c-section c-section--title">
+            <div class="c-page">
+                <h1 @if ($title?->isFallback()) lang="{{ $title->locale }}" @endif>{{ $title?->value ?? '' }}</h1>
+            </div>
+        </div>
+    @endunless
+
     @foreach ($page->visibleBlocks as $block)
         <x-block :block="$block" />
     @endforeach

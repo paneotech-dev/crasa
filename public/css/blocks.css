@@ -408,3 +408,7 @@
 
 .c-form--filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: var(--s-4); align-items: end; max-width: none; }
 .c-form--filters .c-field { margin-bottom: 0; }
+
+/* A page title where no hero carries it. Tighter than a section, because it
+   sits directly above the first block's own heading. */
+.c-section--title { padding-block: var(--section-y) 0; }

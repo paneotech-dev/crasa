@@ -1,0 +1,87 @@
+/* CRASA Digital Anchor Ecosystem — print.
+ *
+ * Regulators print things. A publication or an instrument that prints badly
+ * gets photographed on a screen instead, and a photograph of a citation is
+ * not a citation.
+ *
+ * What this does: drops the chrome that means nothing on paper, keeps the
+ * identity and the citation, expands every URL so a printed link is
+ * followable, and stops content breaking across a page mid-row.
+ */
+
+@page {
+  margin: 16mm 14mm;
+}
+
+@media print {
+  html, body {
+    background: #FFFFFF;
+    color: #000000;
+    font-size: 10.5pt;
+    line-height: 1.45;
+  }
+
+  /* Colour is not reliable on a printer, but the status pills and the
+     superseded warning carry meaning, so they are forced through. */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* Chrome that has no meaning on paper. */
+  .c-header, .c-drawer, .c-skip,
+  .c-filters, .c-pagination, .c-share, .c-map,
+  .c-form, .c-preview__actions, .b-social,
+  .c-footer__links, .c-footer__legal-links {
+    display: none !important;
+  }
+
+  /* The footer keeps the Secretariat's address: a printed page that reaches
+     a ministry should say who issued it and how to reach them. */
+  .c-footer { background: none !important; color: #000 !important; border-top: 1pt solid #000; padding-top: 6mm; }
+  .c-footer__acronym, .c-footer__heading { color: #000 !important; }
+  .c-footer__inner { padding: 0 !important; }
+  .c-footer__columns { display: block !important; }
+
+  /* Full width: no page inset on top of the @page margin. */
+  .c-page, .b__inner, .c-footer__inner { max-width: none !important; padding-inline: 0 !important; }
+  .c-section, .b { padding-block: 0 0 6mm !important; }
+
+  /* A printed link is only useful if its address is on the paper. Internal
+     links are not expanded: the reader is holding the page they came from. */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 8.5pt;
+    word-break: break-all;
+  }
+  a { color: #000 !important; text-decoration: underline; }
+
+  h1, h2, h3 { break-after: avoid; page-break-after: avoid; color: #000 !important; }
+  h1 { font-size: 20pt; }
+  h2 { font-size: 14pt; margin-top: 6mm; }
+  h3 { font-size: 12pt; }
+
+  p, li, tr, figure, .b-card, .b-row, .c-lineage__step, .c-meta > div { break-inside: avoid; page-break-inside: avoid; }
+
+  /* Tables carry the data a regulator prints for. Headers repeat on every
+     page, and nothing scrolls on paper. */
+  .c-scroll, .b-compare__scroll { overflow: visible !important; }
+  table { width: 100% !important; min-width: 0 !important; border-collapse: collapse; font-size: 9pt; }
+  thead { display: table-header-group; }
+  th, td { border: 0.5pt solid #666; padding: 2mm; }
+  thead th { background: #E5E0D5 !important; color: #000 !important; }
+
+  img, svg { max-width: 100% !important; }
+
+  /* Version lineage and the superseded warning are the two things a printed
+     instrument must not lose: without them a reader cites a repealed
+     document from paper. */
+  .c-notice { border: 1pt solid #000 !important; background: none !important; padding: 3mm; }
+  .c-notice__title, .c-notice__body { color: #000 !important; }
+  .c-pill { border: 0.5pt solid #000 !important; background: none !important; color: #000 !important; }
+
+  /* Empty states and image slots are interface, not content. */
+  .b__empty, .b__slot { display: none !important; }
+}
