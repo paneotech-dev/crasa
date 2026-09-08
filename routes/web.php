@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\LocaleRedirectController;
 use App\Http\Middleware\SetLocale;
 use App\Support\Locales;
@@ -35,6 +36,17 @@ Route::prefix('{locale}')
             'This account is suspended. Contact the CRASA Secretariat to restore access.',
             403
         ))->name('account.suspended');
+
+        /*
+         * Documents are never served from the filesystem. Every file goes
+         * through the controller, which checks role, country scope and
+         * clearance before streaming a byte, and writes an audit row for
+         * anything that is not public.
+         */
+        Route::get('documents/{document}', [DocumentController::class, 'show'])
+            ->name('documents.show');
+        Route::get('documents/{document}/download', [DocumentController::class, 'download'])
+            ->name('documents.download');
 
         Route::get('two-factor/enrol', fn () => response(
             'Two-factor enrolment is required for this account. The enrolment flow is not built yet.',

@@ -7,12 +7,16 @@ use App\Models\AuditLog;
 use App\Models\Authority;
 use App\Models\Committee;
 use App\Models\Country;
+use App\Models\Document;
+use App\Models\Instrument;
 use App\Models\Sector;
 use App\Models\User;
 use App\Policies\AuditLogPolicy;
 use App\Policies\AuthorityPolicy;
 use App\Policies\CommitteePolicy;
 use App\Policies\CountryPolicy;
+use App\Policies\DocumentPolicy;
+use App\Policies\InstrumentPolicy;
 use App\Policies\SectorPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
@@ -26,6 +30,8 @@ class AuthServiceProvider extends ServiceProvider
         Authority::class => AuthorityPolicy::class,
         Committee::class => CommitteePolicy::class,
         Country::class => CountryPolicy::class,
+        Document::class => DocumentPolicy::class,
+        Instrument::class => InstrumentPolicy::class,
         Sector::class => SectorPolicy::class,
         User::class => UserPolicy::class,
     ];

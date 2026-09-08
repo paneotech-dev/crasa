@@ -17,6 +17,7 @@ class ReferenceDataSeeder extends Seeder
             SectorSeeder::class,
             AuthoritySeeder::class,
             CommitteeSeeder::class,
+            InstrumentSeeder::class,
         ]);
     }
 }
