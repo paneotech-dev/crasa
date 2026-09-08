@@ -4,7 +4,8 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "assets": "cp node_modules/bootstrap/dist/css/bootstrap-grid.min.css node_modules/bootstrap/dist/css/bootstrap-grid.min.css.map public/css/vendor/"
     },
     "devDependencies": {
         "concurrently": "^10.0.3",
@@ -13,5 +14,8 @@
     },
     "optionalDependencies": {
         "@laravel/multiplex": "^0.4.1"
+    },
+    "dependencies": {
+        "bootstrap": "^5.3.8"
     }
 }

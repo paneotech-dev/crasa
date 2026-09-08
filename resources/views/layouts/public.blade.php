@@ -27,8 +27,12 @@
     @endforeach
     <link rel="alternate" hreflang="x-default" href="{{ \App\Support\Locales::urlFor(\App\Support\Locales::FALLBACK, request()) }}">
 
+    {{-- Order matters. Tokens first, then Bootstrap's grid-only build and the
+         bridge that binds it to them, then our own layers. --}}
     <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
     <link rel="stylesheet" href="{{ asset('css/tokens.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/vendor/bootstrap-grid.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/grid.css') }}">
     <link rel="stylesheet" href="{{ asset('css/base.css') }}">
     <link rel="stylesheet" href="{{ asset('css/chrome.css') }}">
     @stack('styles')

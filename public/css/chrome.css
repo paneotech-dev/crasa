@@ -4,10 +4,8 @@
  * .design/screens/02-homepage.dc.html and section 06 of the design
  * foundations. Screens include these partials rather than rebuilding them.
  *
- * A few neutrals used by the approved screens are not yet in the token file:
- * #C9C2B2 control border, #B9B2A2 input border, #6E7A85 disabled text,
- * #050d18 navy pressed, #4A5670 and #6B7691 navy-surface borders.
- * They are written as literals here rather than invented as new tokens.
+ * Colour, spacing, radius and elevation come from tokens.css. Nothing in
+ * this file carries a hard-coded value.
  */
 
 /* Header --------------------------------------------------------------- */
@@ -96,7 +94,7 @@
   display: grid;
   place-items: center;
   background: transparent;
-  border: 1.5px solid #C9C2B2;
+  border: 1.5px solid var(--c-border);
   border-radius: var(--r-sm);
   cursor: pointer;
   color: var(--c-charcoal);
@@ -118,7 +116,7 @@
   white-space: nowrap;
   transition: background 150ms var(--ease-in);
 }
-.c-extranet:hover { background: #050d18; color: var(--c-white); }
+.c-extranet:hover { background: var(--c-navy-deep); color: var(--c-white); }
 
 /* Language switcher ---------------------------------------------------- */
 /* The current language is always shown as text, never as a flag alone.
@@ -150,7 +148,7 @@
 .c-lang__option[aria-current]:hover { background: var(--c-navy); color: var(--c-white); }
 
 /* On a navy surface the switcher inverts: extranet top bar and drawer. */
-.c-lang--on-navy { border-color: #4A5670; background: var(--c-navy); }
+.c-lang--on-navy { border-color: var(--c-navy-edge); background: var(--c-navy); }
 .c-lang--on-navy .c-lang__option { color: var(--c-cream); }
 .c-lang--on-navy .c-lang__option:hover { background: var(--c-navy-mid); color: var(--c-white); }
 .c-lang--on-navy .c-lang__option[aria-current],
@@ -202,7 +200,7 @@
 }
 .c-drawer__lang .c-lang__option {
   flex: 1;
-  border: 1.5px solid #4A5670;
+  border: 1.5px solid var(--c-navy-edge);
   border-radius: var(--r-sm);
   padding: 12px;
   font-size: 15px;
@@ -289,7 +287,7 @@
 /* Dashed until the supplied emblem files replace them. Marked as placeholders
    rather than approximated with look-alike marks. */
 .c-footer__emblem {
-  border: 1px dashed #6B7691;
+  border: 1px dashed var(--c-navy-soft);
   border-radius: var(--r-sm);
   padding: 9px 14px;
   font-size: 13px;

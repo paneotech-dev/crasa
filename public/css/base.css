@@ -115,13 +115,13 @@ table { border-collapse: collapse; }
 
 .c-notice--info    { background: var(--c-cream); border: 1px solid var(--c-sand); border-left: 4px solid var(--c-navy); }
 .c-notice--info .c-notice__title { color: var(--c-navy); }
-.c-notice--success { background: var(--c-green-light); border: 1px solid #B6DCC5; border-left: 4px solid var(--c-green-dark); }
+.c-notice--success { background: var(--c-green-light); border: 1px solid var(--c-green-mid); border-left: 4px solid var(--c-green-dark); }
 .c-notice--success .c-notice__title { color: var(--c-green-dark); }
-.c-notice--pending { background: #FDF0DC; border: 1px solid #E5BE87; border-left: 4px solid var(--c-amber); }
-.c-notice--pending .c-notice__title, .c-notice--pending .c-notice__body { color: #5C3404; }
-.c-notice--error   { background: var(--c-red-light); border: 1px solid #E3B7B8; border-left: 4px solid var(--c-red); }
+.c-notice--pending { background: var(--c-amber-light); border: 1px solid var(--c-amber-mid); border-left: 4px solid var(--c-amber); }
+.c-notice--pending .c-notice__title, .c-notice--pending .c-notice__body { color: var(--c-amber-dark); }
+.c-notice--error   { background: var(--c-red-light); border: 1px solid var(--c-red-mid); border-left: 4px solid var(--c-red); }
 .c-notice--error .c-notice__title { color: var(--c-red); }
-.c-notice--error .c-notice__body { color: #6E1A1D; }
+.c-notice--error .c-notice__body { color: var(--c-red-dark); }
 
 /* Motion --------------------------------------------------------------- */
 /* Reduced motion removes travel, not feedback. Colour and opacity

@@ -1,0 +1,54 @@
+/* CRASA Digital Anchor Ecosystem — Bootstrap grid, bound to the token layer.
+ *
+ * We ship Bootstrap 5.3's grid-only build (public/css/vendor/), not the full
+ * framework. That build contains the container, row, column, gutter, offset
+ * and flex utilities and nothing else: no Reboot, no components, and not one
+ * font-family or colour declaration. Bootstrap therefore cannot reach the
+ * design system's type or palette, because those rules are not in the file.
+ *
+ * This bridge loads after it and binds what remains to the tokens: gutters to
+ * the spacing scale, container widths to the layout tokens, and container
+ * padding to the page inset so a grid row lines up with a .c-page above it.
+ *
+ * Refresh the vendored file with `npm run assets` after a Bootstrap upgrade.
+ *
+ * Spacing utilities. The grid build also carries Bootstrap's own .m-* and
+ * .p-* classes on its 0.25/0.5/1/1.5/3rem scale. Those are not part of this
+ * design system and must not be used: spacing comes from the --s-* tokens,
+ * which are a 4px scale running to 128px. Use .g-* for grid gutters and
+ * token values everywhere else.
+ */
+
+.container,
+.container-fluid,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl,
+.container-xxl {
+  /* Bootstrap halves the gutter to make container padding, so doubling the
+     page inset here lines a grid row up with .c-page content above it. */
+  --bs-gutter-x: calc(var(--page-x) * 2);
+  --bs-gutter-y: 0;
+}
+
+/* The widest container is the platform page width, not Bootstrap's 1320px. */
+@media (min-width: 1400px) {
+  .container,
+  .container-sm,
+  .container-md,
+  .container-lg,
+  .container-xl,
+  .container-xxl { max-width: var(--w-page); }
+}
+
+/* Rows sit inside a container that already carries the page inset, so their
+   own gutter is the spacing scale rather than the page inset. */
+.row { --bs-gutter-x: var(--s-5); }
+
+/* A reading-width container, for prose and document detail. */
+.container--reading { max-width: var(--w-reading); }
+
+/* .c-page and .container resolve to the same width and inset, so a simple
+   single-column page and a grid-based one line up. Use .container when the
+   page needs rows and columns, .c-page when it does not. */

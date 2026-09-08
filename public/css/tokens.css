@@ -18,11 +18,21 @@
   --c-amber:#C2710C; --c-white:#FFFFFF;
   --c-red:#9B2226; --c-red-light:#FBEDED;
 
+  /* Neutrals. Borders and disabled text on light surfaces, and the
+     pressed and border tones used on navy surfaces. */
+  --c-border:#C9C2B2; --c-border-input:#B9B2A2; --c-disabled:#6E7A85;
+  --c-navy-deep:#050D18; --c-navy-edge:#4A5670; --c-navy-soft:#6B7691;
+
+  /* Notice tints. Ground, rule and text for the amber, green and red
+     notices. They carry the same meanings as the status colours above:
+     amber pending, green validated, red error. */
+  --c-amber-light:#FDF0DC; --c-amber-mid:#E5BE87; --c-amber-dark:#5C3404;
+  --c-green-mid:#B6DCC5;
+  --c-red-mid:#E3B7B8; --c-red-dark:#6E1A1D;
+
   /* Typeface roles. Lora for public headings, IBM Plex Sans for body,
-     Inter for administration and dense data, Source Serif 4 as the heading
-     alternate where Lora is too warm. */
+     Inter for administration and dense data. */
   --f-head:'Lora',Georgia,'Times New Roman',serif;
-  --f-head-alt:'Source Serif 4',Georgia,serif;
   --f-body:'IBM Plex Sans',system-ui,sans-serif;
   --f-admin:'Inter',system-ui,sans-serif;
 
