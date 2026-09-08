@@ -176,6 +176,36 @@ itself rather than from a copy.
 
 ---
 
+## Disclosed variation: the destinations of the footer links
+
+**Screen 02 draws every link in the site footer as `href="#"`.** The design
+is explicit about which links exist, in which column, and in what order. It
+is silent on where any of them go.
+
+That silence has to be resolved, because a footer is on every page: seven of
+its targets returned 404 on the live site. This is case 2 of the two
+permitted departures — the screen is silent on a case that must be handled.
+No link was added, removed or reordered.
+
+| Footer link | Destination chosen | Reasoning |
+|---|---|---|
+| Who we are | `/{locale}/about` | The page exists. |
+| Governance, Executive Committee, Secretariat, Partnerships | `/{locale}/about#…` | The About column holds five links and About is one page, so four of them are sections of it. Page blocks gained an `anchor` column and those four sections now exist on the About page, all flagged `needs_content`. |
+| Regulatory library | `/{locale}/publications` | The built library. |
+| Comparator | `/{locale}/comparator` | WS-05, later phase. The slug resolves to a page stating that, so the approved footer keeps its link without a dead end. |
+| Events | `/{locale}/events` | WS-07, later phase. Same treatment. Delegate registration and travel remain out of this codebase entirely. |
+| Committees, Members, Newsroom, Contact | the built pages | — |
+| Extranet | redirect to sign-in | The extranet is phase 3. Its entry point for an unauthenticated visitor is the sign-in screen, which exists. |
+| Privacy, Terms, Accessibility | `/{locale}/…` | Built. Privacy and terms carry placeholder copy; see "Awaiting the client". |
+| X, Facebook | as drawn in the screen | Client-supplied URLs already in the markup. |
+| LinkedIn | `linkedin.com/company/crasa` | The screen draws `href="#"` for this one where it gives real URLs for the other two. **To confirm with CRASA.** |
+
+`SiteNavigationTest` crawls every internal link on every public page and
+fails if any of them stops resolving, and checks that each footer fragment
+lands on an element that actually carries that id.
+
+---
+
 ## Superseded: the contrast finding that produced the above
 
 Computed 2026-09-09 against the actual token values, for the pairs actually
