@@ -366,3 +366,45 @@
 .c-lineage__step.is-current::before { background: var(--c-green); }
 .c-lineage__title { font-weight: 600; font-size: var(--t-small-size); color: var(--c-navy); }
 .c-lineage__date { font-family: var(--f-admin); font-size: 13px; color: var(--c-slate); margin-left: auto; }
+
+/* Authentication and administration ------------------------------------ */
+
+.c-auth { max-width: 34rem; }
+.c-field--inline { display: flex; align-items: center; gap: var(--s-2); }
+.c-field--inline label { font-size: var(--t-small-size); }
+.c-fieldset { border: 0; padding: 0; margin: 0 0 var(--s-5); }
+.c-input--code { font-family: var(--f-admin); font-size: 20px; letter-spacing: .18em; max-width: 14rem; }
+.c-input--compact { padding: 7px 10px; font-size: 14px; width: auto; min-width: 11rem; }
+.c-inline-form { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
+
+.c-details { margin-top: var(--s-6); border-top: 1px solid var(--c-sand); padding-top: var(--s-4); }
+.c-details summary { cursor: pointer; font-weight: 600; font-size: var(--t-small-size); color: var(--c-green-dark); padding: 8px 0; min-height: 44px; display: flex; align-items: center; }
+
+/* Enrolment. The QR and the typed secret sit side by side: a delegate on a
+   shared device cannot always scan. */
+.c-enrol { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: var(--s-6); align-items: start; margin: var(--s-6) 0; }
+.c-enrol__qr { background: var(--c-white); border: 1px solid var(--c-sand); border-radius: var(--r-md); padding: var(--s-4); display: grid; place-items: center; }
+.c-enrol__qr svg { width: 100%; height: auto; max-width: 200px; }
+.c-secret { font-family: var(--f-admin); font-size: 17px; letter-spacing: .08em; background: var(--c-cream); border: 1px solid var(--c-sand); border-radius: var(--r-sm); padding: var(--s-3) var(--s-4); word-break: break-all; }
+
+/* Recovery codes, shown once. */
+.c-codes { list-style: none; margin: var(--s-4) 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: var(--s-2); }
+.c-codes li { background: var(--c-cream); border: 1px solid var(--c-sand); border-radius: var(--r-xs); padding: var(--s-3); text-align: center; }
+.c-codes code { font-family: var(--f-admin); font-size: 15px; letter-spacing: .06em; }
+
+/* Tables. Inter and tabular figures, per the typeface roles. */
+.c-scroll { min-width: 0; overflow-x: auto; margin: var(--s-5) 0; }
+.c-table { width: 100%; min-width: 640px; border-collapse: collapse; font-family: var(--f-admin); font-size: 14px; }
+.c-table caption { text-align: left; }
+.c-table thead th { background: var(--c-navy); color: var(--c-cream); text-align: left; font-size: 12px; font-weight: 600; padding: 11px var(--s-4); }
+.c-table th, .c-table td { padding: 11px var(--s-4); border-bottom: 1px solid var(--c-sand); text-align: left; vertical-align: top; }
+.c-table tbody th { font-weight: 600; color: var(--c-navy); }
+.c-table__sub { display: block; font-size: 12.5px; font-weight: 400; color: var(--c-slate); }
+.c-table--matrix td { text-align: center; font-weight: 700; }
+.c-table--matrix td.is-granted { background: var(--c-green-light); color: var(--c-green-dark); }
+.c-table--matrix td.is-conditional { background: var(--c-amber-light); color: var(--c-amber-dark); }
+.c-table--matrix td.is-denied { color: var(--c-disabled); }
+.c-table--matrix tbody th { font-family: var(--f-admin); font-size: 13px; font-weight: 500; color: var(--c-charcoal); }
+
+.c-form--filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: var(--s-4); align-items: end; max-width: none; }
+.c-form--filters .c-field { margin-bottom: 0; }

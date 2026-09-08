@@ -159,11 +159,48 @@
    rendered language, measured at runtime, not at a device breakpoint.
    Without JavaScript the header keeps every item and wraps to a second row. */
 
+/* Two stages, as screen 01 draws them.
+ *
+ * data-nav="drawer": the nav collapses, and the search, the switcher and the
+ * extranet action STAY on the first row. This is the 768px state.
+ *
+ * data-nav="compact": everything moves into the drawer, leaving the identity
+ * and the trigger. This is the 375px state.
+ *
+ * Collapsing straight to compact is what broke the live header: in French
+ * the nine items stop fitting well above 768px, so hiding the whole
+ * utilities block at that point left nothing but the logo. */
+
 .c-header__toggle { display: none; margin-left: auto; }
 
 .has-js .c-header[data-nav="drawer"] .c-nav,
-.has-js .c-header[data-nav="drawer"] .c-header__utilities { display: none; }
-.has-js .c-header[data-nav="drawer"] .c-header__toggle { display: grid; }
+.has-js .c-header[data-nav="compact"] .c-nav { display: none; }
+
+.has-js .c-header[data-nav="compact"] .c-header__utilities { display: none; }
+
+.has-js .c-header[data-nav="drawer"] .c-header__toggle,
+.has-js .c-header[data-nav="compact"] .c-header__toggle { display: inline-flex; }
+
+/* The trigger is labelled, not a bare icon. A lone hamburger next to a logo
+   reads as an empty header, which is how this was reported. */
+.c-header__toggle {
+  gap: var(--s-2);
+  width: auto;
+  min-width: 44px;
+  padding: 0 var(--s-3);
+  align-items: center;
+  justify-content: center;
+  font-family: var(--f-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-navy);
+}
+.c-header__toggle-label { white-space: nowrap; }
+
+/* In drawer stage the trigger sits before the utilities, not pushed to the
+   far edge, so the switcher and extranet keep the right-hand end. */
+.has-js .c-header[data-nav="drawer"] .c-header__toggle { margin-left: auto; order: -1; }
+.has-js .c-header[data-nav="drawer"] .c-header__utilities { margin-left: 0; }
 
 .c-drawer {
   background: var(--c-navy);

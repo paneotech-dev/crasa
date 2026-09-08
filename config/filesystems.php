@@ -41,7 +41,21 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            /*
+             * Host-relative by default.
+             *
+             * Building this from APP_URL bakes a host into every image URL
+             * on every page. When APP_URL was still pointing at
+             * localhost:8000 the live site emitted http://localhost:8000/...
+             * for every image: wrong host, and plain HTTP on an HTTPS page,
+             * so browsers blocked them and rendered alt text instead.
+             *
+             * A relative /storage is correct on every host the platform is
+             * served from, and cannot drift out of step with APP_URL.
+             * Override with FILESYSTEM_PUBLIC_URL only if assets ever move
+             * to a separate domain.
+             */
+            'url' => env('FILESYSTEM_PUBLIC_URL', '/storage'),
             'visibility' => 'public',
             'throw' => false,
             'report' => false,

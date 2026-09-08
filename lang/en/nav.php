@@ -6,6 +6,7 @@ return [
     'search' => 'Search',
     'open_menu' => 'Open menu',
     'close_menu' => 'Close menu',
+    'menu' => 'Menu',
     'language' => 'Language',
 
     'home' => 'Home',

@@ -37,6 +37,22 @@ class AuditLog extends Model
 
     public const SUBMISSION_TRANSITIONED = 'submission_transitioned';
 
+    public const TWO_FACTOR_ENROLLED = 'two_factor_enrolled';
+
+    public const TWO_FACTOR_FAILED = 'two_factor_failed';
+
+    public const TWO_FACTOR_DISABLED = 'two_factor_disabled';
+
+    public const RECOVERY_CODE_USED = 'recovery_code_used';
+
+    public const PASSWORD_CHANGED = 'password_changed';
+
+    public const PASSWORD_RESET = 'password_reset';
+
+    public const SUSPENDED = 'suspended';
+
+    public const REACTIVATED = 'reactivated';
+
     protected $table = 'audit_log';
 
     public $timestamps = false;

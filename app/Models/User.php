@@ -25,7 +25,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name', 'email', 'password', 'country_id', 'authority_id', 'role',
-        'status', 'preferred_locale', 'last_seen_at',
+        'status', 'preferred_locale', 'notification_preferences', 'last_seen_at',
     ];
 
     /**
@@ -33,7 +33,7 @@ class User extends Authenticatable
      * reach a response, a log line or a queue payload.
      */
     protected $hidden = [
-        'password', 'remember_token', 'two_factor_secret',
+        'password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes',
     ];
 
     protected function casts(): array
@@ -48,6 +48,10 @@ class User extends Authenticatable
             // than a call someone has to remember to make.
             'two_factor_secret' => 'encrypted',
             'two_factor_confirmed_at' => 'datetime',
+            // Encrypted, like the secret: a hash list is still a secret.
+            'two_factor_recovery_codes' => 'encrypted',
+            'last_login_at' => 'datetime',
+            'notification_preferences' => 'array',
             'last_seen_at' => 'datetime',
         ];
     }
@@ -142,6 +146,11 @@ class User extends Authenticatable
     public function mustEnrolInTwoFactor(): bool
     {
         return $this->role->requiresTwoFactor() && ! $this->hasConfirmedTwoFactor();
+    }
+
+    public function wantsNotification(string $key): bool
+    {
+        return in_array($key, $this->notification_preferences ?? [], true);
     }
 
     public function isSuspended(): bool

@@ -34,11 +34,18 @@
     return total + gap * Math.max(0, children.length - 1);
   }
 
+  /* Two stages, matching screen 01.
+   *
+   * inline   everything on one row
+   * drawer   the nav is in the drawer; search, switcher and extranet stay
+   * compact  everything is in the drawer, leaving identity and the trigger
+   *
+   * Measuring is done from the inline layout, so the widths read are the
+   * real ones rather than the collapsed ones.
+   */
   function measure() {
-    // Measure against the inline layout, so read the widths with the drawer
-    // state removed and restore it immediately afterwards.
-    var collapsed = header.getAttribute('data-nav') === 'drawer';
-    if (collapsed) header.setAttribute('data-nav', 'inline');
+    var previous = header.getAttribute('data-nav');
+    header.setAttribute('data-nav', 'inline');
 
     var inner = header.querySelector('[data-header-inner]');
     var styles = getComputedStyle(inner);
@@ -48,22 +55,46 @@
     var gap = parseFloat(styles.columnGap) || 0;
     var identity = header.querySelector('[data-header-identity]');
 
-    var needed = identity.getBoundingClientRect().width
-      + contentWidth(nav)
-      + utilities.getBoundingClientRect().width
-      + gap * 2;
+    var identityWidth = identity.getBoundingClientRect().width;
+    var utilitiesWidth = utilities.getBoundingClientRect().width;
+    var navWidth = contentWidth(nav);
+    var toggleWidth = 120; // the labelled trigger, measured while hidden
 
-    var fits = needed <= available;
-    header.setAttribute('data-nav', fits ? 'inline' : 'drawer');
-    if (!fits) return false;
+    var stage;
 
-    closeDrawer(false);
-    return true;
+    if (identityWidth + navWidth + utilitiesWidth + gap * 2 <= available) {
+      stage = 'inline';
+    } else if (identityWidth + toggleWidth + utilitiesWidth + gap * 2 <= available) {
+      // The nav alone does not fit. The switcher and the extranet action
+      // still do, and screen 01 keeps them on the first row.
+      stage = 'drawer';
+    } else {
+      stage = 'compact';
+    }
+
+    header.setAttribute('data-nav', stage);
+
+    if (stage === 'inline') {
+      closeDrawer(false);
+      return true;
+    }
+
+    if (previous === 'inline') closeDrawer(false);
+
+    return false;
   }
 
   /* Drawer ------------------------------------------------------------- */
 
   function openDrawer() {
+    // In the drawer stage the switcher and the extranet action are still on
+    // the first row, so the drawer must not repeat them.
+    var duplicated = header.getAttribute('data-nav') === 'drawer';
+    var langGroup = drawer.querySelector('[data-drawer-lang]');
+    var extranet = drawer.querySelector('[data-drawer-extranet]');
+    if (langGroup) langGroup.hidden = duplicated;
+    if (extranet) extranet.hidden = duplicated;
+
     drawer.hidden = false;
     toggle.setAttribute('aria-expanded', 'true');
     toggle.setAttribute('aria-label', toggle.getAttribute('data-label-close'));

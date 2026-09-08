@@ -84,6 +84,47 @@ no column for either.
 
 ---
 
+## Resolved decisions
+
+### Two-factor: libraries, not a framework — resolved 2026-09-09
+
+**Decision: `pragmarx/google2fa` and `bacon/bacon-qr-code`. Not Laravel
+Fortify.**
+
+Fortify would bring login, password reset and TOTP in one package, but it
+carries opinions about routes and redirects that would fight three things
+already built and tested:
+
+- every public URL is prefixed with `{locale}`, and Fortify's route
+  registration assumes it is not;
+- `EnsureAccountActive` and `EnsureTwoFactorEnrolled` already run on the whole
+  web group and already decide where an unenrolled or suspended account goes;
+- the permission matrix, the policies and the country scope already answer
+  what a role may do, which is most of what Fortify's authorisation layer
+  would duplicate.
+
+The two libraries are what Fortify uses internally for TOTP and QR generation
+anyway, so this takes the parts that carry no opinions and leaves the parts
+that do. The cost is roughly 300 lines of controllers, written against the
+existing middleware rather than around it.
+
+Hand-rolling RFC 6238 was considered and rejected: writing your own TOTP on a
+platform with a contractual security requirement is not a saving.
+
+### Geo-IP — available, no installation needed
+
+Checked 2026-09-09. The specifications mention geo-IP blocking. This host
+already carries MaxMind GeoLite2 City and Country databases at
+`/usr/share/GeoIP`, and the `mmdblookup` binary at `/usr/bin/mmdblookup`.
+There is no PHP geoip extension, but the databases can be read directly.
+
+Nothing heavy needs installing. Geo-IP blocking itself is not built: it is
+not in stage 8's scope, and blocking by country on a platform serving
+fourteen member states plus a diaspora needs a policy decision from CRASA
+before it becomes a rule in code.
+
+---
+
 ## Deferred to a later phase
 
 **Selenium four-width regression suite — D3 testing phase, infrastructure TBD.**

@@ -21,14 +21,14 @@ class LocalisationTest extends TestCase
 
     public function test_the_root_redirects_to_a_language(): void
     {
-        $this->get('/')->assertRedirect('http://localhost:8000/en');
+        $this->get('/')->assertRedirect(url('/en'));
     }
 
     public function test_the_root_honours_the_browser_preference(): void
     {
         $this->withHeader('Accept-Language', 'pt-PT,pt;q=0.9,en;q=0.5')
             ->get('/')
-            ->assertRedirect('http://localhost:8000/pt');
+            ->assertRedirect(url('/pt'));
     }
 
     public function test_the_root_honours_the_language_last_chosen(): void
@@ -36,7 +36,7 @@ class LocalisationTest extends TestCase
         $this->withSession(['locale' => 'fr'])
             ->withHeader('Accept-Language', 'pt-PT,pt;q=0.9')
             ->get('/')
-            ->assertRedirect('http://localhost:8000/fr');
+            ->assertRedirect(url('/fr'));
     }
 
     public function test_each_supported_language_renders(): void
@@ -64,18 +64,18 @@ class LocalisationTest extends TestCase
     {
         $response = $this->get('/fr');
 
-        $response->assertSee('href="http://localhost:8000/en"', false);
-        $response->assertSee('href="http://localhost:8000/pt"', false);
+        $response->assertSee('href="'.url('/en').'"', false);
+        $response->assertSee('href="'.url('/pt').'"', false);
         $response->assertSee('hreflang="fr"', false);
         $response->assertSee('aria-current="true"', false);
     }
 
     public function test_the_switcher_keeps_the_reader_on_the_same_page(): void
     {
-        $request = Request::create('http://localhost:8000/fr/publications/roaming?page=2');
+        $request = Request::create(url('/fr/publications/roaming').'?page=2');
 
         $this->assertSame(
-            'http://localhost:8000/pt/publications/roaming?page=2',
+            url('/pt/publications/roaming').'?page=2',
             Locales::urlFor('pt', $request)
         );
     }
@@ -94,6 +94,6 @@ class LocalisationTest extends TestCase
     {
         $this->get('/pt');
 
-        $this->get('/')->assertRedirect('http://localhost:8000/pt');
+        $this->get('/')->assertRedirect(url('/pt'));
     }
 }

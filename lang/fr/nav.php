@@ -6,6 +6,7 @@ return [
     'search' => 'Rechercher',
     'open_menu' => 'Ouvrir le menu',
     'close_menu' => 'Fermer le menu',
+    'menu' => 'Menu',
     'language' => 'Langue',
 
     'home' => 'Accueil',

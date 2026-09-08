@@ -24,7 +24,7 @@ class PublicChromeTest extends TestCase
         $response->assertSee("Communications Regulators' Association of Southern Africa");
         $response->assertSee('aria-label="Primary"', false);
         $response->assertSee('Extranet');
-        $response->assertSee('href="http://localhost:8000/en/extranet"', false);
+        $response->assertSee('href="'.url('/en/extranet').'"', false);
     }
 
     public function test_the_nine_primary_items_are_all_present(): void

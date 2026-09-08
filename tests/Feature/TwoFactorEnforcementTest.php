@@ -44,7 +44,8 @@ class TwoFactorEnforcementTest extends TestCase
     {
         $this->actingAs(User::factory()->administrator()->withoutTwoFactor()->create())
             ->get(route('two-factor.enrol', ['locale' => 'en']))
-            ->assertStatus(501);
+            ->assertOk()
+            ->assertSee('Scan the code');
     }
 
     public function test_two_factor_is_not_forced_on_other_roles(): void
