@@ -1,0 +1,151 @@
+/* CRASA Digital Anchor Ecosystem — base layer.
+ * Element defaults and the accessibility floor. Reads tokens.css only.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--c-cream);
+  color: var(--c-charcoal);
+  font-family: var(--f-body);
+  font-size: var(--t-body-size);
+  line-height: var(--t-body-line);
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg, video { max-width: 100%; }
+img, svg { display: block; }
+
+h1, h2, h3, h4 {
+  font-family: var(--f-head);
+  color: var(--c-navy);
+  margin: 0;
+  text-wrap: balance;
+}
+h1 { font-size: var(--t-h1-size); line-height: var(--t-h1-line); font-weight: var(--t-h1-weight); letter-spacing: -.015em; }
+h2 { font-size: var(--t-h2-size); line-height: var(--t-h2-line); font-weight: var(--t-h2-weight); letter-spacing: -.01em; }
+h3 { font-size: var(--t-h3-size); line-height: var(--t-h3-line); font-weight: var(--t-h3-weight); }
+
+p { margin: 0 0 var(--s-4); max-width: 66ch; }
+
+a { color: var(--c-green-dark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--c-navy); }
+
+/* Focus is a 3px amber ring at 2px offset, on every interactive element.
+   Nothing in this platform removes it. */
+:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
+
+table { border-collapse: collapse; }
+
+/* Numeric values are Inter, tabular, right aligned. */
+.c-num { font-family: var(--f-admin); font-variant-numeric: tabular-nums; }
+
+/* Layout helpers ------------------------------------------------------- */
+
+.c-page { max-width: var(--w-page); margin: 0 auto; padding-inline: var(--page-x); }
+.c-page--reading { max-width: var(--w-reading); }
+.c-section { padding-block: var(--section-y); }
+
+/* Vertical rhythm for a column of prose. Space between a heading and the
+   text under it is tighter than the space before the next heading, so the
+   grouping is legible without rules or boxes. */
+.c-stack > * { margin-bottom: 0; }
+.c-stack > * + * { margin-top: var(--s-4); }
+.c-stack > * + h2, .c-stack > * + h3 { margin-top: var(--s-7); }
+
+.c-lead { font-size: var(--t-lead-size); line-height: var(--t-lead-line); max-width: 58ch; }
+.c-small { font-size: var(--t-small-size); line-height: var(--t-small-line); color: var(--c-slate); }
+.c-list { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: var(--s-3); max-width: 74ch; }
+
+/* Every flex wrapper that must shrink carries min-width:0. Layout invariant 1. */
+.c-shrink { min-width: 0; }
+.c-fixed { flex: none; }
+.c-truncate { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Skip link. Opens every page, per the accessibility specification. */
+.c-skip {
+  position: absolute;
+  left: var(--s-4);
+  top: var(--s-4);
+  z-index: 100;
+  transform: translateY(calc(-100% - var(--s-6)));
+  background: var(--c-navy);
+  color: var(--c-white);
+  font-size: var(--t-small-size);
+  font-weight: 600;
+  padding: 12px 16px;
+  border-radius: var(--r-sm);
+  text-decoration: none;
+  transition: transform 150ms var(--ease-in);
+}
+.c-skip:focus { transform: translateY(0); color: var(--c-white); }
+
+/* Screen-reader-only text, for labels that must exist but not be drawn. */
+.c-sr {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Notices -------------------------------------------------------------- */
+/* Four tones only. Green for validated, amber for pending, red for errors,
+   navy for information. A notice is not a badge. */
+
+.c-notice {
+  display: flex;
+  gap: var(--s-3);
+  border-radius: var(--r-sm);
+  padding: var(--s-4);
+  font-size: var(--t-small-size);
+  line-height: 1.55;
+}
+.c-notice__icon { flex: none; margin-top: 1px; }
+.c-notice__title { font-weight: 600; font-size: 16px; }
+.c-notice__body { margin-top: 3px; }
+.c-notice__body p:last-child { margin-bottom: 0; }
+.c-notice { max-width: 80ch; }
+
+.c-notice--info    { background: var(--c-cream); border: 1px solid var(--c-sand); border-left: 4px solid var(--c-navy); }
+.c-notice--info .c-notice__title { color: var(--c-navy); }
+.c-notice--success { background: var(--c-green-light); border: 1px solid #B6DCC5; border-left: 4px solid var(--c-green-dark); }
+.c-notice--success .c-notice__title { color: var(--c-green-dark); }
+.c-notice--pending { background: #FDF0DC; border: 1px solid #E5BE87; border-left: 4px solid var(--c-amber); }
+.c-notice--pending .c-notice__title, .c-notice--pending .c-notice__body { color: #5C3404; }
+.c-notice--error   { background: var(--c-red-light); border: 1px solid #E3B7B8; border-left: 4px solid var(--c-red); }
+.c-notice--error .c-notice__title { color: var(--c-red); }
+.c-notice--error .c-notice__body { color: #6E1A1D; }
+
+/* Motion --------------------------------------------------------------- */
+/* Reduced motion removes travel, not feedback. Colour and opacity
+   transitions stay, so every state change remains visible. */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+  .c-skip, .c-drawer { transition: none !important; }
+}
+
+/* Print ---------------------------------------------------------------- */
+
+@page { margin: 12mm; }
+
+@media print {
+  html, body { background: var(--c-white); }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .c-header, .c-skip, .c-drawer, .c-header__toggle { display: none !important; }
+  a[href] { text-decoration: underline; }
+  section, figure, li, tr { break-inside: avoid; }
+  h1, h2, h3 { break-after: avoid; }
+  thead { display: table-header-group; }
+}

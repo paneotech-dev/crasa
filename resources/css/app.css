@@ -1,9 +1,8 @@
-@import 'tailwindcss';
-
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
-}
+/*
+ * Vite entry point, reserved for the React surfaces named in CLAUDE.md:
+ * the Comparator Tool and the analytics dashboards.
+ *
+ * The public site and the back office are styled by the static token layer
+ * in public/css, which needs no build step, so re-skinning stays a single
+ * file edit. Do not add a second CSS methodology here.
+ */

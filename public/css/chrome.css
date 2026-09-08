@@ -1,0 +1,314 @@
+/* CRASA Digital Anchor Ecosystem — canonical chrome.
+ *
+ * The public header, the language switcher and the site footer, taken from
+ * .design/screens/02-homepage.dc.html and section 06 of the design
+ * foundations. Screens include these partials rather than rebuilding them.
+ *
+ * A few neutrals used by the approved screens are not yet in the token file:
+ * #C9C2B2 control border, #B9B2A2 input border, #6E7A85 disabled text,
+ * #050d18 navy pressed, #4A5670 and #6B7691 navy-surface borders.
+ * They are written as literals here rather than invented as new tokens.
+ */
+
+/* Header --------------------------------------------------------------- */
+
+.c-header {
+  background: var(--c-white);
+  border-bottom: 1px solid var(--c-sand);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: var(--e-1);
+}
+
+.c-header__inner {
+  max-width: var(--w-page);
+  margin: 0 auto;
+  padding: var(--s-4) var(--page-x);
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  flex-wrap: wrap; /* Wrapping is the floor. Never a horizontal scrollbar. */
+}
+
+/* Identity never shrinks. */
+.c-header__identity {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--s-3);
+  text-decoration: none;
+}
+.c-header__mark { width: 40px; height: 40px; flex: none; }
+.c-header__names { display: flex; flex-direction: column; min-width: 0; }
+.c-header__acronym {
+  font-family: var(--f-head);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--c-navy);
+  line-height: 1.1;
+}
+.c-header__fullname {
+  font-size: 10.5px;
+  color: var(--c-slate);
+  letter-spacing: .03em;
+  line-height: 1.25;
+  max-width: 230px;
+}
+
+/* Primary navigation shrinks and wraps; it never pushes the utilities off. */
+.c-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  min-width: 0;
+  margin-left: auto;
+}
+.c-nav__link {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--c-charcoal);
+  padding: 9px 11px;
+  border-radius: var(--r-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 150ms var(--ease-in), color 150ms var(--ease-in);
+}
+.c-nav__link:hover { background: var(--c-green-light); color: var(--c-navy); }
+.c-nav__link[aria-current] {
+  font-weight: 600;
+  color: var(--c-navy);
+  border-bottom: 2px solid var(--c-green-dark);
+  border-radius: var(--r-sm) var(--r-sm) 0 0;
+}
+
+.c-header__utilities {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-width: 0; /* Without this the switcher clips. */
+}
+
+.c-iconbutton {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 1.5px solid #C9C2B2;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  color: var(--c-charcoal);
+}
+.c-iconbutton:hover { border-color: var(--c-navy); }
+
+.c-extranet {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-white);
+  background: var(--c-navy);
+  padding: 12px 16px;
+  border-radius: var(--r-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 150ms var(--ease-in);
+}
+.c-extranet:hover { background: #050d18; color: var(--c-white); }
+
+/* Language switcher ---------------------------------------------------- */
+/* The current language is always shown as text, never as a flag alone.
+   Each control is a link, so switching works without JavaScript. */
+
+.c-lang {
+  display: flex;
+  flex: none;
+  border: 1.5px solid var(--c-navy);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+.c-lang__option {
+  font-family: var(--f-body);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 13px;
+  min-width: 44px;
+  text-align: center;
+  border: none;
+  background: transparent;
+  color: var(--c-navy);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 150ms var(--ease-in), color 150ms var(--ease-in);
+}
+.c-lang__option:hover { background: var(--c-green-light); color: var(--c-navy); }
+.c-lang__option[aria-current] { background: var(--c-navy); color: var(--c-white); }
+.c-lang__option[aria-current]:hover { background: var(--c-navy); color: var(--c-white); }
+
+/* On a navy surface the switcher inverts: extranet top bar and drawer. */
+.c-lang--on-navy { border-color: #4A5670; background: var(--c-navy); }
+.c-lang--on-navy .c-lang__option { color: var(--c-cream); }
+.c-lang--on-navy .c-lang__option:hover { background: var(--c-navy-mid); color: var(--c-white); }
+.c-lang--on-navy .c-lang__option[aria-current],
+.c-lang--on-navy .c-lang__option[aria-current]:hover { background: var(--c-green-dark); color: var(--c-white); }
+
+/* Drawer --------------------------------------------------------------- */
+/* Navigation collapses at the width where the primary items stop fitting the
+   rendered language, measured at runtime, not at a device breakpoint.
+   Without JavaScript the header keeps every item and wraps to a second row. */
+
+.c-header__toggle { display: none; margin-left: auto; }
+
+.has-js .c-header[data-nav="drawer"] .c-nav,
+.has-js .c-header[data-nav="drawer"] .c-header__utilities { display: none; }
+.has-js .c-header[data-nav="drawer"] .c-header__toggle { display: grid; }
+
+.c-drawer {
+  background: var(--c-navy);
+  padding: var(--s-4) var(--page-x) var(--s-5);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.c-drawer[hidden] { display: none; }
+
+.c-drawer__nav { display: flex; flex-direction: column; gap: 2px; }
+
+.c-drawer__link {
+  font-size: 16px;
+  color: var(--c-cream);
+  padding: 13px var(--s-3);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+}
+.c-drawer__link:hover { background: var(--c-navy-mid); color: var(--c-white); }
+.c-drawer__link[aria-current] {
+  font-weight: 600;
+  color: var(--c-white);
+  background: var(--c-navy-mid);
+  border-left-color: var(--c-green);
+}
+
+.c-drawer__lang {
+  display: flex;
+  gap: var(--s-2);
+  margin-top: var(--s-4);
+  border-top: 1px solid var(--c-navy-line);
+  padding-top: var(--s-4);
+}
+.c-drawer__lang .c-lang__option {
+  flex: 1;
+  border: 1.5px solid #4A5670;
+  border-radius: var(--r-sm);
+  padding: 12px;
+  font-size: 15px;
+  color: var(--c-cream);
+}
+.c-drawer__lang .c-lang__option[aria-current] {
+  background: var(--c-green-dark);
+  border-color: var(--c-green-dark);
+  color: var(--c-white);
+}
+
+.c-drawer__extranet {
+  margin-top: var(--s-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--c-navy);
+  background: var(--c-cream);
+  padding: 14px;
+  border-radius: var(--r-sm);
+  text-decoration: none;
+}
+.c-drawer__extranet:hover { background: var(--c-white); color: var(--c-navy); }
+
+.c-drawer__search { margin-bottom: var(--s-3); }
+
+/* Footer --------------------------------------------------------------- */
+
+.c-footer { background: var(--c-navy); color: var(--c-sand); }
+.c-footer__inner {
+  max-width: var(--w-page);
+  margin: 0 auto;
+  padding: var(--s-8) var(--page-x) var(--s-6);
+}
+
+.c-footer__columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: var(--s-7);
+}
+
+.c-footer__identity {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-bottom: var(--s-4);
+  text-decoration: none;
+}
+.c-footer__mark { width: 38px; height: 38px; flex: none; }
+.c-footer__acronym { font-family: var(--f-head); font-size: 19px; font-weight: 600; color: var(--c-white); }
+
+.c-footer__blurb { margin: 0 0 var(--s-4); font-size: 14px; line-height: 1.6; max-width: 34ch; }
+.c-footer__address { font-size: 14px; line-height: 1.7; font-style: normal; }
+.c-footer__address a { color: var(--c-green-light); }
+.c-footer__address .c-footer__email { margin-top: 8px; }
+.c-footer__address a:hover { color: var(--c-white); }
+
+.c-footer__heading {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--c-white);
+  margin-bottom: var(--s-4);
+}
+.c-footer__links { display: flex; flex-direction: column; gap: 10px; font-size: 14.5px; }
+.c-footer__links a { color: var(--c-sand); text-decoration: none; }
+.c-footer__links a:hover { color: var(--c-white); text-decoration: underline; }
+
+.c-footer__partners {
+  margin-top: var(--s-7);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--c-navy-line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-5);
+  align-items: center;
+  justify-content: space-between;
+}
+.c-footer__emblems { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: center; }
+/* Dashed until the supplied emblem files replace them. Marked as placeholders
+   rather than approximated with look-alike marks. */
+.c-footer__emblem {
+  border: 1px dashed #6B7691;
+  border-radius: var(--r-sm);
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: var(--c-cream);
+}
+.c-footer__donor { margin: 0; font-size: 13.5px; line-height: 1.6; max-width: 56ch; color: var(--c-sand); }
+
+.c-footer__legal {
+  margin-top: var(--s-5);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--c-navy-line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-5);
+  justify-content: space-between;
+  font-size: 13.5px;
+}
+.c-footer__legal-links { display: flex; gap: var(--s-5); flex-wrap: wrap; }
+.c-footer__legal-links a { color: var(--c-sand); text-decoration: none; }
+.c-footer__legal-links a:hover { color: var(--c-white); text-decoration: underline; }
