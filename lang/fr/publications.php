@@ -1,0 +1,35 @@
+<?php
+
+return [
+    'title' => 'Bibliothèque réglementaire',
+    'intro' => 'Lignes directrices, lois types, études et communiqués adoptés dans la région. Chaque téléchargement provient de cette plateforme.',
+    'filters' => 'Filtrer la bibliothèque',
+    'type' => 'Type', 'country' => 'État membre', 'committee' => 'Comité', 'year' => 'Année',
+    'all' => 'Tous',
+    'breadcrumb' => 'Vous êtes ici',
+    'published' => 'Publié le',
+    'downloads' => 'Téléchargements',
+    'result_count' => '{0} Aucune publication ne correspond|{1} Une publication|[2,*] :count publications',
+    'empty_title' => 'Aucune publication ne correspond à ces filtres',
+    'empty_body' => 'Élargissez le filtre par type, État membre, comité ou année, ou effacez-les et recommencez.',
+    'clear_filters' => 'Effacer les filtres',
+
+    'superseded' => 'Remplacé',
+    'superseded_title' => 'Une version plus récente de ce document existe',
+    'lineage' => 'Historique des versions',
+    'lineage_note' => "Ce que ce document a remplacé, et ce qui l'a remplacé.",
+    'you_are_here' => 'Vous lisez celui-ci',
+
+    'download_file' => 'Télécharger le fichier (:size)',
+    'open_in_browser' => 'Ouvrir dans le navigateur',
+    'served_here' => 'Chaque téléchargement provient de la plateforme elle-même. Aucune redirection vers Google Drive ou SharePoint.',
+    'preview_alt' => 'La première page de ce document.',
+    'no_preview' => "Aucun aperçu n'a encore été généré pour ce fichier.",
+
+    'type_annual_report' => 'Rapport annuel',
+    'type_guideline' => 'Ligne directrice',
+    'type_study' => 'Étude',
+    'type_position_paper' => 'Document de position',
+    'type_communique' => 'Communiqué',
+    'type_minutes' => 'Procès-verbal',
+];

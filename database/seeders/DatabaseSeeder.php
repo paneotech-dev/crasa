@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             HomepageSeeder::class,
             PublicPagesSeeder::class,
             NewsroomSeeder::class,
+            PublicationSeeder::class,
         ]);
     }
 }

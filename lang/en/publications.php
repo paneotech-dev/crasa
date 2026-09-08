@@ -1,0 +1,35 @@
+<?php
+
+return [
+    'title' => 'Regulatory library',
+    'intro' => 'Guidelines, model frameworks, studies and communiques adopted across the region. Every download comes from this platform.',
+    'filters' => 'Filter the library',
+    'type' => 'Type', 'country' => 'Member state', 'committee' => 'Committee', 'year' => 'Year',
+    'all' => 'All',
+    'breadcrumb' => 'You are here',
+    'published' => 'Published',
+    'downloads' => 'Downloads',
+    'result_count' => '{0} No publications match|{1} One publication|[2,*] :count publications',
+    'empty_title' => 'No publications match these filters',
+    'empty_body' => 'Widen the type, member state, committee or year filter, or clear them and start again.',
+    'clear_filters' => 'Clear the filters',
+
+    'superseded' => 'Superseded',
+    'superseded_title' => 'A later version of this document exists',
+    'lineage' => 'Version lineage',
+    'lineage_note' => 'What this document replaced, and what replaced it.',
+    'you_are_here' => 'You are reading this one',
+
+    'download_file' => 'Download the file (:size)',
+    'open_in_browser' => 'Open in the browser',
+    'served_here' => 'Every download comes from the platform itself. No redirect to Google Drive or SharePoint anywhere.',
+    'preview_alt' => 'The first page of this document.',
+    'no_preview' => 'No preview has been generated for this file yet.',
+
+    'type_annual_report' => 'Annual report',
+    'type_guideline' => 'Guideline',
+    'type_study' => 'Study',
+    'type_position_paper' => 'Position paper',
+    'type_communique' => 'Communique',
+    'type_minutes' => 'Minutes',
+];

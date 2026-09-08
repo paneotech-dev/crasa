@@ -342,3 +342,27 @@
 .b-card__summary { font-size: 14.5px; line-height: 1.55; color: var(--c-charcoal); margin: 0; }
 .b-card__title a { color: inherit; text-decoration: none; }
 .b-card__title a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Publications ---------------------------------------------------------- */
+
+.b-row__thumb { flex: none; width: 64px; display: grid; place-items: center; }
+.b-row__thumb img { border: 1px solid var(--c-sand); border-radius: var(--r-xs); }
+.c-filetype { font-family: var(--f-admin); font-size: 11px; font-weight: 700; letter-spacing: .04em; color: var(--c-slate); border: 1px solid var(--c-border); border-radius: var(--r-xs); padding: 10px 8px; }
+
+.c-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: var(--s-4); margin: var(--s-5) 0; padding: var(--s-4) 0; border-top: 1px solid var(--c-sand); border-bottom: 1px solid var(--c-sand); align-items: start; }
+.c-meta dt { font-size: 12px; font-weight: 600; color: var(--c-slate); margin-bottom: 4px; }
+.c-meta dd { margin: 0; font-size: var(--t-small-size); color: var(--c-charcoal); }
+
+.c-preview { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: var(--s-5); align-items: start; margin: var(--s-6) 0; }
+.c-preview__pane { border: 1px solid var(--c-sand); border-radius: var(--r-md); overflow: hidden; background: var(--c-white); }
+.c-preview__actions { display: flex; flex-direction: column; gap: var(--s-3); align-items: start; }
+.c-preview__note { font-size: 13px; line-height: 1.5; color: var(--c-slate); margin: 0; max-width: 44ch; }
+
+/* Supersession lineage. Ordered, because it is genuinely a sequence. */
+.c-lineage { list-style: none; margin: var(--s-4) 0 0; padding: 0; display: flex; flex-direction: column; gap: 0; }
+.c-lineage__step { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-3); padding: var(--s-3) 0 var(--s-3) var(--s-5); border-left: 2px solid var(--c-sand); position: relative; }
+.c-lineage__step::before { content: ""; position: absolute; left: -5px; top: 20px; width: 8px; height: 8px; border-radius: var(--r-pill); background: var(--c-sand); }
+.c-lineage__step.is-current { border-left-color: var(--c-green); }
+.c-lineage__step.is-current::before { background: var(--c-green); }
+.c-lineage__title { font-weight: 600; font-size: var(--t-small-size); color: var(--c-navy); }
+.c-lineage__date { font-family: var(--f-admin); font-size: 13px; color: var(--c-slate); margin-left: auto; }

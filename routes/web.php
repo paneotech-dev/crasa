@@ -5,6 +5,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\LocaleRedirectController;
 use App\Http\Controllers\NewsroomController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PublicationController;
 use App\Http\Middleware\SetLocale;
 use App\Support\Locales;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +49,12 @@ Route::prefix('{locale}')
         Route::get('about', [PageController::class, 'show'])->defaults('slug', 'about')->name('about');
         Route::get('committees', [PageController::class, 'show'])->defaults('slug', 'committees')->name('committees');
         Route::get('members', [PageController::class, 'show'])->defaults('slug', 'members')->name('members');
+
+        /*
+         * The regulatory library. WS-05.
+         */
+        Route::get('publications', [PublicationController::class, 'index'])->name('publications');
+        Route::get('publications/{slug}', [PublicationController::class, 'show'])->name('publications.show');
 
         /*
          * Newsroom. WS-06.
