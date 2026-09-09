@@ -94,7 +94,7 @@
                             <div class="b-row__meta">
                                 <span>{{ $indicator->categoryLabel() }}</span>
                                 @if ($indicator->sector)<span>{{ $indicator->sector->name }}</span>@endif
-                                <span>{{ $indicator->unit }}</span>
+                                <span>{{ $indicator->unitLabel() }}</span>
                             </div>
                             {{-- Every definition cites where it came from. An
                                  indicator without a source does not belong in

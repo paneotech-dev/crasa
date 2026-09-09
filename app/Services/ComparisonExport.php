@@ -53,7 +53,7 @@ final class ComparisonExport
                     'id' => $indicator->id,
                     'slug' => $indicator->slug,
                     'name' => $indicator->name,
-                    'unit' => $indicator->unit,
+                    'unit' => $indicator->unitLabel(),
                     'type' => $indicator->data_type,
                     'source' => $indicator->source_standard,
                     'cells' => $comparison->countries->map(function ($country) use ($cells, $indicator, $min, $max) {
@@ -101,7 +101,7 @@ final class ComparisonExport
             foreach ($row as $cell) {
                 fputcsv($handle, [
                     $cell->indicator->name,
-                    $cell->indicator->unit,
+                    $cell->indicator->unitLabel(),
                     $cell->country->name,
                     strtoupper($cell->country->iso_code),
                     // The words, not a blank. A CSV opened in a spreadsheet
@@ -211,7 +211,7 @@ final class ComparisonExport
             $parts[] = '<text x="40" y="'.($y + 6).'" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#1F2937">'
                 .$e(Str::limit($indicator->name, 46)).'</text>';
             $parts[] = '<text x="40" y="'.($y + 26).'" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#5C6B7E">'
-                .$e($indicator->unit).'</text>';
+                .$e((string) $indicator->unitLabel()).'</text>';
 
             foreach ($countries->values() as $i => $country) {
                 $cell = $cells[$indicator->id][$country->id] ?? null;

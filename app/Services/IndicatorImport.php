@@ -47,7 +47,7 @@ final class IndicatorImport
             ->get();
 
         foreach ($indicators as $indicator) {
-            fputcsv($handle, [$indicator->name, $indicator->slug, $indicator->unit, '', '']);
+            fputcsv($handle, [$indicator->name, $indicator->slug, $indicator->unitLabel(), '', '']);
         }
 
         rewind($handle);
@@ -121,7 +121,7 @@ final class IndicatorImport
                 $errors->push($this->error(
                     $number,
                     'value',
-                    __('import.error_not_a_number', ['unit' => $indicator->unit, 'found' => $value]),
+                    __('import.error_not_a_number', ['unit' => $indicator->unitLabel(), 'found' => $value]),
                     $indicator->name,
                 ));
 

@@ -54,4 +54,25 @@ class Indicator extends Model
     {
         return __('indicators.category_'.$this->category);
     }
+
+    /**
+     * The unit as a reader sees it.
+     *
+     * unit is stored as a code because it is matched on import and compared
+     * across member states, and "subscriptions_per_100" printed under a
+     * figure in a ministerial brief is a database showing through. Anything
+     * without a translation falls back to its own words rather than to a
+     * slug, so a unit the Secretariat adds later still reads as English.
+     */
+    public function unitLabel(): ?string
+    {
+        if (! filled($this->unit)) {
+            return null;
+        }
+
+        $key = 'indicators.unit_'.$this->unit;
+        $label = __($key);
+
+        return $label === $key ? str_replace('_', ' ', $this->unit) : $label;
+    }
 }

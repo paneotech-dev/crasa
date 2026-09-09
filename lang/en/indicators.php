@@ -19,4 +19,15 @@ return [
     'category_market' => 'Market',
     'category_quality' => 'Quality of service',
     'category_universal_access' => 'Universal access',
+
+    // Units are stored as codes so they can be matched on import and
+    // compared across member states. These are what a reader sees.
+    'unit_subscriptions_per_100' => 'subscriptions per 100 inhabitants',
+    'unit_bits_per_second_per_inhabitant' => 'bit/s per inhabitant',
+    'unit_percent' => 'per cent',
+    'unit_operators' => 'operators',
+    'unit_offices' => 'offices',
+    'unit_items' => 'items',
+    'unit_staff' => 'staff',
+    'unit_days' => 'days',
 ];

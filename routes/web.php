@@ -26,6 +26,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\ExtranetController;
 use App\Http\Controllers\LocaleRedirectController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\NewsroomController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PublicationController;
@@ -68,6 +69,17 @@ Route::prefix('{locale}')
         Route::get('about', [PageController::class, 'show'])->defaults('slug', 'about')->name('about');
         Route::get('committees', [PageController::class, 'show'])->defaults('slug', 'committees')->name('committees');
         Route::get('members', [PageController::class, 'show'])->defaults('slug', 'members')->name('members');
+
+        /*
+         * One member state. The map on the membership page links here, and a
+         * link that only scrolls the page it is on is not navigation.
+         *
+         * Keyed by ISO code rather than by an id, so the URL a regulator
+         * pastes into a minute reads /members/bw and survives any reseed.
+         */
+        Route::get('members/{iso}', [MemberController::class, 'show'])
+            ->whereAlpha('iso')
+            ->name('members.show');
 
         /*
          * Legal pages. Linked from the footer on every page, so they must

@@ -19,4 +19,15 @@ return [
     'category_market' => 'Marché',
     'category_quality' => 'Qualité de service',
     'category_universal_access' => 'Accès universel',
+
+    // Les unités sont stockées sous forme de codes pour l'import et la
+    // comparaison entre États membres. Voici ce que lit le lecteur.
+    'unit_subscriptions_per_100' => 'abonnements pour 100 habitants',
+    'unit_bits_per_second_per_inhabitant' => 'bit/s par habitant',
+    'unit_percent' => 'pour cent',
+    'unit_operators' => 'opérateurs',
+    'unit_offices' => 'bureaux',
+    'unit_items' => 'envois',
+    'unit_staff' => 'effectifs',
+    'unit_days' => 'jours',
 ];

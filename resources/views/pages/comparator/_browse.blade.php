@@ -23,7 +23,7 @@
     <div class="c-cmp__result-head">
         <p class="c-cmp__eyebrow">{{ __('comparator.category_'.$indicator->category) }} — {{ __('comparator.mode_browse') }}</p>
         <h2>{{ $indicator->name }}</h2>
-        <p class="c-cmp__result-meta">{{ $indicator->unit }}{{ $indicator->definition ? ' — '.$indicator->definition : '' }}</p>
+        <p class="c-cmp__result-meta">{{ $indicator->unitLabel() }}{{ $indicator->definition ? ' — '.$indicator->definition : '' }}</p>
     </div>
 
     <div class="c-cmp__split">

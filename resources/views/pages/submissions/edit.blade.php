@@ -117,7 +117,7 @@
                                                @disabled(! $editable)>
                                     @endif
 
-                                    <p class="s-field__hint">{{ $indicator->definition ?: $indicator->unit }}</p>
+                                    <p class="s-field__hint">{{ $indicator->definition ?: $indicator->unitLabel() }}</p>
 
                                     {{-- Screen 06 puts a source field under every
                                          figure and marks it red when it is empty:

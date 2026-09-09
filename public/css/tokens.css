@@ -38,6 +38,18 @@
   --c-green-mid:#B6DCC5;
   --c-red-mid:#E3B7B8; --c-red-dark:#6E1A1D;
 
+  /* Choropleth steps. RegionMap.dc.html:
+       SHADES = ["#E8F4EC", "#9CCFB2", "#4FA97B", "#0E5536"]
+     One hue in four steps, the ends of which are --c-green-light and
+     --c-green-dark. The two middles are new tokens because the screen
+     draws them and nothing else on the platform did.
+
+     --c-hatch is the second tone of the "not reported" hatch, from the
+     same screen: repeating-linear-gradient(135deg,#E5E0D5 0 4px,#CFC8B8
+     4px 8px). A missing figure has to be visibly a different kind of
+     thing from a low one, not merely a paler one. */
+  --c-green-step-1:#9CCFB2; --c-green-step-2:#4FA97B; --c-hatch:#CFC8B8;
+
   /* Administration surfaces. Both values are drawn in screen 09:
      --c-admin-bg is the page ground behind the back office, --c-line the
      rule between panels, table rows and header. --c-line is a decorative

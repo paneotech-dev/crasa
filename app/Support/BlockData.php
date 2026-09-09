@@ -145,7 +145,7 @@ final class BlockData
                     ? rtrim(rtrim(number_format((float) $v->value_numeric, 1), '0'), '.')
                     : null,
                 'reported' => $v->value_numeric !== null || filled($v->value_text),
-                'unit' => $indicator->unit,
+                'unit' => $indicator->unitLabel(),
                 'period' => $v->period,
                 'confidence' => $v->confidence,
                 'is_sample' => $v->is_sample,

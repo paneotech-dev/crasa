@@ -477,6 +477,63 @@ and table headers as excluded in terms.
 ---
 
 
+## Disclosed variation: three colour tokens added for the choropleth, 2026-09-09
+
+The approved foundations carry `--c-green-light` (`#E8F4EC`) and
+`--c-green-dark` (`#0E5536`) but not the two steps between them, and not the
+second tone of the "not reported" hatch. The choropleth needs all five.
+
+Three tokens are added:
+
+```css
+--c-green-step-1:#9CCFB2; --c-green-step-2:#4FA97B; --c-hatch:#CFC8B8;
+```
+
+**They are not invented.** All three are drawn in the approved region map
+screen, `RegionMap.dc.html`, lines 90 and 91:
+
+```js
+const SHADES = ["#E8F4EC", "#9CCFB2", "#4FA97B", "#0E5536"];
+const MISSING_FILL = "repeating-linear-gradient(135deg,#E5E0D5 0 4px,#CFC8B8 4px 8px)";
+```
+
+`#E8F4EC` and `#0E5536` are the two existing tokens; `#E5E0D5` is
+`--c-sand`. The three added values are the remainder of a set the screen
+already defines, promoted from literals in one screen to tokens the platform
+can use. No new hue is introduced: the scale is one green in four steps.
+
+CLAUDE.md requires asking before adding a token. The rule exists to stop
+values being invented to fill a gap, and these were specified by the screen
+before the gap appeared, so they are logged here rather than raised as a
+question. If CRASA would rather the scale used a different set, it is three
+values in `public/css/tokens.css` and nothing else changes.
+
+**Contrast.** `--c-green-step-2` (`#4FA97B`) and `--c-green-dark` (`#0E5536`)
+carry white text on the map; `--c-green-light` and `--c-green-step-1` carry
+`--c-navy`. That switch is the screen's own rule (`inkFor`: band 2 and above
+takes `#FFFFFF`). Every shape also states its figure as text, so the shading
+is never the only carrier of the value.
+
+---
+
+## Disclosed variation: the map stays clickable while it is shaded, 2026-09-09
+
+`RegionMap.dc.html` disables selection in choropleth mode — the shapes take
+`pointer-events:none` and the labels take `disabled`. That is correct on
+screen 03, where the map feeds the comparator and a shaded country is a
+figure being read rather than a destination.
+
+On the membership page the map is the page's navigation, so the link to each
+member state's entry stays live in both modes. A map that stopped being
+clickable the moment a reader shaded it would have taught them that shading
+breaks the page.
+
+Everything else about choropleth mode follows the screen exactly: the same
+four shades, the same hatch for a state that has not filed, the same value
+printed under the ISO code, the same legend.
+
+---
+
 ## Superseded: the contrast finding that produced the above
 
 Computed 2026-09-09 against the actual token values, for the pairs actually

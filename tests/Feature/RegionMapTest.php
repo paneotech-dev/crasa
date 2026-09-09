@@ -43,7 +43,10 @@ class RegionMapTest extends TestCase
         $html = $this->get('/en/members')->assertOk()->getContent();
 
         foreach (Country::pluck('iso_code') as $code) {
-            $onMap = str_contains($html, 'href="#member-'.$code.'"');
+            // The destination, not an anchor on the same page. A member
+            // state's shape has to go somewhere for the map to be
+            // navigation rather than an illustration.
+            $onMap = str_contains($html, 'href="http://localhost/en/members/'.$code.'"');
 
             $this->assertTrue($onMap, strtoupper($code).' is a member state and does not appear on the map.');
         }

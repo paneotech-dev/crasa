@@ -662,12 +662,53 @@
    sits directly above the first block's own heading. */
 .c-section--title { padding-block: var(--section-y) 0; }
 
+/* Plain lists on record pages. A committee seat or a publication is a row,
+   not a bullet: the marker adds nothing and the note beside it does. */
+.c-list-plain { list-style: none; margin: 0 0 var(--s-6); padding: 0; display: flex; flex-direction: column; }
+.c-list-plain li { padding: var(--s-3) 0; border-bottom: 1px solid var(--c-sand); display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-3); align-items: baseline; }
+.c-list-plain__note { font-size: 13px; color: var(--c-slate); }
+.c-note { font-size: var(--t-small-size); color: var(--c-slate); margin: 0 0 var(--s-6); }
+
 /* The region map ------------------------------------------------------- */
 /* The members page's one bold moment. Everything else on that page stays
    quiet, per CLAUDE.md: spend boldness in one place. */
 
 .c-map-region { margin: 0 0 var(--s-7); }
-.c-map-region__svg { display: block; width: 100%; height: auto; }
+.c-map-region__svg { display: block; width: 100%; height: auto; min-width: 0; }
+
+/* Map, detail panel, island chips. One container, because the detail panel
+   is revealed by :has() from a member state anywhere inside it and the
+   island chips have to be inside the same scope to behave identically. */
+.c-map-region__stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-4);
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .c-map-region__stage { grid-template-columns: minmax(0, 1fr) 260px; }
+  .c-map-region__detail { grid-row: 1; grid-column: 2; }
+  .c-map-region__insets { grid-column: 1 / -1; }
+}
+
+/* The dataset selector ------------------------------------------------- */
+.c-map-region__control {
+  display: flex; flex-wrap: wrap; align-items: end; gap: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+.c-map-region__control-label {
+  display: block; width: 100%;
+  font-family: var(--f-admin); font-size: 13px; font-weight: 600;
+  color: var(--c-charcoal); margin-bottom: calc(var(--s-1) * -1);
+}
+.c-map-region__select {
+  flex: 1 1 260px; min-width: 0; max-width: 420px;
+  min-height: 44px; padding: var(--s-2) var(--s-3);
+  font-family: var(--f-body); font-size: 15px; color: var(--c-charcoal);
+  background: var(--c-white);
+  border: 1px solid var(--c-border); border-radius: var(--r-xs);
+}
+.c-map-region__select:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 1px; }
 
 /* Neighbours in sand, so the region reads as sitting in a continent rather
    than floating. Deliberately flat: they are context, not content. */
@@ -684,8 +725,8 @@
   stroke-linejoin: round;
   transition: fill 150ms var(--ease-in);
 }
-.c-map-region__member:hover path { fill: var(--c-green); }
-.c-map-region__member:focus-visible path { fill: var(--c-green); }
+.c-map-region--plain .c-map-region__member:hover path,
+.c-map-region--plain .c-map-region__member:focus-visible path { fill: var(--c-green); }
 .c-map-region__member:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
 
 .c-map-region__code {
@@ -696,20 +737,153 @@
   letter-spacing: .04em;
   pointer-events: none;
 }
+.c-map-region__value {
+  fill: var(--c-charcoal);
+  font-family: var(--f-admin);
+  font-size: 11px;
+  font-weight: 600;
+  pointer-events: none;
+}
 
-.c-map-region__insets { display: flex; flex-wrap: wrap; gap: var(--s-4); margin-top: var(--s-4); }
+/* The choropleth ------------------------------------------------------- */
+/* RegionMap.dc.html: SHADES = ["#E8F4EC", "#9CCFB2", "#4FA97B", "#0E5536"].
+   One hue in four steps, so a reader sees an ordering rather than a set of
+   categories. Every step is also a number printed on the shape, because
+   colour cannot be the only carrier under SC 1.4.1. */
+.c-map-region--shaded .c-map-region__member[data-band="0"] path { fill: var(--c-green-light); }
+.c-map-region--shaded .c-map-region__member[data-band="1"] path { fill: var(--c-green-step-1); }
+.c-map-region--shaded .c-map-region__member[data-band="2"] path { fill: var(--c-green-step-2); }
+.c-map-region--shaded .c-map-region__member[data-band="3"] path { fill: var(--c-green-dark); }
+.c-map-region--shaded .c-map-region__member[data-band="none"] path { fill: url(#c-map-hatch); }
+
+/* The two darker steps take light ink. The screen switches at band 2:
+   inkFor: (v && v.band >= 2) ? "#FFFFFF" : "#0F1B2D". */
+.c-map-region--shaded .c-map-region__code[data-band="2"],
+.c-map-region--shaded .c-map-region__code[data-band="3"] { fill: var(--c-white); }
+.c-map-region--shaded .c-map-region__value[data-band="2"],
+.c-map-region--shaded .c-map-region__value[data-band="3"] { fill: var(--c-green-light); }
+.c-map-region--shaded .c-map-region__code[data-band="none"],
+.c-map-region--shaded .c-map-region__value[data-band="none"] { fill: var(--c-charcoal); }
+
+/* In choropleth mode a hover must not repaint the shape, or it would read
+   as a different value. The shape thickens its outline instead. */
+.c-map-region--shaded .c-map-region__member:hover path,
+.c-map-region--shaded .c-map-region__member:focus-visible path { stroke-width: 3; }
+
+/* MISSING_FILL = repeating-linear-gradient(135deg,#E5E0D5 0 4px,#CFC8B8 4px 8px) */
+.c-map-region__hatch-ground { fill: var(--c-sand); }
+.c-map-region__hatch-rule { fill: var(--c-hatch); }
+
+/* The detail panel ----------------------------------------------------- */
+/* Fourteen cards stacked in one box, one revealed at a time by :has(). No
+   script, so it works on the first paint and on a reader with scripting
+   off. A browser without :has() simply keeps the prompt, and every fact in
+   the panel is in the link's accessible name and in the list below. */
+.c-map-region__detail {
+  min-height: 132px;
+  padding: var(--s-4);
+  background: var(--c-white);
+  border: 1px solid var(--c-sand);
+  border-radius: var(--r-md);
+}
+.c-map-region__prompt { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--c-slate); }
+.c-map-region__card { display: none; flex-direction: column; gap: var(--s-1); }
+.c-map-region__card-country { font-family: var(--f-head); font-size: 19px; color: var(--c-navy); }
+.c-map-region__card-authority { font-size: 14px; line-height: 1.45; color: var(--c-charcoal); }
+.c-map-region__card-acronym { font-family: var(--f-admin); font-size: 12.5px; font-weight: 700; color: var(--c-green-dark); }
+.c-map-region__card-sectors { font-size: 13px; line-height: 1.45; color: var(--c-slate); }
+.c-map-region__card-value { margin-top: var(--s-2); padding-top: var(--s-2); border-top: 1px solid var(--c-sand); font-size: 13.5px; color: var(--c-charcoal); }
+
+.c-map-region__stage:has([data-iso="ao"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="ao"],
+.c-map-region__stage:has([data-iso="bw"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="bw"],
+.c-map-region__stage:has([data-iso="cd"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="cd"],
+.c-map-region__stage:has([data-iso="km"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="km"],
+.c-map-region__stage:has([data-iso="ls"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="ls"],
+.c-map-region__stage:has([data-iso="mu"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="mu"],
+.c-map-region__stage:has([data-iso="mw"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="mw"],
+.c-map-region__stage:has([data-iso="mz"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="mz"],
+.c-map-region__stage:has([data-iso="na"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="na"],
+.c-map-region__stage:has([data-iso="sz"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="sz"],
+.c-map-region__stage:has([data-iso="tz"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="tz"],
+.c-map-region__stage:has([data-iso="za"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="za"],
+.c-map-region__stage:has([data-iso="zm"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="zm"],
+.c-map-region__stage:has([data-iso="zw"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="zw"] { display: flex; }
+.c-map-region__stage:has([data-iso="ao"]:is(:hover,:focus-visible)) .c-map-region__prompt,
+.c-map-region__stage:has([data-iso="bw"]:is(:hover,:focus-visible)) .c-map-region__prompt,
+.c-map-region__stage:has([data-iso="cd"]:is(:hover,:focus-visible)) .c-map-region__prompt,
+.c-map-region__stage:has([data-iso="km"]:is(:hover,:focus-visible)) .c-map-region__prompt,
+.c-map-region__stage:has([data-iso="ls"]:is(:hover,:focus-visible)) .c-map-region__prompt,
+.c-map-region__stage:has([data-iso="mu"]:is(:hover,:focus-visible)) .c-map-region__prompt,
+.c-map-region__stage:has([data-iso="mw"]:is(:hover,:focus-visible)) .c-map-region__prompt,
+.c-map-region__stage:has([data-iso="mz"]:is(:hover,:focus-visible)) .c-map-region__prompt,
+.c-map-region__stage:has([data-iso="na"]:is(:hover,:focus-visible)) .c-map-region__prompt,
+.c-map-region__stage:has([data-iso="sz"]:is(:hover,:focus-visible)) .c-map-region__prompt,
+.c-map-region__stage:has([data-iso="tz"]:is(:hover,:focus-visible)) .c-map-region__prompt,
+.c-map-region__stage:has([data-iso="za"]:is(:hover,:focus-visible)) .c-map-region__prompt,
+.c-map-region__stage:has([data-iso="zm"]:is(:hover,:focus-visible)) .c-map-region__prompt,
+.c-map-region__stage:has([data-iso="zw"]:is(:hover,:focus-visible)) .c-map-region__prompt { display: none; }
+
+/* The island members --------------------------------------------------- */
+.c-map-region__insets { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: center; }
+.c-map-region__insets-heading {
+  flex: 1 0 100%;
+  font-family: var(--f-admin); font-size: 13px; font-weight: 600;
+  color: var(--c-charcoal); margin: 0;
+}
 .c-map-region__inset {
-  display: flex; align-items: center; gap: var(--s-2);
+  display: flex; align-items: center; gap: var(--s-3);
+  flex: 1 1 200px; max-width: 320px;
   min-height: 44px; padding: var(--s-2) var(--s-3);
   border: 1px solid var(--c-sand); border-radius: var(--r-md);
   background: var(--c-white); text-decoration: none;
 }
 .c-map-region__inset:hover { border-color: var(--c-green-dark); }
-.c-map-region__inset svg { width: 34px; height: 30px; }
+.c-map-region__inset:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
+.c-map-region__inset svg { flex: none; width: 44px; height: 37px; }
 .c-map-region__inset path { fill: var(--c-green-light); stroke: var(--c-green-dark); stroke-width: 1.5; }
+.c-map-region__inset-text { display: flex; flex-direction: column; min-width: 0; gap: 2px; }
 .c-map-region__inset-code { font-family: var(--f-admin); font-size: 13px; font-weight: 700; color: var(--c-green-dark); }
+.c-map-region__inset-detail { font-size: 13px; color: var(--c-charcoal); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* The identical rules the mainland shapes take, on the identical
+   attribute. An inset is a rendering decision, not a second class. */
+.c-map-region--shaded .c-map-region__inset[data-band="0"] path { fill: var(--c-green-light); }
+.c-map-region--shaded .c-map-region__inset[data-band="1"] path { fill: var(--c-green-step-1); }
+.c-map-region--shaded .c-map-region__inset[data-band="2"] path { fill: var(--c-green-step-2); }
+.c-map-region--shaded .c-map-region__inset[data-band="3"] path { fill: var(--c-green-dark); }
+.c-map-region--shaded .c-map-region__inset[data-band="none"] path { fill: url(#c-map-hatch); }
+
+/* The legend ----------------------------------------------------------- */
+.c-map-region__legend { margin-top: var(--s-5); padding-top: var(--s-4); border-top: 1px solid var(--c-line); }
+.c-map-region__legend-title { margin: 0 0 var(--s-3); font-family: var(--f-admin); font-size: 14px; font-weight: 600; color: var(--c-navy); }
+.c-map-region__legend-unit { font-weight: 400; color: var(--c-slate); }
+.c-map-region__scale { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); font-size: 13.5px; color: var(--c-charcoal); }
+.c-map-region__swatch { width: 26px; height: 14px; border: 1px solid var(--c-border); }
+.c-map-region__swatch[data-band="0"] { background: var(--c-green-light); }
+.c-map-region__swatch[data-band="1"] { background: var(--c-green-step-1); }
+.c-map-region__swatch[data-band="2"] { background: var(--c-green-step-2); }
+.c-map-region__swatch[data-band="3"] { background: var(--c-green-dark); }
+.c-map-region__swatch--missing { margin-left: var(--s-3); background: repeating-linear-gradient(135deg, var(--c-sand) 0 4px, var(--c-hatch) 4px 8px); }
+.c-map-region__legend-note { margin: var(--s-3) 0 0; font-size: 13px; line-height: 1.55; color: var(--c-slate); }
+
+/* The table equivalent ------------------------------------------------- */
+.c-map-region__table { margin-top: var(--s-4); }
+.c-map-region__table > summary {
+  cursor: pointer; padding: var(--s-2) 0;
+  font-family: var(--f-admin); font-size: 13.5px; font-weight: 600; color: var(--c-green-dark);
+}
+.c-map-region__table > summary:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
+.c-map-region__cell--missing { color: var(--c-slate); }
 
 .c-map-region__caption { font-size: 13px; line-height: 1.55; color: var(--c-slate); margin-top: var(--s-3); }
+
+/* Print drops the controls. The shading itself survives print badly, which
+   is why every shape carries its figure as text: a photocopied map still
+   states fourteen numbers even when all four greens have gone to one grey. */
+@media print {
+  .c-map-region__control, .c-map-region__detail { display: none; }
+  .c-map-region__table > summary { list-style: none; color: var(--c-charcoal); }
+}
 
 /* Section grounds ------------------------------------------------------ */
 /* Screen 02 alternates cream, white and navy. Everything on one ground is

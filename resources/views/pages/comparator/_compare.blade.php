@@ -56,7 +56,7 @@
                     <tr>
                         <th scope="row" class="c-cmp__sticky">
                             <span class="c-cmp__indicator-name">{{ $indicator->name }}</span>
-                            <span class="c-cmp__indicator-unit">{{ $indicator->unit }}</span>
+                            <span class="c-cmp__indicator-unit">{{ $indicator->unitLabel() }}</span>
                         </th>
                         @foreach ($comparison->countries as $country)
                             @php $cell = $cells[$indicator->id][$country->id] ?? null; @endphp
@@ -81,7 +81,7 @@
         @foreach ($comparison->indicators as $indicator)
             <article class="c-cmp__card">
                 <h3>{{ $indicator->name }}</h3>
-                <p class="c-cmp__indicator-unit">{{ $indicator->unit }}</p>
+                <p class="c-cmp__indicator-unit">{{ $indicator->unitLabel() }}</p>
                 @foreach ($comparison->countries as $country)
                     @php $cell = $cells[$indicator->id][$country->id] ?? null; @endphp
                     @continue($cell === null)

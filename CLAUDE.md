@@ -44,6 +44,7 @@ These come from the approved design foundations. Do not invent values. If a valu
   --c-border:#908977; --c-disabled:#6E7A85;
   --c-navy-deep:#050D18; --c-navy-edge:#5A6680; --c-navy-soft:#6B7691;
 
+  --c-green-step-1:#9CCFB2; --c-green-step-2:#4FA97B; --c-hatch:#CFC8B8;
   --c-admin-bg:#F4F3F0; --c-line:#DFDBD1;
   --d-bg:#0B1220; --d-surface:#141E30; --d-line:#26334A;
   --d-ink:#E8EDF4; --d-ink-dim:#9DAABF; --d-green:#2FA76F; --d-current:#1D3A2B;
@@ -77,6 +78,8 @@ These come from the approved design foundations. Do not invent values. If a valu
 **Contrast is a threshold, not a preference.** WCAG 2.1 AA is a contractual acceptance criterion, so where an approved foundation value fails a success criterion the standard wins and the delivered value differs. `--c-border` and `--c-navy-edge` are both lightened or darkened from the foundations for SC 1.4.11 — `--c-border` twice, because the back office ground is darker than cream and the value that cleared cream did not clear it, and `--c-border-input` is deleted because it resolved to the same value as `--c-border`. Every token pair in use is measured by test.
 
 **The back office has its own ground and its own surface set.** `--c-admin-bg` and `--c-line` are the administration page ground and panel rule, and the `--d-*` set is the dark surface set. All of them are drawn in screen 09. Dark mode is the same design with different surface and ink values, not a second design: no component appears or disappears with the theme, and no status badge changes meaning.
+
+**The choropleth is one hue in four steps.** `--c-green-light`, `--c-green-step-1`, `--c-green-step-2`, `--c-green-dark`, drawn in RegionMap. A member state with no figure is hatched with `--c-sand` and `--c-hatch`, never the lightest step: "not reported" and "lowest value" mean different things and must not look similar.
 
 **Status pills carry fixed meanings.** Green for validated and in force. Amber for draft, pending and returned. Red for repealed, rejected and errors. Slate for archived and superseded. No screen invents a new status colour.
 

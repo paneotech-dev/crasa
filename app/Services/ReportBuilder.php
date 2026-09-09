@@ -96,7 +96,7 @@ final class ReportBuilder
         return [
             'subject' => Report::INDICATOR,
             'title' => $report->title,
-            'subtitle' => trim(($indicator->unit ?? '').($report->period ? ', '.$report->period : '')),
+            'subtitle' => trim(($indicator->unitLabel() ?? '').($report->period ? ', '.$report->period : '')),
             'rows' => $rows,
             'sample' => $rows->contains(fn (array $r) => $r['sample']),
             'reported' => $rows->where('reported', true)->count(),
@@ -112,7 +112,7 @@ final class ReportBuilder
 
         return [
             'label' => $label,
-            'unit' => $indicator->unit,
+            'unit' => $indicator->unitLabel(),
             'reported' => $reported,
             // "Not reported", never a blank and never a zero. The same rule
             // the comparator holds, for the same reason.
