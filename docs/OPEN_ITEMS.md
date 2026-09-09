@@ -1340,3 +1340,91 @@ card existed: nothing in the codebase mentioned an assistant or a proposed
 extension. The card was built alongside the panel, to the specification the
 panel's own wording implies — same label, same interest behaviour, same
 audience.
+
+---
+
+## The header dropdowns, and the menu restructured through the builder
+
+*10 September 2026.*
+
+**Screen 01 draws no dropdown.** It names `--e-2` as the elevation for
+"Hover, dropdowns, sticky headers" at line 418 and stops there. The
+elevation is the screen's; the rest is a disclosed variation.
+
+**The structure.** About ▾, Members, Committees, Publications ▾, Projects ▾,
+Newsroom, Events, Comparator, Contact. Nine roots, three of them groups,
+nine children. **Every one is a record** — `HeaderMenuSeeder` writes the
+shape, and the Secretariat can rename, reorder, hide or renest any of it in
+the builder without a deploy.
+
+The grouping is the legacy site's own. `LEGACY_INVENTORY.md` recorded
+twenty-six internal links grouped under About, Projects and Publications,
+and the nine flat links this site launched with dropped that grouping.
+
+**Projects is hidden until the import lands.** The group and its two
+children are records either way, so showing it is one toggle rather than a
+deploy — which is the point of the menu being records at all.
+
+**The floor.** Every child link is in the document. The rules that close a
+menu are under `html.has-js`, and the toggle button is not drawn without it,
+so with no script the header is an open list rather than a hidden one.
+`nav.js` turns it into a dropdown; it is not how the navigation exists.
+Escape closes and returns focus to the button that opened it, and leaving a
+group by keyboard closes it — without that a reader tabs out of an open menu
+and it stays open behind them.
+
+**No min-width on the menu.** The children carry `white-space: nowrap`, so
+it is as wide as its longest label. Fixing a nav width to English text is
+what CLAUDE.md forbids, and the French and Portuguese labels run 15 to 30%
+longer.
+
+**A group with no page of its own is a button, not a link to nowhere.**
+About opens a page and Projects does not; both are drawn, because the legacy
+site has both. Where a group does have a page, the menu offers it first, so
+a reader who opens the group to reach it finds it.
+
+---
+
+## The contact page, two columns
+
+*10 September 2026.*
+
+The form on the left at `flex:1 1 480px`, the Secretariat card and the map
+on the right at `flex:1 1 320px`, gap `--s-7`. It was one reading column
+with the address and the map stacked under the form, which put the thing
+most readers came for below a form they were not going to fill in.
+
+The Secretariat block is a white card at `--r-md` — not `--r-lg`. The
+screens reserve `--r-lg` for a raised panel over the page (screen 01 line
+745, screen 15 line 374) and this is a panel in the flow of one; the
+existing guard was right and the block follows it rather than being carved
+an exception. Details come from site settings through `App\Support\SiteContact`,
+so the telephone number is one field in the back office rather than three
+lang files.
+
+---
+
+## Committee seats: the screen Lilongwe writes into
+
+*10 September 2026.*
+
+The committees have been in the platform since the schema was written and
+`CommitteeSeeder` has never filled in who sits on them, deliberately:
+inventing which member state sits on which committee is the one thing that
+seeder must not do. So the committees page told every reader "seats not yet
+recorded" and there was no way to record them. There is now.
+
+**One chair per committee, enforced by moving rather than refusing.**
+Naming a second chair moves the first to member. The intent of the click is
+unambiguous, and refusing it would make the operator demote the old chair
+first — two steps for one decision, with the committee chairless in
+between.
+
+**A state cannot take two seats on one committee.** The add form does not
+offer a state that already sits there, and the server refuses it anyway:
+offering one that does turns "add" into a silent change of role.
+
+Seats are recorded by the Secretariat, so `is_sample` is false and the
+go-live strip leaves them. Every add, change and removal writes an audit
+row naming the state. The counts on the committee cards and the member
+state profiles read this pivot, so they follow with no further work.

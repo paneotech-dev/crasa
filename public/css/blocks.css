@@ -2499,3 +2499,27 @@
 /* A step that goes nowhere is present and visibly inert, so the row does
    not change width at the ends of the range. */
 .c-pager__step.is-off { color: var(--c-disabled); border-color: var(--c-sand); }
+
+/* The contact page, two columns ------------------------------------------ */
+/* The form on the left, the Secretariat and the map on the right. It was
+   one reading column with the address stacked under the form, which put the
+   thing most readers came for below a form they were not going to fill in. */
+
+.c-contact { display: flex; flex-wrap: wrap; gap: var(--s-7); align-items: flex-start; }
+.c-contact__form { flex: 1 1 480px; min-width: 0; }
+.c-contact__aside { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: var(--s-5); }
+
+/* A card, so the address reads as a thing rather than as a paragraph. */
+.c-secretariat {
+  background: var(--c-white);
+  border: 1px solid var(--c-sand);
+  /* --r-md, not --r-lg. The screens reserve --r-lg for a raised panel
+     over the page -- screen 01 line 745, screen 15 line 374 -- and this
+     is a panel in the flow of one. */
+  border-radius: var(--r-md);
+  box-shadow: var(--e-1);
+  padding: var(--s-5);
+}
+.c-secretariat__title { font-family: var(--f-head); font-size: 21px; font-weight: 600; margin: 0 0 var(--s-4); }
+.c-secretariat .c-address { font-style: normal; font-size: 16px; line-height: 1.7; color: var(--c-charcoal); }
+.c-address__contact { margin-top: var(--s-2); }

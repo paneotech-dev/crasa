@@ -442,3 +442,74 @@
 .c-footer__legal-links { display: flex; gap: var(--s-5); flex-wrap: wrap; }
 .c-footer__legal-links a { color: var(--c-sand); text-decoration: none; }
 .c-footer__legal-links a:hover { color: var(--c-white); text-decoration: underline; }
+
+/* Header dropdowns --------------------------------------------------------- */
+/* Screen 01 draws no dropdown. It names --e-2 as the elevation for "Hover,
+   dropdowns, sticky headers" and stops there, so the elevation is the
+   screen's and the rest is a disclosed variation in docs/OPEN_ITEMS.md.
+
+   THE FLOOR. Without script the menu is open and every child link is in the
+   document: the rules that close it are all under html.has-js, and the
+   toggle button is not drawn at all. Nothing on this platform hides
+   navigation behind a script. */
+
+.c-nav__group { position: relative; display: flex; align-items: center; }
+
+.c-nav__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+.c-nav__toggle svg { transition: transform 150ms var(--ease-in); }
+.c-nav__toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+.c-nav__menu { display: flex; flex-direction: column; }
+
+.c-nav__child {
+  font-size: 15px;
+  color: var(--c-charcoal);
+  text-decoration: none;
+  padding: 9px 12px;
+  border-radius: var(--r-sm);
+  white-space: nowrap;
+}
+.c-nav__child:hover { background: var(--c-green-light); color: var(--c-navy); }
+.c-nav__child[aria-current] { font-weight: 600; color: var(--c-navy); }
+
+html.has-js .c-nav__menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 30;
+  /* No min-width. The children carry white-space: nowrap, so the menu is
+     as wide as its longest label -- which is the right behaviour on a
+     platform whose French and Portuguese labels run 15 to 30% longer than
+     the English, and the reason CLAUDE.md forbids fixing a nav width to
+     English text. */
+  padding: var(--s-2);
+  background: var(--c-white);
+  border: 1px solid var(--c-sand);
+  border-radius: var(--r-md);
+  /* --e-2, which screen 01 names for exactly this. */
+  box-shadow: var(--e-2);
+}
+html.has-js .c-nav__menu[hidden] { display: none; }
+html:not(.has-js) .c-nav__toggle { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .c-nav__toggle svg { transition: none; }
+}
+
+/* The drawer's second level. */
+.c-drawer__link--child { padding-left: var(--s-6); font-size: 15px; }
+.c-drawer__heading {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-slate);
+  margin: var(--s-3) 0 2px;
+  padding: 0 var(--s-3);
+}

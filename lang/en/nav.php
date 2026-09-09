@@ -22,4 +22,6 @@ return [
 
     'back_office' => 'Back office',
     'account' => 'Your account',
+
+    'overview' => 'All of :section',
 ];

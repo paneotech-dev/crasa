@@ -2385,3 +2385,7 @@ html:not(.has-js) .a-modal {
 html:not(.has-js) [data-modal-open],
 html:not(.has-js) .a-modal__close,
 html:not(.has-js) [data-modal-close] { display: none; }
+
+/* A role select and its save button, on one row inside a table cell. */
+.a-seatform { display: flex; gap: var(--s-2); align-items: center; }
+.a-seatform .a-select { width: auto; min-width: 140px; }

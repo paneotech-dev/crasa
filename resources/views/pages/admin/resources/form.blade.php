@@ -10,6 +10,16 @@
     <li aria-current="page">{{ $isNew ? __('admin.resource_new', ['name' => $definition->singular()]) : $definition->titleFor($record) }}</li>
 @endsection
 
+{{-- Committees carry seats, which are a separate screen: fourteen member
+     states against three roles is a table, not four more fields on a form.
+     One conditional rather than a per-resource hook, because this is the
+     only resource that has one. --}}
+@if ($definition->key === 'committees' && ! $isNew)
+    @section('actions')
+        <a class="a-btn a-btn--secondary" href="{{ route('admin.committees.seats', ['locale' => app()->getLocale(), 'committee' => $record->slug]) }}">{{ __('admin.seats_manage') }}</a>
+    @endsection
+@endif
+
 @section('content')
     @if (! $isNew && $definition->softDeletes() && $record->trashed())
         <div class="a-band">

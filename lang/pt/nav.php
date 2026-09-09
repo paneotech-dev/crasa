@@ -22,4 +22,6 @@ return [
 
     'back_office' => 'Administração',
     'account' => 'A sua conta',
+
+    'overview' => 'Tudo em :section',
 ];

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\AdminSearchController;
 use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\CommitteeSeatController;
 use App\Http\Controllers\Admin\ConfirmationController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DelegateListController;
@@ -506,6 +507,16 @@ Route::prefix('{locale}')
                  * The way in to the rosters. Each one was reachable only by
                  * knowing a meeting's slug.
                  */
+                /*
+                 * Committee seats. Which member states sit on which
+                 * committee, and in what role. This is what the
+                 * confirmation session in Lilongwe writes into.
+                 */
+                Route::get('committees/{committee}/seats', [CommitteeSeatController::class, 'index'])->name('committees.seats');
+                Route::post('committees/{committee}/seats', [CommitteeSeatController::class, 'store'])->name('committees.seats.store');
+                Route::put('committees/{committee}/seats/{country}', [CommitteeSeatController::class, 'update'])->name('committees.seats.update');
+                Route::delete('committees/{committee}/seats/{country}', [CommitteeSeatController::class, 'destroy'])->name('committees.seats.destroy');
+
                 Route::get('meetings', [MeetingListController::class, 'index'])->name('meetings');
                 Route::get('meetings/{meeting}/delegates', [DelegateListController::class, 'index'])->name('delegates');
                 Route::get('meetings/{meeting}/delegates.csv', [DelegateListController::class, 'csv'])->name('delegates.csv');

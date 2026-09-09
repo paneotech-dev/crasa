@@ -25,7 +25,15 @@
     />
 
     <div class="c-section">
-        <div class="c-page c-page--reading">
+        {{-- Two columns below the band: the form on the left at
+             flex:1 1 480px, the Secretariat and the map on the right at
+             flex:1 1 320px, gap --s-7. The page was one reading column with
+             the address and the map stacked under the form, which put the
+             thing a reader most often came for -- the address -- below a
+             form they were not going to fill in. --}}
+        <div class="c-page">
+            <div class="c-contact">
+                <div class="c-contact__form">
 
             @if (session('enquiry_received'))
                 <div class="c-notice c-notice--success" role="status">
@@ -120,14 +128,27 @@
                 <button type="submit" class="c-btn c-btn--primary">{{ __('contact.submit') }}</button>
             </form>
 
-            <h2>{{ __('contact.secretariat') }}</h2>
-            <address class="c-address">
-                {{-- From site settings. See the footer. --}}
-                <div>{{ \App\Support\SiteContact::addressLine1() }}</div>
-                <div>{{ \App\Support\SiteContact::addressLine2() }}</div>
-                <div><a href="mailto:{{ \App\Support\SiteContact::email() }}">{{ \App\Support\SiteContact::email() }}</a></div>
-                <div><a href="tel:{{ preg_replace('/[^0-9+]/', '', \App\Support\SiteContact::phone()) }}">{{ \App\Support\SiteContact::phone() }}</a></div>
-            </address>
+                </div>
+
+                <aside class="c-contact__aside">
+                    {{-- A white card, so the address reads as a thing rather
+                         than as a paragraph after the form. --}}
+                    <div class="c-secretariat">
+                        <h2 class="c-secretariat__title">{{ __('contact.secretariat') }}</h2>
+
+                        <address class="c-address">
+                            {{-- From site settings, not the lang files. See
+                                 App\Support\SiteContact. --}}
+                            <div>{{ \App\Support\SiteContact::addressLine1() }}</div>
+                            <div>{{ \App\Support\SiteContact::addressLine2() }}</div>
+                            <div class="c-address__contact">
+                                <a href="mailto:{{ \App\Support\SiteContact::email() }}">{{ \App\Support\SiteContact::email() }}</a>
+                            </div>
+                            <div class="c-address__contact">
+                                <a href="tel:{{ preg_replace('/[^0-9+]/', '', \App\Support\SiteContact::phone()) }}">{{ \App\Support\SiteContact::phone() }}</a>
+                            </div>
+                        </address>
+                    </div>
 
             {{-- The map loads on request. Tiles are a third-party server, so
                  nothing about a reader leaves this platform unless they ask
@@ -142,7 +163,9 @@
                 <div class="c-map__placeholder">
                     <p class="c-map__note">{{ __('contact.map_note') }}</p>
                     <button type="button" class="c-btn c-btn--secondary" data-map-load>{{ __('contact.map_load') }}</button>
-                </div>
+                        </div>
+                    </div>
+                </aside>
             </div>
         </div>
     </div>

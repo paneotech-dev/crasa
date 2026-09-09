@@ -28,13 +28,57 @@
             </span>
         </a>
 
+        {{-- A root item with children opens a dropdown. Screen 01 draws no
+             dropdown -- it names --e-2 as the elevation for "Hover,
+             dropdowns, sticky headers" and stops -- so the elevation is the
+             screen's and the rest is a disclosed variation.
+
+             THE FLOOR. Without script the group is open: .c-nav__menu is
+             only hidden once has-js is on the root, so every child link is
+             in the document and reachable by keyboard either way. The
+             button is what turns it into a dropdown, and it is not drawn
+             when there is nothing to run it. --}}
         <nav class="c-nav" aria-label="{{ __('nav.primary') }}" data-header-nav>
             @foreach ($primary as $item)
-                <a
-                    class="c-nav__link"
-                    href="{{ $item['url'] }}"
-                    @if ($item['current']) aria-current="page" @endif
-                >{{ $item['label'] }}</a>
+                @if (($item['children'] ?? []) === [])
+                    <a
+                        class="c-nav__link"
+                        href="{{ $item['url'] }}"
+                        @if ($item['current']) aria-current="page" @endif
+                    >{{ $item['label'] }}</a>
+                @else
+                    <div class="c-nav__group" data-nav-group>
+                        <button
+                            type="button"
+                            class="c-nav__link c-nav__toggle"
+                            aria-expanded="false"
+                            aria-controls="nav-menu-{{ $item['key'] }}"
+                            @if ($item['current']) aria-current="page" @endif
+                            data-nav-toggle
+                        >
+                            {{ $item['label'] }}
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 9l6 6 6-6"></path>
+                            </svg>
+                        </button>
+
+                        <div class="c-nav__menu" id="nav-menu-{{ $item['key'] }}" data-nav-menu>
+                            {{-- The group's own page first, where it has
+                                 one. "About" is a page as well as a
+                                 heading, and a reader who opens the group
+                                 to reach it should find it. --}}
+                            @if ($item['url'])
+                                <a class="c-nav__child" href="{{ $item['url'] }}">{{ __('nav.overview', ['section' => $item['label']]) }}</a>
+                            @endif
+
+                            @foreach ($item['children'] as $child)
+                                <a class="c-nav__child" href="{{ $child['url'] }}"
+                                   @if ($child['current']) aria-current="page" @endif>{{ $child['label'] }}</a>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
             @endforeach
         </nav>
 
@@ -98,11 +142,25 @@
     <div class="c-drawer" id="site-drawer" data-drawer hidden>
         <nav class="c-drawer__nav" aria-label="{{ __('nav.primary') }}">
             @foreach ($primary as $item)
-                <a
-                    class="c-drawer__link"
-                    href="{{ $item['url'] }}"
-                    @if ($item['current']) aria-current="page" @endif
-                >{{ $item['label'] }}</a>
+                {{-- A group with no page of its own is a heading here
+                     rather than a link to nowhere. --}}
+                @if ($item['url'])
+                    <a
+                        class="c-drawer__link"
+                        href="{{ $item['url'] }}"
+                        @if ($item['current']) aria-current="page" @endif
+                    >{{ $item['label'] }}</a>
+                @else
+                    <p class="c-drawer__heading">{{ $item['label'] }}</p>
+                @endif
+
+                {{-- Nested, indented, in the same order. A drawer that
+                     drops the second level is a drawer that hides half the
+                     site on a phone. --}}
+                @foreach ($item['children'] ?? [] as $child)
+                    <a class="c-drawer__link c-drawer__link--child" href="{{ $child['url'] }}"
+                       @if ($child['current']) aria-current="page" @endif>{{ $child['label'] }}</a>
+                @endforeach
             @endforeach
             <a class="c-drawer__link" href="{{ $searchUrl }}">{{ __('nav.search') }}</a>
         </nav>

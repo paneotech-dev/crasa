@@ -108,6 +108,7 @@
     @include('partials.site-footer')
 
     <script src="{{ \App\Support\Assets::url('js/chrome.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/nav.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/hero.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/app.js') }}" defer></script>
     @stack('scripts')

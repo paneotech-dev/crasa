@@ -113,3 +113,56 @@ holds what there is.
 user-agent naming the migration and the client. Same-host links only.
 Documents and images are recorded, not followed. Capped at 400 pages so a
 link loop cannot run away on the client's server.
+
+---
+
+## The crawl completed, 10 September 2026
+
+`php artisan legacy:import` ran to an empty queue in about ninety seconds.
+The host answered every request in well under a second, which it did not on
+either of the two earlier attempts; the resumable shape stays regardless,
+because a run that has to be repeated on a bad day should not start again
+from the first page.
+
+| | Count |
+|---|---|
+| Pages fetched | **91** |
+| Documents found | **35** |
+| Images found | **101** |
+| Errors | 1 |
+
+**Every document is on `cdn.prod.website-files.com`**, which confirms the
+two-level finding above: the PDFs are not linked from any listing page and
+are reached only through `/post-articles/<slug>`. The earlier breadth-first
+crawl found zero for exactly that reason.
+
+The filenames carry their own year, which is the publication date the
+manifest needs where the page does not state one separately:
+
+```
+6127444d969e0b4cd2348592_2000 INTERCONNECTION GUIDELINES FOR SADC.pdf
+612fd699e5c497569908f0cd_2000 TARIFF GUIDELINES IN SADC.pdf
+612fd7dc188086cc3041ca15_2002 LICENSING GUIDELINES FOR SADC.pdf
+612fdaa73d03c8570bfc4dac_2003 GUIDELINES ON HARMONISATION ON NUMBERING.pdf
+612fdb57cc121c7a14bd1471_2011_SADC TOOLKIT ON UA FUNDING AND USF IMPLEMENTATION.pdf
+612fde3b2c63ed470831f931_2015 SADC GUIDELINE FOR DEVELOPMENT OF NATIONAL BROADBAND PLANS.pdf
+612fdebfa2759d84ac69dbf7_2015 SADC POLICY ON ROAMING APPROVED.pdf
+```
+
+**The one error** was `/post-articles/2nd-meeting-of-the-finance-and-audit-committee-fac#`
+— a link on the legacy site ending in a bare fragment, fetched as a separate
+URL and answered with nothing. Fixed at the source: a fragment is stripped
+before a URL is queued, so a re-run is clean.
+
+## What the import deliberately does not do
+
+**It writes no records.** The command produces a manifest and nothing else.
+Mapping a legacy category onto a `publication_type`, and deciding which of
+the 35 are publications and which are news, is a decision about CRASA's own
+taxonomy. It is made once, with the manifest in front of somebody, rather
+than guessed by a crawler. `storage/app/private/legacy/state.json` holds
+every URL, the page it was found on, and the page titles.
+
+**Nothing is downloaded yet.** The PDFs are on the client's CDN and 35 of
+them is a few hundred megabytes; fetching them belongs with the decision
+about which are wanted, not before it.

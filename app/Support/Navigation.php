@@ -115,14 +115,54 @@ final class Navigation
     }
 
     /** @return list<array{key: string, label: string, url: string, current: bool}> */
+    /**
+     * The header, one level deep.
+     *
+     * A root item may carry children, which the header draws as a dropdown
+     * and the drawer as an indented group. Screen 01 draws no dropdown: it
+     * names --e-2 as the elevation for "Hover, dropdowns, sticky headers"
+     * and stops there, so the elevation is the screen's and the rest is a
+     * disclosed variation in docs/OPEN_ITEMS.md.
+     *
+     * A GROUP MAY HAVE NO DESTINATION OF ITS OWN. "About" opens a page and
+     * "Projects" does not; a heading with children and no URL is a button
+     * that opens its own list, and one with a URL is a link that also opens
+     * it. Both are drawn, because the legacy site has both.
+     *
+     * A hidden item is absent, and so is a group whose children are all
+     * hidden: Projects stays out of the header entirely until the legacy
+     * import lands, which is one toggle rather than a deploy.
+     */
     private static function fromRecords(string $menu): array
     {
         $items = [];
 
         foreach (self::roots($menu) as $item) {
             $url = $item->url();
+            $children = [];
 
-            if ($url === null) {
+            foreach ($item->children as $child) {
+                if (! $child->is_visible) {
+                    continue;
+                }
+
+                $childUrl = $child->url();
+
+                if ($childUrl === null) {
+                    continue;
+                }
+
+                $children[] = [
+                    'key' => (string) $child->id,
+                    'label' => $child->labelFor(),
+                    'url' => $childUrl,
+                    'current' => self::isCurrentUrl($childUrl),
+                ];
+            }
+
+            // A heading with nothing under it and nowhere of its own to go
+            // is not navigation.
+            if ($url === null && $children === []) {
                 continue;
             }
 
@@ -130,7 +170,9 @@ final class Navigation
                 'key' => (string) $item->id,
                 'label' => $item->labelFor(),
                 'url' => $url,
-                'current' => self::isCurrentUrl($url),
+                'children' => $children,
+                'current' => ($url !== null && self::isCurrentUrl($url))
+                    || collect($children)->contains('current', true),
             ];
         }
 
@@ -160,6 +202,10 @@ final class Navigation
                 'key' => $item['key'],
                 'label' => __('nav.'.$item['key']),
                 'url' => self::url($item['path']),
+                // The config fallback is flat. It is what a database with no
+                // menu records renders, and a flat header is the right
+                // floor for that.
+                'children' => [],
                 'current' => self::isCurrent($item['path']),
             ],
             config('navigation.primary', [])
