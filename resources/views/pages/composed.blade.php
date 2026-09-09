@@ -49,17 +49,33 @@
     @endunless
 
     @php
-        // The ground belongs to the section, not to its position. Screen 02
-        // gives each one a ground for what it is, so BlockType::ground()
-        // carries the value and the quotation it came from. Two neighbours
-        // that resolve to the same ground fuse into one region rather than
-        // reading as two sections that happen to match: blocks.css drops
-        // the second one's leading padding.
+        /*
+         * The ground belongs to the section, not to its position. Screen 02
+         * gives each one a ground for what it is, so BlockType::ground()
+         * carries the value and the quotation it came from.
+         *
+         * One qualifier, for a run of the same type. The About page is six
+         * rich-text blocks, all of which resolve to cream, and blocks.css
+         * drops the leading padding between two matching grounds so they
+         * fuse: the whole page became a single cream column with no seam
+         * between one section and the next. A run alternates cream and
+         * white so a reader can see where one ends.
+         *
+         * Only those two swap. A deliberate pair of darks, which is what
+         * screen 02 draws under the hero, is left alone.
+         */
+        $previous = null;
     @endphp
 
     @foreach ($page->visibleBlocks as $block)
         @php
             $ground = $block->type()->ground();
+
+            if ($ground === $previous && in_array($ground, ['cream', 'white'], true)) {
+                $ground = $ground === 'cream' ? 'white' : 'cream';
+            }
+
+            $previous = $ground;
         @endphp
 
         <x-block :block="$block" :ground="$ground" />

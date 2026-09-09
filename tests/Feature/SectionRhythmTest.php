@@ -4,7 +4,10 @@ namespace Tests\Feature;
 
 use App\Enums\BlockType;
 use App\Support\Locales;
+use Database\Seeders\CommitteeSeeder;
+use Database\Seeders\PublicPagesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Concerns\SeedsComposedPages;
 use Tests\TestCase;
 
@@ -25,6 +28,11 @@ class SectionRhythmTest extends TestCase
     {
         parent::setUp();
         $this->seedComposedPages();
+
+        // About and Committees are composed too, and the run-of-one-type
+        // failure only shows on a page that has such a run.
+        $this->seed(PublicPagesSeeder::class);
+        $this->seed(CommitteeSeeder::class);
     }
 
     /** The grounds a page emits, in document order, hero excluded. */
@@ -48,9 +56,28 @@ class SectionRhythmTest extends TestCase
         );
     }
 
-    public function test_no_two_adjacent_sections_share_a_ground(): void
+    /**
+     * Every composed page, not only the homepage.
+     *
+     * The About page is six rich-text blocks. They all resolve to cream,
+     * blocks.css drops the padding between two matching grounds, and the
+     * whole page fused into one column with no seam anywhere in it.
+     */
+    public static function composedPages(): array
     {
-        $grounds = $this->grounds('/en');
+        return [
+            'homepage' => ['/en'],
+            'about' => ['/en/about'],
+            'committees' => ['/en/committees'],
+        ];
+    }
+
+    #[DataProvider('composedPages')]
+    public function test_no_two_adjacent_sections_share_a_ground(string $path): void
+    {
+        $grounds = $this->grounds($path);
+
+        $this->assertNotEmpty($grounds, "{$path} emits no grounds at all.");
 
         foreach ($grounds as $i => $ground) {
             if ($i === 0) {
@@ -60,10 +87,20 @@ class SectionRhythmTest extends TestCase
             $this->assertNotSame(
                 $grounds[$i - 1],
                 $ground,
-                "Two adjacent sections both sit on {$ground}, at positions "
+                "Two adjacent sections on {$path} both sit on {$ground}, at positions "
                 .($i - 1)." and {$i}. A repeated ground merges them into one region."
             );
         }
+    }
+
+    public function test_a_run_of_one_block_type_still_separates(): void
+    {
+        // Six rich-text blocks in a row must not read as one wall.
+        $grounds = $this->grounds('/en/about');
+
+        $this->assertGreaterThan(3, count($grounds));
+        $this->assertContains('cream', $grounds);
+        $this->assertContains('white', $grounds);
     }
 
     public function test_the_page_reaches_navy_between_the_hero_and_the_footer(): void
