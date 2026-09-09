@@ -44,6 +44,57 @@ enum BlockType: string
     case SocialFeed = 'social_feed';
     case DocumentList = 'document_list';
 
+    /**
+     * The ground this section sits on, taken from screen 02.
+     *
+     * Screen 02 does not rotate grounds on a cycle. It assigns each one to
+     * what the section is, and the run of navy is the point: the hero at
+     * line 93 is navy, the key figures immediately under it at 186 are
+     * navy-mid, the featured comparison at 272 is navy again. Between them
+     * the pillars and the publications sit on the page ground, which the
+     * screen sets to cream at line 27. The social feed at 535 is white
+     * between two sand rules and the members at 604 are sand.
+     *
+     * A positional cycle produced none of that. It put the comparison on
+     * sand and the members on white, which is how a page with a navy hero
+     * ends up reading as one undifferentiated cream column below the fold.
+     *
+     * Null means the section paints its own ground.
+     */
+    public function ground(): ?string
+    {
+        return match ($this) {
+            // "background:var(--c-navy);color:var(--c-cream)" — screen 02 line 93.
+            self::Hero => null,
+            // "background:var(--c-navy-mid);color:var(--c-cream);border-top:1px solid #2C3A55" — line 186.
+            self::KeyFigures => 'navy-mid',
+            // "background:var(--c-navy);color:var(--c-cream);padding:var(--s-9) 0" — line 272.
+            self::FeaturedComparison => 'navy',
+            // "background:var(--c-white);border-top:1px solid var(--c-sand);border-bottom:1px solid var(--c-sand)" — line 535.
+            self::SocialFeed => 'white',
+            // "background:var(--c-sand);padding:var(--s-9) 0" — line 604.
+            self::MemberGrid => 'sand',
+            // The page ground, "background:var(--c-cream)" — screen 02 line 27.
+            self::Pillars, self::FeaturedPublications => 'cream',
+            // Screen 02 draws the newsroom and the events in one two-column
+            // grid on the page ground at line 399, and it reaches that cream
+            // after a navy statement band at line 376 that we have not built.
+            // Without that band the publications and the newsroom are both
+            // cream and fuse into one 400px run, which is the flatness this
+            // change exists to remove. The newsroom takes white so the
+            // boundary the screen draws survives the missing band. Logged as
+            // a disclosed variation; the band itself is a gap in
+            // docs/SCREEN_AUDIT.md.
+            self::NewsroomStrip => 'white',
+            self::EventsStrip => 'cream',
+            // Not drawn on screen 02. The committee grid is the disclosed
+            // variation on member_grid, so it takes the members' ground.
+            self::CommitteeGrid => 'sand',
+            self::RichText, self::DocumentList => 'cream',
+            self::CallToAction => 'navy',
+        };
+    }
+
     public function label(): string
     {
         return match ($this) {

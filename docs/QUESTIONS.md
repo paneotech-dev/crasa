@@ -331,3 +331,60 @@ rows whose files were missing — and it would catch either again.
 
 ---
 
+## Screen 02 draws five colours that are not tokens
+
+*Raised 9 September 2026, during the public polish run.*
+
+**Recommendation: adopt them as four dark-surface tokens, because they are
+already drawn and the alternative is a band that does not match the screen.
+Substituted the nearest existing tokens in the meantime.**
+
+CLAUDE.md says a colour is a decision, not a commit. Screen 02's navy
+comparison band at line 272 uses five hex values, and four of them have no
+token:
+
+| Drawn | Where | Served for now by |
+|---|---|---|
+| `#2C3A55` | panel and table rules | `--c-navy-line` — an exact match, no question |
+| `#4A5670` | select border on navy | `--c-navy-edge` `#5A6680`, one step lighter |
+| `#7A4606` | notice border | `--c-amber-dark` `#5C3404`, one step darker |
+| `#F4E3C8` | notice body text | `--c-amber-mid` `#E5BE87`, slightly duller |
+| `#FFF2DC` | notice strong text | `--c-white` |
+
+Each substitution clears SC 1.4.3 or 1.4.11 against its ground, so nothing
+is blocked. The band reads slightly cooler than drawn.
+
+**What is needed:** a ruling on whether the four are added as tokens. They
+are all dark-surface values and the `--d-*` set already exists for exactly
+that purpose, so the natural home is there rather than in the public set.
+
+**Done in the meantime:** the substitutions above, each commented in
+`public/css/blocks.css` with the value it stands in for, so replacing them
+later is a search for the token name and nothing else.
+
+---
+
+## Screen 02's ground sequence disagrees with the reference in three places
+
+*Raised 9 September 2026. Logged, not blocking — the screen was followed.*
+
+The polish brief gave a ground sequence and the standing rule is that the
+approved screen wins. It does, in all three:
+
+| Section | Reference asks | Screen 02 draws | Built |
+|---|---|---|---|
+| Key figures | cream | navy-mid, line 186 | navy-mid |
+| Social feed | navy | white between two sand rules, line 535 | white |
+| Members | white | sand, line 604 | sand |
+
+The screen is the more contrasty of the two in every case, which is the
+direction the brief wanted, so following it costs nothing.
+
+One departure from the screen is ours and is disclosed. Screen 02 puts a
+navy statement band at line 376 between the publications and the newsroom.
+We have not built that band, so both sections would land on the cream page
+ground and fuse into one run — the exact flatness this work removes. The
+newsroom takes white instead, preserving the boundary the screen draws. The
+band itself is recorded as a gap in `docs/SCREEN_AUDIT.md`.
+
+---

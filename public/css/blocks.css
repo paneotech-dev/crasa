@@ -1289,6 +1289,11 @@
 .b[data-ground="white"] { background: var(--c-white); }
 .b[data-ground="sand"] { background: var(--c-sand); }
 .b[data-ground="navy"] { background: var(--c-navy); color: var(--c-sand); }
+/* Screen 02 line 186: the key figures sit on navy-mid directly under the
+   navy hero, separated by a single navy-line rule rather than by padding.
+   Two different darks touching is the effect; one dark would lose the
+   figures into the hero. */
+.b[data-ground="navy-mid"] { background: var(--c-navy-mid); color: var(--c-sand); border-block-start: 1px solid var(--c-navy-line); }
 
 /*
  * Two adjacent sections on the same ground double their padding into one
@@ -1304,15 +1309,55 @@
 .b[data-ground="cream"] + .b[data-ground="cream"],
 .b[data-ground="white"] + .b[data-ground="white"],
 .b[data-ground="sand"] + .b[data-ground="sand"] { padding-block-start: 0; }
+/* Navy against navy-mid keeps its rule and its padding: the two darks are
+   a deliberate pair on screen 02, not an accidental repeat. */
+.b[data-ground="navy"] + .b[data-ground="navy"] { padding-block-start: 0; }
+
+/*
+ * A dark section inverts its own contents. Everything below applies to both
+ * darks, because a card that keeps a white ground on navy-mid but not on
+ * navy would be two designs.
+ */
 .b[data-ground="navy"] h2,
-.b[data-ground="navy"] .b__heading { color: var(--c-white); }
-.b[data-ground="navy"] .b__intro { color: var(--c-sand); }
-.b[data-ground="navy"] .b-figure { border-top-color: var(--c-navy-line); }
-.b[data-ground="navy"] .b-figure__value { color: var(--c-white); }
-.b[data-ground="navy"] .b-figure__label { color: var(--c-sand); }
-.b[data-ground="navy"] .b-pillar { border-top-color: var(--c-navy-line); }
-.b[data-ground="navy"] .b-pillar__heading { color: var(--c-white); }
-.b[data-ground="navy"] .b-pillar__body { color: var(--c-sand); }
+.b[data-ground="navy"] .b__heading,
+.b[data-ground="navy-mid"] h2,
+.b[data-ground="navy-mid"] .b__heading { color: var(--c-white); }
+.b[data-ground="navy"] .b__intro,
+.b[data-ground="navy-mid"] .b__intro { color: var(--c-sand); }
+.b[data-ground="navy"] .b__eyebrow,
+.b[data-ground="navy-mid"] .b__eyebrow { color: var(--c-green-light); }
+.b[data-ground="navy"] .b-figure,
+.b[data-ground="navy-mid"] .b-figure { border-top-color: var(--c-navy-line); }
+.b[data-ground="navy"] .b-figure__value,
+.b[data-ground="navy-mid"] .b-figure__value { color: var(--c-white); }
+.b[data-ground="navy"] .b-figure__label,
+.b[data-ground="navy-mid"] .b-figure__label { color: var(--c-sand); }
+.b[data-ground="navy"] .b-pillar,
+.b[data-ground="navy-mid"] .b-pillar { border-top-color: var(--c-navy-line); }
+.b[data-ground="navy"] .b-pillar__heading,
+.b[data-ground="navy-mid"] .b-pillar__heading { color: var(--c-white); }
+.b[data-ground="navy"] .b-pillar__body,
+.b[data-ground="navy-mid"] .b-pillar__body { color: var(--c-sand); }
+
+/* Cards and rows keep their white ground on navy. Screen 02 line 348 draws
+   the publication cards white on the dark comparison band, and a card that
+   went transparent would stop being a card. Only the border and the shadow
+   change: a sand border vanishes on navy, and --e-1 is invisible on it. */
+.b[data-ground="navy"] .b-card,
+.b[data-ground="navy"] .b-rows,
+.b[data-ground="navy-mid"] .b-card,
+.b[data-ground="navy-mid"] .b-rows { border-color: var(--c-navy-line); box-shadow: none; }
+.b[data-ground="navy"] .b-row,
+.b[data-ground="navy-mid"] .b-row { border-bottom-color: var(--c-sand); }
+
+/* Bare links on navy. --c-green-dark is a 2.4:1 ratio on --c-navy and fails
+   SC 1.4.3 outright, so links on the darks take white with the underline
+   carrying the affordance. */
+.b[data-ground="navy"] .b__more,
+.b[data-ground="navy"] .b__link,
+.b[data-ground="navy-mid"] .b__more,
+.b[data-ground="navy-mid"] .b__link { color: var(--c-white); }
+
 .b[data-ground="sand"] .b-card,
 .b[data-ground="sand"] .b-rows { border-color: var(--c-border); }
 
@@ -1526,3 +1571,61 @@
 .c-policy > div:nth-child(2) { border-left: 3px solid var(--c-amber); padding-left: var(--s-4); }
 
 @media print { .c-install { display: none !important; } }
+
+/*
+ * The comparison band on navy — screen 02 line 272.
+ *
+ * The screen draws the controls and the table inside a raised panel:
+ * "background:var(--c-navy-mid);border:1px solid #2C3A55;border-radius:
+ * var(--r-md);padding:var(--s-6)". Ours is interactive where the screen's
+ * is static, so the panel wraps the live region that already exists rather
+ * than a new wrapper.
+ *
+ * Screen 02 uses five hex values here that are not tokens — #2C3A55,
+ * #4A5670, #7A4606, #F4E3C8, #FFF2DC. Adding a colour needs a decision, so
+ * each is served by the nearest existing token and the substitution is
+ * logged in docs/QUESTIONS.md. #2C3A55 is already --c-navy-line exactly.
+ */
+.b[data-ground="navy"] [data-live-filters] {
+  background: var(--c-navy-mid);
+  border: 1px solid var(--c-navy-line);
+  border-radius: var(--r-md);
+  padding: var(--s-6);
+}
+.b[data-ground="navy"] .c-results { color: var(--c-sand); }
+.b[data-ground="navy"] .b-compare__control label { color: var(--c-sand); }
+
+/* "background:var(--c-navy);border:1.5px solid #4A5670" — the screen's
+   #4A5670 is served by --c-navy-edge, which is already the lightened
+   value carried for SC 1.4.11. */
+.b[data-ground="navy"] .c-select {
+  background: var(--c-navy);
+  border-color: var(--c-navy-edge);
+  color: var(--c-white);
+}
+.b[data-ground="navy"] .c-select option { color: var(--c-charcoal); }
+
+/* The secondary button is navy on transparent and disappears here. Screen
+   02 draws the band's action as a filled green-dark button at line 279. */
+.b[data-ground="navy"] .c-btn--secondary {
+  background: var(--c-green-dark);
+  border-color: var(--c-green-dark);
+  color: var(--c-white);
+}
+.b[data-ground="navy"] .c-btn--secondary:hover { background: var(--c-green); border-color: var(--c-green); }
+
+.b[data-ground="navy"] .b-compare__indicator { color: var(--c-white); }
+.b[data-ground="navy"] .b-compare__table th,
+.b[data-ground="navy"] .b-compare__table td { border-bottom-color: var(--c-navy-line); color: var(--c-cream); }
+.b[data-ground="navy"] .b-compare__table thead th { background: transparent; color: var(--c-sand); }
+.b[data-ground="navy"] .b-compare__table td.is-numeric { color: var(--c-white); }
+
+/* The demonstration notice, drawn amber on navy at screen 02 line 281.
+   --c-amber-light is a pale cream and would read as a white card here. */
+.b[data-ground="navy"] .c-notice--pending {
+  background: rgba(194, 113, 12, .14);
+  border-color: var(--c-amber-dark);
+  border-left-color: var(--c-amber);
+}
+.b[data-ground="navy"] .c-notice--pending .c-notice__title { color: var(--c-white); }
+.b[data-ground="navy"] .c-notice--pending .c-notice__body { color: var(--c-amber-mid); }

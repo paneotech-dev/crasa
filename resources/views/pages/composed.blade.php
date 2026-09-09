@@ -49,18 +49,17 @@
     @endunless
 
     @php
-        // Alternate the ground so a page is not one undifferentiated column.
-        // The hero carries its own navy, so the count starts after it.
-        $groundIndex = 0;
+        // The ground belongs to the section, not to its position. Screen 02
+        // gives each one a ground for what it is, so BlockType::ground()
+        // carries the value and the quotation it came from. Two neighbours
+        // that resolve to the same ground fuse into one region rather than
+        // reading as two sections that happen to match: blocks.css drops
+        // the second one's leading padding.
     @endphp
 
     @foreach ($page->visibleBlocks as $block)
         @php
-            $isHero = $block->type() === \App\Enums\BlockType::Hero;
-            // Screen 02 alternates navy, cream, sand and white down the
-            // page rather than sitting everything on one ground. The hero
-            // carries its own navy, so the rotation starts after it.
-            $ground = $isHero ? null : ['cream', 'white', 'sand', 'white'][$groundIndex++ % 4];
+            $ground = $block->type()->ground();
         @endphp
 
         <x-block :block="$block" :ground="$ground" />
