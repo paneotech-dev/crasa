@@ -23,6 +23,23 @@ enum BlockType: string
     case NewsroomStrip = 'newsroom_strip';
     case EventsStrip = 'events_strip';
     case MemberGrid = 'member_grid';
+    /*
+     * The thirteenth, added 2026-09-09 on a ruling.
+     *
+     * DATA_MODEL section 8 fixed the set at twelve and said a thirteenth
+     * needed a decision rather than a commit. The decision was taken: the
+     * constraint was against inventing layouts, not against completing the
+     * set, and the six committees existed as records that no public page
+     * could show.
+     *
+     * No screen draws a public committee list. Screen 04 draws a single
+     * committee workspace behind authentication, and its breadcrumb —
+     * "Committees / Spectrum and Frequency Management" — implies an index
+     * it does not draw. So this is derived from member_grid, which is the
+     * platform's own pattern for a set of institutional records, and
+     * logged as a disclosed variation in docs/OPEN_ITEMS.md.
+     */
+    case CommitteeGrid = 'committee_grid';
     case CallToAction = 'call_to_action';
     case SocialFeed = 'social_feed';
     case DocumentList = 'document_list';
@@ -39,6 +56,7 @@ enum BlockType: string
             self::NewsroomStrip => 'Newsroom strip',
             self::EventsStrip => 'Events strip',
             self::MemberGrid => 'Member grid',
+            self::CommitteeGrid => 'Committee grid',
             self::CallToAction => 'Call to action',
             self::SocialFeed => 'Social feed',
             self::DocumentList => 'Document list',
@@ -67,7 +85,7 @@ enum BlockType: string
             self::FeaturedComparison => ['heading', 'intro'],
             self::NewsroomStrip => ['heading'],
             self::EventsStrip => ['heading'],
-            self::MemberGrid => ['heading', 'intro'],
+            self::MemberGrid, self::CommitteeGrid => ['heading', 'intro'],
             self::CallToAction => ['headline', 'body', 'cta_label'],
             self::SocialFeed => ['heading'],
             self::DocumentList => ['heading'],
@@ -104,7 +122,7 @@ enum BlockType: string
             self::RichText, self::CallToAction => 'body',
             self::Hero => 'subhead',
             self::Pillars, self::FeaturedPublications,
-            self::FeaturedComparison, self::MemberGrid => 'intro',
+            self::FeaturedComparison, self::MemberGrid, self::CommitteeGrid => 'intro',
             default => null,
         };
     }
@@ -172,6 +190,14 @@ enum BlockType: string
             ],
             self::MemberGrid => [
                 'show_map' => ['nullable', 'boolean'],
+                'filter' => ['nullable', 'array'],
+                'filter.sector' => ['nullable', 'string', 'max:40'],
+            ],
+            self::CommitteeGrid => [
+                // Inactive committees are history rather than membership,
+                // and a page about who does the work should not list a
+                // committee that has been wound up unless it is asked to.
+                'include_inactive' => ['nullable', 'boolean'],
                 'filter' => ['nullable', 'array'],
                 'filter.sector' => ['nullable', 'string', 'max:40'],
             ],
@@ -278,6 +304,7 @@ enum BlockType: string
             self::FeaturedPublications, self::DocumentList, self::NewsroomStrip => ['limit' => 3, 'filter' => []],
             self::EventsStrip => ['limit' => 3, 'upcoming_only' => true],
             self::MemberGrid => ['show_map' => true, 'filter' => []],
+            self::CommitteeGrid => ['include_inactive' => false, 'filter' => []],
             self::CallToAction => ['tone' => 'navy'],
             self::SocialFeed => ['networks' => ['facebook', 'linkedin', 'youtube', 'x']],
             self::FeaturedComparison => ['country_ids' => [], 'chart_type' => 'table'],

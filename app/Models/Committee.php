@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 /**
  * A CRASA committee. Cross-sector committees have no sector.
@@ -75,6 +77,46 @@ class Committee extends Model
         return $this->belongsToMany(Country::class)
             ->withPivot(['role', 'is_sample'])
             ->withTimestamps();
+    }
+
+    /**
+     * What this committee has published. Publications carry committee_id
+     * already; the relation was never declared because nothing had asked
+     * the question from this side.
+     */
+    public function publications(): HasMany
+    {
+        return $this->hasMany(Publication::class);
+    }
+
+    /** The meetings held under this committee. */
+    public function meetings(): HasMany
+    {
+        return $this->hasMany(Meeting::class);
+    }
+
+    /**
+     * Has anyone told us who sits on these committees?
+     *
+     * The seats are one of the items CRASA has still to supply, so the
+     * pivot is empty. That makes "0 member states" true of every committee
+     * and "0 committees" true of every member state — fourteen identical
+     * zeroes that are a fact about our data rather than about the region.
+     *
+     * Zero is information when it is measured. This zero is not measured,
+     * it is unasked, and printing it as a figure states something the
+     * platform does not know. So where nothing is recorded anywhere, the
+     * count is withheld and the page says the seats are still to come.
+     *
+     * Not memoised. A static that outlives the request is a value that
+     * goes stale the moment the Secretariat records the first seat, and
+     * under a persistent worker it would stay stale until a redeploy.
+     * Callers ask once per block and pass the answer into their loop, so
+     * this is one EXISTS on an indexed pivot per page.
+     */
+    public static function seatsRecorded(): bool
+    {
+        return DB::table('committee_country')->exists();
     }
 
     public function isCrossSector(): bool

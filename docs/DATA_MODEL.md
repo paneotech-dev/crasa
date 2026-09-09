@@ -468,9 +468,16 @@ Composed pages — homepage, About, Committees, Membership, landing and legal pa
 
 Translatable text within a block goes in the `translations` table against the block, not into the JSON. Keeps the translation editor working uniformly.
 
-### The twelve block types
+### The thirteen block types
 
-Fixed set. Adding a thirteenth requires a decision, not a commit.
+Fixed set. Adding a fourteenth requires a decision, not a commit.
+
+The set was twelve until 9 September 2026, when `committee_grid` was added on
+an explicit ruling: the constraint was against inventing layouts rather than
+against completing the set, and the six committee records the platform holds
+appeared on no public page. No screen draws a public committee list, so the
+card is derived from `member_grid`. Recorded as Question 8 in
+`docs/QUESTIONS.md` and as a disclosed variation in `docs/OPEN_ITEMS.md`.
 
 | Type | Settings | Notes |
 |---|---|---|
@@ -486,6 +493,7 @@ Fixed set. Adding a thirteenth requires a decision, not a commit.
 | `call_to_action` | headline, body, cta_label, cta_url, tone | Tone from the defined palette only |
 | `social_feed` | networks[] | Facebook, LinkedIn, YouTube, X |
 | `document_list` | filter{tag, committee, type}, limit | Filtered publication list |
+| `committee_grid` | include_inactive (bool), filter{sector} | The committees, with seats, documents and meetings counted. Derived from `member_grid`; no screen draws it |
 
 **Constraints that must hold:**
 

@@ -477,6 +477,33 @@ and table headers as excluded in terms.
 ---
 
 
+## Disclosed variation: the committee grid is derived, not drawn, 2026-09-09
+
+`docs/DATA_MODEL.md` fixed the block library at twelve types and said a
+thirteenth required a decision. The decision was taken on 9 September and
+`committee_grid` is the thirteenth.
+
+**No approved screen draws a public committee list.** All sixteen were
+searched. Screen 04 draws one committee's workspace behind authentication and
+its breadcrumb implies an index it does not draw; screen 12 has a committee
+filter on the calendar; screen 02 links to Committees from its navigation.
+There is no index in the set.
+
+So the card is derived from `member_grid`, which is the platform's existing
+pattern for a set of institutional records: a bordered white card whose height
+follows its content, the name, a supporting line, and a counted tally on a
+rule at the foot. Nothing new was invented; an existing pattern was applied to
+a second kind of record.
+
+**What screen 04 did settle, and is followed.** The meta line leads with the
+sector. And the empty state is the screen's own words: a committee that has
+been constituted and has not yet met says so, rather than showing zeroes.
+
+If CRASA would rather the committees were presented differently, the block is
+one Blade file and one CSS block, and the records behind it do not change.
+
+---
+
 ## Rejected: grouped left navigation in the back office, 2026-09-09
 
 A comparable platform groups its left navigation by function — My Workspace,

@@ -168,7 +168,7 @@ rather than from the view.
 ---
 
 
-## Question 8: the committees page cannot list the committees
+## Question 8: the committees page cannot list the committees — RESOLVED 2026-09-09
 
 The brief for section 35 asks for counts on committee cards — member states
 seated, documents, meetings.
@@ -217,6 +217,47 @@ computed; what is missing is the page that lists the committees themselves.
 from the main navigation and fold the material into the About page, because a
 navigation item that leads to three sector descriptions and a placeholder is
 worse than no navigation item.
+
+### Ruled: yes, with a condition
+
+> "Yes, add the thirteenth block type for committee cards. But check first
+> whether any screen draws a committee list — if one does, build what it
+> draws. Twelve was my number, not CRASA's, and the constraint was against
+> inventing layouts, not against completing the set."
+
+**Checked. No screen draws a public committee list.** All sixteen were
+searched. Screen 04 draws a single committee *workspace* behind
+authentication, and its own breadcrumb — "Committees / Spectrum and Frequency
+Management" — implies an index it does not draw. Screen 12 has a committee
+filter on the calendar. Screen 02 links to Committees from the header and the
+footer. No index, anywhere.
+
+So `committee_grid` is derived from `member_grid`, which is this platform's
+own pattern for a set of institutional records, and logged as a disclosed
+variation in `docs/OPEN_ITEMS.md`. `docs/DATA_MODEL.md` section 8 now reads
+thirteen and says a fourteenth needs a decision.
+
+**Two things screen 04 did settle, and both are followed.** Its meta line
+puts the sector first. And it writes the empty state out in full: "The Human
+and Institutional Capacity Committee has been constituted but has not yet
+scheduled its first meeting. Documents and the workplan appear here once the
+Chair opens the cycle." A committee with nothing yet is a stage in its life,
+not a fault, and the card says which.
+
+**One thing building it exposed.** `committee_country` is empty: nobody has
+told us which member states sit on which committee. That made "0 member
+states" true of every committee and "0 committees" true of every member
+state — fourteen identical zeroes that are a fact about our data rather than
+about the region.
+
+Zero is information when it is measured. That zero is not measured, it is
+unasked. So while nothing is recorded anywhere, the seat count is withheld on
+both sides and the committees page says once, under the grid, that the
+composition is still to be confirmed. It is already item 6 on the Secretariat
+list.
+
+---
+
 
 ---
 

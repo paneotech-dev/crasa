@@ -9,6 +9,9 @@
     $heading = $block->translate('heading');
     $intro = $block->translate('intro');
     $countries = $countries ?? \App\Models\Country::with(['authority.sectors', 'committees'])->orderBy('name')->get();
+    // Asked once for the whole grid, not once per card. See
+    // Committee::seatsRecorded() for why the count is withheld at all.
+    $seatsKnown = \App\Models\Committee::seatsRecorded();
 @endphp
 
 <section class="b" @if ($block->anchor) id="{{ $block->anchor }}" @endif @if (! empty($ground)) data-ground="{{ $ground }}" @endif>
@@ -81,9 +84,11 @@
                              figure is a query, and a member state sitting on
                              no committee is a fact a reader of a membership
                              page is entitled to. --}}
-                        <span class="b-member__committees">
-                            {{ trans_choice('blocks.committee_count', $country->committees->count(), ['count' => $country->committees->count()]) }}
-                        </span>
+                        @if ($seatsKnown)
+                            <span class="b-member__committees">
+                                {{ trans_choice('blocks.committee_count', $country->committees->count(), ['count' => $country->committees->count()]) }}
+                            </span>
+                        @endif
 
                         @if ($country->authority?->sectors->isNotEmpty())
                             <span class="b-member__sectors">

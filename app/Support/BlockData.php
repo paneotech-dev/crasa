@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Enums\BlockType;
+use App\Models\Committee;
 use App\Models\Country;
 use App\Models\Document;
 use App\Models\Indicator;
@@ -35,6 +36,7 @@ final class BlockData
             BlockType::NewsroomStrip => ['items' => self::news($block)],
             BlockType::DocumentList => ['documents' => self::documents($block)],
             BlockType::MemberGrid => ['countries' => self::countries()],
+            BlockType::CommitteeGrid => ['committees' => self::committees($block)],
             BlockType::FeaturedComparison => self::comparison($block),
             BlockType::EventsStrip => self::events($block),
             default => [],
@@ -273,6 +275,29 @@ final class BlockData
     private static function countries(): Collection
     {
         return Country::with(['authority.sectors', 'committees'])
+            ->orderBy('name')
+            ->get();
+    }
+
+    /**
+     * The committees, with the counts each card states.
+     *
+     * withCount rather than loading the relations: a card states how many
+     * member states are seated and how many documents the committee owns,
+     * and loading fourteen countries per committee to count them would be
+     * six queries to print six numbers.
+     *
+     * @return Collection<int, Committee>
+     */
+    private static function committees(PageBlock $block): Collection
+    {
+        $filter = $block->setting('filter', []) ?? [];
+
+        return Committee::query()
+            ->with(['sector', 'chairAuthority.country'])
+            ->withCount(['countries', 'publications', 'meetings'])
+            ->unless($block->setting('include_inactive'), fn ($q) => $q->where('is_active', true))
+            ->when($filter['sector'] ?? null, fn ($q, $v) => $q->whereHas('sector', fn ($s) => $s->where('slug', $v)))
             ->orderBy('name')
             ->get();
     }

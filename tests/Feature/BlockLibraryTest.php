@@ -302,10 +302,27 @@ class BlockLibraryTest extends TestCase
         }
     }
 
-    public function test_there_are_exactly_twelve_block_types(): void
+    /**
+     * The set is fixed and grows only by decision.
+     *
+     * DATA_MODEL section 8 said twelve and said a thirteenth needed a
+     * decision rather than a commit. The thirteenth — committee_grid —
+     * was added on 9 September 2026 on an explicit ruling, recorded as
+     * Question 8 in docs/QUESTIONS.md and as a disclosed variation in
+     * docs/OPEN_ITEMS.md.
+     *
+     * The number in this test is not the point. The point is that changing
+     * it requires someone to come here, read this, and decide.
+     */
+    public function test_the_block_set_grows_only_by_a_recorded_decision(): void
     {
-        // A thirteenth requires a decision, not a commit.
-        $this->assertCount(12, BlockType::cases());
+        $this->assertCount(13, BlockType::cases());
+
+        $questions = file_get_contents(base_path('docs/QUESTIONS.md'));
+        $this->assertStringContainsString('committee_grid', $questions);
+
+        $model = file_get_contents(base_path('docs/DATA_MODEL.md'));
+        $this->assertStringContainsString('committee_grid', $model);
     }
 
     /* The rules most likely to be lost ------------------------------------- */

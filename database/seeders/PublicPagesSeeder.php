@@ -203,16 +203,38 @@ class PublicPagesSeeder extends Seeder
             'pt' => ['heading' => 'Comités', 'body' => 'A CRASA trabalha através de comités constituídos pelas catorze autoridades reguladoras nacionais. Cada um abrange um setor ou um tema transversal.'],
         ]);
 
+        // The committees themselves. Until 9 September the page carried a
+        // three-column placeholder describing the sectors, and the six
+        // committee records the platform holds appeared on no public page
+        // at all.
+        $this->block($page, BlockType::CommitteeGrid, $position++, ['include_inactive' => false, 'filter' => []], [
+            'en' => [
+                'heading' => 'The six committees',
+                'intro' => 'Each carries one part of the mandate between annual general meetings. The counts are what the platform holds today, and a committee that has been constituted but has not yet met says so.',
+            ],
+            'fr' => [
+                'heading' => 'Les six comités',
+                'intro' => "Chacun porte une partie du mandat entre deux assemblées générales annuelles. Les chiffres sont ceux que la plateforme détient aujourd'hui, et un comité constitué qui ne s'est pas encore réuni l'indique.",
+            ],
+            'pt' => [
+                'heading' => 'Os seis comités',
+                'intro' => 'Cada um assume uma parte do mandato entre assembleias gerais anuais. Os números são os que a plataforma detém hoje, e um comité constituído que ainda não reuniu indica-o.',
+            ],
+        ]);
+
+        // The mandates themselves are still CRASA's to supply: the six
+        // names come from the approved screens and nothing beyond the names
+        // is sourced.
         $this->placeholder(
             $page,
-            BlockType::Pillars,
+            BlockType::RichText,
             $position++,
-            ['columns' => 3, 'items' => [['icon' => 'radio-tower'], ['icon' => 'package'], ['icon' => 'scale']]],
-            'Committee mandates: the terms of reference for each of the six committees, who chairs each one, and which member states hold seats. The six names are taken from the approved screens; nothing beyond the names is sourced.',
+            ['alignment' => 'start'],
+            'Committee terms of reference: the full mandate for each of the six committees, who chairs each one, and which member states hold seats. The platform lists the committees and their counts already; the terms of reference are the text CRASA has not yet supplied.',
             [
-                'en' => ['heading' => 'What each committee does'],
-                'fr' => ['heading' => 'Le rôle de chaque comité'],
-                'pt' => ['heading' => 'O papel de cada comité'],
+                'en' => ['heading' => 'Terms of reference'],
+                'fr' => ['heading' => 'Mandats'],
+                'pt' => ['heading' => 'Mandatos'],
             ]
         );
     }

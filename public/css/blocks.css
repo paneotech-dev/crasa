@@ -980,6 +980,61 @@
   .c-band__eyebrow, .c-band__lead, .c-band__counts dt { color: var(--c-slate) !important; }
 }
 
+/* The committees -------------------------------------------------------- */
+/* Derived from .b-member, which is this platform's pattern for a set of
+   institutional records. No screen draws a public committee list; screen 04
+   draws one committee's workspace behind authentication. Logged in
+   docs/OPEN_ITEMS.md.
+
+   Heights follow content, as they do on the member cards: a committee with
+   a four-line mandate is taller than one with a sentence, and padding both
+   to a common height is the tell CLAUDE.md forbids. */
+.b-committees {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: var(--s-4);
+  align-items: start;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.b-committee {
+  min-width: 0;
+  border: 1px solid var(--c-sand);
+  border-radius: var(--r-md);
+  background: var(--c-white);
+  padding: var(--s-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.b-committees__note { font-size: 13.5px; line-height: 1.6; color: var(--c-slate); margin: var(--s-4) 0 0; max-width: 62ch; }
+.b-committee__name { font-family: var(--f-head); font-size: 17px; font-weight: 600; line-height: 1.3; color: var(--c-navy); }
+.b-committee__meta { font-family: var(--f-admin); font-size: 12px; font-weight: 600; color: var(--c-green-dark); }
+.b-committee__mandate { font-size: 13.5px; line-height: 1.55; color: var(--c-charcoal); margin: 0; }
+.b-committee__chair { font-size: 13px; line-height: 1.5; color: var(--c-slate); }
+
+/* The counted tally, on a rule, exactly as the member cards carry theirs. */
+.b-committee__tally {
+  display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-4);
+  margin: var(--s-2) 0 0; padding-top: var(--s-3);
+  border-top: 1px solid var(--c-sand);
+}
+.b-committee__tally > div { display: flex; align-items: baseline; gap: var(--s-1); }
+.b-committee__tally dd { margin: 0; font-family: var(--f-admin); font-size: 13px; font-weight: 700; color: var(--c-navy); font-variant-numeric: tabular-nums; order: -1; }
+.b-committee__tally dd a { color: var(--c-navy); text-decoration: none; }
+.b-committee__tally dd a:hover, .b-committee__tally dd a:focus-visible { color: var(--c-green-dark); text-decoration: underline; text-underline-offset: 3px; }
+.b-committee__tally dt { font-size: 12.5px; color: var(--c-slate); }
+
+/* A committee constituted but not yet started. Screen 04 writes this state
+   out; it is a stage in a committee's life, not a fault, and three zeroes
+   would report three absences where the truth is one fact. */
+.b-committee__dormant {
+  margin: var(--s-2) 0 0; padding-top: var(--s-3);
+  border-top: 1px solid var(--c-sand);
+  font-size: 13px; line-height: 1.55; color: var(--c-slate);
+}
+
 /* Meetings and events -------------------------------------------------- */
 /* WS-07, read-only. A dated list, not a card grid: a meeting has a date, a
    name and a place, and three lines do not need a box around them.
