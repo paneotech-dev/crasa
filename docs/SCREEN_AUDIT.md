@@ -481,19 +481,37 @@ the built surface is labelled Delegate Registration everywhere, as instructed.
 
 ---
 
+## Closed since this audit was written, 9 September
+
+| # | Gap | Screen | Commit |
+|---|---|---|---|
+| 1 | Extranet dashboard, three of four panels | 11 | `27e5e07` |
+| 2 | Sector facet | 07 | `6ec67df` |
+| 3 | "Available in" language facet | 07 | `6ec67df` |
+| 4 | One select component | 01 | `6ec67df` |
+| 5 | Calendar month grid, type key, committee filter | 12 | `08cdb2a` |
+| 6 | Calendar export | 12 | `08cdb2a` |
+
+**Seven of thirty-one gaps closed.** One new question raised: the calendar's
+subscribe feed needs a decision about a per-user token (Question 9).
+
+Twenty-four remain, and the list below is what is left of the priority order.
+
+---
+
 ## What to work through with CRASA
 
 Ordered by what a delegate or a Secretariat user meets first.
 
 | # | Gap | Screen | Why it matters |
 |---|---|---|---|
-| 1 | Extranet dashboard | 11 | A member signs in and lands in a file browser |
-| 2 | Navigation builder | 14 | The Secretariat cannot change a menu without us |
-| 3 | Calendar month grid, filter, export | 12 | A table of dates is not a calendar |
-| 4 | Sector and language facets | 07 | The language facet is a trilingual obligation |
-| 5 | Member profile: mandate, location, representatives, contact | 08 | The richest thing screen 08 draws |
-| 6 | Related publications, available languages, share and cite | 07 | A cited document needs a citation |
-| 7 | Agenda, participants, workplan | 04, 11 | Two screens depend on the workplan |
-| 8 | One select component | 01 | Three definitions of one control |
-| 9 | Progressive web app | 15 | Offline matters on hotel wifi |
-| 10 | Document viewer in the extranet | 04 | The mechanism exists on the public side |
+| 1 | Navigation builder | 14 | The Secretariat cannot change a menu without us. Contradicts the editability target screen 14 itself draws |
+| 2 | Member profile: mandate, location, representatives, contact, working language | 08 | The richest thing screen 08 draws. Working language is derivable today; three of the five need content from CRASA |
+| 3 | Related publications, available languages, share and cite | 07 | A document that will be quoted in a ministerial brief needs a citation |
+| 4 | Agenda, participants, workplan | 04, 11 | Two screens depend on the workplan, and it has no model. `meetings.agenda` already exists as a column |
+| 5 | Progressive web app | 15 | No manifest, no service worker, no offline page. Offline matters on hotel wifi in Lilongwe |
+| 6 | Document viewer in the extranet | 04 | The mechanism already exists on the public side |
+| 7 | Active filters summary | 07 | A reader with four filters applied has nowhere to see or undo them |
+| 8 | Analytics panels | 09 | Needs an analytics source, which is not in the stack |
+| 9 | Choice, upload and search as components | 01 | The select is done; these three are not collected |
+| 10 | Per-language cover image | 05 | Correct for a photograph, wrong for a document cover carrying set type |
