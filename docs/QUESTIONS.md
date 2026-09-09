@@ -461,3 +461,26 @@ state with no name. Shapes and labels are now two passes, as the page has
 always done them.
 
 ---
+## A search field in the header: rejected
+
+*Raised 9 September 2026. Resolved against the screen, no change made.*
+
+The brief asked whether the header should carry a search field rather than
+an icon, and said to check screen 01 and keep the icon if that is what is
+drawn. Both screens draw the icon. Screen 02 line 77 is a 40px square button
+carrying the glyph and nothing else; screen 01 draws the same control at
+44px, which is the size that ships because it is both the later drawing and
+the one that clears the target size.
+
+There is a second reason beyond the drawing. The header already carries nine
+primary links, the language group, the extranet button and the identity
+block. A field wide enough to type into takes the room the ninth and eighth
+links need, and the drawer breakpoint would move.
+
+Search is one click away and the page it leads to is a full search surface.
+
+**Nothing changed.** The header, the language group and the type scale were
+all checked against the screens in this run and all three already matched.
+`tests/Feature/HeaderAndTypeTest.php` holds them there.
+
+---
