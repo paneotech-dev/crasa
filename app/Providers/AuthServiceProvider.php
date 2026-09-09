@@ -18,6 +18,7 @@ use App\Models\Page;
 use App\Models\PageBlock;
 use App\Models\Publication;
 use App\Models\Sector;
+use App\Models\Submission;
 use App\Models\Tag;
 use App\Models\User;
 use App\Policies\AuditLogPolicy;
@@ -35,6 +36,7 @@ use App\Policies\PageBlockPolicy;
 use App\Policies\PagePolicy;
 use App\Policies\PublicationPolicy;
 use App\Policies\SectorPolicy;
+use App\Policies\SubmissionPolicy;
 use App\Policies\TagPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
@@ -60,6 +62,7 @@ class AuthServiceProvider extends ServiceProvider
         Page::class => PagePolicy::class,
         PageBlock::class => PageBlockPolicy::class,
         Sector::class => SectorPolicy::class,
+        Submission::class => SubmissionPolicy::class,
         User::class => UserPolicy::class,
     ];
 

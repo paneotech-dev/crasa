@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\Admin\PageBlockController;
 use App\Http\Controllers\Admin\ResourceController;
+use App\Http\Controllers\Admin\SubmissionReviewController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Auth\LoginController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\NewsroomController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SubmissionController;
 use App\Http\Middleware\SetLocale;
 use App\Support\Locales;
 use Illuminate\Support\Facades\Route;
@@ -171,6 +173,18 @@ Route::prefix('{locale}')
              */
             Route::get('completeness', [CompletenessController::class, 'index'])->name('completeness');
 
+            /*
+             * The e-Form, RP-09, screen 06. A member state representative
+             * fills in their own country's return. Everything they reach is
+             * their own: the country scope holds the reads and the policy
+             * holds the writes.
+             */
+            Route::get('submissions', [SubmissionController::class, 'index'])->name('submissions');
+            Route::post('submissions', [SubmissionController::class, 'store'])->name('submissions.store');
+            Route::get('submissions/{submission}', [SubmissionController::class, 'edit'])->name('submissions.edit');
+            Route::put('submissions/{submission}', [SubmissionController::class, 'update'])->name('submissions.update');
+            Route::post('submissions/{submission}/submit', [SubmissionController::class, 'submit'])->name('submissions.submit');
+
             Route::get('account', [AccountController::class, 'show'])->name('account');
             Route::put('account', [AccountController::class, 'update'])->name('account.update');
             Route::put('account/password', [AccountController::class, 'updatePassword'])->name('account.password');
@@ -251,6 +265,15 @@ Route::prefix('{locale}')
                 Route::put('data/{resource}/{id}', [ResourceController::class, 'update'])->name('resources.update');
                 Route::delete('data/{resource}/{id}', [ResourceController::class, 'destroy'])->name('resources.destroy');
                 Route::put('data/{resource}/{id}/restore', [ResourceController::class, 'restore'])->name('resources.restore');
+
+                /*
+                 * The Secretariat's review queue, RP-09. Submissions
+                 * waiting on a decision come first.
+                 */
+                Route::get('submissions', [SubmissionReviewController::class, 'index'])->name('submissions');
+                Route::get('submissions/{submission}', [SubmissionReviewController::class, 'show'])->name('submissions.show');
+                Route::post('submissions/{submission}/comment', [SubmissionReviewController::class, 'comment'])->name('submissions.comment');
+                Route::post('submissions/{submission}/decide', [SubmissionReviewController::class, 'decide'])->name('submissions.decide');
 
                 Route::get('users', [UserAdminController::class, 'index'])->name('users');
                 Route::get('users/invite', [UserAdminController::class, 'form'])->name('users.form');

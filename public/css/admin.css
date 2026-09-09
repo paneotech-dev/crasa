@@ -1051,6 +1051,162 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
 .a-intro__text b { display: block; font-size: 14.5px; font-weight: 600; }
 .a-intro__text span { display: block; font-size: 13.5px; color: var(--a-ink-quiet); line-height: 1.6; margin-top: 3px; }
 
+/* The e-Form ------------------------------------------------------------ */
+
+/*
+ * Screen 06. The workflow strip across the top, the two-column field grid,
+ * the source note under every figure, and the returned-comments panel.
+ *
+ * The stage numbers are the one numbered sequence on the public-facing
+ * side of the platform besides onboarding. CLAUDE.md allows them where the
+ * content genuinely is a sequence, and names this workflow as the example.
+ */
+.s-stages { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--s-3); flex-wrap: wrap; counter-reset: stage; }
+
+.s-stage {
+  flex: 1 1 180px;
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--a-rule);
+  border-radius: var(--r-sm);
+  background: var(--a-surface);
+}
+
+.s-stage::before {
+  counter-increment: stage;
+  content: counter(stage);
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-pill);
+  background: var(--c-sand);
+  color: var(--c-charcoal);
+  font-size: 12.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The current stage. The status colours keep their fixed meanings:
+   green validated, amber pending, red returned. */
+.s-stage[aria-current="step"] { border-color: var(--c-navy); border-width: 1.5px; }
+.s-stage[aria-current="step"][data-state="draft"]::before,
+.s-stage[aria-current="step"][data-state="submitted"]::before { background: var(--c-amber); color: var(--c-white); }
+.s-stage[aria-current="step"][data-state="validated"]::before { background: var(--c-green-dark); color: var(--c-white); }
+.s-stage[aria-current="step"][data-state="returned"]::before { background: var(--c-red); color: var(--c-white); }
+
+.s-stage__name { display: block; font-size: 16px; font-weight: 600; line-height: 1.2; }
+.s-stage__sub { display: block; font-size: 12.5px; color: var(--a-ink-quiet); margin-top: 2px; line-height: 1.4; }
+
+/* background:var(--c-red-light);border:1px solid #E3B7B8;
+   border-left:4px solid var(--c-red);border-radius:var(--r-md);
+   padding:var(--s-5)
+
+   The third of the platform's three coloured left edges. Each marks a band
+   that stops work, and this one stops a return from being published. */
+.s-returned {
+  background: var(--c-red-light);
+  border: 1px solid var(--c-red-mid);
+  border-left: 4px solid var(--c-red);
+  border-radius: var(--r-md);
+  padding: var(--s-5);
+}
+
+.s-returned h2 { font-family: var(--f-head); font-size: 22px; font-weight: 600; margin: 0 0 var(--s-3); color: var(--c-red-dark); }
+.s-returned > p { margin: 0 0 var(--s-5); font-size: 15.5px; line-height: 1.6; color: var(--c-red-dark); max-width: 90ch; }
+
+.s-comments { display: flex; flex-direction: column; gap: var(--s-3); }
+
+.s-comment {
+  background: var(--c-white);
+  border: 1px solid var(--c-red-mid);
+  border-radius: var(--r-sm);
+  padding: var(--s-4);
+  display: flex;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+}
+
+.s-comment__main { flex: 1 1 260px; min-width: 0; }
+
+/* Screen 06 sets the field name in tracked caps. Sentence case, per the
+   ruling; the size, weight and quiet ink are the screen's. */
+.s-comment__field { font-size: 12.5px; font-weight: 700; color: var(--c-slate); margin-bottom: 5px; }
+.s-comment__text { font-size: 15.5px; line-height: 1.6; color: var(--c-charcoal); }
+.s-comment__who { flex: 0 0 200px; font-size: 13.5px; color: var(--c-slate); line-height: 1.6; }
+
+/* fieldset per category */
+.s-category { border: 0; border-top: 1px solid var(--a-rule); margin: 0; padding: var(--s-5); }
+.s-category:first-of-type { border-top: 0; }
+.s-category legend { font-family: var(--f-head); font-size: 21px; font-weight: 600; padding: 0; }
+
+/* grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-5) */
+.s-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5); margin-top: var(--s-4); }
+
+@media (max-width: 719.98px) {
+  /* Two columns of a labelled field with a hint and a source note under it
+     is unreadable on a phone. One column, and nothing is hidden. */
+  .s-fields { grid-template-columns: 1fr; }
+}
+
+.s-field { min-width: 0; }
+
+/* A field the Secretariat has commented on. The tint says which one
+   without the representative reading twelve of them. */
+.s-field[data-flagged] {
+  background: var(--c-red-light);
+  border-radius: var(--r-sm);
+  padding: var(--s-3);
+  margin: calc(var(--s-3) * -1);
+}
+
+/* display:block;font-size:14px;font-weight:600;margin-bottom:6px */
+.s-field__label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+
+/* width:100%;font-family:var(--f-admin);font-size:16px;
+   background:var(--c-white);border-radius:var(--r-sm);padding:11px 13px
+   The 1.5px #B9B2A2 rule is 2.11:1 and loses to SC 1.4.11, so the field
+   takes --c-border, as every other control on the platform does. */
+.s-field__input {
+  width: 100%;
+  font-family: var(--f-admin);
+  font-size: 16px;
+  color: var(--a-ink);
+  background: var(--a-surface);
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-xs);
+  padding: 11px 13px;
+}
+
+.s-field__hint { font-size: 12.5px; color: var(--a-ink-quiet); margin: 5px 0 0; line-height: 1.5; }
+
+/* The source note. Screen 06 gives it the cream ground and a red rule when
+   it is empty and the figure is not. */
+.s-field__source {
+  width: 100%;
+  margin-top: 8px;
+  font-family: var(--f-body);
+  font-size: 14px;
+  color: var(--a-ink);
+  background: var(--a-head-ground);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-xs);
+  padding: 9px 11px;
+}
+
+.s-field__source[data-required] { border: 1.5px solid var(--c-red); background: var(--c-white); }
+.s-field__comment { font-size: 13px; line-height: 1.5; color: var(--c-red-dark); margin: 8px 0 0; font-weight: 500; }
+
+.s-field__choices { display: flex; gap: var(--s-5); }
+.s-choice { display: flex; align-items: center; gap: 9px; font-size: 16px; cursor: pointer; }
+
+.s-field__input:focus-visible,
+.s-field__source:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
+
 /* Notices --------------------------------------------------------------- */
 
 .a-notice {

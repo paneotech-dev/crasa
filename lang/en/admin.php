@@ -453,4 +453,5 @@ return [
     'hint_dismissed' => 'The introduction is closed. It stays on the help page.',
     'hints_restored' => 'The introduction is showing again.',
     'field_eyebrow' => 'Eyebrow',
+    'section_submissions' => 'Submissions',
 ];
