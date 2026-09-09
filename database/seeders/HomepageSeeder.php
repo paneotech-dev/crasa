@@ -202,11 +202,19 @@ class HomepageSeeder extends Seeder
 
         $hero->update([
             'needs_content' => true,
-            'content_note' => 'Hero photography. The current image is consumer register, not '
-                .'institutional. Needs delegates in session, a signing, a plenary hall, telecom '
-                .'infrastructure at scale or a regulator building. Landscape, 3000px minimum on '
-                .'the long edge, subject and interest in the RIGHT two thirds because the type '
-                .'sits left. Three images would enable the rotation. See docs/QUESTIONS.md.',
+            // Rewritten 9 September: the note still described an image the
+            // banner no longer carries, which is exactly the kind of drift
+            // a placeholder list exists to prevent and had itself acquired.
+            'content_note' => 'Hero photography. The banner runs with no photograph at all, on '
+                .'navy and typography, because the supplied library has no institutional subject '
+                .'and a wrong one on the first screen is a false claim about what CRASA is. '
+                .'Needs delegates in plenary, a signing ceremony, a speaker at a podium with '
+                .'member state flags, institutional architecture, telecommunications '
+                .'infrastructure at scale, or a network operations centre. Landscape, 3000px '
+                .'minimum on the long edge, subject and interest in the RIGHT two thirds because '
+                .'the type sits left. Three images would enable the rotation. CRASA own AGM '
+                .'photography is worth more than anything purchasable. See '
+                .'docs/CLIENT_REQUESTS.md section 1.',
         ]);
 
         // 2. Key figures. Counts that the platform can stand behind: the

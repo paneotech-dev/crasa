@@ -34,7 +34,7 @@ Stage B is the authentication and account UI. That was built and committed
 earlier as stage 8 (`fbdeffa`): login with screen 11's states, 2FA enrolment
 with QR and manual entry, hashed recovery codes, the challenge with a
 recovery path, password reset, account settings, user administration with
-the role matrix, the filterable audit log, and `crasa:user` which prompts for
+the role matrix, the filterable audit log, and `user:create` which prompts for
 the password and has no password option at all.
 
 **Done:** verified rather than rebuilt. 19 routes, 32 tests in

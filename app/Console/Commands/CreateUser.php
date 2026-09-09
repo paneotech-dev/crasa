@@ -28,7 +28,20 @@ use Illuminate\Validation\Rules\Password as PasswordRule;
  */
 class CreateUser extends Command
 {
-    protected $signature = 'crasa:user
+    /*
+     * user:create, not crasa:user.
+     *
+     * Renamed 9 September 2026. Every other command on this platform is
+     * namespace:verb — content:strip-samples, security:harden-uploads,
+     * images:derivatives — and this one was the odd one out.
+     *
+     * It also matters more than tidiness: docs/DEMO_SCRIPT.md and the
+     * demonstration seeder both told the operator to run `user:create`, and
+     * that command did not exist. On the day of the workshop, the
+     * instruction for creating the four demonstration accounts would have
+     * failed at the prompt.
+     */
+    protected $signature = 'user:create
         {--email= : The account address}
         {--name= : The account holder\'s name}
         {--role= : administrator, editor, member_state_rep, committee_member or viewer}

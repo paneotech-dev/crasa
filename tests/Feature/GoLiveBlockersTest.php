@@ -133,6 +133,50 @@ class GoLiveBlockersTest extends TestCase
     /* The documents ---------------------------------------------------------- */
 
     /**
+     * Every artisan command a document tells the operator to run must exist.
+     *
+     * docs/DEMO_SCRIPT.md and the demonstration seeder both told the
+     * operator to run `user:create`, and the command was called
+     * `crasa:user`. On the day of the workshop the instruction for creating
+     * the four demonstration accounts would have failed at the prompt, in
+     * front of fourteen regulators.
+     */
+    public function test_every_command_the_documents_name_actually_exists(): void
+    {
+        $registered = array_keys($this->app[Kernel::class]->all());
+
+        $documents = glob(base_path('docs/*.md'));
+        $this->assertNotEmpty($documents);
+
+        /*
+         * Commands a document names as arriving with a package it tells the
+         * reader to install. Listed explicitly rather than pattern-matched,
+         * so adding one is a decision: the point of this test is that an
+         * instruction naming a command nobody can run is a broken
+         * instruction, and "it will exist later" has to be stated.
+         */
+        $afterInstallation = [
+            // spatie/laravel-backup, per docs/BACKUP_SETUP.md.
+            'backup:list',
+            'backup:run',
+        ];
+
+        $missing = [];
+
+        foreach ($documents as $path) {
+            preg_match_all('~php artisan ([a-z][a-z0-9:_-]+)~', file_get_contents($path), $matches);
+
+            foreach (array_unique($matches[1]) as $command) {
+                if (! in_array($command, $registered, true) && ! in_array($command, $afterInstallation, true)) {
+                    $missing[$command] = basename($path);
+                }
+            }
+        }
+
+        $this->assertSame([], $missing, 'Documents name commands that do not exist: '.json_encode($missing));
+    }
+
+    /**
      * Both documents go to CRASA and both describe this server. A procedure
      * that names the wrong PHP binary or the wrong database is a procedure
      * that fails at the moment it is needed, which is during a restore.

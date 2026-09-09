@@ -431,7 +431,7 @@ class AuthenticationTest extends TestCase
 
     public function test_the_user_command_creates_an_account_from_prompts(): void
     {
-        $this->artisan('crasa:user', ['--email' => 'console@crasa.org', '--name' => 'Console User', '--role' => 'editor'])
+        $this->artisan('user:create', ['--email' => 'console@crasa.org', '--name' => 'Console User', '--role' => 'editor'])
             ->expectsQuestion('Password (not echoed)', 'a fine long password 7')
             ->expectsQuestion('Confirm password', 'a fine long password 7')
             ->assertSuccessful();
@@ -442,7 +442,7 @@ class AuthenticationTest extends TestCase
 
     public function test_the_user_command_refuses_mismatched_passwords(): void
     {
-        $this->artisan('crasa:user', ['--email' => 'x@crasa.org', '--name' => 'X', '--role' => 'viewer'])
+        $this->artisan('user:create', ['--email' => 'x@crasa.org', '--name' => 'X', '--role' => 'viewer'])
             ->expectsQuestion('Password (not echoed)', 'one password here 1')
             ->expectsQuestion('Confirm password', 'a different one 2')
             ->assertFailed();
