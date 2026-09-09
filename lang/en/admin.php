@@ -525,4 +525,6 @@ return [
     'confirm_recorded' => ':country confirmed.',
     'confirm_saved' => ':country saved, not yet confirmed.',
     'section_confirmations' => 'Confirmations',
+    'sample_present' => '{1} One row is still demonstration data.|[2,*] :count rows are still demonstration data.',
+    'sample_body' => 'They are flagged in the database and are not marked anywhere a reader can see. Run the strip before go-live; it deletes every one and the files attached to them.',
 ];

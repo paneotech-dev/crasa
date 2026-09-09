@@ -58,17 +58,17 @@
     <div class="c-section">
         <div class="c-page">
 
-            <div class="c-notice c-notice--pending" role="status">
-                <svg class="c-notice__icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                     stroke="var(--c-amber-dark)" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-                    <path d="M12 9v4"></path><path d="M12 17h.01"></path>
-                    <path d="M10.3 3.9L2.4 18a1.8 1.8 0 001.6 2.7h16a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"></path>
-                </svg>
-                <div>
-                    <div class="c-notice__title">{{ __('indicators.demo_title') }}</div>
-                    <div class="c-notice__body">{{ __('indicators.demo_body') }}</div>
-                </div>
-            </div>
+            {{-- The demonstration notice was here. Removed on the ruling
+                 of 9 September 2026, which named the admin dashboard as the
+                 only surface that carries it.
+
+                 This page is the one place that removal costs something.
+                 It is behind authentication and it is the data-quality
+                 view, read by member state representatives who cannot see
+                 the admin dashboard and so have no signal at all that the
+                 matrix is built on unconfirmed figures. Recorded in
+                 OPEN_ITEMS.md with a recommendation to put it back here
+                 alone; restoring it is reverting this hunk. --}}
 
             {{-- The answer first. A reader who opens this grid wants the
                  regional figure and who is behind on it; the eighty-four

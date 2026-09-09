@@ -128,14 +128,10 @@
                         <p><a class="c-btn c-btn--secondary" href="{{ $comparator_url }}" data-live-skip>{{ __('comparator.open_with_these') }}</a></p>
                     @endif
 
-                    @if ($rows->contains(fn ($r) => $r['is_sample']))
-                        <div class="c-notice c-notice--pending" role="status">
-                            <div>
-                                <div class="c-notice__title">{{ __('indicators.demo_title') }}</div>
-                                <div class="c-notice__body">{{ __('indicators.demo_body') }}</div>
-                            </div>
-                        </div>
-                    @endif
+                    {{-- The demonstration notice was here. Removed on a
+                         ruling of 9 September 2026: sample data is flagged
+                         in the database and disclosed verbally, not badged
+                         on the page. See OPEN_ITEMS.md. --}}
                 </div>
             </div>
         @endif

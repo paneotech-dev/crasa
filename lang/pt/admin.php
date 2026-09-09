@@ -525,4 +525,6 @@ return [
     'confirm_recorded' => ':country confirmado.',
     'confirm_saved' => ':country guardado, ainda não confirmado.',
     'section_confirmations' => 'Confirmações',
+    'sample_present' => '{1} Uma linha ainda é dado de demonstração.|[2,*] :count linhas ainda são dados de demonstração.',
+    'sample_body' => 'Estão sinalizadas na base de dados e não aparecem assinaladas em nenhum sítio visível ao leitor. Execute a remoção antes da entrada em serviço: apaga todas elas e os ficheiros que lhes estão associados.',
 ];

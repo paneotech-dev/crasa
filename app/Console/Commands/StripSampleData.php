@@ -60,9 +60,13 @@ class StripSampleData extends Command
      * The order matters. Children before parents, so a foreign key never
      * blocks a delete and nothing is orphaned on the way.
      *
+     * Public because App\Support\SampleData counts the same tables for the
+     * admin dashboard. One list, so a model added here is a model the
+     * dashboard starts counting on the same commit.
+     *
      * @var list<class-string<Model>>
      */
-    private const ORDER = [
+    public const ORDER = [
         // Deepest first.
         DelegateRegistration::class,
         Submission::class,

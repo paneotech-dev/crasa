@@ -525,4 +525,6 @@ return [
     'confirm_recorded' => ':country confirmé.',
     'confirm_saved' => ':country enregistré, pas encore confirmé.',
     'section_confirmations' => 'Confirmations',
+    'sample_present' => '{1} Une ligne relève encore des données de démonstration.|[2,*] :count lignes relèvent encore des données de démonstration.',
+    'sample_body' => 'Elles sont signalées dans la base de données et ne sont indiquées nulle part où un lecteur puisse les voir. Lancez la suppression avant la mise en service : elle efface chacune d\'elles ainsi que les fichiers qui y sont attachés.',
 ];

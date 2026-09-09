@@ -225,13 +225,36 @@ class CompletenessTest extends TestCase
         $this->assertStringContainsString('itu.int', $html);
     }
 
-    public function test_the_page_says_the_values_are_demonstration_data(): void
+    /**
+     * This used to assert the opposite, and the change is a decision rather
+     * than a fix.
+     *
+     * On 9 September 2026 the demonstration notice was removed from every
+     * rendered page: sample rows stay flagged in the database and are
+     * disclosed verbally by the presenter instead. This page is the one
+     * place that removal costs something, and the cost is recorded in
+     * OPEN_ITEMS.md rather than left for someone to rediscover.
+     *
+     * It is behind authentication and read by member state
+     * representatives, who cannot see the admin dashboard where the count
+     * now lives. Its entire subject is data quality, and it no longer says
+     * that the matrix is built on unconfirmed figures. The recommendation
+     * is to put the notice back on this page alone.
+     */
+    public function test_the_page_no_longer_badges_demonstration_data(): void
     {
         $this->seed(IndicatorValueSeeder::class);
 
-        $this->actingAs(User::factory()->editor()->create())
+        $html = $this->actingAs(User::factory()->editor()->create())
             ->get('/en/completeness')
-            ->assertSee('Demonstration data')
-            ->assertSee('have not been reported by any national regulator');
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringNotContainsString('Demonstration data', $html);
+        $this->assertStringNotContainsString('c-notice--pending', $html);
+
+        // The flag is untouched. That is what makes the removal a
+        // disclosure decision rather than a data change.
+        $this->assertTrue(IndicatorValue::where('is_sample', true)->exists());
     }
 }

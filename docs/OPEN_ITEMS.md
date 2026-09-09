@@ -759,3 +759,61 @@ approved baseline every remaining screen is checked against, and losing it
 would lose the reference for the whole build. It is committed whole,
 including the bundled fonts and the React and Babel builds the previews
 load, so the screens still render offline years from now.
+
+---
+
+## Decision: sample data is flagged and disclosed verbally, not badged
+
+*Taken 9 September 2026. Disclosed variation from screens 02, 03 and 08.*
+
+Every rendered demonstration-data notice has been removed from the pages.
+Screen 02 draws one inside the hero panel on an amber ground with a 4px left
+edge; screen 03 draws one beside the comparator's standfirst and says it
+"remains in place, on screen and in every export, until each value is
+confirmed by its national regulator". Both are followed no longer, and this
+records why and exactly what is left.
+
+**Removed — five rendered banners:**
+
+| Surface | What it was |
+|---|---|
+| Homepage hero, all three slides | `b-hero__panel-notice` inside the data panel |
+| Homepage featured comparison | `c-notice--pending` under the table |
+| Comparator masthead | `c-cmp__notice` beside the standfirst |
+| Completeness matrix | `c-notice--pending` above the matrix |
+
+**Kept, deliberately, and each is a judgement I would want overruled in
+writing rather than assumed:**
+
+1. **The per-cell provenance label.** The comparator's source column reads
+   Validated, Reported, Demonstration or Not reported against each figure.
+   That is RP-10, not a badge. A source column that omitted "Demonstration"
+   would state that a number came from somewhere it did not, which is worse
+   than the banner ever was.
+2. **The notice in every export.** CSV and PNG carry
+   `comparator.sample_notice_short`. An export leaves the platform and can
+   reach a ministerial brief; the ruling was about pages, and a document
+   circulating without its provenance is the specific harm the flag exists
+   to prevent.
+3. **The admin pre-download warning** on `admin/reports/{id}`. It tells a
+   Secretariat officer, before they download a brief as PDF, that it is
+   built on unconfirmed figures. Admin-only, and the same class of internal
+   safeguard the ruling asked to keep.
+
+**Added:** the admin dashboard now counts sample rows by table, above the
+statistics because it qualifies every figure in them, with the strip command
+beside it. It reads from `StripSampleData::ORDER`, so a model added to the
+strip is counted from the same commit. It disappears when the count reaches
+zero rather than showing an all-clear somebody has to keep believing.
+
+**The one exposure this creates, stated plainly.** The completeness matrix
+is behind authentication and is read by member state representatives, who
+cannot see the admin dashboard. They now have no signal at all that the
+matrix is built on unconfirmed figures, and it is the one page whose entire
+subject is data quality. The recommendation is to restore the notice there
+alone; doing so is reverting one hunk in
+`resources/views/pages/completeness/index.blade.php`, which carries a
+comment saying so.
+
+Nothing about the data changed. `is_sample` is untouched on 18 models,
+`content:strip-samples` is unchanged, and `data:check` still runs nightly.

@@ -14,6 +14,39 @@
 
     @include('partials.admin-intro')
 
+    {{-- The demonstration-data count.
+         The visible notices came off the public pages on 9 September 2026:
+         sample rows stay flagged in the database and are disclosed verbally
+         by the presenter rather than badged on every screen. That leaves
+         nobody looking at the site able to tell, which is the intent, and
+         leaves the Secretariat unable to tell either, which is not. This is
+         the one surface that still says so.
+
+         It disappears by itself the moment the strip runs, so a clean
+         platform shows nothing here rather than a green all-clear that
+         somebody has to keep believing. --}}
+    @if ($sampleCounts !== [])
+        <div class="a-band a-band--pending" role="status">
+            <div>
+                <strong>{{ trans_choice('admin.sample_present', array_sum($sampleCounts), [
+                    'count' => number_format(array_sum($sampleCounts)),
+                ]) }}</strong>
+                {{ __('admin.sample_body') }}
+            </div>
+
+            <dl class="a-sample">
+                @foreach ($sampleCounts as $table => $count)
+                    <div>
+                        <dt>{{ $table }}</dt>
+                        <dd>{{ number_format($count) }}</dd>
+                    </div>
+                @endforeach
+            </dl>
+
+            <p class="a-sample__how"><code>php artisan content:strip-samples</code></p>
+        </div>
+    @endif
+
     {{-- Screen 09: repeat(auto-fit,minmax(min(100%,236px),1fr)), gap var(--s-4) --}}
     <div class="a-grid a-grid--stats">
         @foreach ($stats as $stat)

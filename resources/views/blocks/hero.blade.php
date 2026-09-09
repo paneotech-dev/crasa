@@ -281,17 +281,12 @@
                                 </dl>
                             @endif
 
-                            @if ($panel['sample'])
-                                {{-- Screen 02 draws this band inside the
-                                     panel: rgba(194,113,12,.14) ground, a
-                                     4px amber left edge. One of three such
-                                     edges on the platform, and each one
-                                     stops work. --}}
-                                <p class="b-hero__panel-notice">
-                                    <strong>{{ __('indicators.demo_title') }}</strong>
-                                    {{ __('blocks.hero_panel_demo') }}
-                                </p>
-                            @endif
+                            {{-- The demonstration notice was here. Screen 02
+                                 draws it inside the panel on an amber
+                                 ground with a 4px left edge. Removed on a
+                                 ruling of 9 September 2026: flagged in the
+                                 database, disclosed verbally, not badged on
+                                 the page. OPEN_ITEMS.md. --}}
                         </div>
                     @elseif ($slide['panel'] === 'comparison')
                         @php $comparison = $panels['comparison']; @endphp
@@ -321,12 +316,6 @@
                                 <a href="{{ $comparison['url'] }}">{{ __('blocks.hero_comparison_action') }}</a>
                             </p>
 
-                            @if ($comparison['sample'])
-                                <p class="b-hero__panel-notice">
-                                    <strong>{{ __('indicators.demo_title') }}</strong>
-                                    {{ __('blocks.hero_panel_demo') }}
-                                </p>
-                            @endif
                         </div>
                     @elseif ($slide['panel'] === 'publication')
                         @php $latest = $panels['publication']; @endphp
@@ -343,12 +332,6 @@
                                 <a href="{{ $latest['url'] }}">{{ __('blocks.hero_publication_action') }}</a>
                             </p>
 
-                            @if ($latest['sample'])
-                                <p class="b-hero__panel-notice">
-                                    <strong>{{ __('indicators.demo_title') }}</strong>
-                                    {{ __('blocks.hero_panel_demo') }}
-                                </p>
-                            @endif
                         </div>
                     @endif
                 @endif

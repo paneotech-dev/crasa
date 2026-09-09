@@ -15,7 +15,7 @@
     @endphp
 
     {{-- Screen 03 hero: navy band, h1 at clamp(31px,5.2vw,52px), lead at
-         19px in --c-sand, and the demonstration notice beside it. --}}
+         19px in --c-sand. --}}
     <section class="c-cmp__masthead">
         <div class="c-page c-cmp__masthead-inner">
             <div class="c-cmp__intro">
@@ -26,17 +26,20 @@
                 ]) }}</p>
             </div>
 
-            @if ($comparison->carriesSampleData())
-                {{-- Screen 03 draws this and says it "remains in place, on
-                     screen and in every export, until each value is
-                     confirmed by its national regulator". It is driven by
-                     the is_sample flag on the rows, so it disappears by
-                     itself when the figures are confirmed. --}}
-                <div class="c-cmp__notice" role="note">
-                    <strong>{{ __('comparator.sample_title') }}</strong>
-                    {{ __('comparator.sample_body') }}
-                </div>
-            @endif
+            {{-- The demonstration notice was here. Screen 03 draws it and
+                 says it "remains in place, on screen and in every export,
+                 until each value is confirmed by its national regulator".
+                 Removed on a ruling of 9 September 2026: sample data is
+                 flagged in the database and disclosed verbally by the
+                 presenter, not badged on the page. The is_sample flags and
+                 the purge command are untouched, and the admin dashboard
+                 carries the count. Disclosed variation, OPEN_ITEMS.md.
+
+                 The per-cell provenance label is NOT part of this. A figure
+                 in the table still states its own source, because a source
+                 column that omits "Demonstration" would misstate where a
+                 number came from, which is RP-10 and is worse than a
+                 badge. --}}
         </div>
     </section>
 

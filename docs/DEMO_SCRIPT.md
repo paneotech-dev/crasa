@@ -6,6 +6,27 @@ Written for whoever presents. No technical knowledge assumed.
 
 ---
 
+## Say this once, out loud, before you show anything
+
+> "The indicator values you will see are demonstration data. They have not
+> been confirmed by any national regulator. Everything else — the documents,
+> the committees, the member states — is real."
+
+Say it once and do not repeat it. The platform used to carry that sentence
+as a banner on the homepage, the comparator and the completeness matrix; it
+was removed on 9 September 2026 in favour of saying it aloud, because a
+notice on every screen reads as an unfinished site rather than as a careful
+one. The rows are still flagged in the database, the strip command still
+deletes every one of them, and the admin dashboard still counts what is
+left. Nothing about the data changed. Only where it is disclosed.
+
+If a delegate asks later where a figure came from, the comparator's source
+column still says "Demonstration" against each one, and every export carries
+the notice in writing. You are not hiding it; you are saying it once instead
+of forty times.
+
+---
+
 ## Before the room fills
 
 Twenty minutes, the morning of.

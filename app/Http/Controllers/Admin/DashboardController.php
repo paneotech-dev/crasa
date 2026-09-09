@@ -11,6 +11,7 @@ use App\Models\Instrument;
 use App\Models\NewsItem;
 use App\Models\Publication;
 use App\Support\Locales;
+use App\Support\SampleData;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -50,6 +51,9 @@ class DashboardController extends Controller
             'activity' => $this->recentActivity(),
             'publications' => $this->publicationPage($request),
             'today' => now(),
+            // The Secretariat's only signal that the platform is not yet
+            // clean, now that the public notices are gone.
+            'sampleCounts' => SampleData::counts(),
         ]);
     }
 

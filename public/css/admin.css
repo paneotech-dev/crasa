@@ -805,6 +805,23 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
 
 .a-band--error { border-color: var(--c-red-mid); border-left-color: var(--c-red); background: var(--c-red-light); color: var(--c-red-dark); }
 
+/* The demonstration-data count on the dashboard. The amber band is already
+   the platform's "this stops work" surface; this is the same band with the
+   table breakdown under it. It sits above the stats because it qualifies
+   every figure in them. */
+.a-band--pending { margin-bottom: var(--s-5); }
+.a-sample {
+  margin: var(--s-4) 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
+  gap: var(--s-2) var(--s-4);
+}
+.a-sample > div { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3); border-bottom: 1px solid var(--c-amber-mid); padding-bottom: 3px; }
+.a-sample dt { font-size: 13px; min-width: 0; }
+.a-sample dd { margin: 0; font-family: var(--f-admin); font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.a-sample__how { margin: var(--s-4) 0 0; font-size: 13px; }
+.a-sample__how code { font-family: var(--f-admin); font-size: 13px; background: var(--c-white); border: 1px solid var(--c-amber-mid); border-radius: var(--r-xs); padding: 2px 6px; }
+
 /* The rights panel: background:var(--c-cream);border-radius:var(--r-sm);
    padding:var(--s-3) var(--s-4);font-size:13.5px;line-height:1.6 */
 .a-rights {

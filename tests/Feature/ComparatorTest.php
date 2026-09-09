@@ -264,9 +264,22 @@ class ComparatorTest extends TestCase
     }
 
     /**
-     * Screen 03: the demonstration notice "remains in place, on screen and
-     * in every export, until each value is confirmed by its national
-     * regulator".
+     * Screen 03 says the demonstration notice "remains in place, on screen
+     * and in every export, until each value is confirmed by its national
+     * regulator". Half of that still holds and half was overruled on
+     * 9 September 2026.
+     *
+     * On screen: gone. Sample rows are flagged in the database and
+     * disclosed verbally by the presenter, not badged on the page.
+     *
+     * In every export: kept, and this is the half worth a test. An export
+     * leaves the platform and can reach a ministerial brief. The ruling was
+     * about pages, and a document that circulates without its provenance is
+     * the specific harm the flag exists to prevent.
+     *
+     * The per-cell source column is also untouched: a figure still says
+     * "Demonstration" against itself, because a source column that omitted
+     * it would state a number came from somewhere it did not.
      */
     public function test_the_demonstration_notice_travels_with_every_export(): void
     {
@@ -280,9 +293,12 @@ class ComparatorTest extends TestCase
 
         $query = ['mode' => 'compare', 'category' => $this->indicator->category, 'countries' => 'bw,km'];
 
-        $this->get('/en/comparator?'.http_build_query($query))
+        $html = $this->get('/en/comparator?'.http_build_query($query))
             ->assertOk()
-            ->assertSee(__('comparator.sample_title'));
+            ->getContent();
+
+        $this->assertStringNotContainsString(__('comparator.sample_title'), $html);
+        $this->assertStringNotContainsString('c-cmp__notice', $html);
 
         $csv = $this->get('/en/comparator/export.csv?'.http_build_query($query))->streamedContent();
         $this->assertStringContainsString(__('comparator.sample_notice_short'), $csv);
