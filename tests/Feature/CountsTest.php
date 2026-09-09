@@ -89,19 +89,24 @@ class CountsTest extends TestCase
     }
 
     /**
-     * A member state card says how much that state has on the platform, so a
-     * reader scanning fourteen of them sees which have filed and which have
-     * not without opening any.
+     * A member state's profile says how much that state has on the
+     * platform.
+     *
+     * This used to check a tally on each of fourteen cards on the members
+     * page. That page renders screen 08's directory now -- a row is an
+     * acronym, a name, a country and a way in, and the screen gives it no
+     * counts -- so the tallies moved to the profile the row opens, which is
+     * where screen 08 draws them.
      */
-    public function test_member_cards_state_what_each_member_state_has(): void
+    public function test_a_member_profile_states_what_that_member_state_has(): void
     {
-        $html = $this->get('/en/members')->assertOk()->getContent();
+        $html = $this->get('/en/members/bw')->assertOk()->getContent();
 
-        $this->assertStringContainsString('b-member__tally', $html);
-        $this->assertSame(
-            Country::count(),
-            substr_count($html, 'b-member__tally'),
-            'Not every member card carries its tally.'
+        $this->assertStringContainsString('c-tiles', $html);
+        $this->assertGreaterThanOrEqual(
+            4,
+            substr_count($html, 'c-tile"'),
+            'The member profile carries fewer counts than it did as a card.'
         );
     }
 
@@ -112,13 +117,19 @@ class CountsTest extends TestCase
      */
     public function test_a_member_state_with_nothing_filed_says_zero(): void
     {
-        $html = $this->get('/en/members')->assertOk()->getContent();
-
         $empty = Country::whereDoesntHave('authorities')->first() ?? Country::first();
         $tally = SectionCounts::forCountry($empty);
 
         $this->assertContains(0, $tally, 'Expected at least one zero in a seeded member state tally.');
-        $this->assertMatchesRegularExpression('~b-member__tally.*?<dd>0</dd>~s', $html);
+
+        $html = $this->get('/en/members/'.$empty->iso_code)->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression(
+            '~c-tile.*?<dd>\s*0\s*</dd>~s',
+            $html,
+            'A member state with nothing filed shows no zero, which turns a fact about '
+            .'the data into a gap in the interface.'
+        );
     }
 
     public function test_every_count_is_a_query_and_not_a_number_written_down(): void

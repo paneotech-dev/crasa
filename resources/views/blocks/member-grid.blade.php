@@ -31,7 +31,33 @@
              shapes: at region scale each is a few pixels across, too small
              to see, label or touch. A member state omitted from a
              membership map is a worse outcome than an inset. --}}
+        @php
+            /*
+             * Screen 08's layout, on the page whose subject is the members.
+             *
+             * "display:flex;flex-wrap:wrap;gap:var(--s-7);align-items:
+             *  flex-start", the map in a white card at flex:1 1 520px and
+             * the directory beside it at flex:1 1 400px. The map was
+             * floating on the bare section ground with a grid of cards
+             * under it, which is neither what screen 08 draws nor a
+             * composition that tells a reader the two are alternatives.
+             *
+             * A setting rather than a guess: the homepage carries the same
+             * block as a summary and keeps its card grid.
+             */
+            $directory = (bool) $block->setting('directory', false);
+        @endphp
+
+        <div @class(['b-members__layout' => $directory])>
+
         @if ($block->setting('show_map') && $countries->isNotEmpty())
+            <div @class(['b-members__map' => $directory])>
+            @if ($directory)
+                <div class="b-members__head">
+                    <h3 class="b-members__head-title">{{ __('members.region_heading') }}</h3>
+                    <span class="b-members__head-note">{{ __('members.region_note') }}</span>
+                </div>
+            @endif
             {{-- The dataset selector answers without reloading. It is a GET
                  form underneath, so with no script the map still shades,
                  still deep-links and still prints. --}}
@@ -46,6 +72,7 @@
                     <x-region-map :countries="$countries" :view="$mapView" />
                 </div>
             </div>
+            </div>
         @endif
 
         @if ($countries->isEmpty())
@@ -53,6 +80,44 @@
                 'title' => __('blocks.members_empty_title'),
                 'body' => __('blocks.members_empty_body'),
             ])
+        @elseif ($directory)
+            {{-- The directory. Screen 08 draws it as rows in one white
+                 card, alphabetical by country, not as a grid of cards: it
+                 is a list you scan for a name, and the map beside it is the
+                 other way in to the same fourteen. --}}
+            <div class="b-members__list">
+                <div class="b-members__head">
+                    <h3 class="b-members__head-title">{{ __('members.directory_heading') }}</h3>
+                    <span class="b-members__head-note">{{ trans_choice('members.directory_note', $countries->count(), ['count' => $countries->count()]) }}</span>
+                </div>
+
+                <ul class="b-directory" role="list">
+                    @foreach ($countries as $country)
+                        <li class="b-directory__row" id="member-{{ $country->iso_code }}">
+                            {{-- Screen 08 puts an ISO code in this slot. The
+                                 flag goes here instead: it is the same
+                                 mark in the same place and a reader
+                                 recognises it faster than two letters.
+                                 Decorative either way -- the country's name
+                                 is two columns to the right and is what
+                                 carries the meaning. --}}
+                            <span class="b-directory__mark">
+                                <x-flag :iso="$country->iso_code" />
+                            </span>
+                            <span class="b-directory__names">
+                                <span class="b-directory__acronym">{{ $country->authority?->acronym ?: $country->name }}</span>
+                                @if ($country->authority)
+                                    <span class="b-directory__full">{{ $country->authority->name }}</span>
+                                @endif
+                            </span>
+                            <span class="b-directory__side">
+                                <span class="b-directory__country">{{ $country->name }}</span>
+                                <a class="b-directory__link" href="{{ route('members.show', ['locale' => app()->getLocale(), 'iso' => $country->iso_code]) }}">{{ __('members.directory_open') }}</a>
+                            </span>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
         @else
             <ul class="b-members" role="list">
                 @foreach ($countries as $country)
@@ -120,5 +185,7 @@
                 @endforeach
             </ul>
         @endif
+
+        </div>{{-- b-members__layout --}}
     </div>
 </section>

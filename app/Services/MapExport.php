@@ -131,12 +131,26 @@ class MapExport
             // Every state states its own figure. Colour is never the only
             // carrier, in a printed brief least of all.
             $ink = $view->isShaded() && in_array($entry->bandAttribute(), ['2', '3'], true) ? '#FFFFFF' : '#0F1B2D';
-            // 13 and 11, the same two values the page carries. They were
-            // briefly 18 and 15, to hold the apparent size while the wider
-            // box shrank the group.
+            /*
+             * The country's name, not its ISO code, matching what the page
+             * shows from 768 up. The export renders at 1160px, so it is
+             * always at least that wide, and the reasoning is stronger
+             * here than on screen: a printed brief goes to people who did
+             * not choose to open it and cannot hover anything.
+             *
+             * Lesotho, Eswatini and Malawi keep the code, as they do on
+             * the page. Their shapes cannot hold a name and each carries
+             * its full name on an inset chip below the map.
+             *
+             * 13 and 11, the same two values the page carries.
+             */
+            $label = in_array($iso, ['ls', 'sz', 'mw'], true)
+                ? strtoupper($iso)
+                : ($entry->country?->name ?: strtoupper($iso));
+
             $parts[] = '<text x="'.$shape['label'][0].'" y="'.$shape['label'][1].'" text-anchor="middle" '
                 .'font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="'.$ink.'">'
-                .$e(strtoupper($iso)).'</text>';
+                .$e($label).'</text>';
             $parts[] = '<text x="'.$shape['label'][0].'" y="'.($shape['label'][1] + 14).'" text-anchor="middle" '
                 .'font-family="Helvetica,Arial,sans-serif" font-size="11" font-weight="600" fill="'.$ink.'">'
                 .$e($entry->display).'</text>';

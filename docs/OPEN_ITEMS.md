@@ -853,3 +853,57 @@ translation.
 
 "Play" became "Resume" in the process. It is better English for a carousel
 and it is what makes "Resume rotation" satisfy 2.5.3.
+
+---
+
+## Four disclosed variations on the map
+
+*Taken 9 September 2026, after the map was reverted to the approved box and
+still read badly. Each is a departure from RegionMap.dc.html and each serves
+the screen's own intent, which is a map that reads as real geography and
+behaves like a control.*
+
+**1. Geometry at 1:50m, not 1:110m.** RegionMap specifies 1:110m for the
+mainland and 1:50m for the islands. 1:110m is a world-map resolution: at the
+size the members card renders it turns Tanzania's coast into a zigzag and DR
+Congo into a blob. Everything is 1:50m now, from the same Natural Earth
+release already recorded in `docs/LICENCES.csv`, at the same projection. The
+twelve shapes land within three pixels of where they were, so every label
+coordinate is unchanged, and a test asserts the bounding boxes rather than
+the path text. It costs 43KB of path data against 8KB.
+
+One ring is dropped deliberately: 1:50m South Africa includes the Prince
+Edward Islands at 46 degrees south, which project 200px below the box.
+
+**2. The country's name instead of its ISO code, from 768 up.** The screen
+draws "CD / ARPTC". To a delegate that is two abbreviations, and CD for DR
+Congo is actively misleading. From 768 the short name replaces the code;
+below it the name will not fit and the code returns. Both labels are served
+and a media query chooses.
+
+Lesotho and Eswatini keep the code at every width. Their labels already sit
+outside their shapes because the shapes cannot hold them, and a name out
+there would run across South Africa and Mozambique. Both carry their full
+name on the inset chip, which is what the chips are for.
+
+**3. A marker under Seychelles.** 115 islands totalling 450 square
+kilometres is three pixels at this projection, so the name sat in open ocean
+with nothing under it and read as a stray word rather than a place. A 6px
+circle in the context colour now sits at the archipelago's position. This is
+what a cartographer does for a settlement too small to draw.
+
+**4. Hover and focus.** RegionMap draws none: its shapes have one fill and
+one stroke and nothing responds to a pointer. With nothing selected that
+leaves fourteen identical pale shapes and no signal that any of them is a
+control. Hover and focus now lift a state to `--c-green-step-1` — the
+`#9CCFB2` of the choropleth's second step — and give it the stroke the
+screen reserves for the selected state, so pointing at a member state looks
+like what selecting it will do.
+
+**Also fixed, and not a variation.** The map now sits in the white card
+screen 08 draws at line 108, headed "The region" with "Select a member
+state" at right, beside the directory it draws at line 117. Both were in the
+approved screen and neither had been built: the map floated on the bare
+section ground with a grid of member cards under it. The two controls above
+the map had a label at `width:100%` with a negative bottom margin, so each
+took its own line and sat on the control it labelled.

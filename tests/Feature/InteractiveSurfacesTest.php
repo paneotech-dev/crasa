@@ -93,15 +93,18 @@ class InteractiveSurfacesTest extends TestCase
         $this->assertSame('http://localhost/en/members', BlockLink::resolve('members'));
     }
 
-    public function test_a_member_card_opens_the_member_it_names(): void
+    public function test_a_directory_row_opens_the_member_it_names(): void
     {
+        // The members page renders screen 08's directory now rather than a
+        // card grid. The rule is unchanged: a row that looks like a way in
+        // has to be one.
         $html = $this->get('/en/members')->assertOk()->getContent();
 
         foreach (Country::pluck('iso_code') as $iso) {
             $this->assertStringContainsString(
-                'class="b-member__name" href="http://localhost/en/members/'.$iso.'"',
+                'class="b-directory__link" href="http://localhost/en/members/'.$iso.'"',
                 $html,
-                strtoupper($iso).' has a card that looks like a link and is not one.'
+                strtoupper($iso).' has a row that looks like a link and is not one.'
             );
         }
     }

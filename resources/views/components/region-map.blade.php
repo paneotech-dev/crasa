@@ -98,16 +98,19 @@
          A plain GET form. No script, and it lands on the same canonical
          URL the map's own links use. --}}
     <form class="c-map-region__control" method="get" action="{{ route('members.go', ['locale' => $locale]) }}">
+        <span class="c-map-region__field">
         <label class="c-map-region__control-label" for="map-state">{{ __('members.map_select_state') }}</label>
         <select class="c-select c-map-region__select" id="map-state" name="iso">
             @foreach ($ordered as $iso)
                 <option value="{{ $iso }}">{{ $view->entry($iso)->country->name }}</option>
             @endforeach
         </select>
+        </span>
         <button class="c-btn c-btn--secondary" type="submit">{{ __('members.map_open_state') }}</button>
     </form>
 
     <form class="c-map-region__control" method="get" action="{{ url()->current() }}" data-map-control>
+        <span class="c-map-region__field">
         <label class="c-map-region__control-label" for="map-indicator">{{ __('members.map_shade_by') }}</label>
         <select class="c-select c-map-region__select" id="map-indicator" name="indicator">
             <option value="">{{ __('members.map_option_none') }}</option>
@@ -119,6 +122,7 @@
                 </optgroup>
             @endforeach
         </select>
+        </span>
         {{-- Removed by public/js/filters.js once it has taken over the
              change event. Present and working for every reader who does
              not run it. --}}
@@ -158,6 +162,14 @@
             @foreach ($map['context'] as $context)
                 <path class="c-map-region__context" d="{{ $context['d'] }}" aria-hidden="true"
                       fill="#E5E0D5" stroke="#908977" stroke-width="0.9" stroke-linejoin="round"></path>
+                @if (($context['marker'] ?? null) !== null)
+                    {{-- An archipelago too small to draw at this scale. The
+                         label had nothing under it and read as a stray
+                         word. --}}
+                    <circle class="c-map-region__marker" aria-hidden="true"
+                            cx="{{ $context['marker'][0] }}" cy="{{ $context['marker'][1] }}" r="6"
+                            fill="#E5E0D5" stroke="#908977" stroke-width="1.2"></circle>
+                @endif
             @endforeach
 
             @foreach ($mainland as $iso)
@@ -192,14 +204,42 @@
             @foreach ($mainland as $iso)
                 @php $shape = $map['members'][$iso]; @endphp
                 @continue($shape['label'] === null)
+                {{-- Two labels, one shown at a time.
+
+                     The screen draws the ISO code over the acronym -- "CD /
+                     ARPTC" -- which to a delegate is two abbreviations, and
+                     "CD" for DR Congo is actively misleading. From 768 up
+                     the country's own short name replaces the code; below
+                     it the name will not fit and the code comes back.
+                     Disclosed variation, logged in OPEN_ITEMS.md.
+
+                     Lesotho, Eswatini and Malawi keep the code at every
+                     width, and each has an inset chip carrying its full
+                     name. Malawi is 25 pixels across at its label row and
+                     "Malawi" is 44: the name would sit half on Mozambique.
+                     Lesotho's and Eswatini's labels already sit outside
+                     their shapes, and a name out there runs across South
+                     Africa and Mozambique. The chips are what the reader
+                     gets the full name from. --}}
                 <text
                     class="c-map-region__code"
                     data-band="{{ $view->entry($iso)->bandAttribute() }}"
+                    data-keep="{{ in_array($iso, ['ls', 'sz', 'mw'], true) ? 'true' : 'false' }}"
                     x="{{ $shape['label'][0] }}"
                     y="{{ $shape['label'][1] }}"
                     text-anchor="middle"
                     aria-hidden="true"
                 >{{ strtoupper($iso) }}</text>
+                @unless (in_array($iso, ['ls', 'sz', 'mw'], true))
+                    <text
+                        class="c-map-region__name"
+                        data-band="{{ $view->entry($iso)->bandAttribute() }}"
+                        x="{{ $shape['label'][0] }}"
+                        y="{{ $shape['label'][1] }}"
+                        text-anchor="middle"
+                        aria-hidden="true"
+                    >{{ $view->entry($iso)->country->name }}</text>
+                @endunless
                 <text
                     class="c-map-region__value"
                     data-band="{{ $view->entry($iso)->bandAttribute() }}"

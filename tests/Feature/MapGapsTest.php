@@ -119,7 +119,7 @@ class MapGapsTest extends TestCase
      * Comoros and Mauritius have, rather than a zoom control the reader has
      * to discover.
      */
-    public function test_the_four_smallest_member_states_are_shown_at_larger_scale(): void
+    public function test_the_smallest_member_states_are_shown_at_larger_scale(): void
     {
         $html = $this->get('/en/members')->assertOk()->getContent();
 
@@ -131,7 +131,9 @@ class MapGapsTest extends TestCase
             );
         }
 
-        $this->assertCount(4, RegionGeometry::ENLARGED);
+        // Five since 9 September 2026: Malawi joined when the map started
+        // labelling by name and its shape proved too narrow to carry one.
+        $this->assertCount(5, RegionGeometry::ENLARGED);
     }
 
     /**

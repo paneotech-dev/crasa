@@ -72,15 +72,21 @@ class RegionMapNavigationTest extends TestCase
      * states rather than zoom, which would put the map behind a control the
      * reader has to discover.
      */
-    public function test_the_enlarged_panel_carries_the_four_smallest_in_alphabetical_order(): void
+    public function test_the_enlarged_panel_carries_the_smallest_in_alphabetical_order(): void
     {
         $html = $this->get('/en/members')->assertOk()->getContent();
 
         preg_match_all('~<a\s+class="c-map-region__inset"[^>]*data-iso="([a-z]{2})"~s', $html, $matches);
 
-        // Comoros, Eswatini, Lesotho, Mauritius. Not the order the geometry
-        // file lists them and not alphabetical by ISO code.
-        $this->assertSame(['km', 'sz', 'ls', 'mu'], $matches[1]);
+        // Comoros, Eswatini, Lesotho, Malawi, Mauritius. Alphabetical by
+        // country name, which is neither the order the geometry file lists
+        // them nor alphabetical by ISO code.
+        //
+        // Malawi joined on 9 September 2026, when the map started labelling
+        // by country name. It is 25 pixels across at its label row and
+        // "Malawi" is 44 wide, so it keeps the code on the map and the chip
+        // carries its name.
+        $this->assertSame(['km', 'sz', 'ls', 'mw', 'mu'], $matches[1]);
     }
 
     /**

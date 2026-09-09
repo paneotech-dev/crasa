@@ -25,8 +25,14 @@ final class RegionGeometry
      * in the config. Lesotho and Eswatini are mainland and keep their place
      * on the map; they get a panel as well because at phone width the map
      * cannot answer for them.
+     *
+     * Malawi joined them on 9 September 2026, when the map started labelling
+     * states by name rather than by ISO code. It is 25 pixels across at its
+     * label row and "Malawi" is 44 wide, so the name would sit half on
+     * Mozambique. It keeps the code on the map and the chip carries the
+     * name, which is the same bargain the other three make.
      */
-    public const ENLARGED = ['km', 'mu', 'ls', 'sz'];
+    public const ENLARGED = ['km', 'mu', 'ls', 'sz', 'mw'];
 
     /**
      * A viewBox that frames one path, with a little air around it.

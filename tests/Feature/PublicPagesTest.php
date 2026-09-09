@@ -97,9 +97,13 @@ class PublicPagesTest extends TestCase
 
     public function test_the_members_page_lists_all_fourteen_states(): void
     {
+        // Screen 08's directory, not the card grid it used to render. The
+        // page shows the fourteen twice on purpose -- once on the map and
+        // once in the list beside it -- so this counts the list.
         $html = $this->get('/en/members')->getContent();
 
-        $this->assertSame(14, substr_count($html, 'b-member__name'));
+        $this->assertSame(14, substr_count($html, 'b-directory__row'));
+        $this->assertSame(14, substr_count($html, 'b-directory__link'));
     }
 
     public function test_the_placeholder_report_lists_every_flagged_block(): void

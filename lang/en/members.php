@@ -68,4 +68,9 @@ return [
     'legend_member_shaded' => 'Fourteen sovereign member states, shaded by the selected indicator. Every state states its value as text as well as a shade.',
     'legend_context_title' => 'SADC member without a CRASA regulator.',
     'legend_context_body' => 'SADC has 16 member states, CRASA has 14 member regulators. Madagascar and Seychelles are shown for geographic context only and are not selectable.',
+    'region_heading' => 'The region',
+    'region_note' => 'Select a member state',
+    'directory_heading' => 'Directory',
+    'directory_note' => '{1} One authority|[2,*] :count authorities, alphabetical by country',
+    'directory_open' => 'Open',
 ];

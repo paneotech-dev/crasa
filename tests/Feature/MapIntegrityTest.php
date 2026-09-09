@@ -134,16 +134,64 @@ class MapIntegrityTest extends TestCase
         }
     }
 
-    public function test_no_member_path_moved_through_either_change(): void
+    /**
+     * The shapes stay where they are, whatever they are drawn from.
+     *
+     * Every label on this map is a fixed coordinate pair, so a member state
+     * that shifted would take its own label off it and the export would
+     * stop matching the page. The box has opened and closed, and the source
+     * has gone from 1:110m to 1:50m; through all of it each shape has to
+     * land in the same place.
+     *
+     * Checked as a bounding box rather than a literal path. The path text
+     * changes with the source by definition -- that is what a finer
+     * resolution is -- and pinning it would only ever assert which file the
+     * geometry came from.
+     */
+    public function test_every_member_shape_lands_where_its_label_expects(): void
     {
-        // The box opened around the members and closed again. If a member
-        // coordinate had shifted either way, every label placed at a fixed
-        // point would be wrong and the export would not match the page.
         $map = config('region-map');
 
-        $this->assertStringStartsWith('M400,526.25', $map['members']['ls']['d'], 'Lesotho moved.');
+        // Measured from the 1:110m build, which the labels were placed
+        // against. Four pixels of tolerance: 1:50m traces a coastline more
+        // closely, so an extent may gain a pixel or two of real headland.
+        $expected = [
+            'ao' => [151, 329, 154, 354], 'bw' => [269, 406, 349, 492],
+            'cd' => [158, 433, 13, 286], 'sz' => [424, 445, 473, 500],
+            'ls' => [372, 406, 520, 554], 'mw' => [453, 500, 224, 340],
+            'mz' => [417, 571, 240, 492], 'na' => [151, 346, 338, 528],
+            'za' => [218, 456, 416, 626], 'tz' => [405, 566, 104, 260],
+            'zm' => [298, 468, 208, 354], 'zw' => [346, 458, 316, 422],
+        ];
+
+        foreach ($expected as $iso => [$x0, $x1, $y0, $y1]) {
+            preg_match_all('/-?\d+(?:\.\d+)?/', $map['members'][$iso]['d'], $numbers);
+
+            $values = array_map('floatval', $numbers[0]);
+            $xs = [];
+            $ys = [];
+
+            foreach ($values as $index => $value) {
+                $index % 2 === 0 ? $xs[] = $value : $ys[] = $value;
+            }
+
+            foreach ([
+                ['left', min($xs), $x0], ['right', max($xs), $x1],
+                ['top', min($ys), $y0], ['bottom', max($ys), $y1],
+            ] as [$edge, $actual, $want]) {
+                $this->assertEqualsWithDelta(
+                    $want,
+                    $actual,
+                    4.0,
+                    strtoupper($iso)." has moved: its {$edge} edge is at {$actual} and the labels "
+                    ."were placed against {$want}.",
+                );
+            }
+        }
+
+        // And the labels themselves are untouched by any of it.
         $this->assertSame([366, 556], $map['members']['ls']['label']);
-        $this->assertStringStartsWith('M444.5,490.25', $map['members']['sz']['d'], 'Eswatini moved.');
+        $this->assertSame([462, 492], $map['members']['sz']['label']);
     }
 
     public function test_every_value_survives_with_the_fills_stripped(): void
@@ -195,9 +243,15 @@ class MapIntegrityTest extends TestCase
         $view = MapView::resolve(Country::with('authority')->get(), 'reach');
         $svg = app(MapExport::class)->svg($view, 'https://example.test/en/members');
 
+        // The export labels by name now, matching the page from 768 up,
+        // except for the three states whose shapes cannot hold a name.
         foreach (Country::all() as $country) {
+            $expected = in_array($country->iso_code, ['ls', 'sz', 'mw'], true)
+                ? strtoupper($country->iso_code)
+                : $country->name;
+
             $this->assertStringContainsString(
-                '>'.strtoupper($country->iso_code).'</text>',
+                '>'.$expected.'</text>',
                 $svg,
                 "{$country->name} has no label on the exported map.",
             );
@@ -251,7 +305,9 @@ class MapIntegrityTest extends TestCase
         }
 
         $this->assertSame(12, substr_count($svg[0], 'fill="#E8F4EC"'), 'The twelve mainland members.');
-        $this->assertSame(2, substr_count($svg[0], 'fill="#E5E0D5"'), 'Madagascar and Seychelles.');
+        // Two context outlines plus the Seychelles marker, which is the
+        // same colour because it stands for the same thing.
+        $this->assertSame(3, substr_count($svg[0], 'fill="#E5E0D5"'), 'Madagascar, Seychelles and its marker.');
         $this->assertSame(0, substr_count($svg[0], 'fill="#F8F6F1"'), 'The continent is back.');
     }
 
@@ -263,11 +319,12 @@ class MapIntegrityTest extends TestCase
         // thousands of pixels tall.
         $html = $this->map();
 
-        // Four, not the screen's two. RegionGeometry::ENLARGED adds
-        // Lesotho and Eswatini to Comoros and Mauritius because they are
-        // too small to aim at even at the approved scale.
+        // Five, not the screen's two. RegionGeometry::ENLARGED adds
+        // Lesotho, Eswatini and Malawi to Comoros and Mauritius: the first
+        // two are too small to aim at, and all three are too narrow to
+        // carry their own name once the map started labelling by name.
         $this->assertSame(
-            4,
+            5,
             preg_match_all('/<svg[^>]*width="66"[^>]*height="53"/', $html),
             'An inset does not carry the size the screen draws.',
         );
@@ -322,5 +379,186 @@ class MapIntegrityTest extends TestCase
 
         // The scale stays conditional; there is nothing to scale here.
         $this->assertStringNotContainsString('c-map-region__scale', $html);
+    }
+
+    /* Legibility, not only correctness ------------------------------------ */
+
+    public function test_the_map_sits_in_the_white_card_screen_08_draws(): void
+    {
+        // "background:var(--c-white);border:1px solid var(--c-line);
+        //  border-radius:var(--r-md);padding:var(--s-5)" -- screen 08 line
+        // 108, headed "The region" with "Select a member state" at right.
+        // It was floating on the bare section ground.
+        $html = $this->map();
+
+        $this->assertStringContainsString('b-members__layout', $html);
+        $this->assertStringContainsString('b-members__map', $html);
+        $this->assertStringContainsString('The region', $html);
+        $this->assertStringContainsString('Select a member state', $html);
+
+        $css = file_get_contents(public_path('css/blocks.css'));
+        $this->assertMatchesRegularExpression(
+            '/\.b-members__map \{[^}]*background: var\(--c-white\)/s',
+            $css,
+        );
+        $this->assertMatchesRegularExpression(
+            '/\.b-members__map \{[^}]*border-radius: var\(--r-md\)/s',
+            $css,
+        );
+    }
+
+    public function test_the_directory_lists_all_fourteen_beside_the_map(): void
+    {
+        // Screen 08 puts a directory next to the map: two ways into the same
+        // fourteen, so a reader who would rather read a name than aim at
+        // Lesotho has one.
+        $html = $this->map();
+
+        $this->assertSame(14, substr_count($html, 'b-directory__row'));
+        $this->assertStringContainsString('Directory', $html);
+        $this->assertStringNotContainsString('class="b-members"', $html);
+    }
+
+    public function test_the_name_shows_at_desktop_and_the_code_below_it(): void
+    {
+        $html = $this->map();
+        $css = file_get_contents(public_path('css/blocks.css'));
+
+        // Both labels are served; the media query decides which is seen.
+        preg_match_all('/class="c-map-region__name"[^>]*>([^<]*)</', $html, $names);
+        preg_match_all('/class="c-map-region__code"[^>]*>([^<]*)</', $html, $codes);
+
+        $this->assertContains('DR Congo', $names[1], 'The map still says CD to a delegate.');
+        $this->assertContains('South Africa', $names[1]);
+        $this->assertCount(12, $codes[1], 'Every mainland member keeps a code for narrow widths.');
+
+        $this->assertMatchesRegularExpression(
+            '/@media \(min-width: 768px\) \{\s*\.c-map-region__name \{ display: block; \}\s*'
+            .'\.c-map-region__code:not\(\[data-keep="true"\]\) \{ display: none; \}\s*\}/s',
+            $css,
+            'The name and code do not swap at 768.',
+        );
+        $this->assertMatchesRegularExpression(
+            '/\.c-map-region__name \{ display: none; \}/',
+            $css,
+            'The name label is not hidden below the breakpoint.',
+        );
+
+        // Lesotho and Eswatini keep the code at every width: their labels
+        // already sit outside their shapes and a name there would run
+        // across their neighbours. The inset chips carry the full name.
+        $this->assertMatchesRegularExpression('/data-keep="true"[^>]*>LS</s', $html);
+        $this->assertMatchesRegularExpression('/data-keep="true"[^>]*>SZ</s', $html);
+        $this->assertNotContains('Lesotho', $names[1]);
+        $this->assertNotContains('Eswatini', $names[1]);
+    }
+
+    public function test_no_label_is_drawn_outside_the_box(): void
+    {
+        // Measured against the real advance widths of the label font rather
+        // than guessed: a centred label at 13px runs half its width either
+        // side of its anchor.
+        $map = config('region-map');
+        $html = $this->map();
+
+        preg_match_all(
+            '/class="c-map-region__(?:name|code)"[^>]*x="([\d.]+)"[^>]*>([^<]*)</',
+            $html,
+            $labels,
+            PREG_SET_ORDER,
+        );
+
+        $this->assertNotEmpty($labels);
+
+        foreach ($labels as [$ignored, $x, $text]) {
+            // 7.2px per character at 13px Inter is above the real mean and
+            // above every capital in these names, so this over-estimates.
+            $half = (mb_strlen(trim($text)) * 7.2) / 2;
+
+            $this->assertGreaterThanOrEqual(
+                $map['min_x'],
+                (float) $x - $half,
+                "The label \"{$text}\" runs off the left of the box.",
+            );
+            $this->assertLessThanOrEqual(
+                $map['min_x'] + $map['width'],
+                (float) $x + $half,
+                "The label \"{$text}\" runs off the right of the box.",
+            );
+        }
+    }
+
+    public function test_seychelles_has_something_under_its_name(): void
+    {
+        // 115 islands totalling 450 square kilometres is three pixels at
+        // this projection. A word alone in the ocean reads as an error.
+        $html = $this->map();
+
+        $this->assertMatchesRegularExpression(
+            '/<circle class="c-map-region__marker"[^>]*cx="782"[^>]*cy="157"/',
+            $html,
+        );
+
+        $map = config('region-map');
+        $seychelles = collect($map['context'])->firstWhere('code', 'SC');
+        $this->assertNotNull($seychelles['marker']);
+    }
+
+    public function test_the_context_stroke_matches_the_members(): void
+    {
+        // Context is quieter by colour, not by line weight.
+        $css = file_get_contents(public_path('css/blocks.css'));
+
+        $this->assertMatchesRegularExpression(
+            '/\.c-map-region__context \{[^}]*stroke-width: \.9/',
+            $css,
+        );
+        $this->assertMatchesRegularExpression(
+            '/\.c-map-region__member path \{[^}]*stroke-width: 1;/s',
+            $css,
+        );
+    }
+
+    public function test_a_member_state_responds_to_the_pointer(): void
+    {
+        // RegionMap.dc.html draws no hover at all, so fourteen identical
+        // pale shapes gave no signal that any of them was a control.
+        $css = file_get_contents(public_path('css/blocks.css'));
+
+        $this->assertMatchesRegularExpression(
+            '/\.c-map-region--plain \.c-map-region__member:hover path,\s*'
+            .'\.c-map-region--plain \.c-map-region__member:focus-visible path \{'
+            .'[^}]*fill: var\(--c-green-step-1\)/s',
+            $css,
+        );
+    }
+
+    public function test_the_controls_are_one_row_with_labels_that_do_not_overlap(): void
+    {
+        $css = file_get_contents(public_path('css/blocks.css'));
+
+        // The label was width:100% with a negative bottom margin, so it
+        // took its own line and sat on the control it labelled.
+        $this->assertDoesNotMatchRegularExpression(
+            '/\.c-map-region__control-label \{[^}]*width: 100%/s',
+            $css,
+        );
+        $this->assertDoesNotMatchRegularExpression(
+            '/\.c-map-region__control-label \{[^}]*margin-bottom: calc\(var\(--s-1\) \* -1\)/s',
+            $css,
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/\.c-map-region__field \{[^}]*flex-direction: column/s',
+            $css,
+        );
+
+        // And every select is still the component screen 01 draws.
+        $html = $this->map();
+        preg_match_all('/<select[^>]*class="([^"]*)"/', $html, $selects);
+
+        foreach ($selects[1] as $classes) {
+            $this->assertStringContainsString('c-select', $classes);
+        }
     }
 }
