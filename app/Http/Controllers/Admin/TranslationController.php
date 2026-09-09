@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\Permission;
 use App\Http\Controllers\Controller;
+use App\Models\Committee;
 use App\Models\MediaAsset;
 use App\Models\NewsItem;
 use App\Models\Page;
@@ -45,6 +46,8 @@ class TranslationController extends Controller
         'publications' => Publication::class,
         'news' => NewsItem::class,
         'media' => MediaAsset::class,
+        // Terms of reference, translatable since 9 September 2026.
+        'committees' => Committee::class,
     ];
 
     public function index(Request $request): View

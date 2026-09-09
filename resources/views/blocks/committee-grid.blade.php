@@ -57,8 +57,8 @@
                             {{ $committee->sector?->name ?: __('blocks.committee_cross_sector') }}
                         </span>
 
-                        @if ($committee->mandate)
-                            <p class="b-committee__mandate">{{ $committee->mandate }}</p>
+                        @if ($committee->translate('mandate'))
+                            <p class="b-committee__mandate">{{ $committee->translated('mandate') }}</p>
                         @endif
 
                         @if ($committee->chairAuthority)

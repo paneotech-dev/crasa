@@ -250,18 +250,12 @@ class AdminWalkthroughTest extends TestCase
     {
         $committee = Committee::where('slug', 'spectrum-and-frequency-management')->sole();
 
-        /*
-         * mandate is a plain column rather than a translation, which is a
-         * finding in its own right: CLAUDE.md's multilingual rules put body
-         * prose in the translations table, and a committee's terms of
-         * reference are prose a Francophone regulator has to read. Recorded
-         * rather than changed here, because moving it is a migration and a
-         * data move.
-         */
+        // The mandate is per language, since 10 September 2026.
         $this->admin()->put("/en/admin/data/committees/{$committee->id}", [
             'name' => $committee->name,
             'sector_id' => $committee->sector_id,
-            'mandate' => 'Harmonised spectrum assignment across the fourteen member states.',
+            'en' => ['mandate' => 'Harmonised spectrum assignment across the fourteen member states.'],
+            'fr' => ['mandate' => "Assignation harmonisée du spectre dans les quatorze États membres."],
         ])->assertRedirect()->assertSessionHasNoErrors();
 
         $this->assertAudited(Committee::class, $committee->id, AuditLog::UPDATED);
@@ -269,6 +263,12 @@ class AdminWalkthroughTest extends TestCase
         $this->get('/en/committees')
             ->assertOk()
             ->assertSee('Harmonised spectrum assignment', false);
+
+        // And a French reader gets the French, which is the whole point of
+        // the field having moved.
+        $this->get('/fr/committees')
+            ->assertOk()
+            ->assertSee('Assignation harmonisée du spectre', false);
     }
 
     /* Indicators ---------------------------------------------------------- */

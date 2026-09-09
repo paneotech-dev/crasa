@@ -18,8 +18,8 @@
                         <span class="a-panel__meta">{{ $committee->sector->name }}</span>
                     @endif
                 </div>
-                @if ($committee->mandate)
-                    <p class="a-crow__value">{{ $committee->mandate }}</p>
+                @if ($committee->translate('mandate'))
+                    <p class="a-crow__value">{{ $committee->translated('mandate') }}</p>
                 @else
                     <div class="a-empty">
                         <div class="a-empty__title">{{ __('extranet.mandate_empty_title') }}</div>

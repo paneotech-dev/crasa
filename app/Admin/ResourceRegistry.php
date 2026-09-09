@@ -113,16 +113,15 @@ final class ResourceRegistry
                 columns: ['name', 'slug', 'sector'],
                 fields: [
                     Field::text('name', required: true),
-                    Field::textarea('mandate'),
                     Field::belongsTo('sector_id', 'sector'),
                     Field::belongsTo('chair_authority_id', 'chairAuthority'),
                 ],
                 rules: [
                     'name' => ['required', 'string', 'max:160'],
-                    'mandate' => ['nullable', 'string', 'max:2000'],
                     'sector_id' => ['nullable', 'exists:sectors,id'],
                     'chair_authority_id' => ['nullable', 'exists:authorities,id'],
                 ],
+                translatable: ['mandate'],
                 searchable: ['name', 'slug'],
                 with: ['sector'],
                 orderBy: 'name',

@@ -87,12 +87,19 @@ class CommitteeSeeder extends Seeder
                 [
                     'name' => $details['name'],
                     'sector_id' => $details['sector'] === null ? null : $sectors[$details['sector']],
-                    'mandate' => $details['mandate'],
                     'chair_authority_id' => null,
                     'is_active' => true,
                     'is_sample' => true,
                 ]
             );
+
+            /*
+             * The mandate is per language and English only here. The
+             * French and Portuguese are CRASA's to write: a machine
+             * translation of a committee's terms of reference is the kind
+             * of text a regulator quotes back at you.
+             */
+            $committee->setTranslations('en', ['mandate' => $details['mandate']]);
 
             // Deliberately empty. See the note above: inventing which member
             // states sit on which committee is the one thing this seeder

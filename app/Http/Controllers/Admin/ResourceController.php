@@ -370,13 +370,48 @@ class ResourceController extends Controller
     }
 
     /** @param array<string, mixed> $data */
+    /**
+     * Per-language text, and the audit row it would otherwise not get.
+     *
+     * Auditable watches the model's own attributes, so a save that changes
+     * only a translation is a save with nothing dirty and writes nothing to
+     * the log. That was invisible while every translatable record also
+     * carried a column somebody usually touched at the same time. It stopped
+     * being invisible when a committee's terms of reference became
+     * translatable on 10 September 2026: rewriting them changed no column at
+     * all, and "who changed this committee's mandate" had no answer.
+     *
+     * The row names the fields and languages that moved, not their contents.
+     * The contents are in the translations table, which is where a diff
+     * belongs; an audit log carrying every version of every paragraph is an
+     * audit log nobody can read.
+     */
     private function writeTranslations(Resource $definition, Model $record, array $data, int $by): void
     {
+        $changed = [];
+
         foreach (Locales::SUPPORTED as $locale) {
             foreach ($definition->translatable as $field) {
-                $record->setTranslation($field, $locale, $data[$locale][$field] ?? null, $by);
+                $before = $record->translationValuesFor($field)[$locale] ?? null;
+                $after = $data[$locale][$field] ?? null;
+
+                $record->setTranslation($field, $locale, $after, $by);
+
+                if (trim((string) $before) !== trim((string) $after)) {
+                    $changed[] = $field.'.'.$locale;
+                }
             }
+
+            $record->unsetRelation('translations');
         }
+
+        if ($changed === [] || $record->wasChanged()) {
+            return;
+        }
+
+        AuditLog::record($record->wasRecentlyCreated ? AuditLog::CREATED : AuditLog::UPDATED, $record, [
+            'translations' => $changed,
+        ], $by);
     }
 
     /**

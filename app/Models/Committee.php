@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\Auditable;
+use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\MarksSampleData;
 use Database\Factories\CommitteeFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,18 +20,28 @@ use Illuminate\Support\Facades\DB;
 class Committee extends Model
 {
     /** @use HasFactory<CommitteeFactory> */
-    use Auditable, HasFactory;
+    use Auditable, HasFactory, HasTranslations;
 
     use MarksSampleData;
 
     /** @var list<string> */
     public const ROLES = ['member', 'chair', 'observer'];
 
+    /**
+     * The terms of reference, per language.
+     *
+     * mandate was a plain column until 9 September 2026. It is prose a
+     * Francophone regulator has to read, and CLAUDE.md's multilingual
+     * rules put body prose in the translations table.
+     *
+     * @var list<string>
+     */
+    protected array $translatable = ['mandate'];
+
     protected $fillable = [
         'slug',
         'name',
         'sector_id',
-        'mandate',
         'chair_authority_id',
         'is_active',
         'is_sample',

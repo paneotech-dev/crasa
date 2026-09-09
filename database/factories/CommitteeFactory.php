@@ -20,7 +20,6 @@ class CommitteeFactory extends Factory
             'slug' => str($name)->slug()->value(),
             'name' => ucfirst($name),
             'sector_id' => null,
-            'mandate' => $this->faker->sentence(12),
             'chair_authority_id' => null,
             'is_active' => true,
             'is_sample' => true,
