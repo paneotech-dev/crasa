@@ -90,6 +90,21 @@
                         <a class="c-btn c-btn--secondary" href="{{ route('documents.show', ['locale' => app()->getLocale(), 'document' => $document->id]) }}">
                             {{ __('publications.open_in_browser') }}
                         </a>
+                        {{-- Screen 15: "any document you explicitly save".
+                             Nothing is downloaded to a device because a
+                             reader happened to open a page; a document is
+                             kept because they asked.
+
+                             Hidden until a service worker is in control,
+                             because a button that does nothing is worse
+                             than a button that is not there. --}}
+                        <button class="c-btn c-btn--secondary" type="button" hidden
+                                data-save-offline="{{ route('documents.download', ['locale' => app()->getLocale(), 'document' => $document->id]) }}"
+                                data-saving-label="{{ __('app.saving') }}"
+                                data-saved-label="{{ __('app.saved') }}"
+                                data-refused-label="{{ __('app.save_refused') }}">
+                            {{ __('app.save_offline') }}
+                        </button>
                         <p class="c-preview__note">{{ __('publications.served_here') }}</p>
                     </div>
                 </div>

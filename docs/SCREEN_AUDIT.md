@@ -58,7 +58,7 @@ it was invented.
 | 12 Calendar and folders | 2 (2 closed) | 0 | 1 |
 | 13 Users, roles, audit | 0 | 0 | 2 |
 | 14 Media and editing | 0 (1 closed) | 0 | 1 |
-| 15 Responsive and app | 3 | 0 | 0 |
+| 15 Responsive and app | 0 (3 closed) | 0 | 0 |
 | 18 Delegate registration | 0 | 4 | 1 |
 | **Total** | **31** | **9** | **21** |
 
@@ -453,13 +453,14 @@ built-in navigation rather than rendering a site with no header.
 | Extranet dashboard and an administration table at 375 | **What is cached and what is not** | |
 | The reduced-motion variant | | |
 
-**The progressive web app is not built at all — GAP, medium.** No
-`manifest.json`, no service worker, no install prompt, no offline page.
-Screen 15 draws all four and names what should be cached.
+**The progressive web app — CLOSED 9 September.** Manifest served per locale,
+service worker, install prompt on the second visit, offline page in all three
+languages, and "save for offline" on a document.
 
-The responsive work itself is done and holds at both widths. This is the
-app-shell layer on top of it, and for delegates travelling to Lilongwe on
-hotel wifi the offline state is the part with real value.
+The caching policy is screen 15's own, including the part that is a security
+requirement rather than a performance one: nothing behind a sign-in is
+touched, and a document is kept only when the server declares it public. See
+the run report for what works on Android and what iOS ignores.
 
 ---
 

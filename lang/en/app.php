@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'offline_eyebrow' => 'No connection',
+    'offline_title' => 'Available offline',
+    'offline_lead' => 'You are offline. The pages you have already opened are still readable, and so is anything you saved.',
+    'retry' => 'Retry connection',
+    'saved_title' => 'Saved items',
+    'saved_lead' => 'Documents you asked this device to keep.',
+    'saved_none' => 'Nothing saved on this device.',
+    'saved_forget' => 'Remove',
+    'policy_title' => 'What is kept on this device, and what is not',
+    'policy_cached' => 'Kept',
+    'policy_cached_body' => 'The interface in all three languages, the pages you have opened, and any document you explicitly saved.',
+    'policy_never' => 'Never kept',
+    'policy_never_body' => 'Anything behind a sign-in, and any document graded Confidential or Secretariat. Those need a live session, so they are never left on a device that could be lost or shared.',
+    'policy_stale' => 'Possibly out of date',
+    'policy_stale_body' => 'A page read offline is the copy from when you last opened it. Regulatory text is revised, so check the date before quoting one.',
+    'install_title' => 'Install CRASA',
+    'install_body' => 'Add the platform to your home screen. It opens without a browser bar and the pages you have read stay readable offline.',
+    'install' => 'Install',
+    'install_not_now' => 'Not now',
+    'save_offline' => 'Save for offline',
+    'saving' => 'Saving',
+    'saved' => 'Saved on this device',
+    'save_refused' => 'Cannot be saved offline',
+];

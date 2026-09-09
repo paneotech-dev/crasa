@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\ResourceController;
 use App\Http\Controllers\Admin\SubmissionReviewController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserAdminController;
+use App\Http\Controllers\AppManifestController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\SsoController;
@@ -68,6 +69,20 @@ Route::prefix('{locale}')
          * page record with blocks, so the Secretariat edits them from the
          * back office rather than through a deploy.
          */
+        /*
+         * The web app manifest, WS-02. In the locale group because the
+         * start URL carries the reader's language: a fixed one installs an
+         * English app on a Portuguese reader's phone.
+         */
+        Route::get('manifest.webmanifest', AppManifestController::class)->name('manifest');
+
+        /*
+         * The offline page, screen 15. Precached in all three languages, so
+         * a reader who loses their connection in Portuguese does not meet
+         * an English error.
+         */
+        Route::view('offline', 'pages.app.offline')->name('offline');
+
         Route::get('about', [PageController::class, 'show'])->defaults('slug', 'about')->name('about');
         Route::get('committees', [PageController::class, 'show'])->defaults('slug', 'committees')->name('committees');
         Route::get('members', [PageController::class, 'show'])->defaults('slug', 'members')->name('members');

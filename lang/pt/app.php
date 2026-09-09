@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'offline_eyebrow' => 'Sem ligação',
+    'offline_title' => 'Disponível offline',
+    'offline_lead' => 'Está offline. As páginas que já abriu continuam legíveis, tal como o que guardou.',
+    'retry' => 'Tentar ligar de novo',
+    'saved_title' => 'Itens guardados',
+    'saved_lead' => 'Os documentos que pediu a este dispositivo para manter.',
+    'saved_none' => 'Nada guardado neste dispositivo.',
+    'saved_forget' => 'Remover',
+    'policy_title' => 'O que fica neste dispositivo, e o que não fica',
+    'policy_cached' => 'Fica',
+    'policy_cached_body' => 'A interface nos três idiomas, as páginas que abriu, e qualquer documento que tenha guardado explicitamente.',
+    'policy_never' => 'Nunca fica',
+    'policy_never_body' => 'Tudo o que está atrás de uma sessão iniciada, e qualquer documento classificado Confidencial ou Secretariado. Estes exigem sessão ativa e nunca são deixados num dispositivo que possa perder-se ou ser partilhado.',
+    'policy_stale' => 'Possivelmente desatualizado',
+    'policy_stale_body' => 'Uma página lida offline é a cópia de quando a abriu pela última vez. Os textos regulatórios são revistos: verifique a data antes de citar.',
+    'install_title' => 'Instalar a CRASA',
+    'install_body' => 'Adicione a plataforma ao ecrã principal. Abre sem barra de navegador e as páginas já lidas continuam legíveis offline.',
+    'install' => 'Instalar',
+    'install_not_now' => 'Agora não',
+    'save_offline' => 'Guardar para offline',
+    'saving' => 'A guardar',
+    'saved' => 'Guardado neste dispositivo',
+    'save_refused' => 'Não pode ser guardado offline',
+];

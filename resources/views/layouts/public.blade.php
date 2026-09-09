@@ -20,6 +20,19 @@
 
     <link rel="icon" href="{{ asset('img/crasa-logo.svg') }}" type="image/svg+xml">
 
+    {{-- WS-02. The manifest is a route because its start URL carries the
+         reader's language; a fixed one installs an English app on a
+         Portuguese reader's phone.
+
+         apple-touch-icon is separate because iOS ignores the manifest's
+         icons and reads this instead. --}}
+    <link rel="manifest" href="{{ route('manifest', ['locale' => app()->getLocale()]) }}">
+    <link rel="apple-touch-icon" href="{{ asset('img/app/apple-touch-icon.png') }}">
+    <meta name="theme-color" content="#0F1B2D">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="{{ __('site.acronym') }}">
+
     {{-- Every alternate language of this page, so a reader arriving from a
          search result lands in the language they searched in. --}}
     @foreach (\App\Support\Locales::SUPPORTED as $alternate)
@@ -48,10 +61,30 @@
         @yield('content')
     </main>
 
+    {{-- The install prompt, screen 15: "Shown once, on the second visit,
+         never as an interstitial over content." So it is a band above the
+         footer rather than a dialogue over the page, it starts hidden, and
+         app.js reveals it only on a second visit and never again once
+         dismissed. --}}
+    <div class="c-install" data-install hidden>
+        <div class="c-install__inner c-page">
+            <img class="c-install__icon" src="{{ asset('img/app/icon-192.png') }}" alt="" width="48" height="48">
+            <div class="c-install__copy">
+                <p class="c-install__title">{{ __('app.install_title') }}</p>
+                <p class="c-install__body">{{ __('app.install_body') }}</p>
+            </div>
+            <div class="c-install__actions">
+                <button class="c-btn c-btn--primary" type="button" data-install-accept>{{ __('app.install') }}</button>
+                <button class="c-btn c-btn--secondary" type="button" data-install-dismiss>{{ __('app.install_not_now') }}</button>
+            </div>
+        </div>
+    </div>
+
     @include('partials.site-footer')
 
     <script src="{{ asset('js/chrome.js') }}" defer></script>
     <script src="{{ asset('js/hero.js') }}" defer></script>
+    <script src="{{ asset('js/app.js') }}" defer></script>
     @stack('scripts')
 </body>
 </html>

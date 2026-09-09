@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'offline_eyebrow' => 'Pas de connexion',
+    'offline_title' => 'Disponible hors connexion',
+    'offline_lead' => 'Vous êtes hors connexion. Les pages déjà ouvertes restent lisibles, ainsi que ce que vous avez enregistré.',
+    'retry' => 'Réessayer la connexion',
+    'saved_title' => 'Éléments enregistrés',
+    'saved_lead' => 'Les documents que vous avez demandé à conserver sur cet appareil.',
+    'saved_none' => 'Rien enregistré sur cet appareil.',
+    'saved_forget' => 'Retirer',
+    'policy_title' => 'Ce qui est conservé sur cet appareil, et ce qui ne l est pas',
+    'policy_cached' => 'Conservé',
+    'policy_cached_body' => 'L interface dans les trois langues, les pages que vous avez ouvertes, et tout document que vous avez explicitement enregistré.',
+    'policy_never' => 'Jamais conservé',
+    'policy_never_body' => 'Tout ce qui se trouve derrière une connexion, et tout document classé Confidentiel ou Secrétariat. Ceux-ci exigent une session active et ne sont jamais laissés sur un appareil qui pourrait être perdu ou partagé.',
+    'policy_stale' => 'Peut-être obsolète',
+    'policy_stale_body' => 'Une page lue hors connexion est la copie de votre dernière ouverture. Les textes réglementaires sont révisés : vérifiez la date avant de citer.',
+    'install_title' => 'Installer la CRASA',
+    'install_body' => 'Ajoutez la plateforme à votre écran d accueil. Elle s ouvre sans barre de navigateur et les pages déjà lues restent lisibles hors connexion.',
+    'install' => 'Installer',
+    'install_not_now' => 'Pas maintenant',
+    'save_offline' => 'Enregistrer hors connexion',
+    'saving' => 'Enregistrement',
+    'saved' => 'Enregistré sur cet appareil',
+    'save_refused' => 'Ne peut pas être enregistré hors connexion',
+];

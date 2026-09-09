@@ -1495,3 +1495,34 @@
   word-break: break-word;
 }
 .c-cite__note { font-size: 13px; line-height: 1.55; color: var(--c-slate); margin: 0; max-width: 62ch; }
+
+/* The install prompt and the offline page — WS-02, screen 15 ------------- */
+/* A band above the footer, never an interstitial over content. Screen 15 is
+   explicit: "Shown once, on the second visit, never as an interstitial over
+   content." A prompt over the page is an advertisement. */
+.c-install { background: var(--c-navy); color: var(--c-cream); border-top: 1px solid var(--c-navy-line); }
+.c-install__inner { display: flex; align-items: center; gap: var(--s-4); padding-block: var(--s-4); flex-wrap: wrap; }
+.c-install__icon { flex: none; border-radius: var(--r-md); }
+.c-install__copy { flex: 1 1 260px; min-width: 0; }
+.c-install__title { font-family: var(--f-head); font-size: 17px; font-weight: 600; color: var(--c-white); margin: 0 0 var(--s-1); }
+.c-install__body { font-size: 14px; line-height: 1.5; color: var(--c-sand); margin: 0; max-width: 60ch; }
+.c-install__actions { display: flex; gap: var(--s-3); flex-wrap: wrap; }
+.c-install__actions .c-btn--secondary { border-color: var(--c-cream); color: var(--c-cream); }
+.c-install__actions .c-btn--secondary:hover { background: var(--c-cream); color: var(--c-navy); }
+
+.c-saved { list-style: none; margin: 0 0 var(--s-6); padding: 0; }
+.c-saved__item, .c-saved__empty {
+  display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap;
+  padding: var(--s-3) 0; border-bottom: 1px solid var(--c-sand);
+}
+.c-saved__empty { color: var(--c-slate); font-size: var(--t-small-size); }
+.c-saved__forget { margin-left: auto; }
+
+/* The three policy statements. The middle one is the promise that matters,
+   so it takes the amber edge the platform uses for anything that qualifies
+   what is on the page. */
+.c-policy dt { font-family: var(--f-admin); font-size: 12.5px; font-weight: 700; color: var(--c-navy); }
+.c-policy dd { margin-top: var(--s-2); }
+.c-policy > div:nth-child(2) { border-left: 3px solid var(--c-amber); padding-left: var(--s-4); }
+
+@media print { .c-install { display: none !important; } }
