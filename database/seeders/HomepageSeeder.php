@@ -185,7 +185,11 @@ class HomepageSeeder extends Seeder
         // body whose readers are regulators and ministry officials. The
         // brief for what should replace it is in docs/QUESTIONS.md.
         $hero = $this->block($page, BlockType::Hero, $position++, [
-            'image' => 'hero',
+            // No photograph. The wrong one on the first screen of a treaty
+            // body's site is a claim about what CRASA is; navy and the
+            // typography carry the band until the right one exists. See
+            // App\Support\ImageLibrary and docs/CLIENT_REQUESTS.md.
+            'image' => null,
             'cta_url' => '/publications',
         ], fn (string $l) => [
             // Sentence case, per the tracked-caps ruling. The screen's copy

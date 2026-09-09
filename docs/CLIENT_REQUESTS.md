@@ -34,33 +34,83 @@ platform is currently telling a visitor that content is being prepared.
 page CRASA will open in front of the workshop, and it cannot be worked around
 with a placeholder that does not look like a placeholder.
 
-**We need CRASA's own photographs first.** Real pictures of real CRASA
-meetings, delegates and Secretariat staff are worth more than any stock
-library, for two reasons: they are unarguably specific to CRASA, and they are
-the strongest defence against the site looking like every other regional
-body's site.
+### What the homepage does today
 
-### The homepage banner: three images
+**The banner runs with no photograph.** It is a full navy band carrying the
+headline, the standfirst and one action, and nothing else.
+
+That is a decision, not an omission. The supplied stock library has no
+institutional subject in it. We tried two of its images in the banner and
+withdrew both: a market scene in Cape Town, and then a telecommunications
+equipment bench. The second is at least a regulatory activity, and it is
+still not what CRASA is.
+
+A banner photograph is a claim about an organisation, made on the first
+screen, to a reader who is usually a regulator deciding whether to trust the
+rest of the page. A stranger shopping, or a laboratory bench, says CRASA is
+a consumer body or a testing house. Neither is true, and the wrong claim
+costs more than the empty one. The band as it stands says nothing it cannot
+support, and it looks deliberate rather than unfinished, because the
+composition it uses is one the approved designs already draw.
+
+**One right photograph replaces it in a single setting.** Nothing needs
+rebuilding.
+
+### The single highest-value item on this whole list
+
+**CRASA's own photography of its own meetings.** Not the first item because
+it is urgent — because nothing purchasable can substitute for it.
+
+The AGM, committee sessions, the signing of a determination, the Secretariat
+at work, an Executive Committee meeting in progress. Any of it. Even
+phone-camera photographs from a delegate, if they are sharp and the room is
+recognisable, are worth more than the best stock image money can buy, for
+two reasons that have nothing to do with quality:
+
+1. They are unarguably CRASA. A reader who has sat in that room recognises
+   it, and nobody can say the site could belong to any regional body.
+2. They cannot be wrong about what CRASA is, because they are a record of
+   what CRASA did.
+
+If there is an archive of AGM photographs anywhere — a Secretariat drive, a
+communications officer's folder, a past event report — that archive is the
+answer to this entire section. Please send it before anything is
+commissioned or bought.
+
+### The register we are asking for
 
 | Requirement | Detail |
 |---|---|
-| Subject | Delegates in session, a signing, a plenary hall, telecommunications infrastructure at scale, or a regulator's building |
+| Subject | Delegates in plenary. A signing ceremony. A speaker at a podium with member state flags. Institutional architecture — a regulator's building, a headquarters, a conference venue. Telecommunications infrastructure at scale: a landing station, a tower array, a transmission site. A network operations centre |
+| Register | Institutional. The photograph should look like a record of an event rather than an advertisement for one |
 | Orientation | Landscape |
 | Size | At least 3000 pixels on the long edge |
 | Composition | **The subject and the visual interest must sit in the right-hand two thirds.** The headline sits over the left third, and an image with its subject on the left puts type over a face |
-| How many | Three. The banner rotates, and one image shown three times is not a rotation. With one image we show one image and no controls |
+| How many | Three for the banner, which rotates. One image shown three times is not a rotation; with one image we show one image and no controls. One good photograph is worth more than three weak ones, so send what exists rather than making up the number |
 
 ### What it must not be
 
+These are not stylistic preferences. Each one has been tried on this platform
+or on a comparable one and reads wrong to the intended audience.
+
+- **People using phones.** A hand holding a handset is a photograph about
+  consumers. CRASA regulates the operators, not the users, and a consumer
+  image on the front page misstates the mandate to the ministries reading it.
+- **Market scenes, street scenes, shopfronts.** Same reason. This was the
+  banner until 9 September 2026 and it was withdrawn for exactly this.
+- **Smiling stock subjects.** A person photographed to look approachable is
+  photographed to sell something. Nothing on this platform is for sale.
+- **Generic corporate stock.** Handshakes over a boardroom table, a team
+  pointing at a screen, suited figures against glass towers.
 - **Anything AI-generated.** Flawless skin, symmetrical faces, glassy eyes,
   impossibly tidy offices. On a regulatory platform this destroys credibility
-  faster than a bad photograph does.
-- Generic corporate stock: handshakes over a boardroom table, a team pointing
-  at a screen, suited figures against glass towers.
-- Anything visibly not Southern African. Delegates from fourteen SADC
+  faster than a poor photograph does, because it makes a reader wonder what
+  else was generated.
+- **Anything visibly not Southern African.** Delegates from fourteen SADC
   regulators will notice within a second.
-- Gradients or abstract shapes used instead of a photograph. The absence of
-  real imagery is itself noticeable.
+- **Gradients or abstract shapes standing in for a photograph.** If there is
+  no photograph, the band carries type on navy and says so by looking
+  composed. It does not pretend.
 
 ### Elsewhere on the site
 

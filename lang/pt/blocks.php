@@ -20,7 +20,6 @@ return [
 
     'hero_empty_title' => 'Ainda não há nada definido para este destaque',
     'hero_empty_body' => 'Adicione um título e um subtítulo, e indique o destino da ação principal.',
-    'hero_slot_note' => 'Não foi fornecida fotografia para o destaque. O tratamento tipográfico mantém-se até à sua chegada.',
 
     'figures_empty_title' => 'Ainda não há números',
     'figures_empty_body' => 'Adicione um número, a sua legenda e a fonte. Cada valor nesta plataforma indica a sua origem.',

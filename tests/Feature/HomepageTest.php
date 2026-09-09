@@ -6,14 +6,10 @@ use App\Enums\BlockType;
 use App\Models\NewsItem;
 use App\Models\Page;
 use App\Models\Publication;
-use App\Models\Sector;
-use App\Support\ImageLibrary;
 use App\Support\Locales;
 use Database\Seeders\NewsroomSeeder;
 use Database\Seeders\PublicationSeeder;
-use Database\Seeders\SectorSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Storage;
 use Tests\Concerns\SeedsComposedPages;
 use Tests\TestCase;
 
@@ -122,125 +118,47 @@ class HomepageTest extends TestCase
         $this->assertStringNotContainsString('Member regulators', $french);
     }
 
-    /* Images --------------------------------------------------------------- */
-
-    public function test_the_hero_image_is_served_as_derivatives_never_the_original(): void
-    {
-        $html = $this->get('/en')->getContent();
-
-        $this->assertStringContainsString('images/derivatives/', $html);
-        $this->assertStringNotContainsString('crasa-images/people/people-market-mobile-01.jpg', $html);
-    }
-
-    public function test_the_hero_image_offers_a_webp_source_and_a_jpeg_fallback(): void
-    {
-        $html = $this->get('/en')->getContent();
-
-        $this->assertStringContainsString('type="image/webp"', $html);
-        $this->assertStringContainsString('.jpg', $html);
-        $this->assertStringContainsString('srcset=', $html);
-        $this->assertStringContainsString('sizes=', $html);
-    }
+    /* The hero --------------------------------------------------------------- */
 
     /**
-     * Art direction, not resizing. A 21:9 band at desktop is a strip of sky
-     * with the subject cropped out of it at phone width, so narrow
-     * renditions are cut squarer and each crop is gated by its own media
-     * query. A single srcset would tell the browser these are the same image
-     * at different sizes and let it pick a crop the layout was not built for.
-     */
-    public function test_the_hero_is_art_directed_per_breakpoint(): void
-    {
-        $html = $this->get('/en')->getContent();
-
-        $this->assertStringContainsString('media="(max-width: 480px)"', $html);
-        $this->assertStringContainsString('media="(max-width: 960px)"', $html);
-    }
-
-    public function test_each_breakpoint_gets_its_own_crop(): void
-    {
-        $ratios = [];
-
-        foreach ([480, 960, 1440] as $width) {
-            $path = ImageLibrary::derivativePath('hero', $width, 'jpg');
-            $size = getimagesize(Storage::disk('public')->path($path));
-            $ratios[$width] = round($size[0] / $size[1], 2);
-        }
-
-        // Squarer at phone width, wider at desktop.
-        $this->assertLessThan($ratios[960], $ratios[480]);
-        $this->assertLessThan($ratios[1440], $ratios[960]);
-    }
-
-    /**
-     * Broadcasting has no supplied photograph, and borrowing one from
-     * telecoms would caption a laboratory as broadcasting.
-     */
-    public function test_no_sector_borrows_another_sectors_photograph(): void
-    {
-        $this->seed(SectorSeeder::class);
-
-        $broadcasting = NewsItem::factory()->create([
-            'sector_id' => Sector::where('slug', 'broadcasting')->value('id'),
-        ]);
-
-        $this->assertNull($broadcasting->fallbackImageSlot());
-    }
-
-    /**
-     * Read from the language files rather than pinned to one photograph's
-     * description.
+     * The homepage runs with no photograph, and that is the composition
+     * rather than a gap.
      *
-     * The old version quoted the market scene word for word, so swapping
-     * the hero image broke a test that has nothing to do with which image
-     * is used. What matters is that whatever is there is described, in all
-     * three languages, and that the description is not the English one
-     * repeated.
+     * The band held a market scene in Cape Town, then an equipment testing
+     * bench. Both were wrong in the same way: CRASA is a treaty body that
+     * fourteen national regulatory authorities answer to, and a hero makes a
+     * claim about what an organisation is, on the first screen, to a
+     * regulator. Screen 02 draws a slide with no photograph of its own, so
+     * navy and the typography are the screen's own answer and not a fallback
+     * from it.
+     *
+     * This is held by test because "the hero has no image" looks exactly
+     * like an oversight to anyone who arrives later, and the natural repair
+     * is to put a photograph back.
      */
-    public function test_alt_text_is_present_in_all_three_languages(): void
+    public function test_the_hero_runs_on_navy_and_typography_with_no_photograph(): void
     {
-        foreach (['en', 'fr', 'pt'] as $locale) {
-            $alt = __('images.hero', [], $locale);
+        $hero = Page::where('slug', 'home')->sole()
+            ->blocks()->where('block_type', BlockType::Hero->value)->sole();
 
-            $this->assertNotSame('images.hero', $alt, 'The hero has no '.$locale.' alt text.');
-            $this->assertGreaterThan(30, mb_strlen($alt), 'The '.$locale.' hero alt text is too short to describe anything.');
+        $this->assertNull(
+            $hero->setting('image'),
+            'The homepage hero has a photograph again. See App\Support\ImageLibrary for why it does not.'
+        );
 
-            // Escaped, because the French and Portuguese descriptions
-            // contain apostrophes and the page renders them as entities.
-            $this->get('/'.$locale)->assertSee($alt);
-        }
+        $html = $this->get('/en')->assertOk()->getContent();
+        $band = substr($html, 0, strpos($html, 'b-figures__grid'));
 
-        // Three descriptions, not one description three times.
-        $this->assertCount(3, array_unique([
-            __('images.hero', [], 'en'),
-            __('images.hero', [], 'fr'),
-            __('images.hero', [], 'pt'),
-        ]));
-    }
+        // No photograph, and no grey box saying one is coming either. A
+        // placeholder on the first screen of a treaty body's site tells a
+        // regulator the site is unfinished.
+        $this->assertStringNotContainsString('b-hero__media', $band);
+        $this->assertStringNotContainsString('b__slot', $band);
 
-    public function test_no_derivative_is_larger_than_a_mobile_connection_can_carry(): void
-    {
-        // The archive original is 20 MB. Nothing that size reaches a page.
-        $path = ImageLibrary::derivativePath('hero', 480, 'webp');
-        $bytes = Storage::disk('public')->size($path);
-
-        $this->assertLessThan(120_000, $bytes, 'The 480px hero derivative is too heavy for a mobile connection.');
-    }
-
-    /**
-     * A slot with no image renders the designed absence, never a broken img
-     * and never a grey box.
-     */
-    public function test_a_slot_with_no_image_renders_the_designed_absence(): void
-    {
-        $page = Page::where('slug', 'home')->sole();
-        $hero = $page->blocks()->where('block_type', BlockType::Hero->value)->sole();
-        $hero->update(['settings' => ['image' => 'nonexistent-slot', 'cta_url' => '/publications']]);
-
-        $html = $this->get('/en')->getContent();
-
-        $this->assertStringContainsString('b__slot', $html);
-        $this->assertStringNotContainsString('<img src="" ', $html);
+        // What is there instead: the navy ground, the weave screen 02 draws
+        // on a slide with no photograph, and the headline.
+        $this->assertStringContainsString('b-hero__weave', $band);
+        $this->assertStringContainsString('b-hero__headline', $band);
     }
 
     /* Empty states --------------------------------------------------------- */

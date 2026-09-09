@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Enums\BlockType;
 use App\Models\Authority;
 use App\Models\Indicator;
 use App\Models\Instrument;
 use App\Models\Meeting;
 use App\Models\NewsItem;
+use App\Models\Page;
 use App\Models\PageBlock;
 use App\Models\Publication;
 use Database\Seeders\AuthoritySeeder;
@@ -17,6 +19,7 @@ use Database\Seeders\PublicationSeeder;
 use Database\Seeders\PublicPagesSeeder;
 use Database\Seeders\SectorSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\SeedsComposedPages;
 use Tests\TestCase;
 
 /**
@@ -31,6 +34,7 @@ use Tests\TestCase;
 class ClientDocumentsTest extends TestCase
 {
     use RefreshDatabase;
+    use SeedsComposedPages;
 
     private function variations(): string
     {
@@ -190,6 +194,61 @@ class ClientDocumentsTest extends TestCase
         $this->assertStringContainsStringIgnoringCase('right-hand two thirds', $pack);
         $this->assertStringContainsStringIgnoringCase('AI-generated', $pack);
         $this->assertStringContainsStringIgnoringCase('Three', $pack);
+    }
+
+    /**
+     * The brief names the register it wants and the register it does not.
+     *
+     * "Send us some photographs" produces stock. The subjects below are the
+     * ones that read as institutional, and the exclusions are each a thing
+     * that was actually tried on this platform or a comparable one and read
+     * wrong to a regulator.
+     */
+    public function test_the_imagery_brief_names_the_institutional_register(): void
+    {
+        $pack = file_get_contents(base_path('docs/CLIENT_REQUESTS.md'));
+
+        foreach ([
+            'Delegates in plenary',
+            'signing ceremony',
+            'podium',
+            'Institutional architecture',
+            'network operations centre',
+        ] as $subject) {
+            $this->assertStringContainsStringIgnoringCase($subject, $pack, 'The brief does not ask for: '.$subject);
+        }
+
+        foreach ([
+            'People using phones',
+            'Market scenes',
+            'Smiling stock subjects',
+        ] as $exclusion) {
+            $this->assertStringContainsStringIgnoringCase($exclusion, $pack, 'The brief does not rule out: '.$exclusion);
+        }
+    }
+
+    /**
+     * The pack and the platform have to agree about the banner.
+     *
+     * If the homepage runs without a photograph, the pack must say so and
+     * say why, or CRASA reads a request for three banner images, opens the
+     * site, sees no banner image, and concludes something is broken.
+     */
+    public function test_the_pack_explains_the_banner_running_without_a_photograph(): void
+    {
+        $this->seedComposedPages();
+
+        $hero = Page::where('slug', 'home')->sole()
+            ->blocks()->where('block_type', BlockType::Hero->value)->sole();
+
+        $pack = file_get_contents(base_path('docs/CLIENT_REQUESTS.md'));
+
+        if ($hero->setting('image') === null) {
+            $this->assertStringContainsString('The banner runs with no photograph', $pack);
+            $this->assertStringContainsStringIgnoringCase("CRASA's own photography", $pack);
+        } else {
+            $this->assertStringNotContainsString('The banner runs with no photograph', $pack);
+        }
     }
 
     public function test_the_pack_names_all_fourteen_authorities_for_confirmation(): void

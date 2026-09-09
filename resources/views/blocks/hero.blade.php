@@ -111,6 +111,20 @@
                 <div class="b-hero__tint" aria-hidden="true"></div>
                 <div class="b-hero__scrim" aria-hidden="true"></div>
                 <div class="b-hero__weave" aria-hidden="true"></div>
+            @else
+                {{-- No photograph, and that is a composition rather than a
+                     gap. Screen 02 draws a slide with no photograph of its
+                     own — its chart slide — and what it puts on the navy is
+                     the weave alone:
+
+                       repeating-linear-gradient(58deg,rgba(26,140,90,.09) 0 2px,transparent 2px 24px)
+
+                     The navy ground and the type are the design. The
+                     headline runs at its own measure because the grid is
+                     auto-fit and there is nothing beside it to share the
+                     row with, which is the screen's own layout with one
+                     column rather than a variation on it. --}}
+                <div class="b-hero__weave" aria-hidden="true"></div>
             @endif
 
             <div class="b-hero__inner">
@@ -148,11 +162,11 @@
                     @endif
                 </div>
 
-                @if (! $image)
-                    <div class="b-hero__aside">
-                        @include('blocks._slot', ['note' => __('blocks.hero_slot_note'), 'ratio' => '3:2'])
-                    </div>
-                @endif
+                {{-- No placeholder panel. A grey box reading "photograph
+                     to follow" on the first screen of a treaty body's site
+                     tells a regulator the site is unfinished, which is a
+                     worse first sentence than the headline is a good one.
+                     The empty half of the band is deliberate space. --}}
             </div>
         </div>
     @endforeach

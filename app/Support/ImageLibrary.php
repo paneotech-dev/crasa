@@ -35,19 +35,26 @@ final class ImageLibrary
      */
     private const ACCEPTED = [
         /*
-         * The homepage band.
+         * The homepage band's slot. THE HOMEPAGE DOES NOT USE IT.
          *
-         * It was a market scene in Cape Town until 9 September 2026, and it
+         * It held a market scene in Cape Town until 9 September 2026, which
          * was wrong: CRASA is a treaty body that fourteen national
          * regulatory authorities answer to, and the homepage opened on a
-         * stranger shopping. The equipment testing bench is the closest
-         * thing in the supplied library to an institutional subject, and it
-         * is at least a regulatory activity.
+         * stranger shopping. It was then moved to the equipment testing
+         * bench, which is at least a regulatory activity and still not an
+         * institutional subject.
          *
-         * It is still not right. The brief in docs/CLIENT_REQUESTS.md asks
-         * for delegates in session, a signing, a plenary hall, infrastructure
-         * at scale or a regulator's building. This is a holding image and
-         * the hero block is flagged needs_content accordingly.
+         * Resolved the same day: the homepage runs with no photograph at
+         * all. A hero on the wrong picture is a claim about what CRASA is,
+         * made on the first screen, to a regulator. Navy and the typography
+         * are the design until the right photograph exists — screen 02 draws
+         * a slide with no photograph of its own, so this is the screen's own
+         * composition rather than a fallback from it.
+         *
+         * The slot stays here because it is a working derivative pipeline
+         * and the day CRASA supplies a plenary or a signing it is one
+         * setting away. The brief for what to supply is in
+         * docs/CLIENT_REQUESTS.md.
          */
         'hero' => [
             'path' => 'sector-telecom/telecom-equipment-testing-01.jpg',

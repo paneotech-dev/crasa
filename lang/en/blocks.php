@@ -25,7 +25,6 @@ return [
 
     'hero_empty_title' => 'Nothing set for this banner yet',
     'hero_empty_body' => 'Add a headline and a standfirst, and choose where the primary action goes.',
-    'hero_slot_note' => 'No banner photograph has been supplied. The typographic treatment holds until one arrives.',
 
     'figures_empty_title' => 'No figures yet',
     'figures_empty_body' => 'Add a figure, its label and the source it came from. Every number on this platform states where it came from.',

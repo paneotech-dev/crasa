@@ -20,7 +20,6 @@ return [
 
     'hero_empty_title' => "Rien n'est encore défini pour cette bannière",
     'hero_empty_body' => "Ajoutez un titre et un chapeau, puis indiquez la destination de l'action principale.",
-    'hero_slot_note' => "Aucune photographie de bannière n'a été fournie. Le traitement typographique tient jusqu'à son arrivée.",
 
     'figures_empty_title' => 'Aucun chiffre pour le moment',
     'figures_empty_body' => 'Ajoutez un chiffre, son libellé et sa source. Chaque nombre de cette plateforme indique sa provenance.',
