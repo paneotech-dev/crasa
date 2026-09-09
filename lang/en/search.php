@@ -29,4 +29,7 @@ return [
     'suggest_list' => 'Suggestions',
     'suggest_announce' => '{1}1 suggestion. Use the down arrow to reach it.|[2,*]:count suggestions. Use the arrow keys to move through them.',
     'suggest_none' => 'No suggestions.',
+    'band_eyebrow' => 'Search',
+    'band_lead' => 'One search across the regulatory library, the newsroom, the instruments in force and the fourteen member regulators.',
+    'band_heading' => 'Find an instrument, a decision or a member state',
 ];

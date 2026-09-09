@@ -5,10 +5,19 @@
 @section('description', __('publications.intro'))
 
 @section('content')
+    {{-- No photograph. The library has five images and none of them is a
+         regulatory library: a test bench, a courier, a parcel handover and a
+         team at a laptop. A picture that is not about the section it opens
+         is a lie about what the reader is looking at. --}}
+    <x-section-band
+        :eyebrow="__('publications.band_eyebrow')"
+        :title="__('publications.band_heading')"
+        :lead="__('publications.intro')"
+        :counts="\App\Support\SectionCounts::publications()"
+    />
+
     <div class="c-section">
         <div class="c-page">
-            <h1>{{ __('publications.title') }}</h1>
-            <p class="c-lead">{{ __('publications.intro') }}</p>
 
             {{-- The filters answer without reloading the page, and they
                  are chip links, so the floor is a page that filters and

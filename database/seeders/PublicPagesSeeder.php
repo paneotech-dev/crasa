@@ -44,9 +44,24 @@ class PublicPagesSeeder extends Seeder
     private function about(): void
     {
         $page = $this->page('about', [
-            'en' => ['title' => 'About CRASA', 'meta_description' => 'CRASA is a Specialised Agency of SADC, established in 1997, harmonising the postal and ICT regulatory environment across fourteen member states.'],
-            'fr' => ['title' => 'À propos de la CRASA', 'meta_description' => 'La CRASA est une agence spécialisée de la SADC, créée en 1997, chargée d\'harmoniser l\'environnement réglementaire postal et des TIC dans quatorze États membres.'],
-            'pt' => ['title' => 'Sobre a CRASA', 'meta_description' => 'A CRASA é uma Agência Especializada da SADC, criada em 1997, que harmoniza o ambiente regulatório postal e das TIC em catorze Estados membros.'],
+            'en' => [
+                'title' => 'About CRASA',
+                'heading' => 'A Specialised Agency of SADC, established in 1997',
+                'standfirst' => 'CRASA harmonises the regulation of telecommunications, broadcasting and postal services across fourteen SADC member states, so that a decision taken in one is recognisable in the other thirteen.',
+                'meta_description' => 'CRASA is a Specialised Agency of SADC, established in 1997, harmonising the postal and ICT regulatory environment across fourteen member states.',
+            ],
+            'fr' => [
+                'title' => 'À propos de la CRASA',
+                'heading' => 'Une agence spécialisée de la SADC, créée en 1997',
+                'standfirst' => 'La CRASA harmonise la réglementation des télécommunications, de la radiodiffusion et des services postaux dans quatorze États membres de la SADC, afin qu\'une décision prise dans l\'un soit reconnaissable dans les treize autres.',
+                'meta_description' => 'La CRASA est une agence spécialisée de la SADC, créée en 1997, chargée d\'harmoniser l\'environnement réglementaire postal et des TIC dans quatorze États membres.',
+            ],
+            'pt' => [
+                'title' => 'Sobre a CRASA',
+                'heading' => 'Uma Agência Especializada da SADC, criada em 1997',
+                'standfirst' => 'A CRASA harmoniza a regulação das telecomunicações, da radiodifusão e dos serviços postais em catorze Estados membros da SADC, para que uma decisão tomada num seja reconhecível nos outros treze.',
+                'meta_description' => 'A CRASA é uma Agência Especializada da SADC, criada em 1997, que harmoniza o ambiente regulatório postal e das TIC em catorze Estados membros.',
+            ],
         ]);
 
         $position = 0;
@@ -160,9 +175,24 @@ class PublicPagesSeeder extends Seeder
     private function committees(): void
     {
         $page = $this->page('committees', [
-            'en' => ['title' => 'Committees', 'meta_description' => 'The CRASA committees and the member states that sit on them.'],
-            'fr' => ['title' => 'Comités', 'meta_description' => 'Les comités de la CRASA et les États membres qui y siègent.'],
-            'pt' => ['title' => 'Comités', 'meta_description' => 'Os comités da CRASA e os Estados membros que os integram.'],
+            'en' => [
+                'title' => 'Committees',
+                'heading' => 'Where the harmonisation work is actually done',
+                'standfirst' => 'Each committee takes one part of the mandate and carries it between annual general meetings. Member states hold seats on them, and one authority chairs each.',
+                'meta_description' => 'The CRASA committees and the member states that sit on them.',
+            ],
+            'fr' => [
+                'title' => 'Comités',
+                'heading' => "Là où le travail d'harmonisation se fait",
+                'standfirst' => "Chaque comité prend une partie du mandat et la porte entre deux assemblées générales annuelles. Les États membres y siègent, et une autorité préside chacun d'eux.",
+                'meta_description' => 'Les comités de la CRASA et les États membres qui y siègent.',
+            ],
+            'pt' => [
+                'title' => 'Comités',
+                'heading' => 'Onde o trabalho de harmonização é feito',
+                'standfirst' => 'Cada comité assume uma parte do mandato e leva-a entre assembleias gerais anuais. Os Estados membros ocupam assentos neles, e uma autoridade preside a cada um.',
+                'meta_description' => 'Os comités da CRASA e os Estados membros que os integram.',
+            ],
         ]);
 
         $position = 0;
@@ -192,9 +222,28 @@ class PublicPagesSeeder extends Seeder
     private function membership(): void
     {
         $page = $this->page('members', [
-            'en' => ['title' => 'Members', 'meta_description' => 'The fourteen national regulatory authorities that make up CRASA.'],
-            'fr' => ['title' => 'Membres', 'meta_description' => 'Les quatorze autorités de régulation nationales qui composent la CRASA.'],
-            'pt' => ['title' => 'Membros', 'meta_description' => 'As catorze autoridades reguladoras nacionais que compõem a CRASA.'],
+            // heading and standfirst are the section band's copy, which
+            // screen 08 draws: "Fourteen national communications and postal
+            // authorities" over a standfirst, with the counts beneath. The
+            // title stays "Members" because that is the navigation label.
+            'en' => [
+                'title' => 'Members',
+                'heading' => 'Fourteen national communications and postal authorities',
+                'standfirst' => "CRASA's membership covers the national regulatory authorities of fourteen SADC member states. Four work in Portuguese, three in French, and all fourteen sit on the committees and attend the annual general meeting.",
+                'meta_description' => 'The fourteen national regulatory authorities that make up CRASA.',
+            ],
+            'fr' => [
+                'title' => 'Membres',
+                'heading' => 'Quatorze autorités nationales des communications et des postes',
+                'standfirst' => "La CRASA réunit les autorités de régulation nationales de quatorze États membres de la SADC. Quatre travaillent en portugais, trois en français, et les quatorze siègent aux comités et participent à l'assemblée générale annuelle.",
+                'meta_description' => 'Les quatorze autorités de régulation nationales qui composent la CRASA.',
+            ],
+            'pt' => [
+                'title' => 'Membros',
+                'heading' => 'Catorze autoridades nacionais das comunicações e dos correios',
+                'standfirst' => 'A CRASA reúne as autoridades reguladoras nacionais de catorze Estados membros da SADC. Quatro trabalham em português, três em francês, e as catorze participam nos comités e na assembleia geral anual.',
+                'meta_description' => 'As catorze autoridades reguladoras nacionais que compõem a CRASA.',
+            ],
         ]);
 
         $position = 0;

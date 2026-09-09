@@ -19,12 +19,33 @@
     @unless ($page->blocksRenderH1())
         {{-- The hero carries the h1 where there is one. Without a hero the
              page needs its own, or its headings start at level 2 and the
-             document outline has no title. --}}
-        <div class="c-section c-section--title">
-            <div class="c-page">
-                <h1 @if ($title?->isFallback()) lang="{{ $title->locale }}" @endif>{{ $title?->value ?? '' }}</h1>
-            </div>
-        </div>
+             document outline has no title.
+
+             That h1 was a bare line of type on cream. Screen 08 draws the
+             page it belongs to — the membership page — as a navy band with
+             an eyebrow, the title, a standfirst and a row of counts beneath,
+             so that is what a composed page opens with now.
+
+             The counts are resolved by slug and only for the pages that have
+             something to count. A page with none renders the band without
+             the row rather than an empty rule. --}}
+        @php
+            // The eyebrow names the area and the heading describes it, as
+            // screen 08 draws them. The page title is the navigation label
+            // and is the fallback rather than the first choice: "Members"
+            // is a menu item, not a headline. An eyebrow identical to the
+            // heading is dropped rather than printed twice.
+            $bandHeading = $page->translate('heading')?->value ?: ($title?->value ?? '');
+            $bandEyebrow = __('nav.'.$page->slug);
+            $bandEyebrow = $bandEyebrow === 'nav.'.$page->slug || $bandEyebrow === $bandHeading ? null : $bandEyebrow;
+        @endphp
+
+        <x-section-band
+            :eyebrow="$bandEyebrow"
+            :title="$bandHeading"
+            :lead="$page->translate('standfirst')?->value"
+            :counts="\App\Support\SectionCounts::forPage($page->slug)"
+        />
     @endunless
 
     @php

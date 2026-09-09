@@ -33,4 +33,9 @@ return [
     'type_position_paper' => 'Position paper',
     'type_communique' => 'Communique',
     'type_minutes' => 'Minutes',
+    'count_documents' => '{0}Publications|{1}Publication|[2,*]Publications',
+    'count_states' => '{0}Member states covered|{1}Member state covered|[2,*]Member states covered',
+    'count_instruments' => '{0}Instruments in force|{1}Instrument in force|[2,*]Instruments in force',
+    'band_eyebrow' => 'Regulatory library',
+    'band_heading' => 'Guidelines, model laws and frameworks',
 ];

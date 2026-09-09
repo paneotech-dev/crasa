@@ -17,4 +17,8 @@ return [
     'registration' => 'Inscription',
     'registration_body' => 'Indiquez votre arrivée et votre départ pour que le Secrétariat sache quand vous attendre. Tout le reste est organisé par les organisateurs.',
     'register_elsewhere' => 'S\'inscrire à la réunion',
+    'count_upcoming' => '{0}À venir|{1}À venir|[2,*]À venir',
+    'count_past' => '{0}Réunions passées|{1}Réunion passée|[2,*]Réunions passées',
+    'band_eyebrow' => 'Réunions et événements',
+    'band_heading' => 'Les réunions sur lesquelles repose le travail d\'harmonisation',
 ];

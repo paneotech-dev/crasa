@@ -30,4 +30,5 @@ return [
     'unit_items' => 'items',
     'unit_staff' => 'staff',
     'unit_days' => 'days',
+    'band_eyebrow' => 'Reporting',
 ];

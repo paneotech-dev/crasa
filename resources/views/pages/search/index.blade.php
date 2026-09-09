@@ -9,9 +9,17 @@
 @section('title', $query !== '' ? __('search.results_for', ['query' => $query]) : __('search.title'))
 
 @section('content')
+    {{-- The corpus, stated before a reader types anything. It is the
+         honest answer to "is it worth searching here". --}}
+    <x-section-band
+        :eyebrow="__('search.band_eyebrow')"
+        :title="__('search.band_heading')"
+        :lead="__('search.band_lead')"
+        :counts="\App\Support\SectionCounts::search()"
+    />
+
     <div class="c-section">
         <div class="c-page">
-            <h1>{{ __('search.title') }}</h1>
 
             <form method="GET" action="{{ route('search', ['locale' => app()->getLocale()]) }}" class="c-form c-search__form" role="search">
                 <div class="c-field">

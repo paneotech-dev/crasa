@@ -33,4 +33,9 @@ return [
     'type_position_paper' => 'Document de position',
     'type_communique' => 'Communiqué',
     'type_minutes' => 'Procès-verbal',
+    'count_documents' => '{0}Publications|{1}Publication|[2,*]Publications',
+    'count_states' => '{0}États membres couverts|{1}État membre couvert|[2,*]États membres couverts',
+    'count_instruments' => '{0}Instruments en vigueur|{1}Instrument en vigueur|[2,*]Instruments en vigueur',
+    'band_eyebrow' => 'Bibliothèque réglementaire',
+    'band_heading' => 'Lignes directrices, lois types et cadres de référence',
 ];

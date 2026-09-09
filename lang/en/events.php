@@ -17,4 +17,8 @@ return [
     'registration' => 'Registration',
     'registration_body' => 'File your arrival and departure so the Secretariat knows when to expect you. Everything else about the meeting is arranged by the organisers.',
     'register_elsewhere' => 'Register for the meeting',
+    'count_upcoming' => '{0}Upcoming|{1}Upcoming|[2,*]Upcoming',
+    'count_past' => '{0}Past meetings|{1}Past meeting|[2,*]Past meetings',
+    'band_eyebrow' => 'Meetings and events',
+    'band_heading' => 'The meetings the harmonisation work runs on',
 ];

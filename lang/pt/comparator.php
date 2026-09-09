@@ -80,4 +80,5 @@ return [
     'blurb_quality' => 'Prazos de entrega e proporção de envios que cumprem a norma.',
     'blurb_universal_access' => 'Cobertura das redes e alcance da rede postal.',
     'open_with_these' => 'Abrir no comparador',
+    'count_categories' => '{0}Categorias|{1}Categoria|[2,*]Categorias',
 ];

@@ -21,4 +21,8 @@ return [
     'category_tender' => 'Concurso',
     'category_consultation' => 'Consulta pública',
     'category_communique' => 'Comunicado',
+    'count_items' => '{0}Artigos|{1}Artigo|[2,*]Artigos',
+    'count_sectors' => '{0}Setores abrangidos|{1}Setor abrangido|[2,*]Setores abrangidos',
+    'band_eyebrow' => 'Sala de imprensa',
+    'band_heading' => 'O que a região decidiu, e quando',
 ];

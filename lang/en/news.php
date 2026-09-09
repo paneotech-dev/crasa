@@ -21,4 +21,8 @@ return [
     'category_tender' => 'Tender',
     'category_consultation' => 'Public consultation',
     'category_communique' => 'Communique',
+    'count_items' => '{0}Articles|{1}Article|[2,*]Articles',
+    'count_sectors' => '{0}Sectors covered|{1}Sector covered|[2,*]Sectors covered',
+    'band_eyebrow' => 'Newsroom',
+    'band_heading' => 'What the region has decided, and when',
 ];

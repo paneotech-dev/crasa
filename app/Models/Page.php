@@ -21,7 +21,17 @@ class Page extends Model
     use Auditable, HasFactory, HasTranslations, MarksSampleData, SoftDeletes;
 
     /** @var list<string> */
-    protected array $translatable = ['title', 'meta_title', 'meta_description'];
+    /*
+     * heading and standfirst are the section band's own copy, added
+     * 2026-09-09. Screen 08 draws the membership page with an eyebrow
+     * naming the area, a descriptive headline and a standfirst beneath it,
+     * and none of those is the page's title: the title is what the
+     * navigation says, and "Members" is a menu item rather than a headline.
+     *
+     * Both fall back to the title, so a page that has not been given them
+     * still opens with something.
+     */
+    protected array $translatable = ['title', 'heading', 'standfirst', 'meta_title', 'meta_description'];
 
     protected $fillable = ['slug', 'template', 'status', 'published_at', 'is_sample'];
 

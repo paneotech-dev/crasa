@@ -52,4 +52,5 @@ return [
     'detail_publications' => 'Publications',
     'map_status_plain' => ':count États membres. Choisissez un jeu de données pour ombrer la carte.',
     'map_status_shaded' => ':dataset, :period. :reported États membres sur :total ont transmis. Chaque État affiche son chiffre sur la carte, et le tableau ci-dessous reprend les mêmes chiffres.',
+    'count_committees' => '{0}Comités|{1}Comité|[2,*]Comités',
 ];

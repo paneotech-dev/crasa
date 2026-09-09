@@ -29,4 +29,7 @@ return [
     'suggest_list' => 'Suggestions',
     'suggest_announce' => '{1}1 suggestion. Utilisez la flèche vers le bas pour l\'atteindre.|[2,*]:count suggestions. Utilisez les flèches pour les parcourir.',
     'suggest_none' => 'Aucune suggestion.',
+    'band_eyebrow' => 'Recherche',
+    'band_lead' => 'Une seule recherche dans la bibliothèque réglementaire, la salle de presse, les instruments en vigueur et les quatorze régulateurs membres.',
+    'band_heading' => 'Trouver un instrument, une décision ou un État membre',
 ];

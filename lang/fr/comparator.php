@@ -80,4 +80,5 @@ return [
     'blurb_quality' => 'Délais d\'acheminement et part des envois respectant la norme.',
     'blurb_universal_access' => 'Couverture des réseaux et étendue du réseau postal.',
     'open_with_these' => 'Ouvrir dans le comparateur',
+    'count_categories' => '{0}Catégories|{1}Catégorie|[2,*]Catégories',
 ];

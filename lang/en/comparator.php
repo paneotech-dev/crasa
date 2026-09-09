@@ -80,4 +80,5 @@ return [
     'blurb_quality' => 'Delivery times and the share of items meeting the standard.',
     'blurb_universal_access' => 'Network coverage and the reach of the postal network.',
     'open_with_these' => 'Open these in the comparator',
+    'count_categories' => '{0}Categories|{1}Category|[2,*]Categories',
 ];

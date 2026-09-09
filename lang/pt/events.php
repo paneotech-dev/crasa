@@ -17,4 +17,8 @@ return [
     'registration' => 'Inscrição',
     'registration_body' => 'Indique a sua chegada e partida para que o Secretariado saiba quando o esperar. Tudo o resto é organizado pelos organizadores.',
     'register_elsewhere' => 'Inscrever-se na reunião',
+    'count_upcoming' => '{0}Próximas|{1}Próxima|[2,*]Próximas',
+    'count_past' => '{0}Reuniões passadas|{1}Reunião passada|[2,*]Reuniões passadas',
+    'band_eyebrow' => 'Reuniões e eventos',
+    'band_heading' => 'As reuniões em que assenta o trabalho de harmonização',
 ];

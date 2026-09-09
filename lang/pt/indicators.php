@@ -30,4 +30,5 @@ return [
     'unit_items' => 'objetos',
     'unit_staff' => 'pessoal',
     'unit_days' => 'dias',
+    'band_eyebrow' => 'Comunicação de dados',
 ];

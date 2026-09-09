@@ -30,4 +30,5 @@ return [
     'unit_items' => 'envois',
     'unit_staff' => 'effectifs',
     'unit_days' => 'jours',
+    'band_eyebrow' => 'Transmission des données',
 ];

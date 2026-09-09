@@ -5,10 +5,15 @@
 @section('description', __('news.intro'))
 
 @section('content')
+    <x-section-band
+        :eyebrow="__('news.band_eyebrow')"
+        :title="__('news.band_heading')"
+        :lead="__('news.intro')"
+        :counts="\App\Support\SectionCounts::newsroom()"
+    />
+
     <div class="c-section">
         <div class="c-page">
-            <h1>{{ __('news.title') }}</h1>
-            <p class="c-lead">{{ __('news.intro') }}</p>
 
             <div data-live-filters
                  data-live-swap="#news-filters,#news-results"

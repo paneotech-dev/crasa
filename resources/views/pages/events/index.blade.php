@@ -4,12 +4,12 @@
 @section('description', __('events.meta_description'))
 
 @section('content')
-    <div class="c-section c-section--title">
-        <div class="c-page">
-            <h1>{{ __('events.title') }}</h1>
-            <p class="c-lead">{{ __('events.lead') }}</p>
-        </div>
-    </div>
+    <x-section-band
+        :eyebrow="__('events.band_eyebrow')"
+        :title="__('events.band_heading')"
+        :lead="__('events.lead')"
+        :counts="\App\Support\SectionCounts::events()"
+    />
 
     <div class="c-section">
         <div class="c-page">

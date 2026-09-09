@@ -33,4 +33,9 @@ return [
     'type_position_paper' => 'Documento de posição',
     'type_communique' => 'Comunicado',
     'type_minutes' => 'Ata',
+    'count_documents' => '{0}Publicações|{1}Publicação|[2,*]Publicações',
+    'count_states' => '{0}Estados membros abrangidos|{1}Estado membro abrangido|[2,*]Estados membros abrangidos',
+    'count_instruments' => '{0}Instrumentos em vigor|{1}Instrumento em vigor|[2,*]Instrumentos em vigor',
+    'band_eyebrow' => 'Biblioteca regulatória',
+    'band_heading' => 'Orientações, leis-modelo e quadros de referência',
 ];

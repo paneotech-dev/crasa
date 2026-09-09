@@ -146,6 +146,67 @@ class ContrastTest extends TestCase
         ];
     }
 
+    /**
+     * The section band's photograph overlay.
+     *
+     * A band may carry a photograph under a heavy navy overlay, so the type
+     * sits on a colour nobody wrote down: it is the overlay composited over
+     * whatever the image happens to be underneath.
+     *
+     * The worst case is a pure-white image, which specular highlights make
+     * real rather than theoretical, so that is what is measured. If every
+     * token clears AA against navy-over-white, it clears AA against any
+     * photograph.
+     */
+    public function test_the_band_overlay_clears_aa_over_the_brightest_possible_photograph(): void
+    {
+        $overlay = 0.82;
+        $worstCase = $this->composite($this->tokens['--c-navy'], '#FFFFFF', $overlay);
+
+        foreach ([
+            'band title' => '--c-white',
+            'band eyebrow' => '--c-green-light',
+            'band standfirst' => '--c-sand',
+            'band count label' => '--c-sand',
+        ] as $role => $token) {
+            $ratio = $this->ratioOf($this->tokens[$token], $worstCase);
+
+            $this->assertGreaterThanOrEqual(
+                4.5,
+                $ratio,
+                sprintf('%s is %.2f:1 over a white photograph at %.0f%% overlay.', $role, $ratio, $overlay * 100)
+            );
+        }
+
+        // And the stylesheet has to be using the value that was measured.
+        $this->assertStringContainsString(
+            'rgba(15, 27, 45, .82)',
+            file_get_contents(public_path('css/blocks.css')),
+            'The band overlay is not the value this test measures.'
+        );
+    }
+
+    private function composite(string $foreground, string $background, float $alpha): string
+    {
+        $out = '#';
+
+        foreach ([1, 3, 5] as $offset) {
+            $f = hexdec(substr($foreground, $offset, 2));
+            $b = hexdec(substr($background, $offset, 2));
+            $out .= str_pad(dechex((int) round($alpha * $f + (1 - $alpha) * $b)), 2, '0', STR_PAD_LEFT);
+        }
+
+        return $out;
+    }
+
+    private function ratioOf(string $foreground, string $background): float
+    {
+        $a = $this->luminance($foreground);
+        $b = $this->luminance($background);
+
+        return (max($a, $b) + 0.05) / (min($a, $b) + 0.05);
+    }
+
     #[DataProvider('textPairs')]
     public function test_text_pairs_meet_four_and_a_half_to_one(string $foreground, string $background): void
     {

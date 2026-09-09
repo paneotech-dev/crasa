@@ -52,4 +52,5 @@ return [
     'detail_publications' => 'Publications',
     'map_status_plain' => ':count member states. Choose a dataset to shade the map.',
     'map_status_shaded' => ':dataset, :period. :reported of :total member states have filed. Every state states its figure on the map, and the table below carries the same figures.',
+    'count_committees' => '{0}Committees|{1}Committee|[2,*]Committees',
 ];

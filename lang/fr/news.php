@@ -21,4 +21,8 @@ return [
     'category_tender' => 'Appel d\'offres',
     'category_consultation' => 'Consultation publique',
     'category_communique' => 'Communiqué',
+    'count_items' => '{0}Articles|{1}Article|[2,*]Articles',
+    'count_sectors' => '{0}Secteurs couverts|{1}Secteur couvert|[2,*]Secteurs couverts',
+    'band_eyebrow' => 'Salle de presse',
+    'band_heading' => 'Ce que la région a décidé, et quand',
 ];

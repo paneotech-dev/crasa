@@ -29,4 +29,7 @@ return [
     'suggest_list' => 'Sugestões',
     'suggest_announce' => '{1}1 sugestão. Use a seta para baixo para lá chegar.|[2,*]:count sugestões. Use as setas para as percorrer.',
     'suggest_none' => 'Sem sugestões.',
+    'band_eyebrow' => 'Pesquisa',
+    'band_lead' => 'Uma pesquisa única na biblioteca regulatória, na sala de imprensa, nos instrumentos em vigor e nos catorze reguladores membros.',
+    'band_heading' => 'Encontrar um instrumento, uma decisão ou um Estado membro',
 ];

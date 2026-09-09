@@ -11,10 +11,15 @@
 @section('title', __('indicators.completeness_title'))
 
 @section('content')
+    <x-section-band
+        :eyebrow="__('indicators.band_eyebrow')"
+        :title="__('indicators.completeness_title')"
+        :lead="__('indicators.completeness_intro')"
+        :counts="\App\Support\SectionCounts::comparator()"
+    />
+
     <div class="c-section">
         <div class="c-page">
-            <h1>{{ __('indicators.completeness_title') }}</h1>
-            <p class="c-lead">{{ __('indicators.completeness_intro') }}</p>
 
             <div class="c-notice c-notice--pending" role="status">
                 <svg class="c-notice__icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
