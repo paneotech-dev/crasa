@@ -981,6 +981,76 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
 
 .a-form__actions { display: flex; gap: var(--s-3); flex-wrap: wrap; align-items: center; }
 
+/* Help ------------------------------------------------------------------ */
+
+/*
+ * Inline help, drawn as a disclosure. No approved screen covers onboarding,
+ * so this takes the quiet metadata treatment the screens use everywhere
+ * else rather than inventing a register: the size and ink of .a-hint, and
+ * the panel rule.
+ */
+.a-help { font-size: 13px; }
+
+.a-help > summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--a-link);
+  text-underline-offset: 3px;
+  text-decoration: underline;
+  display: inline-block;
+  padding: 2px 0;
+}
+
+.a-help > summary:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
+
+.a-help__body {
+  margin-top: 6px;
+  padding: var(--s-3) var(--s-4);
+  border-left: 2px solid var(--a-rule);
+  color: var(--a-ink-quiet);
+  line-height: 1.6;
+  max-width: 68ch;
+}
+
+/* The introduction panel. Dismissible, and permanently re-readable at the
+   help page, so dismissing it loses nothing. */
+.a-intro { border-left: 4px solid var(--c-green); }
+.a-intro ol { margin: var(--s-4) 0 0; padding: 0; list-style: none; counter-reset: step; }
+
+.a-intro li {
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--a-rule);
+  display: flex;
+  gap: var(--s-4);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.a-intro li:last-child { border-bottom: 0; }
+
+/* Numbered because these genuinely are a sequence: a person works through
+   them once, in order. CLAUDE.md forbids 01/02/03 markers where the content
+   is not a sequence. This one is. */
+.a-intro li::before {
+  counter-increment: step;
+  content: counter(step);
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-pill);
+  background: var(--c-green-light);
+  color: var(--c-green-dark);
+  font-size: 12.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.a-intro__text { flex: 1 1 320px; min-width: 0; }
+.a-intro__text b { display: block; font-size: 14.5px; font-weight: 600; }
+.a-intro__text span { display: block; font-size: 13.5px; color: var(--a-ink-quiet); line-height: 1.6; margin-top: 3px; }
+
 /* Notices --------------------------------------------------------------- */
 
 .a-notice {

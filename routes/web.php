@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\HelpController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\Admin\PageBlockController;
@@ -221,6 +222,14 @@ Route::prefix('{locale}')
                  * resource table. Every content type in the back office uses
                  * this pattern."
                  */
+                /*
+                 * Onboarding. Not an overlay walkthrough: a panel on the
+                 * page it describes, permanently re-readable here.
+                 */
+                Route::get('help', [HelpController::class, 'index'])->name('help');
+                Route::post('help/dismiss', [HelpController::class, 'dismiss'])->name('help.dismiss');
+                Route::post('help/restore', [HelpController::class, 'reset'])->name('help.reset');
+
                 Route::get('data', [ResourceController::class, 'hub'])->name('data');
                 Route::get('data/{resource}', [ResourceController::class, 'index'])->name('resources');
                 Route::get('data/{resource}/new', [ResourceController::class, 'create'])->name('resources.create');

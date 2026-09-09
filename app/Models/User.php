@@ -26,7 +26,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name', 'email', 'password', 'country_id', 'authority_id', 'role',
-        'status', 'theme', 'preferred_locale', 'notification_preferences', 'last_seen_at',
+        'status', 'theme', 'dismissed_hints', 'preferred_locale', 'notification_preferences', 'last_seen_at',
     ];
 
     /**
@@ -56,6 +56,7 @@ class User extends Authenticatable
             'role' => Role::class,
             'status' => UserStatus::class,
             'theme' => Theme::class,
+            'dismissed_hints' => 'array',
             // AES-256-CBC with the application key. Contractual: sensitive
             // fields are encrypted at rest, and this is structural rather
             // than a call someone has to remember to make.
@@ -242,6 +243,22 @@ class User extends Authenticatable
         }
 
         return $this->grantFor($permission)->allowsAnything();
+    }
+
+    /** Whether this account has already dismissed a piece of guidance. */
+    public function hasDismissed(string $hint): bool
+    {
+        return in_array($hint, $this->dismissed_hints ?? [], true);
+    }
+
+    public function dismiss(string $hint): void
+    {
+        $dismissed = $this->dismissed_hints ?? [];
+
+        if (! in_array($hint, $dismissed, true)) {
+            $dismissed[] = $hint;
+            $this->update(['dismissed_hints' => $dismissed]);
+        }
     }
 
     /**

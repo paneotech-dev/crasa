@@ -51,6 +51,11 @@
             </button>
         </form>
 
+        <a class="a-chip" href="{{ route('admin.help', ['locale' => app()->getLocale()]) }}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 015 .9c0 1.7-2.5 2.1-2.5 3.6"/><path d="M12 17h.01"/></svg>
+            {{ __('help.title') }}
+        </a>
+
         <span class="a-identity">
             <span class="a-identity__initials" aria-hidden="true">{{ \App\Support\Initials::of($user?->name ?? '') }}</span>
             <span class="a-identity__text">

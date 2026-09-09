@@ -285,6 +285,37 @@ behind it.
 
 ---
 
+## Disclosed variation: onboarding, and what it deliberately is not
+
+**No approved screen covers onboarding.** Case 2: the back office needs an
+introduction and the screens are silent on what one looks like.
+
+It is **not** a modal overlay walkthrough. That pattern traps focus, is
+close to unusable with a screen reader, breaks the moment the layout
+reflows, and cannot be re-read once dismissed. WCAG 2.1 AA is a contractual
+acceptance criterion on this project, so it loses, exactly as it did for the
+contrast values.
+
+What is built instead:
+
+- A panel at the top of the dashboard, in the flow of the document, using
+  the panel and row treatments the screens already establish. Dismissible
+  per account rather than per browser, because one officer signing in from
+  the office and from a laptop has read it once.
+- The same content permanently at `/admin/help`, plus the plain-language
+  explanation of all twelve block types and the six rules the platform
+  holds to.
+- Inline help drawn as a `<details>` disclosure, never a hover tooltip. A
+  tooltip does not exist for anyone on a touch screen and does not exist for
+  a keyboard user unless it is rebuilt from scratch with focus handling.
+
+**One numbered list, deliberately.** CLAUDE.md forbids `01 / 02 / 03`
+markers where the content is not a sequence. The introduction is a sequence:
+a person works through the six sections once, in order. Nothing else in the
+back office is numbered.
+
+---
+
 ## Disclosed variation: tracked caps on back office table headers
 
 **CLAUDE.md carves tracked caps out for the footer column headings only, and

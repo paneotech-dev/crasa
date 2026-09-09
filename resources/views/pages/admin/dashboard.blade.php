@@ -12,6 +12,8 @@
 
 @section('content')
 
+    @include('partials.admin-intro')
+
     {{-- Screen 09: repeat(auto-fit,minmax(min(100%,236px),1fr)), gap var(--s-4) --}}
     <div class="a-grid a-grid--stats">
         @foreach ($stats as $stat)
