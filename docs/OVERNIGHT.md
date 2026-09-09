@@ -1460,3 +1460,163 @@ Madagascar correctly in sand as a SADC member without a CRASA regulator.
 4. **Flags in the back office** — the users table, the audit log, anywhere a
    member state is named in a list. They stopped at the public site and the
    delegate roster.
+
+---
+
+# Priorities to Lilongwe, sections 44 to 49 — report
+
+**948 tests, 7264 assertions, all passing. Pint clean. Nine commits, each
+green before committing, none red at any point.**
+
+| # | Section | Commit |
+|---|---|---|
+| — | Question 8 ruled: the thirteenth block type | `8538c1e` |
+| 41 | The screen conformance audit | `6bef593` |
+| 41a–c | Extranet dashboard, facets, select, calendar | `27e5e07` `6ec67df` `08cdb2a` |
+| 42 | The strip, rehearsed against the real database | `8d05cbc` |
+| 43 | The pre-workshop checklist | `c81fc43` |
+| 44 | The navigation builder, screen 14 | `d9c8faa` |
+| 45 | The orphaned translations, all three layers | `7a071fc` |
+| 46 | The restore path, fixed and made repeatable | `9e2abf1` |
+| 47 | The demo path first, the rest deferred on the record | `75b0d3a` |
+| 48 | Committee membership as a workshop session | `c33c041` |
+| 49 | The legal pages, drafted rather than held open | `a259a66` |
+
+---
+
+## Gaps closed, deferred, remaining
+
+The audit found **31 gaps**. Since it was written:
+
+**Ten closed.** The extranet dashboard, the sector facet, the "available in"
+language facet, one select component, the calendar month grid, the calendar
+export, the navigation builder, the member profile fields, available
+languages on a document, and share-and-cite.
+
+**Six deferred as genuinely minor**, each with its reason on the record
+rather than closed indiscriminately: the result layout toggle, sorting the
+library, the calendar week view, the modal, iconography as a collected set,
+and per-language cover images.
+
+**Ten remain**, in priority order in `docs/SCREEN_AUDIT.md`. The largest is
+the workplan, which two screens depend on and which needs a decision from
+CRASA about what a workplan item *is* before it can be built. The progressive
+web app is second and is deferred on time rather than merit.
+
+**Two new questions logged.** Question 9: whether the calendar should offer a
+subscribe feed, which needs a per-user token and is therefore a security
+decision. Question 10: whether the host can give us a second database schema,
+which would turn the restore rehearsal from partial into complete.
+
+---
+
+## The restore, verified by running it
+
+**`php artisan backup:rehearse` — run, and passing.**
+
+```
+Dump                            ok, 367 KB
+Tables in dump                  41 of 41
+Rows in dump                    consistent with live
+Backup set: storage/app/private present, 4 KB
+Backup set: storage/app/public  present, 193.9 MB
+Documents with no file          none
+Restore                         skipped, no scratch schema given
+```
+
+**What is proven.** The documented dump command runs and authenticates — the
+defect that made the procedure unusable is gone, and it is now proven by
+executing the command rather than by reading it. The dump contains every one
+of the 41 tables and an INSERT for every table with rows. Both file-store
+directories exist and are in the backup set. No document row has lost its
+file.
+
+**What is not proven, and the command says so plainly.** The restore itself.
+The database user holds `ALL PRIVILEGES` on one schema and `USAGE` on
+everything else — checked against `SHOW GRANTS`, not assumed — so it cannot
+create a scratch schema, and restoring into the live one to prove a point is
+an outage rather than a rehearsal. That is Question 10, and it is two clicks
+in cPanel.
+
+**The full restore was performed by hand on 9 September and did work**: all
+forty tables matched the pre-purge census exactly, 1079 rows to 1079, and
+every public route returned 200 afterwards. What is missing is the ability to
+repeat that automatically, not evidence that it works.
+
+**Two defects the rehearsal found in itself**, both fixed and pinned:
+`SHOW TABLES` is MySQL-only and broke the command's own tests, and
+`getTableListing()` returns schema-qualified names while a dump names them
+bare — so the first real run reported all 41 tables missing from a dump
+containing every one. A check that cries wolf is worse than no check.
+
+---
+
+## Still not ready for 23 September
+
+**Three, and one of them changed shape this run.**
+
+**1. Imagery.** Unchanged. The banner runs on navy and typography, which is
+screen 02's own photograph-free composition. Only CRASA's own archive changes
+it.
+
+**2. Authority confirmations — no longer a request, now a session.** All
+fourteen are still unconfirmed, and fourteen written confirmations in
+fourteen days was never realistic. But `/{locale}/admin/confirmations` is
+built for the room: fourteen states, every field editable in place, a confirm
+action naming the delegate who vouched, and a count the room can watch move.
+Confirming clears `is_sample`, so a confirmed record survives the go-live
+purge. **Whether it is done now depends on an hour of the agenda, which is
+CRASA's to give rather than ours to build.**
+
+**3. Legal pages, in final form.** Privacy and terms now carry complete
+drafts in all three languages rather than holding lines, marked as drafts
+CRASA has not reviewed. What is left open is only what the build must not
+invent: retention periods, governing law, jurisdiction, the supervisory
+authority, the reuse licence. Each is a named blank saying who must supply
+it. A delegate opening the privacy page meets a document, not a placeholder.
+
+**And two that are one credential away rather than one fortnight:** mail and
+the backup destination. Both are first on the pre-workshop list because a
+fortnight is enough time for CRASA to send a credential and not enough to
+chase one.
+
+**One thing that is ready and was not:** the Secretariat can now change any
+menu item, in any language, without a deploy. That was the client's stated
+core requirement and a D2 acceptance item, and it was a config array and a
+hardcoded Blade template until this run.
+
+---
+
+## What I would do with two more days
+
+1. **The progressive web app.** The offline state is the part with real value
+   for delegates on hotel wifi, and it is the largest thing deferred purely
+   on time. A day to build, a day to test properly — a service worker that
+   caches the wrong thing serves a stale page with no way for the reader to
+   tell, which is why it is not being rushed into a fortnight.
+2. **Ask for the scratch schema and finish the restore rehearsal.** Ten
+   minutes of somebody's time at the host, and it converts the go-live
+   restore from something that will be attempted once under pressure into
+   something proven on a schedule.
+3. **The agenda on a meeting.** `meetings.agenda` exists as a column and is
+   unused. Screen 04 draws it. It is the cheapest remaining screen gap.
+4. **Flags and confirmations in the back office tables.** The confirmation
+   session shows them; the users table and the audit log do not.
+
+---
+
+## Two things worth saying plainly
+
+**The audit changed what this run was.** Four omissions were found by
+accident in the previous run; thirty-one were found on purpose in this one,
+and ten are already closed. Going into the workshop with
+`docs/SCREEN_AUDIT.md` is a better position than going in without it, because
+every gap in it is one we found rather than one a delegate found.
+
+**Two defects in this run would have surfaced in the room.** The demo script
+told the operator to run `php artisan user:create` and the command was called
+`crasa:user`, so the instruction for creating the four demonstration accounts
+would have failed at the prompt in front of fourteen regulators. And the
+orphaned translations meant the first publication CRASA created after go-live
+could have inherited a demonstration title in French. Neither was visible;
+both were found by doing the boring thing properly.
