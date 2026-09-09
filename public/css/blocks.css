@@ -511,8 +511,22 @@
   display: flex;
   flex-direction: column;
 }
+/*
+ * Screen 02 line 341 draws the news card's image edge to edge in a 16/9 box
+ * at the top of the card. It was rendering at its intrinsic size, centred,
+ * with the cream box showing all round it as if it were padding.
+ *
+ * Same cause as the hero, fixed there in line 140 and never carried across:
+ * <picture> is display:inline, so height:100% on the <img> resolves to auto
+ * against a parent with no height of its own, and object-fit never engages.
+ * The picture has to be the block that fills the box.
+ *
+ * place-items:center stays for the placeholder, which is a small mark and
+ * does want centring.
+ */
 .b-card__media { aspect-ratio: 16 / 9; background: var(--c-cream); border-bottom: 1px solid var(--c-sand); display: grid; place-items: center; }
-.b-card__media img { width: 100%; height: 100%; object-fit: cover; }
+.b-card__media picture { display: block; width: 100%; height: 100%; }
+.b-card__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 /* Screen 02 line 341: "background:var(--c-white);border:1px solid
    var(--c-sand);border-radius:var(--r-md);padding:var(--s-5);display:flex;
    flex-direction:column;gap:var(--s-3);box-shadow:var(--e-1)". The padding
@@ -1026,7 +1040,9 @@
 .c-band--image { position: relative; overflow: hidden; }
 .c-band--image .c-band__inner { position: relative; }
 .c-band__media { position: absolute; inset: 0; }
-.c-band__media img { width: 100%; height: 100%; object-fit: cover; }
+/* As the hero and the card: the picture is the block that fills the box. */
+.c-band__media picture { display: block; width: 100%; height: 100%; }
+.c-band__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* The overlay that makes the type legible over an unknown photograph.
    0.82 navy is the measured floor: a pure-white image beneath it still
@@ -1224,7 +1240,9 @@
 }
 /* Sizing only. The control itself is .c-select in base.css, which screen
    01 draws once and this had been redefining. */
-.c-map-region__select { flex: 1 1 260px; max-width: 420px; }
+/* Width, not flex. The field around it already does the row sizing, and a
+   flex basis here is a height. */
+.c-map-region__select { width: 100%; max-width: 420px; }
 
 /*
  * Two tiers, and the distance between them is the point. The two SADC

@@ -16,7 +16,10 @@
    over a photograph whose own tones are not fixed. */
 .c-cmp__masthead--image { position: relative; overflow: hidden; }
 .c-cmp__masthead-media { position: absolute; inset: 0; }
-.c-cmp__masthead-media img { width: 100%; height: 100%; object-fit: cover; }
+/* picture is display:inline, so it has to be made the block that fills the
+   box or object-fit on the img never engages. */
+.c-cmp__masthead-media picture { display: block; width: 100%; height: 100%; }
+.c-cmp__masthead-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .c-cmp__masthead-scrim { position: absolute; inset: 0; background: rgba(15, 27, 45, .82); }
 .c-cmp__masthead--image .c-cmp__masthead-inner { position: relative; }
 

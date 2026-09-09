@@ -98,6 +98,21 @@ table { border-collapse: collapse; }
 .c-select {
   min-height: 44px;
   min-width: 0;
+  /*
+   * Never a flex item that grows, and never one with a basis.
+   *
+   * .c-map-region__select carried "flex: 1 1 260px", written when the
+   * select sat directly in a row container. It was later wrapped in a
+   * column-flex field so its label could sit above it, and in a column the
+   * main axis is vertical: 260px stopped being a width and became a height,
+   * and flex-grow took it past that to the height of the row. Every select
+   * in the members section rendered about 200px tall.
+   *
+   * The component now refuses both by default, so a container rule has to
+   * say so explicitly to change it, and saying so on the wrong axis is
+   * visible immediately rather than in a screenshot a week later.
+   */
+  flex: 0 0 auto;
   padding: var(--s-2) var(--s-3);
   font-family: var(--f-body);
   font-size: 15px;
