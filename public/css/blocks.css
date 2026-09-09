@@ -1213,7 +1213,15 @@
   align-items: start;
 }
 @media (min-width: 900px) {
+  /*
+   * The detail panel's column. This is a viewport query, not a container
+   * one, so it fired for the homepage's 320px summary map too: the stage
+   * reserved 260px for a panel that static mode does not render, and the
+   * map itself was left 320 - 260 - 16 = 44px wide. That is the map the
+   * screenshot showed at roughly 50px.
+   */
   .c-map-region__stage { grid-template-columns: minmax(0, 1fr) 260px; }
+  .c-map-region--static .c-map-region__stage { grid-template-columns: minmax(0, 1fr); }
   .c-map-region__detail { grid-row: 1; grid-column: 2; }
   .c-map-region__insets { grid-column: 1 / -1; }
 }
@@ -2226,8 +2234,17 @@
   color: var(--c-charcoal);
   max-width: 44ch;
 }
-/* "max-width:320px;display:block" */
-.b-members__map-small { max-width: 320px; }
+/*
+ * "max-width:320px;display:block" -- screen 02 line 620.
+ *
+ * Wider than the screen draws, and deliberately. The screen's 320 was drawn
+ * around a decorative hand-inked graphic; this is the real map with
+ * fourteen shapes and fourteen labels on it, and at 320 the labels are
+ * unreadable and Lesotho is three pixels. It fills its column instead, up
+ * to 600 -- at 1440 the column is about 620 wide. Disclosed variation,
+ * logged in OPEN_ITEMS.md.
+ */
+.b-members__map-small { max-width: 600px; }
 .b-members__note { font-size: 13px; line-height: 1.5; color: var(--c-charcoal); margin: var(--s-2) 0 0; max-width: 44ch; }
 
 /* "grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));

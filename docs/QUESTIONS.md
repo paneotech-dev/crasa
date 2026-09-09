@@ -538,3 +538,62 @@ is six rather than four, and so that a decision about the `--d-*` set covers
 all of them at once.
 
 ---
+## E2 and E3: reported on screen, not reproducible from the server
+
+*Raised 9 September 2026, second time of asking.*
+
+**Recommendation: send one computed style from the browser's inspector. I
+have exhausted what the server can tell me.**
+
+Both were investigated by the method asked for and both come back clean.
+
+**E2, the Subject label.** The exact served element, in all three locales:
+
+```html
+<label class="c-label" for="subject">Subject <span class="c-required" aria-hidden="true">*</span></label>
+<label class="c-label" for="subject">Objet <span class="c-required" aria-hidden="true">*</span></label>
+<label class="c-label" for="subject">Assunto <span class="c-required" aria-hidden="true">*</span></label>
+```
+
+Every rule that can reach that element, across every non-print stylesheet
+the page links, in cascade order:
+
+| Sheet | Selector | Declarations |
+|---|---|---|
+| blocks.css | `.c-field` | `margin-bottom: var(--s-5)` |
+| blocks.css | `.c-label` | `display:block; font-size:14px; font-weight:600; color:var(--c-charcoal); margin-bottom:6px` |
+| blocks.css | `.c-required` | `color: var(--c-red)` |
+
+Nothing else matches. `bootstrap-grid.min.css` contributes no `label` rule,
+which is what the grid-only build is for. The computed colour is
+`--c-charcoal` on the cream page ground: 13.6:1. There is no
+visually-hidden span, no transparent colour, no covering pseudo-element,
+and the string is not resolving to one character in any locale.
+
+**E3, the BOCRA row.** Rows 1, 2 and 3 are structurally identical — same
+elements, same classes, same order. There is exactly **one** positional
+selector in every stylesheet on the site, `.c-policy > div:nth-child(2)`,
+which belongs to the legal pages and cannot reach a directory row. And
+Botswana's record is not distinctive: its authority name is 44 characters
+against Angola's 37 and **Comoros' 91**. If length were the trigger, Comoros
+would fail first and it does not.
+
+**What I have ruled out.** Stale HTML: the page is `cache-control: no-cache,
+private` and Cloudflare reports `cf-cache-status: DYNAMIC`, so the markup
+reaching the browser is fresh. Malformed markup: all ten public pages parse
+strictly well-formed under html5lib. Stale CSS: every href is versioned by
+mtime and the served files match the working tree byte for byte.
+
+**What I cannot rule out from here.** A browser extension injecting CSS, a
+forced-colours or high-contrast mode, a user stylesheet, a font that failed
+to load and fell back to one with no glyphs, or a zoom/reflow state. All of
+those are visible in the inspector and none of them are visible to curl.
+
+**What would settle it in one step:** right-click the Subject label, Inspect,
+and send the Computed panel — or just the value of `color`, `font-size` and
+`visibility`, plus whatever appears under Styles as overriding `.c-label`.
+For the directory, the same for `.b-directory__acronym` on the Botswana row.
+
+**Done meanwhile:** E1 was reproducible and is fixed, with its cause named.
+
+---

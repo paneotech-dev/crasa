@@ -9,6 +9,7 @@ use App\Models\IndicatorValue;
 use App\Services\MapExport;
 use App\Support\MapView;
 use Database\Seeders\CountrySeeder;
+use Database\Seeders\HomepageSeeder;
 use Database\Seeders\PublicPagesSeeder;
 use Database\Seeders\SectorSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -559,6 +560,41 @@ class MapIntegrityTest extends TestCase
 
         foreach ($selects[1] as $classes) {
             $this->assertStringContainsString('c-select', $classes);
+        }
+    }
+
+    public function test_the_static_map_gets_its_whole_container(): void
+    {
+        // .c-map-region__stage takes a second 260px column for the detail
+        // panel at 900px of VIEWPORT, not of container. The homepage's
+        // summary map is 600px wide inside that viewport, and static mode
+        // renders no detail panel, so the stage reserved 260px for nothing
+        // and left the map 44px. That is the map that rendered at roughly
+        // 50 pixels.
+        $css = file_get_contents(public_path('css/blocks.css'));
+
+        $this->assertMatchesRegularExpression(
+            '/\.c-map-region--static \.c-map-region__stage \{ grid-template-columns: minmax\(0, 1fr\); \}/',
+            $css,
+            'The static map still reserves a column for a panel it does not render.',
+        );
+
+        $this->seed(HomepageSeeder::class);
+
+        $html = $this->get('/en')->assertOk()->getContent();
+
+        $this->assertStringContainsString('c-map-region--static', $html);
+
+        // And static means static: no controls, no detail, no legend, no
+        // chips, no exports on the homepage.
+        foreach ([
+            'c-map-region__control',
+            'c-map-region__detail',
+            'c-map-region__legend',
+            'c-map-region__insets',
+            'c-map-region__exports',
+        ] as $chrome) {
+            $this->assertStringNotContainsString($chrome, $html, "The homepage map still renders {$chrome}.");
         }
     }
 }

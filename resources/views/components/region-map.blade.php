@@ -92,7 +92,12 @@
     $enlarged = collect($enlarged)->sortBy(fn ($shape, $iso) => $view->entry($iso)->country->name)->all();
 @endphp
 
-<figure class="c-map-region {{ $view->isShaded() ? 'c-map-region--shaded' : 'c-map-region--plain' }}">
+<figure @class([
+    'c-map-region',
+    'c-map-region--shaded' => $view->isShaded(),
+    'c-map-region--plain' => ! $view->isShaded(),
+    'c-map-region--static' => $static,
+])>
     {{-- Two routes to the same member state. Screen 08 puts "Select a
          member state" beside the map, and a map is not a control everyone
          can use: a reader who knows they want Zambia should not have to
