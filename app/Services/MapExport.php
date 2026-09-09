@@ -78,13 +78,41 @@ class MapExport
             $parts[] = '<text x="40" y="172" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="#5C6B7E">'.$e($subtitle).'</text>';
         }
 
-        // The map itself, at the same geometry and the same band colours.
-        $parts[] = '<g transform="translate(40 '.$mapTop.') scale('.round($mapScale, 4).')">';
+        /*
+         * The map itself, at the same geometry and the same band colours.
+         *
+         * The box no longer starts at the origin: it opens west and north to
+         * hold the continent, so min_x and min_y are negative. transform
+         * applies left to right, so the translate has to cancel that origin
+         * or every shape lands down and to the right of the frame.
+         */
+        $originX = round(40 - ($mapScale * $map['min_x']), 4);
+        $originY = round($mapTop - ($mapScale * $map['min_y']), 4);
+
+        // Named, because the header logo is also a translated group and
+        // anything looking for "the map" has to be able to tell them apart.
+        $parts[] = '<g id="region" transform="translate('.$originX.' '.$originY.') scale('.round($mapScale, 4).')">';
+
+        // Africa behind everything, inert here as it is on the page.
+        foreach ($map['continent'] as $outline) {
+            $parts[] = '<path d="'.$e($outline).'" fill="#F8F6F1" stroke="#908977" stroke-width="1.1" stroke-linejoin="round"/>';
+        }
 
         foreach ($map['context'] as $context) {
             $parts[] = '<path d="'.$e($context['d']).'" fill="#E5E0D5" stroke="#908977" stroke-width="0.9"/>';
         }
 
+        /*
+         * Every shape, then every label. Not one country at a time.
+         *
+         * $ordered is alphabetical, so Lesotho is drawn before South Africa,
+         * and Lesotho's label sits outside its own border because the
+         * country is too small to hold it. South Africa's fill then landed
+         * on top of it and the exported map went into a ministerial brief
+         * showing thirteen named member states and one unnamed hole. The
+         * page has always drawn the two passes separately; this is the
+         * export catching up.
+         */
         foreach ($ordered as $iso) {
             $shape = $map['members'][$iso] ?? null;
 
@@ -92,9 +120,13 @@ class MapExport
                 continue;
             }
 
-            $entry = $view->entry($iso);
-            $parts[] = '<path d="'.$e($shape['d']).'" fill="'.$this->fill($view, $entry?->bandAttribute())
+            $parts[] = '<path d="'.$e($shape['d']).'" fill="'.$this->fill($view, $view->entry($iso)?->bandAttribute())
                 .'" stroke="#0E5536" stroke-width="1" stroke-linejoin="round"/>';
+        }
+
+        foreach ($ordered as $iso) {
+            $shape = $map['members'][$iso] ?? null;
+            $entry = $view->entry($iso);
 
             if (($shape['label'] ?? null) === null || $entry === null) {
                 continue;
@@ -103,11 +135,14 @@ class MapExport
             // Every state states its own figure. Colour is never the only
             // carrier, in a printed brief least of all.
             $ink = $view->isShaded() && in_array($entry->bandAttribute(), ['2', '3'], true) ? '#FFFFFF' : '#0F1B2D';
+            // 18 and 15 rather than 13 and 11: these sit inside the scaled
+            // group, and the group's scale fell when the box grew to hold
+            // the continent. The page carries the same two values.
             $parts[] = '<text x="'.$shape['label'][0].'" y="'.$shape['label'][1].'" text-anchor="middle" '
-                .'font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="'.$ink.'">'
+                .'font-family="Helvetica,Arial,sans-serif" font-size="18" font-weight="700" fill="'.$ink.'">'
                 .$e(strtoupper($iso)).'</text>';
-            $parts[] = '<text x="'.$shape['label'][0].'" y="'.($shape['label'][1] + 14).'" text-anchor="middle" '
-                .'font-family="Helvetica,Arial,sans-serif" font-size="11" font-weight="600" fill="'.$ink.'">'
+            $parts[] = '<text x="'.$shape['label'][0].'" y="'.($shape['label'][1] + 19).'" text-anchor="middle" '
+                .'font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="'.$ink.'">'
                 .$e($entry->display).'</text>';
         }
 

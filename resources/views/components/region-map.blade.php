@@ -128,7 +128,7 @@
     <div class="c-map-region__stage">
         <svg
             class="c-map-region__svg"
-            viewBox="0 0 {{ $map['width'] }} {{ $map['height'] }}"
+            viewBox="{{ $map['min_x'] }} {{ $map['min_y'] }} {{ $map['width'] }} {{ $map['height'] }}"
             role="img"
             aria-label="{{ $view->isShaded() ? __('members.map_label_shaded', ['dataset' => $view->title()]) : __('members.map_label') }}"
             focusable="false"
@@ -146,9 +146,20 @@
                 </pattern>
             </defs>
 
-            {{-- Neighbouring states, so the region has a context rather than
-                 floating. Not members, so not interactive and not labelled as
-                 though they were. --}}
+            {{-- Africa. The approved RegionMap.dc.html drew a grid of sand
+                 rules here, which is what a map does when it has no
+                 geography to show. These are the real outlines at the same
+                 projection, inert and unlabelled: the region sits in a
+                 continent instead of on graph paper. --}}
+            <g class="c-map-region__continent" aria-hidden="true">
+                @foreach ($map['continent'] as $outline)
+                    <path d="{{ $outline }}"></path>
+                @endforeach
+            </g>
+
+            {{-- The two SADC states that are not CRASA members. A step
+                 closer than the continent behind them and a step back from
+                 the fourteen: named, but never clickable. --}}
             @foreach ($map['context'] as $context)
                 <path class="c-map-region__context" d="{{ $context['d'] }}" aria-hidden="true"></path>
             @endforeach
@@ -194,7 +205,7 @@
                     class="c-map-region__value"
                     data-band="{{ $view->entry($iso)->bandAttribute() }}"
                     x="{{ $shape['label'][0] }}"
-                    y="{{ $shape['label'][1] + 14 }}"
+                    y="{{ $shape['label'][1] + 19 }}"
                     text-anchor="middle"
                     aria-hidden="true"
                 >{{ $view->entry($iso)->display }}</text>

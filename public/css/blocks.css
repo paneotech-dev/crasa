@@ -1107,10 +1107,30 @@
    01 draws once and this had been redefining. */
 .c-map-region__select { flex: 1 1 260px; max-width: 420px; }
 
+/*
+ * Three tiers, and the distance between them is the whole point.
+ *
+ * Africa is cream on a sand hairline: present, inert, never mistaken for a
+ * subject. The two SADC states that are not CRASA members are a step
+ * forward in sand. The fourteen are green, the colour that means "in force"
+ * everywhere else on the platform.
+ *
+ * The continent's stroke does the work rather than its fill, because the
+ * members block sits on the sand ground and a cream fill on sand is a
+ * whisper. On white it is the other way round. The hairline reads on both.
+ */
+.c-map-region__continent path {
+  fill: var(--c-cream);
+  stroke: var(--c-border);
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
 /* Neighbours in sand, so the region reads as sitting in a continent rather
    than floating. Deliberately flat: they are context, not content. */
 .c-map-region__context { fill: var(--c-sand); stroke: var(--c-border); stroke-width: .9; stroke-linejoin: round; }
-.c-map-region__context-label { fill: var(--c-slate); font-family: var(--f-admin); font-size: 12px; }
+.c-map-region__context-label { fill: var(--c-slate); font-family: var(--f-admin); font-size: 16px; }
 
 /* Members in the green that means "in force" everywhere else on the
    platform. The map is not inventing a colour meaning; it is using the one
@@ -1129,7 +1149,10 @@
 .c-map-region__code {
   fill: var(--c-green-dark);
   font-family: var(--f-admin);
-  font-size: 13px;
+  /* User units, so these scale with the viewBox. The box went from 820 to
+     1136 wide when the continent arrived, which would have rendered 13px at
+     about 9. 18 and 15 hold the apparent size where it was. */
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: .04em;
   pointer-events: none;
@@ -1137,7 +1160,7 @@
 .c-map-region__value {
   fill: var(--c-charcoal);
   font-family: var(--f-admin);
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 600;
   pointer-events: none;
 }
