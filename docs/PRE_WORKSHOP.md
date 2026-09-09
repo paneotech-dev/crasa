@@ -256,8 +256,15 @@ missing and who has it.
 | Terms | Terms of use, from CRASA's counsel |
 | Home | Banner photography |
 
-The legal pages are the two that matter most and the two least likely to
-move: they need counsel, and counsel does not work to a fortnight.
+The legal pages now carry full drafts rather than holding lines, marked as
+drafts CRASA has not reviewed. What is left in them is only what the build
+must not invent: retention periods, governing law, jurisdiction, the
+supervisory authority, the reuse licence. Each is a named blank saying who
+must supply it.
+
+That changes what happens if counsel does not come back in a fortnight. A
+delegate opening the privacy page meets a complete document that says it is a
+draft, rather than a sentence saying content is being prepared.
 
 **Every placeholder states what it is waiting for and does not pretend.** A
 delegate who opens the privacy page sees a designed holding line naming what
@@ -300,8 +307,11 @@ asks for them by email: the confirmation session at
 `/{locale}/admin/confirmations` is built for the room. Whether it is *done*
 depends on an hour of the agenda, which is CRASA's to give.
 
-**3. Legal pages.** Privacy notice and terms of use need CRASA's counsel.
-Both currently show a designed holding line naming what is missing.
+**3. Legal pages, in their final form.** Privacy and terms carry full drafts
+and are marked as drafts. Only counsel can close the bracketed items —
+retention, governing law, jurisdiction, the supervisory authority — and
+counsel does not work to a fortnight. What a delegate meets in the meantime is
+a complete document rather than a holding line.
 
 **And two that are not ours to finish:** mail and backups are both one
 credential away, and both are listed first because a fortnight is enough time
