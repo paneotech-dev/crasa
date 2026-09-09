@@ -3,6 +3,13 @@
 @section('title', __('submissions.form_title', ['period' => $submission->period]))
 @section('note', $submission->country?->name)
 
+@section('actions')
+    @if ($editable)
+        <a class="a-btn a-btn--secondary" href="{{ route('submissions.import', ['locale' => app()->getLocale(), 'submission' => $submission->id]) }}">{{ __('import.title') }}</a>
+    @endif
+    <a class="a-btn a-btn--secondary" href="{{ route('submissions.export.csv', ['locale' => app()->getLocale(), 'submission' => $submission->id]) }}">{{ __('import.export_csv') }}</a>
+@endsection
+
 @section('crumbs')
     <li><a href="{{ route('submissions', ['locale' => app()->getLocale()]) }}">{{ __('submissions.title') }}</a></li>
     <li aria-current="page">{{ $submission->period }}</li>

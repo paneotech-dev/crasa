@@ -25,6 +25,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SubmissionController;
+use App\Http\Controllers\SubmissionImportController;
 use App\Http\Middleware\SetLocale;
 use App\Support\Locales;
 use Illuminate\Support\Facades\Route;
@@ -181,9 +182,27 @@ Route::prefix('{locale}')
              */
             Route::get('submissions', [SubmissionController::class, 'index'])->name('submissions');
             Route::post('submissions', [SubmissionController::class, 'store'])->name('submissions.store');
-            Route::get('submissions/{submission}', [SubmissionController::class, 'edit'])->name('submissions.edit');
+            /*
+             * Constrained to digits, or "submissions/template.csv" would be
+             * matched as a submission called "template.csv" and 404 on a
+             * route that exists.
+             */
+            Route::get('submissions/{submission}', [SubmissionController::class, 'edit'])
+                ->whereNumber('submission')->name('submissions.edit');
             Route::put('submissions/{submission}', [SubmissionController::class, 'update'])->name('submissions.update');
             Route::post('submissions/{submission}/submit', [SubmissionController::class, 'submit'])->name('submissions.submit');
+
+            /*
+             * Bulk import and export, RP-08 and BUILD_SPEC 6.2. Two steps:
+             * inspect reports, commit writes, and commit writes everything
+             * or nothing.
+             */
+            Route::get('submissions/template.csv', [SubmissionImportController::class, 'template'])->name('submissions.template');
+            Route::get('submissions/{submission}/import', [SubmissionImportController::class, 'show'])->name('submissions.import');
+            Route::post('submissions/{submission}/import', [SubmissionImportController::class, 'inspect'])->name('submissions.import.inspect');
+            Route::post('submissions/{submission}/import/commit', [SubmissionImportController::class, 'commit'])->name('submissions.import.commit');
+            Route::get('submissions/{submission}/export.csv', [SubmissionImportController::class, 'exportCsv'])->name('submissions.export.csv');
+            Route::get('submissions/{submission}/export.json', [SubmissionImportController::class, 'exportJson'])->name('submissions.export.json');
 
             Route::get('account', [AccountController::class, 'show'])->name('account');
             Route::put('account', [AccountController::class, 'update'])->name('account.update');
