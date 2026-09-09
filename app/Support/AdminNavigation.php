@@ -31,7 +31,7 @@ final class AdminNavigation
             ['key' => 'content', 'route' => 'admin.pages', 'permission' => Permission::ManageContent],
             ['key' => 'translations', 'route' => 'admin.translations', 'permission' => Permission::EditTranslations],
             ['key' => 'media', 'route' => 'admin.media', 'permission' => Permission::ManageContent],
-            ['key' => 'data', 'route' => 'admin.indicators', 'permission' => Permission::ViewPublishedIndicators],
+            ['key' => 'data', 'route' => 'admin.data', 'permission' => null],
             ['key' => 'users', 'route' => 'admin.users', 'permission' => Permission::ManageUsers],
             ['key' => 'settings', 'route' => 'admin.settings', 'permission' => Permission::ManageSettings],
         ];

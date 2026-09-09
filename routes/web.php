@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\Admin\PageBlockController;
+use App\Http\Controllers\Admin\ResourceController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Auth\LoginController;
@@ -214,6 +215,20 @@ Route::prefix('{locale}')
                 Route::put('translations/{type}/{id}', [TranslationController::class, 'update'])->name('translations.update');
                 Route::put('translations/{type}/{id}/approve', [TranslationController::class, 'approve'])->name('translations.approve');
                 Route::get('translations/{type}/{id}/preview/{previewLocale}', [TranslationController::class, 'preview'])->name('translations.preview');
+
+                /*
+                 * Every other administered model. Screen 09: "The repeating
+                 * resource table. Every content type in the back office uses
+                 * this pattern."
+                 */
+                Route::get('data', [ResourceController::class, 'hub'])->name('data');
+                Route::get('data/{resource}', [ResourceController::class, 'index'])->name('resources');
+                Route::get('data/{resource}/new', [ResourceController::class, 'create'])->name('resources.create');
+                Route::post('data/{resource}', [ResourceController::class, 'store'])->name('resources.store');
+                Route::get('data/{resource}/{id}', [ResourceController::class, 'edit'])->name('resources.edit');
+                Route::put('data/{resource}/{id}', [ResourceController::class, 'update'])->name('resources.update');
+                Route::delete('data/{resource}/{id}', [ResourceController::class, 'destroy'])->name('resources.destroy');
+                Route::put('data/{resource}/{id}/restore', [ResourceController::class, 'restore'])->name('resources.restore');
 
                 Route::get('users', [UserAdminController::class, 'index'])->name('users');
                 Route::get('users/invite', [UserAdminController::class, 'form'])->name('users.form');

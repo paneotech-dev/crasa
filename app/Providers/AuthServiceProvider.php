@@ -8,22 +8,34 @@ use App\Models\Authority;
 use App\Models\Committee;
 use App\Models\Country;
 use App\Models\Document;
+use App\Models\Enquiry;
+use App\Models\Indicator;
+use App\Models\IndicatorValue;
 use App\Models\Instrument;
 use App\Models\MediaAsset;
+use App\Models\NewsItem;
 use App\Models\Page;
 use App\Models\PageBlock;
+use App\Models\Publication;
 use App\Models\Sector;
+use App\Models\Tag;
 use App\Models\User;
 use App\Policies\AuditLogPolicy;
 use App\Policies\AuthorityPolicy;
 use App\Policies\CommitteePolicy;
 use App\Policies\CountryPolicy;
 use App\Policies\DocumentPolicy;
+use App\Policies\EnquiryPolicy;
+use App\Policies\IndicatorPolicy;
+use App\Policies\IndicatorValuePolicy;
 use App\Policies\InstrumentPolicy;
 use App\Policies\MediaAssetPolicy;
+use App\Policies\NewsItemPolicy;
 use App\Policies\PageBlockPolicy;
 use App\Policies\PagePolicy;
+use App\Policies\PublicationPolicy;
 use App\Policies\SectorPolicy;
+use App\Policies\TagPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -39,6 +51,12 @@ class AuthServiceProvider extends ServiceProvider
         Document::class => DocumentPolicy::class,
         Instrument::class => InstrumentPolicy::class,
         MediaAsset::class => MediaAssetPolicy::class,
+        Enquiry::class => EnquiryPolicy::class,
+        Indicator::class => IndicatorPolicy::class,
+        IndicatorValue::class => IndicatorValuePolicy::class,
+        NewsItem::class => NewsItemPolicy::class,
+        Publication::class => PublicationPolicy::class,
+        Tag::class => TagPolicy::class,
         Page::class => PagePolicy::class,
         PageBlock::class => PageBlockPolicy::class,
         Sector::class => SectorPolicy::class,
