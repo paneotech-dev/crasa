@@ -679,4 +679,12 @@ return [
     'stat_users_note' => ':n ativos',
 
     'search_everything' => 'Pesquisar na administração',
+
+    'menu_labels' => 'Etiqueta, por idioma',
+    'menu_edit' => 'Editar este item',
+    'menu_save' => 'Guardar o item',
+    'menu_cancel_edit' => 'Parar de editar',
+    'menu_under' => 'sob :parent',
+    'menu_visible_badge' => 'Visível',
+    'menu_delete_confirm' => 'Eliminar "​:label" do menu? Os seus subitens são removidos com ele.',
 ];

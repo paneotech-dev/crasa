@@ -23,6 +23,9 @@
         <section class="a-card a-card--flush">
             <div class="a-card__head"><h2>{{ __('admin.meetings_'.$key) }}</h2></div>
 
+            {{-- Wide tables scroll inside the card rather than being
+                 clipped by it. --}}
+            <div class="a-tablewrap">
             <table class="a-table">
                 <thead>
                     <tr>
@@ -48,6 +51,7 @@
                     @endforeach
                 </tbody>
             </table>
+            </div>
         </section>
     @endforeach
 @endsection

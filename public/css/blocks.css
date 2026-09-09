@@ -2463,3 +2463,39 @@
 /* A ring rather than a lift: nothing on this platform scales on hover. */
 .c-footer__social a:hover,
 .c-footer__social a:focus-visible { outline: 2px solid var(--c-cream); outline-offset: 3px; }
+
+/* The paginator ---------------------------------------------------------- */
+/* Laravel's default view is the Tailwind one, whose chevrons are
+   <svg class="w-5 h-5"> with no width or height attribute. Tailwind is not
+   on this platform, so those classes resolved to nothing and each chevron
+   filled its container. The views are published under
+   resources/views/vendor/pagination and every svg states its own size. */
+
+.c-pager { display: flex; align-items: center; gap: var(--s-4); flex-wrap: wrap; }
+.c-pager__status { font-size: 14px; color: var(--c-slate); }
+.c-pager__links { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+
+.c-pager__links a,
+.c-pager__links span {
+  min-width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0 12px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  font-size: 14px;
+  text-decoration: none;
+  color: var(--c-charcoal);
+}
+.c-pager__links a:hover { border-color: var(--c-navy); color: var(--c-navy); }
+.c-pager__links [aria-current="page"] {
+  background: var(--c-navy);
+  border-color: var(--c-navy);
+  color: var(--c-white);
+  font-weight: 600;
+}
+.c-pager__gap { border: 0 !important; min-width: 0 !important; padding: 0 4px !important; }
+/* A step that goes nowhere is present and visibly inert, so the row does
+   not change width at the ends of the range. */
+.c-pager__step.is-off { color: var(--c-disabled); border-color: var(--c-sand); }

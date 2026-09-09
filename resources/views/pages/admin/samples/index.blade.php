@@ -22,6 +22,9 @@
         </div>
 
         <section class="a-card a-card--flush">
+            {{-- Wide tables scroll inside the card rather than being
+                 clipped by it. --}}
+            <div class="a-tablewrap">
             <table class="a-table">
                 <thead>
                     <tr>
@@ -38,6 +41,7 @@
                     @endforeach
                 </tbody>
             </table>
+            </div>
         </section>
     @endif
 

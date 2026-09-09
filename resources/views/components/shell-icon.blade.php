@@ -151,6 +151,28 @@
         @case('menu')
             <path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path>
             @break
+        @case('assistant')
+            <path d="M4 5a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2H9l-5 4z"></path>
+            <path d="M9 8h6"></path><path d="M9 11.5h4"></path>
+            @break
+        @case('scales')
+            <path d="M12 4v16"></path><path d="M6 8h12"></path>
+            <path d="M6 8l-3 6h6z"></path><path d="M18 8l-3 6h6z"></path>
+            @break
+        @case('gap')
+            <path d="M4 7h6"></path><path d="M14 7h6"></path>
+            <path d="M4 17h16"></path><path d="M12 4v6"></path>
+            @break
+        @case('draft')
+            <path d="M4 20h4l10-10a2.1 2.1 0 00-3-3L5 17z"></path>
+            <path d="M14 6l4 4"></path>
+            @break
+        @case('arrow-up')
+            <path d="M12 19V5"></path><path d="M6 11l6-6 6 6"></path>
+            @break
+        @case('arrow-down')
+            <path d="M12 5v14"></path><path d="M6 13l6 6 6-6"></path>
+            @break
         @case('close')
             <path d="M6 6l12 12"></path><path d="M18 6L6 18"></path>
             @break

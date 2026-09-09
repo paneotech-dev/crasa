@@ -43,7 +43,7 @@
             <label class="a-search">
                 <span class="c-sr">{{ $searchLabel ?? __('admin.search_label') }}</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>
-                <input type="search" name="{{ $searchName }}" value="{{ request($searchName) }}" placeholder="{{ $searchLabel ?? __('admin.search_label') }}">
+                <input class="a-search__field" type="search" name="{{ $searchName }}" value="{{ request($searchName) }}" placeholder="{{ $searchLabel ?? __('admin.search_label') }}">
             </label>
             {{ $filters }}
             <button type="submit" class="a-btn a-btn--secondary">{{ __('admin.apply') }}</button>

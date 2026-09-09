@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Pagination\Paginator;
 use App\Auth\IdentityProvider;
 use App\Auth\PlatformIdentityProvider;
 use App\Search\DatabaseSearchDriver;
@@ -63,6 +64,21 @@ class AppServiceProvider extends ServiceProvider
          * See docs/MAIL_SETUP.md.
          */
         DeliveryCheck::report();
+
+        /*
+         * The paginator uses this platform's own view.
+         *
+         * Laravel's default is pagination::tailwind, whose chevrons are
+         * <svg class="w-5 h-5"> -- two Tailwind classes on a platform
+         * CLAUDE.md forbids Tailwind on. They resolved to nothing and each
+         * chevron expanded to fill its container: the audit log's
+         * pagination rendered at hundreds of pixels.
+         *
+         * Publishing the view is not enough on its own; the default has to
+         * be pointed at it.
+         */
+        Paginator::defaultView('pagination::default');
+        Paginator::defaultSimpleView('pagination::simple-default');
 
         // Six enquiries an hour per address. Enough that a regulator sending
         // two in a morning is never stopped; few enough that a script is.

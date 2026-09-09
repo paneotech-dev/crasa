@@ -189,7 +189,15 @@ class InteractiveSurfacesTest extends TestCase
                 continue;
             }
 
-            preg_match_all('~class="([^"{}@]*)"~', $file->getContents(), $found);
+            /*
+             * Blade comments first. The published paginator explains why
+             * Laravel's own view could not be used by quoting the Tailwind
+             * markup that caused the bug, and a guard that trips on its
+             * own explanation is a guard nobody keeps.
+             */
+            $source = preg_replace('~\{\{--.*?--\}\}~s', '', $file->getContents());
+
+            preg_match_all('~class="([^"{}@]*)"~', $source, $found);
 
             foreach ($found[1] as $list) {
                 foreach (preg_split('~\s+~', trim($list)) as $class) {

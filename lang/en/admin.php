@@ -679,4 +679,12 @@ return [
     'stat_users_note' => ':n active',
 
     'search_everything' => 'Search the administration',
+
+    'menu_labels' => 'Label, per language',
+    'menu_edit' => 'Edit this item',
+    'menu_save' => 'Save the item',
+    'menu_cancel_edit' => 'Stop editing',
+    'menu_under' => 'under :parent',
+    'menu_visible_badge' => 'Visible',
+    'menu_delete_confirm' => 'Delete ":label" from the menu? Its children are removed with it.',
 ];

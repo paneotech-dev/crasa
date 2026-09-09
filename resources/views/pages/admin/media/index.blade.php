@@ -29,7 +29,7 @@
                 <label class="a-search">
                     <span class="c-sr">{{ __('admin.media_search') }}</span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>
-                    <input type="search" name="q" value="{{ request('q') }}" placeholder="{{ __('admin.media_search') }}">
+                    <input class="a-search__field" type="search" name="q" value="{{ request('q') }}" placeholder="{{ __('admin.media_search') }}">
                 </label>
 
                 <label class="c-sr" for="type">{{ __('admin.col_type') }}</label>

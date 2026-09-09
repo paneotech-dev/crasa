@@ -469,7 +469,11 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
   max-width: 340px;
 }
 
-.a-search input {
+/* The field inside the search wrapper. It carries the class as well as
+   sitting in the wrapper, so a reader of the markup can see which
+   component it belongs to rather than inferring it from position. */
+.a-search input,
+.a-search__field {
   border: 0;
   outline: 0;
   background: none;
@@ -988,13 +992,56 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
  * CLAUDE.md fixes that radius for inputs, and --c-border rather than
  * --c-line, because SC 1.4.11 asks 3:1 for the boundary of a control.
  */
-.a-form { display: flex; flex-direction: column; gap: var(--s-4); max-width: 620px; }
+/* =======================================================================
+   FORMS. One pattern, everywhere in the administration and the extranet.
 
-.a-field { display: flex; flex-direction: column; gap: 5px; }
+   Screen 01's form components, at the sizes the ruling of 10 September
+   2026 gives them. The navigation builder was the case that made this
+   necessary: it mixed .c-input, drawn for the public site, with .s-field,
+   drawn for the submission e-Form, inside an admin panel, and came out
+   looking like a browser default.
+
+   A form is a white card at most 640px wide. Fields are 20px apart, the
+   label sits above its control at 13.5px/600, the control is 40px tall and
+   the full width of the card, and help text sits beneath at 13px slate.
+   Actions sit at the bottom right, auto-width, never full-width.
+   ======================================================================= */
+
+.a-form { display: flex; flex-direction: column; gap: 20px; max-width: 640px; }
+
+/* A form on its own is a card. Inside .a-card the card is already there,
+   so it does not draw a second one. */
+.a-form--card {
+  background: var(--a-surface);
+  border: 1px solid var(--a-rule);
+  border-radius: var(--r-md);
+  box-shadow: var(--e-1);
+  padding: var(--s-5);
+}
+.a-card .a-form--card { border: 0; box-shadow: none; padding: 0; }
+
+.a-field { display: flex; flex-direction: column; gap: 6px; }
 
 /* A real label on every field. Never a placeholder standing in for one. */
 .a-label { font-size: 13.5px; font-weight: 600; color: var(--a-ink); }
 .a-hint { font-size: 13px; color: var(--a-ink-quiet); line-height: 1.5; }
+
+/* The asterisk the public forms use, in the same red and with the same
+   spoken word beside it. Marking a field required in colour alone fails
+   SC 1.4.1, so the visible mark is a glyph and the name says the word. */
+.a-required { color: var(--c-red); margin-left: 3px; }
+
+/* Related fields under one heading. The three language labels on a menu
+   item are one question asked three times, not three questions. */
+.a-fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 20px; }
+.a-fieldset > legend {
+  font-family: var(--f-admin);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--a-ink);
+  padding: 0;
+  margin-bottom: 6px;
+}
 
 .a-input,
 .a-select {
@@ -1002,12 +1049,16 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
   font-size: 14.5px;
   color: var(--a-ink);
   background: var(--a-surface);
-  border: 1px solid var(--c-border);
-  border-radius: var(--r-xs);
-  padding: 9px 11px;
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-sm);
+  padding: 0 12px;
+  height: 40px;
   width: 100%;
   min-width: 0;
 }
+
+/* A textarea is the one control that is not 40px: it is sized by rows. */
+textarea.a-input { height: auto; padding: 10px 12px; line-height: 1.5; }
 
 /*
  * The option list, pinned as a matched pair.
@@ -1031,7 +1082,21 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
 .a-input:focus-visible,
 .a-select:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
 
-.a-form__actions { display: flex; gap: var(--s-3); flex-wrap: wrap; align-items: center; }
+/* Bottom right, auto-width. A full-width green button is a mobile pattern
+   on a screen that is not a phone, and it makes the least reversible
+   control on the form the largest thing on it. */
+.a-form__actions {
+  display: flex;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: var(--s-2);
+}
+.a-form__actions .a-btn { width: auto; flex: none; }
+/* Where a form carries a destructive action, it sits left of the rest so
+   the primary action is not next to it. */
+.a-form__actions .a-btn--danger { margin-right: auto; }
 
 /* Help ------------------------------------------------------------------ */
 
@@ -1707,6 +1772,32 @@ a.e-dash__title:hover { text-decoration: underline; text-underline-offset: 3px; 
   flex: none;
 }
 .a-side__mark:hover { color: var(--c-white); }
+
+/*
+ * WHY THESE CARRY body[data-surface="admin"].
+ *
+ * body[data-surface="admin"] a is (0,1,1) and sets --a-link, which is
+ * --c-green-dark. .a-side__link is (0,1,0) and lost to it, so every row in
+ * the sidebar rendered dark green on navy: 1.4:1, and unreadable. The
+ * sidebar's own rules match that specificity rather than raising the
+ * generic one, because the generic one is right everywhere else.
+ *
+ * Measured against the two grounds the sidebar has:
+ *
+ *   cream 85% on navy       #D5D5D4 on #0F1B2D   11.78:1
+ *   cream 85% on navy-mid   #D7D7D7 on #1A2742   10.32:1
+ *   cream on navy-mid       hover                13.76:1
+ *   white on navy-mid       active               14.86:1
+ *   green-light on navy     group labels         15.29:1
+ *   cream on navy           wordmark and name    16.00:1
+ *   green on navy-mid       the 3px active bar    3.50:1  (SC 1.4.11)
+ *
+ * The 85% is a colour-mix against the ground rather than an opacity, so
+ * the icon and the label dim together and nothing else on the row does,
+ * and so the value stays derived from the tokens.
+ */
+body[data-surface="admin"] .a-side__mark { color: var(--c-cream); }
+body[data-surface="admin"] .a-side__mark:hover { color: var(--c-white); }
 .a-side__wordmark { font-family: var(--f-admin); font-size: 15px; font-weight: 600; line-height: 1.25; }
 
 /* The list scrolls; the mark and the signed-in reader do not. */
@@ -1750,8 +1841,12 @@ a.e-dash__title:hover { text-decoration: underline; text-underline-offset: 3px; 
   line-height: 1.3;
 }
 .a-side__link .a-icon { flex: none; }
-.a-side__link:hover { background: var(--c-navy-mid); color: var(--c-cream); }
-.a-side__link.is-current {
+
+/* The label and its icon together: currentColor on the svg means one
+   declaration moves both. */
+body[data-surface="admin"] .a-side__link { color: color-mix(in srgb, var(--c-cream) 85%, var(--c-navy)); }
+body[data-surface="admin"] .a-side__link:hover { background: var(--c-navy-mid); color: var(--c-cream); }
+body[data-surface="admin"] .a-side__link.is-current {
   background: var(--c-navy-mid);
   border-left-color: var(--c-green);
   color: var(--c-white);
@@ -1784,7 +1879,8 @@ a.e-dash__title:hover { text-decoration: underline; text-underline-offset: 3px; 
   color: var(--c-cream); text-decoration: none;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.a-side__name:hover { color: var(--c-white); text-decoration: underline; text-underline-offset: 3px; }
+body[data-surface="admin"] .a-side__name { color: var(--c-cream); }
+body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-decoration: underline; text-underline-offset: 3px; }
 .a-side__role { font-family: var(--f-admin); font-size: 12px; color: var(--c-sand); }
 .a-side__out {
   flex: none;
@@ -1798,7 +1894,32 @@ a.e-dash__title:hover { text-decoration: underline; text-underline-offset: 3px; 
 
 /* The top bar --------------------------------------------------------- */
 
-.a-shell__body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+/*
+ * THE PAGE NEVER SCROLLS SIDEWAYS, AND THAT IS WHY THE TOP BAR STAYS PUT.
+ *
+ * .a-top is sticky, and a sticky element scrolls horizontally with its
+ * scrollport. On the audit log, a table wider than the space left beside
+ * the sidebar pushed the document past the viewport, so the top bar's right
+ * end -- the pill group, the bell, the help icon and the avatar -- was off
+ * screen to the right. The markup was identical on every page; the layout
+ * was not.
+ *
+ * overflow-x: clip rather than hidden. hidden makes this a scroll container
+ * and a scroll container is exactly what sticky positioning inside it
+ * stops working against. clip contains the overflow and creates no
+ * scrollport, so .a-top keeps sticking.
+ *
+ * Wide content is not lost: every table is inside .a-tablewrap, which
+ * scrolls on its own. Held by test.
+ */
+.a-shell__body {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
+  display: flex;
+  flex-direction: column;
+}
 
 .a-top {
   position: sticky; top: 0; z-index: 20;
@@ -1878,7 +1999,7 @@ a.e-dash__title:hover { text-decoration: underline; text-underline-offset: 3px; 
 
 /* The content area ---------------------------------------------------- */
 
-.a-main { flex: 1 1 auto; min-width: 0; padding: var(--s-6); background: var(--a-ground); }
+.a-main { flex: 1 1 auto; min-width: 0; max-width: 100%; padding: var(--s-6); background: var(--a-ground); }
 
 .a-pagehead {
   display: flex; align-items: flex-start; justify-content: space-between;
@@ -1962,7 +2083,11 @@ a.e-dash__title:hover { text-decoration: underline; text-underline-offset: 3px; 
 }
 /* A table fills its card to the edge, so the header row's ground reaches
    the corners rather than floating inside a 24px margin. */
+/* The corners are clipped and the table scrolls inside .a-tablewrap. A
+   card that clips its own content is a card that hides a column, which is
+   what took the publications table's Status. */
 .a-card--flush { padding: 0; overflow: hidden; }
+.a-card--flush .a-table { min-width: 720px; }
 .a-card--flush .a-card__head { padding: var(--s-5) var(--s-5) var(--s-4); margin: 0; }
 
 .a-card__head {
@@ -2056,3 +2181,91 @@ a.e-dash__title:hover { text-decoration: underline; text-underline-offset: 3px; 
 .a-table__num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--f-admin); }
 .a-table__num[scope="col"] { text-align: right; }
 .a-alert__dismissform { float: right; margin-left: var(--s-3); }
+
+/* The navigation builder ------------------------------------------------- */
+
+.a-menu { list-style: none; margin: 0; padding: 0; }
+.a-menu__row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-5);
+  border-bottom: 1px solid var(--a-rule);
+  min-width: 0;
+}
+.a-menu__row:last-child { border-bottom: 0; }
+/* A nested row is indented and also names its parent in its own meta line:
+   indentation alone is a visual relationship and a screen reader gets none
+   of it. */
+.a-menu__row[data-depth="1"] { padding-left: calc(var(--s-5) + var(--s-6)); background: var(--a-ground); }
+
+.a-menu__handle { flex: none; color: var(--c-disabled); display: grid; place-items: center; cursor: grab; }
+.a-menu__main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.a-menu__label { font-size: 14.5px; font-weight: 600; color: var(--a-ink); }
+.a-menu__path { font-size: 13px; color: var(--a-ink-quiet); }
+.a-menu__flags { display: flex; gap: 6px; flex-wrap: wrap; flex: none; }
+.a-menu__actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; flex: none; }
+
+/* A small icon button, 32px, for the row controls. Its accessible name
+   carries the item's own label. */
+.a-iconbtn {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  color: var(--a-ink);
+  cursor: pointer;
+  padding: 0;
+}
+.a-iconbtn:hover { background: var(--c-cream); border-color: var(--a-ink-strong); color: var(--a-ink-strong); }
+
+.a-btn--small { min-height: 32px; padding: 0 12px; font-size: 13.5px; }
+
+/* Two menus, two tabs. */
+.a-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--a-rule); margin-bottom: var(--s-5); }
+.a-tabs a {
+  font-family: var(--f-admin);
+  font-size: 14.5px;
+  font-weight: 600;
+  padding: 10px var(--s-4);
+  color: var(--a-ink-quiet);
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+}
+.a-tabs a:hover { color: var(--a-ink-strong); }
+.a-tabs a[aria-current] { color: var(--a-ink-strong); border-bottom-color: var(--c-green-dark); }
+
+@media (max-width: 767.98px) {
+  .a-menu__row { flex-wrap: wrap; }
+  .a-menu__row[data-depth="1"] { padding-left: calc(var(--s-5) + var(--s-4)); }
+}
+
+/* A panel whose data source does not exist yet ---------------------------- */
+/* Solid, not dashed. Dashed is this platform's "nothing filed here yet",
+   which a reader can change by filing something. These cannot be changed
+   by using the platform: there is no analytics collection, and a border
+   that suggests otherwise is an invitation to wait. */
+
+.a-card--pending { display: flex; flex-direction: column; }
+.a-nosource {
+  display: flex;
+  gap: var(--s-4);
+  align-items: flex-start;
+  background: var(--a-ground);
+  border: 1px solid var(--a-rule);
+  border-radius: var(--r-sm);
+  padding: var(--s-4);
+}
+.a-nosource__mark {
+  flex: none;
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  border-radius: var(--r-pill);
+  background: var(--a-surface);
+  border: 1px solid var(--a-rule);
+  color: var(--a-ink-quiet);
+}
+.a-nosource__title { display: block; font-size: 14.5px; font-weight: 600; color: var(--a-ink); margin-bottom: 4px; }
+.a-nosource__body { display: block; font-size: 13.5px; line-height: 1.6; color: var(--a-ink-quiet); }

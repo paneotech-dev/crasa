@@ -38,10 +38,21 @@ class MenuController extends Controller
             ? $request->query('menu')
             : 'header';
 
+        /*
+         * Editing happens in the same form as adding, pre-filled, on the
+         * same page. A separate edit screen for four fields is a page load
+         * and a way back for no gain, and it is the pattern screen 14 draws
+         * for the builder.
+         */
+        $editing = $request->filled('edit')
+            ? MenuItem::with('translations')->find($request->integer('edit'))
+            : null;
+
         return view('pages.admin.menus.index', [
-            'menu' => $menu,
+            'menu' => $editing?->menu ?? $menu,
             'menus' => MenuItem::MENUS,
-            'items' => MenuItem::inMenu($menu)
+            'editing' => $editing,
+            'items' => MenuItem::inMenu($editing?->menu ?? $menu)
                 ->whereNull('parent_id')
                 ->with(['translations', 'children.translations'])
                 ->orderBy('position')
@@ -84,6 +95,10 @@ class MenuController extends Controller
         $item->update([
             'destination_type' => $data['destination_type'],
             'destination' => $data['destination'] ?? null,
+            // An item can be renested. Its own children cannot become its
+            // parent: the form does not offer the item itself, and a
+            // deeper tree than two levels is not a menu.
+            'parent_id' => $data['parent_id'] ?? null,
         ]);
 
         $this->saveLabels($item, $request);

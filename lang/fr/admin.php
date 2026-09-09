@@ -679,4 +679,12 @@ return [
     'stat_users_note' => ':n actifs',
 
     'search_everything' => 'Rechercher dans l\'administration',
+
+    'menu_labels' => 'Libellé, par langue',
+    'menu_edit' => 'Modifier cet élément',
+    'menu_save' => 'Enregistrer l\'élément',
+    'menu_cancel_edit' => 'Arrêter la modification',
+    'menu_under' => 'sous :parent',
+    'menu_visible_badge' => 'Visible',
+    'menu_delete_confirm' => 'Supprimer « :label » du menu ? Ses sous-éléments partent avec lui.',
 ];
