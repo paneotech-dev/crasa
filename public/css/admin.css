@@ -1207,6 +1207,45 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
 .s-field__input:focus-visible,
 .s-field__source:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
 
+/* Regional briefs -------------------------------------------------------- */
+
+/*
+ * RP-12. BUILD_SPEC 5.5: "This is the artefact that ends up in ministerial
+ * briefings." So it is set as a document rather than as a screen: a
+ * reading measure, Lora on the title, and a print stylesheet that drops
+ * every control so a Secretariat officer can print from the browser
+ * without exporting first.
+ */
+.r-brief {
+  background: var(--a-surface);
+  border: 1px solid var(--a-rule);
+  border-radius: var(--r-md);
+  padding: var(--s-7);
+  max-width: 78ch;
+}
+
+.r-brief__head { border-bottom: 2px solid var(--a-ink-strong); padding-bottom: var(--s-5); margin-bottom: var(--s-5); }
+.r-brief__kicker { font-size: 13px; font-weight: 600; color: var(--c-green-dark); margin: 0 0 6px; }
+.r-brief__head h2 { font-size: 30px; line-height: 1.15; margin: 0 0 6px; }
+.r-brief__subtitle { font-size: 17px; color: var(--a-ink-quiet); margin: 0 0 var(--s-3); }
+.r-brief__meta { font-size: 13.5px; color: var(--a-ink-quiet); margin: 0; }
+
+.r-brief__foot { border-top: 1px solid var(--a-rule); margin-top: var(--s-5); padding-top: var(--s-4); }
+.r-brief__foot p { font-size: 12.5px; color: var(--a-ink-quiet); margin: 0 0 4px; }
+.r-brief__permalink { font-family: var(--f-admin); overflow-wrap: anywhere; }
+
+.r-bar { display: block; width: 100%; min-width: 90px; height: 14px; background: var(--c-sand); border-radius: 2px; overflow: hidden; }
+.r-bar__fill { display: block; height: 100%; background: var(--c-green-dark); }
+
+@media print {
+  /* The brief, and nothing else. */
+  .a-header, .a-crumbs, .a-pagehead__actions, .a-form, .a-notice { display: none !important; }
+  .r-brief { border: 0; padding: 0; max-width: none; }
+  .a-page { padding: 0; }
+  .r-brief__table { page-break-inside: auto; }
+  .r-brief__table tr { page-break-inside: avoid; }
+}
+
 /* Notices --------------------------------------------------------------- */
 
 .a-notice {

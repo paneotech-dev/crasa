@@ -17,6 +17,7 @@ use App\Models\NewsItem;
 use App\Models\Page;
 use App\Models\PageBlock;
 use App\Models\Publication;
+use App\Models\Report;
 use App\Models\Sector;
 use App\Models\Submission;
 use App\Models\Tag;
@@ -35,6 +36,7 @@ use App\Policies\NewsItemPolicy;
 use App\Policies\PageBlockPolicy;
 use App\Policies\PagePolicy;
 use App\Policies\PublicationPolicy;
+use App\Policies\ReportPolicy;
 use App\Policies\SectorPolicy;
 use App\Policies\SubmissionPolicy;
 use App\Policies\TagPolicy;
@@ -58,6 +60,7 @@ class AuthServiceProvider extends ServiceProvider
         IndicatorValue::class => IndicatorValuePolicy::class,
         NewsItem::class => NewsItemPolicy::class,
         Publication::class => PublicationPolicy::class,
+        Report::class => ReportPolicy::class,
         Tag::class => TagPolicy::class,
         Page::class => PagePolicy::class,
         PageBlock::class => PageBlockPolicy::class,

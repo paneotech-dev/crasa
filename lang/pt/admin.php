@@ -454,4 +454,5 @@ return [
     'hints_restored' => 'A introdução voltou a ser mostrada.',
     'field_eyebrow' => 'Antetítulo',
     'section_submissions' => 'Submissões',
+    'section_reports' => 'Relatórios',
 ];

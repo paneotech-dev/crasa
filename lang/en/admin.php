@@ -454,4 +454,5 @@ return [
     'hints_restored' => 'The introduction is showing again.',
     'field_eyebrow' => 'Eyebrow',
     'section_submissions' => 'Submissions',
+    'section_reports' => 'Reports',
 ];

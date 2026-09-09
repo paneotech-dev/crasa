@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\HelpController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\Admin\PageBlockController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ResourceController;
 use App\Http\Controllers\Admin\SubmissionReviewController;
 use App\Http\Controllers\Admin\TranslationController;
@@ -293,6 +294,15 @@ Route::prefix('{locale}')
                 Route::get('submissions/{submission}', [SubmissionReviewController::class, 'show'])->name('submissions.show');
                 Route::post('submissions/{submission}/comment', [SubmissionReviewController::class, 'comment'])->name('submissions.comment');
                 Route::post('submissions/{submission}/decide', [SubmissionReviewController::class, 'decide'])->name('submissions.decide');
+
+                /*
+                 * Regional briefs, RP-12. Generate, view, store, print.
+                 */
+                Route::get('reports', [ReportController::class, 'index'])->name('reports');
+                Route::post('reports', [ReportController::class, 'store'])->name('reports.store');
+                Route::get('reports/{report}', [ReportController::class, 'show'])->name('reports.show');
+                Route::get('reports/{report}/export.pdf', [ReportController::class, 'pdf'])->name('reports.pdf');
+                Route::delete('reports/{report}', [ReportController::class, 'destroy'])->name('reports.destroy');
 
                 Route::get('users', [UserAdminController::class, 'index'])->name('users');
                 Route::get('users/invite', [UserAdminController::class, 'form'])->name('users.form');
