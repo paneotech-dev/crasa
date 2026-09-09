@@ -51,17 +51,27 @@ class HeroCarouselTest extends TestCase
 
         $this->assertSame(3, substr_count($html, 'data-hero-slide'));
 
-        // The boardroom photograph, the comparison table and the latest
-        // publication. Three of the same thing would be a carousel that
-        // exists to move.
+        // All three are photo slides now, so what differentiates them is
+        // the photograph and the copy rather than the panel beside it.
+        // Screen 02 runs a photo slide's copy the full width and gives it
+        // no second column; the figures live on the navy-mid band below.
         //
-        // Slide one carried the figures panel until batch two supplied a
-        // photograph on 9 September 2026. Screen 02 draws two kinds of
-        // slide and a photo slide runs its copy the full width, so the
-        // panel went with the change. The other two keep theirs.
-        $this->assertStringContainsString('hero-delegates-boardroom-01', $html);
-        $this->assertStringContainsString('b-hero__table', $html);
-        $this->assertStringContainsString('b-hero__latest-title', $html);
+        // Three distinct photographs. The same one three times would be a
+        // carousel that exists to move.
+        foreach ([
+            'hero-delegates-boardroom-01',
+            'data-team-reviewing-charts-01',
+            'institutional-two-person-meeting-01',
+        ] as $photograph) {
+            $this->assertStringContainsString($photograph, $html);
+        }
+
+        // And three distinct headlines, each with its own action.
+        preg_match_all('/class="b-hero__headline"[^>]*>([^<]+)</', $html, $headlines);
+        $this->assertCount(3, array_unique(array_map('trim', $headlines[1])));
+
+        // No panel on any of them.
+        $this->assertStringNotContainsString('b-hero__panel"', $html);
     }
 
     public function test_every_slide_is_named_not_just_numbered(): void

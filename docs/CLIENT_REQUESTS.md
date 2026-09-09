@@ -61,6 +61,22 @@ because it is the only institutional image that exists. Three pages sharing a
 picture is thin, and it is stock: a reader who has sat in a CRASA meeting
 will not recognise the room.
 
+### One more institutional photograph, for the third banner slide
+
+The banner rotates through three slides and all three now carry a
+photograph. The third one is the weakest image in the library — two people
+at a laptop in an atrium — and it is there because it is the only remaining
+real photograph, not because it belongs.
+
+It would pass the substitution test for any company on earth. On a slide
+whose copy is about CRASA's own published library, that is a mismatch a
+delegate will feel without being able to name.
+
+**What would replace it:** a plenary session, or the signing of a
+determination. The same subjects as the request above, and one more frame of
+the same shoot would do it. When it arrives, slide three should be looked at
+again rather than left as it is.
+
 ### The single highest-value item on this whole list
 
 **CRASA's own photography of its own meetings.** Not the first item because

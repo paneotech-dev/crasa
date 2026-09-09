@@ -258,9 +258,24 @@ class HomepageSeeder extends Seeder
              * stripped database serves one slide and a banner rather than
              * three slides and two empty boxes.
              */
+            /*
+             * Every slide is a photo slide, so the three read as one band
+             * rather than as a photograph followed by two data panels.
+             * Screen 02's photo treatment carries all of them: the image at
+             * inset:0, the 140deg colour blend, the .94/.82/.34 scrim. Per
+             * the screen a photo slide runs its copy the full width and
+             * carries no second column, so the figures live on the navy-mid
+             * band immediately below.
+             *
+             * Slide three is the weakest photograph in the library and is
+             * here because it is the only remaining real one. Recorded in
+             * CLIENT_REQUESTS.md: a third institutional photograph is
+             * wanted, a plenary or a signing, and slide three should be
+             * looked at again when it arrives.
+             */
             'rotation_items' => [
-                ['cta_url' => '/comparator', 'panel' => 'comparison'],
-                ['cta_url' => '/publications', 'panel' => 'publication'],
+                ['cta_url' => '/comparator', 'panel' => 'comparison', 'image' => 'data'],
+                ['cta_url' => '/publications', 'panel' => 'publication', 'image' => 'institutional-fallback'],
             ],
         ], fn (string $l) => [
             // Sentence case, per the tracked-caps ruling. The screen's copy
