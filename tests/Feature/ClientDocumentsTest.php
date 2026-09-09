@@ -3,10 +3,17 @@
 namespace Tests\Feature;
 
 use App\Models\Authority;
+use App\Models\Indicator;
+use App\Models\Instrument;
+use App\Models\Meeting;
+use App\Models\NewsItem;
 use App\Models\PageBlock;
+use App\Models\Publication;
 use Database\Seeders\AuthoritySeeder;
 use Database\Seeders\CountrySeeder;
+use Database\Seeders\IndicatorSeeder;
 use Database\Seeders\LegalPagesSeeder;
+use Database\Seeders\PublicationSeeder;
 use Database\Seeders\PublicPagesSeeder;
 use Database\Seeders\SectorSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -210,5 +217,64 @@ class ClientDocumentsTest extends TestCase
 
         $this->assertStringContainsString('SSO_REQUIREMENTS.md', $pack);
         $this->assertFileExists(base_path('docs/SSO_REQUIREMENTS.md'));
+    }
+
+    /**
+     * The script names real records. A demonstration that opens a page
+     * which no longer exists is worse than no script at all, and it fails
+     * in front of the room rather than in front of me.
+     */
+    public function test_the_demonstration_script_only_names_records_that_exist(): void
+    {
+        $this->seed(CountrySeeder::class);
+        $this->seed(SectorSeeder::class);
+        $this->seed(PublicationSeeder::class);
+        $this->seed(IndicatorSeeder::class);
+
+        $script = file_get_contents(base_path('docs/DEMO_SCRIPT.md'));
+
+        preg_match_all('~`([a-z0-9]+(?:-[a-z0-9]+){2,})`~', $script, $matches);
+
+        foreach (array_unique($matches[1]) as $slug) {
+            $exists = Publication::where('slug', $slug)->exists()
+                || Indicator::where('slug', $slug)->exists()
+                || Instrument::where('slug', $slug)->exists()
+                || NewsItem::where('slug', $slug)->exists()
+                || Meeting::where('slug', $slug)->exists()
+                // Not every backticked phrase is a slug.
+                || str_contains($slug, 'artisan') || str_contains($slug, 'member-state-rep');
+
+            $this->assertTrue($exists, 'The script names "'.$slug.'", which is not in the platform.');
+        }
+    }
+
+    public function test_the_script_covers_every_contracted_surface(): void
+    {
+        $script = file_get_contents(base_path('docs/DEMO_SCRIPT.md'));
+
+        // The order the instruction asked for, and each has to be there.
+        foreach ([
+            'homepage', 'language', 'Search', 'supersed', 'comparator',
+            'member states', 'submission', 'review queue', 'back office',
+            'audit log', 'Translations',
+        ] as $surface) {
+            $this->assertStringContainsStringIgnoringCase($surface, $script, $surface.' is not in the script.');
+        }
+
+        // And it must say what to do about each empty section, because
+        // improvising in front of fourteen regulators is how a gap becomes
+        // a doubt.
+        foreach (['analytics', 'Partnerships', 'terms of reference', 'privacy notice', 'logo'] as $gap) {
+            $this->assertStringContainsStringIgnoringCase($gap, $script, 'The script does not explain the '.$gap.' gap.');
+        }
+    }
+
+    public function test_the_script_flags_what_will_look_weak(): void
+    {
+        $script = file_get_contents(base_path('docs/DEMO_SCRIPT.md'));
+
+        // The instruction was to say so rather than hope nobody notices.
+        $this->assertStringContainsStringIgnoringCase('look weak', $script);
+        $this->assertStringContainsStringIgnoringCase('recommendation', $script);
     }
 }
