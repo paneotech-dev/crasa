@@ -84,7 +84,17 @@ class NewsItem extends Model
     public function fallbackImageSlot(): ?string
     {
         return match ($this->sector?->slug) {
-            'telecommunications' => 'sector-telecom',
+            /*
+             * Telecommunications has no fallback of its own any more. The
+             * only telecoms photograph in the supplied library became the
+             * homepage banner on 9 September 2026, and the same photograph
+             * appearing twice on one page is worse than one card showing
+             * its designed absence.
+             *
+             * Same reasoning as broadcasting below. Both gaps are on the
+             * Secretariat list in docs/CLIENT_REQUESTS.md.
+             */
+            'telecommunications' => null,
             'postal' => 'sector-postal',
             // Broadcasting has no supplied image. Substituting one from
             // another sector would caption a telecoms lab as broadcasting,

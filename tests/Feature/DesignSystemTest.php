@@ -63,7 +63,16 @@ class DesignSystemTest extends TestCase
 
     public function test_tokens_load_before_bootstrap_and_the_bridge_loads_after_it(): void
     {
-        $html = $this->get('/en')->getContent();
+        /*
+         * The sign-in page rather than the homepage.
+         *
+         * This is a test about the order of three stylesheet links in the
+         * layout, and it had a hidden dependency on the homepage record
+         * existing in whatever database it happened to run against. The
+         * sign-in page renders the same layout and needs no content at all,
+         * so the test now measures only what it is about.
+         */
+        $html = $this->get('/en/login')->getContent();
 
         $tokens = strpos($html, 'css/tokens.css');
         $grid = strpos($html, 'css/vendor/bootstrap-grid.min.css');

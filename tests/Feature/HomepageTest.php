@@ -187,11 +187,35 @@ class HomepageTest extends TestCase
         $this->assertNull($broadcasting->fallbackImageSlot());
     }
 
+    /**
+     * Read from the language files rather than pinned to one photograph's
+     * description.
+     *
+     * The old version quoted the market scene word for word, so swapping
+     * the hero image broke a test that has nothing to do with which image
+     * is used. What matters is that whatever is there is described, in all
+     * three languages, and that the description is not the English one
+     * repeated.
+     */
     public function test_alt_text_is_present_in_all_three_languages(): void
     {
-        $this->get('/en')->assertSee('A woman using a smartphone at a market stall in Cape Town', false);
-        $this->get('/fr')->assertSee('étal de marché du Cap', false);
-        $this->get('/pt')->assertSee('banca de mercado na Cidade do Cabo', false);
+        foreach (['en', 'fr', 'pt'] as $locale) {
+            $alt = __('images.hero', [], $locale);
+
+            $this->assertNotSame('images.hero', $alt, 'The hero has no '.$locale.' alt text.');
+            $this->assertGreaterThan(30, mb_strlen($alt), 'The '.$locale.' hero alt text is too short to describe anything.');
+
+            // Escaped, because the French and Portuguese descriptions
+            // contain apostrophes and the page renders them as entities.
+            $this->get('/'.$locale)->assertSee($alt);
+        }
+
+        // Three descriptions, not one description three times.
+        $this->assertCount(3, array_unique([
+            __('images.hero', [], 'en'),
+            __('images.hero', [], 'fr'),
+            __('images.hero', [], 'pt'),
+        ]));
     }
 
     public function test_no_derivative_is_larger_than_a_mobile_connection_can_carry(): void

@@ -143,9 +143,17 @@ class NewsroomTest extends TestCase
         $postal = NewsItem::factory()->create(['sector_id' => Sector::where('slug', 'postal')->value('id')]);
         $none = NewsItem::factory()->create(['sector_id' => null]);
 
-        $this->assertSame('sector-telecom', $telecom->fallbackImageSlot());
         $this->assertSame('sector-postal', $postal->fallbackImageSlot());
         $this->assertSame('institutional', $none->fallbackImageSlot());
+
+        /*
+         * Telecommunications has no fallback of its own since 9 September
+         * 2026: the only telecoms photograph in the supplied library became
+         * the homepage banner, and the same photograph twice on one page is
+         * worse than one card showing its designed absence. Same reasoning
+         * as broadcasting below.
+         */
+        $this->assertNull($telecom->fallbackImageSlot());
     }
 
     /* Article page ------------------------------------------------------------ */
