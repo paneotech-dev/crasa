@@ -9,10 +9,12 @@ use App\Models\Committee;
 use App\Models\Country;
 use App\Models\Document;
 use App\Models\Enquiry;
+use App\Models\Folder;
 use App\Models\Indicator;
 use App\Models\IndicatorValue;
 use App\Models\Instrument;
 use App\Models\MediaAsset;
+use App\Models\Meeting;
 use App\Models\NewsItem;
 use App\Models\Page;
 use App\Models\PageBlock;
@@ -28,10 +30,12 @@ use App\Policies\CommitteePolicy;
 use App\Policies\CountryPolicy;
 use App\Policies\DocumentPolicy;
 use App\Policies\EnquiryPolicy;
+use App\Policies\FolderPolicy;
 use App\Policies\IndicatorPolicy;
 use App\Policies\IndicatorValuePolicy;
 use App\Policies\InstrumentPolicy;
 use App\Policies\MediaAssetPolicy;
+use App\Policies\MeetingPolicy;
 use App\Policies\NewsItemPolicy;
 use App\Policies\PageBlockPolicy;
 use App\Policies\PagePolicy;
@@ -56,7 +60,9 @@ class AuthServiceProvider extends ServiceProvider
         Instrument::class => InstrumentPolicy::class,
         MediaAsset::class => MediaAssetPolicy::class,
         Enquiry::class => EnquiryPolicy::class,
+        Folder::class => FolderPolicy::class,
         Indicator::class => IndicatorPolicy::class,
+        Meeting::class => MeetingPolicy::class,
         IndicatorValue::class => IndicatorValuePolicy::class,
         NewsItem::class => NewsItemPolicy::class,
         Publication::class => PublicationPolicy::class,

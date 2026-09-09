@@ -31,6 +31,12 @@
         @endforeach
     </nav>
 
+    @can('viewAny', \App\Models\Folder::class)
+        <a class="a-nav__link"
+           href="{{ route('extranet.folders', ['locale' => app()->getLocale()]) }}"
+           @if (str_starts_with(request()->route()?->getName() ?? '', 'extranet')) aria-current="page" @endif>{{ __('extranet.title') }}</a>
+    @endcan
+
     @can('viewAny', \App\Models\Submission::class)
         {{-- The e-Form. A member state representative reaches the back
              office for this and little else, so it sits in the bar rather

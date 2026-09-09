@@ -20,6 +20,7 @@ use App\Http\Controllers\ComparatorController;
 use App\Http\Controllers\CompletenessController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\ExtranetController;
 use App\Http\Controllers\LocaleRedirectController;
 use App\Http\Controllers\NewsroomController;
 use App\Http\Controllers\PageController;
@@ -96,7 +97,14 @@ Route::prefix('{locale}')
          * which is where the header action and the footer link both go
          * rather than to a 404.
          */
-        Route::get('extranet', fn () => redirect()->route('login', ['locale' => app()->getLocale()]))
+        /*
+         * The extranet entry point. A signed-in account goes to its
+         * folders; a visitor goes to sign in, which is where the extranet
+         * begins for them.
+         */
+        Route::get('extranet', fn () => auth()->check()
+            ? redirect()->route('extranet.folders', ['locale' => app()->getLocale()])
+            : redirect()->route('login', ['locale' => app()->getLocale()]))
             ->name('extranet');
 
         /*
@@ -181,6 +189,19 @@ Route::prefix('{locale}')
              * their own: the country scope holds the reads and the policy
              * holds the writes.
              */
+            /*
+             * The extranet, IN-02 and WS-09. Screens 04, 11 and 12.
+             *
+             * Zero trust: a folder belonging to another member state is
+             * not listed, not searchable and not reachable by guessing an
+             * id, because the global scope makes the query return nothing.
+             */
+            Route::get('extranet/folders', [ExtranetController::class, 'index'])->name('extranet.folders');
+            Route::get('extranet/folders/{folder}', [ExtranetController::class, 'folder'])->name('extranet.folder');
+            Route::post('extranet/folders/{folder}/upload', [ExtranetController::class, 'upload'])->name('extranet.upload');
+            Route::get('extranet/committees/{committee}', [ExtranetController::class, 'committee'])->name('extranet.committee');
+            Route::get('extranet/calendar', [ExtranetController::class, 'calendar'])->name('extranet.calendar');
+
             Route::get('submissions', [SubmissionController::class, 'index'])->name('submissions');
             Route::post('submissions', [SubmissionController::class, 'store'])->name('submissions.store');
             /*

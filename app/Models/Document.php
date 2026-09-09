@@ -27,7 +27,7 @@ class Document extends Model
 
     protected $fillable = [
         'documentable_type', 'documentable_id', 'file_path', 'original_filename',
-        'mime_type', 'size_bytes', 'locale', 'thumbnail_path', 'clearance',
+        'mime_type', 'size_bytes', 'locale', 'thumbnail_path', 'folder_id', 'country_id', 'uploaded_by', 'clearance',
         'committee_id', 'is_sample',
     ];
 
@@ -67,11 +67,39 @@ class Document extends Model
      */
     public function owningCountryId(): ?int
     {
+        // A document filed in an extranet folder belongs to whoever the
+        // folder belongs to. That is the answer the zero-trust boundary
+        // needs, and it comes before the polymorphic owner because a
+        // country folder is the more specific claim.
+        if ($this->country_id !== null) {
+            return $this->country_id;
+        }
+
+        if ($this->folder_id !== null) {
+            $folder = $this->relationLoaded('folder')
+                ? $this->getRelation('folder')
+                : Folder::withoutGlobalScopes()->find($this->folder_id);
+
+            if ($folder?->country_id !== null) {
+                return $folder->country_id;
+            }
+        }
+
         $owner = $this->relationLoaded('documentable')
             ? $this->getRelation('documentable')
             : $this->documentable()->first();
 
         return $owner?->country_id ?? null;
+    }
+
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(Folder::class);
+    }
+
+    public function uploader(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'uploaded_by');
     }
 
     /**
@@ -82,6 +110,16 @@ class Document extends Model
     {
         if ($this->committee_id !== null) {
             return $this->committee_id;
+        }
+
+        if ($this->folder_id !== null) {
+            $folder = $this->relationLoaded('folder')
+                ? $this->getRelation('folder')
+                : Folder::withoutGlobalScopes()->find($this->folder_id);
+
+            if ($folder?->committee_id !== null) {
+                return $folder->committee_id;
+            }
         }
 
         $owner = $this->relationLoaded('documentable')

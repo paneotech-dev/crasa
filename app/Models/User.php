@@ -125,6 +125,12 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    /** Whether this account holds a seat on a committee. */
+    public function sitsOn(Committee $committee): bool
+    {
+        return $this->committees()->whereKey($committee->getKey())->exists();
+    }
+
     public function authority(): BelongsTo
     {
         return $this->belongsTo(Authority::class);
