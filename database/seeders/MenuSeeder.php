@@ -21,7 +21,9 @@ class MenuSeeder extends Seeder
 {
     public function run(): void
     {
-        MenuItem::query()->delete();
+        // purge(), not delete(): a mass delete fires no model events, so
+        // the translations would be orphaned every time this seeder ran.
+        MenuItem::query()->purge();
 
         $header = [
             ['route' => 'home', 'key' => 'home'],

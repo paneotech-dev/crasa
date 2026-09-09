@@ -113,7 +113,8 @@ class LegalPagesSeeder extends Seeder
             $page->setTranslations($locale, $fields);
         }
 
-        $page->blocks()->delete();
+        // purge(), not delete(). See HasTranslations::scopePurge.
+        $page->blocks()->purge();
 
         return $page;
     }

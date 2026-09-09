@@ -65,6 +65,32 @@ trait HasTranslations
         });
     }
 
+    /**
+     * Delete these records and their translations.
+     *
+     * `Model::query()->delete()` and `$parent->children()->delete()` are
+     * mass deletes: they issue one DELETE and fire no model events, so the
+     * hook above never runs and every translation is orphaned. Reseeding
+     * this platform four times in one afternoon left 525 of them.
+     *
+     * Any code clearing translatable records in bulk uses this instead.
+     */
+    public function scopePurge(Builder $query): int
+    {
+        $ids = (clone $query)->pluck($this->getKeyName());
+
+        if ($ids->isEmpty()) {
+            return 0;
+        }
+
+        Translation::query()
+            ->where('translatable_type', $this->getMorphClass())
+            ->whereIn('translatable_id', $ids)
+            ->delete();
+
+        return $query->delete();
+    }
+
     public function translations(): MorphMany
     {
         return $this->morphMany(Translation::class, 'translatable');

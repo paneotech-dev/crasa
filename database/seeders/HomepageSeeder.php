@@ -173,7 +173,8 @@ class HomepageSeeder extends Seeder
             ]);
         }
 
-        $page->blocks()->delete();
+        // purge(), not delete(). See HasTranslations::scopePurge.
+        $page->blocks()->purge();
 
         $position = 0;
 
