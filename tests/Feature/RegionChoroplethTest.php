@@ -280,6 +280,6 @@ class RegionChoroplethTest extends TestCase
 
         $this->assertMatchesRegularExpression('~<form[^>]+method="get"[^>]+data-map-control~', $html);
         $this->assertStringContainsString('name="indicator"', $html);
-        $this->assertStringContainsString('c-map-region__apply', $html);
+        $this->assertStringContainsString('data-live-submit', $html);
     }
 }

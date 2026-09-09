@@ -68,7 +68,7 @@
         {{-- Removed by public/js/filters.js once it has taken over the
              change event. Present and working for every reader who does
              not run it. --}}
-        <button class="c-btn c-btn--secondary c-map-region__apply" type="submit" data-live-submit>{{ __('members.map_apply') }}</button>
+        <button class="c-btn c-btn--secondary" type="submit" data-live-submit>{{ __('members.map_apply') }}</button>
     </form>
 
     <div class="c-map-region__stage">

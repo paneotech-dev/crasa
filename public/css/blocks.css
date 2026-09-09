@@ -710,6 +710,26 @@
 .c-list-plain__note { font-size: 13px; color: var(--c-slate); }
 .c-note { font-size: var(--t-small-size); color: var(--c-slate); margin: 0 0 var(--s-6); }
 
+/* Meetings and events -------------------------------------------------- */
+/* WS-07, read-only. A dated list, not a card grid: a meeting has a date, a
+   name and a place, and three lines do not need a box around them.
+
+   The date leads because that is what a reader scanning for the next
+   session is looking for, and it is set in the admin face because it is
+   data rather than prose. */
+.c-events { list-style: none; margin: 0 0 var(--s-7); padding: 0; border-top: 1px solid var(--c-sand); }
+.c-event { padding: var(--s-4) 0; border-bottom: 1px solid var(--c-sand); min-width: 0; }
+.c-event__when {
+  font-family: var(--f-admin); font-size: 13px; font-weight: 600;
+  color: var(--c-green-dark); margin: 0 0 var(--s-1);
+  display: flex; flex-wrap: wrap; gap: var(--s-2);
+}
+.c-event__when span { font-weight: 500; color: var(--c-slate); }
+.c-event__title { font-family: var(--f-head); font-size: 18px; line-height: 1.35; font-weight: 600; margin: 0; }
+.c-event__title a { color: var(--c-navy); text-decoration: none; }
+.c-event__title a:hover, .c-event__title a:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
+.c-event__where { font-size: 13.5px; color: var(--c-slate); margin: var(--s-1) 0 0; }
+
 /* The region map ------------------------------------------------------- */
 /* The members page's one bold moment. Everything else on that page stays
    quiet, per CLAUDE.md: spend boldness in one place. */

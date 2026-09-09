@@ -16,10 +16,14 @@
             <h2>{{ __('events.upcoming') }}</h2>
 
             @if ($upcoming->isEmpty())
-                <div class="c-empty">
-                    <p class="c-empty__title">{{ __('events.none_upcoming_title') }}</p>
-                    <p class="c-empty__body">{{ __('events.none_upcoming_body') }}</p>
-                </div>
+                {{-- The platform's own empty state, not a second one. This
+                     page had invented c-empty and c-empty__title, neither of
+                     which had any CSS, so an events page with nothing on it
+                     rendered as two unstyled paragraphs. --}}
+                @include('blocks._empty', [
+                    'title' => __('events.none_upcoming_title'),
+                    'body' => __('events.none_upcoming_body'),
+                ])
             @else
                 <ul class="c-events">
                     @foreach ($upcoming as $meeting)

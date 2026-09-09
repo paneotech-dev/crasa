@@ -16,6 +16,7 @@ use Database\Seeders\PublicationSeeder;
 use Database\Seeders\PublicPagesSeeder;
 use Database\Seeders\SectorSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
 /**
@@ -146,6 +147,61 @@ class InteractiveSurfacesTest extends TestCase
         $this->assertStringContainsString('.b-card:has(.b-card__title a:hover)', $css);
         $this->assertStringNotContainsString('.b-card:hover {', $css);
         $this->assertStringNotContainsString('.b-member:hover {', $css);
+    }
+
+    /**
+     * Every class a public template uses has styles behind it.
+     *
+     * This is the "looks interactive but isn't" test's blunter sibling, and
+     * it found a real one: the events page shipped .c-events, .c-event and
+     * three modifiers that no stylesheet defined, so a list of CRASA
+     * meetings rendered as browser-default bullets. It had also invented
+     * .c-empty rather than using the platform's own empty state, which is
+     * the second CSS methodology CLAUDE.md rules out.
+     *
+     * Structural hooks with nothing to style are allowed and named here, so
+     * the exception is a decision rather than a hole in the check.
+     */
+    public function test_no_public_template_uses_a_class_that_has_no_styles(): void
+    {
+        $css = '';
+
+        foreach (glob(public_path('css/*.css')) as $sheet) {
+            $css .= file_get_contents($sheet);
+        }
+
+        preg_match_all('~\.([a-z][a-z0-9_-]*)~i', $css, $matches);
+        $defined = array_flip($matches[1]);
+
+        // Grid children and table modifiers positioned entirely by their
+        // parent. They carry no rules of their own and need none.
+        $structural = ['c-completeness', 'c-enrol__manual'];
+
+        $orphans = [];
+
+        foreach (File::allFiles(resource_path('views')) as $file) {
+            if ($file->getExtension() !== 'php' || str_contains($file->getPathname(), '/admin')) {
+                continue;
+            }
+
+            preg_match_all('~class="([^"{}@]*)"~', $file->getContents(), $found);
+
+            foreach ($found[1] as $list) {
+                foreach (preg_split('~\s+~', trim($list)) as $class) {
+                    if ($class === '' || isset($defined[$class]) || in_array($class, $structural, true)) {
+                        continue;
+                    }
+
+                    $orphans[$class] = $file->getRelativePathname();
+                }
+            }
+        }
+
+        $this->assertSame(
+            [],
+            $orphans,
+            'Classes used with no styles behind them: '.json_encode($orphans)
+        );
     }
 
     /* The floor -------------------------------------------------------------- */
