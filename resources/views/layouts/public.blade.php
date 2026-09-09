@@ -42,14 +42,14 @@
 
     {{-- Order matters. Tokens first, then Bootstrap's grid-only build and the
          bridge that binds it to them, then our own layers. --}}
-    <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/tokens.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/vendor/bootstrap-grid.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/grid.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/base.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/chrome.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/blocks.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/print.css') }}" media="print">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/fonts.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/tokens.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/vendor/bootstrap-grid.min.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/grid.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/base.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/chrome.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/blocks.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/print.css') }}" media="print">
     @stack('styles')
 </head>
 <body>
@@ -82,9 +82,9 @@
 
     @include('partials.site-footer')
 
-    <script src="{{ asset('js/chrome.js') }}" defer></script>
-    <script src="{{ asset('js/hero.js') }}" defer></script>
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/chrome.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/hero.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/app.js') }}" defer></script>
     @stack('scripts')
 </body>
 </html>

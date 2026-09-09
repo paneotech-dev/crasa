@@ -1669,6 +1669,15 @@
 .b[data-ground="navy"] .c-btn--secondary:hover { background: var(--c-green); border-color: var(--c-green); }
 
 .b[data-ground="navy"] .b-compare__indicator { color: var(--c-white); }
+
+/* The unit under the indicator name in the homepage's comparison block.
+   The rule lived only in comparator.css, which the homepage does not link,
+   so the span rendered unstyled -- and only in French and Portuguese,
+   because the English indicator name already contains its unit and the
+   block skips the span entirely. A class a block uses belongs in the block
+   library; comparator.css keeps its own copy for the comparator page. */
+.c-cmp__indicator-unit { display: block; font-size: 12.5px; color: var(--c-slate); margin: 3px 0 0; }
+.b[data-ground="navy"] .c-cmp__indicator-unit { color: var(--c-sand); }
 .b[data-ground="navy"] .b-compare__table th,
 .b[data-ground="navy"] .b-compare__table td { border-bottom-color: var(--c-navy-line); color: var(--c-cream); }
 .b[data-ground="navy"] .b-compare__table thead th { background: transparent; color: var(--c-sand); }

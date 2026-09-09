@@ -4,7 +4,7 @@
 @section('description', __('comparator.meta_description'))
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/comparator.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/comparator.css') }}">
 @endpush
 
 @section('content')
@@ -180,7 +180,7 @@
          the one React surface named in the stack; everything around it is
          Blade, and the markup above is what a reader without JavaScript
          sees and what the printer prints. --}}
-    <script src="{{ asset('js/vendor/react.production.min.js') }}" defer></script>
-    <script src="{{ asset('js/vendor/react-dom.production.min.js') }}" defer></script>
-    <script src="{{ asset('js/comparator.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/vendor/react.production.min.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/vendor/react-dom.production.min.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/comparator.js') }}" defer></script>
 @endpush

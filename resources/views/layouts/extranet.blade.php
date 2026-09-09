@@ -36,13 +36,13 @@
 
     <link rel="icon" href="{{ asset('img/crasa-logo.svg') }}" type="image/svg+xml">
 
-    <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/tokens.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/vendor/bootstrap-grid.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/grid.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/base.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/print.css') }}" media="print">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/fonts.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/tokens.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/vendor/bootstrap-grid.min.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/grid.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/base.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/print.css') }}" media="print">
     @stack('styles')
 </head>
 <body data-surface="admin" data-theme="{{ (auth()->user()?->theme ?? \App\Enums\Theme::System)->value }}">

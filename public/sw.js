@@ -23,7 +23,11 @@
  * open a page.
  */
 
-const VERSION = 'crasa-v1';
+/* Bumped from v1 on 9 September 2026. A v1 cache holds the stylesheets under
+   their old unversioned URLs — /css/blocks.css with no query — which is the
+   copy that rendered the map black and the section bands as stacked text.
+   Changing this name makes the activate handler delete every one of them. */
+const VERSION = 'crasa-v2';
 const SHELL = VERSION + '-shell';
 const PAGES = VERSION + '-pages';
 const SAVED = VERSION + '-saved';
@@ -32,20 +36,25 @@ const SAVED = VERSION + '-saved';
    three languages". Each locale's offline page is precached so a reader who
    goes offline in Portuguese does not meet an English error. */
 const SHELL_URLS = [
-  '/css/tokens.css',
-  '/css/base.css',
-  '/css/chrome.css',
-  '/css/blocks.css',
-  '/css/grid.css',
-  '/css/fonts.css',
-  '/css/vendor/bootstrap-grid.min.css',
-  '/js/chrome.js',
   '/img/crasa-logo.svg',
   '/img/app/icon-192.png',
   '/en/offline',
   '/fr/offline',
   '/pt/offline'
 ];
+
+/* The stylesheets and scripts are deliberately NOT in that list.
+ *
+ * They used to be, by their bare paths. Pages now link them with a version
+ * query -- /css/blocks.css?v=1757430000 -- and caches.match honours the
+ * query string, so a precached /css/blocks.css could never satisfy a
+ * request for the versioned URL. It sat in the cache being neither used nor
+ * evicted, while the offline page it was meant to style rendered bare.
+ *
+ * Precaching them with versions would mean this file knowing the mtimes,
+ * which a static script cannot. The cache-first handler below stores each
+ * one the first time a page asks for it, which is before any reader can
+ * reach the offline page: they have to load a page to install the app. */
 
 /* Never touched. Anything under these, whatever it looks like: not cached,
    not served from cache, not read. Every one is behind a sign-in.
@@ -144,8 +153,9 @@ self.addEventListener('fetch', function (event) {
     return;
   }
 
-  // Assets: cache first. They are fingerprinted by the deploy or they do
-  // not change, and a stylesheet fetched over hotel wifi on every page is
+  // Assets: cache first, keyed on the full URL including the version query.
+  // A changed file is a changed URL, so this can never serve a stale
+  // stylesheet, and a stylesheet fetched over hotel wifi on every page is
   // the difference between usable and not.
   if (/\.(css|js|woff2?|svg|png|jpg|webp|ico)$/i.test(url.pathname)) {
     event.respondWith(

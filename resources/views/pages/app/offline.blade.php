@@ -63,5 +63,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/offline.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/offline.js') }}" defer></script>
 @endpush

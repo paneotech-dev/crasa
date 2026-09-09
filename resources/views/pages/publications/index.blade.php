@@ -108,5 +108,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/filters.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/filters.js') }}" defer></script>
 @endpush

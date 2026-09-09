@@ -138,5 +138,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/map.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/map.js') }}" defer></script>
 @endpush
