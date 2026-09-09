@@ -221,11 +221,20 @@ class PublicPagesSeeder extends Seeder
 
     /* Helpers --------------------------------------------------------------- */
 
+    /**
+     * A page is the site's structure, not demonstration content.
+     *
+     * Its address is in the navigation and the footer of every page, so
+     * removing it at go-live would leave the site with dead links. The
+     * demonstration copy lives in its blocks, which are flagged and which
+     * the strip removes, leaving the page in place and showing its
+     * designed empty state. That is what "functional but empty" means.
+     */
     private function page(string $slug, array $translations): Page
     {
         $page = Page::updateOrCreate(
             ['slug' => $slug],
-            ['template' => 'standard', 'status' => 'published', 'published_at' => now(), 'is_sample' => true]
+            ['template' => 'standard', 'status' => 'published', 'published_at' => now(), 'is_sample' => false]
         );
 
         foreach ($translations as $locale => $fields) {
@@ -246,7 +255,6 @@ class PublicPagesSeeder extends Seeder
             'anchor' => $anchor,
             'is_visible' => true,
             'settings' => $settings,
-            'is_sample' => true,
         ]);
 
         foreach (Locales::SUPPORTED as $locale) {

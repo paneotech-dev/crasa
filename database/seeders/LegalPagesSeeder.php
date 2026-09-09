@@ -72,7 +72,6 @@ class LegalPagesSeeder extends Seeder
             'position' => 0,
             'is_visible' => true,
             'settings' => ['alignment' => 'start'],
-            'is_sample' => true,
         ]);
 
         foreach (Locales::SUPPORTED as $locale) {
@@ -93,7 +92,6 @@ class LegalPagesSeeder extends Seeder
             'position' => 0,
             'is_visible' => true,
             'settings' => ['alignment' => 'start'],
-            'is_sample' => true,
             'needs_content' => true,
             'content_note' => $note,
         ]);
@@ -108,7 +106,7 @@ class LegalPagesSeeder extends Seeder
     {
         $page = Page::updateOrCreate(
             ['slug' => $slug],
-            ['template' => 'legal', 'status' => 'published', 'published_at' => now(), 'is_sample' => true]
+            ['template' => 'legal', 'status' => 'published', 'published_at' => now(), 'is_sample' => false]
         );
 
         foreach ($translations as $locale => $fields) {

@@ -34,8 +34,23 @@ final class ImageLibrary
      * @var array<string, array{path: string, orientation: string}>
      */
     private const ACCEPTED = [
+        /*
+         * The homepage band.
+         *
+         * It was a market scene in Cape Town until 9 September 2026, and it
+         * was wrong: CRASA is a treaty body that fourteen national
+         * regulatory authorities answer to, and the homepage opened on a
+         * stranger shopping. The equipment testing bench is the closest
+         * thing in the supplied library to an institutional subject, and it
+         * is at least a regulatory activity.
+         *
+         * It is still not right. The brief in docs/CLIENT_REQUESTS.md asks
+         * for delegates in session, a signing, a plenary hall, infrastructure
+         * at scale or a regulator's building. This is a holding image and
+         * the hero block is flagged needs_content accordingly.
+         */
         'hero' => [
-            'path' => 'people/people-market-mobile-01.jpg',
+            'path' => 'sector-telecom/telecom-equipment-testing-01.jpg',
             'orientation' => 'landscape',
         ],
         'people' => [

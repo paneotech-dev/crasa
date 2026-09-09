@@ -21,9 +21,11 @@ use Illuminate\Database\Seeder;
  * in all three languages, taken from that file's own dictionaries rather
  * than retyped. Nothing here is drafted by the build.
  *
- * The page is flagged is_sample so it is stripped with everything else
- * before go-live and replaced by whatever the Secretariat approves. The
- * copy is approved; the arrangement is a proposal.
+ * The page itself is NOT flagged is_sample. It is the site's homepage: the
+ * Secretariat edits it, it does not receive it fresh after go-live. What
+ * gets stripped is the demonstration records the blocks display, not the
+ * page or the blocks. An earlier version of the strip command removed them
+ * and the first thing its test found was the homepage returning 404.
  */
 class HomepageSeeder extends Seeder
 {
@@ -156,7 +158,9 @@ class HomepageSeeder extends Seeder
                 'template' => 'landing',
                 'status' => 'published',
                 'published_at' => now(),
-                'is_sample' => true,
+                // The homepage is structure, not demonstration content. Its
+                // blocks carry the copy and the strip removes those.
+                'is_sample' => false,
             ]
         );
 
@@ -298,7 +302,6 @@ class HomepageSeeder extends Seeder
             'position' => $position,
             'is_visible' => true,
             'settings' => $settings,
-            'is_sample' => true,
         ]);
 
         foreach (Locales::SUPPORTED as $locale) {

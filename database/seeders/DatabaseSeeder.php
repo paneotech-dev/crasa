@@ -20,6 +20,11 @@ class DatabaseSeeder extends Seeder
             PublicationSeeder::class,
             IndicatorSeeder::class,
             IndicatorValueSeeder::class,
+
+            // Last: it reads the indicators, publications and instruments the
+            // seeders above create, and adds the gaps and the workflow states
+            // the workshop needs to demonstrate.
+            DemonstrationSeeder::class,
         ]);
     }
 }
