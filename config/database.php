@@ -127,6 +127,19 @@ return [
     |
     */
 
+    /*
+     * The restore-rehearsal schema.
+     *
+     * backup:rehearse restores a dump into this and compares it table by
+     * table against the live database. Empty by default, and when it is
+     * empty the rehearsal skips the restore and says so rather than
+     * pretending it proved one.
+     *
+     * The user is the live user; only the schema differs. See
+     * docs/SCRATCH_SCHEMA.md.
+     */
+    'rehearsal_database' => env('DB_REHEARSAL_DATABASE'),
+
     'migrations' => [
         'table' => 'migrations',
         'update_date_on_publish' => true,

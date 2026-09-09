@@ -35,7 +35,7 @@ use Symfony\Component\Process\Process;
 class RehearseBackup extends Command
 {
     protected $signature = 'backup:rehearse
-        {--database= : A scratch schema to restore into. Without one the restore step is skipped}
+        {--database= : A scratch schema to restore into. Defaults to config database.rehearsal_database}
         {--keep : Leave the dump on disk rather than deleting it}';
 
     protected $description = 'Prove the backup and restore procedure still works';
@@ -113,14 +113,38 @@ class RehearseBackup extends Command
             $failed = $failed || $orphanedFiles > 0;
 
             // 6. The restore, only where there is somewhere safe to put it.
-            $scratch = $this->option('database');
+            $scratch = $this->option('database') ?: config('database.rehearsal_database');
+            $live = config('database.connections.mysql.database');
 
-            if ($scratch && $isMysql) {
+            if ($scratch && $scratch === $live) {
+                /*
+                 * The one thing this command must never do. Restoring a
+                 * dump over the live database is not a rehearsal, it is an
+                 * outage with extra steps, and a mistyped option should not
+                 * be able to cause one.
+                 */
+                $rows[] = ['Restore', 'REFUSED: the rehearsal schema is the live database'];
+                $failed = true;
+            } elseif ($scratch && $isMysql) {
                 $restored = $this->shell(['mysql', '--defaults-extra-file='.$config, $scratch], null, $dump);
                 $rows[] = ['Restore into '.$scratch, $restored ? 'ok' : 'FAILED'];
                 $failed = $failed || ! $restored;
+
+                if ($restored) {
+                    // The point of the whole exercise: not that the restore
+                    // ran, but that what came back is what went in.
+                    $mismatches = $this->compare($scratch, $counts);
+
+                    $rows[] = ['Rows restored', $mismatches === []
+                        ? array_sum($counts).' across '.count($counts).' tables, all matching'
+                        : 'MISMATCH: '.implode('; ', $mismatches)];
+                    $failed = $failed || $mismatches !== [];
+
+                    $dropped = $this->emptyScratch($scratch);
+                    $rows[] = ['Scratch schema cleared', $dropped.' tables dropped'];
+                }
             } else {
-                $rows[] = ['Restore', 'skipped, no scratch schema given'];
+                $rows[] = ['Restore', 'skipped, no rehearsal schema configured'];
             }
         } finally {
             // The credentials file never outlives the command, whatever
@@ -138,8 +162,8 @@ class RehearseBackup extends Command
             $this->line('Dump kept at '.$dump);
         }
 
-        if (! $this->option('database') || ! $isMysql) {
-            $this->warn('The restore step was skipped. This database user cannot create a scratch schema; see Question 10 in docs/QUESTIONS.md.');
+        if (! ($this->option('database') ?: config('database.rehearsal_database')) || ! $isMysql) {
+            $this->warn('The restore step was skipped. Create the rehearsal schema and set DB_REHEARSAL_DATABASE; see docs/SCRATCH_SCHEMA.md.');
         }
 
         if ($failed) {
@@ -188,6 +212,70 @@ class RehearseBackup extends Command
         }
 
         return true;
+    }
+
+    /**
+     * Every table's row count in the restored schema against the live one.
+     *
+     * A restore that ran and is missing rows is the failure a success
+     * message hides, and the go-live restore is the only time anybody would
+     * find out. The comparison is the point of the exercise, not the
+     * restore.
+     *
+     * @param  array<string, int>  $expected
+     * @return list<string>
+     */
+    private function compare(string $schema, array $expected): array
+    {
+        $mismatches = [];
+
+        foreach ($expected as $table => $count) {
+            try {
+                $actual = (int) DB::selectOne('SELECT COUNT(*) AS total FROM `'.$schema.'`.`'.$table.'`')->total;
+            } catch (\Throwable) {
+                $mismatches[] = $table.' is missing entirely';
+
+                continue;
+            }
+
+            if ($actual !== $count) {
+                $mismatches[] = $table.' has '.$actual.' of '.$count;
+            }
+        }
+
+        return $mismatches;
+    }
+
+    /**
+     * Leave the scratch schema empty.
+     *
+     * A rehearsal that left last week's data behind would compare this
+     * week's dump against a mixture of both, and the second run would pass
+     * for the wrong reason.
+     *
+     * Guarded again here rather than trusting the caller's check to still be
+     * there after a refactor.
+     */
+    private function emptyScratch(string $schema): int
+    {
+        if ($schema === config('database.connections.mysql.database')) {
+            throw new \RuntimeException('Refusing to drop tables from the live database.');
+        }
+
+        $tables = DB::select(
+            'SELECT TABLE_NAME AS name FROM information_schema.TABLES WHERE TABLE_SCHEMA = ?',
+            [$schema]
+        );
+
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+
+        foreach ($tables as $table) {
+            DB::statement('DROP TABLE IF EXISTS `'.$schema.'`.`'.$table->name.'`');
+        }
+
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+
+        return count($tables);
     }
 
     /**
