@@ -90,6 +90,116 @@ final class HeroPanel
     }
 
     /**
+     * Slide two: one indicator, two member states, side by side.
+     *
+     * The comparator is the platform's reason to exist and it sat four
+     * sections down the page. This is the same query the comparator runs,
+     * narrowed to the two states with the widest gap on the most-reported
+     * indicator, because a comparison of two near-identical figures
+     * demonstrates nothing.
+     *
+     * Returns null rather than a placeholder when the register cannot
+     * support a comparison. A hero slide that says "no data" is worse than
+     * a hero with two slides.
+     *
+     * @return array{indicator: string, unit: string|null, period: string|null, url: string, sample: bool, rows: array<int, array{country: string, code: string, value: string}>}|null
+     */
+    public static function comparison(): ?array
+    {
+        $indicator = Indicator::active()
+            ->withCount('values')
+            ->orderByDesc('values_count')
+            ->first();
+
+        if ($indicator === null || $indicator->values_count < 2) {
+            return null;
+        }
+
+        $values = IndicatorValue::with('country')
+            ->where('indicator_id', $indicator->id)
+            ->whereNotNull('value_numeric')
+            ->orderByDesc('value_numeric')
+            ->get();
+
+        if ($values->count() < 2) {
+            return null;
+        }
+
+        // The widest gap the register can show, which is the pair that makes
+        // the case for a comparator at all.
+        $rows = collect([$values->first(), $values->last()])
+            ->filter(fn ($value) => $value?->country !== null)
+            ->map(fn ($value) => [
+                'country' => $value->country->name,
+                'code' => strtoupper($value->country->iso_code),
+                // The comparator's own formatter, so a percentage
+                // in the hero and the same percentage on screen 03 are
+                // written identically.
+                'value' => (new ComparisonCell($indicator, $value->country, $value))->display(),
+            ])
+            ->values()
+            ->all();
+
+        if (count($rows) < 2) {
+            return null;
+        }
+
+        return [
+            'indicator' => $indicator->name,
+            'unit' => $indicator->unitLabel(),
+            'period' => $values->first()->period,
+            'url' => route('comparator', ['locale' => app()->getLocale()]),
+            'sample' => $values->contains('is_sample', true),
+            'rows' => $rows,
+        ];
+    }
+
+    /**
+     * Slide three: the most recent publication, as itself.
+     *
+     * Not a card lifted out of the library strip further down the page. The
+     * hero states the one thing a regulator arriving at the site wants to
+     * know first, which is what CRASA published most recently and where the
+     * file is.
+     *
+     * @return array{title: string, kind: string, year: string|null, format: string|null, size: string|null, sample: bool, url: string}|null
+     */
+    public static function publication(): ?array
+    {
+        $publication = Publication::listed()
+            ->with('translations')
+            ->orderByDesc('published_on')
+            ->first();
+
+        if ($publication === null) {
+            return null;
+        }
+
+        $title = $publication->translated('title', '');
+
+        if ($title === '') {
+            return null;
+        }
+
+        $document = $publication->primaryDocument();
+
+        return [
+            'title' => $title,
+            'kind' => __($publication->publication_type->labelKey()),
+            'year' => $publication->published_on?->format('Y'),
+            'format' => $document
+                ? strtoupper(pathinfo($document->original_filename, PATHINFO_EXTENSION))
+                : null,
+            'size' => $document?->readableSize(),
+            'sample' => (bool) $publication->is_sample,
+            'url' => route('publications.show', [
+                'locale' => app()->getLocale(),
+                'slug' => $publication->slug,
+            ]),
+        ];
+    }
+
+    /**
      * The counts beneath the bars. Each goes where it points: a figure a
      * reader cannot follow is a fact about the site rather than a way in.
      *

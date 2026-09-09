@@ -113,6 +113,29 @@
 .b-hero__slide { grid-area: 1 / 1; position: relative; display: flex; align-items: center; min-width: 0; }
 .b-hero__slide[hidden] { display: none; }
 
+/*
+ * The crossfade. 400ms on --ease-in, and nothing travels.
+ *
+ * Screen 02 stacks its slides on one cell and changes which is shown. A
+ * slide-in would imply a direction the content does not have and would move
+ * a paragraph a reader may be part way through. The outgoing slide is
+ * aria-hidden the instant the change happens and stays visible only for the
+ * length of the fade, so the accessibility tree never lags the pixels.
+ *
+ * Only the script sets data-state, so with no script the first slide is
+ * served at full opacity and nothing here applies.
+ */
+.b-hero__slide[data-state] { transition: opacity 400ms var(--ease-in); }
+.b-hero__slide[data-state="current"] { opacity: 1; z-index: 1; }
+.b-hero__slide[data-state="leaving"] { opacity: 0; z-index: 0; pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* The rotation is off entirely under this preference, so the transition
+     would only ever fire on a control the reader pressed themselves. It
+     still goes: an instant change is what was asked for. */
+  .b-hero__slide[data-state] { transition: none; }
+}
+
 .b-hero__media { position: absolute; inset: 0; overflow: hidden; }
 /* picture is display:inline by default, so height:100% resolves to auto on
    it and object-fit on the img never engages. That is what left the
@@ -1660,3 +1683,64 @@
 }
 .b[data-ground="navy"] .c-notice--pending .c-notice__title { color: var(--c-white); }
 .b[data-ground="navy"] .c-notice--pending .c-notice__body { color: var(--c-amber-mid); }
+
+
+/* The comparison and publication panels ---------------------------------- */
+/* Same shell as the figures panel. Screen 02 draws one panel on the hero,
+   at --c-navy-mid inside a --c-navy-line rule; what changes between slides
+   is what is inside it, not the box. */
+
+.b-hero__table { width: 100%; border-collapse: collapse; margin: var(--s-4) 0 0; }
+.b-hero__table th,
+.b-hero__table td { padding: var(--s-3) 0; border-top: 1px solid var(--c-navy-line); text-align: left; }
+.b-hero__table th {
+  font-weight: 500;
+  color: var(--c-cream);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+.b-hero__table td {
+  text-align: right;
+  font-family: var(--f-admin);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--c-white);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* Screen 02 line 291 draws the state code as a 28px green-dark square with
+   the two letters in --f-admin at 11px, weight 700. */
+.b-hero__code {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-xs);
+  background: var(--c-green-dark);
+  color: var(--c-white);
+  font-family: var(--f-admin);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.b-hero__latest-kind {
+  margin: var(--s-4) 0 var(--s-2);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-green-light);
+}
+.b-hero__latest-title {
+  margin: 0 0 var(--s-2);
+  font-family: var(--f-head);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--c-white);
+  text-wrap: pretty;
+}
+
+.b-hero__panel-action { margin: var(--s-4) 0 0; font-size: 15px; font-weight: 600; }
+.b-hero__panel-action a { color: var(--c-white); text-underline-offset: 4px; }

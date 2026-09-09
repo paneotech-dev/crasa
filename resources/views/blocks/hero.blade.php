@@ -23,6 +23,7 @@
         'cta_label' => $block->translate('cta_label'),
         'cta_url' => \App\Support\Navigation::resolve($block->setting('cta_url')),
         'image' => $block->setting('image'),
+        'panel' => $block->setting('panel', 'figures'),
     ];
 
     $rendered = collect([$primary])->concat(
@@ -33,8 +34,50 @@
             'cta_label' => $block->translate('slide_'.$i.'_cta_label'),
             'cta_url' => \App\Support\Navigation::resolve($slide['cta_url'] ?? null),
             'image' => $slide['image'] ?? null,
+            'panel' => $slide['panel'] ?? null,
         ])
     )->filter(fn ($s) => $s['headline'] !== null)->values();
+
+    /*
+     * The panel each slide carries, built before the markup so a slide whose
+     * panel has no data to draw is dropped rather than rendered empty.
+     *
+     * Screen 02 draws two kinds of slide, one with a photograph behind a
+     * scrim and one with a data panel in the second column. There are no
+     * photographs yet, so all three are the second kind and each states
+     * something different: what the register holds, what two member states
+     * report against one indicator, and what CRASA published last.
+     *
+     * A carousel of near-identical slides is worse than no carousel. These
+     * differ because the content differs, which is the only reason a
+     * carousel is ever the right control.
+     */
+    $panels = [
+        'figures' => \App\Support\HeroPanel::build(),
+        'comparison' => \App\Support\HeroPanel::comparison(),
+        'publication' => \App\Support\HeroPanel::publication(),
+    ];
+
+    $hasPanel = fn (?string $kind) => match ($kind) {
+        'figures' => ($panels['figures']['bars'] ?? []) !== [],
+        'comparison' => $panels['comparison'] !== null,
+        'publication' => $panels['publication'] !== null,
+        default => false,
+    };
+
+    /*
+     * Slides two and three exist only to carry their panel. If the register
+     * cannot supply a comparison, or the library is empty, they have nothing
+     * to say and are dropped: a stripped database serves one slide and a
+     * banner rather than three slides and two empty boxes.
+     *
+     * The first slide is not conditional. Its copy is the content and the
+     * figures panel is an addition to it, so it survives a database with no
+     * indicators in it at all.
+     */
+    $rendered = $rendered->reject(
+        fn ($s) => in_array($s['panel'], ['comparison', 'publication'], true) && ! $hasPanel($s['panel'])
+    )->values();
 
     /*
      * Rotation runs only with more than one slide.
@@ -64,7 +107,14 @@
                 data-hero-slide
                 role="group"
                 aria-roledescription="{{ __('blocks.hero_slide') }}"
-                aria-label="{{ __('blocks.hero_slide_of', ['index' => $index + 1, 'total' => $rendered->count()]) }}"
+                {{-- "Slide 2 of 3: featured comparison". A dot labelled
+                     only by its number tells a reader how far along they
+                     are and nothing about where they would land. --}}
+                aria-label="{{ __('blocks.hero_slide_of', [
+                    'index' => $index + 1,
+                    'total' => $rendered->count(),
+                    'name' => __('blocks.hero_panel_'.($slide['panel'] ?? 'figures').'_name'),
+                ]) }}"
                 @if ($index !== 0) hidden @endif
             @endif
         >
@@ -162,7 +212,7 @@
                     @endif
                 </div>
 
-                @if (! $image && $index === 0)
+                @if (! $image && $hasPanel($slide['panel']))
                     {{-- The screen's own answer to a slide with no
                          photograph. Screen 02 fills the second column with:
 
@@ -179,9 +229,9 @@
                          "photograph to follow" on the first screen of a
                          treaty body's site tells a regulator the site is
                          unfinished. This one carries figures instead. --}}
-                    @php $panel = \App\Support\HeroPanel::build(); @endphp
+                    @php $panel = $panels['figures']; @endphp
 
-                    @if ($panel['bars'] !== [])
+                    @if ($slide['panel'] === 'figures')
                         <div class="b-hero__panel">
                             {{-- Screen 02 sets this in tracked caps. The
                                  ruling in CLAUDE.md excludes eyebrows and
@@ -243,6 +293,63 @@
                                 </p>
                             @endif
                         </div>
+                    @elseif ($slide['panel'] === 'comparison')
+                        @php $comparison = $panels['comparison']; @endphp
+                        {{-- The same panel shell as the figures slide: the
+                             screen draws one panel, not three. What changes
+                             inside it is the content. --}}
+                        <div class="b-hero__panel">
+                            <p class="b-hero__panel-title">{{ __('blocks.hero_comparison_title') }}</p>
+                            <p class="b-hero__panel-note">{{ $comparison['indicator'] }}@if ($comparison['period']), {{ $comparison['period'] }}@endif</p>
+
+                            <table class="b-hero__table">
+                                <caption class="c-sr">{{ $comparison['indicator'] }}</caption>
+                                <tbody>
+                                    @foreach ($comparison['rows'] as $row)
+                                        <tr>
+                                            <th scope="row">
+                                                <span class="b-hero__code" aria-hidden="true">{{ $row['code'] }}</span>
+                                                {{ $row['country'] }}
+                                            </th>
+                                            <td>{{ $row['value'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+
+                            <p class="b-hero__panel-action">
+                                <a href="{{ $comparison['url'] }}">{{ __('blocks.hero_comparison_action') }}</a>
+                            </p>
+
+                            @if ($comparison['sample'])
+                                <p class="b-hero__panel-notice">
+                                    <strong>{{ __('indicators.demo_title') }}</strong>
+                                    {{ __('blocks.hero_panel_demo') }}
+                                </p>
+                            @endif
+                        </div>
+                    @elseif ($slide['panel'] === 'publication')
+                        @php $latest = $panels['publication']; @endphp
+                        <div class="b-hero__panel">
+                            <p class="b-hero__panel-title">{{ __('blocks.hero_publication_title') }}</p>
+
+                            <p class="b-hero__latest-kind">{{ $latest['kind'] }}</p>
+                            <p class="b-hero__latest-title">{{ $latest['title'] }}</p>
+                            <p class="b-hero__panel-note">
+                                {{ collect([$latest['year'], $latest['format'], $latest['size']])->filter()->implode(', ') }}
+                            </p>
+
+                            <p class="b-hero__panel-action">
+                                <a href="{{ $latest['url'] }}">{{ __('blocks.hero_publication_action') }}</a>
+                            </p>
+
+                            @if ($latest['sample'])
+                                <p class="b-hero__panel-notice">
+                                    <strong>{{ __('indicators.demo_title') }}</strong>
+                                    {{ __('blocks.hero_panel_demo') }}
+                                </p>
+                            @endif
+                        </div>
                     @endif
                 @endif
             </div>
@@ -276,7 +383,11 @@
                         data-hero-dot="{{ $index }}"
                         role="tab"
                         aria-selected="{{ $index === 0 ? 'true' : 'false' }}"
-                        aria-label="{{ __('blocks.hero_slide_of', ['index' => $index + 1, 'total' => $rendered->count()]) }}"
+                        aria-label="{{ __('blocks.hero_slide_of', [
+                            'index' => $index + 1,
+                            'total' => $rendered->count(),
+                            'name' => __('blocks.hero_panel_'.($slide['panel'] ?? 'figures').'_name'),
+                        ]) }}"
                     ></button>
                 @endforeach
             </div>

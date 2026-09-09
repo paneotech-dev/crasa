@@ -43,20 +43,71 @@
     return reduced && reduced.matches;
   }
 
+  /* A crossfade, not a slide-in.
+   *
+   * Screen 02 stacks its slides on one grid cell and changes which one is
+   * shown; nothing travels. A 400ms fade on --ease-in is the change the
+   * motion specification allows, because it does not imply a direction and
+   * it does not move text a reader may be part-way through.
+   *
+   * The outgoing slide stays in the flow for the length of the fade and is
+   * then hidden, so the band never collapses to nothing between slides. It
+   * is aria-hidden throughout, so the accessibility tree changes at once
+   * even though the pixels take 400ms. */
+  var FADE = 400;
+  var fading = null;
+
   function show(index, announce) {
+    var previous = current;
     current = (index + slides.length) % slides.length;
 
+    if (previous === current && slides[current].hidden === false) {
+      return;
+    }
+
+    if (fading !== null) {
+      window.clearTimeout(fading);
+      fading = null;
+    }
+
     slides.forEach(function (slide, i) {
-      slide.hidden = i !== current;
+      if (i === current) {
+        slide.hidden = false;
+        slide.setAttribute('aria-hidden', 'false');
+        // Forced reflow, so the browser has a frame at opacity 0 to
+        // transition from rather than jumping straight to 1.
+        void slide.offsetWidth;
+        slide.setAttribute('data-state', 'current');
+      } else if (i === previous && !prefersReduced()) {
+        slide.setAttribute('aria-hidden', 'true');
+        slide.setAttribute('data-state', 'leaving');
+      } else {
+        slide.hidden = true;
+        slide.setAttribute('aria-hidden', 'true');
+        slide.removeAttribute('data-state');
+      }
     });
+
+    if (!prefersReduced()) {
+      fading = window.setTimeout(function () {
+        slides.forEach(function (slide, i) {
+          if (i !== current) {
+            slide.hidden = true;
+            slide.removeAttribute('data-state');
+          }
+        });
+        fading = null;
+      }, FADE);
+    }
 
     dots.forEach(function (dot, i) {
       dot.setAttribute('aria-selected', i === current ? 'true' : 'false');
     });
 
     if (announce && live) {
-      // The label already reads "Slide 2 of 3", which is what a reader needs
-      // to know changed. Announced politely so it waits its turn.
+      // The label already reads "Slide 2 of 3: featured comparison", which
+      // is what a reader needs to know changed. Announced politely so it
+      // waits its turn.
       live.textContent = slides[current].getAttribute('aria-label') || '';
     }
   }
@@ -123,6 +174,40 @@
       if (prefersReduced()) { stop(); show(0, false); } else { start(); }
     });
   }
+
+  /* Swipe.
+   *
+   * Horizontal only, and only past a threshold that a vertical scroll will
+   * not cross: a reader flicking down the page must not change slide by
+   * accident. Passive listeners throughout, so the scroll is never blocked
+   * while we decide.
+   */
+  var SWIPE = 45;
+  var touchX = null;
+  var touchY = null;
+
+  hero.addEventListener('touchstart', function (event) {
+    if (event.touches.length !== 1) return;
+    touchX = event.touches[0].clientX;
+    touchY = event.touches[0].clientY;
+  }, { passive: true });
+
+  hero.addEventListener('touchend', function (event) {
+    if (touchX === null) return;
+
+    var touch = event.changedTouches[0];
+    var dx = touch.clientX - touchX;
+    var dy = touch.clientY - touchY;
+
+    touchX = null;
+    touchY = null;
+
+    // A gesture that travelled further down than across was a scroll.
+    if (Math.abs(dx) < SWIPE || Math.abs(dx) <= Math.abs(dy)) return;
+
+    show(dx < 0 ? current + 1 : current - 1, true);
+    start();
+  }, { passive: true });
 
   show(0, false);
   start();

@@ -38,6 +38,14 @@ class HomepageSeeder extends Seeder
                 'headline' => 'Harmonising ICT and postal regulation across Southern Africa.',
                 'subtext' => 'CRASA brings together the national regulatory authorities of 14 SADC member states to align frameworks, share regulatory practice, and strengthen the region\'s communications and postal sectors.',
                 'primaryAction' => 'Explore the library',
+                'slide1Eyebrow' => 'Regulatory comparator',
+                'slide1Headline' => 'The same question, asked of fourteen regulators.',
+                'slide1Subtext' => 'Licence conditions, tariffs and access obligations differ across the region. The comparator sets any indicator side by side, member state against member state, with the source and the reporting period against every figure.',
+                'slide1Action' => 'Open the comparator',
+                'slide2Eyebrow' => 'From the library',
+                'slide2Headline' => 'Every document comes from this platform.',
+                'slide2Subtext' => 'Model laws, guidelines, communiques and annual reports, held by CRASA and downloaded from CRASA. No redirect to Google Drive or SharePoint anywhere.',
+                'slide2Action' => 'Browse the library',
                 'secondaryAction' => 'About CRASA',
                 'fact1' => 'Member regulators',
                 'fact2' => 'Established',
@@ -76,6 +84,14 @@ class HomepageSeeder extends Seeder
                 'headline' => 'Harmoniser la réglementation des TIC et des services postaux en Afrique australe.',
                 'subtext' => 'La CRASA réunit les autorités de régulation nationales de 14 États membres de la SADC afin d\'aligner les cadres réglementaires, de partager les pratiques de régulation et de renforcer les secteurs des communications et des services postaux de la région.',
                 'primaryAction' => 'Explorer la bibliothèque',
+                'slide1Eyebrow' => 'Comparateur réglementaire',
+                'slide1Headline' => 'La même question, posée à quatorze régulateurs.',
+                'slide1Subtext' => 'Les conditions de licence, les tarifs et les obligations d\'accès diffèrent dans la région. Le comparateur place n\'importe quel indicateur côte à côte, État membre par État membre, avec la source et la période de référence pour chaque chiffre.',
+                'slide1Action' => 'Ouvrir le comparateur',
+                'slide2Eyebrow' => 'De la bibliothèque',
+                'slide2Headline' => 'Chaque document provient de cette plateforme.',
+                'slide2Subtext' => 'Lois types, lignes directrices, communiqués et rapports annuels, conservés par la CRASA et téléchargés depuis la CRASA. Aucune redirection vers Google Drive ou SharePoint.',
+                'slide2Action' => 'Parcourir la bibliothèque',
                 'secondaryAction' => 'À propos de la CRASA',
                 'fact1' => 'Régulateurs membres',
                 'fact2' => 'Création',
@@ -114,6 +130,14 @@ class HomepageSeeder extends Seeder
                 'headline' => 'Harmonizar a regulamentação das TIC e dos serviços postais na África Austral.',
                 'subtext' => 'A CRASA reúne as autoridades reguladoras nacionais de 14 Estados membros da SADC para alinhar quadros regulatórios, partilhar práticas de regulação e reforçar os setores das comunicações e dos serviços postais da região.',
                 'primaryAction' => 'Explorar a biblioteca',
+                'slide1Eyebrow' => 'Comparador regulatório',
+                'slide1Headline' => 'A mesma pergunta, feita a catorze reguladores.',
+                'slide1Subtext' => 'As condições de licenciamento, as tarifas e as obrigações de acesso diferem em toda a região. O comparador coloca qualquer indicador lado a lado, Estado membro a Estado membro, com a fonte e o período de referência para cada valor.',
+                'slide1Action' => 'Abrir o comparador',
+                'slide2Eyebrow' => 'Da biblioteca',
+                'slide2Headline' => 'Cada documento provém desta plataforma.',
+                'slide2Subtext' => 'Leis-modelo, linhas de orientação, comunicados e relatórios anuais, conservados pela CRASA e descarregados a partir da CRASA. Sem qualquer redirecionamento para o Google Drive ou o SharePoint.',
+                'slide2Action' => 'Consultar a biblioteca',
                 'secondaryAction' => 'Sobre a CRASA',
                 'fact1' => 'Reguladores membros',
                 'fact2' => 'Fundação',
@@ -192,6 +216,25 @@ class HomepageSeeder extends Seeder
             // App\Support\ImageLibrary and docs/CLIENT_REQUESTS.md.
             'image' => null,
             'cta_url' => '/publications',
+            'panel' => 'figures',
+            /*
+             * Two more slides, and neither needs a photograph.
+             *
+             * Screen 02 draws three, and the rotation has been built and
+             * idle since it was written because the only way to fill it was
+             * to repeat one image. These fill it with content instead: the
+             * comparator, which is the platform's reason to exist and sat
+             * four sections down the page, and the most recent publication,
+             * which is the first thing a regulator arriving here wants.
+             *
+             * Each drops itself if its panel has no data to draw, so a
+             * stripped database serves one slide and a banner rather than
+             * three slides and two empty boxes.
+             */
+            'rotation_items' => [
+                ['cta_url' => '/comparator', 'panel' => 'comparison'],
+                ['cta_url' => '/publications', 'panel' => 'publication'],
+            ],
         ], fn (string $l) => [
             // Sentence case, per the tracked-caps ruling. The screen's copy
             // is client-supplied and already in all three languages.
@@ -199,6 +242,16 @@ class HomepageSeeder extends Seeder
             'headline' => $t[$l]['headline'],
             'subhead' => $t[$l]['subtext'],
             'cta_label' => $t[$l]['primaryAction'],
+
+            'slide_0_eyebrow' => $t[$l]['slide1Eyebrow'],
+            'slide_0_headline' => $t[$l]['slide1Headline'],
+            'slide_0_subhead' => $t[$l]['slide1Subtext'],
+            'slide_0_cta_label' => $t[$l]['slide1Action'],
+
+            'slide_1_eyebrow' => $t[$l]['slide2Eyebrow'],
+            'slide_1_headline' => $t[$l]['slide2Headline'],
+            'slide_1_subhead' => $t[$l]['slide2Subtext'],
+            'slide_1_cta_label' => $t[$l]['slide2Action'],
         ]);
 
         $hero->update([
