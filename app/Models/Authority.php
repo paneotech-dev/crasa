@@ -31,6 +31,9 @@ class Authority extends Model
         'established_year',
         'logo_path',
         'is_sample',
+        'confirmed_at',
+        'confirmed_by_id',
+        'confirmed_by_name',
     ];
 
     protected function casts(): array
@@ -38,7 +41,25 @@ class Authority extends Model
         return [
             'established_year' => 'integer',
             'is_sample' => 'boolean',
+            'confirmed_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Confirmed by its own member state, and by whom.
+     *
+     * is_sample says whether a record is demonstration data. This says who
+     * vouched for it: for a record a national regulator will be asked to
+     * stand behind, "confirmed" without "by whom" is not a confirmation.
+     */
+    public function isConfirmed(): bool
+    {
+        return $this->confirmed_at !== null;
+    }
+
+    public function confirmedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'confirmed_by_id');
     }
 
     public function country(): BelongsTo

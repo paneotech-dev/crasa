@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\ConfirmationController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DelegateListController;
 use App\Http\Controllers\Admin\HelpController;
@@ -353,6 +354,18 @@ Route::prefix('{locale}')
                 Route::post('pages/{page}/blocks/{block}/duplicate', [PageBlockController::class, 'duplicate'])->name('pages.blocks.duplicate');
                 Route::put('pages/{page}/blocks/{block}/visibility', [PageBlockController::class, 'toggle'])->name('pages.blocks.visibility');
                 Route::delete('pages/{page}/blocks/{block}', [PageBlockController::class, 'destroy'])->name('pages.blocks.destroy');
+
+                /*
+                 * Confirming the member state records, built for the
+                 * validation workshop: the fourteen delegates who can
+                 * confirm will be in one room, and a request that leaves in
+                 * a folder comes back in months if at all.
+                 */
+                Route::get('confirmations', [ConfirmationController::class, 'index'])->name('confirmations');
+                Route::get('confirmations/{iso}', [ConfirmationController::class, 'edit'])
+                    ->whereAlpha('iso')->name('confirmations.edit');
+                Route::put('confirmations/{iso}', [ConfirmationController::class, 'update'])
+                    ->whereAlpha('iso')->name('confirmations.update');
 
                 /*
                  * The navigation builder, screen 14.
