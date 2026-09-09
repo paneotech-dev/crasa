@@ -996,6 +996,25 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
   min-width: 0;
 }
 
+/*
+ * The option list, pinned as a matched pair.
+ *
+ * An <option> inherits the select's colours, and the back office swaps its
+ * surface set under prefers-color-scheme. Left alone, the menu is light ink
+ * on whatever ground the browser decides to paint behind it, which in dark
+ * mode is often still white. Naming both properties from the same set means
+ * they are always legible together, in either mode.
+ *
+ * The public .c-select does the same thing in base.css, with white and
+ * charcoal, because the public surfaces have no dark mode to follow.
+ */
+.a-select option,
+.a-select optgroup {
+  color: var(--a-ink);
+  background: var(--a-surface);
+}
+.a-select option:disabled { color: var(--c-disabled); }
+
 .a-input:focus-visible,
 .a-select:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
 

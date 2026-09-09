@@ -109,6 +109,28 @@ table { border-collapse: collapse; }
 .c-select:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 1px; }
 .c-select:disabled { color: var(--c-disabled); background: var(--c-cream); cursor: not-allowed; }
 
+/*
+ * The open option list, always, whatever the control sits on.
+ *
+ * A select on a navy band takes a navy ground and white text, which is
+ * right for the closed control and wrong for the menu: an <option> inherits
+ * the select's background, so the list rendered charcoal on navy and only
+ * the row the operating system highlighted could be read.
+ *
+ * Setting colour and background on the option itself fixes it. Native
+ * option styling is barely controllable, but these two properties are
+ * honoured in Chrome, Firefox and Edge, and they are the two that matter.
+ * They live here rather than beside the dark-ground override so that every
+ * select on the platform gets them, including ones written after this and
+ * ones that move onto a dark ground later.
+ */
+.c-select option,
+.c-select optgroup {
+  color: var(--c-charcoal);
+  background: var(--c-white);
+}
+.c-select option:disabled { color: var(--c-disabled); }
+
 .c-sr {
   position: absolute;
   width: 1px; height: 1px;
