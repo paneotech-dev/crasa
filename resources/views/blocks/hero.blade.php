@@ -66,7 +66,16 @@
                 @if ($index !== 0) hidden @endif
             @endif
         >
-            @php $image = $slide['image'] ? \App\Support\ImageLibrary::resolve($slide['image']) : null; @endphp
+            @php
+                // Two kinds of image can sit in this slot: a slot name from
+                // the supplied art-directed library, or an asset the
+                // Secretariat uploaded. Both are strings in one setting, so
+                // the reference prefix is what tells them apart.
+                $isUpload = \App\Support\MediaReference::isReference($slide['image']);
+                $image = $isUpload
+                    ? \App\Support\MediaReference::resolve($slide['image'])
+                    : ($slide['image'] ? \App\Support\ImageLibrary::resolve($slide['image']) : null);
+            @endphp
 
             @if ($image)
                 {{-- Behind the text, not beside it. The scrim below is what
@@ -77,13 +86,23 @@
                      label, and the foundations make alt a required field in
                      all three languages. --}}
                 <div class="b-hero__media">
-                    <x-responsive-image
-                        :name="$slide['image']"
-                        :alt="__('images.'.$slide['image'])"
-                        sizes="100vw"
-                        :loading="$index === 0 ? 'eager' : 'lazy'"
-                        class="c-img--cover"
-                    />
+                    @if ($isUpload)
+                        <x-media-image
+                            :reference="$slide['image']"
+                            sizes="100vw"
+                            :width="1600"
+                            :loading="$index === 0 ? 'eager' : 'lazy'"
+                            class="c-img--cover"
+                        />
+                    @else
+                        <x-responsive-image
+                            :name="$slide['image']"
+                            :alt="__('images.'.$slide['image'])"
+                            sizes="100vw"
+                            :loading="$index === 0 ? 'eager' : 'lazy'"
+                            class="c-img--cover"
+                        />
+                    @endif
                 </div>
                 {{-- Screen 02 draws a colour-blend tint and then the
                      readability scrim, in that order. --}}

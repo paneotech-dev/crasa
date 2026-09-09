@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\Admin\PageBlockController;
 use App\Http\Controllers\Admin\UserAdminController;
@@ -189,6 +190,18 @@ Route::prefix('{locale}')
                 Route::post('pages/{page}/blocks/{block}/duplicate', [PageBlockController::class, 'duplicate'])->name('pages.blocks.duplicate');
                 Route::put('pages/{page}/blocks/{block}/visibility', [PageBlockController::class, 'toggle'])->name('pages.blocks.visibility');
                 Route::delete('pages/{page}/blocks/{block}', [PageBlockController::class, 'destroy'])->name('pages.blocks.destroy');
+
+                /*
+                 * Media, CM-03. Nothing is hotlinked: every asset is stored
+                 * here and served from a generated rendition.
+                 */
+                Route::get('media', [MediaController::class, 'index'])->name('media');
+                Route::get('media/upload', [MediaController::class, 'create'])->name('media.create');
+                Route::post('media', [MediaController::class, 'store'])->name('media.store');
+                Route::get('media/{asset}', [MediaController::class, 'edit'])->name('media.edit');
+                Route::put('media/{asset}', [MediaController::class, 'update'])->name('media.update');
+                Route::post('media/{asset}/replace', [MediaController::class, 'replace'])->name('media.replace');
+                Route::delete('media/{asset}', [MediaController::class, 'destroy'])->name('media.destroy');
 
                 Route::get('users', [UserAdminController::class, 'index'])->name('users');
                 Route::get('users/invite', [UserAdminController::class, 'form'])->name('users.form');

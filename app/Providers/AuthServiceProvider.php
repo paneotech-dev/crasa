@@ -9,6 +9,7 @@ use App\Models\Committee;
 use App\Models\Country;
 use App\Models\Document;
 use App\Models\Instrument;
+use App\Models\MediaAsset;
 use App\Models\Page;
 use App\Models\PageBlock;
 use App\Models\Sector;
@@ -19,6 +20,7 @@ use App\Policies\CommitteePolicy;
 use App\Policies\CountryPolicy;
 use App\Policies\DocumentPolicy;
 use App\Policies\InstrumentPolicy;
+use App\Policies\MediaAssetPolicy;
 use App\Policies\PageBlockPolicy;
 use App\Policies\PagePolicy;
 use App\Policies\SectorPolicy;
@@ -36,6 +38,7 @@ class AuthServiceProvider extends ServiceProvider
         Country::class => CountryPolicy::class,
         Document::class => DocumentPolicy::class,
         Instrument::class => InstrumentPolicy::class,
+        MediaAsset::class => MediaAssetPolicy::class,
         Page::class => PagePolicy::class,
         PageBlock::class => PageBlockPolicy::class,
         Sector::class => SectorPolicy::class,

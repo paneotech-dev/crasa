@@ -115,7 +115,11 @@ class DesignSystemTest extends TestCase
     public function test_the_named_colours_appear_only_in_the_token_file(): void
     {
         foreach (['css/base.css', 'css/chrome.css', 'css/grid.css', 'css/blocks.css', 'css/admin.css'] as $sheet) {
-            $css = $this->css($sheet);
+            // Comments are stripped first. A stylesheet that quotes the
+            // approved screen's own literal in a comment, next to the token
+            // it uses instead, is documenting the decision rather than
+            // making it, and that is exactly what should be encouraged.
+            $css = preg_replace('#/\*.*?\*/#s', '', $this->css($sheet));
 
             foreach ([
                 '#908977', '#6E7A85', '#050D18', '#5A6680', '#6B7691',
