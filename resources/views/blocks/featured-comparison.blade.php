@@ -57,7 +57,7 @@
                 <form class="b-compare__controls" method="get" action="{{ url()->current() }}#{{ $anchor }}">
                     <div class="b-compare__control">
                         <label for="cmp-indicator">{{ __('blocks.comparison_indicator') }}</label>
-                        <select id="cmp-indicator" name="cmp_indicator">
+                        <select class="c-select" id="cmp-indicator" name="cmp_indicator">
                             @foreach ($choices as $choice)
                                 <option value="{{ $choice->slug }}" @selected(($selected['indicator'] ?? null) === $choice->slug)>{{ $choice->name }}</option>
                             @endforeach
@@ -67,7 +67,7 @@
                     @foreach (['a', 'b'] as $slot)
                         <div class="b-compare__control">
                             <label for="cmp-{{ $slot }}">{{ __('blocks.comparison_state_'.$slot) }}</label>
-                            <select id="cmp-{{ $slot }}" name="cmp_{{ $slot }}">
+                            <select class="c-select" id="cmp-{{ $slot }}" name="cmp_{{ $slot }}">
                                 @foreach ($states as $state)
                                     <option value="{{ $state->iso_code }}" @selected(($selected[$slot] ?? null) === $state->iso_code)>{{ $state->name }}</option>
                                 @endforeach

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Country;
 use App\Models\Publication;
+use App\Models\Sector;
 use App\Support\SectionCounts;
 use Database\Seeders\CountrySeeder;
 use Database\Seeders\NewsroomSeeder;
@@ -151,6 +152,62 @@ class CountsTest extends TestCase
                 basename(dirname($view)).' writes its own facet markup instead of using the shared component.'
             );
         }
+    }
+
+    /**
+     * Screen 07 draws five facets: Sector, Instrument type, Year, Owning
+     * committee, Available in. The build had four and neither Sector nor
+     * Available in was among them.
+     */
+    public function test_the_library_carries_every_facet_screen_07_draws(): void
+    {
+        $html = $this->get('/en/publications')->assertOk()->getContent();
+
+        foreach (['sector', 'type', 'year', 'committee', 'language'] as $facet) {
+            $this->assertStringContainsString('facet-'.$facet, $html, 'Screen 07 draws a '.$facet.' facet and it is not built.');
+        }
+    }
+
+    /**
+     * "Available in" reads the attached document's language, not the
+     * record's translations. The title may be translated while the PDF is
+     * not, and it is the PDF the reader came for.
+     */
+    public function test_the_language_facet_filters_on_the_document_not_the_title(): void
+    {
+        $publication = Publication::listed()->whereHas('documents')->first();
+        $this->assertNotNull($publication, 'No seeded publication has a document to filter on.');
+
+        $locale = $publication->documents->first()->locale;
+
+        $this->get('/en/publications?language='.$locale)
+            ->assertOk()
+            ->assertSee($publication->translated('title', $publication->slug));
+
+        // A language nothing is filed in returns nothing rather than
+        // everything, which is the failure mode of a filter that silently
+        // does not apply.
+        $empty = $this->get('/en/publications?language=zz')->assertOk()->getContent();
+        $this->assertSame(0, substr_count($empty, 'class="b-row"'));
+    }
+
+    public function test_the_sector_facet_narrows_the_library(): void
+    {
+        $sector = Sector::whereIn(
+            'id',
+            Publication::listed()->whereNotNull('sector_id')->pluck('sector_id')
+        )->first();
+
+        $this->assertNotNull($sector, 'No seeded publication carries a sector.');
+
+        $all = $this->get('/en/publications')->assertOk()->getContent();
+        $filtered = $this->get('/en/publications?sector='.$sector->slug)->assertOk()->getContent();
+
+        $this->assertNotSame(
+            substr_count($all, 'class="b-row"'),
+            substr_count($filtered, 'class="b-row"'),
+            'Filtering by sector returned the same number of rows as no filter.'
+        );
     }
 
     /** @return array<int, int> */

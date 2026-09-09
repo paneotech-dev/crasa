@@ -38,4 +38,6 @@ return [
     'count_instruments' => '{0}Instruments in force|{1}Instrument in force|[2,*]Instruments in force',
     'band_eyebrow' => 'Regulatory library',
     'band_heading' => 'Guidelines, model laws and frameworks',
+    'sector' => 'Sector',
+    'language' => 'Available in',
 ];

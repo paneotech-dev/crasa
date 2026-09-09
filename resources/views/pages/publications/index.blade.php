@@ -34,6 +34,14 @@
                     :counts="$counts['type']"
                     :options="collect($types)->map(fn ($t) => ['value' => $t->value, 'label' => __($t->labelKey())])"
                 />
+                {{-- Screen 07 draws Sector first among its facets. --}}
+                <x-facet
+                    :legend="__('publications.sector')"
+                    field="sector"
+                    :active="$filters['sector']"
+                    :counts="$counts['sector']"
+                    :options="$sectors->map(fn ($s) => ['value' => $s->slug, 'label' => $s->name])"
+                />
                 <x-facet
                     :legend="__('publications.country')"
                     field="country"
@@ -47,6 +55,20 @@
                     :active="$filters['committee']"
                     :counts="$counts['committee']"
                     :options="$committees->map(fn ($c) => ['value' => $c->slug, 'label' => $c->name])"
+                />
+                {{-- "Available in". A regulator who works in French needs
+                     to filter the library to what exists in French, and
+                     that is a trilingual obligation rather than a
+                     convenience. It reads the attached document's language,
+                     not the record's translations: the title may be
+                     translated while the PDF is not, and it is the PDF the
+                     reader came for. --}}
+                <x-facet
+                    :legend="__('publications.language')"
+                    field="language"
+                    :active="$filters['language']"
+                    :counts="$counts['language']"
+                    :options="collect($languages)->map(fn ($code) => ['value' => $code, 'label' => \App\Support\Locales::nameOf($code)])"
                 />
                 <x-facet
                     :legend="__('publications.year')"

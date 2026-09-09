@@ -99,7 +99,7 @@
          URL the map's own links use. --}}
     <form class="c-map-region__control" method="get" action="{{ route('members.go', ['locale' => $locale]) }}">
         <label class="c-map-region__control-label" for="map-state">{{ __('members.map_select_state') }}</label>
-        <select class="c-map-region__select" id="map-state" name="iso">
+        <select class="c-select c-map-region__select" id="map-state" name="iso">
             @foreach ($ordered as $iso)
                 <option value="{{ $iso }}">{{ $view->entry($iso)->country->name }}</option>
             @endforeach
@@ -109,7 +109,7 @@
 
     <form class="c-map-region__control" method="get" action="{{ url()->current() }}" data-map-control>
         <label class="c-map-region__control-label" for="map-indicator">{{ __('members.map_shade_by') }}</label>
-        <select class="c-map-region__select" id="map-indicator" name="indicator">
+        <select class="c-select c-map-region__select" id="map-indicator" name="indicator">
             <option value="">{{ __('members.map_option_none') }}</option>
             @foreach ($view->groups as $group)
                 <optgroup label="{{ $group['label'] }}">

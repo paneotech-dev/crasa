@@ -244,6 +244,33 @@ class SectionBandTest extends TestCase
             ->assertDontSee('c-band__counts', false);
     }
 
+    /**
+     * Screen 01 draws select, choice, upload and search as one component
+     * set. The select had been defined three times, with the same values
+     * written out each time — on the map, on the homepage comparison, and
+     * in the back office. Three definitions of one control is how the
+     * fourth one ends up different.
+     */
+    public function test_the_select_control_is_defined_once(): void
+    {
+        $base = File::get(public_path('css/base.css'));
+        $blocks = File::get(public_path('css/blocks.css'));
+
+        $this->assertStringContainsString('.c-select {', $base, 'The select component is not in the foundations layer.');
+
+        // No second definition of the control anywhere in the public sheets.
+        $this->assertDoesNotMatchRegularExpression(
+            '~\.[a-z-]*select \{[^}]*border-radius~',
+            $blocks,
+            'A select is being redefined instead of using .c-select.'
+        );
+        $this->assertDoesNotMatchRegularExpression(
+            '~select \{[^}]*font-family~',
+            $blocks,
+            'A select is being redefined instead of using .c-select.'
+        );
+    }
+
     public function test_the_band_carries_its_copy_in_all_three_languages(): void
     {
         foreach (['en', 'fr', 'pt'] as $locale) {

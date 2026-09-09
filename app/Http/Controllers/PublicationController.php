@@ -6,6 +6,8 @@ use App\Enums\PublicationType;
 use App\Models\Committee;
 use App\Models\Country;
 use App\Models\Publication;
+use App\Models\Sector;
+use App\Support\Locales;
 use Illuminate\Http\Request;
 
 /**
@@ -26,9 +28,27 @@ class PublicationController extends Controller
     {
         $filters = [
             'type' => $request->string('type')->value() ?: null,
+            // Screen 07 draws Sector first among its facets and the build
+            // had none at all, although every publication carries a
+            // sector_id.
+            'sector' => $request->string('sector')->value() ?: null,
             'country' => $request->string('country')->value() ?: null,
             'committee' => $request->string('committee')->value() ?: null,
             'year' => $request->integer('year') ?: null,
+            /*
+             * "Available in", screen 07's fifth facet.
+             *
+             * This is a trilingual obligation rather than a convenience. A
+             * regulator who works in French needs to filter the library to
+             * what exists in French, and telling them a document is
+             * available only in English is more useful than letting them
+             * open it and find out.
+             *
+             * It filters on the attached documents' language, not on the
+             * record's translations: the title may be translated while the
+             * PDF is not, and it is the PDF the reader came for.
+             */
+            'language' => $request->string('language')->value() ?: null,
         ];
 
         $publications = $this->query($filters)
@@ -42,8 +62,10 @@ class PublicationController extends Controller
             'filters' => $filters,
             'counts' => $this->facetCounts($filters),
             'types' => PublicationType::cases(),
+            'sectors' => Sector::orderBy('name')->get(),
             'countries' => Country::orderBy('name')->get(),
             'committees' => Committee::orderBy('name')->get(),
+            'languages' => Locales::SUPPORTED,
             // Derived in PHP rather than with a raw YEAR(), which exists in
             // MariaDB and not in SQLite. The distinct year count is small,
             // and whereYear() below is Laravel's portable helper.
@@ -95,6 +117,25 @@ class PublicationController extends Controller
                 ->map(fn ($total) => (int) $total)
                 ->all(),
 
+            'sector' => $without('sector')
+                ->join('sectors', 'sectors.id', '=', 'publications.sector_id')
+                ->selectRaw('sectors.slug, COUNT(*) as total')
+                ->groupBy('sectors.slug')
+                ->pluck('total', 'slug')
+                ->map(fn ($total) => (int) $total)
+                ->all(),
+
+            'language' => $without('language')
+                ->join('documents', function ($join) {
+                    $join->on('documents.documentable_id', '=', 'publications.id')
+                        ->where('documents.documentable_type', '=', (new Publication)->getMorphClass());
+                })
+                ->selectRaw('documents.locale, COUNT(DISTINCT publications.id) as total')
+                ->groupBy('documents.locale')
+                ->pluck('total', 'locale')
+                ->map(fn ($total) => (int) $total)
+                ->all(),
+
             'country' => $without('country')
                 ->join('countries', 'countries.id', '=', 'publications.country_id')
                 ->selectRaw('countries.iso_code, COUNT(*) as total')
@@ -126,8 +167,10 @@ class PublicationController extends Controller
     {
         return Publication::listed()
             ->when($filters['type'], fn ($q, $v) => $q->where('publication_type', $v))
+            ->when($filters['sector'], fn ($q, $v) => $q->whereHas('sector', fn ($s) => $s->where('slug', $v)))
             ->when($filters['country'], fn ($q, $v) => $q->whereHas('country', fn ($c) => $c->where('iso_code', $v)))
             ->when($filters['committee'], fn ($q, $v) => $q->whereHas('committee', fn ($c) => $c->where('slug', $v)))
-            ->when($filters['year'], fn ($q, $v) => $q->whereYear('published_on', $v));
+            ->when($filters['year'], fn ($q, $v) => $q->whereYear('published_on', $v))
+            ->when($filters['language'], fn ($q, $v) => $q->whereHas('documents', fn ($d) => $d->where('locale', $v)));
     }
 }

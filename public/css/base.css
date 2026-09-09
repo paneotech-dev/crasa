@@ -85,6 +85,30 @@ table { border-collapse: collapse; }
 .c-skip:focus { transform: translateY(0); color: var(--c-white); }
 
 /* Screen-reader-only text, for labels that must exist but not be drawn. */
+/* Select. Screen 01 draws select, choice, upload and search as one
+   component set; this is the select.
+
+   It had been defined three times — once on the map, once on the homepage
+   comparison, once in the back office — with the same values written out
+   each time. Three definitions of one control is how the fourth one ends up
+   different, so it lives here with .c-input and the others reference it.
+
+   --r-xs, because CLAUDE.md puts --r-xs on inputs. 44px minimum, because a
+   control smaller than that is a control a thumb misses. */
+.c-select {
+  min-height: 44px;
+  min-width: 0;
+  padding: var(--s-2) var(--s-3);
+  font-family: var(--f-body);
+  font-size: 15px;
+  color: var(--c-charcoal);
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-xs);
+}
+.c-select:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 1px; }
+.c-select:disabled { color: var(--c-disabled); background: var(--c-cream); cursor: not-allowed; }
+
 .c-sr {
   position: absolute;
   width: 1px; height: 1px;

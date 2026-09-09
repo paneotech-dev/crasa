@@ -44,13 +44,13 @@ it was invented.
 
 | Screen | Gaps | Decided or scope | Built-not-drawn |
 |---|---|---|---|
-| 01 Design foundations | 3 | 0 | 1 |
+| 01 Design foundations | 3 (1 partly closed) | 0 | 1 |
 | 02 Homepage | 0 | 1 | 2 |
 | 03 Regulatory comparator | 2 | 1 | 2 |
 | 04 Committee workspace | 3 | 0 | 1 |
 | 05 Translation editor | 1 | 0 | 1 |
 | 06 Data submission | 0 | 0 | 2 |
-| 07 Publications library | 6 | 0 | 1 |
+| 07 Publications library | 4 (2 closed) | 0 | 1 |
 | 08 Members | 5 | 1 | 3 |
 | 09 Admin dashboard | 1 | 1 | 2 |
 | 10 Trilingual and architecture | 1 | 1 | 0 |
@@ -79,7 +79,9 @@ The token layer and the component set every other screen draws from.
 | Navigation parts | | |
 | Image system, slot specification, alt text in three languages | | |
 
-**Select, choice, upload and search — GAP.** Screen 01 draws these as one
+**Select — CLOSED 9 September.** `.c-select` is now defined once in the foundations layer and referenced everywhere. Choice, upload and search remain a GAP.
+
+**Original finding.** Screen 01 draws these as one
 specimen. The build styles a select in three separate places: `.a-select` in
 the back office, `.c-map-region__select` on the map, and
 `.b-compare__control select` on the homepage. Three definitions of one
@@ -236,11 +238,11 @@ The least conformant public screen. Six gaps.
 | Document details, downloads served from the platform | **Available languages on the detail page** | |
 | Translation fallback state | **Share and cite** | |
 
-**Sector facet — GAP, high.** Screen 07 draws Sector first among its facets.
+**Sector facet — CLOSED 9 September.** Screen 07 draws Sector first among its facets.
 The build has no sector facet at all. Publications carry `sector_id`; the
 filter was simply never added.
 
-**"Available in" — GAP, high.** A reader who works in French needs to filter
+**"Available in" — CLOSED 9 September.** A reader who works in French needs to filter
 to what exists in French. The data is there — documents carry a locale and
 publications have translations — and this is the one facet that is a
 trilingual-obligation question rather than a convenience.

@@ -38,4 +38,6 @@ return [
     'count_instruments' => '{0}Instrumentos em vigor|{1}Instrumento em vigor|[2,*]Instrumentos em vigor',
     'band_eyebrow' => 'Biblioteca regulatória',
     'band_heading' => 'Orientações, leis-modelo e quadros de referência',
+    'sector' => 'Setor',
+    'language' => 'Disponível em',
 ];

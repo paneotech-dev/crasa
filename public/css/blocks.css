@@ -1087,14 +1087,9 @@
   font-family: var(--f-admin); font-size: 13px; font-weight: 600;
   color: var(--c-charcoal); margin-bottom: calc(var(--s-1) * -1);
 }
-.c-map-region__select {
-  flex: 1 1 260px; min-width: 0; max-width: 420px;
-  min-height: 44px; padding: var(--s-2) var(--s-3);
-  font-family: var(--f-body); font-size: 15px; color: var(--c-charcoal);
-  background: var(--c-white);
-  border: 1px solid var(--c-border); border-radius: var(--r-xs);
-}
-.c-map-region__select:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 1px; }
+/* Sizing only. The control itself is .c-select in base.css, which screen
+   01 draws once and this had been redefining. */
+.c-map-region__select { flex: 1 1 260px; max-width: 420px; }
 
 /* Neighbours in sand, so the region reads as sitting in a continent rather
    than floating. Deliberately flat: they are context, not content. */
@@ -1414,12 +1409,8 @@
 }
 .b-compare__control { display: flex; flex-direction: column; gap: var(--s-1); flex: 1 1 200px; min-width: 0; }
 .b-compare__control label { font-family: var(--f-admin); font-size: 13px; font-weight: 600; color: var(--c-charcoal); }
-.b-compare__control select {
-  min-height: 44px; padding: var(--s-2) var(--s-3); min-width: 0;
-  font-family: var(--f-body); font-size: 15px; color: var(--c-charcoal);
-  background: var(--c-white); border: 1px solid var(--c-border); border-radius: var(--r-xs);
-}
-.b[data-ground="sand"] .b-compare__control select { background: var(--c-white); }
+/* Also .c-select. Its ground stays white on the sand band, which the
+   component sets already. */
 
 .b-compare__indicator { font-family: var(--f-head); font-size: 20px; font-weight: 600; color: var(--c-navy); margin: 0 0 var(--s-3); max-width: 40ch; }
 .b[data-ground="navy"] .b-compare__indicator { color: var(--c-white); }

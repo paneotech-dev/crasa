@@ -38,4 +38,6 @@ return [
     'count_instruments' => '{0}Instruments en vigueur|{1}Instrument en vigueur|[2,*]Instruments en vigueur',
     'band_eyebrow' => 'Bibliothèque réglementaire',
     'band_heading' => 'Lignes directrices, lois types et cadres de référence',
+    'sector' => 'Secteur',
+    'language' => 'Disponible en',
 ];
