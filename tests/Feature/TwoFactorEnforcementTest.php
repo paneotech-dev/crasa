@@ -131,4 +131,77 @@ class TwoFactorEnforcementTest extends TestCase
         $this->assertArrayNotHasKey('two_factor_secret', $admin->fresh()->toArray());
         $this->assertStringNotContainsString('JBSWY3DPEHPK3PXP', $admin->fresh()->toJson());
     }
+
+    /* The enrolment screen itself -------------------------------------- */
+
+    /**
+     * Both ways of taking the secret, because one of them fails in a
+     * conference room. A delegate whose telephone camera will not focus on
+     * a projector, or who is enrolling on the same machine as the browser,
+     * needs to type the secret in.
+     */
+    public function test_enrolment_offers_the_secret_as_a_code_and_as_text(): void
+    {
+        $admin = User::factory()->administrator()->withoutTwoFactor()->create();
+
+        $html = $this->actingAs($admin)->get('/en/two-factor/enrol')->assertOk()->getContent();
+
+        // The QR path: an inline SVG, not an image fetched from a third
+        // party. A secret that leaves this platform to be drawn is a secret
+        // somebody else has seen.
+        $this->assertStringContainsString('<svg', $html);
+        $this->assertStringNotContainsString('chart.googleapis.com', $html);
+        $this->assertStringNotContainsString('qrserver.com', $html);
+
+        // The manual path: the same secret in readable groups.
+        $secret = session('two_factor:secret');
+        $this->assertNotNull($secret);
+
+        $formatted = app(\App\Services\TwoFactorService::class)->formatSecret($secret);
+        $this->assertStringContainsString($formatted, $html);
+
+        // Both describe the same secret.
+        $this->assertSame($secret, str_replace(' ', '', $formatted));
+    }
+
+    /**
+     * Recovery codes are shown once, at enrolment, and are never
+     * retrievable afterwards: the column holds hashes.
+     */
+    public function test_recovery_codes_are_displayed_once_and_then_never_again(): void
+    {
+        $admin = User::factory()->administrator()->withoutTwoFactor()->create();
+
+        $this->actingAs($admin)->get('/en/two-factor/enrol')->assertOk();
+        $secret = session('two_factor:secret');
+
+        $code = app(\PragmaRX\Google2FA\Google2FA::class)->getCurrentOtp($secret);
+
+        $this->actingAs($admin)
+            ->post('/en/two-factor/confirm', ['code' => $code])
+            ->assertRedirect()
+            ->assertSessionHas('recovery_codes');
+
+        $codes = session('recovery_codes');
+        $this->assertNotEmpty($codes);
+
+        // Shown on the page they are handed to.
+        $this->actingAs($admin)->get('/en/two-factor/enrol')
+            ->assertOk()
+            ->assertSee($codes[0]);
+
+        // And gone on the next request: they were in a flash, and the
+        // stored copy is a hash list.
+        $again = $this->actingAs($admin)->get('/en/two-factor/enrol')->assertOk()->getContent();
+        $this->assertStringNotContainsString($codes[0], $again);
+
+        // Stored as a JSON list of hashes, encrypted at rest.
+        $stored = json_decode($admin->fresh()->two_factor_recovery_codes, true);
+
+        $this->assertNotEmpty($stored);
+
+        foreach ($stored as $hash) {
+            $this->assertNotContains($hash, $codes, 'A recovery code is stored in the clear.');
+        }
+    }
 }

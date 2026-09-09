@@ -122,10 +122,11 @@
 
             <h2>{{ __('contact.secretariat') }}</h2>
             <address class="c-address">
-                <div>{{ __('footer.address_line_1') }}</div>
-                <div>{{ __('footer.address_line_2') }}</div>
-                <div><a href="mailto:{{ __('footer.email') }}">{{ __('footer.email') }}</a></div>
-                <div>{{ __('footer.telephone') }}</div>
+                {{-- From site settings. See the footer. --}}
+                <div>{{ \App\Support\SiteContact::addressLine1() }}</div>
+                <div>{{ \App\Support\SiteContact::addressLine2() }}</div>
+                <div><a href="mailto:{{ \App\Support\SiteContact::email() }}">{{ \App\Support\SiteContact::email() }}</a></div>
+                <div><a href="tel:{{ preg_replace('/[^0-9+]/', '', \App\Support\SiteContact::phone()) }}">{{ \App\Support\SiteContact::phone() }}</a></div>
             </address>
 
             {{-- The map loads on request. Tiles are a third-party server, so

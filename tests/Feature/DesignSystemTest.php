@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
@@ -13,6 +14,15 @@ use Tests\TestCase;
  */
 class DesignSystemTest extends TestCase
 {
+    /*
+     * One of these renders a page, and a rendered page reads the database:
+     * the header asks whether the reader has a workspace and the footer
+     * asks which of CRASA's accounts are configured. Without a schema the
+     * layout throws and the assertion about three link tags fails for a
+     * reason that has nothing to do with three link tags.
+     */
+    use RefreshDatabase;
+
     private function css(string $path): string
     {
         return file_get_contents(public_path($path));

@@ -50,8 +50,22 @@ final class Comparison
     {
         $mode = ($query['mode'] ?? self::COMPARE) === self::BROWSE ? self::BROWSE : self::COMPARE;
 
-        $codes = collect(explode(',', (string) ($query['countries'] ?? '')))
-            ->map(fn (string $code) => strtolower(trim($code)))
+        /*
+         * Both shapes of the same selection.
+         *
+         * The canonical form is ?countries=bw,mz, which is what the page
+         * writes and what a reader pastes into an email. ?countries[]=bw is
+         * what a form of checkboxes sends and what the rest of the platform
+         * now uses for a multi-select facet, and it reached here as an
+         * array being cast to a string: "Array to string conversion", and a
+         * 500 on a public page from a hand-typed URL.
+         */
+        $raw = $query['countries'] ?? '';
+        $raw = is_array($raw) ? $raw : explode(',', (string) $raw);
+
+        $codes = collect($raw)
+            ->filter(fn ($code) => is_scalar($code))
+            ->map(fn ($code) => strtolower(trim((string) $code)))
             ->filter()
             ->unique()
             ->take(self::MAX_COUNTRIES);

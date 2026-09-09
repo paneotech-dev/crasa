@@ -20,11 +20,47 @@
                 </a>
                 <p class="c-footer__blurb">{{ __('footer.blurb') }}</p>
                 <address class="c-footer__address" aria-label="{{ __('footer.address_label') }}">
-                    <div>{{ __('footer.address_line_1') }}</div>
-                    <div>{{ __('footer.address_line_2') }}</div>
-                    <div class="c-footer__email"><a href="mailto:{{ __('footer.email') }}">{{ __('footer.email') }}</a></div>
-                    <div>{{ __('footer.telephone') }}</div>
+                    {{-- From site settings, not from the lang files. The
+                         Secretariat's telephone number is the same in all
+                         three languages, and changing it used to be a
+                         deploy in three files. The lang strings are still
+                         the fallback. --}}
+                    <div>{{ \App\Support\SiteContact::addressLine1() }}</div>
+                    <div>{{ \App\Support\SiteContact::addressLine2() }}</div>
+                    <div class="c-footer__email"><a href="mailto:{{ \App\Support\SiteContact::email() }}">{{ \App\Support\SiteContact::email() }}</a></div>
+                    <div>{{ \App\Support\SiteContact::phone() }}</div>
                 </address>
+
+                {{-- CRASA's own accounts, from site settings.
+
+                     The circular treatment has been in blocks.css since the
+                     accounts were built and the footer never rendered it:
+                     the marks existed only inside a social_feed block,
+                     which is on one page. A regulator's site carries them
+                     in the footer, and the rule was written for exactly
+                     this.
+
+                     An account with no address renders nothing. YouTube is
+                     registered and empty until the Secretariat fills it in,
+                     and a dead link on a footer is worse than a gap.
+
+                     The brand colours here are the one sanctioned exception
+                     to the no-new-colours rule, scoped to the marks and
+                     nothing else. docs/OPEN_ITEMS.md. --}}
+                @php $accounts = \App\Support\SocialAccounts::all(); @endphp
+
+                @if ($accounts !== [])
+                    <div class="c-footer__social">
+                        @foreach ($accounts as $network => $url)
+                            <a href="{{ $url }}"
+                               data-network="{{ $network }}"
+                               rel="noopener"
+                               aria-label="{{ __('blocks.social_account', ['network' => \App\Support\SocialAccounts::label($network)]) }}">
+                                <x-social-mark :network="$network" tone="white" />
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
             </div>
 
             {{-- The four link columns, from records.

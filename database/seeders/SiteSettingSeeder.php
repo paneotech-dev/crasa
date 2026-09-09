@@ -28,6 +28,25 @@ class SiteSettingSeeder extends Seeder
             // The legacy site, for the migration record and the redirect
             // notice a moved page shows.
             ['legacy_website', 'https://www.crasa.org', 'url', 'general'],
+
+            /*
+             * The Secretariat's own contact details.
+             *
+             * These were four strings in lang/{en,fr,pt}/footer.php, which
+             * meant changing the Secretariat's telephone number was a
+             * deploy in three files. They are not translated content: an
+             * address, an email address and a telephone number are the same
+             * in all three languages, and DATA_MODEL section 5 puts
+             * anything that is not per-language outside the translations
+             * table.
+             *
+             * The lang strings stay as the fallback, so a database with no
+             * settings row still renders a footer.
+             */
+            ['contact_address_1', 'Plot 143, Unit 2, Gaborone International Finance Park', 'text', 'contact'],
+            ['contact_address_2', 'P.O. Box 25793, Gaborone, Botswana', 'text', 'contact'],
+            ['contact_email', 'crasa@crasa.org', 'email', 'contact'],
+            ['contact_phone', '+267 315 84 68', 'text', 'contact'],
         ] as [$key, $value, $type, $group]) {
             SiteSetting::updateOrCreate(['key' => $key], [
                 'value' => $value,

@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\Admin\PageBlockController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ResourceController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SubmissionReviewController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserAdminController;
@@ -408,6 +409,15 @@ Route::prefix('{locale}')
                 Route::put('media/{asset}', [MediaController::class, 'update'])->name('media.update');
                 Route::post('media/{asset}/replace', [MediaController::class, 'replace'])->name('media.replace');
                 Route::delete('media/{asset}', [MediaController::class, 'destroy'])->name('media.destroy');
+
+                /*
+                 * Site settings, CM-05. The Secretariat's own contact
+                 * details, CRASA's accounts, the legacy site's address:
+                 * the things that belong to the site rather than to a
+                 * page. Administrator only, per screen 13's matrix.
+                 */
+                Route::get('settings', [SettingsController::class, 'edit'])->name('settings');
+                Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
 
                 /*
                  * Translations, CM-04. Screen 05. Nothing here creates a

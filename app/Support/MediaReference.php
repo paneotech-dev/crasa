@@ -16,6 +16,15 @@ final class MediaReference
 {
     public const PREFIX = 'media:';
 
+    /**
+     * The reference for an asset. The companion to resolve(), so nothing
+     * outside this class has to know the prefix or build the string.
+     */
+    public static function to(MediaAsset $asset): string
+    {
+        return self::PREFIX.$asset->getKey();
+    }
+
     public static function isReference(?string $value): bool
     {
         return $value !== null && str_starts_with($value, self::PREFIX);

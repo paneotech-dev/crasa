@@ -119,10 +119,30 @@ class MediaController extends Controller
         ];
 
         foreach (Locales::SUPPORTED as $locale) {
-            // Alt text is capped at 255 rather than left open. Alt text that
-            // runs to a paragraph is read aloud in full before the reader
-            // reaches the next thing on the page.
-            $rules[$locale.'.alt'] = ['nullable', 'string', 'max:255'];
+            /*
+             * English alt is required; the other two are not.
+             *
+             * x-media-image already refuses to render an asset in a
+             * language it has no alt text for, which is the rule that
+             * matters and the one screen 14 states in its own alt field.
+             * But an asset saved with no alt at all simply never appears,
+             * and the editor is told nothing: they place it on a page and
+             * the page comes back without it. So the form says so at the
+             * point the metadata is being filled in.
+             *
+             * English rather than all three, because requiring all three
+             * would block an editor who has the photograph and not yet the
+             * translations, and CLAUDE.md is explicit that an item may
+             * publish in English alone.
+             *
+             * Capped at 255 rather than left open: alt text that runs to a
+             * paragraph is read aloud in full before the reader reaches the
+             * next thing on the page.
+             */
+            $rules[$locale.'.alt'] = [
+                $locale === Locales::FALLBACK ? 'required' : 'nullable',
+                'string', 'max:255',
+            ];
             $rules[$locale.'.caption'] = ['nullable', 'string', 'max:500'];
         }
 
