@@ -123,4 +123,12 @@ later than the screen and it is unambiguous.
 choosing between them. The headline carries the slide, which is what the
 approved copy does anyway.
 
+**Same question, second place it bites (added 2026-09-09).** Screen 09 sets
+every column header in the back office in tracked caps, on every table it
+draws, light and dark. Your ruling names table headers as excluded in terms.
+The ruling has been followed there too, for consistency with the answer
+above rather than because the second case is different: the headers keep the
+screen's size, weight and quiet ink and lose only the letterform. It is one
+rule in `public/css/admin.css` either way. **One answer settles both.**
+
 ---

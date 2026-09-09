@@ -61,6 +61,27 @@ class AuthServiceProvider extends ServiceProvider
          */
         Gate::define('read-across-all-countries', fn (User $user) => $user->seesAllCountries());
 
+        /*
+         * The back office door.
+         *
+         * Screen 09 is a working surface, not a reading one: everything on
+         * it either administers something or reports on something being
+         * administered. A viewer has nothing to do there, and a committee
+         * member's work is in the extranet. Both are refused at the door
+         * rather than shown an empty shell.
+         *
+         * This gate opens the door. It grants nothing behind it: every
+         * section re-checks its own permission.
+         */
+        Gate::define('enter-back-office', fn (User $user) => $user->hasAnyPermission([
+            Permission::ManageContent,
+            Permission::ManageUsers,
+            Permission::ReadAuditLog,
+            Permission::SubmitCountryReturn,
+            Permission::ValidateSubmission,
+            Permission::ManageSettings,
+        ]));
+
         /**
          * No Gate::before superuser shortcut. An administrator's power comes
          * from the matrix, which lets the two-factor withholding in

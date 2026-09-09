@@ -157,7 +157,7 @@ criterion, the delivered value differs.
 
 | Token | Foundations | Delivered | Why |
 |---|---|---|---|
-| `--c-border` | #C9C2B2 (1.77:1 on white) | **#958E7E** | 3.26:1 on white, 3.02:1 on cream |
+| `--c-border` | #C9C2B2 (1.77:1 on white) | **#908977** | 3.48:1 on white, 3.22:1 on cream, 3.14:1 on the back office ground |
 | `--c-border-input` | #B9B2A2 (2.11:1 on white) | **deleted** | resolved to the same value as `--c-border` once both had to clear 3:1, so it was never a separate token |
 | `--c-navy-edge` | #4A5670 (2.35:1 on navy) | **#5A6680** | 3.00:1 on navy |
 
@@ -203,6 +203,70 @@ No link was added, removed or reordered.
 `SiteNavigationTest` crawls every internal link on every public page and
 fails if any of them stops resolving, and checks that each footer fragment
 lands on an element that actually carries that id.
+
+**Darkened a second time, 2026-09-09.** #958E7E cleared white and cream but
+reached only 2.93:1 on `--c-admin-bg` (#F4F3F0), the back office ground drawn
+in screen 09, which is darker than cream. The border neutral now clears 3:1
+on all three grounds a control sits on. Found by the per-pair test the moment
+the back office ground became a token, which is what that test is for.
+
+---
+
+## Disclosed variations: where screen 09 is silent
+
+Screen 09 is a static rendition. Three things it cannot state, and what was
+done about each. All three are case 2: the screen is silent on a case that
+has to be handled.
+
+**1. Form fields.** Screens 09 and 13 draw every "input" as a span, so
+neither says what a real field looks like. The geometry is taken from the
+boxes the screens do draw (padding 9px 11px, a 1px rule, a white ground).
+The two things a static rendition cannot decide come from the standards
+instead: `--r-xs`, because CLAUDE.md fixes that radius for inputs, and
+`--c-border` rather than `--c-line`, because SC 1.4.11 asks 3:1 for the
+boundary of a control and `--c-line` reaches 1.5:1 on white.
+
+**2. The input border screen 09 does draw.** The search field in the
+resource table is drawn `border:1.5px solid #B9B2A2`. That is 2.11:1 on
+white. The standard wins, as it did for `--c-border` and `--c-navy-edge`:
+the delivered field takes `--c-border`. Same precedent, same reasoning.
+
+**3. A breadcrumb.** Screen 09 shows the dashboard, which is the root of the
+back office and has nothing above it, so no trail is drawn. A trail is
+needed the moment a section has a detail view. `.a-crumbs` follows the type
+and rule values the screen sets for its other quiet metadata.
+
+**And one substitution, not a variation.** Screen 09's stat row is six
+cards: Publications, News items, Committees, Member regulators, Upcoming
+events, Projects. Events and projects have no model in this build, so the
+row shows Regulatory instruments and Indicators in their place. Six cards,
+same shape, every figure counted from the database.
+
+---
+
+## Disclosed variation: tracked caps on back office table headers
+
+**CLAUDE.md carves tracked caps out for the footer column headings only, and
+names table headers as excluded.** Screen 09 sets every column header in the
+back office in tracked caps:
+
+```
+font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+font-weight:700;color:var(--c-slate)
+```
+
+on every table it draws, light and dark.
+
+The same conflict was already raised for the hero eyebrow, as question 6 in
+docs/QUESTIONS.md, and the position taken there was that the ruling wins:
+it is later than the screen and it is unambiguous. **The same answer is
+taken here rather than the opposite one on the same question.** The headers
+keep everything else the screen sets — the size, the weight 700, the quiet
+ink, the rule beneath — so a header still reads as a header. Only the
+letterform changes.
+
+One rule in `public/css/admin.css` flips it back if the answer comes the
+other way. Added to question 6.
 
 ---
 

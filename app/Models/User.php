@@ -7,6 +7,7 @@ use App\Enums\CommitteeRole;
 use App\Enums\Grant;
 use App\Enums\Permission;
 use App\Enums\Role;
+use App\Enums\Theme;
 use App\Enums\UserStatus;
 use App\Models\Concerns\Auditable;
 use App\Support\PermissionMatrix;
@@ -25,7 +26,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name', 'email', 'password', 'country_id', 'authority_id', 'role',
-        'status', 'preferred_locale', 'notification_preferences', 'last_seen_at',
+        'status', 'theme', 'preferred_locale', 'notification_preferences', 'last_seen_at',
     ];
 
     /**
@@ -36,6 +37,17 @@ class User extends Authenticatable
         'password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes',
     ];
 
+    /**
+     * The column default alone is not enough: it is applied by the database
+     * and the model in memory would carry null until it is reloaded, so a
+     * freshly created user would render with no theme at all.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'theme' => 'system',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -43,6 +55,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => Role::class,
             'status' => UserStatus::class,
+            'theme' => Theme::class,
             // AES-256-CBC with the application key. Contractual: sensitive
             // fields are encrypted at rest, and this is structural rather
             // than a call someone has to remember to make.
@@ -229,6 +242,24 @@ class User extends Authenticatable
         }
 
         return $this->grantFor($permission)->allowsAnything();
+    }
+
+    /**
+     * Whether any of these permissions is held. Used where a surface exists
+     * because there is something to do on it, rather than because of one
+     * specific ability.
+     *
+     * @param  list<Permission>  $permissions
+     */
+    public function hasAnyPermission(array $permissions): bool
+    {
+        foreach ($permissions as $permission) {
+            if ($this->hasPermission($permission)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** Whether the permission is held only over the user's own country. */

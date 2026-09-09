@@ -118,6 +118,27 @@ class AuditLog extends Model
         ]);
     }
 
+    /**
+     * One line of plain language for the activity feed.
+     *
+     * The action names are stable strings and the translation carries the
+     * verb, so a row reads the same whichever language the Secretariat has
+     * the interface in. An action with no translation falls back to the
+     * raw name rather than to nothing: an unreadable audit row is still
+     * better than a missing one.
+     */
+    public function describe(): string
+    {
+        $subject = $this->auditable_type
+            ? __('audit.subject_'.mb_strtolower(class_basename($this->auditable_type)))
+            : null;
+
+        $key = 'audit.action_'.$this->action;
+        $line = __($key, ['subject' => $subject ?? '', 'id' => $this->auditable_id]);
+
+        return $line === $key ? $this->action : trim($line);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

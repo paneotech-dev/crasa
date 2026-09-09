@@ -41,8 +41,12 @@ These come from the approved design foundations. Do not invent values. If a valu
   --c-amber:#C2710C; --c-white:#FFFFFF;
   --c-red:#9B2226; --c-red-light:#FBEDED;
 
-  --c-border:#958E7E; --c-disabled:#6E7A85;
+  --c-border:#908977; --c-disabled:#6E7A85;
   --c-navy-deep:#050D18; --c-navy-edge:#5A6680; --c-navy-soft:#6B7691;
+
+  --c-admin-bg:#F4F3F0; --c-line:#DFDBD1;
+  --d-bg:#0B1220; --d-surface:#141E30; --d-line:#26334A;
+  --d-ink:#E8EDF4; --d-ink-dim:#9DAABF; --d-green:#2FA76F; --d-current:#1D3A2B;
 
   --c-amber-light:#FDF0DC; --c-amber-mid:#E5BE87; --c-amber-dark:#5C3404;
   --c-green-mid:#B6DCC5;
@@ -70,7 +74,9 @@ These come from the approved design foundations. Do not invent values. If a valu
 
 **Radii carry meaning.** `--r-xs` on inputs and table cells, `--r-sm` on buttons, `--r-md` on panels, `--r-lg` on cards and modals, `--r-pill` on status badges only. Applying one radius everywhere flattens the hierarchy and is one of the clearest signs of a generated interface.
 
-**Contrast is a threshold, not a preference.** WCAG 2.1 AA is a contractual acceptance criterion, so where an approved foundation value fails a success criterion the standard wins and the delivered value differs. `--c-border` and `--c-navy-edge` are both lightened or darkened from the foundations for SC 1.4.11, and `--c-border-input` is deleted because it resolved to the same value as `--c-border`. Every token pair in use is measured by test.
+**Contrast is a threshold, not a preference.** WCAG 2.1 AA is a contractual acceptance criterion, so where an approved foundation value fails a success criterion the standard wins and the delivered value differs. `--c-border` and `--c-navy-edge` are both lightened or darkened from the foundations for SC 1.4.11 — `--c-border` twice, because the back office ground is darker than cream and the value that cleared cream did not clear it, and `--c-border-input` is deleted because it resolved to the same value as `--c-border`. Every token pair in use is measured by test.
+
+**The back office has its own ground and its own surface set.** `--c-admin-bg` and `--c-line` are the administration page ground and panel rule, and the `--d-*` set is the dark surface set. All of them are drawn in screen 09. Dark mode is the same design with different surface and ink values, not a second design: no component appears or disappears with the theme, and no status badge changes meaning.
 
 **Status pills carry fixed meanings.** Green for validated and in force. Amber for draft, pending and returned. Red for repealed, rejected and errors. Slate for archived and superseded. No screen invents a new status colour.
 

@@ -1,0 +1,740 @@
+/* CRASA back office.
+ *
+ * Every value here is quoted from screen 09 (09-admin-dashboard.dc.html).
+ * The screen draws a horizontal section bar in the header, not a sidebar,
+ * and it keeps Lora on headings while the interface itself is Inter. Both
+ * of those are deliberate and neither is changed here.
+ *
+ * Loaded after tokens.css and base.css, and it does not touch any public
+ * surface: everything is under .a- or inside [data-surface="admin"].
+ */
+
+/* Ground and type ------------------------------------------------------- */
+
+/* Screen 09 body: background:var(--c-admin-bg);color:var(--c-charcoal);
+   font-family:var(--f-admin) */
+body[data-surface="admin"] {
+  /* The four surface variables every rule below reads. The light set is
+     the default; the dark section at the foot re-points them. */
+  --a-ground: var(--c-admin-bg);
+  --a-surface: var(--c-white);
+  --a-rule: var(--c-line);
+  --a-ink: var(--c-charcoal);
+  --a-ink-quiet: var(--c-slate);
+  --a-ink-strong: var(--c-navy);
+  --a-link: var(--c-green-dark);
+  --a-current: var(--c-green-light);
+  --a-head-ground: var(--c-cream);
+
+  background: var(--a-ground);
+  color: var(--a-ink);
+  font-family: var(--f-admin);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Headings stay Lora. Screen 09 sets font-family:var(--f-head) on the h1
+   and on every panel h2. Inter is the interface, not the voice. */
+body[data-surface="admin"] h1,
+body[data-surface="admin"] h2,
+body[data-surface="admin"] h3 {
+  font-family: var(--f-head);
+  font-weight: 600;
+  margin: 0;
+}
+
+body[data-surface="admin"] a { color: var(--a-link); text-underline-offset: 3px; }
+body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
+
+/* Header ---------------------------------------------------------------- */
+
+/* background:var(--c-white);border-bottom:1px solid var(--c-line);
+   padding:var(--s-3) var(--s-6);display:flex;align-items:center;
+   gap:var(--s-5);flex-wrap:wrap */
+.a-header {
+  background: var(--a-surface);
+  border-bottom: 1px solid var(--a-rule);
+  padding: var(--s-3) var(--s-6);
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  flex-wrap: wrap;
+}
+
+.a-header__identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  text-decoration: none;
+}
+
+.a-header__identity img { width: 32px; height: 32px; flex: none; display: block; }
+
+/* font-size:14.5px;font-weight:600;color:var(--c-navy) */
+.a-header__wordmark { font-size: 14.5px; font-weight: 600; color: var(--a-ink-strong); }
+
+/* nav aria-label="Back office": display:flex;flex-wrap:wrap;gap:2px;
+   min-width:0;margin-left:var(--s-4) */
+.a-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  min-width: 0;
+  margin-left: var(--s-4);
+}
+
+/* font-size:14px;color:var(--c-charcoal);padding:8px 12px */
+.a-nav__link {
+  font-size: 14px;
+  color: var(--a-ink);
+  padding: 8px 12px;
+  border-radius: var(--r-sm);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.a-nav__link:hover { background: var(--a-head-ground); color: var(--a-ink-strong); }
+
+/* The current section: font-weight:600;color:var(--c-navy);
+   border-radius:var(--r-sm);background:var(--c-green-light) */
+.a-nav__link[aria-current="page"] {
+  font-weight: 600;
+  color: var(--a-ink-strong);
+  background: var(--a-current);
+}
+
+.a-header__utilities {
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-4);
+  min-width: 0;
+}
+
+/* The interface-language and theme controls. Screen 09 draws them as
+   flex:none;white-space:nowrap;display:inline-flex;align-items:center;
+   gap:7px;font-size:13.5px;font-weight:500;border:1px solid var(--c-line);
+   border-radius:var(--r-sm);padding:7px 11px;background:var(--c-white).
+   They are controls here rather than labels, so the border is --c-border:
+   a 1px --c-line boundary reaches 1.5:1 on white and SC 1.4.11 asks for
+   3:1 on anything that has to be identified as a control. */
+.a-chip {
+  flex: none;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+  font-weight: 500;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  padding: 7px 11px;
+  background: var(--a-surface);
+  color: var(--a-ink);
+  text-decoration: none;
+  cursor: pointer;
+  font-family: var(--f-admin);
+}
+
+.a-chip:hover { background: var(--a-head-ground); color: var(--a-ink-strong); }
+.a-chip svg { flex: none; }
+
+.a-identity { display: flex; flex: 0 1 auto; min-width: 0; align-items: center; gap: 9px; }
+
+/* width:32px;height:32px;border-radius:var(--r-pill);background:var(--c-navy);
+   color:var(--c-cream);display:grid;place-items:center;font-size:12px;
+   font-weight:600 */
+.a-identity__initials {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-pill);
+  background: var(--c-navy);
+  color: var(--c-cream);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.a-identity__text { display: flex; flex-direction: column; min-width: 0; }
+
+.a-identity__name {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--a-ink);
+  text-decoration: none;
+}
+
+.a-identity__where {
+  font-size: 12px;
+  color: var(--a-ink-quiet);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Page frame ------------------------------------------------------------ */
+
+/* max-width:1560px;margin:0 auto;padding:var(--s-6) var(--s-6) 0;
+   display:flex;flex-direction:column;gap:var(--s-5);min-width:0 */
+.a-page {
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-6) var(--s-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  min-width: 0;
+}
+
+/* display:flex;align-items:flex-end;justify-content:space-between;
+   gap:var(--s-5);flex-wrap:wrap */
+.a-pagehead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-5);
+  flex-wrap: wrap;
+}
+
+/* font-family:var(--f-head);font-size:clamp(25px,3.4vw,34px);
+   line-height:1.15;font-weight:600;margin:0 0 5px;letter-spacing:-.01em */
+.a-pagehead h1 {
+  font-size: clamp(25px, 3.4vw, 34px);
+  line-height: 1.15;
+  margin: 0 0 5px;
+  letter-spacing: -.01em;
+}
+
+/* font-size:14.5px;color:var(--c-slate) */
+.a-pagehead__note { font-size: 14.5px; color: var(--a-ink-quiet); }
+
+.a-pagehead__actions { display: flex; gap: var(--s-3); flex-wrap: wrap; }
+
+/*
+ * The breadcrumb. Screen 09 shows the dashboard, which is the root of the
+ * back office and therefore has no trail above it, so the screen is silent
+ * on this. A trail is needed the moment a section has a detail view.
+ * Disclosed variation; see docs/OPEN_ITEMS.md.
+ */
+.a-crumbs { font-size: 13.5px; color: var(--a-ink-quiet); margin: 0 0 var(--s-2); }
+.a-crumbs ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.a-crumbs li::after { content: "/"; margin-left: 6px; color: var(--c-border); }
+.a-crumbs li:last-child::after { content: none; }
+.a-crumbs [aria-current="page"] { color: var(--a-ink); font-weight: 500; }
+
+/* Buttons --------------------------------------------------------------- */
+
+/* Primary: font-size:14px;font-weight:600;color:var(--c-white);
+   background:var(--c-green-dark);border-radius:var(--r-sm);padding:9px 14px */
+.a-btn {
+  font-family: var(--f-admin);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--r-sm);
+  padding: 9px 14px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.3;
+}
+
+.a-btn--primary { color: var(--c-white); background: var(--c-green-dark); }
+.a-btn--primary:hover { background: var(--a-ink-strong); color: var(--c-white); }
+
+/* Secondary: color:var(--c-charcoal);background:var(--c-white);
+   border:1px solid var(--c-line). The rule is raised to --c-border for the
+   same SC 1.4.11 reason as .a-chip. */
+.a-btn--secondary {
+  color: var(--a-ink);
+  background: var(--a-surface);
+  border-color: var(--c-border);
+}
+
+.a-btn--secondary:hover { background: var(--a-head-ground); color: var(--a-ink-strong); }
+
+.a-btn--danger { color: var(--c-red); background: var(--a-surface); border-color: var(--c-red-mid); }
+.a-btn--danger:hover { background: var(--c-red-light); }
+
+/* Panels ---------------------------------------------------------------- */
+
+/* background:var(--c-white);border:1px solid var(--c-line);
+   border-radius:var(--r-md);padding:var(--s-5) */
+.a-panel {
+  background: var(--a-surface);
+  border: 1px solid var(--a-rule);
+  border-radius: var(--r-md);
+  padding: var(--s-5);
+  min-width: 0;
+}
+
+/* The stat cards take padding:var(--s-4), not var(--s-5). */
+.a-panel--tight { padding: var(--s-4); }
+
+.a-panel__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-4);
+  margin-bottom: var(--s-5);
+  flex-wrap: wrap;
+}
+
+/* font-family:var(--f-head);font-size:20px;font-weight:600;margin:0 */
+.a-panel h2 { font-size: 20px; }
+.a-panel__meta { font-size: 13.5px; color: var(--a-ink-quiet); }
+
+/* A rule under a panel's content, before its footnote:
+   margin-top:var(--s-4);padding-top:var(--s-4);
+   border-top:1px solid var(--c-line) */
+.a-panel__foot {
+  margin-top: var(--s-4);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--a-rule);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--a-ink);
+}
+
+/* Grids. Screen 09 uses three different minimums, one per row, because the
+   rows hold different things: 236px for the stat cards, 440px for the two
+   wide charts, 320px for the three narrower panels. */
+.a-grid { display: grid; gap: var(--s-4); }
+.a-grid--stats { grid-template-columns: repeat(auto-fit, minmax(min(100%, 236px), 1fr)); }
+.a-grid--wide { grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: var(--s-5); }
+.a-grid--medium { grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: var(--s-5); }
+
+/* Stat card:
+   font-family:var(--f-admin);font-size:32px;font-weight:600;line-height:1;
+   color:var(--c-navy);font-variant-numeric:tabular-nums */
+.a-stat__n {
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--a-ink-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.a-stat__label { font-size: 13.5px; font-weight: 600; margin-top: 7px; }
+.a-stat__note { font-size: 12.5px; color: var(--a-ink-quiet); margin-top: 3px; line-height: 1.4; }
+
+/* Charts ---------------------------------------------------------------- */
+
+/* display:flex;align-items:flex-end;gap:5px;height:170px */
+.a-bars { display: flex; align-items: flex-end; gap: 5px; height: 170px; }
+
+.a-bars__col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 5px;
+  height: 100%;
+}
+
+/* font-size:11px;font-weight:600;color:var(--c-charcoal) */
+.a-bars__n { font-size: 11px; font-weight: 600; color: var(--a-ink); font-variant-numeric: tabular-nums; }
+
+.a-bars__bar { width: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
+.a-bars__seg { display: block; width: 100%; }
+.a-bars__seg[data-sector="ict"] { background: var(--c-green-dark); }
+.a-bars__seg[data-sector="postal"] { background: var(--c-navy); }
+
+/* writing-mode:vertical-rl;transform:rotate(180deg) */
+.a-bars__year {
+  font-size: 10.5px;
+  color: var(--a-ink-quiet);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-variant-numeric: tabular-nums;
+}
+
+.a-legend {
+  display: flex;
+  gap: var(--s-5);
+  flex-wrap: wrap;
+  font-size: 13.5px;
+  color: var(--a-ink);
+}
+
+.a-legend__swatch { width: 14px; height: 14px; border-radius: 2px; display: inline-block; }
+.a-legend span { display: inline-flex; align-items: center; gap: 7px; }
+.a-legend__note { margin-left: auto; }
+
+/* The stacked horizontal bar: height:12px;border-radius:2px;
+   background:var(--c-sand);overflow:hidden;display:flex */
+.a-track { height: 12px; border-radius: 2px; background: var(--c-sand); overflow: hidden; display: flex; }
+.a-track__seg { display: block; height: 100%; }
+.a-track__seg[data-sector="ict"] { background: var(--c-green-dark); }
+.a-track__seg[data-sector="postal"] { background: var(--c-navy); }
+
+.a-track__label {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-3);
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.a-track__label b { font-weight: 500; }
+.a-track__label span { color: var(--a-ink-quiet); font-variant-numeric: tabular-nums; }
+
+.a-stack { display: flex; flex-direction: column; gap: var(--s-4); }
+
+/* Rows ------------------------------------------------------------------ */
+
+/* The activity and popular-pages rows. Screen 09 puts the rule on the row
+   rather than between rows, and the last row keeps it. */
+.a-rows { display: flex; flex-direction: column; }
+
+.a-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: 9px 0;
+  border-bottom: 1px solid var(--a-rule);
+}
+
+.a-row:last-child { border-bottom: 0; }
+.a-row__grow { flex: 1; min-width: 0; font-size: 14.5px; line-height: 1.4; }
+.a-row__n { font-size: 14px; font-weight: 600; flex: none; font-variant-numeric: tabular-nums; }
+.a-row__time { font-size: 13px; color: var(--a-ink-quiet); width: 100px; flex: none; }
+.a-row__who { font-size: 13.5px; color: var(--a-ink-quiet); flex: none; }
+
+/* Resource table -------------------------------------------------------- */
+
+/*
+ * Screen 09: "The repeating resource table. Every content type in the back
+ * office uses this pattern." It is built once, here, and the sections reuse
+ * it rather than each drawing its own.
+ */
+.a-resource {
+  background: var(--a-surface);
+  border: 1px solid var(--a-rule);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  min-width: 0;
+}
+
+.a-resource__head { padding: var(--s-5); border-bottom: 1px solid var(--a-rule); }
+.a-resource__title { font-size: 26px; margin: 0 0 5px; }
+.a-resource__note { font-size: 14.5px; color: var(--a-ink-quiet); }
+
+.a-resource__bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-5);
+  flex-wrap: wrap;
+  margin-bottom: var(--s-4);
+}
+
+.a-filters { display: flex; gap: var(--s-3); flex-wrap: wrap; align-items: center; }
+
+/* The search field. Screen 09 draws border:1.5px solid #B9B2A2; that value
+   reaches 2.11:1 on white and SC 1.4.11 asks 3:1 for the boundary of a
+   control, so the token that was already computed for this is used. */
+.a-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-sm);
+  padding: 0 12px;
+  background: var(--a-surface);
+  flex: 1 1 260px;
+  max-width: 340px;
+}
+
+.a-search input {
+  border: 0;
+  outline: 0;
+  background: none;
+  font: inherit;
+  font-size: 14.5px;
+  padding: 10px 0;
+  min-width: 0;
+  flex: 1;
+  color: var(--a-ink);
+}
+
+/* font-size:14px;font-weight:500;color:var(--c-charcoal);
+   background:var(--c-white);border-radius:var(--r-sm);padding:9px 13px */
+.a-filter {
+  font-family: var(--f-admin);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--a-ink);
+  background: var(--a-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  padding: 9px 13px;
+}
+
+/* padding:var(--s-3) var(--s-5);background:var(--c-green-light);
+   border-bottom:1px solid var(--c-line) */
+.a-selection {
+  padding: var(--s-3) var(--s-5);
+  background: var(--a-current);
+  border-bottom: 1px solid var(--a-rule);
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+}
+
+.a-selection__count { font-size: 14.5px; font-weight: 600; color: var(--c-green-dark); }
+
+.a-tablewrap { overflow-x: auto; min-width: 0; }
+
+/* width:100%;border-collapse:collapse;font-size:14.5px;min-width:900px */
+.a-table { width: 100%; border-collapse: collapse; font-size: 14.5px; min-width: 900px; }
+
+/* background:var(--c-cream);text-align:left;
+   border-bottom:1px solid var(--c-line) */
+.a-table thead tr { background: var(--a-head-ground); text-align: left; border-bottom: 1px solid var(--a-rule); }
+
+/*
+ * Screen 09 sets every column header in tracked caps:
+ * font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+ * font-weight:700;color:var(--c-slate)
+ *
+ * The writing rules in CLAUDE.md carve tracked caps out for the footer
+ * column headings only, and name table headers as excluded in terms. The
+ * same conflict was already raised for the hero eyebrow as question 6 in
+ * docs/QUESTIONS.md, and the answer taken there was that the ruling wins
+ * over the screen: it is later and it is unambiguous. The same answer is
+ * taken here rather than the opposite one on the same question.
+ *
+ * Everything else the screen sets is kept, so the header still reads as a
+ * header: the size, the weight, the quiet ink and the rule beneath. Only
+ * the letterform changes. One rule to flip if the answer comes back the
+ * other way.
+ */
+.a-table th[scope="col"] {
+  padding: 11px var(--s-4);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--a-ink-quiet);
+}
+
+.a-table th[scope="col"]:first-child { padding-left: var(--s-5); }
+.a-table th[scope="col"]:last-child { padding-right: var(--s-5); }
+
+.a-table tbody tr { border-bottom: 1px solid var(--a-rule); }
+.a-table tbody tr:last-child { border-bottom: 0; }
+.a-table td, .a-table tbody th { padding: 12px var(--s-4); }
+.a-table td:first-child, .a-table tbody th:first-child { padding-left: var(--s-5); }
+.a-table td:last-child { padding-right: var(--s-5); }
+
+.a-table tbody th[scope="row"] { text-align: left; font-weight: 500; max-width: 420px; font-family: var(--f-admin); }
+.a-table tbody th[scope="row"] a { color: var(--a-ink-strong); }
+
+.a-table [data-numeric] { text-align: right; font-variant-numeric: tabular-nums; }
+.a-table [data-quiet] { font-size: 13px; color: var(--a-ink-quiet); }
+.a-table__actions { display: flex; gap: var(--s-3); }
+.a-table__actions a { font-size: 13.5px; font-weight: 600; }
+.a-table__actions a:last-child { color: var(--a-ink-quiet); }
+
+/* padding:var(--s-4) var(--s-5);background:var(--c-cream);
+   border-top:1px solid var(--c-line) */
+.a-pager {
+  padding: var(--s-4) var(--s-5);
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+  background: var(--a-head-ground);
+  border-top: 1px solid var(--a-rule);
+  font-size: 14px;
+  color: var(--a-ink);
+}
+
+.a-pager__links { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+
+/* min-width:40px;height:40px;display:grid;place-items:center;
+   border:1px solid var(--c-line);border-radius:var(--r-sm);font-size:14px */
+.a-pager__links a,
+.a-pager__links span {
+  min-width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  font-size: 14px;
+  padding: 0 12px;
+  background: var(--a-surface);
+  text-decoration: none;
+  color: var(--a-ink);
+}
+
+/* background:var(--c-navy);color:var(--c-white);font-weight:600 */
+.a-pager__links [aria-current="page"] {
+  background: var(--a-ink-strong);
+  color: var(--c-white);
+  font-weight: 600;
+  border-color: var(--a-ink-strong);
+}
+
+.a-pager__links [aria-disabled="true"] { color: var(--c-disabled); }
+
+/* Status pills. The meanings are fixed in CLAUDE.md and no screen invents
+   a new one. --r-pill, because a status badge is the one thing that takes
+   it. */
+.a-pill {
+  display: inline-block;
+  border-radius: var(--r-pill);
+  padding: 3px 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.a-pill[data-status="published"], .a-pill[data-status="in_force"], .a-pill[data-status="validated"] {
+  background: var(--c-green-light); color: var(--c-green-dark);
+}
+
+.a-pill[data-status="draft"], .a-pill[data-status="review"], .a-pill[data-status="pending"], .a-pill[data-status="returned"] {
+  background: var(--c-amber-light); color: var(--c-amber-dark);
+}
+
+.a-pill[data-status="repealed"], .a-pill[data-status="rejected"] {
+  background: var(--c-red-light); color: var(--c-red-dark);
+}
+
+.a-pill[data-status="archived"], .a-pill[data-status="superseded"], .a-pill[data-status="suspended"] {
+  background: var(--c-sand); color: var(--c-charcoal);
+}
+
+/* Empty states ---------------------------------------------------------- */
+
+/*
+ * Where a data source does not exist, the panel says so and says what would
+ * fill it. It never draws a chart of invented numbers. This is the whole
+ * difference between a dashboard a Secretariat can trust and a demo.
+ */
+.a-empty {
+  border: 1px dashed var(--c-border);
+  border-radius: var(--r-sm);
+  padding: var(--s-4);
+  background: var(--a-head-ground);
+}
+
+.a-empty__title { font-size: 14.5px; font-weight: 600; color: var(--a-ink); margin-bottom: 5px; }
+.a-empty__body { font-size: 13.5px; line-height: 1.6; color: var(--a-ink-quiet); }
+
+/* Forms ----------------------------------------------------------------- */
+
+/*
+ * Screens 09 and 13 draw the back office as static renditions: their
+ * "fields" are spans, so neither screen states what a real input looks
+ * like. Disclosed variation, logged in docs/OPEN_ITEMS.md.
+ *
+ * The geometry is taken from the boxes the screens do draw
+ * (padding:9px 11px, 1px rule, white ground) and the two things the
+ * screens cannot decide come from the standards instead: --r-xs, because
+ * CLAUDE.md fixes that radius for inputs, and --c-border rather than
+ * --c-line, because SC 1.4.11 asks 3:1 for the boundary of a control.
+ */
+.a-form { display: flex; flex-direction: column; gap: var(--s-4); max-width: 620px; }
+
+.a-field { display: flex; flex-direction: column; gap: 5px; }
+
+/* A real label on every field. Never a placeholder standing in for one. */
+.a-label { font-size: 13.5px; font-weight: 600; color: var(--a-ink); }
+.a-hint { font-size: 13px; color: var(--a-ink-quiet); line-height: 1.5; }
+
+.a-input,
+.a-select {
+  font-family: var(--f-admin);
+  font-size: 14.5px;
+  color: var(--a-ink);
+  background: var(--a-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-xs);
+  padding: 9px 11px;
+  width: 100%;
+  min-width: 0;
+}
+
+.a-input:focus-visible,
+.a-select:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
+
+.a-form__actions { display: flex; gap: var(--s-3); flex-wrap: wrap; align-items: center; }
+
+/* Notices --------------------------------------------------------------- */
+
+.a-notice {
+  border-radius: var(--r-sm);
+  padding: 12px var(--s-4);
+  font-size: 14px;
+  line-height: 1.55;
+  border: 1px solid;
+}
+
+.a-notice--success { background: var(--c-green-light); border-color: var(--c-green-mid); color: var(--c-green-dark); }
+.a-notice--pending { background: var(--c-amber-light); border-color: var(--c-amber-mid); color: var(--c-amber-dark); }
+.a-notice--error { background: var(--c-red-light); border-color: var(--c-red-mid); color: var(--c-red-dark); }
+
+/* Dark surface set ------------------------------------------------------ */
+
+/*
+ * Screen 09: "Dark mode is the same tokens with a different set of surface
+ * and ink values, not a second design." So the rules above are written
+ * against four local variables and this section re-points them. Nothing
+ * appears, disappears or changes meaning with the theme.
+ *
+ * Two ways in, one set of declarations: data-theme="dark" is the account
+ * setting, and data-theme="system" follows the operating system, which is
+ * the default the screen states. The account setting wins because it is
+ * the more specific answer to the same question.
+ */
+body[data-surface="admin"][data-theme="dark"] {
+  color-scheme: dark;
+  --a-ground: var(--d-bg);
+  --a-surface: var(--d-surface);
+  --a-rule: var(--d-line);
+  --a-ink: var(--d-ink);
+  --a-ink-quiet: var(--d-ink-dim);
+  --a-ink-strong: var(--c-white);
+  --a-link: var(--d-green);
+  --a-current: var(--d-current);
+  --a-head-ground: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  body[data-surface="admin"][data-theme="system"] {
+    color-scheme: dark;
+    --a-ground: var(--d-bg);
+    --a-surface: var(--d-surface);
+    --a-rule: var(--d-line);
+    --a-ink: var(--d-ink);
+    --a-ink-quiet: var(--d-ink-dim);
+    --a-ink-strong: var(--c-white);
+    --a-link: var(--d-green);
+    --a-current: var(--d-current);
+    --a-head-ground: transparent;
+  }
+}
+
+/* Motion ---------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-surface="admin"] *,
+  body[data-surface="admin"] *::before,
+  body[data-surface="admin"] *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}

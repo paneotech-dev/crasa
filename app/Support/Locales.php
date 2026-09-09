@@ -51,6 +51,24 @@ final class Locales
      * Choose a language for a request that does not name one: the language
      * last chosen, then the browser's preference, then English.
      */
+    /** The next language in the cycle, for a control that rotates rather than lists. */
+    public static function next(string $locale): string
+    {
+        $index = array_search($locale, self::SUPPORTED, true);
+
+        if ($index === false) {
+            return self::FALLBACK;
+        }
+
+        return self::SUPPORTED[($index + 1) % count(self::SUPPORTED)];
+    }
+
+    /** The language's name in the language currently being rendered. */
+    public static function nameOf(string $locale): string
+    {
+        return __('locales.'.$locale);
+    }
+
     public static function detect(Request $request): string
     {
         $remembered = $request->hasSession() ? $request->session()->get('locale') : null;

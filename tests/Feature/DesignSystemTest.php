@@ -81,7 +81,7 @@ class DesignSystemTest extends TestCase
         $tokens = $this->css('css/tokens.css');
 
         foreach ([
-            '--c-border:#958E7E',
+            '--c-border:#908977',
             '--c-disabled:#6E7A85',
             '--c-navy-deep:#050D18',
             '--c-navy-edge:#5A6680',
@@ -99,7 +99,7 @@ class DesignSystemTest extends TestCase
 
     public function test_the_stylesheets_carry_no_hard_coded_colour(): void
     {
-        foreach (['css/base.css', 'css/chrome.css', 'css/grid.css'] as $sheet) {
+        foreach (['css/base.css', 'css/chrome.css', 'css/grid.css', 'css/blocks.css', 'css/admin.css'] as $sheet) {
             $this->assertDoesNotMatchRegularExpression(
                 '/#[0-9A-Fa-f]{3,8}\b/',
                 preg_replace('#/\*.*?\*/#s', '', $this->css($sheet)),
@@ -114,11 +114,11 @@ class DesignSystemTest extends TestCase
      */
     public function test_the_named_colours_appear_only_in_the_token_file(): void
     {
-        foreach (['css/base.css', 'css/chrome.css', 'css/grid.css'] as $sheet) {
+        foreach (['css/base.css', 'css/chrome.css', 'css/grid.css', 'css/blocks.css', 'css/admin.css'] as $sheet) {
             $css = $this->css($sheet);
 
             foreach ([
-                '#958E7E', '#6E7A85', '#050D18', '#5A6680', '#6B7691',
+                '#908977', '#6E7A85', '#050D18', '#5A6680', '#6B7691',
                 '#FDF0DC', '#E5BE87', '#5C3404', '#B6DCC5', '#E3B7B8', '#6E1A1D',
             ] as $literal) {
                 $this->assertStringNotContainsStringIgnoringCase(

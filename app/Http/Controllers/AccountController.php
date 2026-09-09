@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Theme;
 use App\Models\AuditLog;
 use App\Services\TwoFactorService;
 use App\Support\Locales;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use Illuminate\Validation\ValidationException;
 
@@ -26,6 +28,23 @@ class AccountController extends Controller
             'remainingRecoveryCodes' => $this->twoFactor->remainingRecoveryCodes($request->user()),
             'notifications' => self::NOTIFICATIONS,
         ]);
+    }
+
+    /**
+     * The back office surface set. Screen 09 puts the control in the header
+     * rather than only in settings, because it is a comfort setting a
+     * person changes as the light in the room changes, not a preference
+     * they set once.
+     */
+    public function updateTheme(Request $request)
+    {
+        $data = $request->validate([
+            'theme' => ['required', Rule::enum(Theme::class)],
+        ]);
+
+        $request->user()->update(['theme' => $data['theme']]);
+
+        return back()->with('status', __('admin.theme_changed'));
     }
 
     public function update(Request $request)

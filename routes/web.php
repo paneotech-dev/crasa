@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
@@ -154,6 +155,7 @@ Route::prefix('{locale}')
             Route::get('account', [AccountController::class, 'show'])->name('account');
             Route::put('account', [AccountController::class, 'update'])->name('account.update');
             Route::put('account/password', [AccountController::class, 'updatePassword'])->name('account.password');
+            Route::put('account/theme', [AccountController::class, 'updateTheme'])->name('account.theme');
 
             Route::get('two-factor/enrol', [TwoFactorEnrolmentController::class, 'show'])->name('two-factor.enrol');
             Route::post('two-factor/confirm', [TwoFactorEnrolmentController::class, 'confirm'])->name('two-factor.confirm');
@@ -165,6 +167,7 @@ Route::prefix('{locale}')
              * navigation is not the access control.
              */
             Route::prefix('admin')->name('admin.')->group(function () {
+                Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
                 Route::get('users', [UserAdminController::class, 'index'])->name('users');
                 Route::get('users/invite', [UserAdminController::class, 'form'])->name('users.form');
                 Route::post('users/invite', [UserAdminController::class, 'invite'])->name('users.invite');

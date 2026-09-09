@@ -26,7 +26,7 @@ class ContrastTest extends TestCase
         parent::setUp();
 
         preg_match_all(
-            '/(--c-[a-z-]+)\s*:\s*(#[0-9A-Fa-f]{6})/',
+            '/(--[cd]-[a-z0-9-]+)\s*:\s*(#[0-9A-Fa-f]{6})/',
             file_get_contents(public_path('css/tokens.css')),
             $matches,
             PREG_SET_ORDER
@@ -89,6 +89,16 @@ class ContrastTest extends TestCase
             'error text on white' => ['--c-red', '--c-white'],
             'error notice body' => ['--c-red-dark', '--c-red-light'],
             'archived pill' => ['--c-slate', '--c-white'],
+
+            // The dark surface set. Screen 09 states its own figures: body
+            // ink at 12.4:1 on the page ground, dimmed ink at 6.8:1, and the
+            // green raised to clear AA against the dark surface. Measured
+            // here rather than taken on trust.
+            'dark body ink on ground' => ['--d-ink', '--d-bg'],
+            'dark body ink on surface' => ['--d-ink', '--d-surface'],
+            'dark dimmed ink on surface' => ['--d-ink-dim', '--d-surface'],
+            'dark link on surface' => ['--d-green', '--d-surface'],
+            'dark current section' => ['--c-white', '--d-current'],
         ];
     }
 
@@ -107,6 +117,15 @@ class ContrastTest extends TestCase
             'control border on white' => ['--c-border', '--c-white'],
             'control border on cream' => ['--c-border', '--c-cream'],
             'switcher border on navy' => ['--c-navy-edge', '--c-navy'],
+
+            // The back office. Controls sit on white and on the admin
+            // ground; the panel rule is decorative and is not measured.
+            'control border on admin ground' => ['--c-border', '--c-admin-bg'],
+            'focus ring on admin ground' => ['--c-amber', '--c-admin-bg'],
+            // The panel rule is decorative and is not measured, in dark
+            // exactly as in light. What is measured is the boundary of a
+            // control on the dark surface.
+            'control border on dark surface' => ['--c-border', '--d-surface'],
         ];
     }
 

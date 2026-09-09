@@ -23,10 +23,12 @@
   /* --c-border and --c-border-input both had to reach 3:1 against white for
      SC 1.4.11, and both land on the same value, so they were never two
      tokens. One border neutral now, set against cream rather than white:
-     cream is the darker of the two grounds a control sits on, so it is the
-     harder case, and a value that clears it clears white too. --c-navy-edge is lightened to clear 3:1
+     cream is the darker of the two public grounds a control sits on. The
+     back office ground, --c-admin-bg, is darker again: #958E7E reached only
+     2.93:1 there, so the value is darkened once more to #908977, which
+     clears 3:1 on all three (white 3.48, cream 3.22, admin ground 3.14). --c-navy-edge is lightened to clear 3:1
      against navy. See the disclosed variation in docs/OPEN_ITEMS.md. */
-  --c-border:#958E7E; --c-disabled:#6E7A85;
+  --c-border:#908977; --c-disabled:#6E7A85;
   --c-navy-deep:#050D18; --c-navy-edge:#5A6680; --c-navy-soft:#6B7691;
 
   /* Notice tints. Ground, rule and text for the amber, green and red
@@ -35,6 +37,22 @@
   --c-amber-light:#FDF0DC; --c-amber-mid:#E5BE87; --c-amber-dark:#5C3404;
   --c-green-mid:#B6DCC5;
   --c-red-mid:#E3B7B8; --c-red-dark:#6E1A1D;
+
+  /* Administration surfaces. Both values are drawn in screen 09:
+     --c-admin-bg is the page ground behind the back office, --c-line the
+     rule between panels, table rows and header. --c-line is a decorative
+     boundary, not the boundary of a control, so SC 1.4.11 does not apply
+     to it; controls inside the back office take --c-border, which is
+     measured. The input border screen 09 draws, #B9B2A2, reaches only
+     2.11:1 on white and is not used for that reason. */
+  --c-admin-bg:#F4F3F0; --c-line:#DFDBD1;
+
+  /* Dark surface set. Screen 09: "the same tokens with a different set of
+     surface and ink values, not a second design". The green is raised so
+     it clears AA against the dark surface, which is the screen's own
+     wording and its own value. */
+  --d-bg:#0B1220; --d-surface:#141E30; --d-line:#26334A;
+  --d-ink:#E8EDF4; --d-ink-dim:#9DAABF; --d-green:#2FA76F; --d-current:#1D3A2B;
 
   /* Typeface roles. Lora for public headings, IBM Plex Sans for body,
      Inter for administration and dense data. */
