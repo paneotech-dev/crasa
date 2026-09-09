@@ -37,4 +37,14 @@ return [
     'empty_body' => 'Les arrivées et départs apparaissent ici à mesure que les délégués les renseignent.',
     'export' => 'Exporter en CSV',
     'boundary_note' => 'Cette liste enregistre uniquement les arrivées et les départs. L\'hébergement, les transferts, la restauration et l\'interprétation sont organisés sur la plateforme de gestion des événements ; exportez cette liste pour y travailler.',
+
+    'col_country' => 'État membre que vous représentez',
+    'country_hint' => 'Le régulateur ou le ministère que vous représentez. Laissez vide si vous n\'en représentez aucun.',
+    'country_none' => 'Sans représentation d\'un État membre',
+    'rejected' => 'Cette inscription n\'a pas pu être acceptée. Écrivez directement au Secrétariat.',
+    'confirmation_subject' => 'Votre inscription à :meeting',
+    'confirmation_intro' => 'Le Secrétariat de la CRASA a enregistré votre arrivée et votre départ pour cette réunion.',
+    'confirmation_amend' => 'Pour modifier ces informations, remplissez à nouveau le formulaire avec la même adresse électronique. La nouvelle saisie remplace celle-ci.',
+    'confirmation_boundary' => 'L\'hébergement, les transferts et la restauration sont organisés par les organisateurs de la réunion et non par cette plateforme.',
+    'confirmation_none' => 'Non précisé',
 ];

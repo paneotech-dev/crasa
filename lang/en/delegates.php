@@ -37,4 +37,14 @@ return [
     'empty_body' => 'Arrival and departure details appear here as delegates file them.',
     'export' => 'Export CSV',
     'boundary_note' => 'This list records arrival and departure only. Accommodation, transfers, catering and interpretation are arranged on the Event Management Platform; export this list to work with it there.',
+
+    'col_country' => 'Member state you attend for',
+    'country_hint' => 'The regulator or ministry you represent. Leave it empty if you attend for none.',
+    'country_none' => 'Not attending for a member state',
+    'rejected' => 'This registration could not be accepted. Write to the Secretariat directly.',
+    'confirmation_subject' => 'Your registration for :meeting',
+    'confirmation_intro' => 'The CRASA Secretariat has recorded your arrival and departure for this meeting.',
+    'confirmation_amend' => 'To change anything, file the form again with the same email address. The later filing replaces this one.',
+    'confirmation_boundary' => 'Accommodation, transfers and catering are arranged by the meeting organisers rather than through this platform.',
+    'confirmation_none' => 'Not stated',
 ];

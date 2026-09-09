@@ -37,4 +37,14 @@ return [
     'empty_body' => 'As chegadas e partidas aparecem aqui à medida que os delegados as registam.',
     'export' => 'Exportar em CSV',
     'boundary_note' => 'Esta lista regista apenas chegadas e partidas. O alojamento, os transferes, a restauração e a interpretação são organizados na plataforma de gestão de eventos; exporte esta lista para trabalhar lá.',
+
+    'col_country' => 'Estado membro que representa',
+    'country_hint' => 'O regulador ou ministério que representa. Deixe vazio se não representar nenhum.',
+    'country_none' => 'Sem representação de um Estado membro',
+    'rejected' => 'Esta inscrição não pôde ser aceite. Escreva diretamente ao Secretariado.',
+    'confirmation_subject' => 'A sua inscrição em :meeting',
+    'confirmation_intro' => 'O Secretariado da CRASA registou a sua chegada e a sua partida para esta reunião.',
+    'confirmation_amend' => 'Para alterar algo, preencha o formulário novamente com o mesmo endereço eletrónico. A nova submissão substitui esta.',
+    'confirmation_boundary' => 'O alojamento, os transferes e a restauração são organizados pelos organizadores da reunião e não por esta plataforma.',
+    'confirmation_none' => 'Não indicado',
 ];

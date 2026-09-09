@@ -51,6 +51,29 @@
                         <input class="c-input" type="text" id="delegate_role" name="delegate_role"
                                value="{{ old('delegate_role', $existing?->delegate_role) }}">
                     </div>
+
+                    {{-- A delegate signed in from a member state account
+                         has this already and is shown it rather than asked
+                         it. A delegate without an account has no other way
+                         to say which regulator they attend for, and the
+                         roster is sorted by it. --}}
+                    @if (auth()->user()?->country)
+                        <div class="c-field">
+                            <span class="c-label">{{ __('delegates.col_country') }}</span>
+                            <p class="c-field__hint">{{ auth()->user()->country->name }}</p>
+                        </div>
+                    @else
+                        <div class="c-field">
+                            <label class="c-label" for="country_id">{{ __('delegates.col_country') }}</label>
+                            <select class="c-select" id="country_id" name="country_id" aria-describedby="country-hint">
+                                <option value="">{{ __('delegates.country_none') }}</option>
+                                @foreach ($countries as $country)
+                                    <option value="{{ $country->id }}" @selected((int) old('country_id', $existing?->country_id) === $country->id)>{{ $country->name }}</option>
+                                @endforeach
+                            </select>
+                            <p class="c-field__hint" id="country-hint">{{ __('delegates.country_hint') }}</p>
+                        </div>
+                    @endif
                 </fieldset>
 
                 <fieldset>
@@ -107,6 +130,13 @@
                     <label class="c-label" for="notes">{{ __('delegates.col_notes') }}</label>
                     <textarea class="c-input" id="notes" name="notes" rows="4" maxlength="1000">{{ old('notes', $existing?->notes) }}</textarea>
                     <p class="c-small">{{ __('delegates.notes_hint') }}</p>
+                </div>
+
+                {{-- Honeypot. Hidden from people and from screen readers, so
+                     nobody is asked to fill a field that must stay empty. --}}
+                <div class="c-honeypot" aria-hidden="true">
+                    <label for="website">{{ __('contact.field_website') }}</label>
+                    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" value="">
                 </div>
 
                 <button type="submit" class="c-btn c-btn--primary">{{ __('delegates.file_action') }}</button>
