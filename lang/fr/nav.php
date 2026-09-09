@@ -19,4 +19,7 @@ return [
     'comparator' => 'Comparateur',
     'contact' => 'Contact',
     'extranet' => 'Extranet',
+
+    'back_office' => 'Administration',
+    'account' => 'Votre compte',
 ];

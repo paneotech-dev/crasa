@@ -47,7 +47,10 @@ class CreateUser extends Command
         {--role= : administrator, editor, member_state_rep, committee_member or viewer}
         {--country= : ISO code of the member state, for country-scoped roles}
         {--authority= : Acronym of the authority, which must belong to that country}
-        {--locale=en : Interface language}';
+        {--locale=en : Interface language}
+        {--generate : Generate the password and print it once, for scripted setup}
+        {--sample : Flag the account as demonstration data, so the go-live purge removes it}
+        {--length=20 : Length of a generated password}';
 
     protected $description = 'Create a user account, prompting for the password';
 
@@ -89,14 +92,37 @@ class CreateUser extends Command
             $countryId ??= $authority->country_id;
         }
 
-        // secret() does not echo and does not enter shell history.
-        $password = $this->secret('Password (not echoed)');
-        $confirmation = $this->secret('Confirm password');
+        /*
+         * --generate exists so a scripted setup can create several accounts
+         * at once. It does not weaken the rule above: there is still no way
+         * to PASS a password in, which is the thing that lands in shell
+         * history and in the process list. The command makes one, uses it,
+         * and prints it once on stdout for the operator to capture.
+         *
+         * It refuses to generate for anything but a demonstration account.
+         * A real account's password should be chosen by its holder, and a
+         * generated one that is printed to a terminal has already been
+         * seen by whoever was running the command.
+         */
+        if ($this->option('generate')) {
+            if (! $this->option('sample')) {
+                $this->error('--generate creates a password on a terminal, so it is only for demonstration');
+                $this->error('accounts. Pass --sample as well, or set the password at the prompt.');
 
-        if ($password !== $confirmation) {
-            $this->error('The passwords do not match. Nothing was created.');
+                return self::FAILURE;
+            }
 
-            return self::FAILURE;
+            $password = $this->generatePassword((int) $this->option('length'));
+        } else {
+            // secret() does not echo and does not enter shell history.
+            $password = $this->secret('Password (not echoed)');
+            $confirmation = $this->secret('Confirm password');
+
+            if ($password !== $confirmation) {
+                $this->error('The passwords do not match. Nothing was created.');
+
+                return self::FAILURE;
+            }
         }
 
         $validator = Validator::make([
@@ -129,6 +155,7 @@ class CreateUser extends Command
             'country_id' => $countryId,
             'authority_id' => $authorityId,
             'preferred_locale' => $this->option('locale'),
+            'is_sample' => (bool) $this->option('sample'),
         ]);
 
         $user->password = Hash::make($password);
@@ -139,11 +166,65 @@ class CreateUser extends Command
 
         $this->info("Created {$user->email} as {$user->role->label()}.");
 
+        if ($this->option('generate')) {
+            // Printed once, on stdout, so a script can capture it. It is
+            // not written to any file by this command and it is not
+            // recoverable afterwards: the column holds a hash.
+            $this->line('password: '.$password);
+        }
+
+        if ($this->option('sample')) {
+            $this->warn('Flagged as demonstration data. `content:strip-samples` removes it before go-live.');
+        }
+
         if ($user->role->requiresTwoFactor()) {
             $this->warn('Two-factor enrolment is mandatory for this role. The account reaches nothing');
             $this->warn('but the enrolment page until it is completed.');
         }
 
         return self::SUCCESS;
+    }
+
+    /**
+     * A password from the cryptographic random source.
+     *
+     * The alphabet leaves out the characters that get transcribed wrong
+     * when somebody reads one off a screen -- O and 0, l and 1 and I -- and
+     * every symbol that a shell would treat as syntax, because these are
+     * pasted into terminals. Length carries the strength instead: twenty
+     * characters from a 60-character alphabet is about 118 bits.
+     *
+     * Str::password() is not used: it draws from a set including quotes and
+     * backslashes, and one of those in a password meant to be pasted is a
+     * support call.
+     */
+    private function generatePassword(int $length): string
+    {
+        // I, O, l and the digits they are mistaken for are all absent.
+        $upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+        $lower = 'abcdefghijkmnopqrstuvwxyz';
+        $digits = '23456789';
+        $symbols = '-_.+=';
+
+        $pick = fn (string $set) => $set[random_int(0, strlen($set) - 1)];
+
+        // One of each class first, so a generated password cannot fail the
+        // letters-and-numbers rule by chance.
+        $characters = [$pick($upper), $pick($lower), $pick($digits), $pick($symbols)];
+        $pool = $upper.$lower.$digits.$symbols;
+
+        for ($i = count($characters); $i < max(12, $length); $i++) {
+            $characters[] = $pick($pool);
+        }
+
+        // Fisher-Yates on the cryptographic source. str_shuffle draws from
+        // the same seeded generator as rand(), which is not a source to
+        // decide the order of a password with.
+        for ($i = count($characters) - 1; $i > 0; $i--) {
+            $j = random_int(0, $i);
+            [$characters[$i], $characters[$j]] = [$characters[$j], $characters[$i]];
+        }
+
+        return implode('', $characters);
     }
 }

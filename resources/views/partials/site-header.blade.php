@@ -12,6 +12,9 @@
     $primary = \App\Support\Navigation::primary();
     $extranetUrl = \App\Support\Navigation::url(config('navigation.extranet_path'));
     $searchUrl = \App\Support\Navigation::url(config('navigation.search_path'));
+
+    // Null for a signed-out reader and for a viewer, who has no workspace.
+    $workspace = \App\Support\Workspace::for(auth()->user());
 @endphp
 
 <header class="c-header" data-header>
@@ -44,12 +47,32 @@
 
             @include('partials.language-switcher', ['variant' => 'header'])
 
-            <a class="c-extranet" href="{{ $extranetUrl }}">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect>
-                </svg>
-                {{ __('nav.extranet') }}
-            </a>
+            {{-- Signed out, this is the way in. Signed in, the padlock is
+                 answered: the reader goes to their own workspace, and a
+                 viewer, who has none, goes to their account.
+
+                 The header used to carry the padlocked link either way, so
+                 a signed-in reader on a public page had no route to their
+                 own work and no route out. --}}
+            @guest
+                <a class="c-extranet" href="{{ $extranetUrl }}">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect>
+                    </svg>
+                    {{ __('nav.extranet') }}
+                </a>
+            @else
+                @if ($workspace)
+                    <a class="c-extranet" href="{{ $workspace['url'] }}">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect>
+                        </svg>
+                        {{ $workspace['label'] }}
+                    </a>
+                @endif
+
+                <a class="c-nav__link c-header__account" href="{{ route('account', ['locale' => app()->getLocale()]) }}">{{ __('nav.account') }}</a>
+            @endguest
         </div>
 
         {{-- Shown only once the navigation no longer fits the rendered
@@ -86,11 +109,15 @@
 
         @include('partials.language-switcher', ['variant' => 'drawer'])
 
-        <a class="c-drawer__extranet" href="{{ $extranetUrl }}">
+        <a class="c-drawer__extranet" href="{{ $workspace['url'] ?? $extranetUrl }}">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M17 10V8a5 5 0 00-10 0v2"></path><rect x="5" y="10" width="14" height="10" rx="1.5"></rect>
             </svg>
-            {{ __('nav.extranet') }}
+            {{ $workspace['label'] ?? __('nav.extranet') }}
         </a>
+
+        @auth
+            <a class="c-drawer__link" href="{{ route('account', ['locale' => app()->getLocale()]) }}">{{ __('nav.account') }}</a>
+        @endauth
     </div>
 </header>

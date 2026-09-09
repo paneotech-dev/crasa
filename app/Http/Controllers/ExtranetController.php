@@ -207,6 +207,20 @@ class ExtranetController extends Controller
                 ->take(5)
                 ->values(),
 
+            /*
+             * The reader's own seats.
+             *
+             * A committee member had no route to their own workspace from
+             * anywhere: the rail is flat and carries no committee, and this
+             * page listed meetings and documents but never the committee
+             * they sit on. The workspace was reachable only by knowing its
+             * slug.
+             */
+            'committees' => $user->committees()
+                ->withCount(['documents', 'meetings'])
+                ->orderBy('name')
+                ->get(),
+
             'notifications' => $user->notifications()->limit(5)->get(),
             'clearance' => ExtranetNavigation::clearance($user),
         ]);

@@ -59,6 +59,32 @@
             @endif
         </section>
 
+        {{-- The reader's own seats. A committee member had no route to
+             their own workspace from anywhere on the platform: the rail is
+             flat and carries no committee, and this page listed what had
+             been filed without saying where. --}}
+        @if ($committees->isNotEmpty())
+            <section class="a-resource">
+                <div class="a-resource__head">
+                    <h2 class="a-resource__title">{{ __('extranet.dash_committees') }}</h2>
+                </div>
+
+                <ul class="e-dash__list" role="list">
+                    @foreach ($committees as $committee)
+                        <li class="e-dash__row">
+                            <span class="e-dash__main">
+                                <a class="e-dash__title" href="{{ route('extranet.committee', ['locale' => app()->getLocale(), 'committee' => $committee->slug]) }}">{{ $committee->name }}</a>
+                                <span class="e-dash__meta">
+                                    {{ trans_choice('extranet.dash_committee_documents', $committee->documents_count, ['count' => $committee->documents_count]) }},
+                                    {{ trans_choice('extranet.dash_committee_meetings', $committee->meetings_count, ['count' => $committee->meetings_count]) }}
+                                </span>
+                            </span>
+                            <span class="a-pill" data-status="{{ $committee->pivot->role }}">{{ __('extranet.seat_'.$committee->pivot->role) }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+            </section>
+        @endif
         <section class="a-resource">
             <div class="a-resource__head">
                 <h2 class="a-resource__title">{{ __('extranet.dash_documents') }}</h2>

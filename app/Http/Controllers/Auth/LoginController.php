@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Enums\Permission;
 use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -114,11 +115,39 @@ class LoginController extends Controller
         ], $user);
     }
 
+    /**
+     * Where an account lands after signing in.
+     *
+     * Everybody used to land on the account page, which is the one screen
+     * that tells a reader nothing about what they signed in to do. A
+     * member state representative signs in to file a return and a
+     * committee member to read papers; putting both in front of a form for
+     * changing their own password is asking them to find the platform.
+     *
+     * The route is a suggestion, not a grant. Every destination below
+     * re-checks its own permission on the way in, so an account that
+     * cannot reach the back office is redirected out of it rather than let
+     * in by having been sent there.
+     */
     public static function destinationFor(User $user): string
     {
         $locale = $user->preferred_locale ?: app()->getLocale();
 
-        return route('account', ['locale' => $locale]);
+        // An administrator who has not enrolled in two-factor reaches
+        // nothing else, so sending them to the dashboard would be one
+        // redirect on the way to the enrolment page. Send them there.
+        if ($user->role->requiresTwoFactor() && $user->two_factor_confirmed_at === null) {
+            return route('two-factor.enrol', ['locale' => $locale]);
+        }
+
+        return match (true) {
+            $user->hasPermission(Permission::ManageContent) => route('admin.dashboard', ['locale' => $locale]),
+            $user->hasPermission(Permission::ReachCommitteeWorkspace) => route('extranet.dashboard', ['locale' => $locale]),
+            // A viewer has no workspace. The public site, signed in, is
+            // the whole of what they have, and the account page is one
+            // click from the header.
+            default => route('home', ['locale' => $locale]),
+        };
     }
 
     private function recordFailure(Request $request, string $email, string $reason): void

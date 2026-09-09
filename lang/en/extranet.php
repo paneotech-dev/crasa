@@ -100,4 +100,11 @@ return [
     'export' => 'Export',
     'export_note' => 'The file carries only the meetings your clearance lets you see.',
     'export_month' => 'Download this month',
+
+    'dash_committees' => 'Your committees',
+    'dash_committee_documents' => '{0}No documents|{1}One document|[2,*]:count documents',
+    'dash_committee_meetings' => '{0}no meetings|{1}one meeting|[2,*]:count meetings',
+    'seat_member' => 'Member',
+    'seat_chair' => 'Chair',
+    'seat_observer' => 'Observer',
 ];

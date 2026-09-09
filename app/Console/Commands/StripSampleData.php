@@ -17,6 +17,7 @@ use App\Models\Publication;
 use App\Models\Report;
 use App\Models\Submission;
 use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
@@ -90,6 +91,20 @@ class StripSampleData extends Command
          */
         Authority::class,
         Committee::class,
+
+        /*
+         * Accounts last, because everything that points at one has already
+         * gone by here: a demonstration submission, its events and its
+         * field comments are stripped several steps above, and the audit
+         * log, the version tables and the translations table all null the
+         * reference rather than block the delete.
+         *
+         * handle() refuses to run at all if the strip would take the last
+         * administrator who can still sign in. A platform with no way in is
+         * a worse outcome than a platform with one demonstration account
+         * left in it.
+         */
+        User::class,
     ];
 
     public function handle(): int
@@ -126,6 +141,22 @@ class StripSampleData extends Command
             $this->info(($total + $orphans).' rows would be removed. Nothing has been changed.');
 
             return self::SUCCESS;
+        }
+
+        if ($this->wouldLockEverybodyOut()) {
+            $this->error('Every administrator account on this platform is flagged as demonstration data.');
+            $this->error('Create a real administrator with `user:create` first. Nothing has been changed.');
+
+            return self::FAILURE;
+        }
+
+        $accounts = $counts[User::class] ?? 0;
+
+        if ($accounts > 0) {
+            $this->warn(
+                'This includes '.$accounts.' account'.($accounts === 1 ? '' : 's').'. Anyone still signed in '
+                .'with one is signed out, and the credentials file for them should be deleted too.'
+            );
         }
 
         $organisations = ($counts[Authority::class] ?? 0) + ($counts[Committee::class] ?? 0);
@@ -224,6 +255,29 @@ class StripSampleData extends Command
         }
 
         return $total;
+    }
+
+    /**
+     * Whether the strip would leave nobody able to administer the platform.
+     *
+     * Counted rather than assumed: a suspended administrator cannot sign
+     * in, so it is not one, and an account flagged as demonstration data is
+     * about to be deleted, so it is not one either.
+     */
+    private function wouldLockEverybodyOut(): bool
+    {
+        $survivors = User::query()
+            ->where('role', \App\Enums\Role::Administrator)
+            ->where('status', \App\Enums\UserStatus::Active)
+            ->where('is_sample', false)
+            ->count();
+
+        $going = User::query()
+            ->where('role', \App\Enums\Role::Administrator)
+            ->where('is_sample', true)
+            ->count();
+
+        return $survivors === 0 && $going > 0;
     }
 
     /** @return array<class-string<Model>, int> */

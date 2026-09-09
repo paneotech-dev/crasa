@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Enums\Permission;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -27,7 +28,9 @@ use Illuminate\Support\Facades\Route;
  * A section appears only if the reader can open it. That is a convenience,
  * not the access control: every route behind these links re-checks its own
  * policy, so removing a link grants nobody anything and hiding one protects
- * nothing.
+ * nothing. The filter was added on 9 September 2026; before that this note
+ * described an intention rather than the code, and every reader saw every
+ * section.
  */
 final class ExtranetNavigation
 {
@@ -42,17 +45,36 @@ final class ExtranetNavigation
         // landing page; Regulatory data is the submission workspace, which
         // only a member state representative or the Secretariat reaches.
         $definitions = [
-            ['key' => 'folders', 'route' => 'extranet.folders', 'icon' => 'folder'],
-            ['key' => 'calendar', 'route' => 'extranet.calendar', 'icon' => 'calendar'],
-            ['key' => 'submissions', 'route' => 'submissions', 'icon' => 'bar-chart'],
-            ['key' => 'completeness', 'route' => 'completeness', 'icon' => 'grid'],
-            ['key' => 'search', 'route' => 'search', 'icon' => 'search'],
+            ['key' => 'folders', 'route' => 'extranet.folders', 'icon' => 'folder', 'permission' => Permission::OpenMemberDocuments],
+            ['key' => 'calendar', 'route' => 'extranet.calendar', 'icon' => 'calendar', 'permission' => null],
+            ['key' => 'submissions', 'route' => 'submissions', 'icon' => 'bar-chart', 'permission' => Permission::SubmitCountryReturn],
+            ['key' => 'completeness', 'route' => 'completeness', 'icon' => 'grid', 'permission' => Permission::ViewPublishedIndicators],
+            ['key' => 'search', 'route' => 'search', 'icon' => 'search', 'permission' => null],
         ];
 
+        $user = auth()->user();
         $sections = [];
 
         foreach ($definitions as $definition) {
             if (! Route::has($definition['route'])) {
+                continue;
+            }
+
+            /*
+             * The filter this class has claimed since it was written and
+             * did not have. Every section was shown to everybody, so a
+             * committee member's rail carried "Regulatory data", which is
+             * the member state submission workspace and returns 403 for
+             * them, and "Reporting", which is the completeness matrix.
+             *
+             * Still not the access control. Every route behind these links
+             * re-checks its own policy, so removing a link grants nobody
+             * anything and hiding one protects nothing. It is the
+             * difference between a rail that describes the reader's work
+             * and one that describes the platform.
+             */
+            if ($definition['permission'] !== null
+                && ($user === null || ! $user->hasPermission($definition['permission']))) {
                 continue;
             }
 

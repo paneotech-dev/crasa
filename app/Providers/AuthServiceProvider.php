@@ -112,11 +112,23 @@ class AuthServiceProvider extends ServiceProvider
          * This gate opens the door. It grants nothing behind it: every
          * section re-checks its own permission.
          */
+        /*
+         * SubmitCountryReturn is not on this list, and was until
+         * 9 September 2026.
+         *
+         * A member state representative's work is at /en/submissions and in
+         * the extranet, neither of which is behind this gate. Having the
+         * permission here let a representative open screen 09's dashboard,
+         * which counts the Secretariat's content and tells them nothing
+         * they can act on. Nothing sensitive leaked -- every section behind
+         * the door re-checks its own permission and none of them opened --
+         * but a door that opens on a room with nothing in it for you is
+         * still the wrong door.
+         */
         Gate::define('enter-back-office', fn (User $user) => $user->hasAnyPermission([
             Permission::ManageContent,
             Permission::ManageUsers,
             Permission::ReadAuditLog,
-            Permission::SubmitCountryReturn,
             Permission::ValidateSubmission,
             Permission::ManageSettings,
         ]));

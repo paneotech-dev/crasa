@@ -89,6 +89,16 @@ class Committee extends Model
         return $this->hasMany(Publication::class);
     }
 
+    /**
+     * The documents this committee owns, which is what answers who may
+     * open a confidential one. See DATA_MODEL section 7: clearance is per
+     * committee role, not per user.
+     */
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class);
+    }
+
     /** The meetings held under this committee. */
     public function meetings(): HasMany
     {

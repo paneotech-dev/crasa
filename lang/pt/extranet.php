@@ -100,4 +100,11 @@ return [
     'export' => 'Exportar',
     'export_note' => 'O ficheiro contém apenas as reuniões que o seu nível de acesso permite ver.',
     'export_month' => 'Descarregar este mês',
+
+    'dash_committees' => 'Os seus comités',
+    'dash_committee_documents' => '{0}Nenhum documento|{1}Um documento|[2,*]:count documentos',
+    'dash_committee_meetings' => '{0}nenhuma reunião|{1}uma reunião|[2,*]:count reuniões',
+    'seat_member' => 'Membro',
+    'seat_chair' => 'Presidência',
+    'seat_observer' => 'Observador',
 ];

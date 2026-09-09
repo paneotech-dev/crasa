@@ -10,6 +10,7 @@ use App\Enums\Role;
 use App\Enums\Theme;
 use App\Enums\UserStatus;
 use App\Models\Concerns\Auditable;
+use App\Models\Concerns\MarksSampleData;
 use App\Support\PermissionMatrix;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,11 +23,12 @@ use RuntimeException;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use Auditable, HasFactory, Notifiable;
+    use Auditable, HasFactory, MarksSampleData, Notifiable;
 
     protected $fillable = [
         'name', 'email', 'password', 'country_id', 'authority_id', 'role',
         'status', 'theme', 'dismissed_hints', 'preferred_locale', 'notification_preferences', 'last_seen_at',
+        'is_sample',
     ];
 
     /**
@@ -55,6 +57,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => Role::class,
             'status' => UserStatus::class,
+            'is_sample' => 'boolean',
             'theme' => Theme::class,
             'dismissed_hints' => 'array',
             // AES-256-CBC with the application key. Contractual: sensitive

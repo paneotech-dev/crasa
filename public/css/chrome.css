@@ -199,6 +199,20 @@
 }
 .c-extranet:hover { background: var(--c-navy-deep); color: var(--c-white); }
 
+/* The account link beside it, for a signed-in reader. Quiet on purpose:
+   the workspace button is the action and this is the way back to your own
+   settings and your way out, which is a link rather than a button. */
+.c-header__account {
+  flex: none;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-navy);
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 12px 4px;
+}
+.c-header__account:hover { color: var(--c-green-dark); text-decoration: underline; text-underline-offset: 4px; }
+
 /* Language switcher ---------------------------------------------------- */
 /* The current language is always shown as text, never as a flag alone.
    Each control is a link, so switching works without JavaScript. */

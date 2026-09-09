@@ -372,3 +372,28 @@ what was built that no screen draws. Thirty-one gaps were found and several
 are now closed. Going into the workshop with that document is a better
 position than going in without it, because every gap in it is one we found
 rather than one a delegate found.
+
+---
+
+## Six demonstration accounts exist, and they are rotated before Lilongwe
+
+*Added 9 September 2026.*
+
+One account per role was created on the development host so each landing
+page and each permission boundary could be walked rather than reasoned
+about: an administrator, an editor, two member state representatives
+(Botswana and Mozambique, so country scoping can be shown failing to leak),
+a committee member seated on Spectrum and Frequency Management, and a
+viewer.
+
+**All six are flagged `is_sample`,** so `php artisan content:strip-samples`
+removes them with the rest of the demonstration data. The command refuses to
+run at all if that would leave no administrator who can still sign in.
+
+**They are development accounts and they do not travel.** Before the
+workshop, either delete them with the strip or rotate every password. Their
+credentials are in a mode-600 file outside the repository; nothing about
+them is in git, in `docs/`, or in any test.
+
+**Owner:** the build. **When:** with the go-live strip, or sooner if the
+platform is shown to anyone outside the project.
