@@ -34,7 +34,24 @@
                     @foreach ($definition->fields as $field)
                         @php $current = old($field->name, $record->getAttribute($field->name)); @endphp
 
-                        @if ($field->control === 'checkbox')
+                        {{-- Shown, never written. "Superseded by" is the
+                             reverse of a relation the later document owns:
+                             a second writable control for the same fact is
+                             how the two ends stop agreeing. --}}
+                        @if ($field->readOnly)
+                            @php $shown = ($field->optionsUsing)($record); @endphp
+
+                            @if ($shown !== '')
+                                <div class="a-field">
+                                    <span class="a-label">{{ __('admin.field_'.$field->name) }}</span>
+                                    <p class="a-readonly">{{ $shown }}</p>
+                                    @if (__('admin.field_'.$field->name.'_hint') !== 'admin.field_'.$field->name.'_hint')
+                                        <span class="a-hint">{{ __('admin.field_'.$field->name.'_hint') }}</span>
+                                    @endif
+                                </div>
+                            @endif
+
+                        @elseif ($field->control === 'checkbox')
                             <div class="a-field">
                                 <label class="a-label" for="f-{{ $field->name }}">
                                     <input type="hidden" name="{{ $field->name }}" value="0">
@@ -52,6 +69,10 @@
                                         <option value="{{ $id }}" @selected((string) $current === (string) $id)>{{ $label }}</option>
                                     @endforeach
                                 </select>
+                                @if (__('admin.field_'.$field->name.'_hint') !== 'admin.field_'.$field->name.'_hint')
+                                    <span class="a-hint">{{ __('admin.field_'.$field->name.'_hint') }}</span>
+                                @endif
+                                @error($field->name)<p class="c-field__error">{{ $message }}</p>@enderror
                             </div>
 
                         @elseif ($field->control === 'select')

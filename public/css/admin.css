@@ -1633,3 +1633,14 @@ a.e-dash__title:hover { text-decoration: underline; text-underline-offset: 3px; 
   .a-history li { grid-template-columns: minmax(0, 1fr); }
   .a-history__n { grid-row: auto; }
 }
+
+/* A value the form shows and does not let anybody type. Set on the panel's
+   own type scale rather than styled as a disabled input: a disabled input
+   is a control that is currently unavailable, and this is not a control. */
+.a-readonly {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--a-ink);
+  padding: 9px 0;
+}

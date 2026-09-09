@@ -583,4 +583,14 @@ return [
     'setting_social_youtube_hint' => 'Enregistré et vide. Renseignez-le et la marque apparaît.',
     'setting_legacy_website' => 'Ancien site',
     'setting_legacy_website_hint' => 'Le site que cette plateforme remplace.',
+
+    'field_supersedes_id' => 'Remplace',
+    'field_supersedes_id_hint' => 'Le document antérieur que celui-ci remplace. Seuls les documents du même type et de date antérieure sont proposés.',
+    'field_superseded_by' => 'Remplacé par',
+    'field_superseded_by_hint' => 'Se définit en modifiant le document postérieur, pas celui-ci.',
+    'supersedes_missing' => 'Ce document n\'existe plus. Choisissez-en un autre ou laissez le champ vide.',
+    'supersedes_itself' => 'Un document ne peut pas se remplacer lui-même.',
+    'supersedes_type' => 'Un document ne peut remplacer qu\'un document du même type.',
+    'supersedes_later' => 'Ce document est daté du :date, ce qui n\'est pas antérieur à celui-ci. Le remplacement suit le temps dans un seul sens.',
+    'supersedes_loop' => 'Ce document figure déjà plus loin dans la filiation de celui-ci, et le définir formerait une boucle.',
 ];

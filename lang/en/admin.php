@@ -583,4 +583,14 @@ return [
     'setting_social_youtube_hint' => 'Registered and empty. Fill it in and the mark appears.',
     'setting_legacy_website' => 'Legacy website',
     'setting_legacy_website_hint' => 'The site this platform replaced.',
+
+    'field_supersedes_id' => 'Supersedes',
+    'field_supersedes_id_hint' => 'The earlier document this one replaces. Only documents of the same type with an earlier date are offered.',
+    'field_superseded_by' => 'Superseded by',
+    'field_superseded_by_hint' => 'Set by editing the later document, not this one.',
+    'supersedes_missing' => 'That document no longer exists. Choose another, or leave the field empty.',
+    'supersedes_itself' => 'A document cannot supersede itself.',
+    'supersedes_type' => 'A document may only supersede one of the same type.',
+    'supersedes_later' => 'That document is dated :date, which is not earlier than this one. Supersession runs one way in time.',
+    'supersedes_loop' => 'That document already sits later in this one\'s lineage, and setting it would make the chain a loop.',
 ];

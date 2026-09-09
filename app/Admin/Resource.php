@@ -51,6 +51,19 @@ final class Resource
          * instrument, indicator value and user attached to it.
          */
         public readonly bool $isReferenceData = false,
+        /**
+         * Rules that depend on the record and on what was just typed.
+         *
+         * $rules above is a constant, which is right for "a name is
+         * required and at most 200 characters" and cannot express "the
+         * document this one supersedes must be of the same type and
+         * earlier than the date in the form". The closure receives the
+         * record being edited, or a blank model on create, and the request,
+         * and its rules are merged over the constant ones.
+         *
+         * @var (\Closure(?Model, \Illuminate\Http\Request): array<string, mixed>)|null
+         */
+        public readonly ?\Closure $rulesUsing = null,
     ) {}
 
     public function label(): string

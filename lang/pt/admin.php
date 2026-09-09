@@ -583,4 +583,14 @@ return [
     'setting_social_youtube_hint' => 'Registado e vazio. Preencha-o e a marca aparece.',
     'setting_legacy_website' => 'Sítio anterior',
     'setting_legacy_website_hint' => 'O sítio que esta plataforma substitui.',
+
+    'field_supersedes_id' => 'Substitui',
+    'field_supersedes_id_hint' => 'O documento anterior que este substitui. Só são oferecidos documentos do mesmo tipo com data anterior.',
+    'field_superseded_by' => 'Substituído por',
+    'field_superseded_by_hint' => 'Define-se editando o documento posterior, não este.',
+    'supersedes_missing' => 'Esse documento já não existe. Escolha outro ou deixe o campo vazio.',
+    'supersedes_itself' => 'Um documento não pode substituir-se a si próprio.',
+    'supersedes_type' => 'Um documento só pode substituir outro do mesmo tipo.',
+    'supersedes_later' => 'Esse documento tem data de :date, que não é anterior a este. A substituição segue o tempo num só sentido.',
+    'supersedes_loop' => 'Esse documento já está mais adiante na linhagem deste, e defini-lo formaria um ciclo.',
 ];

@@ -106,8 +106,8 @@ class ResourceController extends Controller
 
         return view('pages.admin.resources.form', [
             'definition' => $definition,
-            'record' => new $definition->model,
-            'options' => $this->relationOptions($definition),
+            'record' => $blank = new $definition->model,
+            'options' => $this->relationOptions($definition, $blank),
             'locales' => Locales::SUPPORTED,
         ]);
     }
@@ -119,7 +119,7 @@ class ResourceController extends Controller
 
         abort_unless($definition->creatable, 403);
 
-        $data = $request->validate($this->rules($definition));
+        $data = $request->validate($this->rules($definition, new $definition->model, $request));
 
         $record = new $definition->model;
         $record->fill($this->attributes($definition, $data));
@@ -144,7 +144,7 @@ class ResourceController extends Controller
         return view('pages.admin.resources.form', [
             'definition' => $definition,
             'record' => $record,
-            'options' => $this->relationOptions($definition),
+            'options' => $this->relationOptions($definition, $record),
             'locales' => Locales::SUPPORTED,
         ]);
     }
@@ -155,7 +155,7 @@ class ResourceController extends Controller
         $record = $this->record($definition, $id);
         $this->authorizeAction('update', $definition, $record);
 
-        $data = $request->validate($this->rules($definition));
+        $data = $request->validate($this->rules($definition, $record, $request));
 
         $record->fill($this->attributes($definition, $data));
         $record->save();
@@ -294,9 +294,13 @@ class ResourceController extends Controller
     }
 
     /** @return array<string, mixed> */
-    private function rules(Resource $definition): array
+    private function rules(Resource $definition, ?Model $record = null, ?Request $request = null): array
     {
         $rules = $definition->rules;
+
+        if ($definition->rulesUsing !== null && $request !== null) {
+            $rules = array_merge($rules, ($definition->rulesUsing)($record, $request));
+        }
 
         foreach (Locales::SUPPORTED as $locale) {
             foreach ($definition->translatable as $field) {
@@ -318,6 +322,11 @@ class ResourceController extends Controller
         $attributes = [];
 
         foreach ($definition->fields as $field) {
+            // Shown, never written. See Field::readOnly.
+            if ($field->readOnly) {
+                continue;
+            }
+
             if ($field->control === 'checkbox') {
                 $attributes[$field->name] = (bool) ($data[$field->name] ?? false);
 
@@ -376,11 +385,24 @@ class ResourceController extends Controller
      *
      * @return array<string, array<int, string>>
      */
-    private function relationOptions(Resource $definition): array
+    private function relationOptions(Resource $definition, ?Model $record = null): array
     {
         $options = [];
 
         foreach ($definition->fields as $field) {
+            /*
+             * A field whose candidates depend on the record being edited
+             * answers for itself. Supersession is the case: a publication
+             * may only be superseded by one of the same type with an
+             * earlier date, and never by itself, and no generic listing of
+             * the related table can know that.
+             */
+            if ($field->optionsUsing !== null) {
+                $options[$field->name] = ($field->optionsUsing)($record);
+
+                continue;
+            }
+
             if ($field->control !== 'relation' || $field->relation === null) {
                 continue;
             }

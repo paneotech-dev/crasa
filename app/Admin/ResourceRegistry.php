@@ -17,6 +17,9 @@ use App\Models\NewsItem;
 use App\Models\Publication;
 use App\Models\Sector;
 use App\Models\Tag;
+use App\Rules\SupersedesRule;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use InvalidArgumentException;
 
 /**
@@ -201,6 +204,59 @@ final class ResourceRegistry
                     Field::belongsTo('country_id', 'country'),
                     Field::date('published_on', required: true),
                     Field::boolean('is_public'),
+
+                    /*
+                     * SUPERSESSION. Screen 07 draws the lineage on the
+                     * document page and the model has carried it since the
+                     * schema was written; there was no way to set it.
+                     *
+                     * Only valid candidates are offered: the same
+                     * publication type, an earlier date, never itself. A
+                     * guideline replacing an annual report is a data error
+                     * rather than a lineage, and supersession runs one way
+                     * in time.
+                     */
+                    Field::scoped('supersedes_id', function (?Model $record) {
+                        if ($record === null || $record->publication_type === null) {
+                            return [];
+                        }
+
+                        return Publication::query()
+                            ->with('translations')
+                            ->where('publication_type', $record->publication_type)
+                            ->when($record->exists, fn ($q) => $q->whereKeyNot($record->getKey()))
+                            ->when(
+                                $record->published_on !== null,
+                                fn ($q) => $q->whereDate('published_on', '<', $record->published_on)
+                            )
+                            ->orderByDesc('published_on')
+                            ->limit(100)
+                            ->get()
+                            ->mapWithKeys(fn (Publication $p) => [
+                                $p->getKey() => $p->translated('title', $p->slug)
+                                    .($p->published_on ? ', '.$p->published_on->format('Y') : ''),
+                            ])
+                            ->all();
+                    }),
+
+                    /*
+                     * The reverse, shown and not editable. It is set by
+                     * editing the later document, and a second writable
+                     * control for the same fact is how the two ends stop
+                     * agreeing.
+                     */
+                    Field::readOnly('superseded_by', function (?Model $record) {
+                        if ($record === null || ! $record->exists) {
+                            return '';
+                        }
+
+                        return $record->supersededBy()
+                            ->with('translations')
+                            ->get()
+                            ->map(fn (Publication $p) => $p->translated('title', $p->slug)
+                                .($p->published_on ? ', '.$p->published_on->format('Y') : ''))
+                            ->implode('; ');
+                    }),
                 ],
                 rules: [
                     'publication_type' => ['required', 'string', 'max:60'],
@@ -211,6 +267,16 @@ final class ResourceRegistry
                     // a publication with no date cannot be cited.
                     'published_on' => ['required', 'date'],
                     'is_public' => ['nullable', 'boolean'],
+                ],
+                rulesUsing: fn (?Model $record, Request $request) => [
+                    'supersedes_id' => [
+                        'nullable',
+                        new SupersedesRule(
+                            $record instanceof Publication && $record->exists ? $record : null,
+                            $request->string('publication_type')->value() ?: null,
+                            $request->string('published_on')->value() ?: null,
+                        ),
+                    ],
                 ],
                 translatable: ['title', 'summary'],
                 searchable: ['slug'],
