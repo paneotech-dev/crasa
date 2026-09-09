@@ -343,6 +343,44 @@ back office is numbered.
 
 ---
 
+## Disclosed variation: screen 18 is built at half its width
+
+**Screen 18 draws more than the scope permits, and the difference is
+commercial rather than aesthetic.** The ruling is that the website collects
+the information and the Event Management Platform manages the operation,
+and that division protects a separate commercial agreement.
+
+Built, from screen 18:
+
+- Arrival airport or point of entry, date, time and flight reference
+- Departure date, time and flight reference
+- "Anything else the Secretariat should know", as one free field
+- The Secretariat's roster as a plain sortable list, with a CSV export
+
+**Deliberately not built, though screen 18 draws them:**
+
+| On the screen | Why not |
+|---|---|
+| Accommodation, nights required | Hotel booking is the managing half |
+| Dietary requirements | Dietary tracking is the managing half |
+| Transfer schedule, driver allocation | Grouped scheduling is the managing half |
+| Status workflow, reminders, chase emails | Reserved scope, and nothing on this platform notifies a delegate |
+| Post-event feedback | Reserved scope |
+
+The absence is enforced rather than merely intended. `EventsAndDelegatesTest`
+walks the `delegate_registrations` and `meetings` column names and fails if a
+word like "accommodation", "transfer", "dietary" or "driver" ever appears in
+one; it walks the registration form and fails if a field is added; it walks
+every route touching events or meetings and fails if a write appears that is
+not a delegate filing their own arrival; and it asserts that the platform's
+one notification class is still the regulatory one.
+
+It is called **delegate registration** everywhere, including in all three
+lang files, and there is a test for that too. "Travel logistics" is the name
+of the thing that is not being built.
+
+---
+
 ## Disclosed variation: tracked caps, resolved 2026-09-09
 
 **Ruled: the ruling wins, in both places. Sentence case for the hero eyebrow

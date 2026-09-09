@@ -7,6 +7,7 @@ use App\Models\Country;
 use App\Models\Document;
 use App\Models\Indicator;
 use App\Models\IndicatorValue;
+use App\Models\Meeting;
 use App\Models\NewsItem;
 use App\Models\PageBlock;
 use App\Models\Publication;
@@ -35,11 +36,38 @@ final class BlockData
             BlockType::DocumentList => ['documents' => self::documents($block)],
             BlockType::MemberGrid => ['countries' => self::countries()],
             BlockType::FeaturedComparison => self::comparison($block),
-            // The events mirror is reserved scope: the platform displays
-            // events, it does not manage them, and nothing syncs yet.
-            BlockType::EventsStrip => ['items' => collect()],
+            BlockType::EventsStrip => self::events($block),
             default => [],
         };
+    }
+
+    /**
+     * Upcoming public meetings.
+     *
+     * The platform displays events; it does not manage them. This block
+     * reads what the Secretariat has published and links out to whoever
+     * runs registration, which is the whole extent of the feature on this
+     * side of the boundary.
+     *
+     * @return array{items: Collection<int, array<string, mixed>>}
+     */
+    private static function events(PageBlock $block): array
+    {
+        $limit = (int) $block->setting('limit', 3);
+
+        return [
+            'items' => Meeting::query()
+                ->public()
+                ->when($block->setting('upcoming_only', true), fn ($q) => $q->upcoming(), fn ($q) => $q->orderByDesc('starts_on'))
+                ->limit(max(1, min(12, $limit)))
+                ->get()
+                ->map(fn ($meeting) => [
+                    'title' => $meeting->title,
+                    'kicker' => $meeting->starts_on->isoFormat('D MMMM YYYY'),
+                    'meta' => $meeting->location ?? '',
+                    'url' => route('events.show', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug]),
+                ]),
+        ];
     }
 
     /**

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DelegateListController;
 use App\Http\Controllers\Admin\HelpController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PageAdminController;
@@ -20,7 +21,9 @@ use App\Http\Controllers\Auth\TwoFactorEnrolmentController;
 use App\Http\Controllers\ComparatorController;
 use App\Http\Controllers\CompletenessController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DelegateRegistrationController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\EventsController;
 use App\Http\Controllers\ExtranetController;
 use App\Http\Controllers\LocaleRedirectController;
 use App\Http\Controllers\NewsroomController;
@@ -84,10 +87,15 @@ Route::prefix('{locale}')
         Route::get('comparator/export.pdf', [ComparatorController::class, 'pdf'])->name('comparator.pdf');
 
         /*
-         * Drawn in the screen 02 footer; the feature itself is a later
-         * phase. See PublicPagesSeeder::awaitingFeature().
+         * The public events section, WS-07. Read only: the website
+         * displays and links out to registration, the Event Management
+         * Platform manages. There is no route here that creates or edits
+         * an event, and that is the boundary rather than an omission.
          */
-        Route::get('events', [PageController::class, 'show'])->defaults('slug', 'events')->name('events');
+        Route::get('events', [EventsController::class, 'index'])->name('events');
+        Route::get('events/{meeting}', [EventsController::class, 'show'])->name('events.show');
+        Route::get('events/{meeting}/register', [DelegateRegistrationController::class, 'create'])->name('events.register');
+        Route::post('events/{meeting}/register', [DelegateRegistrationController::class, 'store'])->name('events.register.store');
 
         Route::get('privacy', [PageController::class, 'show'])->defaults('slug', 'privacy')->name('privacy');
         Route::get('terms', [PageController::class, 'show'])->defaults('slug', 'terms')->name('terms');
@@ -332,6 +340,14 @@ Route::prefix('{locale}')
                 /*
                  * Regional briefs, RP-12. Generate, view, store, print.
                  */
+                /*
+                 * The delegate list, WS-07. A plain sortable list and a
+                 * CSV export, which is the handover point to the Event
+                 * Management Platform.
+                 */
+                Route::get('meetings/{meeting}/delegates', [DelegateListController::class, 'index'])->name('delegates');
+                Route::get('meetings/{meeting}/delegates.csv', [DelegateListController::class, 'csv'])->name('delegates.csv');
+
                 Route::get('reports', [ReportController::class, 'index'])->name('reports');
                 Route::post('reports', [ReportController::class, 'store'])->name('reports.store');
                 Route::get('reports/{report}', [ReportController::class, 'show'])->name('reports.show');

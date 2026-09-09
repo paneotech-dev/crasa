@@ -1,6 +1,7 @@
 {{--
-    Reads the synced events mirror. The platform displays events; it does
-    not manage them. Event creation is reserved scope and is not built here.
+    Upcoming public meetings, WS-07. The platform displays events; it does
+    not manage them. Event creation, scheduling and delegate logistics are
+    reserved commercial scope and are not built here.
 --}}
 @php
     $heading = $block->translate('heading');
@@ -24,7 +25,13 @@
                     <article class="b-card">
                         <div class="b-card__body">
                             <div class="b-card__kicker">{{ $item['kicker'] ?? '' }}</div>
-                            <h3 class="b-card__title">{{ $item['title'] }}</h3>
+                            <h3 class="b-card__title">
+                                @if (! empty($item['url']))
+                                    <a href="{{ $item['url'] }}">{{ $item['title'] }}</a>
+                                @else
+                                    {{ $item['title'] }}
+                                @endif
+                            </h3>
                             <div class="b-card__meta">{{ $item['meta'] ?? '' }}</div>
                         </div>
                     </article>

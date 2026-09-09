@@ -1,0 +1,78 @@
+@extends('layouts.admin')
+
+@section('title', __('delegates.list_title'))
+@section('note', $meeting->title)
+
+@section('crumbs')
+    <li><a href="{{ route('extranet.calendar', ['locale' => app()->getLocale()]) }}">{{ __('extranet.calendar') }}</a></li>
+    <li aria-current="page">{{ $meeting->title }}</li>
+@endsection
+
+@section('actions')
+    {{-- The handover point. The website has collected the information;
+         this is how it reaches the platform that schedules with it. --}}
+    <a class="a-btn a-btn--primary" href="{{ route('admin.delegates.csv', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug]) }}">{{ __('delegates.export') }}</a>
+@endsection
+
+@section('content')
+    <div class="a-notice a-notice--pending" role="note">{{ __('delegates.boundary_note') }}</div>
+
+    <section class="a-resource">
+        <div class="a-resource__head">
+            <h2 class="a-resource__title">{{ __('delegates.list_title') }}</h2>
+            <div class="a-resource__note">{{ trans_choice('delegates.count', $registrations->count(), ['count' => $registrations->count()]) }}</div>
+        </div>
+
+        @if ($registrations->isEmpty())
+            <div style="padding:var(--s-5)">
+                <div class="a-empty">
+                    <div class="a-empty__title">{{ __('delegates.empty_title') }}</div>
+                    <div class="a-empty__body">{{ __('delegates.empty_body') }}</div>
+                </div>
+            </div>
+        @else
+            <div class="a-tablewrap">
+                <table class="a-table">
+                    <thead>
+                        <tr>
+                            @foreach ($sorts as $column)
+                                @php
+                                    $isCurrent = $sort === $column;
+                                    $next = $isCurrent && $direction === 'asc' ? 'desc' : 'asc';
+                                @endphp
+                                <th scope="col" @if ($isCurrent) aria-sort="{{ $direction === 'asc' ? 'ascending' : 'descending' }}" @endif>
+                                    <a href="{{ route('admin.delegates', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug, 'sort' => $column, 'direction' => $next]) }}">
+                                        {{ $column === 'country_id' ? __('admin.field_country') : __('delegates.col_'.str_replace('delegate_', '', $column)) }}
+                                    </a>
+                                </th>
+                            @endforeach
+                            <th scope="col">{{ __('delegates.col_arrival_reference') }}</th>
+                            <th scope="col">{{ __('delegates.col_notes') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($registrations as $row)
+                            <tr>
+                                <th scope="row">
+                                    {{ $row->delegate_name }}
+                                    <span class="a-table__sub">{{ $row->delegate_role }}</span>
+                                </th>
+                                <td>{{ $row->country?->name }}</td>
+                                <td>
+                                    {{ $row->arrival_on?->isoFormat('D MMM') }}
+                                    @if ($row->arrival_at)<span class="a-table__sub">{{ $row->arrival_at }} {{ $row->arrival_point }}</span>@endif
+                                </td>
+                                <td>
+                                    {{ $row->departure_on?->isoFormat('D MMM') }}
+                                    @if ($row->departure_at)<span class="a-table__sub">{{ $row->departure_at }}</span>@endif
+                                </td>
+                                <td data-quiet>{{ $row->arrival_reference }}</td>
+                                <td data-quiet>{{ $row->notes }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </section>
+@endsection

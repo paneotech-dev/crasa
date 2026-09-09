@@ -37,40 +37,6 @@ class PublicPagesSeeder extends Seeder
         $this->about();
         $this->committees();
         $this->membership();
-        $this->awaitingFeature();
-    }
-
-    /* Pages the footer links to whose feature is a later phase ------------- */
-
-    /**
-     * Screen 02 draws an events link in the footer and draws every footer
-     * link as href="#". The screen is therefore silent on where it goes,
-     * but it is not silent on whether it exists. Removing it would be a
-     * change to the approved design; leaving it pointing at nothing is a
-     * 404 on every page of the site.
-     *
-     * So the slug resolves and says plainly that the feature is being
-     * prepared, without inventing what it will contain.
-     *
-     * The comparator's placeholder was here too and has been deleted, not
-     * edited: RP-10 is built and /comparator is the real thing.
-     */
-    private function awaitingFeature(): void
-    {
-        $this->page('events', [
-            'en' => ['title' => 'Events', 'meta_description' => 'CRASA meetings, workshops and regional events.'],
-            'fr' => ['title' => 'Événements', 'meta_description' => 'Réunions, ateliers et événements régionaux de la CRASA.'],
-            'pt' => ['title' => 'Eventos', 'meta_description' => 'Reuniões, seminários e eventos regionais da CRASA.'],
-        ]);
-
-        $this->placeholder(
-            Page::where('slug', 'events')->first(),
-            BlockType::RichText,
-            0,
-            ['alignment' => 'start'],
-            'Public events section (WS-07): upcoming and past meetings, workshops and regional events. Not built in this phase. Delegate registration and travel are a separate commercial addendum and are not part of this codebase.',
-            []
-        );
     }
 
     /* About ---------------------------------------------------------------- */

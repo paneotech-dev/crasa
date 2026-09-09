@@ -1,0 +1,20 @@
+<?php
+
+/*
+ * The public events section, WS-07. Read only: the website displays
+ * and links out, the Event Management Platform manages.
+ */
+
+return [
+    'title' => 'Events',
+    'meta_description' => 'CRASA meetings, workshops and regional events across the fourteen member states.',
+    'lead' => 'Meetings of the CRASA committees, the Annual General Meeting and regional workshops. Registration for each is handled by the meeting organisers.',
+    'upcoming' => 'Upcoming',
+    'past' => 'Past',
+    'none_upcoming_title' => 'Nothing scheduled publicly',
+    'none_upcoming_body' => 'Meetings appear here once the Secretariat publishes them. Committee meetings are listed in the extranet for the member states that sit on them.',
+    'agenda' => 'Agenda',
+    'registration' => 'Registration',
+    'registration_body' => 'File your arrival and departure so the Secretariat knows when to expect you. Everything else about the meeting is arranged by the organisers.',
+    'register_elsewhere' => 'Register for the meeting',
+];
