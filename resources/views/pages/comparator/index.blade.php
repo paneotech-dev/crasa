@@ -16,7 +16,19 @@
 
     {{-- Screen 03 hero: navy band, h1 at clamp(31px,5.2vw,52px), lead at
          19px in --c-sand. --}}
-    <section class="c-cmp__masthead">
+    <section class="c-cmp__masthead c-cmp__masthead--image">
+        {{-- Three colleagues comparing a printed chart against a tablet.
+             The comparator is about people reading figures, so the
+             photograph is about the subject rather than about having a band
+             to fill. Decorative behind the heading, so aria-hidden with an
+             empty alt: the library carries a description in all three
+             languages, and announcing it before the h1 would be noise.
+             Behind the same rgba(15,27,45,.82) the section bands use. --}}
+        <div class="c-cmp__masthead-media" aria-hidden="true">
+            <x-responsive-image name="data" decorative sizes="100vw" loading="eager" class="c-img--cover" />
+        </div>
+        <div class="c-cmp__masthead-scrim" aria-hidden="true"></div>
+
         <div class="c-page c-cmp__masthead-inner">
             <div class="c-cmp__intro">
                 <h1>{{ __('comparator.heading') }}</h1>

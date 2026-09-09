@@ -255,3 +255,67 @@ Original resolution, no pre-cropping. Cropping and rendition generation happens 
 | **Total** | **48** |
 
 Minus whatever CRASA supplies from their own archive, which should replace the institutional and event categories entirely if it arrives.
+
+---
+
+## Batch two, 9 September 2026
+
+Eight supplied, four accepted, four held.
+
+**Accepted and placed.**
+
+| File | Slot | Where it appears |
+|---|---|---|
+| `hero/hero-delegates-boardroom-01.jpg` | `hero` | Homepage hero, slide 1 |
+| `institutional/institutional-delegates-boardroom-01.jpg` | `institutional` | About, Committees and Events bands |
+| `data/data-team-reviewing-charts-01.jpg` | `data` | Comparator masthead, completeness band |
+| `sector-telecom/telecom-home-broadband-router-01.jpg` | `sector-telecom-access` | Nowhere yet |
+| `institutional/institutional-two-person-meeting-01.jpg` | `institutional-fallback` | Nowhere; fallback only |
+
+The boardroom photograph closes the loudest gap on the site. The homepage
+hero had been running on navy and typography since 9 September because the
+library had no institutional subject, and a hero on the wrong picture is a
+claim about what CRASA is, made on the first screen, to a regulator. This one
+is a formal meeting of people who look like they decide things.
+
+Screen 02's overlay applies as drawn and the image is **not flipped**. The
+gradient runs .94 navy at the left to .34 at the right, so the delegates sit
+under the near-solid end behind the headline and the right third — the
+note-taking hand, the sunburst, the reflection — reads as texture. Mirroring
+it would put the subject under the opaque end and the empty end under the
+type.
+
+The router is registered and unplaced on purpose. It is household
+connectivity, not infrastructure: it belongs on universal access and consumer
+protection content and no such surface exists yet. Putting it on spectrum or
+licensing would say something about the subject that is not true.
+
+**Held, and why.**
+
+- `company-hosting-diversity-training-session-employees.jpg` — reads as AI
+  generated. The presentation slide is scrambled non-words, the lanyard
+  badges are illegible, and the skyline is Manhattan. A training session is
+  exactly what the Human and Institutional Capacity committee needs, which
+  makes this the most disappointing of the four.
+- `hr-experts-look-cvs-isolated-screen-laptop.jpg` — the laptop is a
+  chroma-key placeholder with tracking markers. Unusable as supplied, and
+  reviewing CVs is recruitment rather than regulation.
+- `Design_sans_titre__73_.jpg` — scaffolding at sunset. Not
+  telecommunications, broadcasting or postal, and 1200x800 is below the
+  minimum for anything but a card thumbnail.
+- `dakar.jpg` — 500x500, and Dakar is Senegal. Rejected on either ground.
+
+**Still missing after this batch.**
+
+- Broadcasting has no image at all.
+- Telecommunications infrastructure at scale: towers, fibre, a network
+  operations centre. None.
+- Institutional imagery is one photograph deep, so About, Committees and
+  Events share it. Acceptable for the workshop; it should be replaced by
+  CRASA's own meeting photography when Form 1 comes back.
+
+**Licences are outstanding.** Filenames suggest Freepik and Rawpixel, both of
+which require attribution on their free tiers. All four accepted files are in
+`docs/LICENCES.csv` with the licence column reading NOT YET RECORDED rather
+than left blank. This belongs in the D5 documentation set and must be
+resolved before go-live.

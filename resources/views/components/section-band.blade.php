@@ -57,7 +57,7 @@
 <section @class(['c-band', 'c-band--image' => $photo])>
     @if ($photo)
         <div class="c-band__media" aria-hidden="true">
-            <x-responsive-image :name="$photo" alt="" sizes="100vw" loading="eager" class="c-img--cover" />
+            <x-responsive-image :name="$photo" decorative sizes="100vw" loading="eager" class="c-img--cover" />
         </div>
         {{-- The overlay. Not decoration: it is what makes the type legible
              over an unknown photograph, and the ratio it guarantees is

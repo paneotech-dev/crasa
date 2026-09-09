@@ -51,10 +51,15 @@ class HeroCarouselTest extends TestCase
 
         $this->assertSame(3, substr_count($html, 'data-hero-slide'));
 
-        // The figures panel, the comparison table and the latest
-        // publication. Three of the same panel would be a carousel that
+        // The boardroom photograph, the comparison table and the latest
+        // publication. Three of the same thing would be a carousel that
         // exists to move.
-        $this->assertStringContainsString('b-hero__bars', $html);
+        //
+        // Slide one carried the figures panel until batch two supplied a
+        // photograph on 9 September 2026. Screen 02 draws two kinds of
+        // slide and a photo slide runs its copy the full width, so the
+        // panel went with the change. The other two keep theirs.
+        $this->assertStringContainsString('hero-delegates-boardroom-01', $html);
         $this->assertStringContainsString('b-hero__table', $html);
         $this->assertStringContainsString('b-hero__latest-title', $html);
     }

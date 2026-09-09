@@ -1015,7 +1015,16 @@
 
 /* The photograph, where one is contextually correct for the section. It is
    texture, not subject: aria-hidden and alt-empty, because a picture that
-   carries no meaning must not claim to. */
+   carries no meaning must not claim to.
+
+   The modifier had no rule until 9 September 2026, because no band had ever
+   passed an image and the one that finally did rendered an empty div: the
+   component refuses an empty alt, which is right for a content image and
+   was wrong for a background. Without position:relative here the media and
+   the scrim would size themselves to the viewport rather than to the band.
+   The class-rule guard caught this within a minute of the first placement. */
+.c-band--image { position: relative; overflow: hidden; }
+.c-band--image .c-band__inner { position: relative; }
 .c-band__media { position: absolute; inset: 0; }
 .c-band__media img { width: 100%; height: 100%; object-fit: cover; }
 

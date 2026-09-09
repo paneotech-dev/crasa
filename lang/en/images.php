@@ -9,11 +9,14 @@
  */
 
 return [
-    'hero' => 'A technician examining a circuit board under a microscope at a test bench, with coiled fibre patch cables behind.',
+    'hero' => 'Delegates seated around a glass boardroom table, one taking notes, with daylight from full-height windows behind them.',
     'people' => 'A courier on a scooter taking a call, with stacked parcels behind.',
     'sector-telecom' => 'A technician examining a circuit board under a microscope, with coiled fibre patch cables on the test bench behind.',
     'sector-postal' => 'A parcel handed over and signed for on a clipboard.',
-    'institutional' => 'Three colleagues reviewing charts on a laptop, with a city visible through the window behind them.',
+    'institutional' => 'Delegates seated around a glass boardroom table, one taking notes, with daylight from full-height windows behind them.',
 
     'illustrative' => 'Illustrative photograph.',
+    'institutional-fallback' => 'Two people looking at a laptop together at a table in a building atrium.',
+    'data' => 'Three colleagues comparing a printed chart against a tablet across a desk.',
+    'sector-telecom-access' => 'A wireless router on a table in the foreground, with two people out of focus behind it.',
 ];

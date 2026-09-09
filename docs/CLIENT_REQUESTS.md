@@ -36,25 +36,30 @@ with a placeholder that does not look like a placeholder.
 
 ### What the homepage does today
 
-**The banner runs with no photograph.** It is a full navy band carrying the
-headline, the standfirst and one action, and nothing else.
+**The banner carries a photograph again, since 9 September 2026.** Delegates
+around a glass boardroom table, one taking notes, from the second batch you
+supplied. It is the first genuinely institutional image in the library and it
+is the right register: a formal meeting of people who look like they decide
+things.
 
-That is a decision, not an omission. The supplied stock library has no
-institutional subject in it. We tried two of its images in the banner and
-withdrew both: a market scene in Cape Town, and then a telecommunications
-equipment bench. The second is at least a regulatory activity, and it is
-still not what CRASA is.
+It took three attempts to get there, and the two that failed are worth
+recording because they explain what the slot needs. We tried a market scene
+in Cape Town, and then a telecommunications equipment bench. The second is at
+least a regulatory activity and it is still not what CRASA is. Both were
+withdrawn, and the banner ran on navy and typography alone for a day rather
+than carry either.
 
 A banner photograph is a claim about an organisation, made on the first
 screen, to a reader who is usually a regulator deciding whether to trust the
-rest of the page. A stranger shopping, or a laboratory bench, says CRASA is
-a consumer body or a testing house. Neither is true, and the wrong claim
-costs more than the empty one. The band as it stands says nothing it cannot
-support, and it looks deliberate rather than unfinished, because the
-composition it uses is one the approved designs already draw.
+rest of the page. A stranger shopping, or a laboratory bench, says CRASA is a
+consumer body or a testing house. Neither is true, and the wrong claim costs
+more than the empty one.
 
-**One right photograph replaces it in a single setting.** Nothing needs
-rebuilding.
+**This does not close the request below.** One photograph is now carrying the
+homepage banner, the About page, the Committees page and the Events page,
+because it is the only institutional image that exists. Three pages sharing a
+picture is thin, and it is stock: a reader who has sat in a CRASA meeting
+will not recognise the room.
 
 ### The single highest-value item on this whole list
 

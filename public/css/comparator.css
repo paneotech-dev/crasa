@@ -11,6 +11,19 @@
    demonstration notice beside it rather than under it. */
 .c-cmp__masthead { background: var(--c-navy); color: var(--c-sand); padding-block: var(--s-8); }
 
+/* The photograph behind the masthead. Same treatment as .c-band--image:
+   the overlay is not decoration, it is what guarantees the type's contrast
+   over a photograph whose own tones are not fixed. */
+.c-cmp__masthead--image { position: relative; overflow: hidden; }
+.c-cmp__masthead-media { position: absolute; inset: 0; }
+.c-cmp__masthead-media img { width: 100%; height: 100%; object-fit: cover; }
+.c-cmp__masthead-scrim { position: absolute; inset: 0; background: rgba(15, 27, 45, .82); }
+.c-cmp__masthead--image .c-cmp__masthead-inner { position: relative; }
+
+@media print {
+  .c-cmp__masthead-media, .c-cmp__masthead-scrim { display: none !important; }
+}
+
 .c-cmp__masthead-inner {
   display: flex;
   flex-wrap: wrap;

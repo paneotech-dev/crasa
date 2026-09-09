@@ -35,29 +35,32 @@ final class ImageLibrary
      */
     private const ACCEPTED = [
         /*
-         * The homepage band's slot. THE HOMEPAGE DOES NOT USE IT.
+         * The homepage hero, slide 1.
          *
-         * It held a market scene in Cape Town until 9 September 2026, which
-         * was wrong: CRASA is a treaty body that fourteen national
-         * regulatory authorities answer to, and the homepage opened on a
-         * stranger shopping. It was then moved to the equipment testing
-         * bench, which is at least a regulatory activity and still not an
-         * institutional subject.
+         * This slot spent a day pointing at nothing usable. It held a market
+         * scene in Cape Town, which was wrong -- CRASA is a treaty body that
+         * fourteen national regulatory authorities answer to, and the
+         * homepage opened on a stranger shopping. It was moved to an
+         * equipment testing bench, which is at least a regulatory activity
+         * and still not an institutional subject. The homepage then ran with
+         * no photograph at all, on navy and typography, because a hero on
+         * the wrong picture is a claim about what CRASA is made on the first
+         * screen to a regulator.
          *
-         * Resolved the same day: the homepage runs with no photograph at
-         * all. A hero on the wrong picture is a claim about what CRASA is,
-         * made on the first screen, to a regulator. Navy and the typography
-         * are the design until the right photograph exists — screen 02 draws
-         * a slide with no photograph of its own, so this is the screen's own
-         * composition rather than a fallback from it.
+         * Batch two closed it. 6000 by 4168, delegates around a glass
+         * boardroom table, one taking notes, natural light from full-height
+         * windows. It is the register the band has been waiting for: a
+         * formal meeting of people who look like they decide things.
          *
-         * The slot stays here because it is a working derivative pipeline
-         * and the day CRASA supplies a plenary or a signing it is one
-         * setting away. The brief for what to supply is in
-         * docs/CLIENT_REQUESTS.md.
+         * The composition suits screen 02's overlay as drawn. The gradient
+         * runs .94 navy at the left to .34 at the right, so the delegates
+         * sit under near-solid navy behind the headline and the right third
+         * -- the note-taking hand, the sunburst, the reflection -- reads as
+         * texture. NOT FLIPPED. Mirroring it would put the subject under the
+         * opaque end and the empty end under the type.
          */
         'hero' => [
-            'path' => 'sector-telecom/telecom-equipment-testing-01.jpg',
+            'path' => 'hero/hero-delegates-boardroom-01.jpg',
             'orientation' => 'landscape',
         ],
         'people' => [
@@ -68,15 +71,62 @@ final class ImageLibrary
             'path' => 'sector-telecom/telecom-equipment-testing-01.jpg',
             'orientation' => 'landscape',
         ],
+        /*
+         * Household connectivity, not infrastructure. 4629 by 3086, a
+         * wireless router sharp in the foreground with two people blurred
+         * behind.
+         *
+         * It belongs on universal access and consumer protection content and
+         * nowhere else. A router is not spectrum and it is not licensing,
+         * and putting it on either would say something about the subject
+         * that is not true. The shallow focus makes it usable behind a band
+         * at heavy overlay. Unused today: no such surface exists yet.
+         */
+        'sector-telecom-access' => [
+            'path' => 'sector-telecom/telecom-home-broadband-router-01.jpg',
+            'orientation' => 'landscape',
+        ],
         'sector-postal' => [
             'path' => 'sector-postal/postal-parcel-handover-01.jpg',
             'orientation' => 'landscape',
         ],
-        // Portrait, 3537 by 5306. Card and sidebar use only; it cannot carry
-        // a full-width band without a crop nobody has approved.
+        /*
+         * The same boardroom photograph as the hero, for the About,
+         * Committees and Events bands.
+         *
+         * It was a portrait team-review shot, 3537 by 5306, which could not
+         * carry a full-width band without a crop nobody had approved. This
+         * is landscape and it can. Three pages sharing one photograph is
+         * thin and is stated as such in the image brief; it is acceptable
+         * for the workshop and should be replaced by CRASA's own meeting
+         * photography when Form 1 comes back.
+         */
         'institutional' => [
-            'path' => 'institutional/institutional-team-review-01.jpg',
-            'orientation' => 'portrait',
+            'path' => 'institutional/institutional-delegates-boardroom-01.jpg',
+            'orientation' => 'landscape',
+        ],
+        /*
+         * Two people at a laptop in an atrium. 5472 by 3648.
+         *
+         * A real photograph, competently shot, and generic: it would pass
+         * the substitution test for any company on earth. Fallback only.
+         * Never leads a page.
+         */
+        'institutional-fallback' => [
+            'path' => 'institutional/institutional-two-person-meeting-01.jpg',
+            'orientation' => 'landscape',
+        ],
+        /*
+         * Three colleagues comparing a printed chart against a tablet.
+         * 7373 by 4147. Candid, and nobody is smiling at the camera.
+         *
+         * The data surfaces: the comparator band and the completeness
+         * dashboard. People looking at figures is what those pages are
+         * about.
+         */
+        'data' => [
+            'path' => 'data/data-team-reviewing-charts-01.jpg',
+            'orientation' => 'landscape',
         ],
     ];
 

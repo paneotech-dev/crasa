@@ -53,6 +53,12 @@
         :title="__('indicators.completeness_title')"
         :lead="__('indicators.completeness_intro')"
         :counts="\App\Support\SectionCounts::comparator()"
+    
+
+        {{-- The completeness matrix is people checking figures, which is what this photograph is of. --}}
+
+        :image="'data'"
+
     />
 
     <div class="c-section">

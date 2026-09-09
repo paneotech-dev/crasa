@@ -225,11 +225,23 @@ class HomepageSeeder extends Seeder
         // body whose readers are regulators and ministry officials. The
         // brief for what should replace it is in docs/QUESTIONS.md.
         $hero = $this->block($page, BlockType::Hero, $position++, [
-            // No photograph. The wrong one on the first screen of a treaty
-            // body's site is a claim about what CRASA is; navy and the
-            // typography carry the band until the right one exists. See
-            // App\Support\ImageLibrary and docs/CLIENT_REQUESTS.md.
-            'image' => null,
+            /*
+             * The boardroom photograph, batch two. Delegates around a glass
+             * table, one taking notes.
+             *
+             * This was null for a day, deliberately: the library had no
+             * institutional subject and a hero on the wrong picture is a
+             * claim about what CRASA is, made on the first screen to a
+             * regulator. This one is the right register and the slot is
+             * simply switched on.
+             *
+             * Screen 02's photo-slide treatment then applies as drawn: the
+             * image at inset:0, the 140deg colour blend over it, then the
+             * 90deg navy gradient at .94, .82 and .34. The delegates sit
+             * under the near-solid end behind the headline and the right
+             * third reads as texture. Not flipped.
+             */
+            'image' => 'hero',
             'cta_url' => '/publications',
             'panel' => 'figures',
             /*
@@ -270,6 +282,9 @@ class HomepageSeeder extends Seeder
         ]);
 
         $hero->update([
+            // The photograph has arrived; the note stays because the
+            // rotation's other two slides still carry no image and CRASA's
+            // own meeting photography would be worth more than this.
             'needs_content' => true,
             // Rewritten 9 September: the note still described an image the
             // banner no longer carries, which is exactly the kind of drift

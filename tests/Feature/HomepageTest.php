@@ -127,52 +127,60 @@ class HomepageTest extends TestCase
     /* The hero --------------------------------------------------------------- */
 
     /**
-     * The homepage runs with no photograph, and that is the composition
-     * rather than a gap.
+     * The homepage hero carries the boardroom photograph, and getting here
+     * took three attempts.
      *
      * The band held a market scene in Cape Town, then an equipment testing
      * bench. Both were wrong in the same way: CRASA is a treaty body that
      * fourteen national regulatory authorities answer to, and a hero makes a
      * claim about what an organisation is, on the first screen, to a
-     * regulator. Screen 02 draws a slide with no photograph of its own, so
-     * navy and the typography are the screen's own answer and not a fallback
-     * from it.
+     * regulator. So it ran on navy and typography instead, which screen 02
+     * draws as a slide in its own right rather than as a fallback.
      *
-     * This is held by test because "the hero has no image" looks exactly
-     * like an oversight to anyone who arrives later, and the natural repair
-     * is to put a photograph back.
+     * Batch two closed it on 9 September 2026: delegates around a glass
+     * boardroom table, one taking notes. A formal meeting of people who look
+     * like they decide things.
+     *
+     * This test used to assert the opposite and the inversion is the point.
+     * What it holds now is that the photograph is THIS one, because the two
+     * that were rejected are still in the library and one setting away.
      */
-    public function test_the_hero_runs_on_navy_and_typography_with_no_photograph(): void
+    public function test_the_hero_carries_the_boardroom_photograph(): void
     {
         $hero = Page::where('slug', 'home')->sole()
             ->blocks()->where('block_type', BlockType::Hero->value)->sole();
 
-        $this->assertNull(
-            $hero->setting('image'),
-            'The homepage hero has a photograph again. See App\Support\ImageLibrary for why it does not.'
-        );
+        $this->assertSame('hero', $hero->setting('image'));
 
         $html = $this->get('/en')->assertOk()->getContent();
         $band = substr($html, 0, strpos($html, 'b-figures__grid'));
 
-        // No photograph, and no grey box saying one is coming either. A
-        // placeholder on the first screen of a treaty body's site tells a
-        // regulator the site is unfinished.
-        $this->assertStringNotContainsString('b-hero__media', $band);
-        $this->assertStringNotContainsString('b__slot', $band);
+        $this->assertStringContainsString('b-hero__media', $band);
+        $this->assertStringContainsString('hero-delegates-boardroom-01', $band);
 
-        // What is there instead: the navy ground, the weave screen 02 draws
-        // on a slide with no photograph, and the headline.
-        $this->assertStringContainsString('b-hero__weave', $band);
+        // Not the market scene and not the test bench.
+        $this->assertStringNotContainsString('people-market-mobile', $band);
+        $this->assertStringNotContainsString('telecom-equipment-testing', $band);
+
+        // Still no placeholder anywhere. A grey box saying a photograph is
+        // coming tells a regulator the site is unfinished.
+        $this->assertStringNotContainsString('b__slot', $band);
         $this->assertStringContainsString('b-hero__headline', $band);
     }
 
     /**
-     * The panel screen 02 draws in the second column of a slide with no
-     * photograph. Its absence was the gap that made the band read thin at
-     * laptop widths, where the copy has stopped filling the row.
+     * The data panel screen 02 draws in the second column of a slide with
+     * no photograph.
+     *
+     * Slide one no longer has it, and that is the screen's own rule rather
+     * than a regression: screen 02 draws two kinds of slide, and a photo
+     * slide runs its copy the full width. Slide one became a photo slide
+     * when the boardroom photograph arrived.
+     *
+     * The panel is still built and still renders on the slides that have no
+     * image, which is where the screen puts it. This checks it there.
      */
-    public function test_the_hero_carries_the_data_panel_the_screen_draws(): void
+    public function test_the_data_panel_renders_on_a_slide_with_no_photograph(): void
     {
         $this->seed(IndicatorSeeder::class);
         $this->seedIndicatorValues();
@@ -180,16 +188,25 @@ class HomepageTest extends TestCase
         $html = $this->get('/en')->assertOk()->getContent();
         $band = substr($html, 0, strpos($html, 'b-figures__grid'));
 
-        $this->assertStringContainsString('b-hero__panel', $band);
+        // The photo slide has no panel beside it.
+        $this->assertMatchesRegularExpression(
+            '~b-hero__media.*?b-hero__headline~s',
+            $band,
+        );
 
-        // One bar per sector, each stating its own figure as text. A bar a
-        // reader cannot read a number off is a picture of a proportion.
+        // The panel itself still works. HeroPanel::build() is what slides
+        // without an image use, and nothing about the photograph changed it.
+        $panel = HeroPanel::build();
+
+        $this->assertNotEmpty($panel['bars'], 'The figures panel no longer builds.');
+
         foreach (Sector::pluck('name') as $sector) {
-            $this->assertStringContainsString($sector, $band, $sector.' has no bar in the hero panel.');
+            $this->assertContains(
+                $sector,
+                array_column($panel['bars'], 'name'),
+                $sector.' has no bar in the figures panel.',
+            );
         }
-
-        $this->assertMatchesRegularExpression('~b-hero__bar-value">\d+%<~', $band);
-        $this->assertMatchesRegularExpression('~b-hero__bar-fill" style="width: \d+%"~', $band);
     }
 
     /**
@@ -217,19 +234,36 @@ class HomepageTest extends TestCase
     }
 
     /**
-     * The counts under the bars go where they point, like every other count
-     * on the platform.
+     * The counts that were under the hero's bars are now the key figures
+     * block, and they still go where they point.
+     *
+     * Slide one carried a data panel while the hero had no photograph:
+     * screen 02 draws a slide with no photograph of its own and fills the
+     * second column that way. Batch two supplied the boardroom photograph
+     * on 9 September 2026, so slide one became a photo slide, and a photo
+     * slide on screen 02 runs its copy the full width with no panel beside
+     * it. The bars and their counts went with it.
+     *
+     * They are not lost. The key figures block sits immediately below on
+     * navy-mid, separated by a single rule, and carries the membership, the
+     * founding year and the sectors, each linked. The figures panel is
+     * still built and still renders on any slide without an image.
      */
-    public function test_the_panel_counts_link_to_what_they_count(): void
+    public function test_the_counts_below_the_hero_link_to_what_they_count(): void
     {
         $this->seed(IndicatorSeeder::class);
         $this->seedIndicatorValues();
 
-        $band = substr($this->get('/en')->getContent(), 0, strpos($this->get('/en')->getContent(), 'b-figures__grid'));
+        $html = $this->get('/en')->assertOk()->getContent();
 
+        // The hero is a photograph now, so it carries no panel.
+        $this->assertStringContainsString('hero-delegates-boardroom-01', $html);
+        $this->assertStringNotContainsString('b-hero__counts', $html);
+
+        // And the figures immediately below it still lead somewhere.
         $this->assertMatchesRegularExpression(
-            '~b-hero__counts.*?href="http://localhost/en/members"~s',
-            $band
+            '~data-ground="navy-mid".*?href="http://localhost/en/members"~s',
+            $html
         );
     }
 
@@ -244,14 +278,21 @@ class HomepageTest extends TestCase
         $this->seed(IndicatorSeeder::class);
         $this->seedIndicatorValues();
 
-        $band = substr($this->get('/en')->getContent(), 0, strpos($this->get('/en')->getContent(), 'b-figures__grid'));
-        $bars = substr($band, strpos($band, 'b-hero__bars'), 2000);
+        // Checked on the panel itself rather than on the rendered band.
+        // Slide one is a photograph now and carries no panel, so a string
+        // search of the homepage would pass for the wrong reason: there
+        // would be no bars to find a country name in.
+        $panel = HeroPanel::build();
+
+        $this->assertNotEmpty($panel['bars']);
+
+        $names = array_column($panel['bars'], 'name');
 
         foreach (Country::pluck('name') as $name) {
-            $this->assertStringNotContainsString(
-                '>'.$name.'<',
-                $bars,
-                $name.' is named in the hero panel bars, which rank filing performance.'
+            $this->assertNotContains(
+                $name,
+                $names,
+                $name.' is named in the figures panel bars, which rank filing performance.'
             );
         }
     }

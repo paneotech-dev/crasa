@@ -9,6 +9,12 @@
         :title="__('events.band_heading')"
         :lead="__('events.lead')"
         :counts="\App\Support\SectionCounts::events()"
+    
+
+        {{-- Events are meetings, which is what the boardroom photograph shows. --}}
+
+        :image="'institutional'"
+
     />
 
     <div class="c-section">

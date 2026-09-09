@@ -40,11 +40,26 @@
             $bandEyebrow = $bandEyebrow === 'nav.'.$page->slug || $bandEyebrow === $bandHeading ? null : $bandEyebrow;
         @endphp
 
+        @php
+            /*
+             * A photograph only where it is contextually true. About and
+             * Committees are both about people meeting in a room, which is
+             * what the boardroom photograph shows. Nothing else composed
+             * gets one: a page earns an image by being about its subject,
+             * not by having a band to fill.
+             */
+            $bandImage = match ($page->slug) {
+                'about', 'committees' => 'institutional',
+                default => null,
+            };
+        @endphp
+
         <x-section-band
             :eyebrow="$bandEyebrow"
             :title="$bandHeading"
             :lead="$page->translate('standfirst')?->value"
             :counts="\App\Support\SectionCounts::forPage($page->slug)"
+            :image="$bandImage"
         />
     @endunless
 
