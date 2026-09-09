@@ -29,6 +29,7 @@ final class AdminNavigation
         $definitions = [
             ['key' => 'dashboard', 'route' => 'admin.dashboard', 'permission' => null],
             ['key' => 'content', 'route' => 'admin.pages', 'permission' => Permission::ManageContent],
+            ['key' => 'translations', 'route' => 'admin.translations', 'permission' => Permission::EditTranslations],
             ['key' => 'media', 'route' => 'admin.media', 'permission' => Permission::ManageContent],
             ['key' => 'data', 'route' => 'admin.indicators', 'permission' => Permission::ViewPublishedIndicators],
             ['key' => 'users', 'route' => 'admin.users', 'permission' => Permission::ManageUsers],

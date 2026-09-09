@@ -828,6 +828,120 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
 
 .a-preview img { width: 100%; height: auto; display: block; }
 
+/* Translation editor ----------------------------------------------------- */
+
+/*
+ * Screen 05. The grid is 220px for the field column and then one equal
+ * column per language:
+ *
+ *   grid-template-columns: 220px repeat(3,minmax(0,1fr))   side by side
+ *   grid-template-columns: 220px repeat(2,minmax(0,1fr))   English and one
+ *
+ * The pair views exist because three columns of a long body field on a
+ * laptop leave nobody enough width to read either language properly.
+ */
+.a-tgrid { display: grid; grid-template-columns: 220px repeat(var(--a-cols, 3), minmax(0, 1fr)); }
+
+@media (max-width: 899.98px) {
+  /* Below this the columns stop being readable at all, so the languages
+     stack. Nothing is hidden: a translator on a small screen still has to
+     see every language. */
+  .a-tgrid { grid-template-columns: 1fr; }
+  .a-tgrid__field { border-right: 0; border-bottom: 1px solid var(--a-rule); }
+}
+
+.a-tgrid__head { border-bottom: 1px solid var(--a-rule); background: var(--a-head-ground); }
+.a-tgrid__headcell { padding: var(--s-3) var(--s-4); display: flex; flex-direction: column; gap: 2px; }
+.a-tgrid__headcell b { font-size: 13px; font-weight: 700; color: var(--a-ink-strong); }
+.a-tgrid__headcell span { font-size: 11.5px; font-weight: 500; color: var(--a-ink-quiet); }
+
+/* padding:var(--s-4);border-right:1px solid var(--c-line);
+   background:var(--c-cream) */
+.a-tgrid__field {
+  padding: var(--s-4);
+  border-right: 1px solid var(--a-rule);
+  background: var(--a-head-ground);
+}
+
+.a-tgrid__field b { display: block; font-size: 14px; font-weight: 600; line-height: 1.35; }
+.a-tgrid__field span { display: block; font-size: 12px; color: var(--a-ink-quiet); margin-top: 4px; line-height: 1.45; }
+
+.a-tgrid__row { border-bottom: 1px solid var(--a-rule); }
+.a-tgrid__row:last-child { border-bottom: 0; }
+.a-tgrid__cell { padding: var(--s-4); border-right: 1px solid var(--a-rule); min-width: 0; }
+.a-tgrid__cell:last-child { border-right: 0; }
+
+.a-tgrid__meta { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; flex-wrap: wrap; }
+.a-tgrid__meta span { font-size: 11.5px; color: var(--a-ink-quiet); }
+
+/* The three states, as the screen draws them:
+     approved       green pill, plain field
+     machine draft  amber pill, 1.5px amber rule on the field
+     untranslated   red pill, red-tinted field
+   The pill is a status pill and takes --r-pill like every other. */
+.a-tpill {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  padding: 3px 8px;
+  border-radius: var(--r-pill);
+  display: inline-block;
+}
+
+.a-tpill[data-state="approved"] { background: var(--c-green-light); color: var(--c-green-dark); }
+.a-tpill[data-state="machine"] { background: var(--c-amber); color: var(--c-white); }
+.a-tpill[data-state="untranslated"] { background: var(--c-red-light); color: var(--c-red-dark); }
+
+/* font-size:14.5px;line-height:1.6;border-radius:4px;padding:11px 13px;
+   min-height:46px */
+.a-tbox {
+  font-family: var(--f-admin);
+  font-size: 14.5px;
+  line-height: 1.6;
+  border-radius: var(--r-xs);
+  padding: 11px 13px;
+  min-height: 46px;
+  width: 100%;
+  border: 1px solid var(--c-border);
+  background: var(--a-surface);
+  color: var(--a-ink);
+  resize: vertical;
+}
+
+.a-tbox[data-state="machine"] { border: 1.5px solid var(--c-amber); }
+.a-tbox[data-state="untranslated"] { border: 1.5px solid var(--c-red); background: var(--c-red-light); }
+.a-tbox:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
+
+/* The fallback notice under an untranslated field. The 3px red left edge is
+   the screen's own, and it marks the one thing on the row that stops
+   publication rather than decorating it. */
+.a-fallback {
+  display: flex;
+  gap: 9px;
+  margin-top: 10px;
+  background: var(--c-red-light);
+  border: 1px solid var(--c-red-mid);
+  border-left: 3px solid var(--c-red);
+  border-radius: var(--r-sm);
+  padding: 10px 12px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--c-red-dark);
+}
+
+.a-draft { display: flex; align-items: center; gap: 9px; margin-top: 10px; flex-wrap: wrap; }
+.a-draft p { font-size: 12.5px; color: var(--c-amber-dark); line-height: 1.5; flex: 1; min-width: 200px; margin: 0; }
+
+/* The coverage bar:
+   width:110px;height:8px;border-radius:var(--r-pill);background:var(--c-sand) */
+.a-coverage { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.a-coverage__code { font-size: 12.5px; font-weight: 600; color: var(--a-ink-quiet); }
+.a-coverage__track { width: 110px; height: 8px; border-radius: var(--r-pill); background: var(--c-sand); overflow: hidden; display: inline-block; }
+.a-coverage__fill { display: block; height: 100%; background: var(--c-amber); }
+.a-coverage[data-ready] .a-coverage__fill { background: var(--c-green-dark); }
+.a-coverage__note { font-size: 12.5px; font-weight: 600; color: var(--c-amber-dark); }
+.a-coverage[data-ready] .a-coverage__note { color: var(--c-green-dark); }
+
 /* Forms ----------------------------------------------------------------- */
 
 /*

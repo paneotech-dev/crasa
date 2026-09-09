@@ -113,6 +113,11 @@ trait HasTranslations
             Translation::updateOrCreate($attributes, [
                 'value' => $value,
                 'translated_by' => $translatedBy,
+                // A person has written this string, so it is no longer a
+                // draft that came from a machine. Screen 05's "Rewrite":
+                // the flag is cleared by the act of writing, not by a
+                // separate step somebody has to remember.
+                'is_machine_draft' => false,
             ]);
         }
 

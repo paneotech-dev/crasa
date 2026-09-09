@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\Admin\PageBlockController;
+use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
@@ -202,6 +203,17 @@ Route::prefix('{locale}')
                 Route::put('media/{asset}', [MediaController::class, 'update'])->name('media.update');
                 Route::post('media/{asset}/replace', [MediaController::class, 'replace'])->name('media.replace');
                 Route::delete('media/{asset}', [MediaController::class, 'destroy'])->name('media.destroy');
+
+                /*
+                 * Translations, CM-04. Screen 05. Nothing here creates a
+                 * machine draft; it only lets an editor see, approve or
+                 * rewrite one that arrived with imported content.
+                 */
+                Route::get('translations', [TranslationController::class, 'index'])->name('translations');
+                Route::get('translations/{type}/{id}', [TranslationController::class, 'edit'])->name('translations.edit');
+                Route::put('translations/{type}/{id}', [TranslationController::class, 'update'])->name('translations.update');
+                Route::put('translations/{type}/{id}/approve', [TranslationController::class, 'approve'])->name('translations.approve');
+                Route::get('translations/{type}/{id}/preview/{previewLocale}', [TranslationController::class, 'preview'])->name('translations.preview');
 
                 Route::get('users', [UserAdminController::class, 'index'])->name('users');
                 Route::get('users/invite', [UserAdminController::class, 'form'])->name('users.form');
