@@ -22,6 +22,59 @@ return [
         ['key' => 'contact', 'path' => 'contact'],
     ],
 
+    /*
+     * The footer's four link columns.
+     *
+     * This is the default structure, not the live one: MenuSeeder
+     * materialises it into menu_items records and the Secretariat edits it
+     * from the back office. It stays here as the floor, for the same reason
+     * the primary list does — a fresh install, a bad import or a purge that
+     * went further than intended should leave a working footer rather than
+     * an empty one.
+     *
+     * `label` is a translation key. `route` is a named route. `url` is
+     * anything else, which covers the section fragments and the social
+     * links: a route plus a fragment is not a route.
+     */
+    'footer' => [
+        [
+            'heading' => 'footer.about',
+            'links' => [
+                ['route' => 'about', 'label' => 'footer.who_we_are'],
+                ['url' => '/about#governance', 'label' => 'footer.governance'],
+                ['url' => '/about#executive-committee', 'label' => 'footer.executive_committee'],
+                ['url' => '/about#secretariat', 'label' => 'footer.secretariat'],
+                ['url' => '/about#partnerships', 'label' => 'footer.partnerships'],
+            ],
+        ],
+        [
+            'heading' => 'footer.publications',
+            'links' => [
+                ['route' => 'publications', 'label' => 'footer.regulatory_library'],
+                ['route' => 'comparator', 'label' => 'nav.comparator'],
+                ['route' => 'committees', 'label' => 'nav.committees'],
+                ['route' => 'members', 'label' => 'nav.members'],
+            ],
+        ],
+        [
+            'heading' => 'footer.newsroom',
+            'links' => [
+                ['route' => 'newsroom', 'label' => 'nav.newsroom'],
+                ['route' => 'events', 'label' => 'nav.events'],
+                ['route' => 'contact', 'label' => 'nav.contact'],
+                ['route' => 'extranet', 'label' => 'nav.extranet'],
+            ],
+        ],
+        [
+            'heading' => 'footer.follow_us',
+            'links' => [
+                ['url' => 'https://x.com/Crasa2C', 'literal' => 'X'],
+                ['url' => 'https://facebook.com/pages/CRASA', 'literal' => 'Facebook'],
+                ['url' => 'https://www.linkedin.com/company/crasa', 'literal' => 'LinkedIn'],
+            ],
+        ],
+    ],
+
     'extranet_path' => 'extranet',
     'search_path' => 'search',
 ];

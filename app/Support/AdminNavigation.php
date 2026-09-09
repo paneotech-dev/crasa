@@ -31,6 +31,7 @@ final class AdminNavigation
             ['key' => 'content', 'route' => 'admin.pages', 'permission' => Permission::ManageContent],
             ['key' => 'translations', 'route' => 'admin.translations', 'permission' => Permission::EditTranslations],
             ['key' => 'media', 'route' => 'admin.media', 'permission' => Permission::ManageContent],
+            ['key' => 'menus', 'route' => 'admin.menus', 'permission' => Permission::ManageContent],
             ['key' => 'submissions', 'route' => 'admin.submissions', 'permission' => Permission::ValidateSubmission],
             ['key' => 'reports', 'route' => 'admin.reports', 'permission' => Permission::ExportReports],
             ['key' => 'data', 'route' => 'admin.data', 'permission' => null],

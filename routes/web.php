@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DelegateListController;
 use App\Http\Controllers\Admin\HelpController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\Admin\PageBlockController;
 use App\Http\Controllers\Admin\ReportController;
@@ -352,6 +353,20 @@ Route::prefix('{locale}')
                 Route::post('pages/{page}/blocks/{block}/duplicate', [PageBlockController::class, 'duplicate'])->name('pages.blocks.duplicate');
                 Route::put('pages/{page}/blocks/{block}/visibility', [PageBlockController::class, 'toggle'])->name('pages.blocks.visibility');
                 Route::delete('pages/{page}/blocks/{block}', [PageBlockController::class, 'destroy'])->name('pages.blocks.destroy');
+
+                /*
+                 * The navigation builder, screen 14.
+                 *
+                 * The header read a config array and the footer's columns
+                 * were written into a Blade template, so renaming a menu
+                 * item meant a deploy.
+                 */
+                Route::get('menus', [MenuController::class, 'index'])->name('menus');
+                Route::post('menus', [MenuController::class, 'store'])->name('menus.store');
+                Route::put('menus/{item}', [MenuController::class, 'update'])->name('menus.update');
+                Route::put('menus/{item}/move', [MenuController::class, 'move'])->name('menus.move');
+                Route::put('menus/{item}/visibility', [MenuController::class, 'toggle'])->name('menus.visibility');
+                Route::delete('menus/{item}', [MenuController::class, 'destroy'])->name('menus.destroy');
 
                 /*
                  * Media, CM-03. Nothing is hotlinked: every asset is stored

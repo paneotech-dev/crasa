@@ -57,7 +57,7 @@ it was invented.
 | 11 Extranet login | 0 (1 closed) | 0 | 1 |
 | 12 Calendar and folders | 2 (2 closed) | 0 | 1 |
 | 13 Users, roles, audit | 0 | 0 | 2 |
-| 14 Media and editing | 1 | 0 | 1 |
+| 14 Media and editing | 0 (1 closed) | 0 | 1 |
 | 15 Responsive and app | 3 | 0 | 0 |
 | 18 Delegate registration | 0 | 4 | 1 |
 | **Total** | **31** | **9** | **21** |
@@ -432,14 +432,15 @@ Both additions are **AUTHORISED** by the contract's access-management clause.
 | Homepage and page content editing, block by block | | |
 | Editability targets | | |
 
-**Navigation builder — GAP, high.** Screen 14 draws an interface for building
-the site's menus. The build has no route, no view and no model: navigation is
-resolved in `App\Support\Navigation` from routes and page slugs, so the
-Secretariat cannot add, reorder or rename a menu item without a deploy.
+**Navigation builder — CLOSED 9 September.** Screen 14 draws an interface for
+building the site's menus, and the build had no route, no view and no model:
+the header read a config array and the footer's four columns were written
+into a Blade template.
 
-That is a direct contradiction of the editability target the same screen
-draws, and it is the kind of thing a client discovers in week two of running
-the site themselves.
+Built as `menu_items` records with a label per locale, a destination that is
+a route, a page or an address, one level of nesting, ordering and show/hide.
+Both menus. Config remains as the floor, so an empty table falls back to the
+built-in navigation rather than rendering a site with no header.
 
 ---
 

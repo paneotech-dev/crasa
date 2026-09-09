@@ -27,45 +27,29 @@
                 </address>
             </div>
 
-            <nav aria-label="{{ __('footer.about') }}">
-                <h2 class="c-footer__heading">{{ __('footer.about') }}</h2>
-                <div class="c-footer__links">
-                    <a href="{{ $nav('about') }}">{{ __('footer.who_we_are') }}</a>
-                    <a href="{{ $nav('about').'#governance' }}">{{ __('footer.governance') }}</a>
-                    <a href="{{ $nav('about').'#executive-committee' }}">{{ __('footer.executive_committee') }}</a>
-                    <a href="{{ $nav('about').'#secretariat' }}">{{ __('footer.secretariat') }}</a>
-                    <a href="{{ $nav('about').'#partnerships' }}">{{ __('footer.partnerships') }}</a>
-                </div>
-            </nav>
+            {{-- The four link columns, from records.
+                 They were written into this template until 9 September
+                 2026, so renaming one meant a deploy. Screen 14 draws a
+                 navigation builder and the contract requires everything to
+                 be manageable from the administration.
 
-            <nav aria-label="{{ __('footer.publications') }}">
-                <h2 class="c-footer__heading">{{ __('footer.publications') }}</h2>
-                <div class="c-footer__links">
-                    <a href="{{ $nav('publications') }}">{{ __('footer.regulatory_library') }}</a>
-                    <a href="{{ $nav('comparator') }}">{{ __('nav.comparator') }}</a>
-                    <a href="{{ $nav('committees') }}">{{ __('nav.committees') }}</a>
-                    <a href="{{ $nav('members') }}">{{ __('nav.members') }}</a>
-                </div>
-            </nav>
-
-            <nav aria-label="{{ __('footer.newsroom') }}">
-                <h2 class="c-footer__heading">{{ __('footer.newsroom') }}</h2>
-                <div class="c-footer__links">
-                    <a href="{{ $nav('newsroom') }}">{{ __('nav.newsroom') }}</a>
-                    <a href="{{ $nav('events') }}">{{ __('nav.events') }}</a>
-                    <a href="{{ $nav('contact') }}">{{ __('nav.contact') }}</a>
-                    <a href="{{ $nav(config('navigation.extranet_path')) }}">{{ __('nav.extranet') }}</a>
-                </div>
-            </nav>
-
-            <nav aria-label="{{ __('footer.follow_us') }}">
-                <h2 class="c-footer__heading">{{ __('footer.follow_us') }}</h2>
-                <div class="c-footer__links">
-                    <a href="https://x.com/Crasa2C" rel="noopener">X</a>
-                    <a href="https://facebook.com/pages/CRASA" rel="noopener">Facebook</a>
-                    <a href="https://www.linkedin.com/company/crasa" rel="noopener">LinkedIn</a>
-                </div>
-            </nav>
+                 An item whose destination has gone is skipped by
+                 Navigation::footer() rather than rendered broken: a deleted
+                 page must not take the footer down on every page of the
+                 site at once. --}}
+            @foreach (\App\Support\Navigation::footer() as $column)
+                <nav aria-label="{{ $column['label'] }}">
+                    <h2 class="c-footer__heading">{{ $column['label'] }}</h2>
+                    <div class="c-footer__links">
+                        @foreach ($column['items'] as $link)
+                            <a href="{{ $link['url'] }}"
+                               @if (\Illuminate\Support\Str::startsWith($link['url'], ['http://', 'https://']) && ! \Illuminate\Support\Str::startsWith($link['url'], config('app.url')))
+                                   rel="noopener"
+                               @endif>{{ $link['label'] }}</a>
+                        @endforeach
+                    </div>
+                </nav>
+            @endforeach
         </div>
 
         <div class="c-footer__legal">
