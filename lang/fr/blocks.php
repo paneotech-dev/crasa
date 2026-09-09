@@ -100,4 +100,5 @@ return [
     'explain_statement_band' => 'Une déclaration sur fond bleu nuit, accompagnée d\'un chiffre par État membre indiquant ce que cet État a déclaré.',
     'statement_empty_title' => 'Rien n\'a encore été indiqué ici',
     'statement_empty_body' => 'Ajoutez la déclaration et la destination de son action. Les chiffres à côté proviennent du registre.',
+    'members_map_note' => 'Quatorze États membres, de l\'Angola au Zimbabwe. Ouvrez la page des membres pour la carte complète et le répertoire.',
 ];

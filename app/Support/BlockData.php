@@ -250,6 +250,9 @@ final class BlockData
                 'image_slot' => $n->fallbackImageSlot(),
                 'hero' => $n->hero_image_path,
                 'sector' => $n->sector?->name,
+                // For the designed panel a sector uses when the library has
+                // no photograph for it. Broadcasting has none at all.
+                'sector_slug' => $n->sector?->slug,
                 'meta' => collect([
                     $n->published_at?->translatedFormat('j F Y'),
                     $n->sector?->name,

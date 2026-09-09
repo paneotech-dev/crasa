@@ -26,8 +26,29 @@
 
 <section class="b b-statement" @if ($block->anchor) id="{{ $block->anchor }}" @endif
          @if (! empty($ground)) data-ground="{{ $ground }}" @endif>
-    {{-- The two crossed weaves the screen lays over the navy. Decorative,
-         so aria-hidden and behind everything. --}}
+    {{-- The photograph, then the hero's own two overlays, then the weave.
+         Four layers in that order.
+
+         Screen 02 draws this band on flat navy with the weave alone. The
+         photograph is a disclosed variation, logged in OPEN_ITEMS.md: the
+         band is the one place on the homepage where CRASA speaks in its own
+         voice, and a claim about fourteen regulators reads better over a
+         room with delegates in it than over a gradient.
+
+         The tint is the hero's, unchanged. The scrim is NOT: the hero's
+         runs .94 at the left to .34 at the right, and this band has content
+         in both columns. Measured over a white pixel, .34 leaves the figure
+         cells at 2.14:1. The flat .82 the section bands use is the measured
+         floor for exactly this case and holds every colour here above 7:1.
+         Numbers in OPEN_ITEMS.md.
+
+         The same photograph as the hero, four sections up. That is a reuse
+         and it is recorded in the image README rather than hidden. --}}
+    <div class="b-statement__media" aria-hidden="true">
+        <x-responsive-image name="hero" decorative sizes="100vw" loading="lazy" class="c-img--cover" />
+    </div>
+    <div class="b-hero__tint b-statement__layer" aria-hidden="true"></div>
+    <div class="b-statement__scrim" aria-hidden="true"></div>
     <div class="b-statement__weave" aria-hidden="true"></div>
 
     <div class="b__inner b-statement__inner">

@@ -20,7 +20,12 @@
             {{-- Featured-and-rest rather than equal thirds. The newest
                  item is the one a reader wants, and equal cards would be
                  saying all three matter the same, which is not true. --}}
-            <div class="b-cards @if ($items->count() >= 3) b-cards--featured @endif">
+            {{-- Three equal cards. Screen 02 line 401 draws
+                 "repeat(auto-fit,minmax(min(100%,240px),1fr));gap:var(--s-5)"
+                 with an image on every one; the 1+2 arrangement it replaced
+                 gave the first card a 3/2 photograph and hid the other two
+                 images outright. --}}
+            <div class="b-cards">
                 @foreach ($items as $item)
                     <article class="b-card">
                         <div class="b-card__media">
@@ -31,7 +36,14 @@
                                 <x-responsive-image :name="$item['image_slot']" :alt="__('images.'.$item['image_slot'])"
                                                     sizes="(max-width: 760px) 100vw, 40vw" class="c-img--cover" />
                             @else
-                                <div class="b-card__typeslot">
+                                {{-- No photograph for this sector in the
+                                     library. A sector-coloured panel with
+                                     the sector's own icon, not a word on
+                                     navy: a card with a word where its
+                                     neighbours have photographs reads as
+                                     the one that failed to load. --}}
+                                <div class="b-card__typeslot" data-sector="{{ $item['sector_slug'] ?? 'default' }}">
+                                    <x-sector-icon :sector="$item['sector_slug'] ?? null" />
                                     <span class="b-card__typeslot-sector">{{ $item['sector'] ?? __('news.title') }}</span>
                                 </div>
                             @endif

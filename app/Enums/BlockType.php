@@ -256,6 +256,7 @@ enum BlockType: string
             self::MemberGrid => [
                 'show_map' => ['nullable', 'boolean'],
                 'directory' => ['nullable', 'boolean'],
+                'summary' => ['nullable', 'boolean'],
                 'filter' => ['nullable', 'array'],
                 'filter.sector' => ['nullable', 'string', 'max:40'],
             ],
@@ -372,7 +373,7 @@ enum BlockType: string
             self::KeyFigures => ['items' => []],
             self::FeaturedPublications, self::DocumentList, self::NewsroomStrip => ['limit' => 3, 'filter' => []],
             self::EventsStrip => ['limit' => 3, 'upcoming_only' => true],
-            self::MemberGrid => ['show_map' => true, 'filter' => [], 'directory' => false],
+            self::MemberGrid => ['show_map' => true, 'filter' => [], 'directory' => false, 'summary' => false],
             self::CommitteeGrid => ['include_inactive' => false, 'filter' => []],
             self::CallToAction => ['tone' => 'navy'],
             self::StatementBand => ['cta_url' => null],

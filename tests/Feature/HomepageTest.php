@@ -108,9 +108,13 @@ class HomepageTest extends TestCase
 
     public function test_the_fourteen_member_states_render(): void
     {
+        // Screen 02 line 630 draws them as fourteen tiles beside the claim,
+        // not as the card grid the members page carries. Each still opens
+        // its member state.
         $html = $this->get('/en')->getContent();
 
-        $this->assertSame(14, substr_count($html, 'b-member__name'));
+        $this->assertSame(14, substr_count($html, 'b-members__tile"'));
+        $this->assertSame(14, substr_count($html, 'b-members__tile-link'));
         $this->assertStringContainsString('Angola', $html);
         $this->assertStringContainsString('Zimbabwe', $html);
     }

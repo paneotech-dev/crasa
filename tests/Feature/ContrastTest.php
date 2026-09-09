@@ -186,6 +186,59 @@ class ContrastTest extends TestCase
         );
     }
 
+    /**
+     * The statement band's photograph, added 9 September 2026.
+     *
+     * The instruction was to give it the hero's photo-slide treatment and
+     * then measure. The measurement is why it does not have it: the hero's
+     * scrim runs .94 navy at the left to .34 at the right, because its copy
+     * is one column on the left and the right third is deliberately texture.
+     * This band has the statement left and fourteen figure cells right, and
+     * at .34 over a white pixel the cells measure 2.14:1.
+     *
+     * So it takes the flat .82 the section bands already carry as the
+     * measured floor. Every colour on the band is checked here, including
+     * the ones the section-band test does not use.
+     */
+    public function test_the_statement_band_clears_aa_over_its_photograph(): void
+    {
+        $worstCase = $this->composite($this->tokens['--c-navy'], '#FFFFFF', 0.82);
+
+        foreach ([
+            'statement quote' => '--c-white',
+            'statement eyebrow' => '--c-green-light',
+            'statement action' => '--c-white',
+            'grid label over the cells' => '--c-green-light',
+            'grid cell value' => '--c-white',
+            'grid cell label' => '--c-sand',
+            'grid note' => '--c-sand',
+        ] as $role => $token) {
+            $ratio = $this->ratioOf($this->tokens[$token], $worstCase);
+
+            $this->assertGreaterThanOrEqual(
+                4.5,
+                $ratio,
+                sprintf('%s is %.2f:1 over a white pixel in the photograph.', $role, $ratio)
+            );
+        }
+
+        $css = file_get_contents(public_path('css/blocks.css'));
+
+        $this->assertMatchesRegularExpression(
+            '/\.b-statement__scrim \{[^}]*rgba\(15, 27, 45, \.82\)/s',
+            $css,
+            'The statement band is not using the overlay this test measures.'
+        );
+
+        // And it must not quietly go back to the hero's gradient, which is
+        // what the measurement rejected.
+        $this->assertStringNotContainsString(
+            'b-hero__scrim b-statement__layer',
+            file_get_contents(base_path('resources/views/blocks/statement-band.blade.php')),
+            'The band has the hero gradient again; its right column fails at .34.'
+        );
+    }
+
     private function composite(string $foreground, string $background, float $alpha): string
     {
         $out = '#';

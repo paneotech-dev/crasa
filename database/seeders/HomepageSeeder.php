@@ -419,7 +419,9 @@ class HomepageSeeder extends Seeder
         // 7. Member states. The map leads the section: fourteen countries
         // are the subject, and a map of them says more than fourteen cards.
         $this->block($page, BlockType::MemberGrid, $position++, [
-            'show_map' => true,
+            // Screen 02 line 604's composition, not the members page's.
+            'summary' => true,
+            'show_map' => false,
             'filter' => [],
         ], fn (string $l) => [
             'heading' => $t[$l]['membersTitle'],

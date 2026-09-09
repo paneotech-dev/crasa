@@ -39,7 +39,11 @@
     table equivalent is a <details>. The script that ships alongside removes
     one click from the selector and nothing else.
 --}}
-@props(['countries', 'selection' => null, 'view' => null])
+{{-- $static: the map alone. No controls, no detail panel, no legend, no
+     exports, no inset chips. The homepage summary uses it -- a summary that
+     hands a reader a dataset selector is asking them to do the work the
+     members page exists for. --}}
+@props(['countries', 'selection' => null, 'view' => null, 'static' => false])
 @php
     $map = config('region-map');
     $view = $view ?? \App\Support\MapView::resolve($countries, $selection ?? request()->query('indicator'));
@@ -97,6 +101,7 @@
 
          A plain GET form. No script, and it lands on the same canonical
          URL the map's own links use. --}}
+    @unless ($static)
     <form class="c-map-region__control" method="get" action="{{ route('members.go', ['locale' => $locale]) }}">
         <span class="c-map-region__field">
         <label class="c-map-region__control-label" for="map-state">{{ __('members.map_select_state') }}</label>
@@ -128,6 +133,7 @@
              not run it. --}}
         <button class="c-btn c-btn--secondary" type="submit" data-live-submit>{{ __('members.map_apply') }}</button>
     </form>
+    @endunless
 
     <div class="c-map-region__stage">
         <svg
@@ -267,6 +273,7 @@
              is already in the link's accessible name and in the list below,
              and fourteen stacked cards read aloud in sequence would be
              fourteen repetitions of the page. --}}
+        @unless ($static)
         <div class="c-map-region__detail" aria-hidden="true">
             <p class="c-map-region__prompt">{{ __('members.map_prompt') }}</p>
             @foreach ($ordered as $iso)
@@ -293,6 +300,9 @@
              scale they would be specks. They get their own frame rather than
              being dropped, because a member state omitted from a membership
              map is a worse outcome than an inset. --}}
+        @endunless
+
+        @unless ($static)
         <div class="c-map-region__insets">
             <h3 class="c-map-region__insets-heading">{{ __('members.map_enlarged') }}</h3>
             @foreach ($enlarged as $iso => $shape)
@@ -437,6 +447,7 @@
     @endif
 
     <figcaption class="c-map-region__caption">{{ __('members.map_caption') }}</figcaption>
+    @endunless
 </figure>
 
 @once

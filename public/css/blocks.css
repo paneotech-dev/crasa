@@ -492,9 +492,12 @@
    is generous enough that a long title does not force a two-character line
    at 375px. */
 
+/* "grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));
+   gap:var(--s-5)" -- screen 02 line 401. 240 rather than 280: at 1344 of
+   content 280 gives four columns and the strip is three. */
 .b-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: var(--s-5);
   align-items: start;
 }
@@ -526,7 +529,9 @@
  */
 .b-card__media { aspect-ratio: 16 / 9; background: var(--c-cream); border-bottom: 1px solid var(--c-sand); display: grid; place-items: center; }
 .b-card__media picture { display: block; width: 100%; height: 100%; }
-.b-card__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* "object-position:50% 26%" -- screen 02 line 403. A 16/9 crop of a
+   portrait subject centred vertically cuts the head off; 26% keeps it. */
+.b-card__media img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 26%; display: block; }
 /* Screen 02 line 341: "background:var(--c-white);border:1px solid
    var(--c-sand);border-radius:var(--r-md);padding:var(--s-5);display:flex;
    flex-direction:column;gap:var(--s-3);box-shadow:var(--e-1)". The padding
@@ -1561,17 +1566,14 @@
 .b[data-ground="sand"] .b-card,
 .b[data-ground="sand"] .b-rows { border-color: var(--c-border); }
 
-/* Featured-and-rest. Three equal cards say all three matter equally, which
-   is usually not what the data says. The first item takes the width it
-   deserves and the rest sit beside it: more interesting to look at, and
-   more truthful about hierarchy. */
-@media (min-width: 760px) {
-  .b-cards--featured { grid-template-columns: 3fr 2fr; }
-  .b-cards--featured > :first-child { grid-row: span 2; }
-  .b-cards--featured > :first-child .b-card__title { font-size: 22px; line-height: 1.25; }
-  .b-cards--featured > :first-child .b-card__media { aspect-ratio: 3 / 2; }
-  .b-cards--featured > :not(:first-child) .b-card__media { display: none; }
-}
+/* The 1+2 arrangement is gone.
+   The reasoning for it was that three equal cards claim all three matter
+   equally, which is often not what the data says. That is true in general
+   and it was not what screen 02 draws here, and the implementation went
+   further than the argument: it hid the other two images outright with
+   "> :not(:first-child) .b-card__media { display: none }", so two of the
+   three cards on the homepage carried no picture at all. Screen 02 line 401
+   draws three equal cards, each with an image edge to edge. */
 
 /* Typography ----------------------------------------------------------- */
 /* The scale from design foundations section 02, used as a scale rather than
@@ -1627,6 +1629,21 @@
 /* Where a sector has no supplied photograph. Well-set type in the space
    beats a grey box with an icon, and beats borrowing a photograph from a
    sector the article is not about. */
+
+/*
+ * The panel a card falls back to when its sector has no photograph in the
+ * library. Broadcasting has none at all.
+ *
+ * A sector-coloured ground with the sector's own mark above its name, not a
+ * word on navy: a card carrying a word where its two neighbours carry
+ * photographs reads as the one that failed to load. The tints are the
+ * platform's existing sector-adjacent values, so nothing new is introduced.
+ */
+.b-card__typeslot { flex-direction: column; gap: var(--s-2); color: var(--c-green-dark); }
+.b-card__typeslot[data-sector="telecommunications"] { background: var(--c-green-light); }
+.b-card__typeslot[data-sector="broadcasting"] { background: var(--c-amber-light); color: var(--c-amber-dark); }
+.b-card__typeslot[data-sector="postal"] { background: var(--c-sand); color: var(--c-navy); }
+.c-sector-icon { flex: none; }
 
 .b-card__typeslot,
 .c-article__typeslot {
@@ -1977,6 +1994,28 @@
  * crossed weaves over it, then a two-column grid at --s-9 --s-7.
  */
 .b-statement { position: relative; overflow: hidden; }
+/* The photograph under the band's four layers. The tint and the scrim are
+   the hero's own rules, reused by class, so the two navy bands on the
+   homepage are made of the same thing. */
+.b-statement__media { position: absolute; inset: 0; }
+.b-statement__media picture { display: block; width: 100%; height: 100%; }
+.b-statement__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.b-statement__layer { position: absolute; inset: 0; }
+/*
+ * A flat scrim, not the hero's gradient.
+ *
+ * The hero runs .94 navy at the left to .34 at the right because its copy
+ * is one column on the left and the right third is texture. This band has
+ * the statement on the left and fourteen figure cells on the right, and at
+ * .34 over a white pixel -- a window, a reflection, the sunburst in this
+ * photograph -- white text measures 2.14:1 and --c-sand 1.63:1.
+ *
+ * rgba(15,27,45,.82) is the value .c-band__scrim already carries as the
+ * measured floor for a photograph whose own tones are not fixed. Over pure
+ * white it leaves --c-white at 9.84:1, --c-sand at 7.48:1 and
+ * --c-green-light at 8.71:1.
+ */
+.b-statement__scrim { position: absolute; inset: 0; background: rgba(15, 27, 45, .82); }
 .b-statement__weave {
   position: absolute;
   inset: 0;
@@ -2160,3 +2199,72 @@
 .b-directory__link { font-size: 13.5px; font-weight: 600; }
 /* The whole row is the target; the link carries the accessible name. */
 .b-directory__link::after { content: ""; position: absolute; inset: 0; }
+
+
+/* The homepage members summary, screen 02 line 604 ---------------------- */
+/*
+ * "display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),
+ *  1fr));gap:var(--s-8);align-items:center" on the sand ground.
+ *
+ * The homepage was rendering the members page's whole apparatus here: two
+ * selects, the interactive map, the legend, the export buttons and a grid
+ * of fourteen cards. A summary that hands a reader a dataset selector is
+ * asking them to do the work the page below exists for.
+ */
+.b-members__summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: var(--s-8);
+  align-items: center;
+}
+.b-members__claim { min-width: 0; }
+/* "margin:0 0 var(--s-5);font-size:17px;line-height:1.65;max-width:44ch" */
+.b-members__lead {
+  margin: 0 0 var(--s-5);
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--c-charcoal);
+  max-width: 44ch;
+}
+/* "max-width:320px;display:block" */
+.b-members__map-small { max-width: 320px; }
+.b-members__note { font-size: 13px; line-height: 1.5; color: var(--c-charcoal); margin: var(--s-2) 0 0; max-width: 44ch; }
+
+/* "grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));
+   gap:var(--s-3)" */
+.b-members__tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: var(--s-3);
+  min-width: 0;
+}
+/* "background:var(--c-cream);border:1px dashed #B9B2A2;border-radius:
+   var(--r-sm);padding:var(--s-3);display:flex;align-items:center;gap:10px".
+   Solid rather than dashed: the screen's dash marks a placeholder, and
+   these are fourteen real member states that open real pages. */
+.b-members__tile { min-width: 0; }
+.b-members__tile-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  background: var(--c-cream);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  padding: var(--s-3);
+  text-decoration: none;
+  transition: background 150ms var(--ease-in), border-color 150ms var(--ease-in);
+}
+.b-members__tile-link:hover,
+.b-members__tile-link:focus-visible { background: var(--c-green-light); border-color: var(--c-green-dark); }
+/* "width:34px;height:34px;border-radius:var(--r-xs);flex:none" -- the flag
+   replaces the screen's navy ISO square. */
+.b-members__tile-mark { flex: none; width: 34px; display: grid; place-items: center; }
+.b-members__tile-mark .c-flag { width: 34px; height: 24px; }
+.b-members__tile-names { min-width: 0; }
+/* "font-weight:600;font-size:14.5px" over "font-size:12px;color:var(--c-slate)" */
+.b-members__tile-acronym { display: block; font-weight: 600; font-size: 14.5px; color: var(--c-navy); }
+.b-members__tile-country { display: block; font-size: 12px; color: var(--c-slate); }

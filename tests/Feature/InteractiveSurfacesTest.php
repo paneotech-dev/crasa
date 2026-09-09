@@ -11,6 +11,8 @@ use App\Models\User;
 use App\Support\BlockLink;
 use Database\Seeders\CountrySeeder;
 use Database\Seeders\HomepageSeeder;
+use Database\Seeders\IndicatorSeeder;
+use Database\Seeders\IndicatorValueSeeder;
 use Database\Seeders\NewsroomSeeder;
 use Database\Seeders\PublicationSeeder;
 use Database\Seeders\PublicPagesSeeder;
@@ -248,13 +250,55 @@ class InteractiveSurfacesTest extends TestCase
      * takes over the change event, and only after it has. They must be in
      * the served HTML.
      */
-    public function test_every_live_form_ships_a_working_submit_button(): void
+    public function test_every_live_submit_is_a_real_submit_in_a_real_form(): void
     {
+        // Stated on the button rather than on the page. It used to assert
+        // that the homepage carried a live submit somewhere, which was true
+        // only because the members block rendered the interactive map
+        // there; the homepage now carries screen 02's summary with a static
+        // map. And "every form in a live region" is too broad -- the
+        // members page's first form navigates to a member profile rather
+        // than swapping a region, and correctly has no live submit.
+        //
+        // What has to hold is this: a button the script will take over must
+        // already be a working submit inside a real form, so the page does
+        // the same thing with the script removed.
         $this->seed(HomepageSeeder::class);
+        $this->seed(IndicatorSeeder::class);
+        $this->seed(IndicatorValueSeeder::class);
 
-        foreach (['/en', '/en/members'] as $url) {
-            $this->get($url)->assertOk()->assertSee('data-live-submit', false);
+        $found = 0;
+
+        foreach (['/en', '/en/members', '/en/publications', '/en/newsroom'] as $url) {
+            $html = $this->get($url)->assertOk()->getContent();
+
+            foreach (preg_split('#(?=<form\b)#', $html) as $chunk) {
+                if (! str_contains($chunk, 'data-live-submit')) {
+                    continue;
+                }
+
+                $form = substr($chunk, 0, strpos($chunk, '</form>') ?: strlen($chunk));
+
+                if (! str_contains($form, 'data-live-submit')) {
+                    continue;
+                }
+
+                $found++;
+
+                $this->assertMatchesRegularExpression(
+                    '/<form[^>]*method="[a-z]+"/i',
+                    $form,
+                    "A live submit on {$url} is not inside a form with a method."
+                );
+                $this->assertMatchesRegularExpression(
+                    '/<button[^>]*type="submit"[^>]*data-live-submit|<button[^>]*data-live-submit[^>]*type="submit"/',
+                    $form,
+                    "A live submit on {$url} is not a submit button."
+                );
+            }
         }
+
+        $this->assertGreaterThan(0, $found, 'No live submit found anywhere, so this proves nothing.');
     }
 
     /* The homepage comparison ------------------------------------------------ */

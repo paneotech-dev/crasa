@@ -907,3 +907,44 @@ approved screen and neither had been built: the map floated on the bare
 section ground with a grid of member cards under it. The two controls above
 the map had a label at `width:100%` with a negative bottom margin, so each
 took its own line and sat on the control it labelled.
+
+---
+
+## The statement band takes a photograph, and not the hero's scrim
+
+*Taken 9 September 2026. Disclosed variation from screen 02.*
+
+Screen 02 draws the statement band at line 376 on flat navy with two crossed
+weaves over it and no photograph. It now carries
+`hero/hero-delegates-boardroom-01.jpg` behind four layers: the image, the
+hero's 140deg colour-blend tint, a scrim, and the weave on top.
+
+The band is the one place on the homepage where CRASA speaks in its own
+voice rather than listing what it holds, and a claim about fourteen
+regulators reads better over a room with delegates in it than over a
+gradient.
+
+**The scrim is not the hero's, and the measurement is why.** The instruction
+was to use the hero's photo-slide treatment and then measure the result. The
+hero's scrim runs `rgba(15,27,45,.94)` at the left to `.34` at the right,
+which works there because its copy is one column on the left and the right
+third is deliberately texture. This band has the statement on the left and
+fourteen figure cells on the right — content at both ends. Over a white
+pixel, which this photograph has in its windows and its sunburst:
+
+| Scrim stop | Composite ground | `--c-white` | `--c-sand` | `--c-green-light` |
+|---|---|---|---|---|
+| left, .94 | rgb(29,41,58) | 14.72:1 | 11.18:1 | 13.03:1 |
+| mid, .82 | rgb(58,68,83) | 9.84:1 | 7.48:1 | 8.71:1 |
+| **right, .34** | rgb(173,177,184) | **2.14:1** | **1.63:1** | **1.90:1** |
+
+So it takes the flat `rgba(15,27,45,.82)` that `.c-band__scrim` already
+carries as the measured floor for a photograph whose own tones are not
+fixed. Every colour on the band clears 7:1 against it, and `ContrastTest`
+holds all seven, including a check that the hero gradient does not come
+back.
+
+**The image is reused.** The same photograph carries the hero four sections
+above. One institutional photograph is doing the work of two bands, which is
+thin, and it is recorded in `storage/app/public/images/README.md` and in
+`docs/CLIENT_REQUESTS.md` rather than left for someone to notice.

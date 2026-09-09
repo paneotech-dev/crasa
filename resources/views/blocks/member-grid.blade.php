@@ -46,11 +46,63 @@
              * block as a summary and keeps its card grid.
              */
             $directory = (bool) $block->setting('directory', false);
+
+            /*
+             * The homepage's own composition, screen 02 line 604. Two
+             * columns: the claim and a small static map on the left, a grid
+             * of fourteen tiles on the right.
+             *
+             * It was rendering the members page's full apparatus here --
+             * two selects, the interactive map, the legend, the export
+             * buttons and a grid of cards -- which is a page's worth of
+             * controls inside a homepage summary.
+             */
+            $summary = (bool) $block->setting('summary', false);
         @endphp
 
-        <div @class(['b-members__layout' => $directory])>
+        <div @class(['b-members__layout' => $directory, 'b-members__summary' => $summary])>
 
-        @if ($block->setting('show_map') && $countries->isNotEmpty())
+        @if ($summary && $countries->isNotEmpty())
+            {{-- LEFT. "font-size:13px;font-weight:600;letter-spacing:.14em;
+                 color:var(--c-green-dark)" for the eyebrow, the h2 at
+                 clamp(27px,4vw,40px), the lead at 17px/1.65 max-width 44ch,
+                 then the map at max-width 320px and a 13px note. --}}
+            <div class="b-members__claim">
+                @if ($intro)
+                    <p class="b-members__lead">{{ $intro->value }}</p>
+                @endif
+
+                {{-- The real RegionMap at 320px, static: no controls, no
+                     legend, no exports, nothing to operate. A summary that
+                     hands a reader a dataset selector is asking them to do
+                     work the page below is for. Disclosed variation --
+                     screen 02 draws a decorative graphic here rather than
+                     the component. --}}
+                <div class="b-members__map-small">
+                    <x-region-map :countries="$countries" :view="\App\Support\MapView::resolve($countries, null)" :static="true" />
+                </div>
+
+                <p class="b-members__note">{{ __('blocks.members_map_note') }}</p>
+            </div>
+
+            {{-- RIGHT. Fourteen tiles, "minmax(min(100%,160px),1fr);
+                 gap:var(--s-3)", each cream with a 1px border, --r-sm,
+                 --s-3 padding and a 34px mark beside two lines. --}}
+            <ul class="b-members__tiles" role="list">
+                @foreach ($countries as $country)
+                    <li class="b-members__tile">
+                        <a class="b-members__tile-link" href="{{ route('members.show', ['locale' => app()->getLocale(), 'iso' => $country->iso_code]) }}">
+                            {{-- The flag replaces the screen's ISO mark. --}}
+                            <span class="b-members__tile-mark"><x-flag :iso="$country->iso_code" /></span>
+                            <span class="b-members__tile-names">
+                                <span class="b-members__tile-acronym">{{ $country->authority?->acronym ?: $country->name }}</span>
+                                <span class="b-members__tile-country">{{ $country->name }}</span>
+                            </span>
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        @elseif ($block->setting('show_map') && $countries->isNotEmpty())
             <div @class(['b-members__map' => $directory])>
             @if ($directory)
                 <div class="b-members__head">
@@ -80,6 +132,8 @@
                 'title' => __('blocks.members_empty_title'),
                 'body' => __('blocks.members_empty_body'),
             ])
+        @elseif ($summary)
+            {{-- Nothing more. The tiles above are the summary. --}}
         @elseif ($directory)
             {{-- The directory. Screen 08 draws it as rows in one white
                  card, alphabetical by country, not as a grid of cards: it
