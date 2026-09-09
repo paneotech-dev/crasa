@@ -54,4 +54,16 @@ return [
 
     'documents_empty_title' => 'Nenhum documento corresponde',
     'documents_empty_body' => 'Alargue o filtro, ou anexe um documento a este registo.',
+    'explain_hero' => 'A faixa de largura total no topo da página: uma fotografia, um título e um botão.',
+    'explain_key_figures' => 'Uma linha de valores com uma legenda sob cada um. O valor é o mesmo nas três línguas.',
+    'explain_pillars' => 'Duas a quatro colunas curtas, cada uma com um ícone, um título e uma frase.',
+    'explain_rich_text' => 'Um título e parágrafos. O bloco a usar quando nada de mais específico serve.',
+    'explain_featured_publications' => 'Documentos retirados da biblioteca, filtrados por setor, comité ou tipo.',
+    'explain_featured_comparison' => 'Um indicador em até quatro Estados membros, em gráfico e em tabela.',
+    'explain_newsroom_strip' => 'As notícias mais recentes, com as respetivas imagens.',
+    'explain_events_strip' => 'Reuniões e seminários próximos.',
+    'explain_member_grid' => 'Os catorze Estados membros, com o mapa da região.',
+    'explain_call_to_action' => 'Um painel colorido com uma frase e um botão.',
+    'explain_social_feed' => 'Ligações para as contas da CRASA. O bloco não vai buscar nada nem segue ninguém.',
+    'explain_document_list' => 'Uma lista simples de documentos para descarregar, sem imagens.',
 ];

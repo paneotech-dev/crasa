@@ -23,6 +23,20 @@ class PageController extends Controller
         return $this->render($request->route()->defaults['slug']);
     }
 
+    /**
+     * Any other published page, by slug.
+     *
+     * Registered last, so it never shadows a named route. Nothing here
+     * trusts the slug beyond a lookup: the route pattern restricts it to
+     * lowercase words and hyphens, and an unpublished or missing page is a
+     * 404 rather than a redirect, so the address does not reveal that a
+     * draft with that slug exists.
+     */
+    public function showBySlug(Request $request)
+    {
+        return $this->render((string) $request->route('slug'));
+    }
+
     private function render(string $slug)
     {
         $page = Page::published()

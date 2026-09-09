@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Enums\BlockType;
+use App\Enums\PageStatus;
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\MarksSampleData;
+use App\Support\Locales;
 use Database\Factories\PageFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,6 +28,7 @@ class Page extends Model
     protected function casts(): array
     {
         return [
+            'status' => PageStatus::class,
             'published_at' => 'datetime',
             'is_sample' => 'boolean',
         ];
@@ -49,7 +52,7 @@ class Page extends Model
 
     public function scopePublished(Builder $query): Builder
     {
-        return $query->where('status', 'published');
+        return $query->where('status', PageStatus::Published);
     }
 
     /**
@@ -68,6 +71,34 @@ class Page extends Model
 
     public function isPublished(): bool
     {
-        return $this->status === 'published';
+        return $this->status === PageStatus::Published;
+    }
+
+    /**
+     * Every block in editing order, including the hidden ones. The public
+     * side asks for visibleBlocks; the back office has to see what it is
+     * being asked to unhide.
+     */
+    public function editableBlocks(): HasMany
+    {
+        return $this->blocks()->with('translations');
+    }
+
+    /**
+     * Which languages this page carries a title in. Screen 14 puts a
+     * language column on every content row and tints the row when one is
+     * missing, so this is what that column reads.
+     *
+     * @return list<string>
+     */
+    public function localesWithTitle(): array
+    {
+        return $this->translations
+            ->where('field', 'title')
+            ->reject(fn ($t) => trim((string) $t->value) === '')
+            ->pluck('locale')
+            ->intersect(Locales::SUPPORTED)
+            ->values()
+            ->all();
     }
 }

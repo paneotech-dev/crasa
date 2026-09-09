@@ -3,6 +3,8 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PageAdminController;
+use App\Http\Controllers\Admin\PageBlockController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
@@ -168,6 +170,26 @@ Route::prefix('{locale}')
              */
             Route::prefix('admin')->name('admin.')->group(function () {
                 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+                /*
+                 * Content. CM-01: the page list, the page, its blocks and
+                 * the workflow. Every action re-checks its policy; the
+                 * navigation is not the access control.
+                 */
+                Route::get('pages', [PageAdminController::class, 'index'])->name('pages');
+                Route::get('pages/{page}', [PageAdminController::class, 'edit'])->name('pages.edit');
+                Route::put('pages/{page}', [PageAdminController::class, 'update'])->name('pages.update');
+                Route::put('pages/{page}/status', [PageAdminController::class, 'updateStatus'])->name('pages.status');
+                Route::get('pages/{page}/preview', [PageAdminController::class, 'preview'])->name('pages.preview');
+
+                Route::get('pages/{page}/blocks/add', [PageBlockController::class, 'create'])->name('pages.blocks.create');
+                Route::post('pages/{page}/blocks', [PageBlockController::class, 'store'])->name('pages.blocks.store');
+                Route::get('pages/{page}/blocks/{block}', [PageBlockController::class, 'edit'])->name('pages.blocks.edit');
+                Route::put('pages/{page}/blocks/{block}', [PageBlockController::class, 'update'])->name('pages.blocks.update');
+                Route::put('pages/{page}/blocks/{block}/move', [PageBlockController::class, 'move'])->name('pages.blocks.move');
+                Route::post('pages/{page}/blocks/{block}/duplicate', [PageBlockController::class, 'duplicate'])->name('pages.blocks.duplicate');
+                Route::put('pages/{page}/blocks/{block}/visibility', [PageBlockController::class, 'toggle'])->name('pages.blocks.visibility');
+                Route::delete('pages/{page}/blocks/{block}', [PageBlockController::class, 'destroy'])->name('pages.blocks.destroy');
+
                 Route::get('users', [UserAdminController::class, 'index'])->name('users');
                 Route::get('users/invite', [UserAdminController::class, 'form'])->name('users.form');
                 Route::post('users/invite', [UserAdminController::class, 'invite'])->name('users.invite');
@@ -177,5 +199,18 @@ Route::prefix('{locale}')
                 Route::get('audit', [AuditLogController::class, 'index'])->name('audit');
             });
         });
+
+        /*
+         * Any other published page, by slug.
+         *
+         * This is last on purpose: every route above is matched first, so
+         * naming a page "publications" cannot capture the library. It is
+         * what makes the back office worth having -- a page created by the
+         * Secretariat is served without a deployment -- and it is scoped to
+         * a single segment so it cannot swallow a nested route.
+         */
+        Route::get('{slug}', [PageController::class, 'showBySlug'])
+            ->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')
+            ->name('page');
 
     });

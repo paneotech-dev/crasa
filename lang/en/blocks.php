@@ -59,4 +59,16 @@ return [
 
     'documents_empty_title' => 'No documents match',
     'documents_empty_body' => 'Widen the filter, or attach a document to this record.',
+    'explain_hero' => 'The full-width band at the top of a page: a photograph, a headline and one button.',
+    'explain_key_figures' => 'A row of figures with a label under each. The figure itself is the same in every language.',
+    'explain_pillars' => 'Two to four short columns, each with an icon, a heading and a sentence.',
+    'explain_rich_text' => 'A heading and paragraphs. The block to reach for when nothing more specific fits.',
+    'explain_featured_publications' => 'Documents pulled from the library, filtered by sector, committee or type.',
+    'explain_featured_comparison' => 'One indicator across up to four member states, as a chart and as a table.',
+    'explain_newsroom_strip' => 'The most recent news items, with their images.',
+    'explain_events_strip' => 'Upcoming meetings and workshops.',
+    'explain_member_grid' => 'The fourteen member states, with the region map.',
+    'explain_call_to_action' => 'A coloured panel with one sentence and one button.',
+    'explain_social_feed' => 'Links to the CRASA accounts. It fetches nothing and tracks nobody.',
+    'explain_document_list' => 'A plain list of documents to download, without images.',
 ];

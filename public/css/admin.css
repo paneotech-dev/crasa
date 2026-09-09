@@ -634,6 +634,75 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
 .a-empty__title { font-size: 14.5px; font-weight: 600; color: var(--a-ink); margin-bottom: 5px; }
 .a-empty__body { font-size: 13.5px; line-height: 1.6; color: var(--a-ink-quiet); }
 
+/* Content rows ---------------------------------------------------------- */
+
+/*
+ * Screen 14, "Homepage and page content". Every content row in the back
+ * office is drawn this way:
+ *
+ *   display:flex;gap:24px;align-items:flex-start;padding:18px 24px;
+ *   flex-wrap:wrap; + border-bottom:1px solid #DFDBD1 on all but the last
+ *
+ * with the field name above the value on the left, where-it-appears and the
+ * languages in the middle, and a single Edit link pinned right at
+ * flex:none;font-size:14px;font-weight:600.
+ *
+ * The screen tints a row whose languages are incomplete (background
+ * #FEFAF3 on the menu rows). The tint is kept and takes --c-amber-light,
+ * which is the token that already means "pending" across the platform.
+ */
+.a-crow {
+  display: flex;
+  gap: var(--s-5);
+  align-items: flex-start;
+  padding: 18px var(--s-5);
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--a-rule);
+}
+
+.a-crow:last-child { border-bottom: 0; }
+.a-crow[data-incomplete] { background: var(--c-amber-light); }
+
+.a-crow__main { flex: 1 1 280px; min-width: 0; }
+.a-crow__aside { flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+
+/* The screen sets this label in tracked caps. Sentence case here, for the
+   same reason the table headers are: see question 6 in docs/QUESTIONS.md.
+   Everything else the screen sets is kept. */
+.a-crow__field { font-size: 12px; font-weight: 700; color: var(--a-ink-quiet); margin-bottom: 5px; }
+
+/* font-size:15.5px;line-height:1.5;color:var(--c-charcoal) */
+.a-crow__value { font-size: 15.5px; line-height: 1.5; color: var(--a-ink); }
+.a-crow__where { font-size: 12.5px; color: var(--a-ink-quiet); }
+
+/* font-size:12.5px;font-weight:500;letter-spacing:.02em;flex:none, amber
+   when a language is missing. */
+.a-langs { font-size: 12.5px; font-weight: 500; letter-spacing: .02em; flex: none; color: var(--a-ink-quiet); }
+.a-langs[data-incomplete] { color: var(--c-amber-dark); }
+
+.a-crow__actions { flex: none; display: flex; gap: var(--s-3); align-items: center; }
+.a-crow__actions a,
+.a-crow__actions button { font-size: 14px; font-weight: 600; }
+
+/* An action that is a single verb inside a form, drawn as a link rather
+   than a button because it sits in a row of links. It is still a button:
+   a GET that changes state is not one of the things this platform does. */
+.a-linkbutton {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--a-link);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.a-linkbutton:hover { color: var(--a-ink-strong); }
+.a-linkbutton[disabled] { color: var(--c-disabled); cursor: default; text-decoration: none; }
+.a-linkbutton--danger { color: var(--c-red); }
+
 /* Forms ----------------------------------------------------------------- */
 
 /*

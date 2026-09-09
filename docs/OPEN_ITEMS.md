@@ -244,6 +244,47 @@ same shape, every figure counted from the database.
 
 ---
 
+## Disclosed variation: content editing has no canvas
+
+**Screen 14 draws page content as rows, not as a canvas.** Its "Homepage and
+page content" panel is a list: field name, value, where it appears, which
+languages it exists in, and one Edit link, each row drawn as
+
+```
+display:flex;gap:24px;align-items:flex-start;padding:18px 24px;flex-wrap:wrap
+```
+
+with the row tinted when a language is missing. There is no drag-and-drop
+editor anywhere in the approved screens.
+
+The block list is built in that register: rows in a panel, and reordering is
+a Move up and a Move down button on each row. That is case 2 — the screen is
+silent on arranging blocks, and blocks have to be arrangeable.
+
+It is also the only version of reordering that is operable from a keyboard
+without building a bespoke drag widget with its own live announcements, and
+WCAG 2.1 AA is an acceptance criterion here rather than an aspiration. If
+CRASA later wants dragging, it is an addition on top of these buttons, not a
+replacement for them: the buttons stay as the keyboard path.
+
+Two smaller silences in the same screen, handled the same way: the workflow
+controls and preview. Neither appears in any approved screen.
+
+---
+
+## Disclosed variation: pages are served by slug
+
+Every public route was named individually. A page created in the back office
+therefore had no address, which makes a page editor a page editor for eleven
+existing pages and nothing else.
+
+A single-segment catch-all is registered last, after every named route, so
+naming a page "publications" cannot capture the library. Unpublished and
+missing pages both 404, so an address does not reveal that a draft exists
+behind it.
+
+---
+
 ## Disclosed variation: tracked caps on back office table headers
 
 **CLAUDE.md carves tracked caps out for the footer column headings only, and

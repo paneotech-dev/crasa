@@ -54,4 +54,16 @@ return [
 
     'documents_empty_title' => 'Aucun document ne correspond',
     'documents_empty_body' => 'Élargissez le filtre, ou joignez un document à cette fiche.',
+    'explain_hero' => 'Le bandeau pleine largeur en haut de page : une photographie, un titre et un bouton.',
+    'explain_key_figures' => 'Une rangée de chiffres avec une légende sous chacun. Le chiffre est identique dans les trois langues.',
+    'explain_pillars' => 'De deux à quatre colonnes courtes, chacune avec une icône, un titre et une phrase.',
+    'explain_rich_text' => 'Un titre et des paragraphes. Le bloc à choisir quand rien de plus précis ne convient.',
+    'explain_featured_publications' => 'Des documents tirés de la bibliothèque, filtrés par secteur, comité ou type.',
+    'explain_featured_comparison' => 'Un indicateur sur quatre États membres au maximum, en graphique et en tableau.',
+    'explain_newsroom_strip' => 'Les actualités les plus récentes, avec leurs images.',
+    'explain_events_strip' => 'Les réunions et ateliers à venir.',
+    'explain_member_grid' => 'Les quatorze États membres, avec la carte de la région.',
+    'explain_call_to_action' => 'Un panneau coloré avec une phrase et un bouton.',
+    'explain_social_feed' => 'Des liens vers les comptes de la CRASA. Le bloc ne récupère rien et ne suit personne.',
+    'explain_document_list' => 'Une simple liste de documents à télécharger, sans images.',
 ];

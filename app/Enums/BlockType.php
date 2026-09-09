@@ -164,6 +164,87 @@ enum BlockType: string
         };
     }
 
+    /**
+     * How the back office draws each settings key.
+     *
+     * Derived from settingsRules() rather than written out a second time,
+     * so a rule and its control can never disagree. The rules stay the
+     * authority: this only decides which input to show, and the server
+     * validates whatever comes back against settingsRules() regardless.
+     *
+     * @return array<string, array{control: string, options?: list<string>, repeats?: string, fields?: array<string, array{control: string, options?: list<string>}>}>
+     */
+    public function settingsFields(): array
+    {
+        $fields = [];
+
+        foreach ($this->settingsRules() as $key => $rules) {
+            // Sub-keys are drawn by the repeating field they belong to.
+            if (str_contains($key, '.')) {
+                [$parent, $child] = explode('.', $key, 2);
+
+                if (str_starts_with($child, '*')) {
+                    $child = ltrim(substr($child, 1), '.');
+
+                    // "items.*" with no field after it is a list of scalars,
+                    // which the repeater draws as one column.
+                    $fields[$parent]['fields'][$child === '' ? 'value' : $child] = self::controlFor($rules);
+
+                    continue;
+                }
+
+                // "filter.sector" and its siblings are a fixed group of
+                // scalars, not a repeating row.
+                $fields[$parent]['control'] = 'group';
+                $fields[$parent]['fields'][$child] = self::controlFor($rules);
+
+                continue;
+            }
+
+            if (in_array('array', $rules, true)) {
+                $fields[$key] ??= ['control' => 'repeater', 'fields' => []];
+                // A group already declared by a sub-key stays a group.
+                $fields[$key]['control'] = ($fields[$key]['control'] ?? '') === 'group' ? 'group' : 'repeater';
+
+                continue;
+            }
+
+            $fields[$key] = self::controlFor($rules);
+        }
+
+        // A declared array with nothing inside it has nothing to draw.
+        foreach ($fields as $key => $field) {
+            if (in_array($field['control'], ['repeater', 'group'], true) && ($field['fields'] ?? []) === []) {
+                unset($fields[$key]);
+            }
+        }
+
+        return $fields;
+    }
+
+    /**
+     * @param  list<mixed>  $rules
+     * @return array{control: string, options?: list<string>}
+     */
+    private static function controlFor(array $rules): array
+    {
+        foreach ($rules as $rule) {
+            if (is_string($rule) && str_starts_with($rule, 'in:')) {
+                return ['control' => 'select', 'options' => explode(',', substr($rule, 3))];
+            }
+        }
+
+        if (in_array('boolean', $rules, true)) {
+            return ['control' => 'checkbox'];
+        }
+
+        if (in_array('integer', $rules, true)) {
+            return ['control' => 'number'];
+        }
+
+        return ['control' => 'text'];
+    }
+
     /** @return array<string, mixed> */
     public function defaultSettings(): array
     {
