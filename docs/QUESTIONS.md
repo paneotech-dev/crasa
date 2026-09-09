@@ -299,3 +299,35 @@ difference is that the download does not stay in step when a meeting moves.
 
 ---
 
+## Question 10: can the host give us a second database schema?
+
+**Recommendation: yes, ask for one. It costs nothing and it is the
+difference between a restore procedure that is tested and one that is
+described.**
+
+`php artisan backup:rehearse` proves everything about the backup except the
+part that matters most — that the dump actually restores. It cannot, because
+the database user holds `ALL PRIVILEGES` on `ptechweb_crasadev` and `USAGE`
+on everything else, so it cannot create a schema to restore into. Verified on
+9 September, not assumed.
+
+Restoring into the live schema to prove the point is not a rehearsal, it is
+an outage.
+
+**What is needed:** one empty database, any name — `ptechweb_restoretest`
+would do — with the same user granted privileges on it. On a cPanel account
+that is two clicks in the database wizard and needs no new credential.
+
+**What it buys:** `backup:rehearse --database=ptechweb_restoretest` becomes a
+full cycle, on a schedule, reporting failure the way any other check does.
+The go-live restore is then something that has been done successfully many
+times rather than something that will be attempted for the first time under
+pressure.
+
+**Done in the meantime:** the rehearsal runs everything else and says plainly
+that the restore step was skipped and why. It caught both defects the manual
+rehearsal found — a dump command that could not authenticate, and document
+rows whose files were missing — and it would catch either again.
+
+---
+
