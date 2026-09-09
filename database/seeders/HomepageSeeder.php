@@ -56,6 +56,7 @@ class HomepageSeeder extends Seeder
                 'fact2' => 'Established',
                 'fact3' => 'Citizens served',
                 'fact4' => 'Sectors regulated',
+                'fact5' => 'Standing committees',
                 'whatWeDo' => 'What we do',
                 'pillarsTitle' => 'Four lines of work, one regional framework',
                 'pillar1t' => 'Harmonised frameworks',
@@ -107,6 +108,7 @@ class HomepageSeeder extends Seeder
                 'fact2' => 'Création',
                 'fact3' => 'Citoyens desservis',
                 'fact4' => 'Secteurs réglementés',
+                'fact5' => 'Comités permanents',
                 'whatWeDo' => 'Ce que nous faisons',
                 'pillarsTitle' => 'Quatre axes de travail, un cadre régional',
                 'pillar1t' => 'Cadres harmonisés',
@@ -158,6 +160,7 @@ class HomepageSeeder extends Seeder
                 'fact2' => 'Fundação',
                 'fact3' => 'Cidadãos servidos',
                 'fact4' => 'Setores regulados',
+                'fact5' => 'Comités permanentes',
                 'whatWeDo' => 'O que fazemos',
                 'pillarsTitle' => 'Quatro linhas de trabalho, um quadro regional',
                 'pillar1t' => 'Quadros harmonizados',
@@ -329,12 +332,18 @@ class HomepageSeeder extends Seeder
                 ['value' => '14', 'link' => 'members'],
                 ['value' => '1997', 'link' => 'about'],
                 ['value' => '3', 'link' => 'committees'],
+                // The fourth. Screen 02 hints five; a fifth needs a fact
+                // CRASA can stand behind and there is not one yet, so this
+                // stops at four rather than reaching for a number nobody
+                // has sourced. Six is counted, not written down.
+                ['value' => '6', 'link' => 'committees'],
             ],
         ], fn (string $l) => [
             'heading' => $t[$l]['whatWeDo'],
             'item_0_label' => $t[$l]['fact1'],
             'item_1_label' => $t[$l]['fact2'],
             'item_2_label' => $t[$l]['fact4'],
+            'item_3_label' => $t[$l]['fact5'],
         ]);
 
         // 3. Pillars. Four lines of work, from the approved screen.

@@ -437,7 +437,10 @@
    encoded nothing: four figures, one colour, no distinction drawn. Ruling 2
    says it either means something or it goes. It goes, replaced by a hairline
    that groups the figures as a set without pretending to classify them. */
-.b-figure { border-top: 1px solid var(--c-sand); padding-top: var(--s-4); min-width: 0; }
+/* "border-top:2px solid #2C3A55;padding-top:var(--s-4)" -- screen 02 line
+   194. Two pixels, and the navy-line rule on the dark ground; the sand
+   hairline was drawn for the cream sections. */
+.b-figure { border-top: 2px solid var(--c-sand); padding-top: var(--s-4); min-width: 0; }
 .b-figure__value {
   font-family: var(--f-head);
   font-size: clamp(30px, 4vw, 44px);
