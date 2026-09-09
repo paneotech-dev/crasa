@@ -20,6 +20,14 @@
     @endsection
 @endif
 
+{{-- An instrument carries a version history, which is a screen of its
+     own: two versions side by side is not four more fields on a form. --}}
+@if ($definition->key === 'instruments' && ! $isNew)
+    @section('actions')
+        <a class="a-btn a-btn--secondary" href="{{ route('admin.instruments.versions', ['locale' => app()->getLocale(), 'instrument' => $record->slug]) }}">{{ __('admin.versions_title') }}</a>
+    @endsection
+@endif
+
 @section('content')
     @if (! $isNew && $definition->softDeletes() && $record->trashed())
         <div class="a-band">

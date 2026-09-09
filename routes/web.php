@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DelegateListController;
 use App\Http\Controllers\Admin\DismissController;
 use App\Http\Controllers\Admin\HelpController;
+use App\Http\Controllers\Admin\InstrumentVersionController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MeetingListController;
 use App\Http\Controllers\Admin\MenuController;
@@ -512,6 +513,15 @@ Route::prefix('{locale}')
                  * committee, and in what role. This is what the
                  * confirmation session in Lilongwe writes into.
                  */
+                /*
+                 * An instrument's history and its diff. RP-07 has written
+                 * a version on every edit since the schema was created and
+                 * nothing read it, so the history was a count rather than
+                 * a record.
+                 */
+                Route::get('instruments/{instrument}/versions', [InstrumentVersionController::class, 'index'])->name('instruments.versions');
+                Route::get('instruments/{instrument}/diff', [InstrumentVersionController::class, 'diff'])->name('instruments.diff');
+
                 Route::get('committees/{committee}/seats', [CommitteeSeatController::class, 'index'])->name('committees.seats');
                 Route::post('committees/{committee}/seats', [CommitteeSeatController::class, 'store'])->name('committees.seats.store');
                 Route::put('committees/{committee}/seats/{country}', [CommitteeSeatController::class, 'update'])->name('committees.seats.update');
