@@ -216,9 +216,29 @@ name and mark.
 fourteen days.** They are worth starting now for delivery, not for the
 workshop.
 
-**For the workshop this is an asset, not a problem.** Ask the fourteen
-delegates in the room to confirm their own entry. That is the fastest route
-to fourteen confirmations that exists, and it turns a gap into an agenda item.
+**For the workshop this is an asset, not a problem, and it is now built.**
+
+`/{locale}/admin/confirmations` presents the fourteen member states with
+their regulator's name, acronym, website, year, mandated sectors and
+committee seats. Every field is editable in place, and a confirm action
+records who vouched for it and when.
+
+**Run it as a session.** Put it on the projector, work down the list, and let
+each delegate correct and confirm their own member state. The count of
+confirmed against outstanding is on screen so the room can see progress: ten
+of fourteen at the coffee break is a different conversation from a list
+somebody promises to return by email.
+
+Confirming clears `is_sample`, so a confirmed authority survives the go-live
+purge and an unconfirmed one does not. Every confirmation writes an audit row
+naming both the account that made it and the delegate who vouched — those are
+rarely the same person, and a confirmation recording only the operator
+confirms nothing.
+
+**Budget an hour.** Fourteen states at four minutes each, and it converts the
+platform's largest content gap into signed-off data. It also fills
+`committee_country`, which is empty today and is the reason every committee
+card reads "0 member states".
 
 ---
 
@@ -275,8 +295,10 @@ composition rather than a gap, and it will read as one unless somebody
 apologises for it. The only thing that changes it is CRASA's own archive.
 
 **2. Authority confirmations.** Fourteen written confirmations from fourteen
-regulators inside fourteen days is not realistic. Turn it into a workshop
-session: the delegates who can confirm are in the room.
+regulators inside fourteen days is not realistic, and the platform no longer
+asks for them by email: the confirmation session at
+`/{locale}/admin/confirmations` is built for the room. Whether it is *done*
+depends on an hour of the agenda, which is CRASA's to give.
 
 **3. Legal pages.** Privacy notice and terms of use need CRASA's counsel.
 Both currently show a designed holding line naming what is missing.
