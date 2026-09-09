@@ -432,12 +432,25 @@
 /* Document row --------------------------------------------------------- */
 
 .b-rows { display: flex; flex-direction: column; border: 1px solid var(--c-sand); border-radius: var(--r-md); overflow: hidden; background: var(--c-white); }
-.b-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4); padding: var(--s-4); border-bottom: 1px solid var(--c-sand); min-width: 0; }
+.b-row { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4); padding: var(--s-4); border-bottom: 1px solid var(--c-sand); min-width: 0; }
+
+/* The whole row opens the publication.
+   It used to be the title text alone, which on a 64px-tall band with a
+   thumbnail and a file-type mark is a small target beside a lot of things
+   that look like part of the same click.
+
+   The download stays a separate action and stays reachable: it is raised
+   above the stretched hit area, so a pointer over the button gets the
+   button and a pointer anywhere else on the row gets the publication. Two
+   destinations, and the reader can tell which is which. */
+.b-row__title a::after { content: ""; position: absolute; inset: 0; }
+.b-row:has(.b-row__title a:hover), .b-row:has(.b-row__title a:focus-visible) { background: var(--c-cream); }
+.b-row__actions { position: relative; z-index: 1; }
 .b-row:last-child { border-bottom: 0; }
 .b-row__main { flex: 1 1 260px; min-width: 0; }
 .b-row__title { font-weight: 600; font-size: 16px; color: var(--c-navy); }
 .b-row__meta { font-size: 13px; color: var(--c-slate); margin-top: var(--s-1); }
-.b-row__actions { flex: none; display: flex; gap: var(--s-2); align-items: center; }
+.b-row__actions { flex: none; display: flex; gap: var(--s-2); align-items: center; position: relative; z-index: 1; }
 
 /* Member grid ---------------------------------------------------------- */
 
@@ -539,7 +552,11 @@
 /* Fixed meanings. Green validated and in force, amber draft and pending,
    red repealed and error, slate archived and superseded. Pill radius only. */
 
-.c-pill { display: inline-block; font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: var(--r-xs); }
+/* --r-pill, because a status badge is the one thing that takes it. This
+   matches .a-pill in the back office, which has had it since screen 09, and
+   it is what tells a reader at a glance that a status is a label and a
+   filter chip is a control. */
+.c-pill { display: inline-block; font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: var(--r-pill); }
 .c-pill--validated { background: var(--c-green-light); color: var(--c-green-dark); border: 1px solid var(--c-green-mid); }
 .c-pill--pending { background: var(--c-amber-light); color: var(--c-amber-dark); border: 1px solid var(--c-amber-mid); }
 .c-pill--error { background: var(--c-red-light); color: var(--c-red); border: 1px solid var(--c-red-mid); }
@@ -619,9 +636,13 @@
   padding: 6px 13px;
   font-size: 14px; font-weight: 500;
   color: var(--c-charcoal); background: var(--c-white);
-  border: 1px solid var(--c-border); border-radius: var(--r-pill);
+  border: 1px solid var(--c-border); border-radius: var(--r-sm);
   text-decoration: none;
 }
+/* --r-sm, because a filter chip is a button and CLAUDE.md puts --r-sm on
+   buttons. It had --r-pill, which the same rule reserves for status badges
+   only — so a chip and a status pill were the same shape on the same page,
+   and readers were trying to click the statuses. Two roles, two radii. */
 /* A facet option that would return nothing. Present, so the reader can see
    the shape of the data, and visibly not a control: no border colour, no
    hover, no cursor, and the count reading zero. Anything that is not
@@ -814,6 +835,24 @@
 .c-list-plain li { padding: var(--s-3) 0; border-bottom: 1px solid var(--c-sand); display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-3); align-items: baseline; }
 .c-list-plain__note { font-size: 13px; color: var(--c-slate); }
 .c-note { font-size: var(--t-small-size); color: var(--c-slate); margin: 0 0 var(--s-6); }
+
+/* Sortable column headings ---------------------------------------------- */
+/* A table heading in a data tool is a control everywhere else a regulator
+   works, so one that looks like a heading and does nothing is the
+   affordance failure in its plainest form.
+
+   Server-rendered links. The sorted view has its own URL, so a regulator
+   pastes "by value, descending" into an email and the recipient sees the
+   same order, and it works with no script at all. */
+.c-sort {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: inherit; text-decoration: none; min-height: 24px;
+}
+.c-sort:hover { text-decoration: underline; text-underline-offset: 3px; }
+.c-sort__mark { font-size: 10px; line-height: 1; }
+/* An unsorted column shows nothing rather than a faint double arrow: a mark
+   that is always there stops meaning anything. */
+[aria-sort="none"] .c-sort__mark { display: none; }
 
 /* Summary tiles --------------------------------------------------------- */
 /* The data-page shape, applied consistently: headline figures, then the

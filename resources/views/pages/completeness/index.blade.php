@@ -10,6 +10,43 @@
 
 @section('title', __('indicators.completeness_title'))
 
+@php
+    /*
+     * Sorting. Eighty-four cells in member-state order answers "how is
+     * Zambia doing"; it does not answer "who is behind", which is the
+     * question the Secretariat opens this grid to ask. So the total and the
+     * freshness column sort, and a sorted view has its own URL.
+     *
+     * Server-rendered links with aria-sort. No script, and pasting the
+     * sorted view into an email shows the recipient the same order.
+     */
+    $sort = request()->string('sort')->value() ?: 'state';
+    $descending = request()->string('dir')->value() === 'desc';
+
+    $sorted = $matrix['countries']->sortBy(function ($country) use ($matrix, $sort) {
+        return match ($sort) {
+            'total' => $matrix['totals'][$country->id]['percent'] ?? 0,
+            // Never reported sorts last on the way up and first on the way
+            // down, which is where a Secretariat looking for gaps wants it.
+            'latest' => $matrix['freshness'][$country->id] ?? '',
+            default => mb_strtolower($country->name),
+        };
+    })->values();
+
+    if ($descending) {
+        $sorted = $sorted->reverse()->values();
+    }
+
+    $sortLink = function (string $column) use ($sort, $descending) {
+        $next = $sort === $column && ! $descending ? 'desc' : 'asc';
+
+        return request()->fullUrlWithQuery(['sort' => $column, 'dir' => $next]);
+    };
+
+    $ariaSort = fn (string $column) => $sort === $column ? ($descending ? 'descending' : 'ascending') : 'none';
+    $mark = fn (string $column) => $sort === $column ? ($descending ? '▼' : '▲') : '';
+@endphp
+
 @section('content')
     <x-section-band
         :eyebrow="__('indicators.band_eyebrow')"
@@ -64,25 +101,43 @@
                     <caption class="c-sr">{{ __('indicators.completeness_title') }}</caption>
                     <thead>
                         <tr>
-                            <th scope="col">{{ __('blocks.member_state') }}</th>
+                            <th scope="col" aria-sort="{{ $ariaSort('state') }}">
+                                <a class="c-sort" href="{{ $sortLink('state') }}">
+                                    {{ __('blocks.member_state') }}
+                                    <span class="c-sort__mark" aria-hidden="true">{{ $mark('state') }}</span>
+                                </a>
+                            </th>
                             @foreach ($matrix['categories'] as $category => $expected)
                                 <th scope="col">
                                     {{ __('indicators.category_'.$category) }}
                                     <span class="c-table__sub">{{ trans_choice('indicators.indicator_count', $expected, ['count' => $expected]) }}</span>
                                 </th>
                             @endforeach
-                            <th scope="col">{{ __('indicators.total') }}</th>
-                            <th scope="col">{{ __('indicators.latest') }}</th>
+                            <th scope="col" aria-sort="{{ $ariaSort('total') }}">
+                                <a class="c-sort" href="{{ $sortLink('total') }}">
+                                    {{ __('indicators.total') }}
+                                    <span class="c-sort__mark" aria-hidden="true">{{ $mark('total') }}</span>
+                                </a>
+                            </th>
+                            <th scope="col" aria-sort="{{ $ariaSort('latest') }}">
+                                <a class="c-sort" href="{{ $sortLink('latest') }}">
+                                    {{ __('indicators.latest') }}
+                                    <span class="c-sort__mark" aria-hidden="true">{{ $mark('latest') }}</span>
+                                </a>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($matrix['countries'] as $country)
+                        @foreach ($sorted as $country)
                             @php $total = $matrix['totals'][$country->id]; @endphp
                             <tr>
                                 {{-- The name of a member state on a grid
                                      about that member state's filing goes
                                      to that member state. --}}
-                                <th scope="row"><a href="{{ route('members.show', ['locale' => app()->getLocale(), 'iso' => $country->iso_code]) }}">{{ $country->name }}</a></th>
+                                <th scope="row">
+                                    <x-flag :iso="$country->iso_code" />
+                                    <a href="{{ route('members.show', ['locale' => app()->getLocale(), 'iso' => $country->iso_code]) }}">{{ $country->name }}</a>
+                                </th>
 
                                 @foreach ($matrix['categories'] as $category => $expected)
                                     @php $cell = $matrix['cells'][$country->id][$category]; @endphp

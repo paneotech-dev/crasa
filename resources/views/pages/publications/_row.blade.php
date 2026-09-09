@@ -4,6 +4,10 @@
     $superseded = $publication->supersededBy->isNotEmpty();
 @endphp
 
+{{-- The whole row opens the publication; the download button is a second
+     destination raised above the stretched hit area. Only the title carries
+     the link, so a screen reader hears one link named after the document
+     rather than the whole row's text read out as a link. --}}
 <div class="b-row">
     <div class="b-row__thumb">
         @if ($document?->thumbnail_path)

@@ -17,6 +17,53 @@
         ->map(fn ($c) => (float) $c->value->value_numeric)->filter(fn ($n) => $n !== null);
     $min = $numbers->min() ?? 0.0;
     $max = $numbers->max() ?? 1.0;
+
+    /*
+     * Sorting. The column headings looked sortable and were not, which is
+     * the affordance failure in its plainest form: a table heading in a
+     * data tool is a control everywhere else a regulator works.
+     *
+     * A regulator comparing fourteen member states wants to sort by value,
+     * so value sorts, and so does the member state name. Server-rendered
+     * links with aria-sort, so it works with no script and the sorted view
+     * has its own URL: a regulator pastes "sorted by value, descending"
+     * into an email and the recipient sees the same order.
+     *
+     * "Not reported" always sorts last, whichever direction is chosen. It
+     * is not a low value and it must not be ordered as one.
+     */
+    $sort = request()->string('sort')->value() ?: 'state';
+    $descending = request()->string('dir')->value() === 'desc';
+
+    $ordered = $comparison->countries
+        ->filter(fn ($c) => isset($row[$c->id]))
+        ->sortBy(function ($country) use ($row, $sort) {
+            $cell = $row[$country->id];
+
+            if ($sort !== 'value') {
+                return [0, mb_strtolower($country->name)];
+            }
+
+            return $cell->isReported()
+                ? [0, (float) $cell->value->value_numeric]
+                : [1, 0.0];
+        })
+        ->values();
+
+    if ($descending) {
+        // Reverse the reported block only, so unreported states stay at the
+        // bottom rather than being promoted to the top by a reversal.
+        $reported = $ordered->filter(fn ($c) => $row[$c->id]->isReported())->reverse()->values();
+        $ordered = $reported->concat($ordered->reject(fn ($c) => $row[$c->id]->isReported()))->values();
+    }
+
+    $sortLink = function (string $column) use ($sort, $descending) {
+        $next = $sort === $column && ! $descending ? 'desc' : 'asc';
+
+        return request()->fullUrlWithQuery(['sort' => $column, 'dir' => $next, 'page' => null]);
+    };
+
+    $ariaSort = fn (string $column) => $sort === $column ? ($descending ? 'descending' : 'ascending') : 'none';
 @endphp
 
 <section class="c-cmp__result">
@@ -32,18 +79,33 @@
                 <caption class="c-sr">{{ __('comparator.browse_caption', ['indicator' => $indicator->name]) }}</caption>
                 <thead>
                     <tr>
-                        <th scope="col">{{ __('comparator.col_state') }}</th>
-                        <th scope="col" class="c-cmp__num">{{ __('comparator.col_value') }}</th>
+                        <th scope="col" aria-sort="{{ $ariaSort('state') }}">
+                            <a class="c-sort" href="{{ $sortLink('state') }}">
+                                {{ __('comparator.col_state') }}
+                                <span class="c-sort__mark" aria-hidden="true">{{ $sort === 'state' ? ($descending ? '▼' : '▲') : '' }}</span>
+                            </a>
+                        </th>
+                        <th scope="col" class="c-cmp__num" aria-sort="{{ $ariaSort('value') }}">
+                            <a class="c-sort" href="{{ $sortLink('value') }}">
+                                {{ __('comparator.col_value') }}
+                                <span class="c-sort__mark" aria-hidden="true">{{ $sort === 'value' ? ($descending ? '▼' : '▲') : '' }}</span>
+                            </a>
+                        </th>
+                        {{-- Provenance is a category with four values and no
+                             order. Sorting by it would put "reported" above
+                             "validated" for no reason a reader could name,
+                             so this heading is not a control and does not
+                             look like one. --}}
                         <th scope="col">{{ __('comparator.col_provenance') }}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($comparison->countries as $country)
-                        @php $cell = $row[$country->id] ?? null; @endphp
-                        @continue($cell === null)
+                    @foreach ($ordered as $country)
+                        @php $cell = $row[$country->id]; @endphp
                         <tr @unless ($cell->isReported()) data-missing @endunless>
                             <th scope="row">
                                 <span class="c-cmp__state-cell">
+                                    <x-flag :iso="$country->iso_code" />
                                     <span class="c-cmp__code">{{ strtoupper($country->iso_code) }}</span>
                                     {{ $country->name }}
                                 </span>
