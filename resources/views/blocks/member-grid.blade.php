@@ -22,28 +22,15 @@
 
         {{-- The map is the page's one bold moment; the list below it stays
              quiet. It renders only when the block asks for it, so the same
-             component can appear on the homepage without it. --}}
-        {{--
-            The region map is withdrawn, 9 September 2026.
+             component can appear on the homepage without it.
 
-            As drawn it is wrong in ways a reader sees immediately: the
-            landmasses render solid black rather than in the palette,
-            Madagascar and Seychelles are drawn and labelled although
-            neither is a CRASA member, Seychelles is a four-pixel dot
-            carrying a label, and the shapes spread down far more vertical
-            space than the layout allows for. Comoros and Mauritius carry no
-            path at all, so the caption promising labelled insets describes
-            something that is not there.
-
-            A broken map is worse than fourteen cards, so it comes off the
-            page rather than being noticed at the workshop. The cards below
-            carry the same information and always did.
-
-            It goes back when it renders fourteen member shapes inside one
-            viewBox, in the palette, with the two island members as labelled
-            insets and no non-member labelled. Those conditions are tests in
-            RegionMapTest, and the tests are the gate.
-        --}}
+             Comoros and Mauritius are inset chips rather than mainland
+             shapes: at region scale each is a few pixels across, too small
+             to see, label or touch. A member state omitted from a
+             membership map is a worse outcome than an inset. --}}
+        @if ($block->setting('show_map') && $countries->isNotEmpty())
+            <x-region-map :countries="$countries" />
+        @endif
 
         @if ($countries->isEmpty())
             @include('blocks._empty', [
