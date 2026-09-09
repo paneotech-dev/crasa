@@ -56,4 +56,7 @@ return [
     'tally_instruments' => '{0}Instruments|{1}Instrument|[2,*]Instruments',
     'tally_publications' => '{0}Publications|{1}Publication|[2,*]Publications',
     'tally_indicators' => '{0}Indicateurs|{1}Indicateur|[2,*]Indicateurs',
+    'map_select_state' => 'Ou choisissez un État membre',
+    'map_open_state' => 'Ouvrir',
+    'map_enlarged' => 'Plus petits États membres, à plus grande échelle',
 ];

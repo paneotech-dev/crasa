@@ -6,6 +6,7 @@ use App\Models\Authority;
 use App\Models\Country;
 use App\Models\Indicator;
 use App\Models\IndicatorValue;
+use App\Support\RegionGeometry;
 use Database\Seeders\CountrySeeder;
 use Database\Seeders\PublicPagesSeeder;
 use Database\Seeders\SectorSeeder;
@@ -60,14 +61,66 @@ class RegionMapNavigationTest extends TestCase
         );
     }
 
-    public function test_the_island_chips_are_alphabetical_among_themselves(): void
+    /**
+     * Four member states get their own enlarged panel, and they are in the
+     * same alphabetical-by-name order as everything else on this map.
+     *
+     * Comoros and Mauritius because at region scale each island is a few
+     * pixels across. Lesotho and Eswatini because at 375px they are too
+     * small to read a figure off or aim a thumb at, even though they are on
+     * the map and correctly placed. That is the answer to the smallest
+     * states rather than zoom, which would put the map behind a control the
+     * reader has to discover.
+     */
+    public function test_the_enlarged_panel_carries_the_four_smallest_in_alphabetical_order(): void
     {
         $html = $this->get('/en/members')->assertOk()->getContent();
 
         preg_match_all('~<a\s+class="c-map-region__inset"[^>]*data-iso="([a-z]{2})"~s', $html, $matches);
 
-        // Comoros then Mauritius. Not the order the geometry file lists them.
-        $this->assertSame(['km', 'mu'], $matches[1]);
+        // Comoros, Eswatini, Lesotho, Mauritius. Not the order the geometry
+        // file lists them and not alphabetical by ISO code.
+        $this->assertSame(['km', 'sz', 'ls', 'mu'], $matches[1]);
+    }
+
+    /**
+     * The mainland pair keep their place on the map as well. An enlargement
+     * is an additional way to reach a member state, not a removal from the
+     * map, and Lesotho is not an island.
+     */
+    public function test_the_enlarged_mainland_states_are_still_drawn_on_the_map(): void
+    {
+        $html = $this->get('/en/members')->assertOk()->getContent();
+
+        foreach (['ls', 'sz'] as $iso) {
+            $this->assertMatchesRegularExpression(
+                '~c-map-region__member"[^>]*data-iso="'.$iso.'"~',
+                $html,
+                strtoupper($iso).' was moved into the panel instead of being added to it.'
+            );
+        }
+    }
+
+    /**
+     * The enlargement is the map's own geometry reframed, not a second
+     * drawing of a country. Nothing here invents a coordinate.
+     */
+    public function test_an_enlarged_shape_is_the_same_path_the_map_draws(): void
+    {
+        $map = config('region-map');
+        $html = $this->get('/en/members')->assertOk()->getContent();
+
+        foreach (['ls', 'sz'] as $iso) {
+            $this->assertStringContainsString(
+                $map['members'][$iso]['d'],
+                $html,
+                strtoupper($iso).' is enlarged from a path the map does not draw.'
+            );
+
+            $box = RegionGeometry::viewBoxFor($map['members'][$iso]['d']);
+            $this->assertNotNull($box);
+            $this->assertStringContainsString('viewBox="'.$box.'"', $html);
+        }
     }
 
     /**

@@ -33,6 +33,28 @@
                 </div>
             </div>
 
+            {{-- The answer first. A reader who opens this grid wants the
+                 regional figure and who is behind on it; the eighty-four
+                 cells beneath are the evidence for both. --}}
+            <dl class="c-tiles">
+                <div class="c-tile">
+                    <dd>{{ $matrix['overall'] }}%</dd>
+                    <dt>{{ __('indicators.tile_overall') }}</dt>
+                </div>
+                <div class="c-tile">
+                    <dd>{{ collect($matrix['totals'])->filter(fn ($t) => $t['percent'] === 100)->count() }}</dd>
+                    <dt>{{ __('indicators.tile_complete') }}</dt>
+                </div>
+                <div class="c-tile">
+                    <dd>{{ collect($matrix['totals'])->filter(fn ($t) => $t['reported'] === 0)->count() }}</dd>
+                    <dt>{{ __('indicators.tile_nothing') }}</dt>
+                </div>
+                <div class="c-tile">
+                    <dd>{{ collect($matrix['freshness'])->filter()->max() ?: __('indicators.never') }}</dd>
+                    <dt>{{ __('indicators.tile_latest') }}</dt>
+                </div>
+            </dl>
+
             <p class="c-results" role="status">
                 {{ __('indicators.overall', ['percent' => $matrix['overall']]) }}
             </p>

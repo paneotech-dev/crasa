@@ -31,4 +31,8 @@ return [
     'unit_staff' => 'staff',
     'unit_days' => 'days',
     'band_eyebrow' => 'Reporting',
+    'tile_overall' => 'Of the register filed',
+    'tile_complete' => 'Member states complete',
+    'tile_nothing' => 'Filed nothing yet',
+    'tile_latest' => 'Most recent period',
 ];

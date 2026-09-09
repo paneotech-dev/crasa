@@ -29,6 +29,15 @@ final class MapEntry
         public readonly ?int $band,
         public readonly bool $reported,
         public readonly ?float $numeric = null,
+        /**
+         * The most recent period this member state has filed anything for.
+         *
+         * A shaded map with no freshness signal invites a reader to treat a
+         * 2019 return as current. The completeness dashboard has carried
+         * this since section 19 and the map had no equivalent, so the same
+         * figure now reaches both.
+         */
+        public readonly ?string $latestPeriod = null,
     ) {}
 
     public function iso(): string
@@ -42,6 +51,12 @@ final class MapEntry
      * not the lightest step. "Not reported" and "lowest value" are different
      * claims about a member state and must not look similar.
      */
+    /** current, ageing, stale or none, on the same scale the grid uses. */
+    public function freshness(): string
+    {
+        return CompletenessMatrix::freshnessOf($this->latestPeriod);
+    }
+
     public function bandAttribute(): string
     {
         return $this->band === null ? 'none' : (string) $this->band;

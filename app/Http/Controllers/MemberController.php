@@ -5,7 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Country;
 use App\Models\IndicatorValue;
 use App\Models\Publication;
+use App\Services\MapExport;
+use App\Support\MapView;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 /**
  * One member state.
@@ -23,6 +28,55 @@ use Illuminate\Contracts\View\View;
  */
 class MemberController extends Controller
 {
+    /**
+     * The dropdown beside the map. A GET form cannot put its value into a
+     * path segment, so it arrives here as ?iso= and leaves as a redirect to
+     * the canonical URL.
+     *
+     * An unknown code goes back to the membership page rather than to a 404:
+     * the reader chose from a list we rendered, so a value we do not
+     * recognise is our problem and not theirs.
+     */
+    public function redirectToState(Request $request): RedirectResponse
+    {
+        $iso = strtolower((string) $request->query('iso'));
+        $locale = app()->getLocale();
+
+        return Country::where('iso_code', $iso)->exists()
+            ? redirect()->route('members.show', ['locale' => $locale, 'iso' => $iso])
+            : redirect()->route('members', ['locale' => $locale]);
+    }
+
+    /**
+     * The shaded map as a document. Same pipeline as the comparator's
+     * exports: a branded SVG through Imagick, no headless browser.
+     */
+    public function export(Request $request, MapExport $export, string $format): Response
+    {
+        abort_unless(in_array($format, ['png', 'pdf'], true), 404);
+
+        $view = MapView::resolve(
+            Country::with(['authority.sectors'])->get(),
+            $request->query('indicator')
+        );
+
+        $permalink = route('members', array_filter([
+            'locale' => app()->getLocale(),
+            'indicator' => $view->selection ?: null,
+        ]));
+
+        $slug = $view->selection ?: 'membership';
+
+        return response(
+            $format === 'png' ? $export->png($view, $permalink) : $export->pdf($view, $permalink),
+            200,
+            [
+                'Content-Type' => $format === 'png' ? 'image/png' : 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="crasa-map-'.$slug.'.'.$format.'"',
+            ]
+        );
+    }
+
     public function show(string $iso): View
     {
         $country = Country::query()

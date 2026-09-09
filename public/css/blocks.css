@@ -815,6 +815,28 @@
 .c-list-plain__note { font-size: 13px; color: var(--c-slate); }
 .c-note { font-size: var(--t-small-size); color: var(--c-slate); margin: 0 0 var(--s-6); }
 
+/* Summary tiles --------------------------------------------------------- */
+/* The data-page shape, applied consistently: headline figures, then the
+   chart, then the complete table with its source. A reader gets the answer
+   immediately and the evidence underneath rather than having to assemble
+   the answer from the evidence.
+
+   Rules rather than boxes. Four identical bordered cards is the pattern
+   CLAUDE.md forbids, and these figures do not need a container to be read
+   as a set. */
+.c-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: var(--s-5);
+  margin: 0 0 var(--s-6);
+  padding-top: var(--s-4);
+  border-top: 2px solid var(--c-navy);
+}
+.c-tile dd { margin: 0; font-family: var(--f-head); font-size: 32px; font-weight: 600; line-height: 1; color: var(--c-navy); font-variant-numeric: tabular-nums; }
+.c-tile dd a { color: var(--c-navy); text-decoration: none; }
+.c-tile dd a:hover, .c-tile dd a:focus-visible { color: var(--c-green-dark); text-decoration: underline; text-underline-offset: 5px; }
+.c-tile dt { font-size: 13px; line-height: 1.4; color: var(--c-slate); margin-top: var(--s-2); }
+
 /* Member state flags ---------------------------------------------------- */
 /* Instantly scannable, unmistakably regional, and no photography needed.
    A thin rule rather than a shadow: several of these flags are largely
@@ -1144,6 +1166,8 @@
 }
 .c-map-region__table > summary:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
 .c-map-region__cell--missing { color: var(--c-slate); }
+
+.c-map-region__exports { display: flex; flex-wrap: wrap; gap: var(--s-3); margin: var(--s-5) 0 0; }
 
 .c-map-region__caption { font-size: 13px; line-height: 1.55; color: var(--c-slate); margin-top: var(--s-3); }
 

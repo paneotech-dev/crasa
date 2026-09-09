@@ -31,4 +31,8 @@ return [
     'unit_staff' => 'effectifs',
     'unit_days' => 'jours',
     'band_eyebrow' => 'Transmission des données',
+    'tile_overall' => 'Du registre transmis',
+    'tile_complete' => 'États membres complets',
+    'tile_nothing' => 'N\'ont rien transmis',
+    'tile_latest' => 'Période la plus récente',
 ];

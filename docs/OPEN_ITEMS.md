@@ -477,6 +477,38 @@ and table headers as excluded in terms.
 ---
 
 
+## Deferred: two map capabilities, logged 2026-09-09
+
+Four gaps in the region map were named in the report at the end of the
+responsiveness run. Four were closed on 9 September; two were ruled out of
+scope at the same time and are recorded here so they are deferred rather than
+forgotten.
+
+**Change over time.** The map shades one period. It cannot answer "who
+improved", which needs a period selector and a difference mode: shade by the
+change between two periods rather than by a value, with a diverging scale
+because an improvement and a decline are opposite directions and one hue in
+four steps cannot say that.
+
+That is a second colour scale on a platform that has deliberately kept to
+one, so it is a design decision as well as a build one. Screen 03 and the
+RegionMap screen both draw a single-hue sequential scale and neither draws a
+diverging one, so there is nothing approved to build against.
+
+**Composite categories.** A reader who wants "spectrum readiness" rather than
+one spectrum indicator has to pick the indicators one at a time. A composite
+needs a weighting, and a weighting is a methodological decision that belongs
+to CRASA rather than to us: publishing a "readiness index" whose weights we
+chose would be publishing an opinion as a figure.
+
+The completeness dataset is the only composite the map carries, and it is
+composite over a count rather than over values, which needs no weighting.
+
+Both stay out until CRASA asks for them, and both are additions to
+`App\Support\MapView` rather than changes to it.
+
+---
+
 ## Disclosed variation: two hero panel colours substituted, 2026-09-09
 
 Screen 02's data panel draws its bar track at `#0B1522` and its bar fill at

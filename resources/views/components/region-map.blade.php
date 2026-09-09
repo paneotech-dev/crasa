@@ -49,10 +49,64 @@
     // so the order the shapes are written in is entirely ours to choose.
     $ordered = $view->countries->keys()->all();
     $mainland = array_values(array_filter($ordered, fn ($iso) => ($map['members'][$iso]['d'] ?? null) !== null));
-    $islands = array_values(array_filter($ordered, fn ($iso) => ($map['members'][$iso]['inset'] ?? null) !== null));
+    /*
+     * The member states that get their own enlarged panel.
+     *
+     * Comoros and Mauritius because at region scale each island is a few
+     * pixels across. Lesotho and Eswatini because at 375px they are too
+     * small to read a figure off or aim a thumb at, even though they are on
+     * the map and correctly placed.
+     *
+     * The island pair have hand-prepared inset paths in the config. The
+     * mainland pair are framed from the shape the map already draws, so the
+     * enlargement is the same Natural Earth geometry at a different scale
+     * rather than a second drawing of a country.
+     */
+    $enlarged = [];
+
+    foreach (\App\Support\RegionGeometry::ENLARGED as $iso) {
+        if (! isset($map['members'][$iso]) || ! in_array($iso, $ordered, true)) {
+            continue;
+        }
+
+        $shape = $map['members'][$iso];
+
+        if ($shape['inset'] ?? null) {
+            $enlarged[$iso] = ['d' => $shape['inset'], 'viewBox' => '0 0 120 100'];
+
+            continue;
+        }
+
+        $box = ($shape['d'] ?? null) ? \App\Support\RegionGeometry::viewBoxFor($shape['d']) : null;
+
+        if ($box !== null) {
+            $enlarged[$iso] = ['d' => $shape['d'], 'viewBox' => $box];
+        }
+    }
+
+    // Alphabetical among themselves, like everything else on this map.
+    $enlarged = collect($enlarged)->sortBy(fn ($shape, $iso) => $view->entry($iso)->country->name)->all();
 @endphp
 
 <figure class="c-map-region {{ $view->isShaded() ? 'c-map-region--shaded' : 'c-map-region--plain' }}">
+    {{-- Two routes to the same member state. Screen 08 puts "Select a
+         member state" beside the map, and a map is not a control everyone
+         can use: a reader who knows they want Zambia should not have to
+         find Zambia on a map, and a reader who cannot see the map has no
+         route through it at all.
+
+         A plain GET form. No script, and it lands on the same canonical
+         URL the map's own links use. --}}
+    <form class="c-map-region__control" method="get" action="{{ route('members.go', ['locale' => $locale]) }}">
+        <label class="c-map-region__control-label" for="map-state">{{ __('members.map_select_state') }}</label>
+        <select class="c-map-region__select" id="map-state" name="iso">
+            @foreach ($ordered as $iso)
+                <option value="{{ $iso }}">{{ $view->entry($iso)->country->name }}</option>
+            @endforeach
+        </select>
+        <button class="c-btn c-btn--secondary" type="submit">{{ __('members.map_open_state') }}</button>
+    </form>
+
     <form class="c-map-region__control" method="get" action="{{ url()->current() }}" data-map-control>
         <label class="c-map-region__control-label" for="map-indicator">{{ __('members.map_shade_by') }}</label>
         <select class="c-map-region__select" id="map-indicator" name="indicator">
@@ -190,8 +244,8 @@
              being dropped, because a member state omitted from a membership
              map is a worse outcome than an inset. --}}
         <div class="c-map-region__insets">
-            <h3 class="c-map-region__insets-heading">{{ __('members.map_islands') }}</h3>
-            @foreach ($islands as $iso)
+            <h3 class="c-map-region__insets-heading">{{ __('members.map_enlarged') }}</h3>
+            @foreach ($enlarged as $iso => $shape)
                 @php $entry = $view->entry($iso); $country = $entry->country; @endphp
                 <a
                     class="c-map-region__inset"
@@ -202,8 +256,8 @@
                         ? __('members.map_region_inset_shaded', ['country' => $country->name, 'value' => $entry->display])
                         : __('members.map_region_inset', ['country' => $country->name, 'authority' => $country->authority?->name ?: $country->name]) }}"
                 >
-                    <svg viewBox="0 0 120 100" aria-hidden="true" focusable="false">
-                        <path d="{{ $map['members'][$iso]['inset'] }}"></path>
+                    <svg viewBox="{{ $shape['viewBox'] }}" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
+                        <path d="{{ $shape['d'] }}"></path>
                     </svg>
                     <span class="c-map-region__inset-text">
                         <span class="c-map-region__inset-code">{{ strtoupper($iso) }}</span>
@@ -213,6 +267,16 @@
             @endforeach
         </div>
     </div>
+
+    {{-- The map as a briefing document, matching the comparator's exports.
+         A choropleth that has to be screenshotted to reach a plenary paper
+         is half a feature. The exported document carries every member
+         state's figure as text, the enlarged four, the freshness column and
+         the permalink that reproduces the view. --}}
+    <p class="c-map-region__exports">
+        <a class="c-btn c-btn--secondary" href="{{ route('members.export', array_filter(['locale' => $locale, 'format' => 'png', 'indicator' => $view->selection ?: null])) }}" data-live-skip>{{ __('comparator.export_png') }}</a>
+        <a class="c-btn c-btn--secondary" href="{{ route('members.export', array_filter(['locale' => $locale, 'format' => 'pdf', 'indicator' => $view->selection ?: null])) }}" data-live-skip>{{ __('comparator.export_pdf') }}</a>
+    </p>
 
     {{-- The legend, and only when there is something to key. Screen 03's
          choropleth legend is Low, four swatches, High, then a hatch swatch
@@ -263,6 +327,7 @@
                             <th scope="col">{{ __('blocks.member_state') }}</th>
                             <th scope="col">{{ __('members.detail_acronym') }}</th>
                             <th scope="col">{{ $view->unit() ? $view->title().' ('.$view->unit().')' : $view->title() }}</th>
+                            <th scope="col">{{ __('indicators.latest') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -274,6 +339,19 @@
                                 </th>
                                 <td>{{ $entry->country->authority?->acronym }}</td>
                                 <td @class(['c-map-region__cell--missing' => ! $entry->reported])>{{ $entry->display }}</td>
+                                {{-- How recent this member state's filing
+                                     is, on the same scale the completeness
+                                     grid uses. A shaded map with no
+                                     freshness signal invites a reader to
+                                     treat a 2019 return as current. --}}
+                                <td>
+                                    <span class="c-pill {{ [
+                                        'current' => 'c-pill--validated',
+                                        'ageing' => 'c-pill--pending',
+                                        'stale' => 'c-pill--error',
+                                        'none' => 'c-pill--archived',
+                                    ][$entry->freshness()] }}">{{ $entry->latestPeriod ?: __('indicators.never') }}</span>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

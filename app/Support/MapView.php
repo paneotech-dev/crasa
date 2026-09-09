@@ -279,6 +279,7 @@ final class MapView
                 },
                 reported: true,
                 numeric: (float) $percent,
+                latestPeriod: $matrix['freshness'][$country->id] ?? null,
             );
         }
 
@@ -319,6 +320,16 @@ final class MapView
             ->get()
             ->keyBy('country_id');
 
+        // The most recent period each state has filed anything at all for,
+        // which is what the freshness badge reads. Not the period this map
+        // is drawn on: a state can be current on its filing generally and
+        // absent from this one indicator, and those are different facts.
+        $latest = IndicatorValue::query()
+            ->selectRaw('country_id, MAX(period) as latest')
+            ->groupBy('country_id')
+            ->pluck('latest', 'country_id')
+            ->all();
+
         $numbers = $values
             ->filter(fn (IndicatorValue $v) => $v->value_numeric !== null)
             ->map(fn (IndicatorValue $v) => (float) $v->value_numeric);
@@ -339,6 +350,7 @@ final class MapView
                 numeric: $cell->isReported() && $values[$country->id]?->value_numeric !== null
                     ? (float) $values[$country->id]->value_numeric
                     : null,
+                latestPeriod: $latest[$country->id] ?? null,
             );
         }
 

@@ -31,4 +31,8 @@ return [
     'unit_staff' => 'pessoal',
     'unit_days' => 'dias',
     'band_eyebrow' => 'Comunicação de dados',
+    'tile_overall' => 'Do registo comunicado',
+    'tile_complete' => 'Estados membros completos',
+    'tile_nothing' => 'Nada comunicaram',
+    'tile_latest' => 'Período mais recente',
 ];

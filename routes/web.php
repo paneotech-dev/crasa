@@ -71,6 +71,30 @@ Route::prefix('{locale}')
         Route::get('members', [PageController::class, 'show'])->defaults('slug', 'members')->name('members');
 
         /*
+         * The dropdown alternative to the map.
+         *
+         * Screen 08 says "Select a member state" beside the map, and a map
+         * is not a control everyone can use: a reader who knows they want
+         * Zambia should not have to find Zambia on a map, and a reader who
+         * cannot see the map has no route through it at all.
+         *
+         * A GET form needs a real action, and the member page's URL has the
+         * code in its path rather than its query string, so this redirects.
+         * One route, no script, and the reader lands on the same canonical
+         * URL the map's links use.
+         */
+        Route::get('member', [MemberController::class, 'redirectToState'])->name('members.go');
+
+        /*
+         * The shaded map as a briefing document, matching the comparator's
+         * exports. A choropleth that has to be screenshotted to reach a
+         * plenary paper is half a feature.
+         */
+        Route::get('members/export.{format}', [MemberController::class, 'export'])
+            ->whereIn('format', ['png', 'pdf'])
+            ->name('members.export');
+
+        /*
          * One member state. The map on the membership page links here, and a
          * link that only scrolls the page it is on is not navigation.
          *

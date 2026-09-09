@@ -35,6 +35,31 @@
                 <p class="c-lead">{{ $authority->name }}</p>
             @endif
 
+            {{-- Screen 03's shape, applied consistently: the headline
+                 figures first, then the evidence underneath. A reader gets
+                 the answer immediately and can check it without leaving the
+                 page. --}}
+            @php $tally = \App\Support\SectionCounts::forCountry($country); @endphp
+            <dl class="c-tiles">
+                @foreach ([
+                    'indicators' => ['members.tally_indicators', null],
+                    'instruments' => ['members.tally_instruments', null],
+                    'publications' => ['members.tally_publications', null],
+                    'committees' => ['members.count_committees', 'committees'],
+                ] as $field => [$key, $route])
+                    <div class="c-tile">
+                        <dd>
+                            @if ($route)
+                                <a href="{{ route($route, ['locale' => app()->getLocale()]) }}">{{ $tally[$field] }}</a>
+                            @else
+                                {{ $tally[$field] }}
+                            @endif
+                        </dd>
+                        <dt>{{ trans_choice($key, $tally[$field], ['count' => $tally[$field]]) }}</dt>
+                    </div>
+                @endforeach
+            </dl>
+
             <dl class="c-meta">
                 <div>
                     <dt>{{ __('members.detail_iso') }}</dt>
