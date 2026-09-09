@@ -1168,3 +1168,295 @@ without a CRASA regulator and must not resolve as one).
    but the first thing a Secretariat user will try.
 4. **A period selector on the map**, which turns it from a snapshot into the
    thing that answers "who improved".
+
+---
+
+# Reference run, sections 33 to 40 — report
+
+**853 tests, 6823 assertions, all passing. Pint clean. Ten commits, each
+green before committing, none red at any point.**
+
+| # | Section | Commit |
+|---|---|---|
+| 33 | The hero's second column, as screen 02 draws it | `4111a80` |
+| 34 | Section header bands, which screen 08 already drew | `8672868` |
+| 35 | Counts everywhere, each one a query | `7491b7d` |
+| 36 | The fourteen flags | `203aef8` |
+| 37, 38 | The data page shape, and the map's four gaps | `3de95f2` |
+| 39 | The extranet gets the rail screen 04 draws | `cad0d5d` |
+| 40 | The four affordance failures, closed | `7e5010c` |
+| — | The image audit, and the two things it changed | `3f2ceb8` |
+
+---
+
+## The PSC Hub patterns: what was adopted, and what was rejected
+
+The most useful thing about the reference was not that it supplied patterns
+CRASA lacked. It is that **four of the five patterns described were already
+drawn in CRASA's own approved screens and had not been built.** The reference
+did not tell us what to add; it told us where to look.
+
+### Adopted, and already ours
+
+**Section header bands with inline counts.** Screen 08 draws this exactly at
+the head of the membership page — a navy band, a 13px `--c-green-light`
+eyebrow, a `clamp(32px,5.4vw,54px)` Lora heading at 24ch, a 19px `--c-sand`
+standfirst at 70ch, and a counts row on a `--c-navy-line` rule at 36px Lora
+over a 13.5px label. Screen 07 draws the same band without the counts. The
+build had reduced all of it to a bare `<h1>` on cream.
+
+Built and applied to eight sections. One change to the screen's own grid:
+`repeat(4,...)` became `auto-fit`, because a section with three counts should
+not leave a quarter of the row empty.
+
+**The photograph as texture at heavy overlay.** Adopted as a capability and
+used nowhere — see the imagery section below. The overlay is 0.82 navy,
+measured against a pure-white photograph as the worst case, which specular
+highlights make real rather than theoretical.
+
+**Counts at every level.** Adopted wholesale and it was the largest single
+gap. Facet counts on the library, the newsroom and search, each computed with
+the other filters applied but not its own. Member cards stating what each
+state has. Every band stating how much is in its section. Every count a
+query, every count a link.
+
+**Zero-result options disabled rather than hidden.** Adopted. A reader who
+cannot see that Comoros has no publications cannot tell whether it has none
+or whether the filter is broken.
+
+**National flags on country cards.** Adopted, and the one pattern here that
+was genuinely new to CRASA. See the flags section.
+
+**The data page shape** — summary tiles, then the chart, then the complete
+table with its source. Screen 03 already draws it and the comparator already
+followed it; it is now applied consistently to the member state pages and the
+completeness dashboard.
+
+**Two routes to the same thing: map or dropdown.** Screen 08 says "Select a
+member state" beside its map and the build had only the map.
+
+**Left navigation grouped by function.** Adopted for the extranet only, and
+adopted because screen 04 already draws it — a navy rail, 220 to 280px, flat
+links with Lucide icons, the current section on `--c-navy-mid` with a 3px
+`--c-green` edge, and the reader's clearance pinned to the foot with
+`margin-top:auto`. The extranet had been extending the back office layout.
+
+### Rejected
+
+**Left navigation in the back office.** Screen 09 draws a horizontal section
+bar in the header and CRASA has seen it. An approved screen is not overridden
+by a pattern from another platform, however good the pattern is. Logged in
+`docs/OPEN_ITEMS.md`.
+
+**The grouping itself, in both surfaces.** Screen 04 draws seven flat links
+and no group headings. Grouping five destinations under three named groups
+adds headings without adding navigation; at this size the group label is more
+text than the links it organises. Worth reopening past a dozen destinations.
+
+**Six identical photo cards.** Named in the brief as the uniform-card pattern
+CLAUDE.md forbids, and not built. Card heights on this platform vary with
+content and always have.
+
+**The generic-corporate register.** Named in the brief and — it turned out —
+already present in one place on our own platform. Removed. See below.
+
+---
+
+## Where a screen overrode a pattern
+
+Three, and each is recorded where a later reader will find it.
+
+**The back office keeps its horizontal bar.** Screen 09.
+
+**The comparator keeps screen 03's band.** Screen 03 draws the same navy band
+with the demonstration notice where a counts row would go, and states its
+counts in the standfirst instead — "Twelve indicators across three categories,
+for all 14 CRASA member regulators". Adding a counts row would print those
+figures twice and displace the notice that qualifies every value on the page.
+A test asserts the comparator has no `c-band__counts`.
+
+**Eyebrows stay in sentence case.** Screens 02, 07 and 08 all set the band
+eyebrow in tracked caps. The CLAUDE.md ruling excludes eyebrows and wins, as
+it did for the hero eyebrow in an earlier run. Everything else each screen
+sets — size, weight, colour, spacing — is kept. The one place tracked caps
+survive outside the footer is the extranet rail's wordmark lockup, which is a
+mark rather than a section label.
+
+---
+
+## The flags: source, licence, and what was verified
+
+**Source.** [flag-icons](https://github.com/lipis/flag-icons) 7.2.3, MIT
+licensed, fetched from jsDelivr on 9 September 2026. Not drawn here, not
+approximated, and not modified: every file is the upstream file byte for
+byte. A wrong flag on an intergovernmental platform is a diplomatic problem
+rather than a design one.
+
+**Licence.** MIT, copyright 2013 Panayiotis Lipiridis. The full text is
+retained at `public/img/flags/LICENSE.txt`. MIT requires the notice be kept
+and does not require visible attribution on the page. Per-file provenance —
+source URL, version, licence, download date and what was verified — is in
+`public/img/flags/LICENCES.csv`, in the same shape as the photography
+register.
+
+**Verified against.** Each flag was checked against its authoritative
+description before installation, and what was checked is recorded per file.
+
+| | Verified |
+|---|---|
+| Angola | Red over black with the yellow machete, cog and star |
+| Botswana | Light blue with a white-bordered black horizontal band |
+| Comoros | Four bands, green hoist triangle, crescent and four stars |
+| DR Congo | Sky blue, yellow star, red diagonal with yellow fimbriation |
+| Eswatini | Blue, yellow and red with the Nguni shield, spears and staff |
+| Lesotho | **2006 design**: blue, white, green with the black mokorotlo |
+| Malawi | **2012 reversion**: black, red, green with the red rising sun |
+| Mauritius | Four bands: red, blue, yellow, green |
+| Mozambique | Green, black, yellow, white fimbriation, red hoist triangle |
+| Namibia | Blue and green, red diagonal, white fimbriation, gold sun |
+| South Africa | The six-colour Y design |
+| Tanzania | Green and blue, black diagonal with yellow fimbriation |
+| Zambia | Green with the orange eagle over red, black and orange fly bands |
+| Zimbabwe | Seven stripes, white hoist triangle, red star, Zimbabwe Bird |
+
+**Two needed particular care.** Lesotho and Malawi both have a superseded
+version still in wide circulation, and neither error would be noticed by
+anyone who is not from that country. A test asserts the specific fills that
+distinguish the current design from the old one in both cases, so an asset
+refresh cannot quietly regress either.
+
+**Eswatini keeps ISO code SZ.** The 2018 rename from Swaziland changed
+neither the code nor the flag.
+
+**One thing worth chasing down.** Zimbabwe's file carries a `#00f` fill. It
+is on a rect inside a `clipPath` and never renders; Zimbabwe's flag has no
+blue in it.
+
+**Never the only identifier.** Every flag is `alt=""` and decorative, with
+the country name beside it. A flag cannot be read out, cannot be searched
+for, and tells a reader who does not know fourteen Southern African flags by
+sight nothing at all. A test walks every flag on every page and fails if any
+carries alt text, because alt text on a flag means it is being asked to
+identify something the name should be identifying.
+
+---
+
+## Every image on the platform, and whether it belongs there
+
+Measured by fetching each public page and listing what it actually serves,
+not asserted.
+
+| Image | Where it appears | Contextually correct? |
+|---|---|---|
+| `telecom-equipment-testing-01.jpg` | Newsroom cards and articles tagged telecommunications | **Yes.** A test bench is a telecommunications subject on a telecommunications card |
+| `postal-parcel-handover-01.jpg` | Newsroom cards and articles tagged postal | **Yes.** A parcel handover on a postal card |
+| Fourteen flag SVGs | Member cards, member pages, comparator selector and table, completeness grid, submissions list, delegate roster | **Yes.** Each flag is the flag of the member state it names |
+| `crasa-logo.svg` | Site header, extranet rail, every export | Yes |
+
+**Every other public page carries no photograph at all**: the homepage,
+publications, members, about, events, committees, search, comparator and the
+completeness dashboard.
+
+That is not an oversight. The band component supports a photograph at heavy
+overlay, measured and tested, and no band uses one because the supplied
+library has five images and not one of them is about any of these eight
+sections. The nearest miss was `institutional` for the committees band —
+three colleagues reviewing charts — and that is a team looking at a screen,
+which `docs/CLIENT_REQUESTS.md` rules out in its own words.
+
+**Two changes the audit forced.**
+
+Telecommunications had been set to `null` because the only telecoms
+photograph was also the homepage banner, and the same photograph twice on one
+page is worse than one designed absence. That was right when it was written
+and the premise is gone: the banner carries no photograph since section 31.
+Restored.
+
+A news item with no sector was getting `institutional` — the team at the
+laptop. That is on the list of things we are telling CRASA not to send us. A
+rule we apply to CRASA's suppliers has to hold for us, so it is gone and
+untagged items render the typographic slot.
+
+**Three library slots now render nowhere**: `people` (a courier on a scooter,
+a consumer subject), `institutional` (the team at the laptop), and `hero` (an
+alias of the telecoms file). They stay in the library with their licences,
+because the derivative pipeline is proven against them and because deleting a
+supplied asset is CRASA's call rather than ours.
+
+---
+
+## What section 35 asked for and did not get
+
+**Committee cards.** There are none. The six committees that exist as records
+— mandates, chairs, member state seats, meetings — are not rendered anywhere
+on the public site. A reader can find which committees a member state sits
+on, from that state's page; they cannot go the other way.
+
+Listing them needs a thirteenth block type, and `docs/DATA_MODEL.md` section
+8 is explicit: *"Fixed set. Adding a thirteenth requires a decision, not a
+commit."* So it is Question 8 in `docs/QUESTIONS.md`, with a recommendation to
+add it, the settings it would take, and the honest alternative if the answer
+is no.
+
+In place meanwhile: the committees band states committees, member state seats
+and meetings recorded, each a link; and every member state page lists that
+state's seats with the role it holds.
+
+---
+
+## The hero, revisited
+
+The last report named the gap and this run closed it. Screen 02's slide with
+no photograph fills its second column with a `--c-navy-mid` panel, and ours
+had filled it with nothing, which read thinnest at laptop widths.
+
+The panel now carries three bars — one per sector, each the share of the
+indicator register member states have filed for that sector across all
+fourteen — then the counts, each a link.
+
+**What it deliberately does not show.** Per-member-state completeness is the
+obvious thing to put in a bar chart here and the wrong thing to put on a
+public homepage. That view ranks fourteen sovereign regulators by how well
+they have filed, and it lives behind an account on the completeness dashboard
+for exactly that reason. Publishing it on the front page is CRASA's decision,
+not ours. A test asserts no member state is named in the bars.
+
+Screen 08's own band carries "350M+ citizens served". Nobody has sourced that
+for us and it is not on the platform. A test asserts each bar states the
+figure it computed, and that `350M` appears nowhere.
+
+---
+
+## Test and assertion count
+
+| | Start of this run | End |
+|---|---|---|
+| Tests | 784 | **853** |
+| Assertions | 6205 | **6823** |
+| Pint | clean | clean |
+
+Six new test files: `SectionBandTest`, `CountsTest`, `FlagsTest`,
+`MapGapsTest`, `ExtranetNavigationTest`, `AffordanceFixesTest`.
+
+Live smoke after every section: all public routes 200 in all three
+languages. The map's PNG and PDF exports verified by rendering them, not by
+checking a status code — 1240×1745, all fourteen member states present with
+their figures printed as text, the four enlarged states in their own row, and
+Madagascar correctly in sand as a SADC member without a CRASA regulator.
+
+---
+
+## What I would do first with another two days
+
+1. **The committee directory**, if Question 8 comes back yes. It is the one
+   thing a delegate will look for in the first two minutes, because they sit
+   on one.
+2. **Sortable columns in the back office resource tables.** Section 40 made
+   the public data tools sortable; the back office tables a Secretariat user
+   works in all day still are not.
+3. **A period selector on the map**, which turns it from a snapshot into the
+   thing that answers "who improved". Held only by the diverging-scale
+   question logged in `OPEN_ITEMS.md`.
+4. **Flags in the back office** — the users table, the audit log, anywhere a
+   member state is named in a list. They stopped at the public site and the
+   delegate roster.
