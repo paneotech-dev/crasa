@@ -59,6 +59,19 @@ final class MediaLibrary
                 $existing->restore();
             }
 
+            /*
+             * A record whose file has gone is repaired rather than handed
+             * back as if it were fine. Deduplicating on the checksum is
+             * right, but "we already have this one" has to mean the bytes
+             * are still there: otherwise a lost file leaves a row pointing
+             * at nothing and every later upload of the same image confirms
+             * the problem instead of fixing it.
+             */
+            if (! Storage::disk($existing->disk)->exists($existing->path)) {
+                Storage::disk($existing->disk)->put($existing->path, $this->cleaned($file));
+                $this->generateRenditions($existing);
+            }
+
             return $existing;
         }
 
