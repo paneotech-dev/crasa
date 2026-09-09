@@ -22,14 +22,58 @@ Nothing in this file appears on the rendered site.
 
 ## Disclosed deviations from the specifications
 
-These three depart from the written specifications and go to the client in
-writing. Each is a hosting or platform reality, not a preference.
+These depart from the written specifications and go to the client in
+writing. Each is a hosting reality, a contractual standard overriding a
+drawn value, or a conflict between two contractual documents. None is a
+preference.
+
+**All of them are consolidated for the client in `docs/VARIATIONS.md`,
+which is written to be forwarded as it stands.**
 
 | # | Specification says | Built as | Why |
 |---|---|---|---|
 | 1 | Laravel 11 | **Laravel 13.30.1** | The base install predates this build. Laravel 11 is out of active support; downgrading a working install to an older major would add risk and no benefit. |
 | 2 | MySQL 8.0 | **MariaDB 10.11** | The server runs MariaDB. All tables are InnoDB, utf8mb4_unicode_ci. Behaviour differences that matter to this build are limited to the SET column type, addressed in DATA_MODEL section 2. |
 | 3 | ElasticSearch | **Laravel Scout on MariaDB InnoDB FULLTEXT**, behind a driver interface | Resolved 2026-09-08. See below. |
+| 4 | `--c-border` and `--c-navy-edge` as drawn in the approved foundations | **Darkened and lightened** | WCAG 2.1 AA is a contractual acceptance criterion and the drawn values fail SC 1.4.11. Resolved 2026-09-09; see the disclosed variation below. |
+| 5 | Chart.js for graphs (Annexure B, RP-10 and the technology stack) | **The chart treatment screen 03 draws**: DOM bars that state their own figures, and the RegionMap SVG for the regional view | Resolved 2026-09-09. Two contractual documents disagree; see below. |
+
+### 5. Chart.js and Leaflet — resolved 2026-09-09
+
+**This is a conflict between two contractual documents, not a departure from
+one.**
+
+Annexure B names Chart.js for graphs and Leaflet for maps, both under RP-10
+and in the technology stack. **Screen 03, which CRASA accepted, uses
+neither.** Its regional-view bars are DOM elements that each state their own
+figure beside them, and its map is the RegionMap component in choropleth
+mode, drawn as inline SVG.
+
+**Decision: the accepted screen governs.** Three reasons, and the first two
+are themselves contractual requirements.
+
+Accessibility. A canvas chart needs a separate table equivalent to satisfy
+the WCAG 2.1 AA clause and the "charts have a table equivalent" requirement.
+Bars that state their own figures satisfy it by construction, because they
+are already text.
+
+Print. The comparator is specified to print, and screen 03 says in its own
+words that the screen "reads correctly as a printed page and under a screen
+reader". A canvas and a slippy map both defeat that.
+
+Self-hosting. A Leaflet map needs a tile provider, which is a third-party
+request from a regulator's browser. This platform's stated position is that
+nothing is hotlinked.
+
+**Half of the stack row is satisfied as written: Leaflet remains in use on
+the contact page** for the Secretariat's office location, which is a
+geographic map and the right tool for it.
+
+Chart.js is not currently used. If the client wants it, the natural home is
+the analytics dashboards, which are not published figures and so need no
+table equivalent. Swapping either library into the comparator later is a
+change to one Blade partial, because the data comes from the `Comparison`
+object rather than from the view.
 
 ### 3. Search driver — resolved 2026-09-08
 
