@@ -152,24 +152,8 @@
                 </pattern>
             </defs>
 
-            {{-- Africa. The approved RegionMap.dc.html drew a grid of sand
-                 rules here, which is what a map does when it has no
-                 geography to show. These are the real outlines at the same
-                 projection, inert and unlabelled: the region sits in a
-                 continent instead of on graph paper. --}}
-            <g class="c-map-region__continent" aria-hidden="true">
-                {{-- fill and stroke as attributes, not only in CSS. A path
-                     with no fill from either source renders black, which is
-                     what a whole continent of solid black polygons was. The
-                     stylesheet still governs every interactive state; this
-                     is only the floor under it. --}}
-                @foreach ($map['continent'] as $outline)
-                    <path d="{{ $outline }}" fill="#F8F6F1" stroke="#908977" stroke-width="1.1" stroke-linejoin="round"></path>
-                @endforeach
-            </g>
-
             {{-- The two SADC states that are not CRASA members. A step
-                 closer than the continent behind them and a step back from
+                 forward from the ocean around them and a step back from
                  the fourteen: named, but never clickable. --}}
             @foreach ($map['context'] as $context)
                 <path class="c-map-region__context" d="{{ $context['d'] }}" aria-hidden="true"
@@ -220,7 +204,7 @@
                     class="c-map-region__value"
                     data-band="{{ $view->entry($iso)->bandAttribute() }}"
                     x="{{ $shape['label'][0] }}"
-                    y="{{ $shape['label'][1] + 19 }}"
+                    y="{{ $shape['label'][1] + 14 }}"
                     text-anchor="middle"
                     aria-hidden="true"
                 >{{ $view->entry($iso)->display }}</text>
@@ -315,9 +299,9 @@
          the sc-if that gates the scale, and only the four-step scale is
          conditional. This rendered nothing at all unless a choropleth was
          showing, so the default view of the map -- three tiers of colour,
-         green members, sand context, cream continent -- had nothing keying
-         any of them. The third entry is ours: the screen has no continent
-         behind its map and needs no line for it. --}}
+         green members and sand context -- had nothing keying either. Two
+         entries, as the screen has. A third was added while the whole
+         continent sat behind the map and left when it did. --}}
     <div class="c-map-region__legend">
         <div class="c-map-region__key">
             <span class="c-map-region__swatch c-map-region__swatch--member"
@@ -330,12 +314,6 @@
             <span class="c-map-region__swatch c-map-region__swatch--context"></span>
             <span><strong>{{ __('members.legend_context_title') }}</strong>
                 {{ __('members.legend_context_body') }}</span>
-        </div>
-
-        <div class="c-map-region__key">
-            <span class="c-map-region__swatch c-map-region__swatch--continent"></span>
-            <span><strong>{{ __('members.legend_continent_title') }}</strong>
-                {{ __('members.legend_continent_body') }}</span>
         </div>
     </div>
 

@@ -384,16 +384,11 @@
   color: var(--c-sand);
   font-variant-numeric: tabular-nums;
 }
-/* "font-size:13px;color:#B9C2D0;min-width:0" -- #B9C2D0 is not a token.
-   --c-sand reads warm against the navy where that grey reads cold; the
-   substitution is logged in docs/QUESTIONS.md with the other four. */
-.b-hero__state {
-  margin: 0;
-  min-width: 0;
-  font-size: 13px;
-  line-height: 1.4;
-  color: var(--c-sand);
-}
+/* Screen 02 draws a state note after the counter, "font-size:13px;
+   color:#B9C2D0". Removed on a ruling of 9 September 2026 and logged as a
+   disclosed variation: it narrated the control's own behaviour back to a
+   reader who could already see the control, and what it carried for a
+   reader who could not now lives in the pause button's accessible name. */
 
 .b-hero__pause {
   min-height: 44px;
@@ -1208,29 +1203,18 @@
 .c-map-region__select { flex: 1 1 260px; max-width: 420px; }
 
 /*
- * Three tiers, and the distance between them is the whole point.
+ * Two tiers, and the distance between them is the point. The two SADC
+ * states that are not CRASA members are flat sand; the fourteen are green,
+ * the colour that means "in force" everywhere else on the platform.
  *
- * Africa is cream on a sand hairline: present, inert, never mistaken for a
- * subject. The two SADC states that are not CRASA members are a step
- * forward in sand. The fourteen are green, the colour that means "in force"
- * everywhere else on the platform.
- *
- * The continent's stroke does the work rather than its fill, because the
- * members block sits on the sand ground and a cream fill on sand is a
- * whisper. On white it is the other way round. The hairline reads on both.
+ * A third tier sat behind these while the whole continent was drawn. It
+ * went with the revert to the approved box.
  */
-.c-map-region__continent path {
-  fill: var(--c-cream);
-  stroke: var(--c-border);
-  stroke-width: 1.1;
-  stroke-linejoin: round;
-  pointer-events: none;
-}
 
 /* Neighbours in sand, so the region reads as sitting in a continent rather
    than floating. Deliberately flat: they are context, not content. */
 .c-map-region__context { fill: var(--c-sand); stroke: var(--c-border); stroke-width: .9; stroke-linejoin: round; }
-.c-map-region__context-label { fill: var(--c-slate); font-family: var(--f-admin); font-size: 16px; }
+.c-map-region__context-label { fill: var(--c-slate); font-family: var(--f-admin); font-size: 12px; }
 
 /* Members in the green that means "in force" everywhere else on the
    platform. The map is not inventing a colour meaning; it is using the one
@@ -1249,10 +1233,11 @@
 .c-map-region__code {
   fill: var(--c-green-dark);
   font-family: var(--f-admin);
-  /* User units, so these scale with the viewBox. The box went from 820 to
-     1136 wide when the continent arrived, which would have rendered 13px at
-     about 9. 18 and 15 hold the apparent size where it was. */
-  font-size: 18px;
+  /* User units, so these scale with the viewBox. Back to 13 and 11 with the
+     box back at 820: they were raised to 18 and 15 to hold the apparent
+     size while the wider box shrank everything, and at 16 the Seychelles
+     label ran off the right edge. */
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: .04em;
   pointer-events: none;
@@ -2003,8 +1988,7 @@
   color: var(--c-charcoal);
 }
 .c-map-region__swatch--member,
-.c-map-region__swatch--context,
-.c-map-region__swatch--continent {
+.c-map-region__swatch--context {
   flex: none;
   width: 20px;
   height: 14px;
@@ -2014,6 +1998,3 @@
 .c-map-region__swatch--member { background: var(--c-green-light); border: 1.5px solid var(--c-green-dark); }
 .c-map-region__swatch--member[data-band="2"] { background: var(--c-green-step-2); }
 .c-map-region__swatch--context { background: var(--c-sand); border: 1.5px solid var(--c-border); }
-/* Ours, for the continent the screen does not draw. Cream on a sand
-   hairline, which is exactly what the outlines themselves carry. */
-.c-map-region__swatch--continent { background: var(--c-cream); border: 1.5px solid var(--c-border); }

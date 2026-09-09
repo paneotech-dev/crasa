@@ -68,6 +68,4 @@ return [
     'legend_member_shaded' => 'Quatorze États membres souverains, ombrés selon l\'indicateur retenu. Chaque État indique sa valeur en toutes lettres autant que par une teinte.',
     'legend_context_title' => 'État membre de la SADC sans régulateur de la CRASA.',
     'legend_context_body' => 'La SADC compte 16 États membres, la CRASA 14 régulateurs membres. Madagascar et les Seychelles figurent à titre de contexte géographique et ne sont pas sélectionnables.',
-    'legend_continent_title' => 'Ni l\'un ni l\'autre.',
-    'legend_continent_body' => 'Le reste de l\'Afrique, tracé pour que la région s\'inscrive dans un continent plutôt que seule. Non sélectionnable et sans données.',
 ];

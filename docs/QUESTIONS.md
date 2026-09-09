@@ -418,6 +418,15 @@ the screens are the error, this reverses in one commit.
 ---
 ## The map now draws Africa, which RegionMap.dc.html does not
 
+> **Answered 9 September 2026: reverted.** The continent came out and the box
+> went back to `0 0 820 660`. It cost every member state 28 per cent of its
+> size, and the four enlarged panels were carrying weight they were not
+> designed for. Everything else this entry describes — the licence record,
+> the Lesotho label defect, the attributes — was independent of the continent
+> and stayed. The entry is kept below as written, because the reasoning that
+> led to it is worth being able to read.
+
+
 *Raised 9 September 2026. A disclosed variation, taken on the brief's
 instruction to log rather than to ask.*
 

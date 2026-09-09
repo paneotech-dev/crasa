@@ -81,10 +81,11 @@ class MapExport
         /*
          * The map itself, at the same geometry and the same band colours.
          *
-         * The box no longer starts at the origin: it opens west and north to
-         * hold the continent, so min_x and min_y are negative. transform
-         * applies left to right, so the translate has to cancel that origin
-         * or every shape lands down and to the right of the frame.
+         * The translate cancels the box's origin. That origin is 0,0 again
+         * now the continent has gone, so the two terms fall away -- but the
+         * arithmetic stays, because a box that can move is worth keeping
+         * even when it is not moving, and the day it moved without this the
+         * whole map landed down and to the right of its frame.
          */
         $originX = round(40 - ($mapScale * $map['min_x']), 4);
         $originY = round($mapTop - ($mapScale * $map['min_y']), 4);
@@ -92,11 +93,6 @@ class MapExport
         // Named, because the header logo is also a translated group and
         // anything looking for "the map" has to be able to tell them apart.
         $parts[] = '<g id="region" transform="translate('.$originX.' '.$originY.') scale('.round($mapScale, 4).')">';
-
-        // Africa behind everything, inert here as it is on the page.
-        foreach ($map['continent'] as $outline) {
-            $parts[] = '<path d="'.$e($outline).'" fill="#F8F6F1" stroke="#908977" stroke-width="1.1" stroke-linejoin="round"/>';
-        }
 
         foreach ($map['context'] as $context) {
             $parts[] = '<path d="'.$e($context['d']).'" fill="#E5E0D5" stroke="#908977" stroke-width="0.9"/>';
@@ -135,14 +131,14 @@ class MapExport
             // Every state states its own figure. Colour is never the only
             // carrier, in a printed brief least of all.
             $ink = $view->isShaded() && in_array($entry->bandAttribute(), ['2', '3'], true) ? '#FFFFFF' : '#0F1B2D';
-            // 18 and 15 rather than 13 and 11: these sit inside the scaled
-            // group, and the group's scale fell when the box grew to hold
-            // the continent. The page carries the same two values.
+            // 13 and 11, the same two values the page carries. They were
+            // briefly 18 and 15, to hold the apparent size while the wider
+            // box shrank the group.
             $parts[] = '<text x="'.$shape['label'][0].'" y="'.$shape['label'][1].'" text-anchor="middle" '
-                .'font-family="Helvetica,Arial,sans-serif" font-size="18" font-weight="700" fill="'.$ink.'">'
+                .'font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="'.$ink.'">'
                 .$e(strtoupper($iso)).'</text>';
-            $parts[] = '<text x="'.$shape['label'][0].'" y="'.($shape['label'][1] + 19).'" text-anchor="middle" '
-                .'font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="'.$ink.'">'
+            $parts[] = '<text x="'.$shape['label'][0].'" y="'.($shape['label'][1] + 14).'" text-anchor="middle" '
+                .'font-family="Helvetica,Arial,sans-serif" font-size="11" font-weight="600" fill="'.$ink.'">'
                 .$e($entry->display).'</text>';
         }
 

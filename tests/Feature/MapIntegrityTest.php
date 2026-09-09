@@ -15,15 +15,20 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * The map, once the continent arrived behind it.
+ * The map's integrity, at the approved box.
  *
- * RegionMap.dc.html fits the box to the fourteen member states and fills the
- * emptiness around them with a grid of sand rules. That is what a map draws
- * when it has no geography. This replaces the rules with the real outlines
- * at the same projection, which is a disclosed departure from the approved
- * screen and is recorded in docs/QUESTIONS.md.
+ * The whole continent sat behind this map for a few hours on 9 September
+ * 2026 and was reverted: it cost every member state 28 per cent of its size
+ * for context nobody had asked for. What survived the revert is everything
+ * that had nothing to do with the continent -- the colours and sizes as
+ * attributes rather than only as CSS, the labels drawn after every shape,
+ * the legend in both modes -- because those were fixing real faults that a
+ * stale stylesheet had merely exposed.
+ *
+ * This holds the approved box and the things that make it survive a
+ * stylesheet that does not arrive.
  */
-class ContinentMapTest extends TestCase
+class MapIntegrityTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -73,30 +78,23 @@ class ContinentMapTest extends TestCase
         );
     }
 
-    public function test_the_continent_is_inert(): void
+    public function test_the_box_is_the_one_the_screen_draws(): void
     {
-        $html = $this->map();
+        // RegionMap.dc.html line 12: viewBox="0 0 820 660".
+        $map = config('region-map');
 
-        preg_match('#<g class="c-map-region__continent"[^>]*>(.*?)</g>#s', $html, $group);
+        $this->assertSame(0, $map['min_x']);
+        $this->assertSame(0, $map['min_y']);
+        $this->assertSame(820, $map['width']);
+        $this->assertSame(660, $map['height']);
 
-        $this->assertNotEmpty($group, 'The continent group is not rendered.');
-        $this->assertStringContainsString('aria-hidden="true"', $group[0]);
-        $this->assertStringNotContainsString('<a ', $group[1], 'A non-member outline must not be a link.');
-        $this->assertStringNotContainsString('href', $group[1]);
-        $this->assertStringNotContainsString('<text', $group[1], 'A non-member outline must not be labelled.');
-
-        $this->assertSame(
-            38,
-            substr_count($group[1], '<path'),
-            'The continent is 38 outlines: Africa less the fourteen members, less Madagascar and Seychelles.',
+        $this->assertArrayNotHasKey(
+            'continent',
+            $map,
+            'The continent is back. It was reverted on 9 September 2026.',
         );
 
-        $css = file_get_contents(public_path('css/blocks.css'));
-        $this->assertMatchesRegularExpression(
-            '/\.c-map-region__continent path \{[^}]*pointer-events: none/',
-            $css,
-            'The continent must not swallow a click aimed at a member state.',
-        );
+        $this->assertStringContainsString('viewBox="0 0 820 660"', $this->map());
     }
 
     public function test_nothing_is_drawn_outside_the_box(): void
@@ -108,7 +106,7 @@ class ContinentMapTest extends TestCase
         $x1 = $x0 + $map['width'];
         $y1 = $y0 + $map['height'];
 
-        $paths = array_values($map['continent']);
+        $paths = [];
 
         foreach ($map['members'] as $iso => $shape) {
             if ($shape['d'] !== null) {
@@ -136,11 +134,11 @@ class ContinentMapTest extends TestCase
         }
     }
 
-    public function test_no_member_path_moved_when_the_box_grew(): void
+    public function test_no_member_path_moved_through_either_change(): void
     {
-        // The box opened around the members. If a member coordinate had
-        // shifted, every label placed at a fixed point would be wrong and
-        // the export would not match the page.
+        // The box opened around the members and closed again. If a member
+        // coordinate had shifted either way, every label placed at a fixed
+        // point would be wrong and the export would not match the page.
         $map = config('region-map');
 
         $this->assertStringStartsWith('M400,526.25', $map['members']['ls']['d'], 'Lesotho moved.');
@@ -167,7 +165,7 @@ class ContinentMapTest extends TestCase
         }
     }
 
-    public function test_the_continent_is_recorded_in_the_licence_register(): void
+    public function test_the_geometry_is_recorded_in_the_licence_register(): void
     {
         $rows = array_map('str_getcsv', file(base_path('docs/LICENCES.csv')));
         $header = array_shift($rows);
@@ -178,11 +176,11 @@ class ContinentMapTest extends TestCase
             $sources[] = array_combine($header, $row);
         }
 
-        $continent = array_filter($sources, fn ($r) => str_contains($r['where used'], 'continent'));
+        $geometry = array_filter($sources, fn ($r) => str_contains($r['where used'], 'region-map.php'));
 
-        $this->assertNotEmpty($continent, 'The continent geometry is not in docs/LICENCES.csv.');
+        $this->assertNotEmpty($geometry, 'The map geometry is not in docs/LICENCES.csv.');
 
-        $row = reset($continent);
+        $row = reset($geometry);
         $this->assertStringContainsString('Natural Earth', $row['source']);
         $this->assertStringContainsString('Public domain', $row['licence']);
     }
@@ -253,8 +251,8 @@ class ContinentMapTest extends TestCase
         }
 
         $this->assertSame(12, substr_count($svg[0], 'fill="#E8F4EC"'), 'The twelve mainland members.');
-        $this->assertSame(38, substr_count($svg[0], 'fill="#F8F6F1"'), 'The continent behind them.');
         $this->assertSame(2, substr_count($svg[0], 'fill="#E5E0D5"'), 'Madagascar and Seychelles.');
+        $this->assertSame(0, substr_count($svg[0], 'fill="#F8F6F1"'), 'The continent is back.');
     }
 
     public function test_the_island_insets_carry_their_size_as_attributes(): void
@@ -267,8 +265,7 @@ class ContinentMapTest extends TestCase
 
         // Four, not the screen's two. RegionGeometry::ENLARGED adds
         // Lesotho and Eswatini to Comoros and Mauritius because they are
-        // too small to aim at, which matters more since the continent
-        // arrived and took every member state to 72 per cent of its size.
+        // too small to aim at even at the approved scale.
         $this->assertSame(
             4,
             preg_match_all('/<svg[^>]*width="66"[^>]*height="53"/', $html),
@@ -284,29 +281,44 @@ class ContinentMapTest extends TestCase
         );
     }
 
-    public function test_the_context_states_are_named_in_full(): void
+    public function test_the_context_states_are_named_in_full_and_fit_the_box(): void
     {
         $html = $this->map();
 
         $this->assertStringContainsString('>Seychelles<', $html);
         $this->assertStringContainsString('>Madagascar<', $html);
-        $this->assertStringNotContainsString('>Seychelle<', $html);
+
+        // "Seychelles" was never truncated in the markup. It was clipped by
+        // the right edge: the label is centred, and at 16px -- the size the
+        // wider box needed -- it reached x=827 in an 820 box and rendered
+        // as "Seychelle". At 12px it is 61.5px wide, so a centre at 783
+        // reaches 814 and leaves six pixels.
+        $map = config('region-map');
+
+        foreach ($map['context'] as $context) {
+            $halfWidth = mb_strlen($context['name']) * 6.2 / 2;
+
+            $this->assertLessThanOrEqual(
+                $map['min_x'] + $map['width'],
+                $context['lx'] + $halfWidth,
+                "The {$context['name']} label runs off the right of the box.",
+            );
+        }
     }
 
-    public function test_the_legend_keys_all_three_tiers_without_a_choropleth(): void
+    public function test_the_legend_keys_both_tiers_without_a_choropleth(): void
     {
         // RegionMap.dc.html draws its two key entries outside the sc-if
         // that gates the four-step scale, so they show in both modes. Ours
         // rendered nothing at all unless a choropleth was showing, which
-        // left the default view carrying three tiers of colour and no key
-        // to any of them. The third entry is ours: the screen has no
-        // continent behind its map and needs no line for it.
+        // left the default view carrying two tiers of colour and no key to
+        // either. A third entry existed while the continent did.
         $html = $this->map();
 
-        $this->assertSame(3, substr_count($html, 'c-map-region__key'));
+        $this->assertSame(2, substr_count($html, 'c-map-region__key'));
         $this->assertStringContainsString('CRASA member regulator.', $html);
         $this->assertStringContainsString('SADC member without a CRASA regulator.', $html);
-        $this->assertStringContainsString('The rest of Africa', $html);
+        $this->assertStringNotContainsString('The rest of Africa', $html);
 
         // The scale stays conditional; there is nothing to scale here.
         $this->assertStringNotContainsString('c-map-region__scale', $html);
