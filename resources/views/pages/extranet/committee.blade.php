@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.extranet')
 
 @section('title', $committee->name)
 @section('note', __('extranet.workspace_note'))

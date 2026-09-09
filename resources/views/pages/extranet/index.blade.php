@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.extranet')
 
 @section('title', __('extranet.title'))
 @section('note', __('extranet.note'))

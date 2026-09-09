@@ -1387,3 +1387,74 @@ body[data-surface="admin"][data-theme="dark"] {
     animation-duration: .01ms !important;
   }
 }
+
+/* The extranet rail ----------------------------------------------------- */
+/* Screen 04, verbatim:
+     flex:1 1 220px;max-width:280px;min-width:0;background:var(--c-navy);
+     color:var(--c-cream);padding:var(--s-5) 0;
+     display:flex;flex-direction:column;gap:var(--s-6)
+
+   The back office keeps screen 09's horizontal section bar. These are two
+   surfaces with two approved patterns, and neither borrows the other's. */
+.e-shell { display: flex; flex-wrap: wrap; align-items: stretch; min-height: 100vh; }
+
+.e-rail {
+  flex: 1 1 220px;
+  max-width: 280px;
+  min-width: 0;
+  background: var(--c-navy);
+  color: var(--c-cream);
+  padding: var(--s-5) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+
+/* Below the rail's own breakpoint it becomes a band across the top rather
+   than a 280px column beside a 40px one. */
+@media (max-width: 700px) {
+  .e-rail { flex: 1 1 100%; max-width: none; gap: var(--s-4); }
+  .e-rail__links { flex-direction: row; flex-wrap: wrap; }
+  .e-rail__clearance { margin-top: 0; }
+}
+
+.e-main { flex: 999 1 420px; min-width: 0; background: var(--c-admin-bg); }
+
+.e-rail__mark { display: flex; align-items: center; gap: var(--s-3); padding: 0 var(--s-5); text-decoration: none; }
+.e-rail__mark img { flex: none; display: block; }
+.e-rail__mark > span { display: flex; flex-direction: column; }
+.e-rail__wordmark { font-family: var(--f-head); font-size: 17px; font-weight: 600; color: var(--c-white); line-height: 1.1; }
+/* Tracked caps. This is a wordmark lockup rather than a section eyebrow —
+   the same treatment the site header gives the mark — and screen 04 draws
+   it. Sentence case elsewhere still holds. */
+.e-rail__kicker { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--c-green-light); }
+
+.e-rail__links { display: flex; flex-direction: column; gap: 2px; padding: 0 var(--s-3); }
+.e-rail__link {
+  display: flex; align-items: center; gap: 11px;
+  font-size: 15px; font-weight: 500; color: var(--c-cream);
+  text-decoration: none; padding: 11px var(--s-3); border-radius: var(--r-sm);
+  min-height: 44px;
+}
+.e-rail__link:hover { background: var(--c-navy-mid); color: var(--c-white); }
+.e-rail__link:focus-visible { outline: 3px solid var(--c-amber); outline-offset: -3px; }
+/* The current section: ground and a 3px green edge, not colour alone. */
+.e-rail__link.is-current {
+  font-weight: 600; color: var(--c-white);
+  background: var(--c-navy-mid);
+  border-left: 3px solid var(--c-green);
+  padding-left: calc(var(--s-3) - 3px);
+}
+
+/* margin-top:auto, as the screen pins it. A reader who does not know their
+   own clearance reads an empty folder list as a fault, not a boundary. */
+.e-rail__clearance { margin-top: auto; padding: var(--s-4) var(--s-5); border-top: 1px solid var(--c-navy-line); }
+.e-rail__clearance-title { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--c-green-light); margin: 0 0 8px; }
+.e-rail__clearance-level { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--c-cream); line-height: 1.4; margin: 0; }
+.e-rail__clearance-scope { font-size: 13px; color: var(--c-sand); line-height: 1.5; margin: 6px 0 0; }
+
+/* The rail is navigation and does not print. */
+@media print {
+  .e-rail { display: none !important; }
+  .e-shell { display: block; }
+}

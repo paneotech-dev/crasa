@@ -477,6 +477,38 @@ and table headers as excluded in terms.
 ---
 
 
+## Rejected: grouped left navigation in the back office, 2026-09-09
+
+A comparable platform groups its left navigation by function — My Workspace,
+Knowledge Base, Collaboration Network, Capacity Building, Platform
+Management — and it was proposed for the back office and the extranet here.
+
+**Rejected for the back office.** Screen 09 draws a horizontal section bar in
+the page header and not a sidebar:
+
+```html
+<nav aria-label="Back office" style="display:flex;flex-wrap:wrap;gap:2px;
+     min-width:0;margin-left:var(--s-4)">
+```
+
+The screen is approved and CRASA has seen it. A pattern from another platform
+does not override one, however good the pattern is. The bar stays.
+
+**Adopted for the extranet, because the extranet already had it.** Screen 04
+draws the extranet with its own navy left rail, and the build had been
+extending the back office layout instead — screen 09's pattern on a surface
+that has an approved pattern of its own. That is now corrected: the extranet
+has `layouts/extranet.blade.php` and the rail screen 04 draws, including the
+clearance panel pinned to its foot.
+
+**Rejected in both: the grouping itself.** Screen 04 draws seven flat links
+and no group headings. Grouping five items under three named groups adds
+headings without adding navigation, and at this size the group label is more
+text than the links it organises. If the extranet grows past a dozen
+destinations the question is worth reopening; at five it is not.
+
+---
+
 ## Deferred: two map capabilities, logged 2026-09-09
 
 Four gaps in the region map were named in the report at the end of the

@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.extranet')
 
 @section('title', $folder->name)
 @section('note', $folder->country?->name ?? $folder->committee?->name ?? __('extranet.regional'))
