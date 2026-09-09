@@ -20,6 +20,15 @@ use App\Models\User;
 final class Workspace
 {
     /**
+     * Whether this reader belongs in the back office rather than the
+     * extranet. Asked by layouts.workspace, which serves one URL to both.
+     */
+    public static function isBackOffice(?User $user): bool
+    {
+        return $user !== null && $user->hasPermission(Permission::ManageContent);
+    }
+
+    /**
      * The reader's workspace, or null for an account that has none.
      *
      * A viewer has none. That is not a gap: a viewer signs in to read what

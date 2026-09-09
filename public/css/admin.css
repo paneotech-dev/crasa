@@ -16,7 +16,20 @@
 body[data-surface="admin"] {
   /* The four surface variables every rule below reads. The light set is
      the default; the dark section at the foot re-points them. */
-  --a-ground: var(--c-admin-bg);
+  /*
+   * The content ground, #F0F4F1.
+   *
+   * An admin-only token, added 10 September 2026 with the shell. The back
+   * office ground was --c-admin-bg, a warm grey drawn for a page with a
+   * white header above it. Against a navy sidebar it reads as a second
+   * paper colour rather than as a ground, and the shell's cards sit on it
+   * all day. The tint is the platform's own green rather than a neutral,
+   * so the sidebar, the cards and the ground are one family.
+   *
+   * Scoped to the administered surfaces. It is not in tokens.css and no
+   * public rule may reach it.
+   */
+  --a-ground: #F0F4F1;
   --a-surface: var(--c-white);
   --a-rule: var(--c-line);
   --a-ink: var(--c-charcoal);
@@ -1644,3 +1657,402 @@ a.e-dash__title:hover { text-decoration: underline; text-underline-offset: 3px; 
   color: var(--a-ink);
   padding: 9px 0;
 }
+
+/* =======================================================================
+   THE SHELL. Sidebar, top bar, content area.
+
+   Screen 09 draws a horizontal section bar in a page header and it is
+   overruled, on a ruling of 10 September 2026 and logged as a disclosed
+   variation in docs/OPEN_ITEMS.md. With twenty-four destinations the bar
+   wrapped two and three rows deep before any content began, and this is
+   the surface the Secretariat uses every day.
+
+   Screen 09's content is untouched. What changed is what surrounds it.
+
+   Every pair below is measured against the actual token values:
+
+     cream #F8F6F1 on navy #0F1B2D                    16.00:1
+     green-light #E8F4EC on navy, the group labels    15.29:1
+     white on navy-mid #1A2742, the active label      14.86:1
+     green #1A8C5A on navy-mid, the 3px active bar     3.50:1  (SC 1.4.11)
+     charcoal on the new ground #F0F4F1               13.22:1
+     slate on the new ground                           4.90:1
+   ======================================================================= */
+
+.a-shell { display: flex; min-height: 100vh; align-items: stretch; }
+
+/* The sidebar --------------------------------------------------------- */
+
+.a-side {
+  flex: none;
+  width: 264px;
+  background: var(--c-navy);
+  color: var(--c-cream);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  min-height: 100vh;
+}
+
+.a-side__mark {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-5);
+  border-bottom: 1px solid var(--c-navy-line);
+  text-decoration: none;
+  color: var(--c-cream);
+  flex: none;
+}
+.a-side__mark:hover { color: var(--c-white); }
+.a-side__wordmark { font-family: var(--f-admin); font-size: 15px; font-weight: 600; line-height: 1.25; }
+
+/* The list scrolls; the mark and the signed-in reader do not. */
+.a-side__scroll { flex: 1 1 auto; overflow-y: auto; padding-bottom: var(--s-5); }
+
+.a-side__group { margin-top: var(--s-6); }
+.a-side__group:first-child { margin-top: var(--s-5); }
+
+/* THE SECOND SANCTIONED CAPS CARVE-OUT. CLAUDE.md carries it: the footer's
+   column headings were the only one until the shell needed group labels,
+   and a group label at 11px in sentence case reads as a disabled item
+   rather than as a heading over one. */
+.a-side__grouplabel {
+  font-family: var(--f-admin);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--c-green-light);
+  padding: 0 var(--s-5);
+  margin: 0 0 var(--s-2);
+}
+
+.a-side__items { list-style: none; margin: 0; padding: 0; }
+
+.a-side__link {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: 40px;
+  padding: 0 var(--s-5);
+  /* The active bar is 3px and takes its space from the padding, so a row
+     does not move sideways when it becomes current. */
+  border-left: 3px solid transparent;
+  padding-left: calc(var(--s-5) - 3px);
+  font-family: var(--f-admin);
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--c-cream);
+  text-decoration: none;
+  line-height: 1.3;
+}
+.a-side__link .a-icon { flex: none; }
+.a-side__link:hover { background: var(--c-navy-mid); color: var(--c-cream); }
+.a-side__link.is-current {
+  background: var(--c-navy-mid);
+  border-left-color: var(--c-green);
+  color: var(--c-white);
+  font-weight: 600;
+}
+.a-side__link:focus-visible { outline: 2px solid var(--c-amber); outline-offset: -2px; }
+
+/* Pinned: who you are signed in as, and the way out beside it. */
+.a-side__me {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-4) var(--s-5);
+  border-top: 1px solid var(--c-navy-line);
+  min-width: 0;
+}
+.a-side__avatar {
+  flex: none;
+  width: 36px; height: 36px;
+  border-radius: var(--r-pill);
+  background: var(--c-green-dark);
+  color: var(--c-cream);
+  display: grid; place-items: center;
+  font-family: var(--f-admin); font-size: 13px; font-weight: 700;
+}
+.a-side__metext { min-width: 0; flex: 1 1 auto; display: flex; flex-direction: column; }
+.a-side__name {
+  font-family: var(--f-admin); font-size: 14px; font-weight: 600;
+  color: var(--c-cream); text-decoration: none;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.a-side__name:hover { color: var(--c-white); text-decoration: underline; text-underline-offset: 3px; }
+.a-side__role { font-family: var(--f-admin); font-size: 12px; color: var(--c-sand); }
+.a-side__out {
+  flex: none;
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+  background: transparent; border: 0; padding: 0;
+  color: var(--c-sand); cursor: pointer;
+  border-radius: var(--r-sm);
+}
+.a-side__out:hover { background: var(--c-navy-mid); color: var(--c-white); }
+
+/* The top bar --------------------------------------------------------- */
+
+.a-shell__body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+
+.a-top {
+  position: sticky; top: 0; z-index: 20;
+  flex: none;
+  height: 64px;
+  display: flex; align-items: center; gap: var(--s-3);
+  padding: 0 var(--s-6);
+  background: var(--c-white);
+  border-bottom: 1px solid var(--c-sand);
+  box-shadow: var(--e-1);
+}
+
+.a-top__burger {
+  display: none;
+  width: 40px; height: 40px;
+  place-items: center;
+  background: transparent; border: 1.5px solid var(--c-border);
+  border-radius: var(--r-sm); color: var(--a-ink); cursor: pointer;
+}
+
+.a-top__search { position: relative; flex: 0 1 360px; min-width: 0; }
+.a-top__searchicon {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--c-slate); pointer-events: none;
+}
+.a-top__field {
+  width: 100%; height: 40px;
+  padding: 0 12px 0 38px;
+  font-family: var(--f-admin); font-size: 14px;
+  color: var(--a-ink); background: var(--c-white);
+  border: 1.5px solid var(--c-sand); border-radius: var(--r-sm);
+}
+.a-top__field::placeholder { color: var(--c-slate); }
+.a-top__spacer { flex: 1 1 auto; }
+
+.a-top__utilities { margin-left: auto; display: flex; align-items: center; gap: var(--s-3); }
+
+/* The language, as a pill group. Each is a link to this page in that
+   language, so switching never loses the reader's place. */
+.a-pills { display: inline-flex; border: 1.5px solid var(--c-sand); border-radius: var(--r-sm); overflow: hidden; }
+.a-pills__item {
+  min-width: 38px; height: 30px;
+  display: grid; place-items: center;
+  font-family: var(--f-admin); font-size: 12.5px; font-weight: 600;
+  color: var(--c-slate); text-decoration: none;
+  border-right: 1px solid var(--c-sand);
+}
+.a-pills__item:last-child { border-right: 0; }
+.a-pills__item:hover { background: var(--c-cream); color: var(--a-ink-strong); }
+.a-pills__item.is-current { background: var(--c-navy); color: var(--c-white); }
+
+.a-top__icon {
+  position: relative;
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  color: var(--a-ink); border-radius: var(--r-sm); text-decoration: none;
+}
+.a-top__icon:hover { background: var(--c-cream); color: var(--a-ink-strong); }
+.a-top__badge {
+  position: absolute; top: 4px; right: 4px;
+  min-width: 16px; height: 16px; padding: 0 4px;
+  border-radius: var(--r-pill);
+  background: var(--c-red); color: var(--c-white);
+  font-family: var(--f-admin); font-size: 10px; font-weight: 700;
+  display: grid; place-items: center;
+}
+
+.a-top__avatar {
+  width: 36px; height: 36px; flex: none;
+  border-radius: var(--r-pill);
+  background: var(--c-green-dark); color: var(--c-cream);
+  display: grid; place-items: center;
+  font-family: var(--f-admin); font-size: 13px; font-weight: 700;
+  text-decoration: none;
+}
+.a-top__avatar:hover { background: var(--c-navy); color: var(--c-white); }
+
+/* The content area ---------------------------------------------------- */
+
+.a-main { flex: 1 1 auto; min-width: 0; padding: var(--s-6); background: var(--a-ground); }
+
+.a-pagehead {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--s-5); flex-wrap: wrap;
+  margin-bottom: var(--s-5);
+}
+.a-pagehead__text { min-width: 0; }
+.a-pagehead h1 { font-family: var(--f-head); font-size: 28px; font-weight: 600; margin: 0; line-height: 1.2; }
+.a-pagehead__note { font-family: var(--f-admin); font-size: 14px; color: var(--a-ink-quiet); margin: 6px 0 0; }
+.a-pagehead__actions { display: flex; gap: var(--s-3); flex-wrap: wrap; }
+
+/* Alerts, with the 4px accent the ruling asks for. */
+.a-alert {
+  background: var(--a-surface);
+  border: 1px solid var(--a-rule);
+  border-left: 4px solid var(--c-slate);
+  border-radius: var(--r-md);
+  padding: var(--s-4) var(--s-5);
+  margin-bottom: var(--s-4);
+  font-size: 14.5px; line-height: 1.6;
+}
+.a-alert--error { border-left-color: var(--c-red); }
+.a-alert--pending { border-left-color: var(--c-amber); }
+.a-alert--success { border-left-color: var(--c-green); }
+.a-alert strong { display: block; margin-bottom: 3px; }
+.a-alert__dismiss {
+  float: right; background: transparent; border: 0; padding: 4px;
+  color: var(--a-ink-quiet); cursor: pointer; border-radius: var(--r-sm);
+}
+.a-alert__dismiss:hover { background: var(--c-cream); color: var(--a-ink); }
+
+/* The drawer, below 1024 ----------------------------------------------- */
+
+.a-shell__veil { display: none; }
+
+@media (max-width: 1023.98px) {
+  .a-top__burger { display: grid; }
+
+  .a-side {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: 40;
+    transform: translateX(-100%);
+    transition: transform 200ms var(--ease-in);
+  }
+  .a-side[data-open="true"] { transform: translateX(0); }
+
+  /* With no script the sidebar is a sidebar: the transform above only
+     applies once the toggle exists to undo it, and has-js is on the root
+     from the first line of the head. */
+  html:not(.has-js) .a-side { position: static; transform: none; height: auto; min-height: 0; }
+  html:not(.has-js) .a-shell { flex-direction: column; }
+  html:not(.has-js) .a-side { width: 100%; }
+
+  .has-drawer-open .a-shell__veil {
+    display: block;
+    position: fixed; inset: 0; z-index: 30;
+    background: rgba(5, 13, 24, .55);
+  }
+  .has-drawer-open { overflow: hidden; }
+
+  .a-main { padding: var(--s-5); }
+  .a-top { padding: 0 var(--s-4); }
+  .a-top__search { flex: 1 1 auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a-side { transition: none; }
+}
+
+/* The dashboard, in the shell -------------------------------------------- */
+
+.a-card {
+  background: var(--a-surface);
+  border: 1px solid var(--a-rule);
+  border-radius: var(--r-md);
+  box-shadow: var(--e-1);
+  padding: var(--s-5);
+  margin-bottom: var(--s-5);
+}
+/* A table fills its card to the edge, so the header row's ground reaches
+   the corners rather than floating inside a 24px margin. */
+.a-card--flush { padding: 0; overflow: hidden; }
+.a-card--flush .a-card__head { padding: var(--s-5) var(--s-5) var(--s-4); margin: 0; }
+
+.a-card__head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--s-3); margin-bottom: var(--s-4); flex-wrap: wrap;
+}
+.a-card__head h2 { font-family: var(--f-head); font-size: 19px; font-weight: 600; margin: 0; }
+.a-card__meta { font-family: var(--f-admin); font-size: 13.5px; font-weight: 600; }
+
+/* No card inside a card. Where the old panels nested, the inner one is a
+   plain block on the same white. */
+.a-card .a-card { border: 0; box-shadow: none; padding: 0; margin: 0; }
+
+.a-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: var(--s-5);
+  margin-bottom: var(--s-5);
+}
+.a-tile {
+  display: flex; align-items: flex-start; gap: var(--s-4);
+  background: var(--a-surface);
+  border: 1px solid var(--a-rule);
+  border-radius: var(--r-md);
+  box-shadow: var(--e-1);
+  padding: var(--s-5);
+  text-decoration: none;
+  color: var(--a-ink);
+  min-width: 0;
+}
+.a-tile:hover { border-color: var(--c-green-dark); color: var(--a-ink); }
+.a-tile__icon {
+  flex: none;
+  width: 48px; height: 48px;
+  border-radius: var(--r-pill);
+  background: var(--c-green-light);
+  color: var(--c-green-dark);
+  display: grid; place-items: center;
+}
+.a-tile__text { min-width: 0; display: flex; flex-direction: column; }
+.a-tile__n { font-family: var(--f-head); font-size: 28px; font-weight: 600; line-height: 1.1; color: var(--a-ink-strong); }
+.a-tile__label { font-family: var(--f-admin); font-size: 13px; color: var(--a-ink-quiet); margin-top: 2px; }
+.a-tile__note { font-family: var(--f-admin); font-size: 12.5px; color: var(--a-ink-quiet); margin-top: 4px; }
+
+/* Two columns, 2:1. Screen 09's own grid ratio for a wide panel beside a
+   narrow one. */
+.a-split { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--s-5); align-items: start; }
+.a-stack { display: flex; flex-direction: column; gap: 0; min-width: 0; }
+
+@media (max-width: 899.98px) {
+  .a-split { grid-template-columns: minmax(0, 1fr); }
+}
+
+.a-results { list-style: none; margin: 0; padding: 0; }
+.a-results li {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--s-3); padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--a-rule);
+  font-size: 14.5px;
+}
+.a-results li:last-child { border-bottom: 0; }
+.a-results__meta { font-family: var(--f-admin); font-size: 13px; color: var(--a-ink-quiet); flex: none; }
+
+/* Tables in the shell -------------------------------------------------- */
+
+.a-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.a-table thead th {
+  font-family: var(--f-admin);
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 0;
+  color: var(--a-ink-quiet);
+  background: var(--a-ground);
+  text-align: left;
+  padding: var(--s-3) var(--s-5);
+  border-bottom: 1px solid var(--c-sand);
+  white-space: nowrap;
+}
+.a-table tbody th,
+.a-table tbody td {
+  padding: var(--s-3) var(--s-5);
+  border-bottom: 1px solid var(--c-sand);
+  text-align: left;
+  font-weight: 400;
+  height: 48px;
+  vertical-align: middle;
+}
+.a-table tbody th { font-weight: 600; }
+.a-table tbody tr:last-child th,
+.a-table tbody tr:last-child td { border-bottom: 0; }
+.a-table tbody tr:hover { background: var(--c-cream); }
+.a-table__num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--f-admin); }
+.a-table__num[scope="col"] { text-align: right; }
+.a-alert__dismissform { float: right; margin-left: var(--s-3); }

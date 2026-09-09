@@ -107,4 +107,17 @@ return [
     'seat_member' => 'Membro',
     'seat_chair' => 'Presidência',
     'seat_observer' => 'Observador',
+
+    'group_workspace' => 'Área de trabalho',
+    'group_committees' => 'Comités',
+    'group_region' => 'Região',
+    'group_account' => 'Conta',
+    'nav_dashboard' => 'Painel',
+    'nav_comparator' => 'Comparador',
+    'nav_account' => 'Definições',
+
+    'side_group_workspace' => 'Área de trabalho',
+    'side_group_committees' => 'Comités',
+    'side_group_region' => 'Região',
+    'side_group_account' => 'Conta',
 ];

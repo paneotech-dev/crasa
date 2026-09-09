@@ -1,17 +1,21 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\Admin\AdminSearchController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\ConfirmationController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DelegateListController;
+use App\Http\Controllers\Admin\DismissController;
 use App\Http\Controllers\Admin\HelpController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\MeetingListController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\Admin\PageBlockController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ResourceController;
+use App\Http\Controllers\Admin\SampleDataController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SubmissionReviewController;
 use App\Http\Controllers\Admin\TranslationController;
@@ -416,6 +420,25 @@ Route::prefix('{locale}')
                  * the things that belong to the site rather than to a
                  * page. Administrator only, per screen 13's matrix.
                  */
+                /*
+                 * The search field in the top bar. Six record types, each
+                 * gated separately: a search that lists what you cannot
+                 * open is a directory of what you are not allowed to see.
+                 */
+                Route::get('search', [AdminSearchController::class, 'index'])->name('search');
+
+                /*
+                 * What demonstration data is left, per table. No purge
+                 * button: the strip deletes two hundred rows in one
+                 * transaction and belongs at a terminal, not behind a
+                 * mis-click.
+                 */
+                Route::get('samples', [SampleDataController::class, 'index'])->name('samples');
+
+                // Putting an informational alert away for the session. The
+                // mail warning is not on the list and cannot be.
+                Route::post('dismiss', [DismissController::class, 'store'])->name('dismiss');
+
                 Route::get('settings', [SettingsController::class, 'edit'])->name('settings');
                 Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
 
@@ -469,6 +492,11 @@ Route::prefix('{locale}')
                  * CSV export, which is the handover point to the Event
                  * Management Platform.
                  */
+                /*
+                 * The way in to the rosters. Each one was reachable only by
+                 * knowing a meeting's slug.
+                 */
+                Route::get('meetings', [MeetingListController::class, 'index'])->name('meetings');
                 Route::get('meetings/{meeting}/delegates', [DelegateListController::class, 'index'])->name('delegates');
                 Route::get('meetings/{meeting}/delegates.csv', [DelegateListController::class, 'csv'])->name('delegates.csv');
 

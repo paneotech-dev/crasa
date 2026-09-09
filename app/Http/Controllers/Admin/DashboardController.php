@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\PageStatus;
+use App\Enums\Permission;
+use App\Enums\SubmissionStatus;
+use App\Models\Submission;
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Committee;
@@ -46,22 +51,88 @@ class DashboardController extends Controller
         Gate::authorize('enter-back-office');
 
         return view('pages.admin.dashboard', [
-            'stats' => $this->stats(),
+            'tiles' => $this->tiles(),
             'byYear' => $this->publicationsByYear(),
             'byType' => $this->publicationsByType(),
             'activity' => $this->recentActivity(),
             'publications' => $this->publicationPage($request),
-            'today' => now(),
+            /*
+             * The platform's configured timezone, not the server's.
+             * now() already honours app.timezone; the header was
+             * formatting a UTC instant, which showed yesterday to anybody
+             * in Gaborone before two in the morning.
+             */
+            'today' => now()->timezone(config('app.timezone')),
             // The Secretariat's only signal that the platform is not yet
             // clean, now that the public notices are gone.
             'sampleCounts' => SampleData::counts(),
+            'sampleTotal' => SampleData::total(),
             // Administration only. The public legal pages carry the text and
             // none of this; see PageAdminController::clientReview().
             'awaitingReview' => Page::awaitingClientReview()
                 ->with(['translations', 'blocks.translations'])
                 ->orderBy('slug')
                 ->get(),
+            'awaitingSubmissions' => Gate::allows(Permission::ValidateSubmission->value)
+                ? Submission::where('status', SubmissionStatus::Submitted)
+                    ->with('country')
+                    ->orderBy('submitted_at')
+                    ->limit(6)
+                    ->get()
+                : collect(),
+            'draftPages' => Page::where('status', PageStatus::Draft)
+                ->with('translations')
+                ->orderByDesc('updated_at')
+                ->limit(6)
+                ->get(),
         ]);
+    }
+
+    /**
+     * The four tiles, in the order the ruling gives them.
+     *
+     * Every figure is a link to what it counts. A number on a dashboard
+     * that a reader cannot follow is a number they have to go and find.
+     *
+     * @return list<array{n: int, label: string, note: string, icon: string, url: string}>
+     */
+    private function tiles(): array
+    {
+        $locale = app()->getLocale();
+        $publications = Publication::count();
+        $ict = Publication::whereRelation('sector', 'slug', '!=', 'postal')->count();
+        $reporting = Country::whereHas('indicatorValues')->count();
+
+        return [
+            [
+                'n' => $publications,
+                'label' => __('admin.dash_stat_publications'),
+                'note' => __('admin.stat_publications_note', ['ict' => $ict, 'postal' => $publications - $ict]),
+                'icon' => 'publications',
+                'url' => route('admin.resources', ['locale' => $locale, 'resource' => 'publications']),
+            ],
+            [
+                'n' => NewsItem::count(),
+                'label' => __('admin.dash_stat_news'),
+                'note' => __('admin.stat_news_note', ['n' => NewsItem::whereYear('published_at', now()->year)->count()]),
+                'icon' => 'newsroom',
+                'url' => route('admin.resources', ['locale' => $locale, 'resource' => 'news']),
+            ],
+            [
+                'n' => $reporting,
+                'label' => __('admin.dash_stat_reporting'),
+                'note' => __('admin.stat_members_note', ['n' => Country::has('authorities')->count()]),
+                'icon' => 'members',
+                'url' => route('completeness', ['locale' => $locale]),
+            ],
+            [
+                'n' => User::count(),
+                'label' => __('admin.dash_stat_users'),
+                'note' => __('admin.stat_users_note', ['n' => User::where('status', 'active')->count()]),
+                'icon' => 'users',
+                'url' => route('admin.users', ['locale' => $locale]),
+            ],
+        ];
     }
 
     /**

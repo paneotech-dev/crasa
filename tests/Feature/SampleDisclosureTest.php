@@ -101,9 +101,49 @@ class SampleDisclosureTest extends TestCase
             ->assertOk()
             ->getContent();
 
-        $this->assertStringContainsString('a-band--pending', $html);
-        $this->assertStringContainsString('content:strip-samples', $html);
-        $this->assertStringContainsString('IndicatorValue', $html);
+        /*
+         * Its own alert, found by the hook rather than by the class: the
+         * mail warning uses the same amber and would satisfy a class-only
+         * assertion on a platform with no demonstration data at all.
+         */
+        $this->assertStringContainsString('data-dismissable="samples"', $html);
+
+        // The breakdown and the command moved to their own page on
+        // 10 September 2026. "196 rows" is a number the Secretariat cannot
+        // act on; which tables, and how many in each, is what tells them
+        // whether the strip is safe to run yet.
+        $this->assertStringContainsString(__('admin.nav_samples'), $html);
+
+        $breakdown = $this->actingAs($admin)->get('/en/admin/samples')->assertOk()->getContent();
+
+        $this->assertStringContainsString('content:strip-samples', $breakdown);
+        $this->assertStringContainsString('IndicatorValue', $breakdown);
+    }
+
+    /** And no purge button, on the dashboard or on the breakdown. */
+    public function test_nothing_in_the_back_office_strips_the_samples(): void
+    {
+        $admin = User::factory()->administrator()->create();
+
+        $breakdown = $this->actingAs($admin)->get('/en/admin/samples')->assertOk()->getContent();
+
+        /*
+         * The strip removes two hundred rows in one transaction and
+         * cannot be undone. It is a command at a terminal, not a button a
+         * mis-click reaches.
+         *
+         * Scoped to the page rather than the document: the shell's own
+         * sign-out is a submit button and is not what this is about.
+         */
+        $main = substr($breakdown, strpos($breakdown, '<main'));
+
+        $this->assertStringNotContainsString('<button type="submit"', $main);
+
+        $names = collect(app('router')->getRoutes())
+            ->map(fn ($route) => (string) $route->getName())
+            ->filter(fn (string $name) => str_contains($name, 'strip') || str_contains($name, 'purge'));
+
+        $this->assertEmpty($names->all(), 'A route exists that strips demonstration data.');
     }
 
     public function test_a_clean_platform_shows_no_band_at_all(): void
@@ -119,7 +159,9 @@ class SampleDisclosureTest extends TestCase
         $admin = User::factory()->administrator()->create();
         $html = $this->actingAs($admin)->get('/en/admin')->assertOk()->getContent();
 
-        $this->assertStringNotContainsString('a-band--pending', $html);
+        // Its own alert, not any amber one: the mail warning shares the
+        // colour and is a different fact.
+        $this->assertStringNotContainsString('data-dismissable="samples"', $html);
     }
 
     public function test_an_export_still_carries_the_notice_in_writing(): void

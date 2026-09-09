@@ -1,10 +1,12 @@
 @extends('layouts.admin')
 @section('title', __('admin.invite'))
+{{-- The heading is the layout's. This page carried a second h1 of its
+     own, which is two h1s in one document and a structure failure under
+     WCAG 2.1 AA. --}}
+@section('note', __('admin.invite_intro'))
+
 @section('content')
-    <div class="c-section">
-        <div class="c-page c-page--reading">
-    <h1>{{ __('admin.invite') }}</h1>
-    <p class="a-hint">{{ __('admin.invite_intro') }}</p>
+    <div class="a-card">
 
     <form method="POST" action="{{ route('admin.users.invite', ['locale' => app()->getLocale()]) }}" class="a-form">
         @csrf
@@ -46,4 +48,5 @@
         <p class="c-form__note">{{ __('admin.invite_note') }}</p>
         <button type="submit" class="a-btn a-btn--primary">{{ __('admin.send_invite') }}</button>
     </form>
+    </div>
 @endsection

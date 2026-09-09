@@ -107,4 +107,17 @@ return [
     'seat_member' => 'Member',
     'seat_chair' => 'Chair',
     'seat_observer' => 'Observer',
+
+    'group_workspace' => 'Workspace',
+    'group_committees' => 'Committees',
+    'group_region' => 'Region',
+    'group_account' => 'Account',
+    'nav_dashboard' => 'Dashboard',
+    'nav_comparator' => 'Comparator',
+    'nav_account' => 'Settings',
+
+    'side_group_workspace' => 'Workspace',
+    'side_group_committees' => 'Committees',
+    'side_group_region' => 'Region',
+    'side_group_account' => 'Account',
 ];

@@ -58,7 +58,10 @@ class AdminShellTest extends TestCase
             $this->actingAs($this->administrator)
                 ->get("/{$locale}/admin")
                 ->assertOk()
-                ->assertSee('a-header', false);
+                // The shell, not the header bar screen 09 draws.
+                // Ruled out on 10 September 2026; see ShellNavigation.
+                ->assertSee('a-side', false)
+                ->assertSee('a-top', false);
         }
     }
 
@@ -82,18 +85,58 @@ class AdminShellTest extends TestCase
             ->assertSee('noindex', false);
     }
 
-    public function test_the_section_bar_draws_only_sections_this_user_can_open(): void
+    public function test_the_sidebar_draws_only_what_this_user_can_open(): void
     {
         $editor = User::factory()->editor()->create();
 
         $asAdministrator = $this->actingAs($this->administrator)->get('/en/admin')->getContent();
-        $this->assertStringContainsString(__('admin.section_users'), $asAdministrator);
+        $this->assertStringContainsString('<span>'.__('admin.nav_users').'</span>', $asAdministrator);
+        $this->assertStringContainsString('<span>'.__('admin.nav_settings').'</span>', $asAdministrator);
 
-        // An editor cannot manage users, so the link is not drawn. The route
-        // refuses them regardless, which is the part that matters.
+        /*
+         * An editor cannot manage users, so the row is absent rather than
+         * disabled: a disabled control is a promise that it will work
+         * later. The route refuses them regardless, which is the part that
+         * matters.
+         */
         $asEditor = $this->actingAs($editor)->get('/en/admin')->getContent();
-        $this->assertStringNotContainsString('>'.__('admin.section_users').'<', $asEditor);
+        $this->assertStringNotContainsString('<span>'.__('admin.nav_users').'</span>', $asEditor);
+        $this->assertStringNotContainsString('<span>'.__('admin.nav_settings').'</span>', $asEditor);
         $this->actingAs($editor)->get('/en/admin/users')->assertForbidden();
+        $this->actingAs($editor)->get('/en/admin/settings')->assertForbidden();
+
+        // And a group with nothing left in it is not drawn as an empty
+        // heading.
+        $this->assertStringNotContainsString(__('admin.side_group_platform'), $asEditor);
+    }
+
+    /**
+     * Grouped, with the group labels in tracked caps. The second sanctioned
+     * carve-out from CLAUDE.md's sentence-case rule, and it is written into
+     * CLAUDE.md rather than only here.
+     */
+    public function test_the_sidebar_is_grouped(): void
+    {
+        $html = $this->actingAs($this->administrator)->get('/en/admin')->getContent();
+
+        foreach (['overview', 'content', 'regulatory', 'people', 'platform'] as $group) {
+            $this->assertStringContainsString(__('admin.side_group_'.$group), $html);
+        }
+
+        $this->assertStringContainsString('a-side__grouplabel', $html);
+
+        $css = file_get_contents(public_path('css/admin.css'));
+        preg_match('/\.a-side__grouplabel \{([^}]*)\}/', $css, $rule);
+
+        $this->assertNotEmpty($rule);
+        $this->assertStringContainsString('text-transform: uppercase', $rule[1]);
+        $this->assertStringContainsString('letter-spacing: .1em', $rule[1]);
+
+        // Held in CLAUDE.md too. A carve-out that loses its written scope
+        // reads as permission to set anything in caps.
+        $claude = file_get_contents(base_path('CLAUDE.md'));
+        $this->assertStringContainsString('Two carve-outs for caps', $claude);
+        $this->assertStringContainsString("administered sidebar's group labels", $claude);
     }
 
     public function test_a_panel_with_no_data_source_says_so_instead_of_drawing_a_chart(): void
@@ -113,14 +156,21 @@ class AdminShellTest extends TestCase
 
         $html = $this->actingAs($this->administrator)->get('/en/admin')->getContent();
 
+        /*
+         * The four tiles the shell draws: publications, news, member states
+         * with data, users. Each figure is a link to what it counts.
+         */
         $publications = Publication::count();
-        $committees = Committee::count();
-        $countries = Country::count();
 
         $this->assertGreaterThan(0, $publications);
         $this->assertStringContainsString('>'.number_format($publications).'<', $html);
-        $this->assertStringContainsString('>'.number_format($committees).'<', $html);
-        $this->assertStringContainsString('>'.number_format($countries).'<', $html);
+        $this->assertStringContainsString('>'.number_format(\App\Models\NewsItem::count()).'<', $html);
+        $this->assertStringContainsString('>'.number_format(\App\Models\User::count()).'<', $html);
+
+        // Committees and member states are counted on the charts and the
+        // resource table below, which screen 09 draws and the shell kept.
+        $this->assertGreaterThan(0, Committee::count());
+        $this->assertSame(14, Country::count());
     }
 
     public function test_the_year_chart_states_every_count_so_it_reads_without_colour(): void

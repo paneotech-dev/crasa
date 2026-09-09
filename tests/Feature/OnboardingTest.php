@@ -38,10 +38,26 @@ class OnboardingTest extends TestCase
     {
         $this->assertFalse($this->administrator->hasDismissed(Onboarding::WELCOME));
 
+        /*
+         * Two lines and a link, at the foot of the dashboard. It used to
+         * be the first thing on the page and the height of the viewport,
+         * with four numbered steps above every figure; ruled down on
+         * 10 September 2026. The steps are at the help page permanently,
+         * which is where the link goes.
+         */
         $this->actingAs($this->administrator)
             ->get('/en/admin')
             ->assertOk()
             ->assertSee(__('help.welcome_body'))
+            ->assertSee(__('admin.dash_welcome_action'))
+            // On the step's own markup, not on the word: the sidebar's
+            // CONTENT group says the same word.
+            ->assertDontSee('a-intro__step', false);
+
+        // And the steps are still somewhere: the help page.
+        $this->actingAs($this->administrator)
+            ->get('/en/admin/help')
+            ->assertOk()
             ->assertSee(__('help.step_content_title'));
     }
 
@@ -49,11 +65,18 @@ class OnboardingTest extends TestCase
     {
         $html = $this->actingAs($this->administrator)->get('/en/admin')->getContent();
 
-        // A panel in the flow of the document, inside the dashboard's own
-        // grid. Nothing that dims the page or traps focus.
+        // A card in the flow of the document, at the foot of the page.
+        // Nothing that dims the page or traps focus.
         $this->assertStringContainsString('a-intro', $html);
         $this->assertStringNotContainsString('role="dialog"', $html);
         $this->assertStringNotContainsString('aria-modal', $html);
+
+        // At the foot: after the figures rather than above them.
+        $this->assertGreaterThan(
+            strpos($html, 'a-tiles'),
+            strpos($html, 'a-intro'),
+            'The introduction is above the dashboard rather than at the foot of it.'
+        );
     }
 
     public function test_dismissing_is_per_account_and_survives_signing_in_elsewhere(): void

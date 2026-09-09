@@ -1,86 +1,163 @@
 @extends('layouts.admin')
 
+{{--
+    Screen 09's dashboard, in the new shell.
+
+    THE CONTENT IS THE SCREEN'S. The figures, the two charts, the recent
+    activity and the sample-data count are all the ones screen 09 draws.
+    What changed on 10 September 2026 is the order and the shell: alerts
+    first, then four tiles, then the work waiting on somebody, then the
+    charts. A reader who opens this every morning wants to know what needs
+    them before they want a histogram of publications by year.
+
+    The welcome panel used to be the first thing on the page and the height
+    of the viewport. It is a card at the foot now, and dismissable.
+--}}
+
 @section('title', __('admin.section_dashboard'))
 @section('note', __('admin.dashboard_note', ['date' => $today->translatedFormat('l j F Y')]))
 
 @section('actions')
     <a class="a-btn a-btn--secondary" href="{{ route('admin.audit', ['locale' => app()->getLocale()]) }}">{{ __('admin.open_audit') }}</a>
     @if (Route::has('admin.pages'))
+        {{-- Labelled. The primary action on this page used to be a green
+             button with no text in it. --}}
         <a class="a-btn a-btn--primary" href="{{ route('admin.pages', ['locale' => app()->getLocale()]) }}">{{ __('admin.open_content') }}</a>
     @endif
 @endsection
 
 @section('content')
 
-    @include('partials.admin-intro')
+    {{-- 1. ALERTS, only when there is one.
 
-    {{-- The demonstration-data count.
-         The visible notices came off the public pages on 9 September 2026:
-         sample rows stay flagged in the database and are disclosed verbally
-         by the presenter rather than badged on every screen. That leaves
-         nobody looking at the site able to tell, which is the intent, and
-         leaves the Secretariat unable to tell either, which is not. This is
-         the one surface that still says so.
-
-         It disappears by itself the moment the strip runs, so a clean
-         platform shows nothing here rather than a green all-clear that
-         somebody has to keep believing. --}}
-    @if ($sampleCounts !== [])
-        <div class="a-band a-band--pending" role="status">
-            <div>
-                <strong>{{ trans_choice('admin.sample_present', array_sum($sampleCounts), [
-                    'count' => number_format(array_sum($sampleCounts)),
-                ]) }}</strong>
-                {{ __('admin.sample_body') }}
-            </div>
-
-            <dl class="a-sample">
-                @foreach ($sampleCounts as $table => $count)
-                    <div>
-                        <dt>{{ $table }}</dt>
-                        <dd>{{ number_format($count) }}</dd>
-                    </div>
-                @endforeach
-            </dl>
-
-            <p class="a-sample__how"><code>php artisan content:strip-samples</code></p>
+         The mail warning is in the layout and is never dismissable: mail
+         that goes nowhere is the one misconfiguration that produces no
+         error anywhere. These two are informational and go for the
+         session once read. --}}
+    @if ($sampleCounts !== [] && ! session('dismissed.samples'))
+        <div class="a-alert a-alert--pending" role="status" data-dismissable="samples">
+            {{-- A real form, so dismissing works with no script at
+                 all. Every control on this platform does. --}}
+            <form class="a-alert__dismissform" method="POST" action="{{ route('admin.dismiss', ['locale' => app()->getLocale()]) }}">
+                @csrf
+                <input type="hidden" name="notice" value="samples">
+                <button type="submit" class="a-alert__dismiss" aria-label="{{ __('admin.dismiss') }}">
+                    <x-shell-icon name="close" :size="16" />
+                </button>
+            </form>
+            <strong>{{ trans_choice('admin.sample_present', $sampleTotal, ['count' => number_format($sampleTotal)]) }}</strong>
+            {{ __('admin.sample_body') }}
+            <a href="{{ route('admin.samples', ['locale' => app()->getLocale()]) }}">{{ __('admin.nav_samples') }}</a>
         </div>
     @endif
 
-    {{-- Pages CRASA has still to sign off. Administration only: the public
-         pages show their text and nothing about this. Until 9 September
-         2026 the legal pages announced their own draft status in their
-         opening paragraph, which put the project's internal state in front
-         of every public reader. --}}
-    @if ($awaitingReview->isNotEmpty())
-        <div class="a-band a-band--pending" role="status">
-            <div>
-                <strong>{{ __('admin.review_pending') }}</strong>
-                {{ __('admin.review_pending_body') }}
-            </div>
-
-            <dl class="a-sample">
-                @foreach ($awaitingReview as $page)
-                    <div>
-                        <dt><a href="{{ route('admin.pages.edit', ['locale' => app()->getLocale(), 'page' => $page->slug]) }}">{{ $page->translate('title')?->value ?? $page->slug }}</a></dt>
-                        <dd>{{ count($page->outstandingClientItems()) }}</dd>
-                    </div>
-                @endforeach
-            </dl>
+    @if ($awaitingReview->isNotEmpty() && ! session('dismissed.review'))
+        <div class="a-alert a-alert--pending" role="status" data-dismissable="review">
+            {{-- A real form, so dismissing works with no script at
+                 all. Every control on this platform does. --}}
+            <form class="a-alert__dismissform" method="POST" action="{{ route('admin.dismiss', ['locale' => app()->getLocale()]) }}">
+                @csrf
+                <input type="hidden" name="notice" value="review">
+                <button type="submit" class="a-alert__dismiss" aria-label="{{ __('admin.dismiss') }}">
+                    <x-shell-icon name="close" :size="16" />
+                </button>
+            </form>
+            <strong>{{ __('admin.review_flag_title') }}</strong>
+            {{ __('admin.review_pending_body') }}
+            @foreach ($awaitingReview as $page)
+                <a href="{{ route('admin.pages.edit', ['locale' => app()->getLocale(), 'page' => $page->slug]) }}">{{ $page->translate('title')?->value ?? $page->slug }}</a>@if (! $loop->last), @endif
+            @endforeach
         </div>
     @endif
 
-    {{-- Screen 09: repeat(auto-fit,minmax(min(100%,236px),1fr)), gap var(--s-4) --}}
-    <div class="a-grid a-grid--stats">
-        @foreach ($stats as $stat)
-            <div class="a-panel a-panel--tight">
-                <div class="a-stat__n">{{ number_format($stat['n']) }}</div>
-                <div class="a-stat__label">{{ $stat['label'] }}</div>
-                <div class="a-stat__note">{{ $stat['note'] }}</div>
-            </div>
+    {{-- 2. FOUR TILES. Every figure is a link to what it counts. --}}
+    <div class="a-tiles">
+        @foreach ($tiles as $tile)
+            <a class="a-tile" href="{{ $tile['url'] }}">
+                <span class="a-tile__icon" aria-hidden="true"><x-shell-icon :name="$tile['icon']" :size="20" /></span>
+                <span class="a-tile__text">
+                    <span class="a-tile__n">{{ number_format($tile['n']) }}</span>
+                    <span class="a-tile__label">{{ $tile['label'] }}</span>
+                    <span class="a-tile__note">{{ $tile['note'] }}</span>
+                </span>
+            </a>
         @endforeach
     </div>
 
+    {{-- 3. TWO COLUMNS, 2:1. What happened, and what is waiting. --}}
+    <div class="a-split">
+        <section class="a-card">
+            <div class="a-card__head">
+                <h2>{{ __('admin.dash_activity') }}</h2>
+                <a class="a-card__meta" href="{{ route('admin.audit', ['locale' => app()->getLocale()]) }}">{{ __('admin.open_audit') }}</a>
+            </div>
+
+            @if ($activity->isEmpty())
+                <div class="a-empty">
+                    <div class="a-empty__title">{{ __('admin.activity_empty_title') }}</div>
+                    <div class="a-empty__body">{{ __('admin.activity_empty_body') }}</div>
+                </div>
+            @else
+                <div class="a-rows">
+                    @foreach ($activity as $entry)
+                        <div class="a-row">
+                            <span class="a-row__time">{{ $entry->created_at->diffForHumans() }}</span>
+                            <span class="a-row__grow">{{ $entry->describe() }}</span>
+                            <span class="a-row__who">{{ $entry->user?->name ?? __('admin.system') }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </section>
+
+        <div class="a-stack">
+            @can(\App\Enums\Permission::ValidateSubmission->value)
+                <section class="a-card">
+                    <div class="a-card__head">
+                        <h2>{{ __('admin.dash_awaiting') }}</h2>
+                        <a class="a-card__meta" href="{{ route('admin.submissions', ['locale' => app()->getLocale()]) }}">{{ __('admin.nav_submissions') }}</a>
+                    </div>
+
+                    @if ($awaitingSubmissions->isEmpty())
+                        <div class="a-empty">
+                            <div class="a-empty__body">{{ __('admin.dash_awaiting_empty') }}</div>
+                        </div>
+                    @else
+                        <ul class="a-results" role="list">
+                            @foreach ($awaitingSubmissions as $submission)
+                                <li>
+                                    <a href="{{ route('admin.submissions.show', ['locale' => app()->getLocale(), 'submission' => $submission->id]) }}">{{ $submission->country?->name }}</a>
+                                    <span class="a-results__meta">{{ $submission->period }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </section>
+            @endcan
+
+            <section class="a-card">
+                <div class="a-card__head">
+                    <h2>{{ __('admin.dash_drafts') }}</h2>
+                    <a class="a-card__meta" href="{{ route('admin.pages', ['locale' => app()->getLocale(), 'status' => 'draft']) }}">{{ __('admin.nav_pages') }}</a>
+                </div>
+
+                @if ($draftPages->isEmpty())
+                    <div class="a-empty">
+                        <div class="a-empty__body">{{ __('admin.dash_drafts_empty') }}</div>
+                    </div>
+                @else
+                    <ul class="a-results" role="list">
+                        @foreach ($draftPages as $page)
+                            <li>
+                                <a href="{{ route('admin.pages.edit', ['locale' => app()->getLocale(), 'page' => $page->slug]) }}">{{ $page->translate('title')?->value ?? $page->slug }}</a>
+                                <span class="a-results__meta">{{ $page->updated_at?->isoFormat('D MMM YYYY') }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </section>
+        </div>
+    </div>
     {{-- Screen 09: repeat(auto-fit,minmax(min(100%,440px),1fr)), gap var(--s-5) --}}
     <div class="a-grid a-grid--wide">
         <div class="a-panel">
@@ -201,30 +278,6 @@
             :body="__('admin.submissions_empty_body')" />
     </div>
 
-    <div class="a-panel">
-        <div class="a-panel__head">
-            <h2>{{ __('admin.recent_activity') }}</h2>
-            <a class="a-panel__meta" href="{{ route('admin.audit', ['locale' => app()->getLocale()]) }}">{{ __('admin.open_audit') }}</a>
-        </div>
-
-        @if ($activity->isEmpty())
-            <div class="a-empty">
-                <div class="a-empty__title">{{ __('admin.activity_empty_title') }}</div>
-                <div class="a-empty__body">{{ __('admin.activity_empty_body') }}</div>
-            </div>
-        @else
-            <div class="a-rows">
-                @foreach ($activity as $entry)
-                    <div class="a-row">
-                        <span class="a-row__time">{{ $entry->created_at->diffForHumans() }}</span>
-                        <span class="a-row__grow">{{ $entry->describe() }}</span>
-                        <span class="a-row__who">{{ $entry->user?->name ?? __('admin.system') }}</span>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-    </div>
-
     <x-admin.resource-table
         :title="__('admin.stat_publications')"
         :note="__('admin.publications_note')"
@@ -256,4 +309,11 @@
                 ['label' => __('admin.view'), 'url' => route('publications.show', ['locale' => app()->getLocale(), 'slug' => $p->slug])],
             ],
         ]" />
+
+    {{-- 4. THE WELCOME, at the foot and dismissable. It used to be the
+         first thing on the page and the height of the viewport.
+         Dismissal is per account, which is the mechanism that was
+         already there and the right one: somebody who has taken the
+         tour has taken it. --}}
+    @include('partials.admin-intro')
 @endsection

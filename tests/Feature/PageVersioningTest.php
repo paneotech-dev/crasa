@@ -134,7 +134,8 @@ class PageVersioningTest extends TestCase
 
         $this->actingAs($this->administrator)->get('/en/admin')
             ->assertOk()
-            ->assertSee(__('admin.review_pending'))
+            // An alert at the top of the dashboard since the shell.
+            ->assertSee(__('admin.review_flag_title'))
             ->assertSee('Privacy notice');
     }
 
@@ -168,7 +169,7 @@ class PageVersioningTest extends TestCase
 
         $this->actingAs($this->administrator)->get('/en/admin')
             ->assertOk()
-            ->assertDontSee(__('admin.review_pending'));
+            ->assertDontSee(__('admin.review_flag_title'));
     }
 
     /**

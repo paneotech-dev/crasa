@@ -6,7 +6,9 @@
     reported, and it says so plainly rather than showing a zero, because a
     zero is a figure and a gap is not.
 --}}
-@extends('layouts.public')
+{{-- The shell, not the public chrome: this is a signed-in page and
+     both administered surfaces reach it. See layouts.workspace. --}}
+@extends('layouts.workspace')
 
 @section('title', __('indicators.completeness_title'))
 

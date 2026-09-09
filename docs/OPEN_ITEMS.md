@@ -1191,3 +1191,93 @@ a visible label: the button is an icon and the criterion matches an
 accessible name against visible text. The lang guard that keeps "Pause
 rotation" containing "Pause" in all three languages is kept anyway, as a
 constraint on the strings should a visible label ever come back.
+
+---
+
+## The administration shell, and screen 09's section bar
+
+*10 September 2026, on a ruling.*
+
+**What screen 09 draws.** A horizontal section bar in a white page header:
+`background:var(--c-white);border-bottom:1px solid var(--c-line);
+padding:var(--s-3) var(--s-6);display:flex;align-items:center;
+gap:var(--s-5);flex-wrap:wrap`, with the identity on the left, the sections
+beside it and the language, theme and identity pushed right.
+
+**Overruled.** `flex-wrap: wrap` is the tell. With twenty-four destinations
+the bar wrapped two and three rows deep before any content began, and the
+back office is the surface the Secretariat uses every day rather than the
+one CRASA looks at once. Screen 09's *content* is untouched: the figures,
+both charts, the recent activity, the resource table and the sample-data
+count are all still there, inside the new shell.
+
+**The shell.** A 264px navy sidebar, fixed, full height, with the mark at
+the top, grouped navigation, and the signed-in reader pinned at the foot
+beside the way out. A 64px white top bar carrying a search field, the
+language as a pill group, notifications, help and the reader's initials.
+A content area on `--a-ground`.
+
+**The extranet uses the same shell.** Screen 04 draws a navy left rail 220
+to 280px with the mark, a label, flat links with Lucide icons and the
+clearance at the bottom — which is this shell at 264px. Two shells for two
+signed-in surfaces is two things to keep in step.
+
+### Four variations to disclose
+
+1. **The sidebar's group labels are tracked caps.** The second carve-out
+   from CLAUDE.md's sentence-case rule, and it is written into CLAUDE.md
+   rather than only here. At 11px a group label in sentence case reads as a
+   disabled item rather than as a heading over one.
+2. **`--a-ground` is a new token, `#F0F4F1`, admin-only.** Defined in
+   `admin.css` under `[data-surface="admin"]`, absent from `tokens.css`,
+   and no public rule may reach it — held by test in both directions.
+   `--c-admin-bg` was drawn for a page with a white header above it and
+   reads as a second paper colour against navy. Charcoal measures 13.22:1
+   on it and slate 4.90:1.
+3. **The extranet rail is grouped, not flat.** Screen 04 draws seven links
+   with no headings, which was right while that was all there was. It now
+   carries a row per committee the reader sits on.
+4. **The clearance note moved from the rail to the extranet dashboard.**
+   Under a scrolling list of committees it is a boundary statement nobody
+   reads; on the dashboard it sits above the folders it describes.
+
+### What the rebuild found
+
+- **`/en/admin/users/invite` carried two h1s**, its own under the layout's.
+  Two h1s in one document is a structure failure under WCAG 2.1 AA.
+- **The completeness matrix rendered in the public chrome** while being an
+  authenticated page both administered surfaces reach. It uses
+  `layouts.workspace`, which picks the navigation the same way
+  `LoginController::destinationFor` picks a landing page.
+- **A viewer's sidebar would have offered one link to a 403.** The
+  dashboard row carries no permission of its own, because everybody in the
+  back office may see it; the navigation now returns nothing at all to a
+  reader who cannot enter.
+- **The admin search escaped `%` and `_` without an `ESCAPE` clause**,
+  which made an email address with an underscore in it unfindable rather
+  than safer.
+- **The primary action on the dashboard was a green button with no text
+  in it.** Every button on the platform carries a label, and a test now
+  walks them.
+- **The dashboard's date was formatted from a UTC instant**, so it showed
+  yesterday to anybody in Gaborone before two in the morning.
+
+### Two things built to fill gaps the sidebar exposed
+
+**Sample data**, `/en/admin/samples`: the per-table breakdown behind the
+dashboard's total. "196 rows" is a number the Secretariat cannot act on.
+**There is no purge button and that is deliberate** — the strip removes two
+hundred rows across fourteen tables in one transaction and cannot be
+undone, so it is a command run at a terminal by somebody who can read what
+it says before confirming. Held by test, including that no route exists
+that strips or purges.
+
+**Delegate registrations**, `/en/admin/meetings`: the way in to the
+rosters, which were reachable only by knowing a meeting's slug.
+
+### Not done
+
+Screen 09's visitors chart, popular pages and popular search terms still
+render as empty states naming what would fill them: there is no analytics
+collection on this platform. The notification bell links to the account
+page rather than opening a panel.

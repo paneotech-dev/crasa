@@ -87,7 +87,7 @@ a mark, it is a hole. Recorded in `docs/OPEN_ITEMS.md` and held by test.
 
 **Contrast is a threshold, not a preference.** WCAG 2.1 AA is a contractual acceptance criterion, so where an approved foundation value fails a success criterion the standard wins and the delivered value differs. `--c-border` and `--c-navy-edge` are both lightened or darkened from the foundations for SC 1.4.11 — `--c-border` twice, because the back office ground is darker than cream and the value that cleared cream did not clear it, and `--c-border-input` is deleted because it resolved to the same value as `--c-border`. Every token pair in use is measured by test.
 
-**The back office has its own ground and its own surface set.** `--c-admin-bg` and `--c-line` are the administration page ground and panel rule, and the `--d-*` set is the dark surface set. All of them are drawn in screen 09. Dark mode is the same design with different surface and ink values, not a second design: no component appears or disappears with the theme, and no status badge changes meaning.
+**The back office has its own ground and its own surface set.** `--a-ground` is `#F0F4F1`, the content ground behind the shell's cards, and it is admin-only: it is defined in `public/css/admin.css` under `[data-surface="admin"]`, it is not in `tokens.css`, and no public rule may reach it. It replaced `--c-admin-bg` as the ground on 10 September 2026, when the sidebar arrived: a warm grey drawn for a page with a white header above it reads as a second paper colour against navy. `--c-admin-bg` and `--c-line` are the administration page ground and panel rule, and the `--d-*` set is the dark surface set. All of them are drawn in screen 09. Dark mode is the same design with different surface and ink values, not a second design: no component appears or disappears with the theme, and no status badge changes meaning.
 
 **The choropleth is one hue in four steps.** `--c-green-light`, `--c-green-step-1`, `--c-green-step-2`, `--c-green-dark`, drawn in RegionMap. A member state with no figure is hatched with `--c-sand` and `--c-hatch`, never the lightest step: "not reported" and "lowest value" mean different things and must not look similar.
 
@@ -106,7 +106,7 @@ The reference screens were designed deliberately. Code written against them must
 - The same soft grey shadow under every card. Use the three defined elevations to encode hierarchy.
 - Emoji standing in for icons. Use Lucide, one library, consistently. Emoji do not inherit colour, break across operating systems and do not scale.
 - A thin coloured gradient bar down the left edge of a card.
-- Tracked-out ALL-CAPS eyebrow labels above headings. The one exception is the footer column headings, which are set in tracked caps as drawn in the approved screens — see the carve-out under the writing rules.
+- Tracked-out ALL-CAPS eyebrow labels above headings. The two exceptions are the footer column headings and the administered sidebar's group labels — see the carve-outs under the writing rules.
 - Meta strings joined with middle dots (`A · B · C`).
 - An arrow character appended to button or link text.
 - Numbered markers `01 / 02 / 03` unless the content genuinely is a sequence. The submission workflow is a sequence. A feature grid is not.
@@ -129,7 +129,11 @@ The reference screens were designed deliberately. Code written against them must
 The copy is where generated pages give themselves away fastest, and it is the part most likely to be read by a regulator deciding whether to trust the data.
 
 - **Sentence case everywhere.** No title case headings, no ALL CAPS labels.
-- **One carve-out for caps: footer column headings.** The four link-group headings in the site footer are set in tracked caps, 12px, weight 700, `letter-spacing: .1em`, as drawn in screen 02. Nothing else on any surface takes this treatment — not section eyebrows, not table headers, not card labels, not navigation. If you find yourself reaching for tracked caps anywhere but the footer, the answer is sentence case.
+- **Two carve-outs for caps, and only two.**
+  1. **The footer's column headings.** The four link-group headings in the site footer are set in tracked caps, 12px, weight 700, `letter-spacing: .1em`, as drawn in screen 02.
+  2. **The administered sidebar's group labels.** OVERVIEW, CONTENT, REGULATORY, PEOPLE, PLATFORM in the back office; WORKSPACE, COMMITTEES, REGION, ACCOUNT in the extranet. Inter 11px, weight 700, `letter-spacing: .1em`, `--c-green-light` on navy. Added 10 September 2026 with the shell: a group label at 11px in sentence case reads as a disabled item rather than as a heading over one, and the sidebar is a navigation of twenty-four rows that has to be scannable at a glance every morning.
+
+  Nothing else on any surface takes this treatment — not section eyebrows, not table headers, not card labels, not the public navigation. If you find yourself reaching for tracked caps anywhere but those two, the answer is sentence case.
 - **The rendered site carries only content CRASA would publish.** Project, contract and programme information stays in `docs/`. No contract number, deliverable reference, work-stream code, Terms of Reference, milestone date, supplier name or focal point ever appears in a Blade template, a lang file, a page title, a meta description, alt text or an aria-label. The reader is a regulator or a member of the public, not a programme officer.
 - **Partner and funder attribution is supplied by the client.** Never draft it, never guess it, never approximate a logo or a funding statement. The EU emblem in particular has binding rules on proportion, clear space and accompanying wording, and a wrong one on a donor-funded platform is raised formally. Leave the space empty until CRASA supplies the copy and the marks.
 - **Straight quotes in code and content fields.** Curly quotes pasted from a generator are a tell.

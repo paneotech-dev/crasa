@@ -86,9 +86,9 @@ class RoleLandingTest extends TestCase
         $html = $this->actingAs($admin)->get('/en/admin')->assertOk()->getContent();
 
         // Three things that must be there. Screen 09's dashboard.
-        $this->assertStringContainsString(__('admin.section_content'), $html);
-        $this->assertStringContainsString(__('admin.stat_publications'), $html);
-        $this->assertStringContainsString(__('admin.section_users'), $html);
+        $this->assertStringContainsString('<span>'.__('admin.nav_pages').'</span>', $html);
+        $this->assertStringContainsString(__('admin.dash_stat_publications'), $html);
+        $this->assertStringContainsString('<span>'.__('admin.nav_users').'</span>', $html);
     }
 
     public function test_an_administrator_reaches_the_privileged_screens(): void
@@ -125,13 +125,19 @@ class RoleLandingTest extends TestCase
         $html = $this->actingAs($editor)->get('/en/admin')->assertOk()->getContent();
 
         // Present: the content work an editor signs in to do.
-        $this->assertStringContainsString(__('admin.section_content'), $html);
-        $this->assertStringContainsString(__('admin.section_media'), $html);
-        $this->assertStringContainsString(__('admin.stat_publications'), $html);
+        $this->assertStringContainsString('<span>'.__('admin.nav_pages').'</span>', $html);
+        $this->assertStringContainsString('<span>'.__('admin.nav_media').'</span>', $html);
+        $this->assertStringContainsString(__('admin.dash_stat_publications'), $html);
 
-        // Absent: not in the navigation.
-        $this->assertStringNotContainsString(__('admin.section_users'), $html);
-        $this->assertStringNotContainsString(__('admin.section_audit'), $html);
+        /*
+         * Absent from the navigation. Asserted on the sidebar row's own
+         * markup rather than on the word: the dashboard's tiles count
+         * users, and an editor may see the figure without being able to
+         * open the list.
+         */
+        $this->assertStringNotContainsString('<span>'.__('admin.nav_users').'</span>', $html);
+        $this->assertStringNotContainsString('<span>'.__('admin.nav_audit').'</span>', $html);
+        $this->assertStringNotContainsString('<span>'.__('admin.nav_settings').'</span>', $html);
     }
 
     /** And absent from the navigation is not the control. The routes are. */
@@ -162,9 +168,9 @@ class RoleLandingTest extends TestCase
         $this->assertStringContainsString(__('extranet.nav_submissions'), $html);
 
         // Absent: nothing from the back office, and no other member state.
-        $this->assertStringNotContainsString(__('admin.section_users'), $html);
+        $this->assertStringNotContainsString('<span>'.__('admin.nav_users').'</span>', $html);
         $this->assertStringNotContainsString('Mozambique', $html);
-        $this->assertStringNotContainsString(__('admin.section_audit'), $html);
+        $this->assertStringNotContainsString('<span>'.__('admin.nav_audit').'</span>', $html);
     }
 
     public function test_a_member_state_representative_is_kept_out_of_the_back_office(): void

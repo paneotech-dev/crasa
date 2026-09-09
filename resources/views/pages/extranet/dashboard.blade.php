@@ -22,6 +22,23 @@
 @section('note', $clearance['scope'] ?? '')
 
 @section('content')
+    {{-- The reader's own clearance.
+
+         Screen 04 pins this to the bottom of the rail. It moved here with
+         the shell on 10 September 2026: the rail now carries a row per
+         committee the reader sits on, and a boundary statement under a
+         scrolling list is a boundary statement nobody reads. Here it sits
+         above the folders it describes.
+
+         A reader who does not know their own clearance reads an empty
+         folder list as a fault rather than as a boundary. --}}
+    @if ($clearance)
+        <div class="a-alert" role="note">
+            <strong>{{ __('extranet.clearance_title') }}</strong>
+            {{ $clearance['level'] }}. {{ $clearance['scope'] }}
+        </div>
+    @endif
+
     <div class="e-dash">
         <section class="a-resource">
             <div class="a-resource__head">

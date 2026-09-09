@@ -51,6 +51,17 @@ class Country extends Model
         return $this->hasOne(Authority::class)->latestOfMany();
     }
 
+    /**
+     * Every figure reported against this member state. Used by the
+     * dashboard tile that counts how many of the fourteen have filed
+     * anything at all, which is the number that says whether the
+     * comparator has a region in it or a demonstration.
+     */
+    public function indicatorValues(): HasMany
+    {
+        return $this->hasMany(IndicatorValue::class);
+    }
+
     public function committees(): BelongsToMany
     {
         return $this->belongsToMany(Committee::class)

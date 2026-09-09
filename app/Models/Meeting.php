@@ -58,6 +58,12 @@ class Meeting extends Model
         return $this->morphMany(Document::class, 'documentable');
     }
 
+    /** Who has filed an arrival and a departure against this meeting. */
+    public function delegateRegistrations(): HasMany
+    {
+        return $this->hasMany(DelegateRegistration::class);
+    }
+
     public function scopeUpcoming(Builder $query): Builder
     {
         return $query->whereDate('starts_on', '>=', now()->toDateString())->orderBy('starts_on');

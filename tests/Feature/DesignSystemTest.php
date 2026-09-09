@@ -123,9 +123,40 @@ class DesignSystemTest extends TestCase
 
             $this->assertDoesNotMatchRegularExpression(
                 '/#[0-9A-Fa-f]{3,8}\b/',
-                $this->withoutBrandMarks($css),
+                $this->withoutAdminGround($this->withoutBrandMarks($css)),
                 $sheet.' must take every colour from tokens.css.'
             );
+        }
+    }
+
+    /**
+     * The second carve-out: --a-ground.
+     *
+     * #F0F4F1 is the back office's content ground and it is deliberately
+     * not in tokens.css. It exists only behind the shell's cards, no public
+     * rule may reach it, and putting it in the shared token file would
+     * offer it to every surface on the platform. CLAUDE.md records it.
+     *
+     * Removed by its own declaration rather than by matching the value, so
+     * a second #F0F4F1 written anywhere else still fails.
+     */
+    private function withoutAdminGround(string $css): string
+    {
+        return (string) preg_replace('/--a-ground:\s*#F0F4F1;/', '', $css, 1);
+    }
+
+    /** And the carve-out is one declaration, not a licence. */
+    public function test_the_admin_ground_is_declared_once_and_only_in_the_admin_sheet(): void
+    {
+        $admin = preg_replace('#/\*.*?\*/#s', '', $this->css('css/admin.css'));
+
+        $this->assertSame(1, substr_count($admin, '#F0F4F1'), '--a-ground is written more than once.');
+        $this->assertMatchesRegularExpression('/--a-ground:\s*#F0F4F1;/', $admin);
+
+        // Not offered to the public surfaces.
+        foreach (['css/tokens.css', 'css/base.css', 'css/chrome.css', 'css/blocks.css'] as $sheet) {
+            $this->assertStringNotContainsString('--a-ground', $this->css($sheet), $sheet.' reaches an admin-only token.');
+            $this->assertStringNotContainsString('#F0F4F1', $this->css($sheet));
         }
     }
 
