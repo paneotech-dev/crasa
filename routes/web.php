@@ -32,6 +32,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DelegateRegistrationController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EventsController;
+use App\Http\Controllers\FeatureInterestController;
 use App\Http\Controllers\ExtranetController;
 use App\Http\Controllers\LocaleRedirectController;
 use App\Http\Controllers\MemberController;
@@ -174,6 +175,15 @@ Route::prefix('{locale}')
          * folders; a visitor goes to sign in, which is where the extranet
          * begins for them.
          */
+        /*
+         * Demand capture for a proposal that is not built and is outside
+         * the contracted scope. A row and an audit entry; nothing else.
+         * See docs/OPEN_ITEMS.md, and FeatureInterestController.
+         */
+        Route::post('extranet/interest', [FeatureInterestController::class, 'store'])
+            ->middleware(['auth', 'throttle:20,60'])
+            ->name('extranet.interest');
+
         Route::get('extranet', fn () => auth()->check()
             ? redirect()->route('extranet.dashboard', ['locale' => app()->getLocale()])
             : redirect()->route('login', ['locale' => app()->getLocale()]))

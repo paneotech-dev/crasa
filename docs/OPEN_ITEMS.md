@@ -1281,3 +1281,62 @@ Screen 09's visitors chart, popular pages and popular search terms still
 render as empty states naming what would fill them: there is no analytics
 collection on this platform. The notification bell links to the account
 page rather than opening a panel.
+
+---
+
+## The regulatory assistant card and panel: demand capture, not a feature
+
+*10 September 2026, on an instruction.*
+
+**What this is.** A card on the extranet dashboard and a panel it opens,
+describing what a regulatory assistant would do. Nothing is built. There is
+no chat input anywhere on this platform and nothing in the card or the panel
+can be typed into; the only thing a reader can do is say once that they
+would use it, which writes one row and one audit entry and changes the
+button to "Noted, thank you".
+
+**Why it is here at all.** CLAUDE.md reserves conversational features for a
+separate commercial addendum and forbids building them in this codebase.
+This does not build one. It asks a question the Secretariat cannot otherwise
+answer — would member states use this — before anybody is asked to pay for
+it. Describing a proposal and counting who wants it is not the reserved
+scope; shipping the thing is.
+
+**The line, held by test.** `AssistantProposalTest` asserts that the partial
+carries no textarea, no text or search input and no `contenteditable`; that
+the only `<input>` in it is the hidden field naming which proposal is being
+voted on; that the rendered panel carries none either; and that neither the
+partial, the controller nor the script contains `https://`, `fetch(`,
+`XMLHttpRequest`, `Http::` or `curl`. It also asserts that no vendor and no
+model is named, no date is given, and the words "coming soon" and their
+French and Portuguese equivalents appear nowhere.
+
+**Who sees it.** Member state representatives and committee members. Not the
+Secretariat's own staff: a count that includes the people proposing it is a
+count of the wrong thing, and the administrator and editor dashboards carry
+nothing about it.
+
+**Where the data goes.** `feature_interests`, one row per account per
+proposal, cascading with the account. Nothing on the platform reads it to
+decide what to render — it is not a feature flag. An expression of interest
+from a deleted account is not evidence of anything, which is why it goes
+with the account rather than being flagged and swept.
+
+**Removable in one commit.** The partial, the controller, the route, the
+model, the migration, the three lang files, the CSS block, `modal.js` and
+the test. One `@include` line comes out of the extranet dashboard. Nothing
+else on the platform references any of it.
+
+**The panel's own mechanics.** A native `<dialog>`, so the focus trap, the
+Escape key and the inert background are the browser's rather than
+reimplemented — reimplementing them is how a modal ends up letting Tab walk
+behind it. With no script the dialog is an ordinary section of the page and
+the button that would open it is not drawn, which is this platform's floor
+everywhere else.
+
+**One correction to the instruction, stated rather than assumed.** The
+instruction was to *extend* an existing "proposed extension" card. No such
+card existed: nothing in the codebase mentioned an assistant or a proposed
+extension. The card was built alongside the panel, to the specification the
+panel's own wording implies — same label, same interest behaviour, same
+audience.

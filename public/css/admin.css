@@ -2269,3 +2269,119 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
 }
 .a-nosource__title { display: block; font-size: 14.5px; font-weight: 600; color: var(--a-ink); margin-bottom: 4px; }
 .a-nosource__body { display: block; font-size: 13.5px; line-height: 1.6; color: var(--a-ink-quiet); }
+
+/* A proposal, and the panel that describes it ---------------------------- */
+/* Not a feature. There is no input here and none anywhere on the platform.
+   See resources/views/partials/assistant-proposal.blade.php and
+   docs/OPEN_ITEMS.md. */
+
+/* The card itself, marked as not part of the platform: a green-light edge
+   rather than the amber the platform uses for a warning. This is neither a
+   warning nor a promise. */
+.a-proposal { border-left: 4px solid var(--c-green-light); }
+
+.a-proposal__head { display: flex; align-items: flex-start; gap: var(--s-4); margin-bottom: var(--s-4); }
+.a-proposal__mark {
+  flex: none;
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  border-radius: var(--r-pill);
+  background: var(--c-green-light);
+  color: var(--c-green-dark);
+}
+.a-proposal__title { font-family: var(--f-head); font-size: 19px; font-weight: 600; margin: 0; }
+
+/* The label that says what this is, every time it appears. A proposal that
+   does not say it is a proposal on the panel as well as on the card is a
+   proposal somebody quotes as a commitment. */
+.a-proposal__label {
+  font-family: var(--f-admin);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--c-slate);
+  margin: 4px 0 0;
+}
+
+.a-proposal__framing { font-size: 15px; line-height: 1.6; color: var(--a-ink); margin: 0 0 var(--s-4); max-width: 62ch; }
+.a-proposal__actions { display: flex; justify-content: flex-end; }
+
+.a-proposal__subhead {
+  font-family: var(--f-admin);
+  font-size: 13px; font-weight: 700;
+  color: var(--a-ink-quiet);
+  margin: var(--s-5) 0 var(--s-3);
+}
+
+.a-proposal__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-3); }
+.a-proposal__item {
+  display: flex; gap: var(--s-3); align-items: flex-start;
+  border: 1px solid var(--a-rule);
+  border-radius: var(--r-sm);
+  padding: var(--s-3) var(--s-4);
+  background: var(--a-ground);
+}
+.a-proposal__itemmark { flex: none; color: var(--c-green-dark); margin-top: 2px; }
+.a-proposal__itemtitle { display: block; font-size: 14.5px; font-weight: 600; color: var(--a-ink); margin-bottom: 3px; }
+.a-proposal__example { display: block; font-size: 13.5px; line-height: 1.6; color: var(--a-ink-quiet); }
+
+.a-proposal__how { margin: 0; padding-left: var(--s-5); display: grid; gap: 6px; font-size: 14px; line-height: 1.6; color: var(--a-ink); }
+
+/* The status line. Cream with a 4px green-light edge: this is neither a
+   warning nor a promise, and the amber band is the platform's warning. */
+.a-proposal__status {
+  margin: var(--s-5) 0 0;
+  padding: var(--s-3) var(--s-4);
+  background: var(--c-cream);
+  border-left: 4px solid var(--c-green-light);
+  border-radius: var(--r-sm);
+  font-family: var(--f-admin);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--a-ink);
+}
+
+.a-proposal__panelactions { display: flex; align-items: center; gap: var(--s-4); justify-content: flex-end; margin-top: var(--s-5); }
+.a-proposal__noted { font-size: 14px; font-weight: 600; color: var(--c-green-dark); }
+
+/* The modal --------------------------------------------------------------- */
+/* A native dialog, so the focus trap, the Escape key and the inert
+   background are the browser's rather than reimplemented. With no script
+   the dialog is an ordinary section of the page and the button that opens
+   it is not drawn, which is this platform's floor everywhere. */
+
+.a-modal {
+  border: 0;
+  padding: 0;
+  border-radius: var(--r-md);
+  box-shadow: var(--e-3);
+  max-width: 720px;
+  width: calc(100% - var(--s-6));
+  background: var(--a-surface);
+  color: var(--a-ink);
+}
+.a-modal::backdrop { background: rgba(5, 13, 24, .55); }
+.a-modal__inner { padding: var(--s-5); }
+.a-modal__close {
+  margin-left: auto;
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  background: transparent; border: 0; padding: 0;
+  color: var(--a-ink-quiet); cursor: pointer; border-radius: var(--r-sm);
+  flex: none;
+}
+.a-modal__close:hover { background: var(--c-cream); color: var(--a-ink); }
+
+html:not(.has-js) .a-modal {
+  display: block;
+  position: static;
+  max-width: none;
+  width: auto;
+  box-shadow: var(--e-1);
+  border: 1px solid var(--a-rule);
+  margin-bottom: var(--s-5);
+}
+html:not(.has-js) [data-modal-open],
+html:not(.has-js) .a-modal__close,
+html:not(.has-js) [data-modal-close] { display: none; }

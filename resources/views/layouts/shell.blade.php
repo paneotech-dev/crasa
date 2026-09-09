@@ -80,6 +80,7 @@
     </div>
 
     <script src="{{ \App\Support\Assets::url('js/shell.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/modal.js') }}" defer></script>
     @stack('scripts')
 </body>
 </html>

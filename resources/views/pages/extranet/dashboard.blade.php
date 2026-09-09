@@ -39,6 +39,10 @@
         </div>
     @endif
 
+    {{-- A proposal, not a feature. Member state representatives and
+         committee members only. See the partial. --}}
+    @include('partials.assistant-proposal')
+
     <div class="e-dash">
         <section class="a-resource">
             <div class="a-resource__head">
