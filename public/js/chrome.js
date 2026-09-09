@@ -1,7 +1,13 @@
 /* CRASA Digital Anchor Ecosystem — public header behaviour.
  *
- * One job: run the drawer. Escape closes it, focus is trapped inside it
- * while it is open, and focus returns to the trigger on close.
+ * Two jobs, and neither of them is layout.
+ *
+ * The drawer: Escape closes it, focus is trapped inside it while it is
+ * open, and focus returns to the trigger on close.
+ *
+ * The compressed sticky state screen 02 draws: an IntersectionObserver on
+ * a sentinel at the top of the document, so the browser reports whether the
+ * page has scrolled and the stylesheet decides everything else.
  *
  * The collapse itself is CSS, at the breakpoints screen 01 names. It used to
  * be measured at runtime and that failed three times, each time hiding a
@@ -15,6 +21,32 @@
 
   var header = document.querySelector('[data-header]');
   if (!header) return;
+
+  /* The compressed sticky state ------------------------------------------
+   *
+   * Screen 02 draws the header compressed once the page has scrolled.
+   *
+   * An IntersectionObserver on a sentinel above the header, not a scroll
+   * handler and not a measurement. Nothing here reads a width or a
+   * position: the browser reports whether the top of the document is still
+   * on screen, and the stylesheet decides everything else. Without
+   * JavaScript the header stays in its resting state, which is the state
+   * the screen draws at rest.
+   */
+  if (window.IntersectionObserver) {
+    var sentinel = document.createElement('div');
+    sentinel.setAttribute('aria-hidden', 'true');
+    sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:1px;';
+    document.body.insertBefore(sentinel, document.body.firstChild);
+
+    new IntersectionObserver(function (entries) {
+      if (entries[0].isIntersecting) {
+        header.removeAttribute('data-compressed');
+      } else {
+        header.setAttribute('data-compressed', '');
+      }
+    }).observe(sentinel);
+  }
 
   var toggle = header.querySelector('[data-drawer-toggle]');
   var drawer = document.querySelector('[data-drawer]');
@@ -86,4 +118,5 @@
       });
     }
   }
+
 })();

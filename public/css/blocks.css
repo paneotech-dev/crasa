@@ -626,7 +626,8 @@
 .c-secret { font-family: var(--f-admin); font-size: 17px; letter-spacing: .08em; background: var(--c-cream); border: 1px solid var(--c-sand); border-radius: var(--r-sm); padding: var(--s-3) var(--s-4); word-break: break-all; }
 
 /* Recovery codes, shown once. */
-.c-codes { list-style: none; margin: var(--s-4) 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: var(--s-2); }
+/* 160px, which is a width the approved screens draw. 150 was invented. */
+.c-codes { list-style: none; margin: var(--s-4) 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr)); gap: var(--s-2); }
 .c-codes li { background: var(--c-cream); border: 1px solid var(--c-sand); border-radius: var(--r-xs); padding: var(--s-3); text-align: center; }
 .c-codes code { font-family: var(--f-admin); font-size: 15px; letter-spacing: .06em; }
 

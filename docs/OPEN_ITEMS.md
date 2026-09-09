@@ -285,6 +285,33 @@ behind it.
 
 ---
 
+## Closed: the three not-generic findings
+
+All three are resolved. The detail is in `docs/OVERNIGHT.md`; the short
+version:
+
+**The eleven `auto-fit` grids.** Not drift. `repeat(auto-fit, minmax(min(100%,
+Npx), 1fr))` is the approved screens' own formula, used throughout screen 02
+including its footer at 220px. Every width in the platform was checked
+mechanically against every width the screens draw: all but two match. The
+two exceptions are the member grid, which is `auto-fill` with a
+server-computed span under Ruling 2, and `.c-codes`, which had an invented
+150px and is now 160px, a width the screens do draw.
+
+**`--e-2` unused.** The token was unused because the thing it belongs on was
+not built: screen 02 draws a compressed sticky header carrying
+`box-shadow:var(--e-2)` and the header had no compressed state. Built. All
+three elevations now carry a distinct depth, and a test fails if any of them
+goes unused again.
+
+**Radius 15:3.** Closed by checking each use against the rule rather than by
+changing values. `--r-xs` on inputs, `--r-sm` on buttons and small controls,
+`--r-md` on panels, `--r-lg` on the three card-shaped things that exist,
+`--r-pill` on status badges only. No violations. The distribution is
+lopsided because the element population is.
+
+---
+
 ## Disclosed variation: onboarding, and what it deliberately is not
 
 **No approved screen covers onboarding.** Case 2: the back office needs an

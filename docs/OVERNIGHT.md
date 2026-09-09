@@ -1,231 +1,414 @@
-# Overnight run — morning report
+# Long run — report
 
-**430 tests, 1862 assertions, all passing. Pint clean. Eight commits, each
-green before committing.**
+**563 tests, 2590 assertions, all passing. Pint clean. Nine commits, each
+green before committing, none red at any point.**
 
-Questions are in `docs/QUESTIONS.md`, six of them, each with a recommendation
-and what was done in the meantime.
+Sections 9 to 16 are complete. The public site is finished and the
+administration back office is built end to end.
+
+| # | Section | Commit |
+|---|---|---|
+| 9 | Site search | `b545398` |
+| 10 | The pages the footer links to, and a crawl that keeps them alive | `8c94ad9` |
+| — | The footer destinations, logged as a disclosed variation | `291e75b` |
+| 11 | The back office shell and dashboard | `1a6d09d` |
+| 12 | Page and block editing | `4adc550` |
+| 13 | The media library | `0649bd5` |
+| 14 | Translation management | `6c44df1` |
+| 15 | CRUD for every administered model | `40d3ada` |
+| 16 | Onboarding | `c9c7ca0` |
 
 ---
 
-## Stages completed
+## What the screens decided, and where I departed
 
-| Stage | State |
+Every visual decision in this run was taken from an approved screen, and the
+markup or value is quoted in the stylesheet beside the rule that implements
+it. Four departures, all logged in `docs/OPEN_ITEMS.md`.
+
+**Screen 09 settled two things a guess would have got wrong.** The back
+office nav is a horizontal section bar in the header, not a sidebar:
+
+```
+<nav aria-label="Back office" style="display:flex;flex-wrap:wrap;gap:2px;
+min-width:0;margin-left:var(--s-4)">
+```
+
+And Lora stays on headings; only the interface itself is Inter:
+
+```
+h1 style="font-family:var(--f-head);font-size:clamp(25px,3.4vw,34px)"
+```
+
+**Screen 14 settled the shape of content editing.** It draws content as
+rows in a panel, never as a drag-and-drop canvas:
+
+```
+display:flex;gap:24px;align-items:flex-start;padding:18px 24px;flex-wrap:wrap
+```
+
+so the block list is rows, and reordering is a Move up and a Move down
+button. That is also the only reordering operable from a keyboard without
+building a bespoke drag widget with its own live announcements.
+
+**Screen 05 settled the translation editor**, including why the pair views
+exist: `220px repeat(3,minmax(0,1fr))` for all three languages and
+`220px repeat(2,...)` for English against one, because three columns of a
+long body field on a laptop leave nobody enough width to read either.
+
+### The four disclosed variations
+
+| Variation | Reason | Where |
+|---|---|---|
+| Footer link destinations | Screen 02 draws every footer link as `href="#"`. Silent on a case that must be handled. | Case 2 |
+| Screen 09's form fields, input border, breadcrumb, and two stat cards | Static rendition: it draws spans, not inputs. Its `#B9B2A2` input border is 2.11:1 and loses to SC 1.4.11. | Cases 1 and 2 |
+| Content editing has no canvas; pages served by slug | No approved screen draws either. | Case 2 |
+| Onboarding | No approved screen covers it. | Case 2 |
+
+**And one departure from CLAUDE.md rather than from a screen.** Screen 09
+sets every back office table header in tracked caps. Your ruling names table
+headers as excluded in terms. The same conflict was already raised for the
+hero eyebrow as question 6, and the position taken there was that the ruling
+wins. **The same answer is taken here rather than the opposite one on the
+same question.** The headers keep the screen's size, weight and quiet ink;
+only the letterform changes. One rule in `public/css/admin.css` flips it back.
+
+---
+
+## Computed padding and nav state at the four widths
+
+Nothing here is measured in a browser. These are the computed values, read
+from the cascade.
+
+### Section padding
+
+`--section-y` and `--page-x` are tokens with one breakpoint at 767px.
+
+| Width | `--section-y` | `--page-x` | `.b` | `.b--medium` | `.b--tight` |
+|---|---|---|---|---|---|
+| 375 | `--s-7` = **48px** | `--s-4` = **16px** | 48 | 64 | 48 |
+| 768 | `--s-9` = **96px** | `--s-7` = **48px** | 96 | 64 | 48 |
+| 1024 | `--s-9` = **96px** | `--s-7` = **48px** | 96 | 64 | 48 |
+| 1440 | `--s-9` = **96px** | `--s-7` = **48px** | 96 | 64 | 48 |
+
+**Before and after, for the change this run made.** Only the header changed:
+
+| Width | Header padding, at rest | Header padding, compressed |
+|---|---|---|
+| 375 | `var(--s-4) var(--page-x)` = 16px / 16px | not applied below 1024 |
+| 768 | 16px / 48px | not applied below 1024 |
+| 1024 | 16px / 48px | **9px** / 48px |
+| 1440 | 16px / 48px | **9px** / 48px |
+
+Two consecutive blocks on the same ground collapse to `padding-block-start: 0`,
+so a run of cream sections reads as one section rather than as three with a
+seam. Unchanged this run.
+
+### Nav state
+
+| Width | Primary nav | Utilities | Toggle | Drawer | Compressed state |
+|---|---|---|---|---|---|
+| 375 | hidden (`display:none`) | hidden | shown, `margin-left:auto` | available | n/a |
+| 768 | second row: `flex-basis:100%`, `order:3`, 1px `--c-sand` rule above | first row | hidden | none | n/a |
+| 1024 | inline, one row | inline | hidden | none | **available** |
+| 1440 | inline, one row, full identity lockup | inline | hidden | none | **available** |
+
+Without JavaScript at 375 the nav and the utilities both render inline and
+wrap, which is the floor: a reader never loses the navigation.
+
+**New this run: the compressed sticky state.** Screen 02 draws it under the
+heading "Compressed sticky state, 1440px":
+
+```
+background:var(--c-white);border:1px solid var(--c-sand);
+border-radius:var(--r-md);box-shadow:var(--e-2);padding:9px var(--s-5)
+img width:30px;height:30px    span font-size:17px
+```
+
+It was not built. It is now, at 1024 and up, and it is what closes the
+elevation finding below. The state is reported by an IntersectionObserver on
+a sentinel at the top of the document: nothing reads a width or a position,
+which is the failure mode that broke this header three times earlier in the
+build. There is a test that fails if a measurement reappears.
+
+---
+
+## Page by page, what can be demonstrated
+
+### Public
+
+| Route | State |
 |---|---|
-| Ruling 1 — contrast tokens | done, `0125754` |
-| A6 — nav collapse at 1440 | done, `0125754` |
-| Ruling 2 — grid drift, `.b-figure` accent | done, `3379a55` |
-| H — fabricated committee membership | done, `3379a55` |
-| A1–A3 — hero, block data, section rhythm | done, `9a02a54` |
-| Design pass — region map, composition, art direction | done, `1932bea` |
-| G — indicators and completeness dashboard | done, `4ef5585` |
-| B — authentication and account UI | **already built** as stage 8, `fbdeffa` |
-| **F — search** | **not reached** |
+| `/{locale}` | Homepage, composed from blocks, real data in every one |
+| `/{locale}/about` | Six sections; four flagged `needs_content`, each with the footer anchor that lands on it |
+| `/{locale}/committees` | Composed; committee mandates flagged |
+| `/{locale}/members` | Fourteen member states, region map, real committee membership |
+| `/{locale}/publications` | Library with filters, thumbnails, language badges |
+| `/{locale}/publications/{slug}` | Document detail, clearance-gated streaming |
+| `/{locale}/newsroom`, `/newsroom/{slug}` | Listing and article |
+| `/{locale}/search`, `/search/suggest` | Faceted, highlighted, country-scoped |
+| `/{locale}/contact` | Form, rate limited, no CAPTCHA |
+| `/{locale}/completeness` | Indicator completeness matrix |
+| `/{locale}/privacy`, `/terms` | Resolve; legal text flagged as client content |
+| `/{locale}/accessibility` | **Written in full**, naming the conformance target and the exceptions |
+| `/{locale}/comparator`, `/events` | Resolve; feature is a later phase and the page says so |
+| `/{locale}/extranet` | Redirects to sign-in |
+| `/{locale}/login`, password reset, 2FA challenge and enrolment | Complete |
+| `/{locale}/account`, `/account/suspended` | Complete |
+| `/{locale}/{slug}` | **New**: any published page, so a page the Secretariat creates has an address without a deployment |
 
-Stage B was in the brief twice. It was built and committed earlier in the
-evening: 19 routes, 32 tests, login with screen 11's states, 2FA with hashed
-recovery codes, password reset, account settings, user administration and the
-filterable audit log. It was verified rather than rebuilt.
+40 public routes. `SiteNavigationTest` crawls every internal link on every
+public page and fails if any stops resolving.
 
-Stage F is the only numbered stage untouched. Question 5.
+### Administration
 
----
-
-## The homepage, fixed
-
-**A1. The hero was inside out.** The photograph rendered in a rounded box
-below the headline. It is now what screen 02 draws: a full-bleed navy band
-with the image behind a gradient scrim running from 95 per cent opaque where
-the text sits to 38 per cent at the far edge, which is what makes a headline
-readable over a photograph nobody chose for its contrast.
-
-The rotation did not exist. It does now, and it stops on hover and on focus,
-never advances while a control inside it holds focus, takes arrow keys,
-announces each change through a polite live region, carries an explicit pause,
-and under `prefers-reduced-motion` does not rotate at all with the controls
-removed rather than left inert.
-
-**A2. Three empty states on a seeded database.** Not the seeders: 30
-instruments, 10 publications and 6 articles were all present. The blocks were
-written with their empty states first and never given a data source, so they
-queried nothing and correctly reported nothing. `BlockData` supplies them now.
-The test asserts both directions, which is the part that matters — a seeded
-database must not render an empty block, and an unseeded one must still
-render the empty state.
-
-**A3. One padding for every section.** Screen 02 uses three tiers by density.
-Prose and grids at 96, card strips at 64 because the cards carry their own
-padding, dense figure rows at 48.
-
-**A4/H. "Sits on 6 committees", fourteen times.** Every state had been
-attached to every committee. Seats went 84 → 0. The member card shows the
-authority's sector mandates instead, which are real and vary 1 to 3.
-
-**A5. Uniform card heights.** Fixed across the library, not just the
-homepage: every grid carries `align-items: start`, held by test.
-
-**A6. Nav collapsed to a hamburger at 1440.** The measurement asked whether
-the nav fitted on one row and went straight to the drawer when it did not.
-In French the nine items stop fitting a single row well above 1440. There is
-a wrapped state between inline and drawer now; the drawer is only reached
-when identity and utilities alone fill the row.
-
----
-
-## Which grids changed, and which did not
-
-**Changed — `.b-members`.** `auto-fit` with equal fractions gave every member
-card the same width whatever it held. It is `auto-fill` on a narrower track
-now, and a card claims two columns when its content earns them, decided
-server-side from the authority's name length and mandate count.
-
-**Left, deliberately:**
-
-- `.b-cards` — a 16:9 image sets the rhythm; variation shows in card height,
-  which already varies.
-- `.b-figures__grid`, `.b-pillars__grid` — figures are a number and a short
-  label; pillars are peers whose column count is an editor setting.
-- `.c-meta`, `.c-codes`, `.c-enrol`, `.c-preview`, `.c-form--filters` — label
-  and value pairs, recovery codes, form fields. Genuinely uniform.
-
-Forcing variation onto uniform content is just a different default.
-
-`.b-figure` carried 3px of `--c-green` on all four figures identically,
-drawing no distinction at all. Removed.
-
----
-
-## Indicators: what was sourced and what was dropped
-
-**Fourteen sourced. Two categories dropped.**
-
-Both source documents were **fetched and read**, not recalled: the ITU Core
-List of Indicators (March 2022), which reproduces the ITU Handbook for the
-Collection of Administrative Data on Telecommunications/ICT with page
-references, and the UPU Postal Statistics technical notes. Every indicator
-carries the document, the page or heading, and a URL.
-
-**ITU, seven:** fixed-telephone subscriptions (p.25), mobile-cellular (p.43),
-fixed-broadband (p.83), active mobile-broadband (p.48), international
-bandwidth per inhabitant (p.74), 3G population coverage (p.57), multichannel
-TV subscriptions (A10).
-
-**UPU, seven:** licensed operators (2.1), permanent post offices (4.1),
-domestic letter-post items (9.2), domestic parcels (10.4), total staff (3.1),
-transit-time standard (8.8), percentage within standard (8.10).
-
-**Dropped: spectrum and interconnection.** Neither ITU nor UPU publishes a
-definition at the level a regulator reports against; they are regionally
-specific and most likely live in the SADC guidelines. Both categories are
-seeded empty and a test pins them empty. Question 4.
-
-The demonstration values are deliberately uneven — South Africa and Botswana
-complete, Comoros reporting nothing, periods from 2022 to 2025 — because a
-dashboard whose purpose is showing gaps proves nothing against a complete
-grid. An empty cell reads "Not reported", not zero: a zero is a figure
-someone reported.
-
----
-
-## What is demonstrable, page by page
-
-| Page | State |
+| Route | State |
 |---|---|
-| `/{locale}` homepage | Full-bleed hero with rotation, key figures, four pillars, featured comparison (empty state — indicators are not wired to it yet), featured publications and newsroom both showing real records, member grid, social links |
-| `/{locale}/about` | Sourced founding statement in three languages, two placeholder-flagged sections |
-| `/{locale}/committees` | Intro, mandates placeholder-flagged |
-| `/{locale}/members` | **The region map.** Twelve mainland states, Madagascar and Seychelles as context, Comoros and Mauritius as insets, every one linking to its entry |
-| `/{locale}/publications` | Faceted by type, state, committee, year; supersession lineage across three generations; thumbnails; download counts |
-| `/{locale}/newsroom` | Category, sector and tag filters, pagination, article pages with related items |
-| `/{locale}/contact` | Honeypot, rate limit, store-then-queue, click-to-load map |
-| `/{locale}/login` + 2FA + reset | Screen 11 states, QR and manual entry, hashed recovery codes |
-| `/{locale}/account` | Details, language, notifications, 2FA, password |
-| `/{locale}/admin/users`, `/admin/audit` | Role matrix, invite, suspend, filterable trail |
-| `/{locale}/completeness` | **New.** Fourteen states against four categories, freshness badges, gaps highlighted, taxonomy with sources |
+| `/admin` | Dashboard: six real counts, two real charts, real activity from the audit log, three honest empty states |
+| `/admin/help` | Onboarding, all twelve block explanations, six platform rules |
+| `/admin/pages` | Page list with language coverage and status |
+| `/admin/pages/{page}` | Page fields in three languages, workflow, block list |
+| `/admin/pages/{page}/blocks/*` | Add, edit, move, duplicate, hide, delete |
+| `/admin/pages/{page}/preview` | The real template, unpublished |
+| `/admin/translations` | Coverage per record per language |
+| `/admin/translations/{type}/{id}` | Side by side or paired, with approve and rewrite |
+| `/admin/translations/{type}/{id}/preview/{locale}` | The real resolver, fallback notice and all |
+| `/admin/media` | Grid and list, search, filters, missing-alt count |
+| `/admin/media/{asset}` | Alt text per language, renditions, rights, usage, replace, delete |
+| `/admin/data` | Every administered model with a count |
+| `/admin/data/{resource}` | List, create, edit, delete, restore, for eleven models |
+| `/admin/users`, `/admin/users/invite` | Accounts, roles, suspension, the permission matrix |
+| `/admin/audit` | Filterable, append only |
+
+44 administration routes.
 
 ---
 
-## The honest not-generic audit
+## Not built, and why
 
-Read against CLAUDE.md's list, naming files and lines.
+### From BUILD_SPEC section 3.2
 
-**Clean:** no indigo/violet/purple anywhere; no middle-dot meta strings
-(comma separators, `blocks.css:290`); no arrows appended to links; no emoji;
-no gradient bars on card edges; no `01/02/03` markers; no scroll-triggered
-animation (`AccessibilityTest` fails on any `@keyframes` in the block
-stylesheet); tracked caps only in the sanctioned footer carve-out
-(`chrome.css:305`).
+| Item | Why |
+|---|---|
+| Report builder and output (RP-12) | Out of this run's scope |
+| SSO handoff and error states (IN-01) | Integration details still outstanding from CRASA. In "Ask before doing" |
+| Public events section (WS-07) | Named in the not-to-build list. Slug resolves and says so |
 
-**Still not right, three findings:**
+### Named in the not-to-build list
 
-1. **`blocks.css` — eleven `auto-fit` grids remain** at lines 134, 230,
-   256–258, 279, 501, 505, 534, 540, 558. Ruling 2 says leave them where
-   content is uniform and I believe that holds for each. But the honest
-   version is that the *formula* is still the reflex reach, and only one grid
-   on the platform responds to content. If a second one ever should, nothing
-   in the code will prompt it.
+Comparator tool, submissions and e-Forms, extranet file area and folders,
+committee workspace, reports, events, delegate registration, SSO bridge.
+Nothing conversational, AI-powered, or touching event and travel management
+exists in this codebase.
 
-2. **Elevation still encodes almost nothing.** `--e-1` twice, `--e-3` once,
-   `--e-2` never. Three levels exist to encode hierarchy and two are doing
-   the work of one. `--e-2` is defined for hover, dropdowns and sticky
-   headers; the sticky header is the obvious home and needs a scroll listener
-   I have not written.
+The comparator and the events slugs resolve rather than 404, because screen
+02 draws both links in the footer. Each page says the feature is being
+prepared and invents nothing about it. They are deleted, not edited, when
+WS-05 and WS-07 are built.
 
-3. **Radius is honest but lopsided:** `--r-sm` 15 uses against `--r-lg` 3.
-   That is defensible — buttons and inputs outnumber cards — but it means the
-   card radius is carrying very little of the hierarchy CLAUDE.md says radii
-   should encode.
+### From DATA_MODEL
 
-### The substitution test
-
-**Replace CRASA with EACO or ARICEA. Does the design still fit perfectly?**
-
-Mostly yes, and that is the finding.
-
-The **region map is the exception** and it is the only one. It is fitted to
-this region, its member fills use the platform's own "in force" green, and
-the two island insets exist because *these* fourteen states include Comoros
-and Mauritius. Swap in EACO and the map is wrong, which is exactly what
-should happen.
-
-Everything else survives substitution intact. The typographic scale, the card
-strips, the facet chips, the document rows, the completeness matrix — all of
-it would suit any regional regulatory association without a single edit. The
-copy is CRASA-specific in ten places (SADC, fourteen, 1997, the Protocol);
-the *design* is not.
-
-The three-generation supersession lineage on a publication page is the
-nearest thing to a second distinctive idea, and it is under-designed: it
-renders as a modest indented list where it should be the page's memorable
-moment. That is the gap I would close next, before search.
-
-So: **the platform is specific in its content and generic in its form,
-everywhere except the members page.** You would have found that in Lilongwe.
+Submissions, submission transitions and the extranet folder tree remain
+unmodelled. Everything else in sections 2 to 7 is built and reconciled.
 
 ---
 
-## Placeholder content still needed from the Secretariat
+## The imagery brief
 
-1. Governance — AGM, Executive Committee and Secretariat structure, current
-   office holders, meeting cycle
-2. Strategic priorities — the current cycle and its priorities
-3. Committee mandates — terms of reference, chairs, **and which member states
-   hold which seats**, now that the fabricated membership is gone
-4. Accession dates, and written consent for each authority to be listed
-5. **Spectrum and interconnection indicator definitions**, most likely from
-   the SADC guidelines
-6. A broadcasting photograph — the sector has none, and no image is borrowed
-   from another sector
-7. Image licences — `LICENCES.csv` source and licence columns are blank for
-   all five accepted images
+`docs/IMAGE_BRIEF.md` is unchanged and still outstanding. The short version:
+
+- **The hero image is the largest single problem on the site.** The current
+  one is consumer register, not institutional. It needs delegates in
+  session, a signing, a plenary hall, telecom infrastructure at scale, or a
+  regulator's building.
+- Landscape, 3000px minimum on the long edge, **subject and interest in the
+  right two thirds**, because the type sits left over a scrim.
+- **Three images would enable the rotation.** One image shown three times is
+  not a rotation and was deliberately not built.
+- Eight images in `_review-needed` are held. Two are photographed outside
+  the region entirely, which on a Southern African regulatory platform is
+  not a small problem.
+- Authority marks: fourteen needed, minimum 512px, transparent, SVG
+  preferred. One current sample is 412 by 118 on a white plate.
+- Licences are yours to resolve. Nothing is blocked on it; the media library
+  records rights holder, licence, source and a confirmation date per asset
+  so a COMESA query can be answered in seconds.
 
 ---
 
-## Still underspecified
+## What the Secretariat has to supply
 
-- `authority_id`/`country_id` consistency is enforced but section 7 never
-  said it should be
-- Screen 13's matrix has four roles where section 7 has five;
-  `committee_member`'s row was derived
-- The hero eyebrow: screen 02 sets tracked caps, your carve-out forbids them
-  outside the footer. Rendering no eyebrow in the meantime — question 6
+`php artisan content:placeholders` prints this list with the full note for
+each. Twelve blocks:
+
+| Page | Block | What is needed |
+|---|---|---|
+| home | Hero | Institutional photography, three images for the rotation |
+| about | Rich text | Governance: the AGM structure, the meeting cycle, current office holders |
+| about | Rich text | Executive Committee: size, election, terms, current chair and vice-chair |
+| about | Rich text | Secretariat: base, establishment, the Executive Secretary and functional roles |
+| about | Rich text | **Partnerships: client-supplied without exception**, including the attribution wording and marks each partner requires |
+| about | Rich text | Strategic plan: the current cycle, its priorities and its dates |
+| committees | Pillars | Terms of reference for each of the six committees, chairs, seats |
+| members | Rich text | Accession dates, and written consent from each authority to be listed |
+| privacy | Rich text | Privacy notice. Legal text, from CRASA and its counsel |
+| terms | Rich text | Terms of use. Legal text, from CRASA and its counsel |
+| comparator | Rich text | Deleted when WS-05 is built |
+| events | Rich text | Deleted when WS-07 is built |
+
+No partner or funder attribution is drafted anywhere. No contract number,
+deliverable reference, work-stream code or milestone date appears in any
+template, lang file, page title, meta description, alt text or aria-label.
+There is a test that fails if one does.
+
+---
+
+## The not-generic audit
+
+### The three open findings
+
+**1. The eleven `auto-fit` grids on the reflex formula — CLOSED.**
+
+I checked every grid formula in the platform against every grid formula
+drawn in the approved screens, mechanically:
+
+```
+value  kind      files                       in an approved screen?
+180px  fit       blocks.css                  yes
+196px  fit       admin.css                   yes
+220px  fit       blocks.css, chrome.css      yes
+236px  fit       admin.css                   yes
+260px  fit       blocks.css                  yes
+280px  fit       blocks.css                  yes
+320px  fit       admin.css                   yes
+340px  fit       blocks.css                  yes
+420px  fit       blocks.css                  yes
+440px  fit       admin.css                   yes
+210px  fill      blocks.css                  NO  — deliberate, Ruling 2
+150px  fit       blocks.css                  NO  — invented, now fixed
+```
+
+`repeat(auto-fit, minmax(min(100%, Npx), 1fr))` is **the approved screens'
+own formula**, used throughout screen 02 including its footer at 220px. It
+was never drift; I had mistaken the design's own convention for a reflex.
+
+Two exceptions and both are now accounted for. The member grid is
+`auto-fill` with a server-computed span, which is the Ruling 2 fix for the
+one place content genuinely varies. And `.c-codes` used an invented 150px:
+**changed to 160px, a width the screens actually draw.**
+
+**2. `--e-2` unused, so elevation encoded almost nothing — CLOSED, and it
+found a missing feature.**
+
+The token was unused because the thing it belongs on was not built. Screen
+02 draws a compressed sticky header carrying `box-shadow:var(--e-2)`, and
+the header had no compressed state. Building it gives all three elevations a
+distinct depth:
+
+| Token | What carries it | Depth |
+|---|---|---|
+| `--e-1` | header at rest, `.b-card` | resting on the page |
+| `--e-2` | header compressed, floating over scrolled content | lifted |
+| `--e-3` | the drawer | over everything |
+
+`HeaderBreakpointTest::test_each_elevation_is_used_and_each_one_means_a_different_depth`
+fails if any of the three goes unused again.
+
+**3. Radius lopsided 15:3 — CLOSED, with evidence.**
+
+Current counts, and what each is on:
+
+| Token | Uses | On |
+|---|---|---|
+| `--r-xs` | 9 | inputs, selects, table-cell chips |
+| `--r-sm` | 36 | buttons, filters, chips, pager cells, small boxes |
+| `--r-md` | 12 | panels, resource tables, the compressed header |
+| `--r-lg` | 3 | `.b-card`, `.b-cta__panel`, `.c-article__hero` |
+| `--r-pill` | 10 | status badges and coverage bars only |
+
+Every use follows the rule in CLAUDE.md. The distribution is lopsided
+because the element population is: a back office is mostly buttons and small
+controls, and there are three card-shaped things on the whole platform. A
+flat distribution would mean the radii had stopped encoding anything, which
+is the failure the rule exists to prevent. **Not closed by changing values;
+closed by checking each one against the rule and finding no violation.**
+
+One value to note: `.a-search` takes `--r-sm` rather than `--r-xs`, because
+screen 09 draws that field wrapper with `border-radius:var(--r-sm)`. Screen,
+not preference.
+
+### The rest of the audit
+
+| Check | Result |
+|---|---|
+| Indigo, violet, purple, `#615fff`, `#8e51ff`, `#0f172b` | none, anywhere |
+| Hard-coded colour outside `tokens.css` | none in `base`, `chrome`, `grid`, `blocks`, `admin` — the guard now covers all five, and strips comments so a stylesheet may quote the screen's literal beside the token it uses instead |
+| Emoji standing in for icons | none in any view |
+| Middle-dot meta strings | none |
+| Arrow characters on link text | none |
+| Numbered `01 / 02 / 03` markers | one, on the onboarding steps, which genuinely are a sequence a person works through once in order. Nothing else is numbered |
+| Coloured gradient bar down a card's left edge | none. Three coloured left edges exist and each marks a band that stops work: the missing-alt band, the not-ready-to-publish band, and the fallback notice on an untranslated field. Each is drawn that way in screens 05 and 14 |
+| Uniform section padding | three tiers, plus the same-ground collapse |
+| Fade-and-slide on scroll, hover lift on every card | none. The one scroll-driven change is the compressed header state screen 02 draws, and it is instant under `prefers-reduced-motion` |
+| Marketing adjectives (seamless, innovative, robust, leverage, empower, unlock, transform) | none in any lang file |
+
+New files this run, and their lines, for anything above: `public/css/admin.css`
+(the tracked-caps rule at 585, the elevation-free panels throughout),
+`public/css/chrome.css` 78–105 (the compressed state),
+`public/js/chrome.js` 19–43 (the observer),
+`public/css/blocks.css` 629 (the 150 to 160 fix).
+
+---
+
+## The substitution test
+
+**On the public site: passes.** Replacing CRASA with EACO or ARICEA breaks
+the copy, which is the point. The rendered prose carries, in all three
+languages: fourteen member states, SADC, 1997, the Protocol on Transport,
+Communications and Meteorology, the three sectors, and the harmonisation
+mandate. Counting lang files that carry each: `fourteen` 6, `quatorze` 6,
+`catorze` 6, `SADC` 9, `harmonis*` 8, `postal` 10, `1997` 3.
+
+**On the back office: it applies differently, and I want to be exact about
+that rather than claim a pass.**
+
+Of 78 prose strings in `admin.php` and `help.php`, most describe mechanics —
+what a button does, what happens when you delete something — and would read
+correctly on any regulator's platform. That is not a failure. "The last row
+is spare. Leave it empty and it is not saved." should not be padded with the
+word SADC.
+
+What the test does catch, and what I changed: two strings that were bland
+where they had room not to be. The dashboard subtitle and the data section
+subtitle now name the three sectors and the fourteen member states.
+
+What passes the test in substance without naming the institution: the copy
+that is specific to *this build's decisions* rather than to CRASA. "A
+photograph taken at a meeting carries the coordinates of the room, the
+camera serial number and often the photographer name." "The original is kept
+and never served directly." "Machine drafts are never published as approved
+copy." None of that would appear in a generated back office, which is the
+underlying thing the test is for.
+
+**Where the back office is unambiguously not generic:** the twelve block
+explanations, the six platform rules on the help page, and every empty state
+that names the specific data source it is waiting for rather than saying
+"no data available".
+
+---
+
+## Two things worth your attention
+
+**1. The dashboard has three visible gaps and they are deliberate.** Screen
+09 draws a visitors chart, popular pages, popular search terms and
+submission activity. There is no analytics collection on this platform and
+the submission workflow is not built, so those four render as empty states
+naming what each one needs. A dashboard that invents one number makes every
+other number on it unusable, and this platform's figures get quoted in
+ministerial briefs. Logging search queries in particular is a decision with
+a privacy consequence and has not been taken.
+
+**2. Question 6 in `docs/QUESTIONS.md` now covers two places.** Tracked caps
+in the hero eyebrow and in back office table headers are the same conflict
+between your ruling and the approved screens. One answer settles both, and
+either answer is one CSS rule.

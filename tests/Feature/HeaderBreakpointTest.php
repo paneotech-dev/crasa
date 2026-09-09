@@ -124,4 +124,65 @@ class HeaderBreakpointTest extends TestCase
         $this->assertStringContainsString('c-header__utilities', $html);
         $this->assertStringContainsString('c-lang', $html);
     }
+
+    /**
+     * The compressed sticky state, screen 02.
+     *
+     *   "Compressed sticky state, 1440px"
+     *   background:var(--c-white);border:1px solid var(--c-sand);
+     *   border-radius:var(--r-md);box-shadow:var(--e-2);padding:9px var(--s-5)
+     *   img width:30px;height:30px   span font-size:17px
+     */
+    public function test_the_header_has_the_compressed_sticky_state_the_screen_draws(): void
+    {
+        $css = file_get_contents(public_path('css/chrome.css'));
+
+        $this->assertStringContainsString('.c-header[data-compressed]', $css);
+        $this->assertStringContainsString('box-shadow: var(--e-2);', $css);
+        $this->assertStringContainsString('padding-block: 9px;', $css);
+        $this->assertStringContainsString('width: 30px; height: 30px;', $css);
+        $this->assertStringContainsString('font-size: 17px;', $css);
+    }
+
+    /**
+     * Three elevations, three depths.
+     *
+     * The finding this closes: --e-2 was unused, so elevation encoded
+     * almost nothing. The header at rest is --e-1, the header compressed
+     * and floating over the page is --e-2, the drawer over everything is
+     * --e-3.
+     */
+    public function test_each_elevation_is_used_and_each_one_means_a_different_depth(): void
+    {
+        $css = implode("\n", array_map(
+            fn (string $sheet) => file_get_contents(public_path('css/'.$sheet)),
+            ['chrome.css', 'blocks.css', 'base.css', 'admin.css']
+        ));
+
+        foreach (['--e-1', '--e-2', '--e-3'] as $elevation) {
+            $this->assertStringContainsString(
+                'box-shadow: var('.$elevation.')',
+                $css,
+                $elevation.' is defined and unused, so elevation encodes less than it claims to.'
+            );
+        }
+    }
+
+    /**
+     * The compressed state is reported by the browser, not measured.
+     *
+     * Runtime measurement of the header failed three times on this build,
+     * each time hiding a navigation that fitted. Nothing here reads a
+     * width.
+     */
+    public function test_the_compressed_state_is_observed_and_never_measured(): void
+    {
+        $js = file_get_contents(public_path('js/chrome.js'));
+
+        $this->assertStringContainsString('IntersectionObserver', $js);
+        $this->assertStringNotContainsString('getBoundingClientRect', $js);
+        $this->assertStringNotContainsString('offsetWidth', $js);
+        $this->assertStringNotContainsString('scrollY', $js);
+        $this->assertStringNotContainsString('addEventListener(\'scroll\'', $js);
+    }
 }

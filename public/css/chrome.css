@@ -54,6 +54,54 @@
   max-width: 230px;
 }
 
+/*
+ * The compressed sticky state.
+ *
+ * Screen 02 draws it under the heading "Compressed sticky state, 1440px":
+ *
+ *   background:var(--c-white);border:1px solid var(--c-sand);
+ *   border-radius:var(--r-md);box-shadow:var(--e-2);padding:9px var(--s-5)
+ *   img ... width:30px;height:30px
+ *   span ... font-family:var(--f-head);font-size:17px
+ *   nav ... margin-left:auto
+ *   current item ... border-bottom:2px solid var(--c-green-dark)
+ *
+ * It is what closes the elevation hierarchy. The header at rest is --e-1,
+ * the header compressed and floating over the page is --e-2, and the
+ * drawer over everything is --e-3. Three elevations, three depths, which
+ * is what the three tokens are for.
+ *
+ * Below 1024 the header has already given its nav a second row or a
+ * drawer, so there is nothing left to compress and the state does not
+ * apply. The screen draws it at 1440.
+ */
+@media (min-width: 1024px) {
+  .c-header[data-compressed] {
+    box-shadow: var(--e-2);
+    border-bottom-color: transparent;
+  }
+
+  /* 9px var(--s-5), against the resting var(--s-4) var(--page-x). */
+  .c-header[data-compressed] .c-header__inner { padding-block: 9px; }
+
+  /* 40px to 30px, and 20px to 17px. */
+  .c-header[data-compressed] .c-header__mark { width: 30px; height: 30px; }
+  .c-header[data-compressed] .c-header__acronym { font-size: 17px; }
+
+  /* The full name goes. At 9px of padding there is no room for a second
+     line of type, which is why the screen draws only the acronym. */
+  .c-header[data-compressed] .c-header__fullname { display: none; }
+
+  /* Motion answers an action. Here the action is scrolling, so the change
+     is a state rather than an animation, and it is instant for anyone who
+     has asked for reduced motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    .c-header,
+    .c-header__mark,
+    .c-header__acronym { transition: all .18s var(--ease-in); }
+  }
+}
+
 /* Primary navigation shrinks and wraps; it never pushes the utilities off. */
 .c-nav {
   display: flex;
