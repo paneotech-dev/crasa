@@ -1482,3 +1482,53 @@ body[data-surface="admin"][data-theme="dark"] {
 .e-dash__title { font-size: 14.5px; font-weight: 600; color: var(--a-ink); text-decoration: none; overflow: hidden; text-overflow: ellipsis; }
 a.e-dash__title:hover { text-decoration: underline; text-underline-offset: 3px; }
 .e-dash__meta { font-size: 12.5px; line-height: 1.4; color: var(--a-ink-quiet); }
+
+/* The meetings calendar, screen 12 --------------------------------------- */
+.e-cal__filters { margin: 0 0 var(--s-5); }
+.e-cal__nav { display: flex; gap: var(--s-2); margin-left: auto; }
+
+.e-cal { padding: 0 var(--s-4) var(--s-4); }
+.e-cal__weekdays, .e-cal__grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
+.e-cal__weekdays {
+  font-family: var(--f-admin); font-size: 11px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--a-ink-quiet);
+  padding-bottom: var(--s-2);
+}
+.e-cal__weekdays span { text-align: center; }
+.e-cal__cell {
+  min-height: 84px; padding: 5px;
+  border: 1px solid var(--a-rule); border-radius: var(--r-xs);
+  display: flex; flex-direction: column; gap: 3px; min-width: 0;
+}
+.e-cal__cell--outside { border-color: transparent; }
+.e-cal__cell.is-today { border-color: var(--c-green-dark); border-width: 2px; padding: 4px; }
+.e-cal__daynum { font-family: var(--f-admin); font-size: 12px; font-weight: 600; color: var(--a-ink-quiet); font-variant-numeric: tabular-nums; }
+
+/* Type by colour AND by the label in every cell, which is screen 12's own
+   rule. Colour alone would be a meeting type a colour-blind chair cannot
+   read. The label is the first line of the chip, always. */
+.e-cal__meeting {
+  display: block; min-width: 0;
+  font-size: 11.5px; line-height: 1.3; color: var(--c-navy);
+  background: var(--c-green-light); border-left: 3px solid var(--c-green);
+  border-radius: 2px; padding: 3px 5px;
+  overflow: hidden;
+}
+.e-cal__meeting[data-kind="agm"] { background: var(--c-amber-light); border-left-color: var(--c-amber); }
+.e-cal__meeting[data-kind="workshop"] { background: var(--c-sand); border-left-color: var(--c-border); }
+.e-cal__kind { display: block; font-family: var(--f-admin); font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--c-green-dark); }
+.e-cal__meeting[data-kind="agm"] .e-cal__kind { color: var(--c-amber-dark); }
+.e-cal__meeting[data-kind="workshop"] .e-cal__kind { color: var(--c-charcoal); }
+
+.e-cal__export { padding: var(--s-4); border-top: 1px solid var(--a-rule); }
+.e-cal__export .c-btn { margin-top: var(--s-3); }
+
+/* At phone width a seven-column grid of 84px cells is unreadable. The
+   month collapses and the upcoming list below carries the same meetings. */
+@media (max-width: 640px) {
+  .e-cal { display: none; }
+}
+
+@media print {
+  .e-cal__filters, .e-cal__nav, .e-cal__export { display: none !important; }
+}

@@ -261,3 +261,41 @@ list.
 
 ---
 
+## Question 9: should the calendar offer a subscribe feed as well as a download?
+
+Screen 12 draws two export controls beside the month grid: "Subscribe, ICS"
+and "Download this month". The download is built. The subscription is not,
+and it needs a decision rather than a build.
+
+**Why it is not just more code.** A subscribe URL is fetched by Outlook,
+Google Calendar or Apple Calendar on a schedule, with no browser and no
+session. It has to authenticate on the URL itself, which means a per-user
+token in the query string.
+
+That token is then in the reader's calendar client, in any backup of it, and
+in any email where they forwarded the link to a colleague. Anyone holding it
+reads that person's meeting titles, committees and locations for as long as
+the token lives. On a platform where a meeting title can be "Closed session,
+chairs only", that is a disclosure.
+
+**Recommendation: yes, with three conditions.**
+
+1. **A token per user, revocable from their account page**, not a signed URL
+   derived from the app key. A reader who forwards a link by mistake needs to
+   be able to undo it themselves, and rotating the app key to revoke one
+   person's feed would invalidate every password reset link on the platform.
+2. **The feed carries only Public and Member clearance**, never Confidential
+   or Secretariat, whatever the reader's own clearance is. A calendar client
+   caches, syncs to phones and shows notifications on lock screens, and none
+   of that is a place for a confidential meeting title.
+3. **The account page states what the feed exposes and who can read it**, in
+   the same plain terms the extranet rail states clearance.
+
+If that is more than CRASA wants to carry, the download covers the practical
+need: a regulator downloads the month and their calendar keeps it. The
+difference is that the download does not stay in step when a meeting moves.
+
+**Done in the meantime:** the download, clearance-filtered per request.
+
+---
+

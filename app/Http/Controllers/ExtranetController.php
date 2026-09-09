@@ -7,10 +7,13 @@ use App\Models\Committee;
 use App\Models\Document;
 use App\Models\Folder;
 use App\Models\Meeting;
+use App\Services\CalendarFeed;
 use App\Support\ExtranetNavigation;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -209,16 +212,97 @@ class ExtranetController extends Controller
         ]);
     }
 
-    /** The meetings calendar, screen 12. */
+    /**
+     * The meetings calendar, screen 12.
+     *
+     * The screen draws a month grid with meetings on their dates, a
+     * committee filter and an export. The build had an ordered table: all
+     * the data was right and the view the screen draws was not built.
+     *
+     * The month is in the query string, so a particular month is a URL a
+     * chair can send. An unparseable month falls back to this one rather
+     * than erroring, because a mistyped link should still open a calendar.
+     */
     public function calendar(Request $request): View
     {
         Gate::authorize('viewAny', Meeting::class);
 
+        $month = $this->monthFrom($request->query('month'));
+        $committee = $request->string('committee')->value() ?: null;
+
+        $visible = fn ($query) => $query
+            ->with('committee')
+            ->when($committee, fn ($q, $v) => $q->whereHas('committee', fn ($c) => $c->where('slug', $v)))
+            ->get()
+            ->filter(fn (Meeting $m) => Gate::allows('view', $m))
+            ->values();
+
         return view('pages.extranet.calendar', [
-            'upcoming' => Meeting::upcoming()->with('committee')->get()
-                ->filter(fn (Meeting $m) => Gate::allows('view', $m))->values(),
-            'past' => Meeting::past()->with('committee')->limit(20)->get()
-                ->filter(fn (Meeting $m) => Gate::allows('view', $m))->values(),
+            'month' => $month,
+            'committeeFilter' => $committee,
+            'committees' => Committee::where('is_active', true)->orderBy('name')->get(),
+            'inMonth' => $visible(Meeting::query()
+                ->whereBetween('starts_on', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
+                ->orderBy('starts_on')),
+            'upcoming' => $visible(Meeting::upcoming()),
+            'past' => $visible(Meeting::past()->limit(20)),
         ]);
+    }
+
+    /**
+     * The calendar as a file a regulator can open in their own calendar.
+     *
+     * Screen 12: "The feed carries only the meetings your category can
+     * see." So every meeting goes through the same Gate the page uses, and
+     * the file is generated per request rather than cached, because a
+     * cached calendar is a calendar that leaks the moment somebody's
+     * clearance changes.
+     */
+    public function calendarExport(Request $request): Response
+    {
+        Gate::authorize('viewAny', Meeting::class);
+
+        $month = $this->monthFrom($request->query('month'));
+
+        $meetings = Meeting::query()
+            ->whereBetween('starts_on', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
+            ->orderBy('starts_on')
+            ->get()
+            ->filter(fn (Meeting $m) => Gate::allows('view', $m))
+            ->values();
+
+        return response(
+            app(CalendarFeed::class)->ics($meetings),
+            200,
+            [
+                'Content-Type' => 'text/calendar; charset=utf-8',
+                'Content-Disposition' => 'attachment; filename="crasa-'.$month->format('Y-m').'.ics"',
+            ]
+        );
+    }
+
+    /**
+     * The month a calendar URL asks for.
+     *
+     * Checked with a pattern before it is parsed, because Carbon rolls an
+     * out-of-range month forward rather than refusing it: "2027-99" parses
+     * happily to March 2035, and a reader who mistyped a link would land
+     * nine years out with no indication anything had gone wrong. The
+     * exception handler alone did not catch that, because nothing threw.
+     *
+     * Anything that is not a real year and a month between 01 and 12 falls
+     * back to this month. A mistyped link should still open a calendar.
+     */
+    private function monthFrom(?string $value): CarbonImmutable
+    {
+        if (! is_string($value) || ! preg_match('/^(\d{4})-(0[1-9]|1[0-2])$/', $value)) {
+            return CarbonImmutable::now()->startOfMonth();
+        }
+
+        try {
+            return CarbonImmutable::createFromFormat('Y-m', $value)->startOfMonth();
+        } catch (\Throwable) {
+            return CarbonImmutable::now()->startOfMonth();
+        }
     }
 }

@@ -91,4 +91,13 @@ return [
     'dash_no_notifications_title' => 'Nada requer a sua atenção',
     'dash_no_notifications_body' => 'As decisões sobre submissões e os depósitos dos comités são anunciados aqui.',
     'dash_notification' => 'Notificação',
+    'filter_committee' => 'Comité',
+    'month_previous' => 'Mês anterior',
+    'month_next' => 'Mês seguinte',
+    'month_count' => '{0}Sem reuniões|{1}1 reunião|[2,*]:count reuniões',
+    'month_empty_title' => 'Nenhuma reunião agendada este mês',
+    'month_empty_body' => 'Use os controlos de mês para ver mais adiante, ou consulte a lista abaixo.',
+    'export' => 'Exportar',
+    'export_note' => 'O ficheiro contém apenas as reuniões que o seu nível de acesso permite ver.',
+    'export_month' => 'Descarregar este mês',
 ];

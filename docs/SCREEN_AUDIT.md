@@ -55,7 +55,7 @@ it was invented.
 | 09 Admin dashboard | 1 | 1 | 2 |
 | 10 Trilingual and architecture | 1 | 1 | 0 |
 | 11 Extranet login | 0 (1 closed) | 0 | 1 |
-| 12 Calendar and folders | 4 | 0 | 1 |
+| 12 Calendar and folders | 2 (2 closed) | 0 | 1 |
 | 13 Users, roles, audit | 0 | 0 | 2 |
 | 14 Media and editing | 1 | 0 | 1 |
 | 15 Responsive and app | 3 | 0 | 0 |
@@ -384,14 +384,24 @@ workplan model that screen 04 also depends on, and remains a gap.
 | "No meetings scheduled" empty state | | |
 | Upcoming, next six months | | |
 
-**The calendar is a table, not a calendar — GAP, high.** Screen 12 draws a
-month grid with meetings placed on their dates, a colour key by meeting type,
-a type filter, a week view and an export. The build renders an ordered table
-of meetings. Everything is present and correct as data; the view the screen
-draws is not built.
+**The month grid — CLOSED 9 September.** Screen 12 draws a month grid with
+meetings on their dates, a colour key by meeting type and a committee filter.
+Built: the month is in the query string so a month is a URL; type is carried
+by colour and by the label in every cell, which is the screen's own rule; an
+empty month says so.
 
-**Calendar export — GAP, medium.** A meeting a regulator cannot put in their
-own calendar is a meeting they will miss. One `.ics` endpoint.
+**Calendar export — CLOSED 9 September**, for download. `.ics` per month,
+generated per request and filtered through the same Gate the page uses,
+because a cached calendar is one that leaks the moment a clearance changes.
+
+**Subscribe feed — GAP, and it needs a decision.** Screen 12 draws "Subscribe,
+ICS" alongside the download. A subscription URL is fetched by a calendar
+client that cannot present a session, so it needs a per-user token, and a
+long-lived token that leaks meeting titles if the URL is forwarded is a
+security decision rather than a build one. Logged as Question 9.
+
+**Week view — GAP, low.** Screen 12 draws one. The month grid and the
+upcoming list cover the same ground.
 
 ---
 

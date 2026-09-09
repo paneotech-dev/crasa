@@ -91,4 +91,13 @@ return [
     'dash_no_notifications_title' => 'Nothing needs you',
     'dash_no_notifications_body' => 'Submission decisions and committee filings are announced here.',
     'dash_notification' => 'Notification',
+    'filter_committee' => 'Committee',
+    'month_previous' => 'Previous month',
+    'month_next' => 'Next month',
+    'month_count' => '{0}No meetings|{1}1 meeting|[2,*]:count meetings',
+    'month_empty_title' => 'No meetings scheduled this month',
+    'month_empty_body' => 'Use the month controls to look ahead, or read the upcoming list below.',
+    'export' => 'Export',
+    'export_note' => 'The file carries only the meetings your clearance lets you see.',
+    'export_month' => 'Download this month',
 ];

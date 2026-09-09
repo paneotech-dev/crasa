@@ -289,6 +289,9 @@ Route::prefix('{locale}')
             Route::post('extranet/folders/{folder}/upload', [ExtranetController::class, 'upload'])->name('extranet.upload');
             Route::get('extranet/committees/{committee}', [ExtranetController::class, 'committee'])->name('extranet.committee');
             Route::get('extranet/calendar', [ExtranetController::class, 'calendar'])->name('extranet.calendar');
+            // Screen 12 draws an export beside the month grid. A meeting a
+            // regulator cannot put in their own calendar is one they miss.
+            Route::get('extranet/calendar.ics', [ExtranetController::class, 'calendarExport'])->name('extranet.calendar.ics');
 
             Route::get('submissions', [SubmissionController::class, 'index'])->name('submissions');
             Route::post('submissions', [SubmissionController::class, 'store'])->name('submissions.store');

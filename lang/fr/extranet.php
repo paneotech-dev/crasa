@@ -91,4 +91,13 @@ return [
     'dash_no_notifications_title' => 'Rien ne requiert votre attention',
     'dash_no_notifications_body' => 'Les décisions sur les soumissions et les dépôts des comités sont annoncés ici.',
     'dash_notification' => 'Notification',
+    'filter_committee' => 'Comité',
+    'month_previous' => 'Mois précédent',
+    'month_next' => 'Mois suivant',
+    'month_count' => '{0}Aucune réunion|{1}1 réunion|[2,*]:count réunions',
+    'month_empty_title' => 'Aucune réunion programmée ce mois-ci',
+    'month_empty_body' => 'Utilisez les commandes de mois pour regarder plus loin, ou consultez la liste ci-dessous.',
+    'export' => 'Exporter',
+    'export_note' => 'Le fichier ne contient que les réunions que votre niveau d\'accès vous permet de voir.',
+    'export_month' => 'Télécharger ce mois',
 ];
