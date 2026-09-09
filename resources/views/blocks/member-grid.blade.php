@@ -53,6 +53,7 @@
         @else
             <ul class="b-members" role="list">
                 @foreach ($countries as $country)
+                    @php $tally = \App\Support\SectionCounts::forCountry($country); @endphp
                     <li class="b-member" id="member-{{ $country->iso_code }}" data-span="{{ $country->cardSpan() }}">
                         {{-- The card is a bordered white box and reads as
                              one thing a reader can open, so it opens. The
@@ -64,21 +65,44 @@
                         @if ($country->authority)
                             <span class="b-member__authority">{{ $country->authority->name }}</span>
                         @endif
-                        {{-- Only when there is a real seat to report. An
-                             invented committee count reads as fabricated
-                             data, and every state showing the same number
-                             reads as fabricated data loudly. --}}
-                        @if ($country->committees->isNotEmpty())
-                            <span class="b-member__committees">
-                                {{ trans_choice('blocks.committee_count', $country->committees->count(), ['count' => $country->committees->count()]) }}
-                            </span>
-                        @endif
+                        {{-- A counted seat, including none. The original
+                             rule here was to hide a zero, on the reasoning
+                             that an invented committee count reads as
+                             fabricated data. That reasoning still holds for
+                             invented numbers and not for counted ones: this
+                             figure is a query, and a member state sitting on
+                             no committee is a fact a reader of a membership
+                             page is entitled to. --}}
+                        <span class="b-member__committees">
+                            {{ trans_choice('blocks.committee_count', $country->committees->count(), ['count' => $country->committees->count()]) }}
+                        </span>
 
                         @if ($country->authority?->sectors->isNotEmpty())
                             <span class="b-member__sectors">
                                 {{ $country->authority->sectors->pluck('name')->implode(', ') }}
                             </span>
                         @endif
+
+                        {{-- How much this member state has on the platform.
+                             A reader scanning fourteen cards should be able
+                             to see which states have filed and which have
+                             not without opening any of them.
+
+                             Zero is shown. A state with no instruments has
+                             filed none, and hiding that turns a fact about
+                             the data into a gap in the interface. --}}
+                        <dl class="b-member__tally">
+                            @foreach ([
+                                'instruments' => 'members.tally_instruments',
+                                'publications' => 'members.tally_publications',
+                                'indicators' => 'members.tally_indicators',
+                            ] as $field => $key)
+                                <div>
+                                    <dt>{{ trans_choice($key, $tally[$field], ['count' => $tally[$field]]) }}</dt>
+                                    <dd>{{ $tally[$field] }}</dd>
+                                </div>
+                            @endforeach
+                        </dl>
                     </li>
                 @endforeach
             </ul>

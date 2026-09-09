@@ -484,6 +484,19 @@
 .b-member__committees { font-size: 13px; line-height: 1.55; color: var(--c-slate); }
 .b-member__sectors { font-size: 13px; line-height: 1.55; color: var(--c-slate); }
 
+/* How much this member state has on the platform. A reader scanning
+   fourteen cards sees which have filed and which have not without opening
+   any of them, which is the whole reason the figures are here rather than
+   one level down. Tabular figures so the columns line up across cards. */
+.b-member__tally {
+  display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-4);
+  margin: var(--s-2) 0 0; padding-top: var(--s-3);
+  border-top: 1px solid var(--c-sand);
+}
+.b-member__tally > div { display: flex; align-items: baseline; gap: var(--s-1); }
+.b-member__tally dd { margin: 0; font-family: var(--f-admin); font-size: 13px; font-weight: 700; color: var(--c-navy); font-variant-numeric: tabular-nums; order: -1; }
+.b-member__tally dt { font-size: 12.5px; color: var(--c-slate); }
+
 /* Call to action ------------------------------------------------------- */
 /* Tone from the defined palette only. Three tones, no arbitrary colour. */
 
@@ -606,6 +619,18 @@
   border: 1px solid var(--c-border); border-radius: var(--r-pill);
   text-decoration: none;
 }
+/* A facet option that would return nothing. Present, so the reader can see
+   the shape of the data, and visibly not a control: no border colour, no
+   hover, no cursor, and the count reading zero. Anything that is not
+   interactive must not look it. */
+.c-chip.is-empty {
+  color: var(--c-disabled);
+  border-color: var(--c-sand);
+  background: transparent;
+  cursor: default;
+}
+.c-chip.is-empty .c-chip__count { color: var(--c-disabled); }
+
 .c-chip:hover { border-color: var(--c-navy); color: var(--c-navy); }
 .c-chip.is-active, .c-chip[aria-current] { background: var(--c-navy); border-color: var(--c-navy); color: var(--c-white); font-weight: 600; }
 

@@ -18,47 +18,32 @@
             <div data-live-filters
                  data-live-swap="#news-filters,#news-results"
                  data-live-status="#news-count">
+            {{-- The same facet partial the library uses. Three
+                 hand-written copies of the same chip list is how one of
+                 them ends up with the count and the other two without. --}}
             <nav class="c-filters" id="news-filters" aria-label="{{ __('news.filters') }}">
-                <div class="c-filters__group">
-                    <span class="c-filters__legend" id="filter-category">{{ __('news.category') }}</span>
-                    <div class="c-filters__options" role="list" aria-labelledby="filter-category">
-                        <a role="listitem" class="c-chip @if (! $activeCategory) is-active @endif"
-                           @if (! $activeCategory) aria-current="true" @endif
-                           href="{{ request()->fullUrlWithQuery(['category' => null, 'page' => null]) }}">{{ __('news.all') }}</a>
-                        @foreach ($categories as $case)
-                            <a role="listitem" class="c-chip @if ($activeCategory === $case->value) is-active @endif"
-                               @if ($activeCategory === $case->value) aria-current="true" @endif
-                               href="{{ request()->fullUrlWithQuery(['category' => $case->value, 'page' => null]) }}">{{ __($case->labelKey()) }}</a>
-                        @endforeach
-                    </div>
-                </div>
-
-                <div class="c-filters__group">
-                    <span class="c-filters__legend" id="filter-sector">{{ __('news.sector') }}</span>
-                    <div class="c-filters__options" role="list" aria-labelledby="filter-sector">
-                        <a role="listitem" class="c-chip @if (! $activeSector) is-active @endif"
-                           href="{{ request()->fullUrlWithQuery(['sector' => null, 'page' => null]) }}">{{ __('news.all') }}</a>
-                        @foreach ($sectors as $sector)
-                            <a role="listitem" class="c-chip @if ($activeSector === $sector->slug) is-active @endif"
-                               @if ($activeSector === $sector->slug) aria-current="true" @endif
-                               href="{{ request()->fullUrlWithQuery(['sector' => $sector->slug, 'page' => null]) }}">{{ $sector->name }}</a>
-                        @endforeach
-                    </div>
-                </div>
-
+                <x-facet
+                    :legend="__('news.category')"
+                    field="category"
+                    :active="$activeCategory"
+                    :counts="$counts['category']"
+                    :options="collect($categories)->map(fn ($case) => ['value' => $case->value, 'label' => __($case->labelKey())])"
+                />
+                <x-facet
+                    :legend="__('news.sector')"
+                    field="sector"
+                    :active="$activeSector"
+                    :counts="$counts['sector']"
+                    :options="$sectors->map(fn ($sector) => ['value' => $sector->slug, 'label' => $sector->name])"
+                />
                 @if ($tags->isNotEmpty())
-                    <div class="c-filters__group">
-                        <span class="c-filters__legend" id="filter-tag">{{ __('news.tag') }}</span>
-                        <div class="c-filters__options" role="list" aria-labelledby="filter-tag">
-                            <a role="listitem" class="c-chip @if (! $activeTag) is-active @endif"
-                               href="{{ request()->fullUrlWithQuery(['tag' => null, 'page' => null]) }}">{{ __('news.all') }}</a>
-                            @foreach ($tags as $tagOption)
-                                <a role="listitem" class="c-chip @if ($activeTag === $tagOption->slug) is-active @endif"
-                                   @if ($activeTag === $tagOption->slug) aria-current="true" @endif
-                                   href="{{ request()->fullUrlWithQuery(['tag' => $tagOption->slug, 'page' => null]) }}">{{ $tagOption->translated('name', $tagOption->slug) }}</a>
-                            @endforeach
-                        </div>
-                    </div>
+                    <x-facet
+                        :legend="__('news.tag')"
+                        field="tag"
+                        :active="$activeTag"
+                        :counts="$counts['tag']"
+                        :options="$tags->map(fn ($tag) => ['value' => $tag->slug, 'label' => $tag->translated('name', $tag->slug)])"
+                    />
                 @endif
             </nav>
 

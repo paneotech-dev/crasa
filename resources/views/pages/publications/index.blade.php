@@ -27,22 +27,34 @@
                  data-live-swap="#library-filters,#library-results"
                  data-live-status="#library-count">
             <nav class="c-filters" id="library-filters" aria-label="{{ __('publications.filters') }}">
-                @include('pages.publications._facet', [
-                    'legend' => __('publications.type'), 'key' => 'type', 'active' => $filters['type'],
-                    'options' => collect($types)->map(fn ($t) => ['value' => $t->value, 'label' => __($t->labelKey())]),
-                ])
-                @include('pages.publications._facet', [
-                    'legend' => __('publications.country'), 'key' => 'country', 'active' => $filters['country'],
-                    'options' => $countries->map(fn ($c) => ['value' => $c->iso_code, 'label' => $c->name]),
-                ])
-                @include('pages.publications._facet', [
-                    'legend' => __('publications.committee'), 'key' => 'committee', 'active' => $filters['committee'],
-                    'options' => $committees->map(fn ($c) => ['value' => $c->slug, 'label' => $c->name]),
-                ])
-                @include('pages.publications._facet', [
-                    'legend' => __('publications.year'), 'key' => 'year', 'active' => $filters['year'],
-                    'options' => $years->map(fn ($y) => ['value' => $y, 'label' => $y]),
-                ])
+                <x-facet
+                    :legend="__('publications.type')"
+                    field="type"
+                    :active="$filters['type']"
+                    :counts="$counts['type']"
+                    :options="collect($types)->map(fn ($t) => ['value' => $t->value, 'label' => __($t->labelKey())])"
+                />
+                <x-facet
+                    :legend="__('publications.country')"
+                    field="country"
+                    :active="$filters['country']"
+                    :counts="$counts['country']"
+                    :options="$countries->map(fn ($c) => ['value' => $c->iso_code, 'label' => $c->name])"
+                />
+                <x-facet
+                    :legend="__('publications.committee')"
+                    field="committee"
+                    :active="$filters['committee']"
+                    :counts="$counts['committee']"
+                    :options="$committees->map(fn ($c) => ['value' => $c->slug, 'label' => $c->name])"
+                />
+                <x-facet
+                    :legend="__('publications.year')"
+                    field="year"
+                    :active="$filters['year']"
+                    :counts="$counts['year']"
+                    :options="$years->map(fn ($y) => ['value' => $y, 'label' => $y])"
+                />
             </nav>
 
             {{-- In the document before any exchange begins, so replacing

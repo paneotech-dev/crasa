@@ -77,4 +77,5 @@ return [
     'hero_count_members' => 'Régulateurs membres',
     'hero_count_indicators' => 'Indicateurs suivis',
     'hero_count_publications' => 'Publications',
+    'filter_all' => 'Tous',
 ];

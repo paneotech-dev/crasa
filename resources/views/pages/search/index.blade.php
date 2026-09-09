@@ -91,21 +91,19 @@
                     <nav class="c-filters" aria-label="{{ __('search.filters') }}">
                         @foreach (['type', 'country', 'sector', 'year'] as $facet)
                             @continue(empty($results->facets[$facet]))
-                            <div class="c-filters__group">
-                                <span class="c-filters__legend" id="facet-{{ $facet }}">{{ __('search.facet_'.$facet) }}</span>
-                                <div class="c-filters__options" role="list" aria-labelledby="facet-{{ $facet }}">
-                                    <a role="listitem" class="c-chip @if (! $filters[$facet]) is-active @endif"
-                                       href="{{ request()->fullUrlWithQuery([$facet => null, 'page' => null]) }}">{{ __('search.all') }}</a>
-                                    @foreach ($results->facets[$facet] as $value => $count)
-                                        <a role="listitem" class="c-chip @if ((string) $filters[$facet] === (string) $value) is-active @endif"
-                                           @if ((string) $filters[$facet] === (string) $value) aria-current="true" @endif
-                                           href="{{ request()->fullUrlWithQuery([$facet => $value, 'page' => null]) }}">
-                                            {{ $facet === 'type' ? __('search.type_'.$value) : $value }}
-                                            <span class="c-chip__count">{{ $count }}</span>
-                                        </a>
-                                    @endforeach
-                                </div>
-                            </div>
+                            {{-- The same facet component the library and the
+                                 newsroom use, so a count added in one place
+                                 appears in all three. --}}
+                            <x-facet
+                                :legend="__('search.facet_'.$facet)"
+                                :field="$facet"
+                                :active="$filters[$facet]"
+                                :counts="$results->facets[$facet]"
+                                :options="collect($results->facets[$facet])->map(fn ($count, $value) => [
+                                    'value' => $value,
+                                    'label' => $facet === 'type' ? __('search.type_'.$value) : $value,
+                                ])->values()"
+                            />
                         @endforeach
                     </nav>
                 @endif

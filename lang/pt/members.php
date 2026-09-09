@@ -53,4 +53,7 @@ return [
     'map_status_plain' => ':count Estados membros. Escolha um conjunto de dados para sombrear o mapa.',
     'map_status_shaded' => ':dataset, :period. :reported de :total Estados membros comunicaram. Cada Estado indica o seu valor no mapa, e a tabela abaixo apresenta os mesmos valores.',
     'count_committees' => '{0}Comités|{1}Comité|[2,*]Comités',
+    'tally_instruments' => '{0}Instrumentos|{1}Instrumento|[2,*]Instrumentos',
+    'tally_publications' => '{0}Publicações|{1}Publicação|[2,*]Publicações',
+    'tally_indicators' => '{0}Indicadores|{1}Indicador|[2,*]Indicadores',
 ];

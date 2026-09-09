@@ -82,4 +82,5 @@ return [
     'hero_count_members' => 'Member regulators',
     'hero_count_indicators' => 'Indicators tracked',
     'hero_count_publications' => 'Publications',
+    'filter_all' => 'All',
 ];

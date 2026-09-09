@@ -168,3 +168,55 @@ rather than from the view.
 ---
 
 
+## Question 8: the committees page cannot list the committees
+
+The brief for section 35 asks for counts on committee cards — member states
+seated, documents, meetings.
+
+**There are no committee cards.** The committees page carries a rich-text
+block and a three-column pillars block describing the three sectors. The six
+committees that exist as records — with their mandates, their chair
+authorities, their member state seats and their meetings — are not rendered
+anywhere on the public site. A reader can find which committees a member
+state sits on, from that member state's page. They cannot go the other way.
+
+Listing them needs a `committee_grid` block, and `docs/DATA_MODEL.md` section
+8 is explicit about that:
+
+> The twelve block types. Fixed set. **Adding a thirteenth requires a
+> decision, not a commit.**
+
+So this is the decision, and it is yours rather than mine.
+
+**Recommendation: yes, add it.** Three reasons.
+
+The data is already complete and already administered. Committees, their
+sector, their mandate, their chair authority, their member state seats with
+roles, and their meetings are all in the schema and all editable in the back
+office. Nothing needs collecting.
+
+The committees are one of the four things CRASA visibly *is* — fourteen
+member states, three sectors, the 1997 protocol, and the committees that
+carry the harmonisation work between annual general meetings. A site that
+names them in its navigation and cannot show them is conspicuously
+incomplete, and it is the kind of gap a delegate notices in the first two
+minutes because they sit on one.
+
+It costs one block type and changes nothing else. The settings would be
+`{sector filter, show_counts}`, matching `member_grid` exactly, and the block
+would render from `Committee` records the way `member_grid` renders from
+`Country` records. DATA_MODEL section 8 would gain a thirteenth row.
+
+**What is in place meanwhile.** The committees page's section band states the
+three real figures — committees, member state seats, meetings recorded — and
+each is a link. Every member state page lists that state's committee seats
+with the role it holds. So the counts asked for in section 35 exist and are
+computed; what is missing is the page that lists the committees themselves.
+
+**If the answer is no**, the honest alternative is to remove "Committees"
+from the main navigation and fold the material into the About page, because a
+navigation item that leads to three sector descriptions and a placeholder is
+worse than no navigation item.
+
+---
+

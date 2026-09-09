@@ -13,6 +13,12 @@ use Illuminate\Http\Request;
  *
  * Facet counts come from one grouped query per facet rather than a query per
  * option, so adding a fifteenth member state does not add fifteen queries.
+ *
+ * Each facet's counts are computed with the OTHER filters applied but not
+ * its own. That is what makes the number honest: it states what a reader
+ * would get if they clicked, rather than how many exist in total. A "South
+ * Africa (7)" that yields two results once the year filter is taken into
+ * account is worse than no number.
  */
 class PublicationController extends Controller
 {
@@ -34,6 +40,7 @@ class PublicationController extends Controller
         return view('pages.publications.index', [
             'publications' => $publications,
             'filters' => $filters,
+            'counts' => $this->facetCounts($filters),
             'types' => PublicationType::cases(),
             'countries' => Country::orderBy('name')->get(),
             'committees' => Committee::orderBy('name')->get(),
@@ -62,6 +69,56 @@ class PublicationController extends Controller
             'publication' => $publication,
             'lineage' => $publication->lineage(),
         ]);
+    }
+
+    /**
+     * How many publications each facet option would return.
+     *
+     * One grouped query per facet. Options that would return nothing keep
+     * their place in the list and are shown as unavailable rather than
+     * removed: a reader who cannot see that Comoros has no publications
+     * cannot tell whether it has none or whether the filter is broken. The
+     * shape of the data is part of the answer.
+     *
+     * @param  array<string, mixed>  $filters
+     * @return array<string, array<string, int>>
+     */
+    private function facetCounts(array $filters): array
+    {
+        $without = fn (string $key) => $this->query(array_merge($filters, [$key => null]));
+
+        return [
+            'type' => $without('type')
+                ->selectRaw('publication_type, COUNT(*) as total')
+                ->groupBy('publication_type')
+                ->pluck('total', 'publication_type')
+                ->map(fn ($total) => (int) $total)
+                ->all(),
+
+            'country' => $without('country')
+                ->join('countries', 'countries.id', '=', 'publications.country_id')
+                ->selectRaw('countries.iso_code, COUNT(*) as total')
+                ->groupBy('countries.iso_code')
+                ->pluck('total', 'iso_code')
+                ->map(fn ($total) => (int) $total)
+                ->all(),
+
+            'committee' => $without('committee')
+                ->join('committees', 'committees.id', '=', 'publications.committee_id')
+                ->selectRaw('committees.slug, COUNT(*) as total')
+                ->groupBy('committees.slug')
+                ->pluck('total', 'slug')
+                ->map(fn ($total) => (int) $total)
+                ->all(),
+
+            // Grouped in PHP rather than with YEAR(), which MariaDB has and
+            // SQLite does not. The candidate set is one row per publication
+            // and the page already loads them.
+            'year' => $without('year')
+                ->pluck('published_on')
+                ->countBy(fn ($date) => (string) $date->format('Y'))
+                ->all(),
+        ];
     }
 
     /** @param array<string, mixed> $filters */

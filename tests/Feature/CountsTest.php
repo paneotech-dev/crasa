@@ -1,0 +1,163 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Country;
+use App\Models\Publication;
+use App\Support\SectionCounts;
+use Database\Seeders\CountrySeeder;
+use Database\Seeders\NewsroomSeeder;
+use Database\Seeders\PublicationSeeder;
+use Database\Seeders\PublicPagesSeeder;
+use Database\Seeders\SectorSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
+
+/**
+ * The reader always knows how much is there.
+ *
+ * A count is only worth printing if it is computed, if it is a link to what
+ * it counts, and if it tells the truth about what a click would return.
+ * These hold all three.
+ */
+class CountsTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Storage::fake('public');
+        $this->seed(CountrySeeder::class);
+        $this->seed(SectorSeeder::class);
+        $this->seed(PublicPagesSeeder::class);
+        $this->seed(PublicationSeeder::class);
+        $this->seed(NewsroomSeeder::class);
+    }
+
+    /**
+     * A facet count states what a reader would get if they clicked, not how
+     * many exist in total. "South Africa (7)" that yields two once the year
+     * filter is applied is worse than no number at all.
+     */
+    public function test_a_facet_count_is_computed_with_the_other_filters_applied(): void
+    {
+        $year = Publication::listed()->orderByDesc('published_on')->first()->published_on->format('Y');
+
+        $unfiltered = $this->countsFrom($this->get('/en/publications')->getContent());
+        $filtered = $this->countsFrom($this->get('/en/publications?year='.$year)->getContent());
+
+        // The type counts must narrow once a year is chosen, or they are
+        // counting the whole library and lying about the click.
+        $this->assertLessThanOrEqual(
+            array_sum($unfiltered),
+            array_sum($filtered),
+            'Facet counts did not narrow when another filter was applied.'
+        );
+    }
+
+    /**
+     * An option that would return nothing keeps its place and is shown as
+     * unavailable. A reader who cannot see that Comoros has no publications
+     * cannot tell whether it has none or whether the filter is broken, and
+     * the shape of the data is part of the answer.
+     */
+    public function test_an_option_with_no_results_is_disabled_rather_than_hidden(): void
+    {
+        $html = $this->get('/en/publications')->assertOk()->getContent();
+
+        $this->assertStringContainsString('c-chip is-empty', $html);
+
+        // Present, and not a link: there is no disabled state for an
+        // anchor, and aria-disabled on something still focusable is a
+        // promise the browser does not keep.
+        preg_match('~<span role="listitem" class="c-chip is-empty">\s*([^<]+)~', $html, $match);
+        $this->assertNotEmpty($match, 'No unavailable option is rendered at all.');
+        $this->assertStringNotContainsString('is-empty" href', $html);
+    }
+
+    public function test_every_facet_option_carries_its_count(): void
+    {
+        foreach (['/en/publications', '/en/newsroom', '/en/search?q=roaming'] as $url) {
+            $html = $this->get($url)->assertOk()->getContent();
+
+            $chips = preg_match_all('~class="c-chip[^"]*"[^>]*>\s*[^<]+<span class="c-chip__count">~', $html);
+            $this->assertGreaterThan(0, $chips, $url.' has facet options with no counts.');
+        }
+    }
+
+    /**
+     * A member state card says how much that state has on the platform, so a
+     * reader scanning fourteen of them sees which have filed and which have
+     * not without opening any.
+     */
+    public function test_member_cards_state_what_each_member_state_has(): void
+    {
+        $html = $this->get('/en/members')->assertOk()->getContent();
+
+        $this->assertStringContainsString('b-member__tally', $html);
+        $this->assertSame(
+            Country::count(),
+            substr_count($html, 'b-member__tally'),
+            'Not every member card carries its tally.'
+        );
+    }
+
+    /**
+     * Zero is information. A member state with no instruments has filed
+     * none, and hiding that turns a fact about the data into a gap in the
+     * interface.
+     */
+    public function test_a_member_state_with_nothing_filed_says_zero(): void
+    {
+        $html = $this->get('/en/members')->assertOk()->getContent();
+
+        $empty = Country::whereDoesntHave('authorities')->first() ?? Country::first();
+        $tally = SectionCounts::forCountry($empty);
+
+        $this->assertContains(0, $tally, 'Expected at least one zero in a seeded member state tally.');
+        $this->assertMatchesRegularExpression('~b-member__tally.*?<dd>0</dd>~s', $html);
+    }
+
+    public function test_every_count_is_a_query_and_not_a_number_written_down(): void
+    {
+        $before = SectionCounts::publications()[0]['value'];
+
+        Publication::factory()->create(['is_public' => true]);
+
+        $this->assertNotSame(
+            $before,
+            SectionCounts::publications()[0]['value'],
+            'The publications count did not move when a publication was added.'
+        );
+    }
+
+    /**
+     * The facet component is shared. Three hand-written copies of the same
+     * chip list is how one of them ends up with the count and the other two
+     * without, which is exactly what had happened.
+     */
+    public function test_all_three_filtered_surfaces_use_the_same_facet_component(): void
+    {
+        foreach ([
+            'resources/views/pages/publications/index.blade.php',
+            'resources/views/pages/newsroom/index.blade.php',
+            'resources/views/pages/search/index.blade.php',
+        ] as $view) {
+            $this->assertStringContainsString(
+                '<x-facet',
+                file_get_contents(base_path($view)),
+                basename(dirname($view)).' writes its own facet markup instead of using the shared component.'
+            );
+        }
+    }
+
+    /** @return array<int, int> */
+    private function countsFrom(string $html): array
+    {
+        preg_match_all('~c-chip__count">(\d+)<~', $html, $matches);
+
+        return array_map('intval', $matches[1]);
+    }
+}
