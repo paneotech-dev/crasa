@@ -57,7 +57,12 @@
                                     {{ $row->delegate_name }}
                                     <span class="a-table__sub">{{ $row->delegate_role }}</span>
                                 </th>
-                                <td>{{ $row->country?->name }}</td>
+                                <td>
+                                    @if ($row->country)
+                                        <x-flag :iso="$row->country->iso_code" />
+                                        {{ $row->country->name }}
+                                    @endif
+                                </td>
                                 <td>
                                     {{ $row->arrival_on?->isoFormat('D MMM') }}
                                     @if ($row->arrival_at)<span class="a-table__sub">{{ $row->arrival_at }} {{ $row->arrival_point }}</span>@endif

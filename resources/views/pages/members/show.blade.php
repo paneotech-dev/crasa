@@ -26,7 +26,10 @@
                 <span>{{ $country->name }}</span>
             </nav>
 
-            <h1>{{ $country->name }}</h1>
+            <h1 class="c-member__heading">
+                <x-flag :iso="$country->iso_code" size="lg" />
+                {{ $country->name }}
+            </h1>
 
             @if ($authority)
                 <p class="c-lead">{{ $authority->name }}</p>

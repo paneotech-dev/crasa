@@ -452,3 +452,9 @@
   .c-cmp__table thead tr { background: none; color: var(--c-charcoal); border-bottom: 2px solid var(--c-charcoal); }
   .c-cmp__result, .c-cmp__card { break-inside: avoid; }
 }
+
+/* The flag beside the ISO code. Never instead of it: two characters a
+   regulator reads at a glance beat a 24px picture, and the flag is there to
+   make the row scannable rather than to identify it. */
+.c-cmp__state .c-flag, .c-cmp__state-cell .c-flag { flex: none; margin-right: 2px; }
+.c-cmp__state-cell .c-flag { border-color: var(--c-navy-line); }

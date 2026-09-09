@@ -38,6 +38,7 @@
                     @foreach ($comparison->countries as $country)
                         <th scope="col">
                             <span class="c-cmp__state-cell">
+                                <x-flag :iso="$country->iso_code" />
                                 <span class="c-cmp__code c-cmp__code--on-navy">{{ strtoupper($country->iso_code) }}</span>
                                 <span class="c-cmp__state-names">
                                     <span class="c-cmp__state-name">{{ $country->name }}</span>

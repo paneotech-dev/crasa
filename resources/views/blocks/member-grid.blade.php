@@ -61,7 +61,15 @@
                              makes the whole card the target: a screen
                              reader hears one link called "Botswana", and a
                              thumb gets the card. --}}
-                        <a class="b-member__name" href="{{ route('members.show', ['locale' => app()->getLocale(), 'iso' => $country->iso_code]) }}">{{ $country->name }}</a>
+                        <span class="b-member__id">
+                            {{-- Decorative: the name beside it is what
+                                 carries the meaning, and a flag alone is
+                                 not an identifier a screen reader or a
+                                 reader who does not know fourteen Southern
+                                 African flags can use. --}}
+                            <x-flag :iso="$country->iso_code" />
+                            <a class="b-member__name" href="{{ route('members.show', ['locale' => app()->getLocale(), 'iso' => $country->iso_code]) }}">{{ $country->name }}</a>
+                        </span>
                         @if ($country->authority)
                             <span class="b-member__authority">{{ $country->authority->name }}</span>
                         @endif

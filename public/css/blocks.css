@@ -470,7 +470,10 @@
 }
 .b-member { position: relative; transition: border-color 150ms var(--ease-in); }
 .b-member:has(.b-member__name:hover), .b-member:has(.b-member__name:focus-visible) { border-color: var(--c-green-dark); }
-.b-member__name { font-family: var(--f-head); font-size: 17px; font-weight: 600; color: var(--c-navy); text-decoration: none; }
+/* Flag and name together, always. */
+.b-member__id { display: flex; align-items: baseline; gap: var(--s-2); min-width: 0; }
+.b-member__name { font-family: var(--f-head); font-size: 17px; font-weight: 600; color: var(--c-navy); text-decoration: none; min-width: 0; }
+.c-member__heading { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
 /* The whole card is the target. The link keeps its own accessible name, so
    the committee count and the sectors below are read as text rather than
    being swallowed into the link. */
@@ -811,6 +814,25 @@
 .c-list-plain li { padding: var(--s-3) 0; border-bottom: 1px solid var(--c-sand); display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-3); align-items: baseline; }
 .c-list-plain__note { font-size: 13px; color: var(--c-slate); }
 .c-note { font-size: var(--t-small-size); color: var(--c-slate); margin: 0 0 var(--s-6); }
+
+/* Member state flags ---------------------------------------------------- */
+/* Instantly scannable, unmistakably regional, and no photography needed.
+   A thin rule rather than a shadow: several of these flags are largely
+   white at one edge and would otherwise dissolve into the card behind
+   them. Fixed 4:3, because a flag stretched to fit is a wrong flag. */
+.c-flag {
+  display: inline-block;
+  flex: none;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border: 1px solid var(--c-sand);
+  border-radius: 1px;
+  vertical-align: baseline;
+}
+.c-flag--sm { width: 24px; height: 18px; }
+.c-flag--md { width: 36px; height: 27px; }
+.c-flag--lg { width: 56px; height: 42px; }
+.b[data-ground="navy"] .c-flag, .c-band .c-flag { border-color: var(--c-navy-line); }
 
 /* The section band ------------------------------------------------------ */
 /* Screen 08, verbatim:

@@ -45,7 +45,11 @@
             'url' => route('submissions.edit', ['locale' => app()->getLocale(), 'submission' => $s->id]),
             'cells' => [
                 'period' => $s->period,
-                'country' => $s->country?->name ?? '',
+                // The flag is decorative and the name carries the
+                // meaning, exactly as everywhere else it appears.
+                'country' => $s->country
+                    ? new \Illuminate\Support\HtmlString(view('components.flag', ['iso' => $s->country->iso_code])->render().' '.e($s->country->name))
+                    : '',
                 'progress' => $s->values->filter->isComplete()->count().' / '.\App\Models\Indicator::active()->count(),
                 'status' => new \Illuminate\Support\HtmlString(
                     '<span class=\'a-pill\' data-status=\'' . e($s->status->value) . '\'>' . e(__($s->status->labelKey())) . '</span>'
