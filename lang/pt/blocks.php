@@ -95,4 +95,10 @@ return [
     'committee_meetings' => '{0}Reuniões|{1}Reunião|[2,*]Reuniões',
     'committee_seats_pending' => 'A composição de cada comité em Estados membros está por confirmar pelo Secretariado. Os assentos aparecem nestes cartões assim que o for.',
     'explain_committee_grid' => 'Os comités, com o que cada um publicou e quantas vezes reuniu.',
+    'explain_statement_band' => 'Uma declaração sobre azul-escuro, com um número por Estado membro ao lado a contar o que esse Estado reportou.',
+    'hero_state_rotating' => 'Roda a cada oito segundos.',
+    'hero_state_paused' => 'Em pausa. Use as setas ou os números.',
+    'hero_state_still' => 'Sem rotação, conforme a sua definição do sistema.',
+    'statement_empty_title' => 'Ainda não há nada indicado aqui',
+    'statement_empty_body' => 'Adicione a declaração e o destino da sua ação. Os números ao lado vêm do registo.',
 ];

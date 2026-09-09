@@ -95,4 +95,10 @@ return [
     'committee_meetings' => '{0}Réunions|{1}Réunion|[2,*]Réunions',
     'committee_seats_pending' => 'La composition de chaque comité en États membres reste à confirmer par le Secrétariat. Les sièges apparaîtront sur ces fiches dès qu\'elle le sera.',
     'explain_committee_grid' => 'Les comités, avec ce que chacun a publié et le nombre de fois qu\'il s\'est réuni.',
+    'explain_statement_band' => 'Une déclaration sur fond bleu nuit, accompagnée d\'un chiffre par État membre indiquant ce que cet État a déclaré.',
+    'hero_state_rotating' => 'Rotation toutes les huit secondes.',
+    'hero_state_paused' => 'En pause. Utilisez les flèches ou les numéros.',
+    'hero_state_still' => 'Pas de rotation, selon votre réglage système.',
+    'statement_empty_title' => 'Rien n\'a encore été indiqué ici',
+    'statement_empty_body' => 'Ajoutez la déclaration et la destination de son action. Les chiffres à côté proviennent du registre.',
 ];

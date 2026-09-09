@@ -12,10 +12,20 @@
 @section('description', __('contact.intro'))
 
 @section('content')
+    {{-- The band screen 08 draws, which this page was the only public one
+         without. Its two entries are the only things that are true and
+         labelled about contacting CRASA: where the Secretariat sits, and how
+         many regulators it answers to. Opening hours and a response time
+         would both be inventions. --}}
+    <x-section-band
+        :eyebrow="__('contact.band_eyebrow')"
+        :title="__('contact.title')"
+        :lead="__('contact.intro')"
+        :counts="\App\Support\SectionCounts::forPage('contact')"
+    />
+
     <div class="c-section">
         <div class="c-page c-page--reading">
-            <h1>{{ __('contact.title') }}</h1>
-            <p class="c-lead">{{ __('contact.intro') }}</p>
 
             @if (session('enquiry_received'))
                 <div class="c-notice c-notice--success" role="status">

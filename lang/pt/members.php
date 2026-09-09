@@ -63,4 +63,11 @@ return [
     'detail_established' => 'Autoridade criada em',
     'detail_website' => 'Sítio web',
     'detail_unconfirmed' => 'Estes dados ainda não foram confirmados pelo regulador deste Estado membro.',
+    'legend_member_title' => 'Regulador membro da CRASA.',
+    'legend_member_body' => 'Catorze Estados membros soberanos, cada um selecionável por clique ou teclado e ligado ao diretório.',
+    'legend_member_shaded' => 'Catorze Estados membros soberanos, sombreados pelo indicador selecionado. Cada Estado apresenta o seu valor por extenso além da tonalidade.',
+    'legend_context_title' => 'Estado membro da SADC sem regulador da CRASA.',
+    'legend_context_body' => 'A SADC tem 16 Estados membros, a CRASA tem 14 reguladores membros. Madagáscar e as Seicheles são mostrados apenas como contexto geográfico e não são selecionáveis.',
+    'legend_continent_title' => 'Nenhum dos dois.',
+    'legend_continent_body' => 'O resto de África, desenhado para que a região se inscreva num continente em vez de ficar isolada. Não selecionável e sem dados.',
 ];

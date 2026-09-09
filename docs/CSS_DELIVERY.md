@@ -143,3 +143,32 @@ assertion is what stops this class of failure recurring.
 It cannot see a browser cache. Nothing in a test suite can. What it can do
 is guarantee that a changed file is a changed URL, which removes the
 mechanism.
+
+---
+
+## A second failure mode the same screenshots exposed
+
+The stale stylesheet explains every symptom, but two components would have
+rendered badly under *any* stylesheet failure, and that is worth separating
+out because versioning does not fix it.
+
+**An SVG sized only in CSS has no floor.** The island insets carried
+`width: 44px` in `blocks.css` and no `width` attribute. An `<svg>` with a
+viewBox and no intrinsic size defaults to 100% by 100%, so the moment the
+rule was missing the two island states rendered as full-width blocks
+thousands of pixels tall. RegionMap.dc.html sets `width="66" height="53"` on
+the element, and that is why.
+
+**An SVG path with no fill renders black.** Every colour on the map lived in
+the stylesheet. RegionMap.dc.html sets `fill` and `stroke` as presentation
+attributes on each shape. Presentation attributes lose to CSS, so the
+stylesheet still governs every interactive and choropleth state — they cost
+nothing and they are the difference between a degraded map and a black one.
+
+Both are now attributes, and `ContinentMapTest` asserts that every path in
+the map carries a fill and that the insets carry their size.
+
+The general rule this leaves: **anything whose failure mode is grotesque
+rather than merely plain should carry its floor in the markup.** A heading
+that loses its font is still a heading. A map that loses its fills is a
+black rectangle.

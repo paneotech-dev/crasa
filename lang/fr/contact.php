@@ -29,4 +29,8 @@ return [
     'map_note' => "La carte provient d'un service de tuiles tiers : elle n'est donc pas chargée tant que vous ne la demandez pas. L'adresse ci-dessus est complète sans elle.",
     'map_load' => 'Afficher la carte',
     'map_label' => 'Secrétariat de la CRASA, Gaborone International Finance Park',
+    'band_eyebrow' => 'Contact',
+    'band_city' => 'Gaborone',
+    'band_city_label' => 'Où siège le Secrétariat',
+    'band_members_label' => 'Régulateurs membres qu\'il sert',
 ];

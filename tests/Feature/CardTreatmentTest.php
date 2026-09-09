@@ -44,20 +44,30 @@ class CardTreatmentTest extends TestCase
         );
     }
 
-    public function test_no_public_surface_uses_the_modal_radius(): void
+    public function test_the_modal_radius_is_used_only_where_a_screen_draws_it(): void
     {
+        // The screens reserve --r-lg for a raised panel over the page:
+        // screen 01's modal at line 745, and screen 15's install card at
+        // line 374, "border-radius:var(--r-lg)...box-shadow:var(--e-2)".
+        // The public site has exactly one such surface. Anything else
+        // reaching for --r-lg is a card that should be --r-md.
+        $allowed = ['.c-install__card'];
+
         foreach (['blocks.css', 'base.css', 'chrome.css'] as $file) {
-            $css = file_get_contents(public_path('css/'.$file));
+            $css = (string) file_get_contents(public_path('css/'.$file));
+            $css = (string) preg_replace('#/\\*.*?\\*/#s', '', $css);
 
-            // Comments name the token when explaining the decision.
-            $css = preg_replace('#/\*.*?\*/#s', '', $css);
+            preg_match_all('/([^{}]+)\\{([^{}]*var\\(--r-lg\\)[^{}]*)\\}/', $css, $rules);
 
-            $this->assertStringNotContainsString(
-                'var(--r-lg)',
-                $css,
-                "{$file} applies --r-lg. The screens reserve it for modals, and "
-                .'the public site has none.',
-            );
+            foreach ($rules[1] as $selector) {
+                $selector = trim((string) preg_replace('/\\s+/', ' ', $selector));
+
+                $this->assertContains(
+                    $selector,
+                    $allowed,
+                    "{$file} applies --r-lg to {$selector}, which no screen draws at that radius.",
+                );
+            }
         }
     }
 

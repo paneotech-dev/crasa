@@ -24,4 +24,5 @@ return [
     'saving' => 'Enregistrement',
     'saved' => 'Enregistré sur cet appareil',
     'save_refused' => 'Ne peut pas être enregistré hors connexion',
+    'install_note' => 'Affiché une fois, lors de votre deuxième visite. Choisir Pas maintenant le ferme définitivement sur ce navigateur.',
 ];

@@ -299,17 +299,31 @@
 
 /* Controls. Always visible, never hover-revealed: meaning carried by hover
    alone is meaning a touch or keyboard reader never gets. */
+/*
+ * "margin-top:auto;background:rgba(11,21,34,.86);border-top:1px solid
+ *  #2C3A55" -- screen 02 line 152, and inside it
+ * "padding:var(--s-3) var(--s-7);display:flex;align-items:center;
+ *  gap:var(--s-4);flex-wrap:wrap".
+ *
+ * It was a floating cluster with no ground, inset from the corner. The
+ * screen draws a bar across the whole width of the band, which is what
+ * separates the controls from the slide rather than leaving them sitting
+ * on top of it.
+ */
 .b-hero__controls {
   position: relative;
   z-index: 2;
   grid-area: 1 / 1;
   align-self: end;
-  justify-self: start;
+  justify-self: stretch;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--s-2);
-  margin: 0 0 var(--s-5) var(--page-x);
+  gap: var(--s-4);
+  margin: 0;
+  padding: var(--s-3) var(--page-x);
+  background: rgba(11, 21, 34, .86);
+  border-block-start: 1px solid var(--c-navy-line);
 }
 
 .b-hero__arrow {
@@ -339,6 +353,48 @@
 }
 .b-hero__dot[aria-selected="true"]::before { background: var(--c-cream); }
 
+/*
+ * Numbered, as screen 02 draws them: the dots loop over "{{ d.num }}", not
+ * an empty button. A carousel's slides are one of the few things on this
+ * platform that genuinely are a sequence, which is the carve-out in the
+ * rule against numbered markers.
+ *
+ * The number sits over the dot rather than beside it, so the control keeps
+ * its 44px target and the row keeps the width the screen gives it.
+ */
+.b-hero__dot {
+  font-family: var(--f-admin);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-sand);
+  line-height: 1;
+}
+.b-hero__dot[aria-selected="true"] { color: var(--c-navy); }
+.b-hero__dot::before { z-index: 0; }
+.b-hero__dot > * , .b-hero__dot { position: relative; }
+
+/* "font-family:var(--f-admin);font-size:13.5px;font-weight:600;
+    color:var(--c-sand);font-variant-numeric:tabular-nums;flex:none" */
+.b-hero__counter {
+  margin: 0 0 0 auto;
+  flex: none;
+  font-family: var(--f-admin);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--c-sand);
+  font-variant-numeric: tabular-nums;
+}
+/* "font-size:13px;color:#B9C2D0;min-width:0" -- #B9C2D0 is not a token.
+   --c-sand reads warm against the navy where that grey reads cold; the
+   substitution is logged in docs/QUESTIONS.md with the other four. */
+.b-hero__state {
+  margin: 0;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--c-sand);
+}
+
 .b-hero__pause {
   min-height: 44px;
   padding: 0 var(--s-4);
@@ -357,7 +413,20 @@
    controls have nothing to control, so they are removed rather than left
    inert. The first slide stands alone. */
 @media (prefers-reduced-motion: reduce) {
-  .b-hero__controls { display: none; }
+  /*
+   * The controls stay. They used to be removed here, on the reasoning that
+   * a carousel which does not rotate needs no controls, and that was right
+   * while every slide said the same kind of thing.
+   *
+   * It stopped being right when the slides became content. Slide two is the
+   * featured comparison and slide three the latest publication, and hiding
+   * the controls made both unreachable for any reader whose system asks for
+   * less motion. Reduced motion means do not move things by yourself; it
+   * does not mean withhold the content.
+   *
+   * The pause button goes instead: there is nothing running to pause.
+   */
+  .b-hero__pause { display: none; }
 }
 
 /* Key figures ---------------------------------------------------------- */
@@ -996,7 +1065,12 @@
 .c-band__counts {
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  /* "repeat(4,minmax(0,1fr))" -- screen 08. Fixed four, not auto-fit: with
+     two counts, auto-fit gave each a 440px column and the two figures sat
+     at opposite ends of the band. Four columns keep a stat row reading as a
+     stat row however many entries it has. Two columns below 640, where four
+     36px figures cannot share a phone. */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--s-5);
   border-top: 1px solid var(--c-navy-line);
   padding-top: var(--s-5);
@@ -1009,6 +1083,9 @@
 .c-band__counts dd a:hover, .c-band__counts dd a:focus-visible { color: var(--c-green-light); text-decoration: underline; text-underline-offset: 5px; }
 /* font-size:13.5px;color:var(--c-sand);margin-top:6px */
 .c-band__counts dt { font-size: 13.5px; line-height: 1.4; color: var(--c-sand); margin-top: 6px; }
+@media (max-width: 639.98px) {
+  .c-band__counts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
 /* A band prints as type on white. Reversing a full-bleed navy band costs a
    printer a cartridge and gains the reader nothing. */
@@ -1282,7 +1359,9 @@
 }
 .c-map-region__inset:hover { border-color: var(--c-green-dark); }
 .c-map-region__inset:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
-.c-map-region__inset svg { flex: none; width: 44px; height: 37px; }
+/* The screen draws 66 by 53 and the element now carries those as
+   attributes. CSS only needs to stop flex from stretching them. */
+.c-map-region__inset svg { flex: none; }
 .c-map-region__inset path { fill: var(--c-green-light); stroke: var(--c-green-dark); stroke-width: 1.5; }
 .c-map-region__inset-text { display: flex; flex-direction: column; min-width: 0; gap: 2px; }
 .c-map-region__inset-code { font-family: var(--f-admin); font-size: 13px; font-weight: 700; color: var(--c-green-dark); }
@@ -1297,7 +1376,9 @@
 .c-map-region--shaded .c-map-region__inset[data-band="none"] path { fill: url(#c-map-hatch); }
 
 /* The legend ----------------------------------------------------------- */
-.c-map-region__legend { margin-top: var(--s-5); padding-top: var(--s-4); border-top: 1px solid var(--c-line); }
+/* "margin-top:16px;padding-top:16px;border-top:1px solid #DFDBD1;display:flex;
+   flex-direction:column;gap:12px" -- RegionMap.dc.html line 63. */
+.c-map-region__legend { margin-top: var(--s-4); padding-top: var(--s-4); border-top: 1px solid var(--c-line); display: flex; flex-direction: column; gap: var(--s-3); }
 .c-map-region__legend-title { margin: 0 0 var(--s-3); font-family: var(--f-admin); font-size: 14px; font-weight: 600; color: var(--c-navy); }
 .c-map-region__legend-unit { font-weight: 400; color: var(--c-slate); }
 .c-map-region__scale { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); font-size: 13.5px; color: var(--c-charcoal); }
@@ -1599,15 +1680,73 @@
 /* A band above the footer, never an interstitial over content. Screen 15 is
    explicit: "Shown once, on the second visit, never as an interstitial over
    content." A prompt over the page is an advertisement. */
-.c-install { background: var(--c-navy); color: var(--c-cream); border-top: 1px solid var(--c-navy-line); }
-.c-install__inner { display: flex; align-items: center; gap: var(--s-4); padding-block: var(--s-4); flex-wrap: wrap; }
-.c-install__icon { flex: none; border-radius: var(--r-md); }
-.c-install__copy { flex: 1 1 260px; min-width: 0; }
-.c-install__title { font-family: var(--f-head); font-size: 17px; font-weight: 600; color: var(--c-white); margin: 0 0 var(--s-1); }
-.c-install__body { font-size: 14px; line-height: 1.5; color: var(--c-sand); margin: 0; max-width: 60ch; }
-.c-install__actions { display: flex; gap: var(--s-3); flex-wrap: wrap; }
-.c-install__actions .c-btn--secondary { border-color: var(--c-cream); color: var(--c-cream); }
-.c-install__actions .c-btn--secondary:hover { background: var(--c-cream); color: var(--c-navy); }
+/*
+ * The install prompt, screen 15 line 374.
+ *
+ *   width:300px;border:1px solid var(--c-sand);border-radius:var(--r-lg);
+ *   overflow:hidden;background:var(--c-white);box-shadow:var(--e-2)
+ *
+ * It was a full-width navy band inside the document flow above the footer,
+ * which is neither the card the screen draws nor something the rule under
+ * the drawing permits. --r-lg reappears here and this is the one public
+ * surface entitled to it: the screens reserve that radius for a raised
+ * panel over the page, and this is the only one the public site has.
+ *
+ * Fixed, so it never moves the footer. Bottom right on a desktop, across
+ * the bottom on a phone, and out of the flow either way.
+ */
+.c-install {
+  position: fixed;
+  z-index: 30;
+  inset-block-end: var(--s-5);
+  inset-inline-end: var(--s-5);
+  max-width: calc(100vw - (var(--s-5) * 2));
+}
+.c-install__card {
+  width: 300px;
+  max-width: 100%;
+  border: 1px solid var(--c-sand);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--c-white);
+  box-shadow: var(--e-2);
+}
+/* "padding:var(--s-4);background:var(--c-cream);border-bottom:1px solid
+   var(--c-sand);font-size:13px;color:var(--c-slate)" -- line 375. */
+.c-install__source {
+  margin: 0;
+  padding: var(--s-4);
+  background: var(--c-cream);
+  border-bottom: 1px solid var(--c-sand);
+  font-size: 13px;
+  color: var(--c-slate);
+}
+.c-install__body { padding: var(--s-4); display: flex; flex-direction: column; gap: var(--s-4); }
+.c-install__head { display: flex; gap: var(--s-3); align-items: flex-start; }
+/* "width:52px;height:52px;flex:none;display:block;border-radius:10px".
+   10px is not a token and is not one of the five radii; --r-md at 8 is the
+   nearest and reads identically at 52px. Logged in docs/QUESTIONS.md. */
+.c-install__icon { width: 52px; height: 52px; flex: none; display: block; border-radius: var(--r-md); }
+.c-install__names { min-width: 0; }
+.c-install__title { margin: 0; font-size: 15.5px; font-weight: 600; line-height: 1.3; color: var(--c-navy); }
+.c-install__meta { margin: 3px 0 0; font-size: 13px; color: var(--c-slate); }
+.c-install__copy { margin: 0; font-size: 14px; line-height: 1.55; color: var(--c-charcoal); }
+/* "display:flex;gap:8px", each button "flex:1;text-align:center". */
+.c-install__actions { display: flex; gap: 8px; }
+.c-install__actions .c-btn { flex: 1; text-align: center; justify-content: center; }
+.c-install__note { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--c-slate); }
+
+@media (max-width: 639.98px) {
+  /* Across the bottom on a phone, where 300px in a corner is most of the
+     width anyway and a hanging card looks like an error. */
+  .c-install { inset-inline: var(--s-4); inset-block-end: var(--s-4); max-width: none; }
+  .c-install__card { width: auto; }
+}
+
+/* No entrance animation. One was written and taken out again: the card
+   appearing is itself the signal, and two guards forbid a declared
+   animation in this file for the reason CLAUDE.md gives -- motion answers
+   an action, it does not announce that something has arrived. */
 
 .c-saved { list-style: none; margin: 0 0 var(--s-6); padding: 0; }
 .c-saved__item, .c-saved__empty {
@@ -1753,3 +1892,128 @@
 
 .b-hero__panel-action { margin: var(--s-4) 0 0; font-size: 15px; font-weight: 600; }
 .b-hero__panel-action a { color: var(--c-white); text-underline-offset: 4px; }
+
+/* The statement band ----------------------------------------------------- */
+/*
+ * Screen 02 line 376. The one place on the homepage where CRASA says
+ * something rather than lists what it holds.
+ *
+ * "position:relative;overflow:hidden;background:var(--c-navy)" with two
+ * crossed weaves over it, then a two-column grid at --s-9 --s-7.
+ */
+.b-statement { position: relative; overflow: hidden; }
+.b-statement__weave {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(122deg, rgba(232, 244, 236, .05) 0 1px, transparent 1px 16px),
+    repeating-linear-gradient(58deg, rgba(26, 140, 90, .10) 0 2px, transparent 2px 26px);
+}
+.b-statement__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr));
+  gap: var(--s-8);
+  align-items: center;
+}
+.b-statement__copy { max-width: 46ch; min-width: 0; }
+
+/* "font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:
+   uppercase;color:var(--c-green-light)". Sentence case here, per the
+   tracked-caps ruling in CLAUDE.md, which excludes eyebrows and wins.
+   Every other value is the screen's. */
+.b-statement__eyebrow {
+  margin: 0 0 var(--s-4);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-green-light);
+}
+/* "font-family:var(--f-head);font-size:clamp(26px,3.8vw,38px);
+   line-height:1.22;font-weight:500;color:var(--c-white)" */
+.b-statement__quote {
+  margin: 0 0 var(--s-5);
+  font-family: var(--f-head);
+  font-size: clamp(26px, 3.8vw, 38px);
+  line-height: 1.22;
+  font-weight: 500;
+  color: var(--c-white);
+  text-wrap: pretty;
+}
+.b-statement__action {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--c-white);
+  text-underline-offset: 5px;
+}
+.b-statement__figures { min-width: 0; }
+.b-statement__grid-label {
+  margin: 0 0 var(--s-4);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c-green-light);
+}
+/* "display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;
+   background:#2C3A55;border:1px solid #2C3A55;border-radius:var(--r-sm);
+   overflow:hidden" -- the 1px gap over a navy-line ground is what draws the
+   rules between cells. #2C3A55 is --c-navy-line exactly. */
+.b-statement__grid {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--c-navy-line);
+  border: 1px solid var(--c-navy-line);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+.b-statement__cell { background: var(--c-navy); padding: var(--s-4) var(--s-3); min-width: 0; }
+/* "font-family:var(--f-admin);font-size:23px;font-weight:600;
+   color:var(--c-white);line-height:1;font-variant-numeric:tabular-nums" */
+.b-statement__value {
+  margin: 0;
+  font-family: var(--f-admin);
+  font-size: 23px;
+  font-weight: 600;
+  color: var(--c-white);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+/* "font-size:11.5px;line-height:1.4;color:var(--c-sand);margin-top:7px" */
+.b-statement__label { font-size: 11.5px; line-height: 1.4; color: var(--c-sand); margin-top: 7px; }
+/* "font-size:13px;line-height:1.6;color:var(--c-sand);margin-top:var(--s-4);
+   max-width:56ch" */
+.b-statement__note { margin: var(--s-4) 0 0; font-size: 13px; line-height: 1.6; color: var(--c-sand); max-width: 56ch; }
+
+@media (max-width: 639.98px) {
+  /* Fourteen cells four across is 60px a column on a phone, which is
+     narrower than "South Africa". Two across instead. */
+  .b-statement__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* The legend's key entries, RegionMap.dc.html line 63.
+   "display:flex;align-items:flex-start;gap:10px;font-size:14px;
+    line-height:1.5;color:#1F2937", and the swatch
+   "flex:none;width:20px;height:14px;margin-top:2px;...;border-radius:2px". */
+.c-map-region__key {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--c-charcoal);
+}
+.c-map-region__swatch--member,
+.c-map-region__swatch--context,
+.c-map-region__swatch--continent {
+  flex: none;
+  width: 20px;
+  height: 14px;
+  margin-top: 2px;
+  border-radius: var(--r-xs);
+}
+.c-map-region__swatch--member { background: var(--c-green-light); border: 1.5px solid var(--c-green-dark); }
+.c-map-region__swatch--member[data-band="2"] { background: var(--c-green-step-2); }
+.c-map-region__swatch--context { background: var(--c-sand); border: 1.5px solid var(--c-border); }
+/* Ours, for the continent the screen does not draw. Cream on a sand
+   hairline, which is exactly what the outlines themselves carry. */
+.c-map-region__swatch--continent { background: var(--c-cream); border: 1.5px solid var(--c-border); }

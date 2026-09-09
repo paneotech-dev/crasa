@@ -63,4 +63,11 @@ return [
     'detail_established' => 'Authority established',
     'detail_website' => 'Website',
     'detail_unconfirmed' => 'These details have not yet been confirmed by this member state regulator.',
+    'legend_member_title' => 'CRASA member regulator.',
+    'legend_member_body' => 'Fourteen sovereign member states, each selectable by click or keyboard and cross-linked to the directory.',
+    'legend_member_shaded' => 'Fourteen sovereign member states, shaded by the selected indicator. Every state states its value as text as well as a shade.',
+    'legend_context_title' => 'SADC member without a CRASA regulator.',
+    'legend_context_body' => 'SADC has 16 member states, CRASA has 14 member regulators. Madagascar and Seychelles are shown for geographic context only and are not selectable.',
+    'legend_continent_title' => 'Neither.',
+    'legend_continent_body' => 'The rest of Africa, drawn so the region sits in a continent rather than on its own. Not selectable and carrying no data.',
 ];

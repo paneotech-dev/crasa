@@ -29,4 +29,8 @@ return [
     'map_note' => 'O mapa é carregado a partir de um serviço de mosaicos de terceiros, pelo que só é pedido quando o solicitar. A morada acima está completa sem ele.',
     'map_load' => 'Mostrar o mapa',
     'map_label' => 'Secretariado da CRASA, Gaborone International Finance Park',
+    'band_eyebrow' => 'Contacto',
+    'band_city' => 'Gaborone',
+    'band_city_label' => 'Onde fica o Secretariado',
+    'band_members_label' => 'Reguladores membros que serve',
 ];

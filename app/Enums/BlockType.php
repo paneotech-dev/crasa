@@ -43,6 +43,17 @@ enum BlockType: string
     case CallToAction = 'call_to_action';
     case SocialFeed = 'social_feed';
     case DocumentList = 'document_list';
+    /*
+     * The fourteenth, added 2026-09-09 on an instruction.
+     *
+     * Screen 02 draws it at line 376, between the publications and the
+     * newsroom: a navy band carrying one statement and a grid of figures
+     * beside it. It had never been built, and its absence was why the
+     * publications and the newsroom both landed on cream and fused. That
+     * was patched by giving the newsroom white; this removes the patch and
+     * builds the section.
+     */
+    case StatementBand = 'statement_band';
 
     /**
      * The ground this section sits on, taken from screen 02.
@@ -77,20 +88,18 @@ enum BlockType: string
             // The page ground, "background:var(--c-cream)" — screen 02 line 27.
             self::Pillars, self::FeaturedPublications => 'cream',
             // Screen 02 draws the newsroom and the events in one two-column
-            // grid on the page ground at line 399, and it reaches that cream
-            // after a navy statement band at line 376 that we have not built.
-            // Without that band the publications and the newsroom are both
-            // cream and fuse into one 400px run, which is the flatness this
-            // change exists to remove. The newsroom takes white so the
-            // boundary the screen draws survives the missing band. Logged as
-            // a disclosed variation; the band itself is a gap in
-            // docs/SCREEN_AUDIT.md.
-            self::NewsroomStrip => 'white',
-            self::EventsStrip => 'cream',
+            // grid on the page ground at line 399, reached after the navy
+            // statement band at 376. The band exists now, so the newsroom
+            // takes the cream the screen gives it and the white it was
+            // standing in with is no longer needed.
+            self::NewsroomStrip => 'cream',
+            self::EventsStrip => 'white',
             // Not drawn on screen 02. The committee grid is the disclosed
             // variation on member_grid, so it takes the members' ground.
             self::CommitteeGrid => 'sand',
             self::RichText, self::DocumentList => 'cream',
+            // "background:var(--c-navy)" -- screen 02 line 376.
+            self::StatementBand => 'navy',
             self::CallToAction => 'navy',
         };
     }
@@ -109,6 +118,7 @@ enum BlockType: string
             self::MemberGrid => 'Member grid',
             self::CommitteeGrid => 'Committee grid',
             self::CallToAction => 'Call to action',
+            self::StatementBand => 'Statement band',
             self::SocialFeed => 'Social feed',
             self::DocumentList => 'Document list',
         };
@@ -138,6 +148,9 @@ enum BlockType: string
             self::EventsStrip => ['heading'],
             self::MemberGrid, self::CommitteeGrid => ['heading', 'intro'],
             self::CallToAction => ['headline', 'body', 'cta_label'],
+            // The statement, the label over its figures, the note under
+            // them, and the link out. Screen 02 line 376.
+            self::StatementBand => ['eyebrow', 'statement', 'cta_label', 'grid_label', 'grid_note'],
             self::SocialFeed => ['heading'],
             self::DocumentList => ['heading'],
         };
@@ -155,6 +168,7 @@ enum BlockType: string
     {
         return match ($this) {
             self::Hero, self::CallToAction => 'headline',
+            self::StatementBand => 'statement',
             self::RichText => 'body',
             default => $this->translatableFields()[0] ?? null,
         };
@@ -251,6 +265,9 @@ enum BlockType: string
                 'include_inactive' => ['nullable', 'boolean'],
                 'filter' => ['nullable', 'array'],
                 'filter.sector' => ['nullable', 'string', 'max:40'],
+            ],
+            self::StatementBand => [
+                'cta_url' => ['nullable', 'string', 'max:255'],
             ],
             self::CallToAction => [
                 'cta_url' => ['nullable', 'string', 'max:255'],
@@ -357,6 +374,7 @@ enum BlockType: string
             self::MemberGrid => ['show_map' => true, 'filter' => []],
             self::CommitteeGrid => ['include_inactive' => false, 'filter' => []],
             self::CallToAction => ['tone' => 'navy'],
+            self::StatementBand => ['cta_url' => null],
             self::SocialFeed => ['networks' => ['facebook', 'linkedin', 'youtube', 'x']],
             self::FeaturedComparison => ['country_ids' => [], 'chart_type' => 'table'],
             self::RichText => ['alignment' => 'start'],

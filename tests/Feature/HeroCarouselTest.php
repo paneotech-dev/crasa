@@ -207,4 +207,68 @@ class HeroCarouselTest extends TestCase
         // The first slide is still there. Its copy is the content.
         $this->assertStringContainsString('b-hero__headline', $html);
     }
+
+    public function test_the_controls_survive_a_reduced_motion_preference(): void
+    {
+        // They used to be removed here. That was right while every slide
+        // said the same kind of thing and wrong the moment they carried
+        // different content: it made the featured comparison and the latest
+        // publication unreachable for anyone whose system asks for less
+        // motion. Reduced motion means do not move things by yourself.
+        $css = file_get_contents(public_path('css/blocks.css'));
+
+        $this->assertDoesNotMatchRegularExpression(
+            '/@media \(prefers-reduced-motion: reduce\) \{[^}]*\.b-hero__controls \{ display: none/s',
+            $css,
+            'A reduced-motion reader cannot reach slides two and three.',
+        );
+
+        // The pause button goes instead: nothing is running to pause.
+        $this->assertMatchesRegularExpression(
+            '/@media \(prefers-reduced-motion: reduce\) \{.*?\.b-hero__pause \{ display: none; \}/s',
+            $css,
+        );
+    }
+
+    public function test_the_controls_are_a_bar_across_the_band(): void
+    {
+        // "margin-top:auto;background:rgba(11,21,34,.86);border-top:1px
+        //  solid #2C3A55" -- screen 02 line 152. It was a floating cluster
+        // with no ground, sitting on the slide rather than under it.
+        $css = file_get_contents(public_path('css/blocks.css'));
+
+        $this->assertMatchesRegularExpression(
+            '/\.b-hero__controls \{[^}]*background: rgba\(11, 21, 34, \.86\)/',
+            $css,
+        );
+        $this->assertMatchesRegularExpression(
+            '/\.b-hero__controls \{[^}]*border-block-start: 1px solid var\(--c-navy-line\)/',
+            $css,
+        );
+        $this->assertMatchesRegularExpression(
+            '/\.b-hero__controls \{[^}]*justify-self: stretch/',
+            $css,
+        );
+    }
+
+    public function test_the_bar_carries_a_counter_and_a_state_note(): void
+    {
+        // Screen 02 closes the bar with a counter in --f-admin at 13.5px
+        // and a note on what the carousel is doing. The dots say which
+        // slide is current by shape; the counter says it in figures.
+        $html = $this->home();
+
+        $this->assertMatchesRegularExpression('/data-hero-counter[^>]*>1 \/ 3</', $html);
+        $this->assertStringContainsString('data-hero-state', $html);
+        $this->assertStringContainsString('data-label-paused', $html);
+
+        // And the dots are numbered, as the screen loops "{{ d.num }}".
+        foreach ([1, 2, 3] as $n) {
+            $this->assertMatchesRegularExpression(
+                '/class="b-hero__dot"[^>]*data-hero-dot="'.($n - 1).'".*?>'.$n.'<\/button>/s',
+                $html,
+                "Dot {$n} is not numbered.",
+            );
+        }
+    }
 }

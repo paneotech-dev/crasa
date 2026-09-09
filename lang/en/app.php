@@ -24,4 +24,5 @@ return [
     'saving' => 'Saving',
     'saved' => 'Saved on this device',
     'save_refused' => 'Cannot be saved offline',
+    'install_note' => 'Shown once, on your second visit. Choosing Not now closes it for good on this browser.',
 ];

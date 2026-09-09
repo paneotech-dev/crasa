@@ -129,6 +129,12 @@
         <svg
             class="c-map-region__svg"
             viewBox="{{ $map['min_x'] }} {{ $map['min_y'] }} {{ $map['width'] }} {{ $map['height'] }}"
+            {{-- RegionMap.dc.html line 12 sets width on the element, not in
+                 a stylesheet. An svg carrying only a viewBox defaults to
+                 100% by 100%, so when the stylesheet does not arrive it
+                 does not fall back to something smaller, it falls back to
+                 something enormous. --}}
+            width="100%"
             role="img"
             aria-label="{{ $view->isShaded() ? __('members.map_label_shaded', ['dataset' => $view->title()]) : __('members.map_label') }}"
             focusable="false"
@@ -152,8 +158,13 @@
                  projection, inert and unlabelled: the region sits in a
                  continent instead of on graph paper. --}}
             <g class="c-map-region__continent" aria-hidden="true">
+                {{-- fill and stroke as attributes, not only in CSS. A path
+                     with no fill from either source renders black, which is
+                     what a whole continent of solid black polygons was. The
+                     stylesheet still governs every interactive state; this
+                     is only the floor under it. --}}
                 @foreach ($map['continent'] as $outline)
-                    <path d="{{ $outline }}"></path>
+                    <path d="{{ $outline }}" fill="#F8F6F1" stroke="#908977" stroke-width="1.1" stroke-linejoin="round"></path>
                 @endforeach
             </g>
 
@@ -161,7 +172,8 @@
                  closer than the continent behind them and a step back from
                  the fourteen: named, but never clickable. --}}
             @foreach ($map['context'] as $context)
-                <path class="c-map-region__context" d="{{ $context['d'] }}" aria-hidden="true"></path>
+                <path class="c-map-region__context" d="{{ $context['d'] }}" aria-hidden="true"
+                      fill="#E5E0D5" stroke="#908977" stroke-width="0.9" stroke-linejoin="round"></path>
             @endforeach
 
             @foreach ($mainland as $iso)
@@ -179,7 +191,10 @@
                         ? __('members.map_region_shaded', ['country' => $country->name, 'value' => $entry->display])
                         : __('members.map_region', ['country' => $country->name, 'authority' => $country->authority?->name ?: $country->name]) }}"
                 >
-                    <path d="{{ $shape['d'] }}"></path>
+                    {{-- "fill #E8F4EC default ... stroke #0E5536 0.9" --
+                         RegionMap.dc.html. The choropleth bands are applied
+                         over this from the stylesheet. --}}
+                    <path d="{{ $shape['d'] }}" fill="#E8F4EC" stroke="#0E5536" stroke-width="0.9" stroke-linejoin="round"></path>
                 </a>
             @endforeach
 
@@ -267,8 +282,14 @@
                         ? __('members.map_region_inset_shaded', ['country' => $country->name, 'value' => $entry->display])
                         : __('members.map_region_inset', ['country' => $country->name, 'authority' => $country->authority?->name ?: $country->name]) }}"
                 >
-                    <svg viewBox="{{ $shape['viewBox'] }}" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
-                        <path d="{{ $shape['d'] }}"></path>
+                    {{-- width="66" height="53", exactly as RegionMap.dc.html
+                         line 49 draws them. These were sized in CSS alone,
+                         so a stylesheet that did not arrive left an svg at
+                         its 100% default: the two island states rendered as
+                         full-width blocks thousands of pixels tall. --}}
+                    <svg viewBox="{{ $shape['viewBox'] }}" width="66" height="53"
+                         aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
+                        <path d="{{ $shape['d'] }}" fill="#E8F4EC" stroke="#0E5536" stroke-width="1.5" stroke-linejoin="round"></path>
                     </svg>
                     <span class="c-map-region__inset-text">
                         <span class="c-map-region__inset-code">{{ strtoupper($iso) }}</span>
@@ -289,9 +310,35 @@
         <a class="c-btn c-btn--secondary" href="{{ route('members.export', array_filter(['locale' => $locale, 'format' => 'pdf', 'indicator' => $view->selection ?: null])) }}" data-live-skip>{{ __('comparator.export_pdf') }}</a>
     </p>
 
-    {{-- The legend, and only when there is something to key. Screen 03's
-         choropleth legend is Low, four swatches, High, then a hatch swatch
-         labelled "Not reported". --}}
+    {{-- The legend.
+         RegionMap.dc.html draws its two key entries in both modes, outside
+         the sc-if that gates the scale, and only the four-step scale is
+         conditional. This rendered nothing at all unless a choropleth was
+         showing, so the default view of the map -- three tiers of colour,
+         green members, sand context, cream continent -- had nothing keying
+         any of them. The third entry is ours: the screen has no continent
+         behind its map and needs no line for it. --}}
+    <div class="c-map-region__legend">
+        <div class="c-map-region__key">
+            <span class="c-map-region__swatch c-map-region__swatch--member"
+                  data-band="{{ $view->isShaded() ? '2' : '0' }}"></span>
+            <span><strong>{{ __('members.legend_member_title') }}</strong>
+                {{ $view->isShaded() ? __('members.legend_member_shaded') : __('members.legend_member_body') }}</span>
+        </div>
+
+        <div class="c-map-region__key">
+            <span class="c-map-region__swatch c-map-region__swatch--context"></span>
+            <span><strong>{{ __('members.legend_context_title') }}</strong>
+                {{ __('members.legend_context_body') }}</span>
+        </div>
+
+        <div class="c-map-region__key">
+            <span class="c-map-region__swatch c-map-region__swatch--continent"></span>
+            <span><strong>{{ __('members.legend_continent_title') }}</strong>
+                {{ __('members.legend_continent_body') }}</span>
+        </div>
+    </div>
+
     @if ($view->isShaded())
         <div class="c-map-region__legend">
             <p class="c-map-region__legend-title">

@@ -8,8 +8,9 @@
  *     reader is not moved off the thing they are on
  *   - fully operable from the keyboard, arrows and dots both
  *   - announces each change through a polite live region
- *   - does not rotate at all under prefers-reduced-motion, and the controls
- *     are removed rather than left inert
+ *   - does not rotate at all under prefers-reduced-motion, but keeps its
+ *     controls: the slides carry different content, so removing the way to
+ *     reach them withholds two of the three
  *   - offers an explicit pause, which is what makes an auto-advancing region
  *     acceptable at all under WCAG 2.2.2
  *
@@ -29,6 +30,8 @@
   var live = hero.querySelector('[data-hero-live]');
   var pauseButton = hero.querySelector('[data-hero-pause]');
   var pauseLabel = hero.querySelector('[data-hero-pause-label]');
+  var counter = hero.querySelector('[data-hero-counter]');
+  var state = hero.querySelector('[data-hero-state]');
 
   var INTERVAL = 8000;
   var current = 0;
@@ -104,6 +107,8 @@
       dot.setAttribute('aria-selected', i === current ? 'true' : 'false');
     });
 
+    if (counter) counter.textContent = (current + 1) + ' / ' + slides.length;
+
     if (announce && live) {
       // The label already reads "Slide 2 of 3: featured comparison", which
       // is what a reader needs to know changed. Announced politely so it
@@ -112,8 +117,20 @@
     }
   }
 
+  /* The state note, screen 02's last element in the controls bar. It says
+     what the carousel is doing, which is the difference between a paused
+     carousel and a broken one. Not a live region: the polite one already
+     announces the slide, and two announcements per change is one too many. */
+  function describe() {
+    if (!state) return;
+    var key = prefersReduced() ? 'still' : (pausedByUser ? 'paused' : 'rotating');
+    var text = state.getAttribute('data-label-' + key);
+    if (text) state.textContent = text;
+  }
+
   function start() {
     stop();
+    describe();
     if (prefersReduced() || pausedByUser || hovered || focused) return;
     timer = window.setInterval(function () { show(current + 1, true); }, INTERVAL);
   }
@@ -164,7 +181,7 @@
           ? pauseButton.getAttribute('data-label-play') || pauseLabel.textContent
           : pauseButton.getAttribute('data-label-pause') || pauseLabel.textContent;
       }
-      if (pausedByUser) stop(); else start();
+      if (pausedByUser) { stop(); describe(); } else start();
     });
   }
 

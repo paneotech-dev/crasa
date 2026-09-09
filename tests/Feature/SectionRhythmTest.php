@@ -48,10 +48,15 @@ class SectionRhythmTest extends TestCase
     {
         // Screen 02: hero navy (line 93), key figures navy-mid (186),
         // pillars on the cream page ground (227), featured comparison navy
-        // (272), publications cream (332), newsroom (399), members sand
-        // (604), social feed white (535).
+        // (272), publications cream (332), the statement band navy (376),
+        // newsroom cream (399), members sand (604), social feed white (535).
+        //
+        // The newsroom stood on white for one day, while the statement band
+        // did not exist and it was the only thing keeping the publications
+        // and the newsroom from fusing. The band is built now and the
+        // newsroom has its cream back.
         $this->assertSame(
-            ['navy-mid', 'cream', 'navy', 'cream', 'white', 'sand', 'white'],
+            ['navy-mid', 'cream', 'navy', 'cream', 'navy', 'cream', 'sand', 'white'],
             $this->grounds('/en'),
         );
     }

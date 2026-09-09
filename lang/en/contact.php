@@ -29,4 +29,8 @@ return [
     'map_note' => 'The map loads from a third-party tile service, so it is not requested until you ask for it. The address above is complete without it.',
     'map_load' => 'Show the map',
     'map_label' => 'CRASA Secretariat, Gaborone International Finance Park',
+    'band_eyebrow' => 'Contact',
+    'band_city' => 'Gaborone',
+    'band_city_label' => 'Where the Secretariat sits',
+    'band_members_label' => 'Member regulators it answers to',
 ];

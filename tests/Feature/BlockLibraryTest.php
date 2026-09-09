@@ -311,18 +311,26 @@ class BlockLibraryTest extends TestCase
      * Question 8 in docs/QUESTIONS.md and as a disclosed variation in
      * docs/OPEN_ITEMS.md.
      *
+     * The fourteenth — statement_band — was added the same day on a second
+     * instruction. Screen 02 draws it at line 376 and it had simply never
+     * been built; its absence was why the publications and the newsroom
+     * both landed on cream and fused into one run.
+     *
      * The number in this test is not the point. The point is that changing
      * it requires someone to come here, read this, and decide.
      */
     public function test_the_block_set_grows_only_by_a_recorded_decision(): void
     {
-        $this->assertCount(13, BlockType::cases());
+        $this->assertCount(14, BlockType::cases());
 
         $questions = file_get_contents(base_path('docs/QUESTIONS.md'));
         $this->assertStringContainsString('committee_grid', $questions);
 
+        $this->assertStringContainsString('statement_band', $questions);
+
         $model = file_get_contents(base_path('docs/DATA_MODEL.md'));
         $this->assertStringContainsString('committee_grid', $model);
+        $this->assertStringContainsString('statement_band', $model);
     }
 
     /* The rules most likely to be lost ------------------------------------- */
@@ -393,7 +401,11 @@ class BlockLibraryTest extends TestCase
 
     public function test_no_block_carries_a_scroll_entrance_animation(): void
     {
-        $css = file_get_contents(public_path('css/blocks.css'));
+        // Comments stripped first. A comment recording why an animation was
+        // taken out again names the thing it forbids, and a guard that
+        // fails on its own explanation teaches people to delete the
+        // explanation.
+        $css = (string) preg_replace('#/\*.*?\*/#s', '', (string) file_get_contents(public_path('css/blocks.css')));
 
         $this->assertStringNotContainsString('@keyframes', $css);
         $this->assertStringNotContainsString('animation:', $css);

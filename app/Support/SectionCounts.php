@@ -32,6 +32,33 @@ use App\Models\Sector;
 final class SectionCounts
 {
     /**
+     * Contact.
+     *
+     * A definition list is a label and a value; screen 08 happens to use
+     * numbers in all four of its. Only two things here are both true and
+     * worth stating, and one of them is a place. Opening hours and a
+     * response time are the obvious third and fourth and CRASA has given
+     * neither, so they are not here.
+     *
+     * @return array<int, array{value: string, label: string, url: string|null}>
+     */
+    private static function contact(): array
+    {
+        return [
+            [
+                'value' => __('contact.band_city'),
+                'label' => __('contact.band_city_label'),
+                'url' => null,
+            ],
+            [
+                'value' => (string) Country::count(),
+                'label' => __('contact.band_members_label'),
+                'url' => route('members', ['locale' => app()->getLocale()]),
+            ],
+        ];
+    }
+
+    /**
      * The counts for a composed page, by slug.
      *
      * A page with nothing to count returns none, and the band renders
@@ -45,6 +72,7 @@ final class SectionCounts
             'members' => self::members(),
             'committees' => self::committees(),
             'about' => self::about(),
+            'contact' => self::contact(),
             default => [],
         };
     }

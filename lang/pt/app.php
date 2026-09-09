@@ -24,4 +24,5 @@ return [
     'saving' => 'A guardar',
     'saved' => 'Guardado neste dispositivo',
     'save_refused' => 'Não pode ser guardado offline',
+    'install_note' => 'Mostrado uma vez, na sua segunda visita. Escolher Agora não fecha-o definitivamente neste navegador.',
 ];

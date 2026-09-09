@@ -484,3 +484,48 @@ all checked against the screens in this run and all three already matched.
 `tests/Feature/HeaderAndTypeTest.php` holds them there.
 
 ---
+## The fourteenth block type: statement_band
+
+*Raised and answered 9 September 2026. Recorded because the block set is
+fixed and changing it is a decision.*
+
+DATA_MODEL section 8 fixed the set at twelve. `committee_grid` was the
+thirteenth, on a ruling. `statement_band` is the fourteenth, on a second
+instruction, and unlike the thirteenth it invents nothing: screen 02 draws
+it at line 376, between the publications and the newsroom, and it had never
+been built.
+
+Its absence had a visible consequence. Without it the publications and the
+newsroom both resolve to the cream page ground, `blocks.css` drops the
+padding between two matching grounds, and the two fused into one run. That
+was patched by giving the newsroom white and disclosing the variation. The
+patch is now removed and the newsroom takes the cream the screen gives it.
+
+**What goes in its grid.** The screen draws a four-column grid of
+value-and-label cells with a placeholder count of twelve and does not say
+what they hold. `App\Support\StatementGrid` fills it with one cell per
+member state showing how many active indicators that state has reported:
+fourteen cells, which is the membership rather than a round number chosen to
+fill a layout. A state that has reported nothing shows a zero, because a
+blank cell reads as a rendering fault and a gap in the register is exactly
+what this grid should make visible.
+
+Every figure is a query. Nothing in it is written down.
+
+---
+## Two more values the screens draw that are not tokens
+
+*Raised 9 September 2026, alongside the four already logged for the navy
+comparison band. Same recommendation, same reason.*
+
+| Drawn | Where | Served for now by |
+|---|---|---|
+| `10px` radius | the install card's 52px app icon, screen 15 line 378 | `--r-md` at 8px, which reads identically at that size |
+| `#B9C2D0` | the hero's state note, screen 02 line 187 | `--c-sand`, which reads warm on navy where that grey reads cold |
+
+Neither is a contrast question; both clear their success criterion either
+way. They are listed so that the count of undeclared values in the screens
+is six rather than four, and so that a decision about the `--d-*` set covers
+all of them at once.
+
+---

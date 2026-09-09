@@ -46,6 +46,11 @@ class HomepageSeeder extends Seeder
                 'slide2Headline' => 'Every document comes from this platform.',
                 'slide2Subtext' => 'Model laws, guidelines, communiques and annual reports, held by CRASA and downloaded from CRASA. No redirect to Google Drive or SharePoint anywhere.',
                 'slide2Action' => 'Browse the library',
+                'bandEyebrow' => 'One register, fourteen regulators',
+                'bandStatement' => 'A licence condition written in Gaborone should be recognisable in Maputo. That is the whole of the harmonisation mandate, and it only works if every member state reports against the same indicators.',
+                'bandAction' => 'See what each state has reported',
+                'bandGridLabel' => 'Indicators reported, by member state',
+                'bandGridNote' => 'Counted from the register itself, not from a return. A zero means that state has filed nothing yet against the active indicator set, which is the gap the harmonisation programme exists to close.',
                 'secondaryAction' => 'About CRASA',
                 'fact1' => 'Member regulators',
                 'fact2' => 'Established',
@@ -92,6 +97,11 @@ class HomepageSeeder extends Seeder
                 'slide2Headline' => 'Chaque document provient de cette plateforme.',
                 'slide2Subtext' => 'Lois types, lignes directrices, communiqués et rapports annuels, conservés par la CRASA et téléchargés depuis la CRASA. Aucune redirection vers Google Drive ou SharePoint.',
                 'slide2Action' => 'Parcourir la bibliothèque',
+                'bandEyebrow' => 'Un registre, quatorze régulateurs',
+                'bandStatement' => 'Une condition de licence rédigée à Gaborone devrait être reconnaissable à Maputo. C\'est là tout le mandat d\'harmonisation, et il ne fonctionne que si chaque État membre rend compte des mêmes indicateurs.',
+                'bandAction' => 'Voir ce que chaque État a déclaré',
+                'bandGridLabel' => 'Indicateurs déclarés, par État membre',
+                'bandGridNote' => 'Comptés à partir du registre lui-même, et non d\'une déclaration. Un zéro signifie que cet État n\'a encore rien déposé pour l\'ensemble des indicateurs actifs, ce qui est précisément l\'écart que le programme d\'harmonisation vise à combler.',
                 'secondaryAction' => 'À propos de la CRASA',
                 'fact1' => 'Régulateurs membres',
                 'fact2' => 'Création',
@@ -138,6 +148,11 @@ class HomepageSeeder extends Seeder
                 'slide2Headline' => 'Cada documento provém desta plataforma.',
                 'slide2Subtext' => 'Leis-modelo, linhas de orientação, comunicados e relatórios anuais, conservados pela CRASA e descarregados a partir da CRASA. Sem qualquer redirecionamento para o Google Drive ou o SharePoint.',
                 'slide2Action' => 'Consultar a biblioteca',
+                'bandEyebrow' => 'Um registo, catorze reguladores',
+                'bandStatement' => 'Uma condição de licenciamento redigida em Gaborone deve ser reconhecível em Maputo. É nisso que consiste todo o mandato de harmonização, e só funciona se cada Estado membro reportar os mesmos indicadores.',
+                'bandAction' => 'Ver o que cada Estado reportou',
+                'bandGridLabel' => 'Indicadores reportados, por Estado membro',
+                'bandGridNote' => 'Contados a partir do próprio registo, e não de uma declaração. Um zero significa que esse Estado ainda nada apresentou face ao conjunto de indicadores ativos, que é precisamente a lacuna que o programa de harmonização visa colmatar.',
                 'secondaryAction' => 'Sobre a CRASA',
                 'fact1' => 'Reguladores membros',
                 'fact2' => 'Fundação',
@@ -341,7 +356,30 @@ class HomepageSeeder extends Seeder
             'filter' => [],
         ], fn (string $l) => ['heading' => $t[$l]['pubTitle']]);
 
-        // 6. Newsroom strip.
+        /*
+         * 6. The statement band, screen 02 line 376.
+         *
+         * The one place on the homepage where CRASA says something in its
+         * own voice rather than listing what it holds. It sits between the
+         * publications and the newsroom because that is where the screen
+         * puts it, and because without it those two sections share the
+         * cream page ground and fuse into one run.
+         *
+         * The claim has to pass the substitution test: replace CRASA with
+         * EACO or ARICEA and it must stop being true. Fourteen states, one
+         * register, three sectors does.
+         */
+        $this->block($page, BlockType::StatementBand, $position++, [
+            'cta_url' => '/comparator',
+        ], fn (string $l) => [
+            'eyebrow' => $t[$l]['bandEyebrow'],
+            'statement' => $t[$l]['bandStatement'],
+            'cta_label' => $t[$l]['bandAction'],
+            'grid_label' => $t[$l]['bandGridLabel'],
+            'grid_note' => $t[$l]['bandGridNote'],
+        ]);
+
+        // 7. Newsroom strip.
         $this->block($page, BlockType::NewsroomStrip, $position++, [
             'limit' => 3,
             'filter' => [],

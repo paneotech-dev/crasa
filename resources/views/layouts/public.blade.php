@@ -61,21 +61,46 @@
         @yield('content')
     </main>
 
-    {{-- The install prompt, screen 15: "Shown once, on the second visit,
-         never as an interstitial over content." So it is a band above the
-         footer rather than a dialogue over the page, it starts hidden, and
-         app.js reveals it only on a second visit and never again once
-         dismissed. --}}
+    {{-- The install prompt, screen 15 line 374.
+         "width:300px;border:1px solid var(--c-sand);border-radius:var(--r-lg);
+          overflow:hidden;background:var(--c-white);box-shadow:var(--e-2)"
+
+         It was a full-width navy band above the footer. That is not what the
+         screen draws and it is not what the rule under the drawing allows:
+         "Shown once, on the second visit, never as an interstitial over
+         content." A band in the flow is not an interstitial, but it is also
+         not the card, and it pushed the footer down on every page for every
+         reader whose browser offered the prompt.
+
+         A 300px card, bottom right on desktop and across the bottom on a
+         phone. app.js still reveals it only on a second visit and never
+         again once dismissed. --}}
     <div class="c-install" data-install hidden>
-        <div class="c-install__inner c-page">
-            <img class="c-install__icon" src="{{ asset('img/app/icon-192.png') }}" alt="" width="48" height="48">
-            <div class="c-install__copy">
-                <p class="c-install__title">{{ __('app.install_title') }}</p>
-                <p class="c-install__body">{{ __('app.install_body') }}</p>
-            </div>
-            <div class="c-install__actions">
-                <button class="c-btn c-btn--primary" type="button" data-install-accept>{{ __('app.install') }}</button>
-                <button class="c-btn c-btn--secondary" type="button" data-install-dismiss>{{ __('app.install_not_now') }}</button>
+        <div class="c-install__card" role="dialog" aria-modal="false"
+             aria-labelledby="install-title">
+            {{-- The source bar. A card asking to install something states
+                 where it comes from, which is the browser's own convention
+                 and the screen's line 375. --}}
+            <p class="c-install__source">{{ request()->getHost() }}</p>
+
+            <div class="c-install__body">
+                <div class="c-install__head">
+                    <img class="c-install__icon" src="{{ \App\Support\Assets::url('img/app/icon-192.png') }}"
+                         alt="" width="52" height="52">
+                    <div class="c-install__names">
+                        <p class="c-install__title" id="install-title">{{ __('app.install_title') }}</p>
+                        <p class="c-install__meta">{{ request()->getHost() }}</p>
+                    </div>
+                </div>
+
+                <p class="c-install__copy">{{ __('app.install_body') }}</p>
+
+                <div class="c-install__actions">
+                    <button class="c-btn c-btn--primary" type="button" data-install-accept>{{ __('app.install') }}</button>
+                    <button class="c-btn c-btn--secondary" type="button" data-install-dismiss>{{ __('app.install_not_now') }}</button>
+                </div>
+
+                <p class="c-install__note">{{ __('app.install_note') }}</p>
             </div>
         </div>
     </div>

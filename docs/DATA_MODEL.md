@@ -470,7 +470,7 @@ Translatable text within a block goes in the `translations` table against the bl
 
 ### The thirteen block types
 
-Fixed set. Adding a fourteenth requires a decision, not a commit.
+Fixed set. Adding a fifteenth requires a decision, not a commit.
 
 The set was twelve until 9 September 2026, when `committee_grid` was added on
 an explicit ruling: the constraint was against inventing layouts rather than
@@ -478,6 +478,12 @@ against completing the set, and the six committee records the platform holds
 appeared on no public page. No screen draws a public committee list, so the
 card is derived from `member_grid`. Recorded as Question 8 in
 `docs/QUESTIONS.md` and as a disclosed variation in `docs/OPEN_ITEMS.md`.
+
+`statement_band` was the fourteenth, added later the same day on a second
+instruction. Unlike the thirteenth it invents nothing: screen 02 draws it at
+line 376 and it had simply never been built. Its absence had a visible
+consequence, because without it the publications and the newsroom both
+resolved to the cream page ground and fused into one run.
 
 | Type | Settings | Notes |
 |---|---|---|
@@ -494,6 +500,7 @@ card is derived from `member_grid`. Recorded as Question 8 in
 | `social_feed` | networks[] | Facebook, LinkedIn, YouTube, X |
 | `document_list` | filter{tag, committee, type}, limit | Filtered publication list |
 | `committee_grid` | include_inactive (bool), filter{sector} | The committees, with seats, documents and meetings counted. Derived from `member_grid`; no screen draws it |
+| `statement_band` | cta_url | One claim on navy, with a cell per member state beside it counting what that state has reported. Screen 02 line 376 |
 
 **Constraints that must hold:**
 

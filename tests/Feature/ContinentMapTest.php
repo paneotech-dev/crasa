@@ -227,4 +227,88 @@ class ContinentMapTest extends TestCase
             'A member state is filled after a label is written, so it paints over it.',
         );
     }
+
+    /* Survives a stylesheet that does not arrive ---------------------------- */
+
+    public function test_every_shape_carries_its_colour_as_an_attribute(): void
+    {
+        // An SVG path with no fill from any source renders black. The
+        // colours lived only in the stylesheet, so the day the stylesheet
+        // was stale the map was a continent of solid black polygons.
+        // RegionMap.dc.html sets them as attributes for this reason.
+        $html = $this->map();
+
+        preg_match('#<svg[^>]*class="c-map-region__svg".*?</svg>#s', $html, $svg);
+        $this->assertNotEmpty($svg);
+
+        preg_match_all('/<path\b[^>]*>/', $svg[0], $paths);
+
+        foreach ($paths[0] as $path) {
+            $this->assertMatchesRegularExpression(
+                '/\bfill="#[0-9A-Fa-f]{6}"/',
+                $path,
+                'A path in the map has no fill attribute, so it renders black '
+                .'if the stylesheet does not arrive.',
+            );
+        }
+
+        $this->assertSame(12, substr_count($svg[0], 'fill="#E8F4EC"'), 'The twelve mainland members.');
+        $this->assertSame(38, substr_count($svg[0], 'fill="#F8F6F1"'), 'The continent behind them.');
+        $this->assertSame(2, substr_count($svg[0], 'fill="#E5E0D5"'), 'Madagascar and Seychelles.');
+    }
+
+    public function test_the_island_insets_carry_their_size_as_attributes(): void
+    {
+        // RegionMap.dc.html line 49: width="66" height="53". These were
+        // sized in CSS alone, and an svg with only a viewBox defaults to
+        // 100% by 100%: the two island states rendered as full-width blocks
+        // thousands of pixels tall.
+        $html = $this->map();
+
+        // Four, not the screen's two. RegionGeometry::ENLARGED adds
+        // Lesotho and Eswatini to Comoros and Mauritius because they are
+        // too small to aim at, which matters more since the continent
+        // arrived and took every member state to 72 per cent of its size.
+        $this->assertSame(
+            4,
+            preg_match_all('/<svg[^>]*width="66"[^>]*height="53"/', $html),
+            'An inset does not carry the size the screen draws.',
+        );
+    }
+
+    public function test_the_map_itself_carries_a_width(): void
+    {
+        $this->assertMatchesRegularExpression(
+            '/class="c-map-region__svg"[^>]*width="100%"/s',
+            $this->map(),
+        );
+    }
+
+    public function test_the_context_states_are_named_in_full(): void
+    {
+        $html = $this->map();
+
+        $this->assertStringContainsString('>Seychelles<', $html);
+        $this->assertStringContainsString('>Madagascar<', $html);
+        $this->assertStringNotContainsString('>Seychelle<', $html);
+    }
+
+    public function test_the_legend_keys_all_three_tiers_without_a_choropleth(): void
+    {
+        // RegionMap.dc.html draws its two key entries outside the sc-if
+        // that gates the four-step scale, so they show in both modes. Ours
+        // rendered nothing at all unless a choropleth was showing, which
+        // left the default view carrying three tiers of colour and no key
+        // to any of them. The third entry is ours: the screen has no
+        // continent behind its map and needs no line for it.
+        $html = $this->map();
+
+        $this->assertSame(3, substr_count($html, 'c-map-region__key'));
+        $this->assertStringContainsString('CRASA member regulator.', $html);
+        $this->assertStringContainsString('SADC member without a CRASA regulator.', $html);
+        $this->assertStringContainsString('The rest of Africa', $html);
+
+        // The scale stays conditional; there is nothing to scale here.
+        $this->assertStringNotContainsString('c-map-region__scale', $html);
+    }
 }

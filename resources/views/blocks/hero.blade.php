@@ -388,7 +388,7 @@
                             'total' => $rendered->count(),
                             'name' => __('blocks.hero_panel_'.($slide['panel'] ?? 'figures').'_name'),
                         ]) }}"
-                    ></button>
+                    >{{ $index + 1 }}</button>
                 @endforeach
             </div>
 
@@ -403,6 +403,18 @@
                     data-label-play="{{ __('blocks.hero_play') }}">
                 <span data-hero-pause-label>{{ __('blocks.hero_pause') }}</span>
             </button>
+
+            {{-- Screen 02 closes the bar with a counter in --f-admin at
+                 13.5px and a note on the state, pushed right by
+                 margin-left:auto. The dots say which slide is current by
+                 shape; the counter says it in figures, which is what a
+                 reader glances at rather than counts. --}}
+            <p class="b-hero__counter" data-hero-counter aria-hidden="true">1 / {{ $rendered->count() }}</p>
+            <p class="b-hero__state" data-hero-state
+               data-label-rotating="{{ __('blocks.hero_state_rotating') }}"
+               data-label-paused="{{ __('blocks.hero_state_paused') }}"
+               data-label-still="{{ __('blocks.hero_state_still') }}"
+            >{{ __('blocks.hero_state_rotating') }}</p>
         </div>
 
         {{-- Slide changes are announced here, politely, so a screen reader
