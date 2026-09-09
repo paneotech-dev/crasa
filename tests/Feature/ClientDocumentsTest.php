@@ -2,6 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\Authority;
+use App\Models\PageBlock;
+use Database\Seeders\AuthoritySeeder;
+use Database\Seeders\CountrySeeder;
+use Database\Seeders\LegalPagesSeeder;
+use Database\Seeders\PublicPagesSeeder;
+use Database\Seeders\SectorSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -122,5 +129,86 @@ class ClientDocumentsTest extends TestCase
                 'A variation offers options without a recommendation.'
             );
         }
+    }
+
+    /**
+     * The pack must stay in step with the platform.
+     *
+     * Every block flagged as awaiting content has to appear in the document
+     * CRASA is sent, or the Secretariat is asked for nine things and the
+     * platform is waiting on ten.
+     */
+    public function test_the_client_pack_covers_every_placeholder_the_platform_carries(): void
+    {
+        $this->seed(CountrySeeder::class);
+        $this->seed(SectorSeeder::class);
+        $this->seed(PublicPagesSeeder::class);
+        $this->seed(LegalPagesSeeder::class);
+
+        $pack = file_get_contents(base_path('docs/CLIENT_REQUESTS.md'));
+
+        $subjects = [
+            'about' => ['Governance', 'Executive Committee', 'Secretariat', 'Partnerships', 'strategic'],
+            'committees' => ['Terms of reference'],
+            'members' => ['Accession', 'consent'],
+            'privacy' => ['Privacy notice'],
+            'terms' => ['Terms of use'],
+        ];
+
+        $flagged = PageBlock::where('needs_content', true)
+            ->with('page')
+            ->get()
+            ->pluck('page.slug')
+            ->unique()
+            ->values();
+
+        foreach ($flagged as $slug) {
+            $this->assertArrayHasKey($slug, $subjects, 'The page "'.$slug.'" has a placeholder the client pack does not mention.');
+
+            foreach ($subjects[$slug] as $term) {
+                $this->assertStringContainsStringIgnoringCase($term, $pack);
+            }
+        }
+    }
+
+    /** The imagery brief has to carry the four things a photographer needs. */
+    public function test_the_pack_states_the_imagery_brief_in_full(): void
+    {
+        $pack = file_get_contents(base_path('docs/CLIENT_REQUESTS.md'));
+
+        // Subject, orientation, size, and where the type sits. A brief
+        // missing any one of these produces images that cannot be used.
+        $this->assertStringContainsStringIgnoringCase('Landscape', $pack);
+        $this->assertStringContainsStringIgnoringCase('3000 pixels', $pack);
+        $this->assertStringContainsStringIgnoringCase('right-hand two thirds', $pack);
+        $this->assertStringContainsStringIgnoringCase('AI-generated', $pack);
+        $this->assertStringContainsStringIgnoringCase('Three', $pack);
+    }
+
+    public function test_the_pack_names_all_fourteen_authorities_for_confirmation(): void
+    {
+        $this->seed(CountrySeeder::class);
+        $this->seed(SectorSeeder::class);
+        $this->seed(AuthoritySeeder::class);
+
+        $pack = file_get_contents(base_path('docs/CLIENT_REQUESTS.md'));
+
+        // Every authority currently flagged unverified must be in the table
+        // CRASA is asked to correct.
+        foreach (Authority::where('is_sample', true)->get() as $authority) {
+            $this->assertStringContainsString(
+                $authority->acronym,
+                $pack,
+                $authority->acronym.' is seeded as unverified but is not in the confirmation table.'
+            );
+        }
+    }
+
+    public function test_the_pack_points_at_the_sso_document_rather_than_repeating_it(): void
+    {
+        $pack = file_get_contents(base_path('docs/CLIENT_REQUESTS.md'));
+
+        $this->assertStringContainsString('SSO_REQUIREMENTS.md', $pack);
+        $this->assertFileExists(base_path('docs/SSO_REQUIREMENTS.md'));
     }
 }
