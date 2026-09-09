@@ -811,3 +811,360 @@ was wrong. Commit `a14f893` restores the map and explains why both readings
 were available from the same evidence. The map now renders all fourteen
 member states, twelve as mainland shapes and two as inset chips, and a test
 holds each of those conditions.
+
+---
+
+# Responsiveness run, sections 29 to 32 — report
+
+**784 tests, 6205 assertions, all passing. Pint clean. Five commits, each
+green before committing, none red at any point.**
+
+| # | Section | Commit |
+|---|---|---|
+| 29 | The region map becomes the navigation | `905a22d` |
+| 30 | The page answers the reader | `e5567f1` |
+| 31 | The hero runs without a photograph | `bccb93a` |
+| 32 | The two go-live blockers | `f93f4e7` |
+| — | The affordance audit, and the two things it found | `6e53ab4` |
+
+The brief was that the platform reads as static, and that the fix is
+responsiveness rather than decoration: the page reacting to the reader, not
+fading in as it scrolls. Nothing in this run animates on scroll. Every piece
+of motion added answers a pointer, a key or a change of state.
+
+---
+
+## What the map does now
+
+**It is navigation.** Every one of the fourteen shapes and both island chips
+links to `/members/{iso}`, a member state page that did not exist before this
+run. Previously they linked to an anchor on the same page: the reader clicked
+a country and the page scrolled a little, which is the difference between an
+illustration and an interface.
+
+The member page carries the regulator in place, its acronym, its mandated
+sectors, the committee seats the state holds with the role it holds them in,
+the indicator figures it has filed with their periods and sources, and its
+publications. Nothing on it is written for it. A member state entry carrying
+invented prose about a national regulator is the first thing a regulator
+would catch.
+
+**It answers hover and focus.** Pointing at a member state, or reaching it
+with the keyboard, shows its regulator, acronym and sectors beside the map.
+That is CSS, not script: the stage matches
+`:has([data-iso="bw"]:is(:hover,:focus-visible))` and reveals one of fourteen
+cards. The same selector matches an island chip, which is how the chips
+behave identically without a second implementation to keep in step.
+
+The panel is `aria-hidden`. Every fact in it is already in the link's
+accessible name, and fourteen stacked cards read out in sequence would be
+fourteen repetitions of the page.
+
+**It shades by a dataset.** A selector above the map picks one, and the
+fourteen shade in one green in four steps, quoting `RegionMap.dc.html`:
+
+```js
+const SHADES = ["#E8F4EC", "#9CCFB2", "#4FA97B", "#0E5536"];
+const MISSING_FILL = "repeating-linear-gradient(135deg,#E5E0D5 0 4px,#CFC8B8 4px 8px)";
+```
+
+Two datasets. Any indicator member states have actually filed figures for,
+and data completeness — the view that shows the Secretariat who has not
+filed.
+
+A state with no figure is hatched, never the lightest shade. Completeness is
+the stated exception: there, filing nothing is a measurement of zero rather
+than an absence of one, so the palest states are the answer rather than a
+gap, and the legend says so.
+
+**Colour is never the only carrier.** Every shape prints its own figure under
+its ISO code, which is what the screen does (`sub: choropleth ? v.display :
+m.acr`). Every link's accessible name states the value. The legend states the
+units, the period and how many states did not file. The same fourteen figures
+are in a table in the document, one disclosure click away. The test for that
+strips every `fill`, `class` and `style` attribute from the response and
+requires all fourteen figures to survive.
+
+**Keyboard order is alphabetical by country name.** Stated, because it was a
+decision. It is the order the list under the map reads in, the order the
+comparator's country selector reads in, and the order CRASA's own documents
+list member states in, so a reader tabbing the map and a reader reading the
+page are in the same place. A geographic order asks the reader to hold a map
+of Southern Africa, which is exactly what a reader who cannot see the map
+does not have.
+
+Tab order is DOM order — no positive `tabindex`, because focus order and
+visual order have to agree under SC 2.4.3. That is also why the two island
+chips come after the mainland twelve rather than being interleaved at C and
+M: they sit visually below the map, and focus jumping out of the map and back
+into it would be worse for a sighted keyboard reader than a second
+alphabetical run.
+
+**It is a document before it is a script.** The selector is a GET form, the
+shading is server-rendered fill classes, the detail panel is CSS, the table
+is a `<details>`. `/members?indicator=completeness` reproduces the view, and
+an unknown slug falls back to membership rather than erroring, so a stale
+link in a two-year-old minute still opens the page. None of the tests in this
+run execute JavaScript, so everything they assert is what a reader with
+scripting off receives.
+
+---
+
+## What the map still cannot do
+
+Six things, in the order I would fix them.
+
+**1. It shades one period, and cannot show change over time.** The map picks
+the period the most member states have filed and shades everything on it.
+That is right for comparing fourteen states — a scale putting Angola's 2019
+figure beside Zambia's 2025 figure would be comparing two questions and
+calling the difference a regional pattern — but it means the map cannot
+answer "who improved". A period selector and a difference mode are the
+obvious next step and neither is built.
+
+**2. It cannot shade by a category, only by a single indicator.** A reader
+who wants "spectrum readiness" rather than one spectrum indicator has to pick
+the indicators one at a time. The completeness dataset is the only composite
+view and it is composite over everything.
+
+**3. It has no zoom and no pan.** The geometry is a fixed 820 by 660 viewBox.
+At 375px the twelve mainland shapes are legible because the ISO codes and
+figures scale with the viewBox, but Lesotho and Eswatini are small and their
+figures are set at roughly 5px. They remain readable in the table equivalent
+and in the accessible names, which is why this is fourth on the list rather
+than first, but a reader on a phone will squint.
+
+**4. The island chips are not on the map.** That is deliberate and logged —
+at region scale each is a few pixels across — but it does mean a reader
+scanning the map for Mauritius has to know to look below it. The heading
+"Island member states, shown at larger scale" is the only signpost.
+
+**5. It cannot be exported.** The comparator has PNG, PDF, CSV and SVG export
+built in section 17. The map has none of them, so a choropleth that would be
+useful in a plenary paper has to be screenshotted. The `ComparisonExport`
+service already rasterises SVG through Imagick, so this is a day's work
+rather than a new capability.
+
+**6. It does not know it is out of date.** The legend states the period the
+figures come from, but nothing on the map distinguishes a 2025 figure from a
+2019 one when both are shown, because only one period is ever shown at once.
+The freshness badges that exist on the completeness grid have no equivalent
+here.
+
+---
+
+## Where the platform still fails the "looks interactive but isn't" test
+
+The audit was done twice: once by reading every `:hover` and `cursor:
+pointer` rule in the public stylesheets against the markup that uses it, and
+once by machine, comparing every class every public template uses against
+every class the stylesheets define.
+
+### Fixed in this run
+
+**News cards and member cards were bordered boxes where only the title text
+was clickable.** Both now stretch the link over the whole card with a
+pseudo-element on the link, so the link keeps its own accessible name and the
+summary and date beside it stay text rather than being swallowed into it.
+
+**The homepage key figures were inert numbers.** 14, 1997 and 3 now go to the
+member states, the About page and the committees.
+
+**The completeness grid's member state names were inert**, on a grid entirely
+about those member states.
+
+**The events page had no styles at all.** `.c-events`, `.c-event` and three
+modifiers were used by the template and defined in no stylesheet, so a list
+of CRASA meetings rendered as browser-default bullets in Times. It had also
+invented `.c-empty` rather than using the platform's own empty state — a
+second CSS methodology, which CLAUDE.md rules out, and one that also had no
+styles.
+
+### Still failing, and why I left each one
+
+**Publication and instrument rows in the library.** Each row is a bordered
+band with a title link and a separate download action. Only the title is
+clickable. I left it: a stretched link would cover the download button, and a
+dense list row with two distinct actions is a genuine "the title is the link"
+case rather than a card. It is the one I am least sure about.
+
+**The comparator's country column headers are not links.** They sit beside a
+remove control, and a link competing with a remove `×` in the same cell is
+worse than an inert name. A reader who wants a member state's page has the
+map, the directory and search.
+
+**Status pills look like buttons and are not.** `--r-pill`, coloured ground,
+coloured border. Nothing in the platform gives them a hover state or a
+cursor, so the affordance is weak rather than false, but a reader could
+reasonably try clicking "Validated" expecting a filter. The publications and
+newsroom filters do exactly that job as chips one section above, which is
+where the confusion would come from.
+
+**The freshness badges on the completeness grid are the same.** They read as
+filters and are not.
+
+**The hero's action button is the only thing in a 640px band that responds.**
+See the next section.
+
+**In the back office, the resource tables' column headers are not sortable.**
+They look like table headers rather than controls, so this is not a false
+affordance — but a Secretariat user working through 140 publications will try
+to sort by date, and nothing happens. That is a missing capability rather
+than a misleading one, and it is on the unbuilt list.
+
+---
+
+## The hero, honestly
+
+**The question was whether it reads better with or without a photograph. The
+honest answer is three separate answers, and only one of them is the one
+asked for.**
+
+**It reads better without a photograph than with either of the two it has
+had.** That much I am confident of. A market scene in Cape Town said CRASA is
+a consumer body. An equipment testing bench says CRASA is a testing house.
+Both are false claims about a treaty organisation, made in the largest
+element on the first screen, to a reader who is deciding whether the rest of
+the page is trustworthy. The empty band makes no claim it cannot support.
+
+**It does not read better than it would with the right photograph.** Delegates
+in plenary behind the scrim, with the headline over the left third, is what
+screen 02 draws and it is better than what is there now. Anyone who reports
+otherwise is defending a decision rather than describing a page.
+
+**And the band as it stands has a specific weakness I should name rather than
+let CRASA discover.** Screen 02's photograph-free slide — its chart slide —
+does not leave the second column empty. It fills it with a data panel in
+`--c-navy-mid` carrying figures. Ours fills it with nothing. So we have taken
+the screen's ground, its weave, its type and its measures, and left out the
+one thing the screen used to stop 640px of flat navy reading as an empty
+container.
+
+At desktop width the headline runs to about 22ch at up to 58px and the
+standfirst to 52ch, so the copy occupies most of the width and the band holds
+together. At intermediate widths — roughly 900px to 1200px, which is a
+laptop — the copy has stopped filling the row and nothing has replaced it,
+and that is where it is weakest.
+
+I did not add the data panel, because the instruction was that navy and the
+typography are the design, and adding a chart to the hero is a larger change
+than "run it without a photograph". But it is the remedy the approved screen
+already contains, it needs no photograph, and the figures to fill it exist
+and are sourced. **If the empty band looks thin at the workshop, that panel
+is the fix, and it is quoting the screen rather than inventing.**
+
+One caveat on all of the above: this is a reasoned judgement from the markup,
+the measures and the approved screen. I have not looked at the rendered page.
+
+---
+
+## The other things this run found
+
+**A leak in autocomplete.** `suggest()` read the translations table directly.
+Its own comment said "only from what the reader may already see" and the
+query enforced nothing: it matched every title row of every publication, news
+item and instrument, published or not, listed or not. A reader could learn
+the title of an unlisted country publication by typing three letters, and the
+link would then correctly refuse them — which tells them the document exists,
+which is the part that matters.
+
+Autocomplete is the classic place an otherwise sound authorisation layer
+leaks, because nothing is being "viewed" yet and no policy runs. Suggestions
+now come from the same visibility scopes the results come from, and the test
+that holds it is the invariant rather than a blocklist: anything autocomplete
+offers, the same reader's search must be able to reach.
+
+**Unit codes were reaching readers.** `subscriptions_per_100` and
+`bits_per_second_per_inhabitant` were rendering in the comparator, the
+completeness grid, the import error messages, the CSV, the PDF and the report
+builder. `Indicator::unitLabel()` translates them in three languages and
+falls back to the code's own words rather than a slug, so a unit the
+Secretariat adds later still reads as English.
+
+**The map was comparing on the wrong period.** It took the most recent period
+any state had filed, which is usually the year two or three states have got
+to first. The seeded data made it visible: the latest period held four states
+where the best-filled period held ten, so the map hatched eleven countries
+and reported a filing problem that did not exist.
+
+**One assertion I wrote was wrong and I replaced it.** While fixing the
+autocomplete leak I asserted that a Zambian instrument's title must never
+appear in a Namibian representative's suggestions. It should: the instrument
+is in force and its title is public. Only the file attached to it is
+restricted. The assertion that survives is the invariant, which is the claim
+worth making.
+
+---
+
+## Section 32: the two go-live blockers
+
+Both are documents rather than code, because both need a decision from CRASA.
+What did not need a decision is whether the platform says anything.
+
+**`docs/BACKUP_SETUP.md`.** Three things are missing and each on its own would
+be enough to lose the platform: no backup package, no off-site destination,
+and — the one that would be missed — **no cron entry for this application at
+all**. A sibling application on this account has one; this one has none. It
+is entirely possible to install a package, configure it correctly, watch the
+command succeed by hand, and never take a single backup, because nothing ever
+calls it.
+
+The document covers the install, exactly what CRASA must provide, the
+retention schedule, the restore procedure, and how to prove a restore works —
+which ends at a file download, because that is the only check proving the
+database restore and the `storage/app` restore agree with each other. A
+restored database whose file paths point at documents that were not restored
+looks perfectly healthy until somebody clicks one.
+
+It also carries three alternatives for a client who cannot provision S3,
+which is a realistic outcome for a public body.
+
+**`docs/MAIL_SETUP.md`, and a check that will not stay quiet.**
+`MAIL_MAILER=log` with `APP_ENV=production`. Nothing throws, no job fails, no
+line says "delivery failed" — because nothing failed. A representative
+submits their figures, the platform tells them the Secretariat has been
+notified, and both parties believe the other has the message. That would most
+likely have surfaced at the validation workshop, in front of fourteen
+regulators.
+
+`App\Support\DeliveryCheck` now writes an error-level line on every boot and
+shows a red banner on every back office screen until it is fixed. Verified
+firing on the live server, not only in tests. It never throws and never
+blocks a request: a platform that refused to serve pages because mail was
+misconfigured would be worse than one that delivers no mail.
+
+The document gives SPF, DKIM and DMARC their own section, because without
+them mail from a new sender to fourteen government domains is filed as spam
+with no bounce — the same silent failure one step further down the chain.
+
+---
+
+## Test and assertion count
+
+| | Before this run | After |
+|---|---|---|
+| Tests | 728 | **784** |
+| Assertions | 5880 | **6205** |
+| Pint | clean | clean |
+
+Five new test files: `RegionChoroplethTest`, `RegionMapNavigationTest`,
+`MemberPageTest`, `InteractiveSurfacesTest`, `GoLiveBlockersTest`, plus
+`ImagePipelineTest` carrying the coverage that moved off the hero.
+
+Live smoke after every section: all public routes 200 in all three
+languages, `/en/members/mg` correctly 404 (Madagascar is a SADC member
+without a CRASA regulator and must not resolve as one).
+
+---
+
+## What I would do first with another two days
+
+1. **The hero's second column**, using screen 02's data panel. It is the one
+   thing in this run I stopped short of and the one most likely to be
+   noticed at the workshop.
+2. **Export the map**, reusing `ComparisonExport`. A choropleth that has to
+   be screenshotted to reach a plenary paper is half a feature.
+3. **Sortable columns in the back office tables.** Not a false affordance,
+   but the first thing a Secretariat user will try.
+4. **A period selector on the map**, which turns it from a snapshot into the
+   thing that answers "who improved".
