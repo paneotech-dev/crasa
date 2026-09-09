@@ -1531,8 +1531,15 @@
 }
 
 /* A pull statement: Lora at display size, set against a rule rather than in
-   a box. Used once per page at most. */
-.b-statement {
+   a box. Used once per page at most.
+
+   Renamed from .b-statement on 9 September 2026. The statement band block
+   added the day before carries class="b b-statement" on its <section>, and
+   inherited the max-width:30ch below: the whole band rendered as a column
+   thirty characters wide with the page ground beside it. Nothing used this
+   rule, so nothing breaks; the name is what its own comment always called
+   it. */
+.b-pullquote {
   font-family: var(--f-head);
   font-size: clamp(22px, 3.2vw, 32px);
   line-height: 1.28;
@@ -1543,7 +1550,7 @@
   padding-left: var(--s-5);
   margin: 0;
 }
-.b[data-ground="navy"] .b-statement { color: var(--c-white); border-left-color: var(--c-green); }
+.b[data-ground="navy"] .b-pullquote { color: var(--c-white); border-left-color: var(--c-green); }
 
 /* Designed absence ----------------------------------------------------- */
 /* Where a sector has no supplied photograph. Well-set type in the space
@@ -1790,7 +1797,10 @@
   border-color: var(--c-navy-edge);
   color: var(--c-white);
 }
-.b[data-ground="navy"] .c-select option { color: var(--c-charcoal); }
+/* The option list is not overridden here. It is set unconditionally in
+   base.css, on the component, because an option that inherits a dark
+   background is unreadable wherever it happens and this rule only ever
+   covered the one ground somebody remembered. */
 
 /* The secondary button is navy on transparent and disappears here. Screen
    02 draws the band's action as a filled green-dark button at line 279. */
