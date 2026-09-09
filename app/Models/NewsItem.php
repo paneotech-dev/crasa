@@ -85,23 +85,35 @@ class NewsItem extends Model
     {
         return match ($this->sector?->slug) {
             /*
-             * Telecommunications has no fallback of its own any more. The
-             * only telecoms photograph in the supplied library became the
-             * homepage banner on 9 September 2026, and the same photograph
-             * appearing twice on one page is worse than one card showing
+             * Telecommunications is available again. It was set to null on
+             * 9 September because the only telecoms photograph in the
+             * supplied library was also the homepage banner, and the same
+             * photograph twice on one page is worse than one card showing
              * its designed absence.
              *
-             * Same reasoning as broadcasting below. Both gaps are on the
-             * Secretariat list in docs/CLIENT_REQUESTS.md.
+             * The banner no longer carries a photograph at all, so the
+             * premise is gone and the photograph is free. It is a test
+             * bench, which is a telecommunications subject, on a card about
+             * telecommunications.
              */
-            'telecommunications' => null,
+            'telecommunications' => 'sector-telecom',
             'postal' => 'sector-postal',
             // Broadcasting has no supplied image. Substituting one from
             // another sector would caption a telecoms lab as broadcasting,
             // so the designed empty state renders instead and the gap is on
             // the Secretariat list.
             'broadcasting' => null,
-            default => 'institutional',
+            /*
+             * An item with no sector gets no photograph.
+             *
+             * It used to get "institutional", which is three colleagues
+             * reviewing charts on a laptop. That is a team looking at a
+             * screen, which docs/CLIENT_REQUESTS.md rules out in its own
+             * words as generic corporate stock, and a rule we apply to
+             * CRASA's suppliers has to hold for us. The typographic slot
+             * renders instead.
+             */
+            default => null,
         };
     }
 }

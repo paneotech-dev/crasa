@@ -144,16 +144,28 @@ class NewsroomTest extends TestCase
         $none = NewsItem::factory()->create(['sector_id' => null]);
 
         $this->assertSame('sector-postal', $postal->fallbackImageSlot());
-        $this->assertSame('institutional', $none->fallbackImageSlot());
 
         /*
-         * Telecommunications has no fallback of its own since 9 September
-         * 2026: the only telecoms photograph in the supplied library became
-         * the homepage banner, and the same photograph twice on one page is
-         * worse than one card showing its designed absence. Same reasoning
-         * as broadcasting below.
+         * Telecommunications is available again. It was null between 9
+         * September and the section 41 image audit, because the only
+         * telecoms photograph was also the homepage banner and the same
+         * photograph twice on one page is worse than one designed absence.
+         * The banner carries no photograph at all now, so the premise is
+         * gone: a test bench on a telecommunications card is a
+         * telecommunications subject.
          */
-        $this->assertNull($telecom->fallbackImageSlot());
+        $this->assertSame('sector-telecom', $telecom->fallbackImageSlot());
+
+        /*
+         * An item with no sector gets no photograph.
+         *
+         * It used to get "institutional", which is three colleagues
+         * reviewing charts on a laptop — a team looking at a screen, which
+         * docs/CLIENT_REQUESTS.md rules out in its own words as generic
+         * corporate stock. A rule we apply to CRASA's suppliers has to hold
+         * for us, so the typographic slot renders instead.
+         */
+        $this->assertNull($none->fallbackImageSlot());
     }
 
     /* Article page ------------------------------------------------------------ */
