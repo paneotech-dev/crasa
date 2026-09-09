@@ -10,7 +10,10 @@
             <h1>{{ __('news.title') }}</h1>
             <p class="c-lead">{{ __('news.intro') }}</p>
 
-            <nav class="c-filters" aria-label="{{ __('news.filters') }}">
+            <div data-live-filters
+                 data-live-swap="#news-filters,#news-results"
+                 data-live-status="#news-count">
+            <nav class="c-filters" id="news-filters" aria-label="{{ __('news.filters') }}">
                 <div class="c-filters__group">
                     <span class="c-filters__legend" id="filter-category">{{ __('news.category') }}</span>
                     <div class="c-filters__options" role="list" aria-labelledby="filter-category">
@@ -54,8 +57,9 @@
                 @endif
             </nav>
 
-            <p class="c-results" role="status">{{ trans_choice('news.result_count', $items->total(), ['count' => $items->total()]) }}</p>
+            <p class="c-results" id="news-count" role="status">{{ trans_choice('news.result_count', $items->total(), ['count' => $items->total()]) }}</p>
 
+            <div id="news-results">
             @if ($items->isEmpty())
                 @include('blocks._empty', [
                     'title' => __('news.empty_title'),
@@ -72,6 +76,12 @@
 
                 <div class="c-pagination">{{ $items->links() }}</div>
             @endif
+            </div>
+            </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('js/filters.js') }}" defer></script>
+@endpush

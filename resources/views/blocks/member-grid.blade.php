@@ -29,7 +29,20 @@
              to see, label or touch. A member state omitted from a
              membership map is a worse outcome than an inset. --}}
         @if ($block->setting('show_map') && $countries->isNotEmpty())
-            <x-region-map :countries="$countries" />
+            {{-- The dataset selector answers without reloading. It is a GET
+                 form underneath, so with no script the map still shades,
+                 still deep-links and still prints. --}}
+            @php $mapView = \App\Support\MapView::resolve($countries, request()->query('indicator')); @endphp
+            <div data-live-filters
+                 data-live-swap="#members-map"
+                 data-live-status="#members-map-status">
+                {{-- Outside the swapped region, so its text change is
+                     announced rather than silently rebuilt. --}}
+                <p class="c-results" id="members-map-status" role="status">{{ $mapView->summary() }}</p>
+                <div id="members-map">
+                    <x-region-map :countries="$countries" :view="$mapView" />
+                </div>
+            </div>
         @endif
 
         @if ($countries->isEmpty())
@@ -41,7 +54,13 @@
             <ul class="b-members" role="list">
                 @foreach ($countries as $country)
                     <li class="b-member" id="member-{{ $country->iso_code }}" data-span="{{ $country->cardSpan() }}">
-                        <span class="b-member__name">{{ $country->name }}</span>
+                        {{-- The card is a bordered white box and reads as
+                             one thing a reader can open, so it opens. The
+                             name carries the link and a stretched hit area
+                             makes the whole card the target: a screen
+                             reader hears one link called "Botswana", and a
+                             thumb gets the card. --}}
+                        <a class="b-member__name" href="{{ route('members.show', ['locale' => app()->getLocale(), 'iso' => $country->iso_code]) }}">{{ $country->name }}</a>
                         @if ($country->authority)
                             <span class="b-member__authority">{{ $country->authority->name }}</span>
                         @endif

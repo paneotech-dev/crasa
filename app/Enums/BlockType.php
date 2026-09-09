@@ -2,6 +2,8 @@
 
 namespace App\Enums;
 
+use App\Support\BlockLink;
+
 /**
  * The twelve block types from DATA_MODEL section 8. Fixed set. Adding a
  * thirteenth requires a decision, not a commit.
@@ -129,6 +131,11 @@ enum BlockType: string
                 // item_N_label and item_N_source.
                 'items' => ['nullable', 'array', 'max:8'],
                 'items.*.value' => ['required', 'string', 'max:20'],
+                // Where the figure goes. A count of fourteen member states
+                // that a reader cannot click is a decoration of the thing it
+                // counts. Named destinations rather than free text, so the
+                // link resolves in the reader's language and cannot 404.
+                'items.*.link' => ['nullable', 'string', 'in:'.implode(',', BlockLink::names())],
             ],
             self::Pillars => [
                 // Two to four. Not five, whatever the request says.

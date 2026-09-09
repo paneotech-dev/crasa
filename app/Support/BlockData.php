@@ -71,85 +71,125 @@ final class BlockData
     }
 
     /**
-     * A pinned comparison, from the sourced indicators.
+     * A comparison the reader can drive.
      *
-     * A section whose only content is an empty state is a section that is
-     * not ready. This one shows a real pinned comparison drawn from the
-     * sourced indicators, and links through to the comparator with the
-     * same states and indicator already selected, so the homepage is an
-     * entry point to RP-10 rather than a picture of one.
+     * This block used to render a fixed four-state table under an intro
+     * that said "select up to four member states and see them side by
+     * side" — describing an interaction the reader could not have on the
+     * page they were reading it on. RP-10 is the contract's flagship tool
+     * and the homepage was a picture of it.
      *
-     * @return array{rows: Collection<int, array<string, mixed>>, indicator: Indicator|null}
+     * It now carries its own selectors: two member states and one
+     * indicator, in the query string, so the whole state of the comparison
+     * is in the URL a reader pastes into an email. The full four-state tool
+     * is one link away and the link arrives already set to what the reader
+     * built here.
+     *
+     * The selectors are a GET form. With no script the homepage reloads to
+     * the same anchor; with one, the table swaps in place.
+     *
+     * @return array{rows: Collection<int, array<string, mixed>>, indicator: Indicator|null, ...}
      */
     private static function comparison(PageBlock $block): array
     {
-        $indicator = Indicator::active()
-            ->when($block->setting('indicator_id'), fn ($q, $id) => $q->whereKey($id))
-            // Failing that, the indicator with the widest reporting, because
-            // a comparison of four blanks demonstrates nothing.
-            ->withCount('values')
-            ->orderByDesc('values_count')
+        $request = request();
+
+        // Only indicators a member state has actually filed a figure for. An
+        // indicator offering two blank cells demonstrates nothing.
+        $choices = Indicator::active()
+            ->whereHas('values', fn ($q) => $q->whereNotNull('value_numeric'))
+            ->orderBy('category')
             ->orderBy('display_order')
-            ->first();
+            ->orderBy('name')
+            ->get();
+
+        $indicator = $choices->firstWhere('slug', $request->query('cmp_indicator'))
+            ?? $choices->firstWhere('id', $block->setting('indicator_id'))
+            // Failing both, the indicator with the widest reporting.
+            ?? $choices->sortByDesc(fn (Indicator $i) => $i->values()->count())->first();
 
         if ($indicator === null) {
-            return ['rows' => collect(), 'indicator' => null];
+            return ['rows' => collect(), 'indicator' => null, 'choices' => $choices, 'states' => collect(), 'selected' => []];
         }
 
+        $states = Country::orderBy('name')->get();
         $pinned = collect($block->setting('country_ids', []))->filter();
 
+        // Two member states. Whatever the reader asked for, then whatever
+        // the block pins, then the two that have filed the highest figures
+        // so the default is a comparison rather than two blanks.
+        $chosen = collect([$request->query('cmp_a'), $request->query('cmp_b')])
+            ->map(fn ($iso) => $states->firstWhere('iso_code', is_string($iso) ? strtolower($iso) : null))
+            ->filter()
+            ->unique('id')
+            ->values();
+
+        if ($chosen->count() < 2) {
+            $fallback = $states->whereIn('id', $pinned->all())->values();
+
+            if ($fallback->count() < 2) {
+                $ranked = IndicatorValue::where('indicator_id', $indicator->id)
+                    ->whereNotNull('value_numeric')
+                    ->orderByDesc('value_numeric')
+                    ->pluck('country_id')
+                    ->unique();
+
+                $fallback = $fallback->concat($states->whereIn('id', $ranked->all()))->unique('id')->values();
+            }
+
+            $chosen = $chosen
+                ->concat($fallback->reject(fn (Country $c) => $chosen->contains('id', $c->id)))
+                ->take(2)
+                ->values();
+        }
+
+        $chosen = $chosen->take(2)->values();
+
         $values = IndicatorValue::where('indicator_id', $indicator->id)
-            ->with('country')
-            ->when($pinned->isNotEmpty(), fn ($q) => $q->whereIn('country_id', $pinned->all()))
+            ->whereIn('country_id', $chosen->pluck('id')->all())
             ->orderByDesc('period')
             ->get()
             ->unique('country_id')
-            ->sortByDesc('value_numeric')
-            ->take(4);
-
-        /*
-         * A pinned member state with no value still appears, and says so.
-         *
-         * Dropping it would leave four filled cells on the homepage and
-         * hide the thing the comparator is careful about: "Not reported"
-         * and "0" mean opposite things, and a reader should meet that
-         * distinction on the front page rather than discover it later.
-         */
-        if ($pinned->isNotEmpty()) {
-            $missing = Country::whereIn('id', $pinned->all())
-                ->whereNotIn('id', $values->pluck('country_id'))
-                ->get()
-                ->map(fn (Country $country) => new IndicatorValue([
-                    'indicator_id' => $indicator->id,
-                    'country_id' => $country->id,
-                ]))
-                ->each(fn (IndicatorValue $v, $i) => $v->setRelation('country', Country::find($v->country_id)));
-
-            $values = $values->concat($missing)->take(4);
-        }
-
-        $codes = $values->map(fn (IndicatorValue $v) => $v->country?->iso_code)->filter()->values();
+            ->keyBy('country_id');
 
         return [
             'indicator' => $indicator,
+            'choices' => $choices,
+            'states' => $states,
+            'selected' => [
+                'indicator' => $indicator->slug,
+                'a' => $chosen->get(0)?->iso_code,
+                'b' => $chosen->get(1)?->iso_code,
+            ],
             // The comparator, opened on exactly what the homepage shows.
             'comparator_url' => route('comparator', [
                 'locale' => app()->getLocale(),
                 'mode' => 'compare',
                 'category' => $indicator->category,
-                'countries' => $codes->implode(','),
+                'countries' => $chosen->pluck('iso_code')->implode(','),
             ]),
-            'rows' => $values->map(fn (IndicatorValue $v) => [
-                'country' => $v->country?->name,
-                'value' => $v->value_numeric !== null
-                    ? rtrim(rtrim(number_format((float) $v->value_numeric, 1), '0'), '.')
-                    : null,
-                'reported' => $v->value_numeric !== null || filled($v->value_text),
-                'unit' => $indicator->unitLabel(),
-                'period' => $v->period,
-                'confidence' => $v->confidence,
-                'is_sample' => $v->is_sample,
-            ])->values(),
+            /*
+             * A chosen member state with no value still appears, and says
+             * so. Dropping it would hide the thing the comparator is
+             * careful about: "Not reported" and "0" mean opposite things,
+             * and a reader should meet that distinction on the front page
+             * rather than discover it later.
+             */
+            'rows' => $chosen->map(function (Country $country) use ($indicator, $values) {
+                $value = $values[$country->id] ?? null;
+                $cell = new ComparisonCell($indicator, $country, $value);
+
+                return [
+                    'country' => $country->name,
+                    'iso' => $country->iso_code,
+                    'value' => $cell->isReported() ? $cell->display() : null,
+                    'reported' => $cell->isReported(),
+                    'unit' => $indicator->unitLabel(),
+                    'period' => $value?->period,
+                    'confidence' => $value?->confidence ?? 'reported',
+                    'is_sample' => (bool) $value?->is_sample,
+                ];
+            })->values(),
         ];
     }
 

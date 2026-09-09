@@ -128,6 +128,86 @@ class SearchTest extends TestCase
         $this->assertSame([], $this->driver()->suggest('r'));
     }
 
+    /**
+     * The hole this closed.
+     *
+     * suggest() used to read the translations table directly and matched
+     * every title row of every publication, published or not. A reader
+     * could learn the title of an unlisted country publication by typing
+     * three letters; the link would then correctly refuse them, which tells
+     * them the document exists, which is the part that matters.
+     *
+     * Autocomplete is where an otherwise sound authorisation layer leaks,
+     * because nothing is being "viewed" yet and no policy runs.
+     */
+    public function test_an_unlisted_publication_is_never_suggested(): void
+    {
+        $publication = Publication::factory()->create([
+            'slug' => 'restricted-tariff-annex',
+            'is_public' => false,
+            'country_id' => Country::where('iso_code', 'bw')->value('id'),
+        ]);
+        $publication->translations()->create([
+            'locale' => 'en',
+            'field' => 'title',
+            'value' => 'Confidential wholesale tariff annex',
+        ]);
+
+        $suggestions = $this->driver()->suggest('wholesale tariff');
+
+        $this->assertNotContains('Confidential wholesale tariff annex', $suggestions);
+
+        // And the same term is not findable through the results either, so
+        // the two paths agree rather than one of them being the loose one.
+        $this->assertSame(
+            [],
+            $this->driver()->search('wholesale tariff annex')->hits->pluck('title')->all()
+        );
+    }
+
+    public function test_an_unpublished_news_item_is_never_suggested(): void
+    {
+        $item = NewsItem::factory()->create(['slug' => 'embargoed-note', 'published_at' => null]);
+        $item->translations()->create([
+            'locale' => 'en',
+            'field' => 'title',
+            'value' => 'Embargoed statement on numbering',
+        ]);
+
+        $this->assertNotContains(
+            'Embargoed statement on numbering',
+            $this->driver()->suggest('embargoed statement')
+        );
+    }
+
+    public function test_a_suggestion_only_ever_names_something_the_reader_can_open(): void
+    {
+        // Whatever comes back for a broad term, every one of it must be
+        // reachable as a result. If the two lists can diverge, the narrower
+        // one is not the one protecting anything.
+        foreach ($this->driver()->suggest('spectrum') as $suggestion) {
+            $this->assertNotEmpty(
+                $this->driver()->search($suggestion)->hits,
+                'Suggested "'.$suggestion.'" but searching for it finds nothing the reader may see.'
+            );
+        }
+    }
+
+    public function test_the_suggest_endpoint_announces_how_many_it_found(): void
+    {
+        // Pluralised on the server. A dropdown that only appears is a
+        // dropdown a screen reader user is never told about, and
+        // pluralising in JavaScript in three languages is how a French
+        // plural bug reaches a regulator.
+        $this->get('/en/search/suggest?q=roam')
+            ->assertOk()
+            ->assertJsonStructure(['suggestions', 'announce']);
+
+        $this->get('/en/search/suggest?q=qqzzxx')
+            ->assertOk()
+            ->assertJson(['suggestions' => [], 'announce' => 'No suggestions.']);
+    }
+
     /* Facets ---------------------------------------------------------------- */
 
     public function test_facets_are_counted_from_the_results_themselves(): void
@@ -216,6 +296,25 @@ class SearchTest extends TestCase
                 'restricted',
                 strtolower($hit->snippet),
                 'A restricted document leaked through search: '.$hit->title
+            );
+        }
+
+        /*
+         * And autocomplete is held to the same line, as this reader.
+         *
+         * Note what is and is not restricted here. The Zambian instrument is
+         * in force, so its title is public and appears in this
+         * representative's results; the Member-clearance file attached to it
+         * is what they are refused. So the test is not "this title never
+         * appears" — it is that autocomplete never offers a title the same
+         * reader could not have reached by searching. Autocomplete is the
+         * usual place that invariant breaks, because nothing is being
+         * "viewed" yet and no policy runs.
+         */
+        foreach ($this->driver()->suggest('roaming') as $suggestion) {
+            $this->assertNotEmpty(
+                $this->driver()->search($suggestion)->hits,
+                'Autocomplete offered "'.$suggestion.'" to a reader whose search cannot reach it.'
             );
         }
     }

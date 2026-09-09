@@ -66,4 +66,9 @@ return [
     'explain_call_to_action' => 'Un panneau coloré avec une phrase et un bouton.',
     'explain_social_feed' => 'Des liens vers les comptes de la CRASA. Le bloc ne récupère rien et ne suit personne.',
     'explain_document_list' => 'Une simple liste de documents à télécharger, sans images.',
+    'comparison_indicator' => 'Indicateur',
+    'comparison_state_a' => 'État membre',
+    'comparison_state_b' => 'Comparé à',
+    'comparison_apply' => 'Comparer ces États',
+    'comparison_status' => ':indicator, :a et :b.',
 ];

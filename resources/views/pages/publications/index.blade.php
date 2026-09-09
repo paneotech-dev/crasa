@@ -10,7 +10,14 @@
             <h1>{{ __('publications.title') }}</h1>
             <p class="c-lead">{{ __('publications.intro') }}</p>
 
-            <nav class="c-filters" aria-label="{{ __('publications.filters') }}">
+            {{-- The filters answer without reloading the page, and they
+                 are chip links, so the floor is a page that filters and
+                 paginates with no script at all. See public/js/filters.js:
+                 nothing there draws a control. --}}
+            <div data-live-filters
+                 data-live-swap="#library-filters,#library-results"
+                 data-live-status="#library-count">
+            <nav class="c-filters" id="library-filters" aria-label="{{ __('publications.filters') }}">
                 @include('pages.publications._facet', [
                     'legend' => __('publications.type'), 'key' => 'type', 'active' => $filters['type'],
                     'options' => collect($types)->map(fn ($t) => ['value' => $t->value, 'label' => __($t->labelKey())]),
@@ -29,8 +36,12 @@
                 ])
             </nav>
 
-            <p class="c-results" role="status">{{ trans_choice('publications.result_count', $publications->total(), ['count' => $publications->total()]) }}</p>
+            {{-- In the document before any exchange begins, so replacing
+                 its text is announced. A results count rebuilt from
+                 scratch is a results count a screen reader never hears. --}}
+            <p class="c-results" id="library-count" role="status">{{ trans_choice('publications.result_count', $publications->total(), ['count' => $publications->total()]) }}</p>
 
+            <div id="library-results">
             @if ($publications->isEmpty())
                 @include('blocks._empty', [
                     'title' => __('publications.empty_title'),
@@ -47,6 +58,12 @@
 
                 <div class="c-pagination">{{ $publications->links() }}</div>
             @endif
+            </div>
+            </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('js/filters.js') }}" defer></script>
+@endpush

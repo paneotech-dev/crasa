@@ -55,7 +55,7 @@ class HomepageSeeder extends Seeder
                 'pillar4b' => 'Training for regulator staff, and consumer rights instruments that give users the same protections across the region.',
                 'compEyebrow' => 'Regulatory comparator',
                 'compTitle' => 'Compare regulation across member states',
-                'compBody' => 'Twelve indicators across spectrum management, roaming and mobile, and postal services. Select up to four member states and see them side by side, with a source and a date on every value.',
+                'compBody' => 'Pick two member states and an indicator and read them here. Every value carries its source and the period it covers. The full tool takes four member states at once.',
                 'compAction' => 'Open the comparator',
                 'pubEyebrow' => 'Regulatory library',
                 'pubTitle' => 'Latest guidelines and frameworks',
@@ -93,7 +93,7 @@ class HomepageSeeder extends Seeder
                 'pillar4b' => 'Formation du personnel des régulateurs et instruments de protection des consommateurs qui garantissent les mêmes droits dans toute la région.',
                 'compEyebrow' => 'Comparateur réglementaire',
                 'compTitle' => 'Comparer la réglementation entre les États membres',
-                'compBody' => 'Douze indicateurs répartis entre la gestion du spectre, l\'itinérance et le mobile, et les services postaux. Sélectionnez jusqu\'à quatre États membres et comparez-les, avec une source et une date pour chaque valeur.',
+                'compBody' => 'Choisissez deux États membres et un indicateur, et lisez-les ici. Chaque valeur porte sa source et la période couverte. L\'outil complet accepte quatre États membres à la fois.',
                 'compAction' => 'Ouvrir le comparateur',
                 'pubEyebrow' => 'Bibliothèque réglementaire',
                 'pubTitle' => 'Dernières lignes directrices et cadres',
@@ -131,7 +131,7 @@ class HomepageSeeder extends Seeder
                 'pillar4b' => 'Formação para o pessoal dos reguladores e instrumentos de direitos do consumidor que garantem as mesmas proteções em toda a região.',
                 'compEyebrow' => 'Comparador regulatório',
                 'compTitle' => 'Comparar a regulamentação entre os Estados membros',
-                'compBody' => 'Doze indicadores em gestão do espectro, roaming e móvel, e serviços postais. Selecione até quatro Estados membros e compare-os lado a lado, com fonte e data em cada valor.',
+                'compBody' => 'Escolha dois Estados membros e um indicador e leia-os aqui. Cada valor traz a sua fonte e o período abrangido. A ferramenta completa aceita quatro Estados membros de cada vez.',
                 'compAction' => 'Abrir o comparador',
                 'pubEyebrow' => 'Biblioteca regulatória',
                 'pubTitle' => 'Diretrizes e quadros mais recentes',
@@ -208,11 +208,16 @@ class HomepageSeeder extends Seeder
         // 2. Key figures. Counts that the platform can stand behind: the
         // membership, the sectors, the founding year. No citizen or
         // subscriber totals, which would need a source CRASA has not given.
+        //
+        // Each one goes where it points. Fourteen member states are a page
+        // on this platform; so is the founding protocol; so are the three
+        // sectors the committees are organised by. A figure a reader cannot
+        // follow is a fact about the site rather than a way into it.
         $this->block($page, BlockType::KeyFigures, $position++, [
             'items' => [
-                ['value' => '14'],
-                ['value' => '1997'],
-                ['value' => '3'],
+                ['value' => '14', 'link' => 'members'],
+                ['value' => '1997', 'link' => 'about'],
+                ['value' => '3', 'link' => 'committees'],
             ],
         ], fn (string $l) => [
             'heading' => $t[$l]['whatWeDo'],

@@ -50,4 +50,6 @@ return [
     'detail_source_none' => 'Sem fonte registada',
     'detail_compare' => 'Comparar :country com outros Estados membros',
     'detail_publications' => 'Publicações',
+    'map_status_plain' => ':count Estados membros. Escolha um conjunto de dados para sombrear o mapa.',
+    'map_status_shaded' => ':dataset, :period. :reported de :total Estados membros comunicaram. Cada Estado indica o seu valor no mapa, e a tabela abaixo apresenta os mesmos valores.',
 ];

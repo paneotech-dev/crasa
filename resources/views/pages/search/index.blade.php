@@ -16,22 +16,53 @@
             <form method="GET" action="{{ route('search', ['locale' => app()->getLocale()]) }}" class="c-form c-search__form" role="search">
                 <div class="c-field">
                     <label class="c-label" for="q">{{ __('search.label') }}</label>
-                    <div class="c-search__field">
+
+                    {{-- WS-04 predictive search.
+
+                         The floor is this input and this button. With no
+                         script the field takes a query and the form submits
+                         it; nothing below is required to search.
+
+                         With a script it becomes an ARIA combobox: the
+                         listbox is built by public/js/search.js, the input
+                         gains aria-expanded and aria-activedescendant, and
+                         the count is announced. The suggestions themselves
+                         are scoped server-side to what this reader could
+                         open — a member state representative must not learn
+                         another country's restricted document titles by
+                         typing three letters. --}}
+                    <div class="c-search__field c-suggest">
                         <input class="c-input" type="search" id="q" name="q" value="{{ $query }}"
                                autocomplete="off" autofocus
-                               list="search-suggestions"
                                aria-describedby="search-hint"
                                data-search-input
                                data-suggest-url="{{ route('search.suggest', ['locale' => app()->getLocale()]) }}">
                         <button type="submit" class="c-btn c-btn--primary">{{ __('search.submit') }}</button>
+                        <ul class="c-suggest__list" id="search-suggestions" role="listbox"
+                            aria-label="{{ __('search.suggest_list') }}" data-suggestions hidden></ul>
                     </div>
+
                     <p class="c-field__hint" id="search-hint">{{ __('search.hint') }}</p>
-                    {{-- Native suggestions: no dropdown to build, no keyboard
-                         trap to get wrong, and it works without JavaScript. --}}
-                    <datalist id="search-suggestions" data-suggestions></datalist>
+
+                    {{-- How many suggestions arrived, for a reader who
+                         cannot see them appear. Polite, so it waits for a
+                         pause in typing rather than interrupting it. --}}
+                    <p class="c-sr" role="status" data-suggest-status></p>
                 </div>
             </form>
 
+            <div data-live-filters
+                 data-live-swap="#search-body"
+                 data-live-status="#search-count">
+
+            {{-- Outside the swapped region on purpose. This element has to
+                 survive the exchange for its text change to be announced;
+                 a status region destroyed and rebuilt announces nothing,
+                 which is how an "instant" filter quietly locks a screen
+                 reader out of its own results. --}}
+            <p class="c-results" id="search-count" role="status">{{ $query === '' ? '' : trans_choice('search.result_count', $results->total, ['count' => $results->total, 'query' => $query]) }}</p>
+
+            <div id="search-body">
             @if ($query === '')
                 {{-- Empty query. Not an error, and not a blank page. --}}
                 @include('blocks._empty', [
@@ -71,9 +102,7 @@
                     </nav>
                 @endif
 
-                <p class="c-results" role="status">
-                    {{ trans_choice('search.result_count', $results->total, ['count' => $results->total, 'query' => $query]) }}
-                </p>
+
 
                 <div class="b-rows">
                     @foreach ($results->hits as $hit)
@@ -115,10 +144,13 @@
                     </nav>
                 @endif
             @endif
+            </div>
+            </div>
         </div>
     </div>
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('js/filters.js') }}" defer></script>
     <script src="{{ asset('js/search.js') }}" defer></script>
 @endpush

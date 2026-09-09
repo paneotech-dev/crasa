@@ -65,6 +65,29 @@ class DatabaseSearchDriver implements SearchDriver
         );
     }
 
+    /**
+     * Predictive suggestions.
+     *
+     * SECURITY. This method used to read the translations table directly.
+     * That was a hole: the query matched every title row of every
+     * publication, news item and instrument, published or not, listed or
+     * not, and returned it as a suggestion. A reader could learn the title
+     * of an unlisted country publication by typing three letters, and the
+     * link they would then follow would correctly refuse them — which tells
+     * them the document exists, which is the part that matters.
+     *
+     * Suggestions now come from the same visibility scopes the results come
+     * from: Instrument::published(), Publication::listed(),
+     * NewsItem::published(). A title cannot be suggested unless the same
+     * reader could have found it by searching, and could then open it.
+     *
+     * Matching is LIKE rather than FULLTEXT because a reader typing "spec"
+     * has not finished a word yet and FULLTEXT will not match a prefix. The
+     * candidate set is bounded by the limit and by the visibility scope
+     * before it is sorted.
+     *
+     * @return array<int, string>
+     */
     public function suggest(string $partial, int $limit = 6): array
     {
         $partial = trim($partial);
@@ -73,13 +96,29 @@ class DatabaseSearchDriver implements SearchDriver
             return [];
         }
 
-        // Titles only, and only from what the reader may already see.
-        return DB::table('translations')
-            ->where('field', 'title')
-            ->where('value', 'like', '%'.$partial.'%')
-            ->whereIn('translatable_type', [Publication::class, NewsItem::class, Instrument::class])
-            ->limit($limit * 4)
-            ->pluck('value')
+        $like = '%'.str_replace(['%', '_'], ['\\%', '\\_'], $partial).'%';
+
+        $titled = fn (Builder $query) => $query
+            ->whereHas('translations', fn ($t) => $t->where('field', 'title')->where('value', 'like', $like))
+            ->with('translations')
+            ->limit($limit * 3)
+            ->get()
+            ->map(fn ($record) => $record->translated('title', ''));
+
+        $suggestions = collect()
+            ->concat($titled(Instrument::published()))
+            ->concat($titled(Publication::listed()))
+            ->concat($titled(NewsItem::published()))
+            // Member states and their regulators are public by definition,
+            // and they are the most common thing typed into this field.
+            ->concat(Country::query()
+                ->where('name', 'like', $like)
+                ->orWhereHas('authority', fn ($a) => $a->where('name', 'like', $like)->orWhere('acronym', 'like', $like))
+                ->limit($limit)
+                ->pluck('name'));
+
+        return $suggestions
+            ->filter(fn (string $value) => filled($value))
             ->unique()
             // Shortest first, sorted in PHP: CHAR_LENGTH is MySQL-only and
             // the candidate set is already small.
@@ -196,7 +235,7 @@ class DatabaseSearchDriver implements SearchDriver
                 type: 'member',
                 title: $c->name,
                 snippet: $this->snippetFrom([$c->authority?->name ?? '', $c->name], $query),
-                url: route('members', ['locale' => app()->getLocale()]).'#member-'.$c->iso_code,
+                url: route('members.show', ['locale' => app()->getLocale(), 'iso' => $c->iso_code]),
                 meta: $c->authority?->acronym,
                 country: $c->name,
                 score: 1.0,

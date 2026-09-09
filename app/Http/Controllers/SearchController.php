@@ -41,11 +41,25 @@ class SearchController extends Controller
         ]);
     }
 
-    /** Predictive suggestions. Titles only. */
+    /**
+     * Predictive suggestions. Titles only, and the driver scopes them to
+     * what this reader could open — autocomplete is the usual way a title
+     * escapes an authorisation layer, because nothing is being "viewed" yet
+     * and the policies never run.
+     *
+     * The announcement is built here rather than in the browser. It is a
+     * pluralised string in three languages, and pluralising in JavaScript
+     * is how a French plural bug reaches a regulator.
+     */
     public function suggest(Request $request): JsonResponse
     {
+        $suggestions = $this->search->suggest(trim($request->string('q')->value()));
+
         return response()->json([
-            'suggestions' => $this->search->suggest(trim($request->string('q')->value())),
+            'suggestions' => $suggestions,
+            'announce' => $suggestions === []
+                ? __('search.suggest_none')
+                : trans_choice('search.suggest_announce', count($suggestions), ['count' => count($suggestions)]),
         ]);
     }
 }

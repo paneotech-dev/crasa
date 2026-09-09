@@ -52,7 +52,10 @@
                         @foreach ($matrix['countries'] as $country)
                             @php $total = $matrix['totals'][$country->id]; @endphp
                             <tr>
-                                <th scope="row">{{ $country->name }}</th>
+                                {{-- The name of a member state on a grid
+                                     about that member state's filing goes
+                                     to that member state. --}}
+                                <th scope="row"><a href="{{ route('members.show', ['locale' => app()->getLocale(), 'iso' => $country->iso_code]) }}">{{ $country->name }}</a></th>
 
                                 @foreach ($matrix['categories'] as $category => $expected)
                                     @php $cell = $matrix['cells'][$country->id][$category]; @endphp

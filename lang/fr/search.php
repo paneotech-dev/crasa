@@ -26,4 +26,7 @@ return [
     'type_publication' => 'Publication',
     'type_news' => 'Actualité',
     'type_member' => 'État membre',
+    'suggest_list' => 'Suggestions',
+    'suggest_announce' => '{1}1 suggestion. Utilisez la flèche vers le bas pour l\'atteindre.|[2,*]:count suggestions. Utilisez les flèches pour les parcourir.',
+    'suggest_none' => 'Aucune suggestion.',
 ];

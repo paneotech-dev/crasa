@@ -26,4 +26,7 @@ return [
     'type_publication' => 'Publicação',
     'type_news' => 'Notícia',
     'type_member' => 'Estado membro',
+    'suggest_list' => 'Sugestões',
+    'suggest_announce' => '{1}1 sugestão. Use a seta para baixo para lá chegar.|[2,*]:count sugestões. Use as setas para as percorrer.',
+    'suggest_none' => 'Sem sugestões.',
 ];

@@ -71,4 +71,9 @@ return [
     'explain_call_to_action' => 'A coloured panel with one sentence and one button.',
     'explain_social_feed' => 'Links to the CRASA accounts. It fetches nothing and tracks nobody.',
     'explain_document_list' => 'A plain list of documents to download, without images.',
+    'comparison_indicator' => 'Indicator',
+    'comparison_state_a' => 'Member state',
+    'comparison_state_b' => 'Compared with',
+    'comparison_apply' => 'Compare these',
+    'comparison_status' => ':indicator, :a and :b.',
 ];

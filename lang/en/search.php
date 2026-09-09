@@ -26,4 +26,7 @@ return [
     'type_publication' => 'Publication',
     'type_news' => 'Newsroom',
     'type_member' => 'Member state',
+    'suggest_list' => 'Suggestions',
+    'suggest_announce' => '{1}1 suggestion. Use the down arrow to reach it.|[2,*]:count suggestions. Use the arrow keys to move through them.',
+    'suggest_none' => 'No suggestions.',
 ];

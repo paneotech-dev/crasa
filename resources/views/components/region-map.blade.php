@@ -39,10 +39,10 @@
     table equivalent is a <details>. The script that ships alongside removes
     one click from the selector and nothing else.
 --}}
-@props(['countries', 'selection' => null])
+@props(['countries', 'selection' => null, 'view' => null])
 @php
     $map = config('region-map');
-    $view = \App\Support\MapView::resolve($countries, $selection ?? request()->query('indicator'));
+    $view = $view ?? \App\Support\MapView::resolve($countries, $selection ?? request()->query('indicator'));
     $locale = app()->getLocale();
 
     // Alphabetical, per the note above. The geometry is keyed by ISO code,
@@ -65,9 +65,10 @@
                 </optgroup>
             @endforeach
         </select>
-        {{-- Removed by the enhancement script, which submits on change.
-             Present and working for every reader who does not run it. --}}
-        <button class="c-btn c-btn--secondary c-map-region__apply" type="submit">{{ __('members.map_apply') }}</button>
+        {{-- Removed by public/js/filters.js once it has taken over the
+             change event. Present and working for every reader who does
+             not run it. --}}
+        <button class="c-btn c-btn--secondary c-map-region__apply" type="submit" data-live-submit>{{ __('members.map_apply') }}</button>
     </form>
 
     <div class="c-map-region__stage">
@@ -286,6 +287,6 @@
 
 @once
     @push('scripts')
-        <script src="{{ asset('js/region-map.js') }}" defer></script>
+        <script src="{{ asset('js/filters.js') }}" defer></script>
     @endpush
 @endonce

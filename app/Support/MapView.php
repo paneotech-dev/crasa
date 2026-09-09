@@ -144,6 +144,27 @@ final class MapView
     }
 
     /**
+     * What changed, in a sentence, for the reader who did not see it.
+     *
+     * The map answers instantly when a script is running, and an answer
+     * that only arrives as colour is no answer at all to someone using a
+     * screen reader. This is the text that is announced.
+     */
+    public function summary(): string
+    {
+        if (! $this->isShaded()) {
+            return __('members.map_status_plain', ['count' => count($this->entries)]);
+        }
+
+        return __('members.map_status_shaded', [
+            'dataset' => (string) $this->title(),
+            'reported' => $this->reportedCount(),
+            'total' => count($this->entries),
+            'period' => $this->period ?: __('members.map_period_unknown'),
+        ]);
+    }
+
+    /**
      * The dropdown, grouped. Completeness first because it is the view the
      * Secretariat opens the page for; the filed indicators follow, by
      * category, in the order the indicator register lists them.

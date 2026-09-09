@@ -50,4 +50,6 @@ return [
     'detail_source_none' => 'No source recorded',
     'detail_compare' => 'Compare :country with other member states',
     'detail_publications' => 'Publications',
+    'map_status_plain' => ':count member states. Choose a dataset to shade the map.',
+    'map_status_shaded' => ':dataset, :period. :reported of :total member states have filed. Every state states its figure on the map, and the table below carries the same figures.',
 ];

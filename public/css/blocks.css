@@ -285,6 +285,22 @@
 .b-figure__label { font-size: var(--t-small-size); line-height: 1.45; color: var(--c-charcoal); margin-top: var(--s-2); }
 .b-figure__source { font-size: 13px; line-height: 1.45; color: var(--c-slate); margin-top: var(--s-2); }
 
+/* A figure with a destination. The rule at the top thickens and takes the
+   green rather than the tile lifting or shadowing: the figure is already
+   the largest thing in the section and does not need to grow. A figure
+   without a destination gets none of this, so a reader can tell which
+   numbers go somewhere before they aim at one. */
+.b-figure--link {
+  display: block; text-decoration: none; color: inherit;
+  border-top-width: 1px; border-top-color: var(--c-sand);
+  transition: border-top-color 150ms var(--ease-in), border-top-width 150ms var(--ease-in);
+}
+.b-figure--link:hover, .b-figure--link:focus-visible { border-top: 3px solid var(--c-green-dark); padding-top: calc(var(--s-4) - 2px); }
+.b-figure--link:hover .b-figure__value, .b-figure--link:focus-visible .b-figure__value { color: var(--c-green-dark); }
+.b-figure--link:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 4px; }
+.b[data-ground="navy"] .b-figure--link:hover, .b[data-ground="navy"] .b-figure--link:focus-visible { border-top-color: var(--c-green); }
+.b[data-ground="navy"] .b-figure--link:hover .b-figure__value, .b[data-ground="navy"] .b-figure--link:focus-visible .b-figure__value { color: var(--c-green); }
+
 /* Pillars -------------------------------------------------------------- */
 /* align-items:start is the rule. A pillar with two sentences is shorter than
    a pillar with five, and the layout absorbs that rather than padding both
@@ -375,7 +391,18 @@
   flex-direction: column;
   gap: var(--s-2);
 }
-.b-member__name { font-family: var(--f-head); font-size: 17px; font-weight: 600; color: var(--c-navy); }
+.b-member { position: relative; transition: border-color 150ms var(--ease-in); }
+.b-member:has(.b-member__name:hover), .b-member:has(.b-member__name:focus-visible) { border-color: var(--c-green-dark); }
+.b-member__name { font-family: var(--f-head); font-size: 17px; font-weight: 600; color: var(--c-navy); text-decoration: none; }
+/* The whole card is the target. The link keeps its own accessible name, so
+   the committee count and the sectors below are read as text rather than
+   being swallowed into the link. */
+.b-member__name::after { content: ""; position: absolute; inset: 0; border-radius: var(--r-md); }
+.b-member__name:hover { text-decoration: underline; }
+/* The link keeps the platform's own focus ring from base.css, around the
+   name where the reader's eye already is. The card answers as well, by
+   greening its border, so the whole target is legible without a second
+   ring drawn around a ring. */
 .b-member__authority { font-size: 13.5px; line-height: 1.5; color: var(--c-charcoal); }
 .b-member__committees { font-size: 13px; line-height: 1.55; color: var(--c-slate); }
 .b-member__sectors { font-size: 13px; line-height: 1.55; color: var(--c-slate); }
@@ -506,6 +533,12 @@
 .c-chip.is-active, .c-chip[aria-current] { background: var(--c-navy); border-color: var(--c-navy); color: var(--c-white); font-weight: 600; }
 
 .c-results { font-size: var(--t-small-size); color: var(--c-slate); margin: 0 0 var(--s-5); }
+/* The live-region count is in the document before a search is run so that
+   its text change is announced. With nothing to say it takes no space. */
+.c-results:empty { display: none; }
+/* While a filtered region is being fetched. Not a spinner: the previous
+   answer stays readable and simply stops claiming to be current. */
+[aria-busy="true"] { opacity: .55; transition: opacity 120ms var(--ease-in); }
 
 .c-pagination { margin-top: var(--s-7); }
 .c-pagination nav { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
@@ -524,8 +557,16 @@
 .c-tags, .c-share { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; margin-top: var(--s-6); }
 .c-share__label { font-size: 13px; font-weight: 600; color: var(--c-slate); margin-right: var(--s-2); }
 .b-card__summary { font-size: 14.5px; line-height: 1.55; color: var(--c-charcoal); margin: 0; }
+/* The whole card opens the article. It is a bordered box with a picture in
+   it and it reads as one thing a reader can open, so all of it is the
+   target rather than the eighteen-pixel title inside it. The link keeps its
+   own accessible name, so the kicker, the summary and the date are read as
+   text instead of being swallowed into it. */
+.b-card { position: relative; transition: border-color 150ms var(--ease-in); }
 .b-card__title a { color: inherit; text-decoration: none; }
+.b-card__title a::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
 .b-card__title a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.b-card:has(.b-card__title a:hover), .b-card:has(.b-card__title a:focus-visible) { border-color: var(--c-green-dark); }
 
 /* Publications ---------------------------------------------------------- */
 
@@ -1017,6 +1058,22 @@
 .c-completeness__total { font-weight: 700; }
 .c-source { font-size: 12.5px; line-height: 1.5; color: var(--c-slate); margin: var(--s-2) 0 0; }
 
+/* The homepage comparison's own selectors. Two member states and one
+   indicator: the section demonstrates RP-10 by being it, not by describing
+   it. */
+.b-compare__controls {
+  display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-4);
+  align-items: end; margin-bottom: var(--s-5);
+}
+.b-compare__control { display: flex; flex-direction: column; gap: var(--s-1); flex: 1 1 200px; min-width: 0; }
+.b-compare__control label { font-family: var(--f-admin); font-size: 13px; font-weight: 600; color: var(--c-charcoal); }
+.b-compare__control select {
+  min-height: 44px; padding: var(--s-2) var(--s-3); min-width: 0;
+  font-family: var(--f-body); font-size: 15px; color: var(--c-charcoal);
+  background: var(--c-white); border: 1px solid var(--c-border); border-radius: var(--r-xs);
+}
+.b[data-ground="sand"] .b-compare__control select { background: var(--c-white); }
+
 .b-compare__indicator { font-family: var(--f-head); font-size: 20px; font-weight: 600; color: var(--c-navy); margin: 0 0 var(--s-3); max-width: 40ch; }
 .b[data-ground="navy"] .b-compare__indicator { color: var(--c-white); }
 
@@ -1026,6 +1083,34 @@
 .c-search__form { max-width: none; margin-bottom: var(--s-6); }
 .c-search__field { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: stretch; }
 .c-search__field .c-input { flex: 1 1 18rem; min-width: 0; }
+
+/* Predictive suggestions. The list is a panel over the page, not a shifted
+   layout: a dropdown that pushed the results down would move the thing the
+   reader is about to click. --e-2 rather than --e-3, because this floats
+   just above the page and is not a modal. */
+.c-suggest { position: relative; }
+.c-suggest__list {
+  position: absolute; z-index: 20; top: 100%; left: 0; right: 0; margin: var(--s-1) 0 0;
+  list-style: none; padding: var(--s-1) 0;
+  max-height: 19rem; overflow-y: auto;
+  background: var(--c-white);
+  border: 1px solid var(--c-border); border-radius: var(--r-md);
+  box-shadow: var(--e-2);
+}
+.c-suggest__option {
+  padding: var(--s-2) var(--s-4); min-height: 40px;
+  display: flex; align-items: center;
+  font-size: 15px; line-height: 1.4; color: var(--c-charcoal); cursor: pointer;
+}
+/* The current option is marked by ground and a rule, not by colour alone:
+   the reader's focus stays in the input, so this is the only signal that
+   the arrow keys have moved. */
+.c-suggest__option.is-active {
+  background: var(--c-green-light);
+  color: var(--c-green-dark);
+  box-shadow: inset 3px 0 0 var(--c-green-dark);
+}
+.c-suggest__option:hover { background: var(--c-cream); }
 .c-chip__count { font-family: var(--f-admin); font-size: 12px; color: var(--c-slate); margin-left: var(--s-2); }
 .c-chip.is-active .c-chip__count, .c-chip[aria-current] .c-chip__count { color: var(--c-cream); }
 /* Matched terms in a snippet. mark has a browser default background that is
