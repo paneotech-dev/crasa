@@ -19,6 +19,7 @@ use App\Models\Submission;
 use App\Models\Tag;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -91,11 +92,19 @@ class StripSampleData extends Command
     {
         $counts = $this->counts();
         $total = array_sum($counts);
+        $orphans = $this->orphanedTranslationCount();
 
-        if ($total === 0) {
+        if ($total === 0 && $orphans === 0) {
             $this->info('No demonstration data. Nothing to remove.');
 
             return self::SUCCESS;
+        }
+
+        if ($total === 0) {
+            // Nothing flagged, but earlier deletions left translations
+            // behind. Worth clearing on its own: an orphan becomes the
+            // translation of the next record to reuse its id.
+            $this->info('No demonstration data, but '.$orphans.' orphaned translation rows remain.');
         }
 
         $this->table(
@@ -105,7 +114,12 @@ class StripSampleData extends Command
 
         if ($this->option('dry-run')) {
             $this->line('');
-            $this->info($total.' rows would be removed. Nothing has been changed.');
+
+            if ($orphans > 0) {
+                $this->line($orphans.' orphaned translation rows would also be swept.');
+            }
+
+            $this->info(($total + $orphans).' rows would be removed. Nothing has been changed.');
 
             return self::SUCCESS;
         }
@@ -119,7 +133,7 @@ class StripSampleData extends Command
             );
         }
 
-        if (! $this->option('force') && ! $this->confirm('Remove all '.$total.' demonstration rows?')) {
+        if (! $this->option('force') && ! $this->confirm('Remove all '.($total + $orphans).' rows?')) {
             $this->line('Nothing has been changed.');
 
             return self::SUCCESS;
@@ -134,6 +148,8 @@ class StripSampleData extends Command
                 $removed += $this->strip($class);
             }
 
+            $removed += $this->sweepOrphanedTranslations();
+
             return $removed;
         });
 
@@ -141,6 +157,69 @@ class StripSampleData extends Command
         $this->line('Run `php artisan content:placeholders` to see what CRASA still has to supply.');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Translations whose record no longer exists.
+     *
+     * HasTranslations takes a record's translations with it now, so nothing
+     * new is orphaned. This sweeps what earlier deletions left behind — a
+     * rehearsal of this command on 9 September found 337, from records
+     * deleted before the trait knew to clean up and from every reseed that
+     * dropped and rebuilt a page's blocks.
+     *
+     * It matters more than dead rows. A translation is addressed by
+     * translatable_type and translatable_id, and ids are reused: an orphan
+     * for publication 5 becomes the French title of the next publication to
+     * be created as id 5. On a platform whose claim is that its content is
+     * sourced, that is a demonstration string appearing under a real
+     * document.
+     */
+    private function sweepOrphanedTranslations(): int
+    {
+        $removed = $this->eachOrphanedType(
+            fn (Builder $query) => $query->delete()
+        );
+
+        if ($removed > 0) {
+            $this->line($removed.' orphaned translation rows swept.');
+        }
+
+        return $removed;
+    }
+
+    private function orphanedTranslationCount(): int
+    {
+        return $this->eachOrphanedType(
+            fn (Builder $query) => $query->count()
+        );
+    }
+
+    /**
+     * Run one action over the orphaned rows of each translatable type.
+     *
+     * @param  \Closure(Builder): int  $action
+     */
+    private function eachOrphanedType(\Closure $action): int
+    {
+        $total = 0;
+
+        $types = DB::table('translations')->select('translatable_type')->distinct()->pluck('translatable_type');
+
+        foreach ($types as $type) {
+            $query = DB::table('translations')->where('translatable_type', $type);
+
+            if (class_exists($type)) {
+                $table = (new $type)->getTable();
+                $query->whereNotIn('translatable_id', fn ($q) => $q->select('id')->from($table));
+            }
+            // A type whose class no longer exists is an orphan in whole:
+            // every row for it addresses a model the codebase dropped.
+
+            $total += $action($query);
+        }
+
+        return $total;
     }
 
     /** @return array<class-string<Model>, int> */

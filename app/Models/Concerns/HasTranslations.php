@@ -8,6 +8,7 @@ use App\Support\ResolvedText;
 use App\Support\TranslationResolver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 
 /**
@@ -29,6 +30,41 @@ use Illuminate\Support\Collection;
  */
 trait HasTranslations
 {
+    /**
+     * Take the translations with the record.
+     *
+     * Translations are polymorphic, so there is no foreign key and nothing
+     * cascades. Deleting a publication left its French and Portuguese title
+     * behind for ever, and the go-live purge left 337 of them.
+     *
+     * Dead rows are the smaller half of it. The row is addressed by
+     * translatable_type and translatable_id, and ids are reused: delete
+     * publication 5 and create a new one, and the new publication inherits
+     * the dead one's French title. After the purge, the first publication
+     * CRASA created could have shown a demonstration title in another
+     * language, on a platform whose whole claim is that its content is
+     * sourced.
+     *
+     * A soft delete keeps them, because a soft-deleted record can be
+     * restored and would come back mute. Only a real deletion takes them.
+     */
+    public static function bootHasTranslations(): void
+    {
+        static::deleted(function ($model) {
+            $softDeleting = in_array(
+                SoftDeletes::class,
+                class_uses_recursive($model),
+                true
+            );
+
+            if ($softDeleting && ! $model->isForceDeleting()) {
+                return;
+            }
+
+            $model->translations()->delete();
+        });
+    }
+
     public function translations(): MorphMany
     {
         return $this->morphMany(Translation::class, 'translatable');

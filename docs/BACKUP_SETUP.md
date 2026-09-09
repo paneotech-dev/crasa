@@ -156,6 +156,14 @@ Write this down somewhere that is not this server.
 ### Restoring the database
 
 ```bash
+# 0. Credentials for mysql and mysqldump. A password passed on the command
+#    line does not survive shell quoting on this account, and would be in
+#    the shell history besides.
+CNF=$(mktemp) && chmod 600 "$CNF"
+printf '[client]\nuser=%s\npassword="%s"\nhost=%s\n' "$DB_USER" "$DB_PASS" "$DB_HOST" > "$CNF"
+# ... use --defaults-extra-file="$CNF" on every command below, then:
+# rm -f "$CNF"
+
 # 1. Fetch the backup from the bucket to a working directory.
 php artisan backup:list                    # confirm what exists and when
 # download the chosen archive from the bucket
@@ -183,6 +191,30 @@ php artisan images:derivatives
 # 8. Back up.
 php artisan up
 ```
+
+### What a rehearsal on 9 September proved
+
+This procedure was rehearsed against the live database on 9 September 2026:
+full dump, purge, verify, restore. Three things it found, all now fixed, and
+all of them things a first run on go-live day would have found instead.
+
+**mysqldump needs a defaults file, not a command-line password.** Reading
+`DB_PASSWORD` out of `.env` in a shell and passing it inline fails on this
+account: the value does not survive shell quoting. Write a temporary file with
+`0600` permissions, use `--defaults-extra-file`, delete it after. The
+procedure below does that.
+
+**A database-only restore leaves every download broken.** The purge deletes a
+demonstration document's file as well as its row, and restoring the database
+brought the rows back and not the files. Every page looked healthy and every
+download returned 404. This is precisely why the verification below ends at a
+file download rather than at a row count.
+
+**The purge left 337 orphaned rows.** Translations are polymorphic, so there
+is no foreign key and nothing cascades. Every other relationship on the
+platform cascaded correctly — 76 rows in three pivot and version tables went
+with their parents — and the translations stayed. That is now fixed at the
+model, and the purge sweeps historical orphans as well.
 
 ### Proving a restore works, which is the only part that counts
 

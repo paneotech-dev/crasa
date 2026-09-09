@@ -32,6 +32,7 @@ use Database\Seeders\PublicationSeeder;
 use Database\Seeders\PublicPagesSeeder;
 use Database\Seeders\SectorSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -373,5 +374,128 @@ class SampleDataStripTest extends TestCase
         $this->artisan('content:strip-samples --force')->assertSuccessful();
 
         $this->get('/en')->assertOk();
+    }
+
+    /**
+     * TRANSLATIONS ARE POLYMORPHIC, SO NOTHING CASCADES.
+     *
+     * Found by rehearsing the purge against the seeded database on 9
+     * September 2026: it removed 196 flagged rows and 76 rows behind real
+     * foreign keys, and left 337 translation rows addressing records that
+     * no longer existed.
+     *
+     * Dead rows are the smaller half. A translation is addressed by
+     * translatable_type and translatable_id, and ids are reused. An orphan
+     * for publication 5 becomes the French title of the next publication
+     * created as id 5 — a demonstration string under a real document, on a
+     * platform whose whole claim is that its content is sourced.
+     */
+    public function test_deleting_a_record_takes_its_translations_with_it(): void
+    {
+        $publication = Publication::factory()->create(['is_sample' => true]);
+        $publication->setTranslations('fr', ['title' => 'Titre de demonstration']);
+
+        $this->assertSame(1, $publication->translations()->count());
+
+        $publication->forceDelete();
+
+        $this->assertSame(
+            0,
+            DB::table('translations')
+                ->where('translatable_type', Publication::class)
+                ->where('translatable_id', $publication->id)
+                ->count(),
+            'A deleted publication left its French title behind for the next record to inherit.'
+        );
+    }
+
+    /**
+     * A soft delete keeps them, because a soft-deleted record can be
+     * restored and would come back mute.
+     */
+    public function test_a_soft_delete_keeps_the_translations(): void
+    {
+        $publication = Publication::factory()->create(['is_sample' => true]);
+        $publication->setTranslations('fr', ['title' => 'Toujours la']);
+
+        $publication->delete();
+
+        $this->assertSame(1, DB::table('translations')
+            ->where('translatable_type', Publication::class)
+            ->where('translatable_id', $publication->id)
+            ->count());
+    }
+
+    /** The purge sweeps what earlier deletions left behind. */
+    public function test_the_purge_sweeps_translations_orphaned_before_the_trait_knew_to(): void
+    {
+        // An orphan of exactly the kind the rehearsal found: a row whose
+        // record was deleted by something that did not clean up.
+        DB::table('translations')->insert([
+            'translatable_type' => Publication::class,
+            'translatable_id' => 999_999,
+            'locale' => 'fr',
+            'field' => 'title',
+            'value' => 'Orpheline',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->artisan('content:strip-samples --force')->assertSuccessful();
+
+        $this->assertSame(0, DB::table('translations')->where('translatable_id', 999_999)->count());
+    }
+
+    /**
+     * The purge runs the sweep even when nothing is flagged, because a
+     * platform with no demonstration data can still be carrying orphans
+     * from a reseed.
+     */
+    public function test_the_sweep_runs_even_when_there_is_nothing_flagged(): void
+    {
+        DB::table('translations')->insert([
+            'translatable_type' => Publication::class,
+            'translatable_id' => 888_888,
+            'locale' => 'pt',
+            'field' => 'title',
+            'value' => 'Orfa',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Nothing carries is_sample in this test's database.
+        Publication::query()->forceDelete();
+
+        $this->artisan('content:strip-samples --force')->assertSuccessful();
+
+        $this->assertSame(0, DB::table('translations')->where('translatable_id', 888_888)->count());
+    }
+
+    /**
+     * The other half of the rehearsal.
+     *
+     * Restoring the database brings a document's row back and does not
+     * bring its file back, so every download 404s while every page looks
+     * healthy. That is the failure docs/BACKUP_SETUP.md tells the reader to
+     * check for by downloading a file after a restore, and the seeder could
+     * not heal it because it returned early on finding the row.
+     */
+    public function test_the_seeder_repairs_a_document_row_whose_file_is_missing(): void
+    {
+        $this->seed(PublicationSeeder::class);
+
+        $document = Document::whereNotNull('file_path')->firstOrFail();
+        $this->assertTrue(Storage::disk('local')->exists($document->file_path));
+
+        // The state a database-only restore leaves behind.
+        Storage::disk('local')->delete($document->file_path);
+        $this->assertFalse(Storage::disk('local')->exists($document->file_path));
+
+        $this->seed(PublicationSeeder::class);
+
+        $this->assertTrue(
+            Storage::disk('local')->exists($document->file_path),
+            'A document row survived a restore without its file and the seeder could not repair it.'
+        );
     }
 }

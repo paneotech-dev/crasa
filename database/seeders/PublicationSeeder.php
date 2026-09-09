@@ -104,17 +104,31 @@ class PublicationSeeder extends Seeder
 
     private function attachDocument(Publication $publication): void
     {
-        if ($publication->documents()->exists()) {
-            return;
-        }
-
         $filename = $publication->slug.'.pdf';
         $path = 'documents/'.$filename;
 
-        // A minimal real PDF, so the thumbnail pipeline has something to
-        // render rather than a byte string that would fail.
+        /*
+         * The file first, and whether or not the row exists.
+         *
+         * A restore rehearsal on 9 September 2026 found this: restoring the
+         * database brings the document rows back and does not bring the
+         * files back, so every download 404s while every page looks
+         * healthy. Re-running this seeder could not heal it either, because
+         * it returned early on finding the row.
+         *
+         * That is the exact failure docs/BACKUP_SETUP.md tells the reader to
+         * check for by downloading a file after a restore. A demonstration
+         * document whose row survived without its file is a repairable
+         * state, so it repairs.
+         */
         if (! Storage::disk('local')->exists($path)) {
+            // A minimal real PDF, so the thumbnail pipeline has something to
+            // render rather than a byte string that would fail.
             Storage::disk('local')->put($path, $this->placeholderPdf($publication->slug));
+        }
+
+        if ($publication->documents()->exists()) {
+            return;
         }
 
         Document::create([
