@@ -6,6 +6,7 @@ use App\Auth\IdentityProvider;
 use App\Auth\PlatformIdentityProvider;
 use App\Search\DatabaseSearchDriver;
 use App\Search\SearchDriver;
+use App\Support\DeliveryCheck;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -52,6 +53,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        /*
+         * Say so if mail is going nowhere.
+         *
+         * MAIL_MAILER=log accepts every message and delivers none, and does
+         * it without an exception, a failed job or a visible error. Written
+         * once per boot at error level so it is in the log a host or a
+         * reviewer actually reads, and shown on every back office screen.
+         * See docs/MAIL_SETUP.md.
+         */
+        DeliveryCheck::report();
+
         // Six enquiries an hour per address. Enough that a regulator sending
         // two in a morning is never stopped; few enough that a script is.
         RateLimiter::for('enquiries', fn (Request $request) => Limit::perHour(6)

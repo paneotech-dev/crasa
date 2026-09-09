@@ -455,4 +455,8 @@ return [
     'field_eyebrow' => 'Surtitre',
     'section_submissions' => 'Soumissions',
     'section_reports' => 'Rapports',
+    'mail_silent_title' => 'Le courrier n\'est pas distribué.',
+    'mail_silent_body' => 'Le pilote de messagerie est ":driver" et l\'environnement est ":env" : toutes les notifications envoyées par la plateforme sont écrites dans le journal et ne partent nulle part. Les notifications de soumission, les accusés de réception et les réinitialisations de mot de passe sont concernés. Il s\'agit d\'un réglage dans .env, pas d\'un défaut de la plateforme.',
+    'mail_from_title' => 'L\'adresse d\'expédition est encore un espace réservé.',
+    'mail_from_body' => 'Le courrier part de ":address". La plupart des serveurs destinataires rejettent ou classent en indésirable le courrier venant d\'une adresse d\'exemple. Indiquez une adresse sur un domaine de la CRASA.',
 ];

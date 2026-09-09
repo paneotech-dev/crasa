@@ -455,4 +455,8 @@ return [
     'field_eyebrow' => 'Eyebrow',
     'section_submissions' => 'Submissions',
     'section_reports' => 'Reports',
+    'mail_silent_title' => 'Mail is not being delivered.',
+    'mail_silent_body' => 'The mail driver is ":driver" and the environment is ":env", so every notification this platform sends is written to the log file and goes nowhere. Submission notifications, enquiry receipts and password resets are all affected. This is a setting in .env, not a fault in the platform.',
+    'mail_from_title' => 'The sending address is still a placeholder.',
+    'mail_from_body' => 'Mail is sent from ":address". Most receiving servers reject or spam-file mail from an example address. Set it to an address on a CRASA domain.',
 ];

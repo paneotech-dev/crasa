@@ -56,6 +56,23 @@
                 @endif
             </div>
 
+            {{-- Mail that goes nowhere is the one misconfiguration on this
+                 platform that produces no error anywhere. The Secretariat is
+                 told on every back office screen until it is fixed, because
+                 the alternative is finding out at a workshop when somebody
+                 asks why they never received the notification. --}}
+            @if (\App\Support\DeliveryCheck::mailIsSilentInProduction())
+                <div class="a-notice a-notice--error" role="alert">
+                    <strong>{{ __('admin.mail_silent_title') }}</strong>
+                    {{ __('admin.mail_silent_body', ['driver' => config('mail.default'), 'env' => app()->environment()]) }}
+                </div>
+            @elseif (\App\Support\DeliveryCheck::fromAddressIsUnset())
+                <div class="a-notice a-notice--pending" role="alert">
+                    <strong>{{ __('admin.mail_from_title') }}</strong>
+                    {{ __('admin.mail_from_body', ['address' => config('mail.from.address')]) }}
+                </div>
+            @endif
+
             @if (session('status'))
                 <div class="a-notice a-notice--success" role="status">{{ session('status') }}</div>
             @endif

@@ -455,4 +455,8 @@ return [
     'field_eyebrow' => 'Antetítulo',
     'section_submissions' => 'Submissões',
     'section_reports' => 'Relatórios',
+    'mail_silent_title' => 'O correio não está a ser entregue.',
+    'mail_silent_body' => 'O controlador de correio é ":driver" e o ambiente é ":env", pelo que todas as notificações enviadas pela plataforma são escritas no registo e não chegam a lado nenhum. Notificações de submissão, avisos de receção e reposições de palavra-passe estão todos afetados. Isto é uma definição no .env, não uma falha da plataforma.',
+    'mail_from_title' => 'O endereço de envio ainda é um marcador de posição.',
+    'mail_from_body' => 'O correio é enviado de ":address". A maioria dos servidores destinatários rejeita ou classifica como spam o correio vindo de um endereço de exemplo. Defina um endereço num domínio da CRASA.',
 ];

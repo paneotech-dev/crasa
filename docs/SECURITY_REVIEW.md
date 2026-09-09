@@ -186,8 +186,14 @@ Error: Class "League\Flysystem\AwsS3V3\PortableVisibilityConverter" not found
    that the bucket exists and is writable. They were not tested against a
    live bucket because doing so would have written to a bucket this review
    does not own.
-3. A backup command, and one cron entry to run it hourly. Roughly half a
-   day's work once the above are settled.
+3. A backup command, and one cron entry to run it. Roughly half a day's
+   work once the above are settled.
+
+**Updated 9 September 2026.** The full procedure — what to install, what
+CRASA must provide, the retention schedule, the restore steps, how to prove a
+restore actually works, and three alternatives if CRASA cannot provision S3
+— is now written up in `docs/BACKUP_SETUP.md` and can be sent to CRASA as it
+stands. The decision itself is still CRASA's.
 
 **One related finding.** This application has no cron entry at all. The
 crontab on this account runs a scheduler and a queue worker for a different
@@ -209,6 +215,23 @@ platform would report success.
 
 **What is needed.** SMTP credentials, or an API key for whichever service
 CRASA uses, and the from-address the Secretariat wants on outgoing mail.
+
+**Updated 9 September 2026.** Two things changed.
+
+First, the platform no longer fails quietly. It writes an error-level line on
+every boot naming the driver, the environment and the file to change, and
+shows a red banner on every back office screen until mail is configured. This
+was the worst property of the finding: nothing threw, no job failed, and the
+platform reported success to a representative whose notification went
+nowhere. It could have persisted until the validation workshop.
+
+Second, `docs/MAIL_SETUP.md` sets out both routes — cPanel SMTP and a
+transactional service — with what each needs, the SPF, DKIM and DMARC records
+without which mail to fourteen government domains is filed as spam, and a
+verification procedure that ends at a real external mailbox rather than at
+"the command did not error".
+
+The severity is unchanged. The credentials are still outstanding.
 
 ---
 
