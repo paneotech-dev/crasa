@@ -31,6 +31,7 @@ use Database\Seeders\NewsroomSeeder;
 use Database\Seeders\PublicationSeeder;
 use Database\Seeders\PublicPagesSeeder;
 use Database\Seeders\SectorSeeder;
+use Database\Seeders\SiteSettingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -69,6 +70,10 @@ class SampleDataStripTest extends TestCase
     {
         $this->seed(CountrySeeder::class);
         $this->seed(SectorSeeder::class);
+        // A fully populated platform has its social accounts configured;
+        // without them the homepage's "Follow us" section correctly renders
+        // its empty state, which is what this test forbids.
+        $this->seed(SiteSettingSeeder::class);
         $this->seed(CommitteeSeeder::class);
         $this->seed(AuthoritySeeder::class);
         $this->seed(IndicatorSeeder::class);

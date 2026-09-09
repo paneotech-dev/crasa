@@ -106,4 +106,5 @@ return [
     'statement_empty_title' => 'Nothing stated here yet',
     'statement_empty_body' => 'Add the statement and where its action goes. The figures beside it come from the register.',
     'members_map_note' => 'Fourteen member states, from Angola to Zimbabwe. Open the members page for the full map and directory.',
+    'social_account' => 'CRASA on :network',
 ];

@@ -109,12 +109,57 @@ class DesignSystemTest extends TestCase
     public function test_the_stylesheets_carry_no_hard_coded_colour(): void
     {
         foreach (['css/base.css', 'css/chrome.css', 'css/grid.css', 'css/blocks.css', 'css/admin.css'] as $sheet) {
+            $css = preg_replace('#/\*.*?\*/#s', '', $this->css($sheet));
+
             $this->assertDoesNotMatchRegularExpression(
                 '/#[0-9A-Fa-f]{3,8}\b/',
-                preg_replace('#/\*.*?\*/#s', '', $this->css($sheet)),
+                $this->withoutBrandMarks($css),
                 $sheet.' must take every colour from tokens.css.'
             );
         }
+    }
+
+    /**
+     * The one carve-out: third-party brand marks.
+     *
+     * X's black, LinkedIn's #0A66C2, Facebook's #1877F2 and YouTube's
+     * #FF0000 are registered trademarks whose owners' guidelines specify
+     * the colour, and a recoloured brand mark is a guideline breach.
+     * CLAUDE.md carries the rule and scopes it.
+     *
+     * Removed by their own selectors rather than by matching the hex, so a
+     * stray #1877F2 anywhere else in the file still fails. That is the
+     * difference between a carve-out and a hole.
+     */
+    private function withoutBrandMarks(string $css): string
+    {
+        return (string) preg_replace(
+            '/\.c-footer__social a\[data-network="(?:x|linkedin|facebook|youtube)"\] \{[^}]*\}/',
+            '',
+            $css
+        );
+    }
+
+    public function test_the_brand_mark_carve_out_is_narrow(): void
+    {
+        // The carve-out must not become a hole. Only the four footer
+        // selectors may carry a hex, and only their own colour.
+        $css = preg_replace('#/\*.*?\*/#s', '', $this->css('css/blocks.css'));
+
+        preg_match_all('/([^{}]*)\{([^{}]*#[0-9A-Fa-f]{3,8}[^{}]*)\}/', $css, $rules, PREG_SET_ORDER);
+
+        foreach ($rules as $rule) {
+            $this->assertMatchesRegularExpression(
+                '/\.c-footer__social a\[data-network="(?:x|linkedin|facebook|youtube)"\]/',
+                trim($rule[1]),
+                'A hex colour outside the brand-mark carve-out: '.trim($rule[1])
+            );
+        }
+
+        $this->assertStringContainsString(
+            'One carve-out: third-party brand marks',
+            file_get_contents(base_path('CLAUDE.md')),
+        );
     }
 
     /**

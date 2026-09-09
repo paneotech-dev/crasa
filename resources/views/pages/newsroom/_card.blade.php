@@ -2,6 +2,24 @@
     $title = $item->translate('title');
     $summary = $item->translate('summary');
     $slot = $item->fallbackImageSlot();
+
+    /*
+     * A photograph appears once per page. The comment below says this grid
+     * "does not repeat one placeholder four times in a row", and that was
+     * only true across sectors: two articles in the same sector shared one
+     * fallback and the grid showed the same picture twice.
+     *
+     * $usedImageSlots is passed down from the listing and accumulates as
+     * the cards render. The first article in a sector gets the photograph;
+     * a later one gets the designed sector panel.
+     */
+    $usedImageSlots ??= collect();
+
+    if ($slot && $usedImageSlots->contains($slot)) {
+        $slot = null;
+    } elseif ($slot) {
+        $usedImageSlots->push($slot);
+    }
 @endphp
 
 <article class="b-card">
@@ -14,10 +32,13 @@
                  does not repeat one placeholder four times in a row. --}}
             <x-responsive-image :name="$slot" :alt="__('images.'.$slot)" sizes="(max-width: 700px) 100vw, 33vw" class="c-img--cover" />
         @else
-            {{-- Broadcasting has no supplied image. Well-set type in the
-                 space beats a grey box, and beats borrowing a photograph
-                 from a sector this article is not about. --}}
-            <div class="b-card__typeslot">
+            {{-- Broadcasting has no supplied image, and a sector whose
+                 photograph is already on this page does not get it twice.
+                 Well-set type on the sector's own ground beats a grey box,
+                 and beats borrowing a photograph from a sector this article
+                 is not about. --}}
+            <div class="b-card__typeslot" data-sector="{{ $item->sector?->slug ?? 'default' }}">
+                <x-sector-icon :sector="$item->sector?->slug" />
                 <span class="b-card__typeslot-sector">{{ $item->sector?->name ?? __('news.title') }}</span>
             </div>
         @endif

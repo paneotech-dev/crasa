@@ -13,6 +13,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             ReferenceDataSeeder::class,
+            // The social accounts and the legacy site's address. They were
+            // hardcoded in a Blade template and two of the three were the
+            // wrong accounts.
+            SiteSettingSeeder::class,
             HomepageSeeder::class,
             PublicPagesSeeder::class,
             LegalPagesSeeder::class,

@@ -25,6 +25,21 @@
                  with an image on every one; the 1+2 arrangement it replaced
                  gave the first card a 3/2 photograph and hid the other two
                  images outright. --}}
+            @php
+                /*
+                 * A photograph appears once per page. Two news items in the
+                 * same sector both fall back to that sector's image, and
+                 * the strip then showed the same picture twice side by
+                 * side, which reads as a rendering fault rather than as two
+                 * stories.
+                 *
+                 * The first card in a sector gets the photograph; a second
+                 * gets the designed sector panel. CLAUDE.md carries the
+                 * rule and a test walks every public page for it.
+                 */
+                $usedImages = [];
+            @endphp
+
             <div class="b-cards">
                 @foreach ($items as $item)
                     <article class="b-card">
@@ -32,7 +47,8 @@
                             @if (! empty($item['hero']))
                                 <img class="c-img c-img--cover" src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($item['hero']) }}"
                                      alt="" loading="lazy" decoding="async">
-                            @elseif (! empty($item['image_slot']))
+                            @elseif (! empty($item['image_slot']) && ! in_array($item['image_slot'], $usedImages, true))
+                                @php $usedImages[] = $item['image_slot']; @endphp
                                 <x-responsive-image :name="$item['image_slot']" :alt="__('images.'.$item['image_slot'])"
                                                     sizes="(max-width: 760px) 100vw, 40vw" class="c-img--cover" />
                             @else

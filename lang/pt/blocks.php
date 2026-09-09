@@ -101,4 +101,5 @@ return [
     'statement_empty_title' => 'Ainda não há nada indicado aqui',
     'statement_empty_body' => 'Adicione a declaração e o destino da sua ação. Os números ao lado vêm do registo.',
     'members_map_note' => 'Catorze Estados membros, de Angola ao Zimbabué. Abra a página dos membros para o mapa completo e o diretório.',
+    'social_account' => 'A CRASA no :network',
 ];

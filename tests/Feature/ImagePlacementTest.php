@@ -147,19 +147,30 @@ class ImagePlacementTest extends TestCase
         }
     }
 
-    public function test_the_router_is_registered_but_not_placed(): void
+    public function test_the_router_carries_the_statement_band_and_nothing_else(): void
     {
-        // Household connectivity, not infrastructure. It belongs on
-        // universal access and consumer protection content and there is no
-        // such surface yet, so it waits rather than going somewhere it
-        // would misdescribe.
+        // It was registered and unplaced: household connectivity, and no
+        // universal-access or consumer-protection surface existed. It now
+        // sits behind the statement band on instruction, at 82 per cent
+        // overlay where it functions as texture rather than as a subject.
+        //
+        // That is a real tension with the README's own rule for it, which
+        // is "only where the subject genuinely is household access", and
+        // the README says so rather than pretending otherwise. What still
+        // holds is the narrower rule: it must not appear where it would
+        // claim to be the subject.
         $this->assertTrue(ImageLibrary::has('sector-telecom-access'));
 
-        foreach (['/en', '/en/about', '/en/committees', '/en/events', '/en/comparator'] as $path) {
+        $this->assertMatchesRegularExpression(
+            '#<div class="b-statement__media".*?telecom-home-broadband-router-01.*?</div>#s',
+            $this->get('/en')->getContent(),
+        );
+
+        foreach (['/en/about', '/en/committees', '/en/events', '/en/comparator'] as $path) {
             $this->assertStringNotContainsString(
                 'telecom-home-broadband-router',
                 $this->get($path)->getContent(),
-                "The router is on {$path}, which is not universal access or consumer content.",
+                "The router is on {$path}, where a reader would read it as the subject.",
             );
         }
     }

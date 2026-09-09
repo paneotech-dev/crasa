@@ -948,3 +948,46 @@ back.
 above. One institutional photograph is doing the work of two bands, which is
 thin, and it is recorded in `storage/app/public/images/README.md` and in
 `docs/CLIENT_REQUESTS.md` rather than left for someone to notice.
+
+---
+
+## Decision: third-party brand marks are the one exception to the palette
+
+*Taken 9 September 2026, on instruction.*
+
+CLAUDE.md's rule is that the palette is the palette and a colour is a
+decision. Four values now sit outside it:
+
+| Mark | Colour | Source |
+|---|---|---|
+| X | `#000000` | X brand toolkit |
+| LinkedIn | `#0A66C2` | brand.linkedin.com |
+| Facebook | `#1877F2` | Meta brand resources |
+| YouTube | `#FF0000` | YouTube brand resources |
+
+These are registered trademarks whose owners publish usage guidelines
+specifying the exact geometry, the exact colour and the clear space around
+them. A redrawn or recoloured brand mark is a guideline breach, and on a
+donor-funded treaty body's site that is the same class of exposure as
+getting the EU emblem wrong.
+
+**The carve-out is scoped and the scope is the point.** Nothing on this
+platform may use those values for anything of its own. A test asserts both
+that the marks carry their own colours and that CLAUDE.md still says the
+scope out loud, because a carve-out that loses its scope reads as permission
+to add colours.
+
+On the navy footer the marks are white on a 36px circle of the brand colour.
+`#000000` on `#0F1B2D` is not a mark, it is a hole, and the guidelines
+permit a reversed mark on a brand-colour field.
+
+All four are in `docs/LICENCES.csv` with their guideline URL and a note that
+the mark must not be altered.
+
+**What this replaced.** The three accounts were hardcoded in
+`social-feed.blade.php` and two of the three were wrong: `x.com/Crasa2C`,
+`facebook.com/pages/CRASA` and `linkedin.com/company/crasa`. None of those
+is CRASA's account. A link on a regulator's site pointing at an account that
+is not theirs is worse than no link, and a value nobody can edit is a value
+nobody checks. They are site settings now, with YouTube registered and empty
+so the Secretariat can fill it without a deploy.

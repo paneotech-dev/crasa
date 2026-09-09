@@ -59,8 +59,9 @@
                 ])
             @else
                 <div class="b-cards">
+                    @php $usedImageSlots = collect(); @endphp
                     @foreach ($items as $item)
-                        @include('pages.newsroom._card', ['item' => $item])
+                        @include('pages.newsroom._card', ['item' => $item, 'usedImageSlots' => $usedImageSlots])
                     @endforeach
                 </div>
 

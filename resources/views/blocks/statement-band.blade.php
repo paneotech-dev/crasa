@@ -42,10 +42,12 @@
          floor for exactly this case and holds every colour here above 7:1.
          Numbers in OPEN_ITEMS.md.
 
-         The same photograph as the hero, four sections up. That is a reuse
-         and it is recorded in the image README rather than hidden. --}}
+         Not the hero's photograph. It carried the boardroom shot until
+         9 September 2026, which put the same image on one page twice, four
+         sections apart. CLAUDE.md now forbids that outright and a test
+         enforces it. --}}
     <div class="b-statement__media" aria-hidden="true">
-        <x-responsive-image name="hero" decorative sizes="100vw" loading="lazy" class="c-img--cover" />
+        <x-responsive-image name="sector-telecom-access" decorative sizes="100vw" loading="lazy" class="c-img--cover" />
     </div>
     <div class="b-hero__tint b-statement__layer" aria-hidden="true"></div>
     <div class="b-statement__scrim" aria-hidden="true"></div>

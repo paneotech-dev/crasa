@@ -2288,3 +2288,53 @@
 /* "font-weight:600;font-size:14.5px" over "font-size:12px;color:var(--c-slate)" */
 .b-members__tile-acronym { display: block; font-weight: 600; font-size: 14.5px; color: var(--c-navy); }
 .b-members__tile-country { display: block; font-size: 12px; color: var(--c-slate); }
+
+
+/* Social account links --------------------------------------------------- */
+/*
+ * The mark is the network's own, in its own colour. See
+ * resources/views/components/social-mark.blade.php for why that is the one
+ * exception to the palette, and CLAUDE.md for the carve-out.
+ *
+ * On the cream "Follow us" section the brand-colour mark sits on white. On
+ * the navy footer it is a white mark on a circle of the brand colour, so
+ * the colours read against the dark ground rather than disappearing into
+ * it -- #000000 on navy is not a mark, it is a hole.
+ */
+.b-social { display: flex; flex-wrap: wrap; gap: var(--s-3); }
+.b-social__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 10px var(--s-4);
+  min-height: 44px;
+  background: var(--c-white);
+  border: 1px solid var(--c-sand);
+  border-radius: var(--r-sm);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-navy);
+  text-decoration: none;
+  transition: border-color 150ms var(--ease-in), background 150ms var(--ease-in);
+}
+.b-social__link:hover,
+.b-social__link:focus-visible { background: var(--c-green-light); border-color: var(--c-green-dark); }
+.c-social-mark { flex: none; display: block; }
+
+/* The footer's circular treatment. */
+.c-footer__social { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-4); }
+.c-footer__social a {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-pill);
+  transition: transform 150ms var(--ease-in), outline-offset 150ms var(--ease-in);
+}
+.c-footer__social a[data-network="x"] { background: #000000; }
+.c-footer__social a[data-network="linkedin"] { background: #0A66C2; }
+.c-footer__social a[data-network="facebook"] { background: #1877F2; }
+.c-footer__social a[data-network="youtube"] { background: #FF0000; }
+/* A ring rather than a lift: nothing on this platform scales on hover. */
+.c-footer__social a:hover,
+.c-footer__social a:focus-visible { outline: 2px solid var(--c-cream); outline-offset: 3px; }

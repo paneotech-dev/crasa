@@ -10,6 +10,7 @@ use App\Support\Locales;
 use Database\Seeders\AuthoritySeeder;
 use Database\Seeders\CountrySeeder;
 use Database\Seeders\SectorSeeder;
+use Database\Seeders\SiteSettingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\View;
 use Illuminate\Validation\ValidationException;
@@ -142,6 +143,12 @@ class BlockLibraryTest extends TestCase
      */
     public function test_a_configured_social_feed_shows_accounts_not_an_empty_state(): void
     {
+        // The URLs live in site settings now, not in the template. A block
+        // that names two networks and finds no account configured for
+        // either has nothing to show, and says so -- which is the right
+        // behaviour and is why this seeds them.
+        $this->seed(SiteSettingSeeder::class);
+
         $html = $this->render($this->block(BlockType::SocialFeed, ['networks' => ['x', 'linkedin']]));
 
         $this->assertStringContainsString('LinkedIn', $html);
@@ -414,6 +421,21 @@ class BlockLibraryTest extends TestCase
     public function test_the_block_stylesheet_carries_no_hard_coded_colour(): void
     {
         $css = preg_replace('#/\*.*?\*/#s', '', file_get_contents(public_path('css/blocks.css')));
+
+        /*
+         * Four exceptions, and all four are third-party trademarks whose
+         * owners' guidelines specify the colour. CLAUDE.md carries the
+         * carve-out and scopes it: nothing on this platform may use these
+         * values for anything of its own.
+         *
+         * They are removed by their own selectors rather than by matching
+         * the hex, so a stray #1877F2 somewhere else still fails.
+         */
+        $css = preg_replace(
+            '/\.c-footer__social a\[data-network="(?:x|linkedin|facebook|youtube)"\] \{[^}]*\}/',
+            '',
+            $css
+        );
 
         $this->assertDoesNotMatchRegularExpression('/#[0-9A-Fa-f]{3,8}\b/', $css);
     }

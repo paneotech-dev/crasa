@@ -60,11 +60,52 @@ under `/publications` and the crawl will confirm.
 | `www.crasa.org` | 200, empty, crawl permitted | none (`/sitemap.xml` and `/sitemap_index.xml` both 404) |
 | `events.crasa.org` | 200, `Disallow:` empty | `https://events.crasa.org/sitemap_index.xml` |
 
+## The finding that governs the whole import
+
+**The legacy site is Webflow, and no document is linked from any listing
+page. Every PDF lives on its own detail page.**
+
+A breadth-first crawl of the six category pages returned **zero documents**,
+which looked at first like an empty site. It is not. The pattern is two
+levels:
+
+```
+/post-category/electronic-communications-regulatory-guidelines
+    → 16 links to /post-articles/<document-name>
+        → one PDF each, on cdn.prod.website-files.com
+```
+
+Confirmed on `/post-articles/sadc-roaming-guidelines`, which carries
+`.../612fe9d9e1d1a95bb6ccffc9_2021%20REVISED-SADC-ROAMING-GUIDELINES.pdf`.
+The CDN filename preserves the original, and the article titles carry the
+edition year — "Edition 2021", "Edition 2019" — which is the publication
+date the manifest needs where the page does not state one separately.
+
+So A2's import is a two-pass crawl, not a one-pass one: collect
+`/post-articles/` URLs from the six category pages, then fetch each for its
+document. Sixteen in the electronic communications category alone.
+
+**The host is slow and unreliable under sustained crawling.** Two runs
+stalled: the first for twenty-five minutes on a hanging request, the second
+after twenty-five pages with 407 URLs still queued. Every request is
+rate-limited to one a second and many take several seconds to answer. The
+import needs to run as a resumable job that writes after every fetch and can
+be restarted, not as a single pass — which is how it is now written.
+
 ## Totals
 
-*Pending the crawl.* The crawler writes
-`storage/app/legacy/inventory.json` with every page, document and image,
-and this section is generated from it.
+*Partial.* Thirty pages reached before the second stall:
+
+| | Count |
+|---|---|
+| Pages fetched | 30 |
+| Documents found on those pages | 0 — see the finding above |
+| Images found | 17, of which the crasa.org ones are all UI icons |
+| Errors | 0 |
+
+The `/post-articles/` layer, which is where the documents and the real
+photographs are, had not been reached. `storage/app/legacy/inventory.json`
+holds what there is.
 
 ## Method
 

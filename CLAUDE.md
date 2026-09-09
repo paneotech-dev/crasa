@@ -75,6 +75,16 @@ These come from the approved design foundations. Do not invent values. If a valu
 
 **Radii carry meaning.** `--r-xs` on inputs and table cells, `--r-sm` on buttons, `--r-md` on panels, `--r-lg` on cards and modals, `--r-pill` on status badges only. Applying one radius everywhere flattens the hierarchy and is one of the clearest signs of a generated interface.
 
+**One carve-out: third-party brand marks.** X's black, LinkedIn's `#0A66C2`,
+Facebook's `#1877F2` and YouTube's `#FF0000` are outside the palette and are
+used anyway, because they are registered trademarks whose owners publish
+usage guidelines specifying the exact geometry and colour. A recoloured
+brand mark is a guideline breach, and on a treaty body's site that is a real
+exposure. The carve-out is scoped to those marks: **nothing on this platform
+may use those values for anything of its own.** On the navy footer the marks
+are white on a circle of the brand colour, because `#000000` on navy is not
+a mark, it is a hole. Recorded in `docs/OPEN_ITEMS.md` and held by test.
+
 **Contrast is a threshold, not a preference.** WCAG 2.1 AA is a contractual acceptance criterion, so where an approved foundation value fails a success criterion the standard wins and the delivered value differs. `--c-border` and `--c-navy-edge` are both lightened or darkened from the foundations for SC 1.4.11 — `--c-border` twice, because the back office ground is darker than cream and the value that cleared cream did not clear it, and `--c-border-input` is deleted because it resolved to the same value as `--c-border`. Every token pair in use is measured by test.
 
 **The back office has its own ground and its own surface set.** `--c-admin-bg` and `--c-line` are the administration page ground and panel rule, and the `--d-*` set is the dark surface set. All of them are drawn in screen 09. Dark mode is the same design with different surface and ink values, not a second design: no component appears or disappears with the theme, and no status badge changes meaning.
@@ -103,6 +113,7 @@ The reference screens were designed deliberately. Code written against them must
 - Fade-and-slide-up entrance animation on every section, hover lift on every card. Motion answers a user action; it does not decorate scrolling.
 - Uniform `py-24`-style padding on every section. Whitespace should reflect content density, not the difficulty of making a layout responsive.
 - Three identical cards with identical two-sentence descriptions of identical length. Content varies naturally; the layout must absorb that.
+- **The same photograph twice on one page.** A reader who sees one picture in two places does not read it as two subjects; they read it as a page that ran out of pictures, or as one that failed to load. Where a second surface would repeat an image, it uses a designed alternative instead — the sector panel, the typographic composition — and the repetition is a signal that the library is too thin, which belongs in `docs/CLIENT_REQUESTS.md` rather than on the page. Held by test.
 
 **Do this instead:**
 
