@@ -10,11 +10,11 @@ return [
     'language' => 'Langue',
 
     'home' => 'Accueil',
-    'about' => 'À propos de la CRASA',
+    'about' => 'À propos',
     'committees' => 'Comités',
     'members' => 'Membres',
     'publications' => 'Publications',
-    'newsroom' => 'Salle de presse',
+    'newsroom' => 'Actualités',
     'events' => 'Événements',
     'comparator' => 'Comparateur',
     'contact' => 'Contact',

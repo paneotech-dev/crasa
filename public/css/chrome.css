@@ -46,12 +46,45 @@
   color: var(--c-navy);
   line-height: 1.1;
 }
+/*
+ * "font-size:10.5px;color:var(--c-slate);letter-spacing:.03em;max-width:230px"
+ * -- screen 02 line 57. Every value is the screen's.
+ *
+ * WHERE IT SHOWS IS NOT. Measured from the shipped font files at the
+ * shipped sizes, the header needs more room than it has:
+ *
+ *   available at 1440, less --page-x twice        1344px
+ *   identity with the 230px full name              282
+ *   nine nav links at 15px, padding 9px 11px       836 (en) 830 (fr) 755 (pt)
+ *   search, language group, extranet               321
+ *   two --s-5 gaps                                  48
+ *   ------------------------------------------------------
+ *   total                                         1488 (en) 1481 (fr) 1406 (pt)
+ *
+ * It overflows in all three languages and the container is capped at
+ * --w-page, so a wider viewport gives the header nothing: the full name and
+ * nine links cannot share a row at any width. flex-wrap then puts the nav
+ * on a second row, which is what the screenshots showed.
+ *
+ * Screen 02's own compressed state answers this by hiding this exact
+ * element -- "[data-compressed] .c-header__fullname { display: none }". The
+ * same device is used a step earlier: the full name shows while the nav is
+ * in the drawer, and stands down when the nav comes inline and needs the
+ * room. Dropping it takes the identity from 282 to 117 and every locale
+ * fits, English with 21px to spare and Portuguese with 103.
+ *
+ * The name is not lost. It is the footer's first line, the <title>, and the
+ * logo's alt text.
+ */
 .c-header__fullname {
   font-size: 10.5px;
   color: var(--c-slate);
   letter-spacing: .03em;
   line-height: 1.25;
   max-width: 230px;
+}
+@media (min-width: 1024px) {
+  .c-header__fullname { display: none; }
 }
 
 /*
