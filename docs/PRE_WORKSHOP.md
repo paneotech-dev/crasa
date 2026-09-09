@@ -46,10 +46,33 @@ mail to fourteen government domains is filed as spam with no bounce.
 each needs, and a verification procedure that ends at a real external
 mailbox. Configuration is under an hour once the credentials arrive.
 
+### The workshop deadline inside this deadline
+
+**SMTP is deferred, but not past 23 September.** Two things the demonstration
+depends on send mail, and both fail silently:
+
+| What | Where | What happens with no SMTP |
+|---|---|---|
+| Submission notifications | **Script steps 7 and 8** | Pressing validate or return sends a notification to the member state representative. It is written to the log and nobody receives it. The screen says it was sent |
+| Password reset | Not in the script, but one prompt away | A delegate who asks to see it gets a success message and no email |
+
+**Either SMTP is configured before 23 September, or those steps come out of
+the script.** They cannot be left in and quietly not work: step 8's whole
+point is that validating a return notifies the member state, and saying so
+while it does not happen is worse than not saying it.
+
+**Two-factor enrolment is fine without mail** and stays in. It is TOTP: the
+QR code and the recovery codes are on the screen, and nothing is emailed. The
+brief listed it as a mail step; it is not one.
+
+**The decision point is 19 September.** If credentials have not arrived by
+then, rewrite steps 7 and 8 to stop at the state change and say plainly that
+the notification is configured and awaiting CRASA's mail credentials. That is
+a better sentence in a plenary than a promise the platform did not keep.
+
 **If nothing arrives:** the back office already shows a red banner on every
 screen saying mail is not delivered, so nobody discovers it at the workshop
-by accident. Demonstrate the submission workflow without the notification
-step, and say why.
+by accident.
 
 ---
 
@@ -325,7 +348,8 @@ for CRASA to send a credential and not enough to chase one.
 |---|---|---|
 | 12 September | Us | Send all seven documents |
 | 12 September | Us | Cron entry, backup package, retention, restore test against local disk |
-| 15 September | CRASA | Mail credentials, or the decision to demonstrate without notifications |
+| 15 September | CRASA | Mail credentials |
+| 19 September | Us | **Decision point:** no credentials means steps 7 and 8 of the demo script are rewritten to stop at the state change |
 | 15 September | CRASA | Backup destination decision |
 | 17 September | CRASA | Anything from the AGM photography archive, if it exists |
 | 19 September | Us | Four demonstration accounts created interactively, 2FA enrolled |
