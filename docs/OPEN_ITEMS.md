@@ -991,3 +991,60 @@ is CRASA's account. A link on a regulator's site pointing at an account that
 is not theirs is worse than no link, and a value nobody can edit is a value
 nobody checks. They are site settings now, with YouTube registered and empty
 so the Secretariat can fill it without a deploy.
+
+---
+
+## The client review state, and the two admin surfaces it needed
+
+*9 September 2026.*
+
+**What changed on the public side.** The privacy notice and the terms of use
+each opened with a paragraph announcing themselves a draft CRASA had not
+reviewed. That is a fact about this project rather than a fact about privacy
+or about terms of use, and CLAUDE.md's writing rules are explicit that
+project state stays in `docs/` and never reaches a rendered page. It is gone
+from all three languages of both pages. The text is otherwise untouched.
+
+**Where it went.** `pages.needs_client_review`, with `client_reviewed_at` and
+`client_reviewed_by` beside it. The back office reads it in three places: a
+client review column on the page list, a band on the dashboard naming every
+page still waiting, and a panel on the page editor listing what is
+outstanding. `PageVersioningTest::test_no_public_template_reads_the_review_state`
+holds the boundary statically as well as at request level, because a block
+template added later could read the flag and no rendered-output test would
+catch it until a public page carried it.
+
+**The list is derived, not maintained.** `App\Support\ClientReview` reads the
+square-bracketed sentences out of the page's own English text. A second list
+of outstanding items, kept by hand alongside the text, goes stale the first
+time somebody fills a blank in and forgets to update it. Reading the brackets
+cannot go stale.
+
+**Two variations to disclose.**
+
+1. **`.a-review` and `.a-history` have no screen.** Screen 14 draws the
+   content editor as panels of rows and stops there; it draws no version
+   history and no review panel. Both are built from the panel's own type
+   scale and `--c-line`, and neither introduces a value. Case 2.
+2. **Signing off is gated on `ManageSettings`, not `PublishContent`.**
+   Screen 13's permission matrix grants publishing to editors as well as
+   administrators. Recording that the client has approved its own legal text
+   is not an editorial act, and the instruction was that it clears when an
+   administrator marks it reviewed. `ManageSettings` is the
+   administrator-only grant in the same matrix, so no new permission was
+   invented.
+
+**One thing left open.** The square brackets are still in the public text.
+Removing them would delete content rather than a banner, and the instruction
+was that the text stays. Raised in `docs/QUESTIONS.md` and named in
+`docs/CLIENT_REQUESTS.md` item 8, which now lists all thirteen decisions.
+
+**Two bugs found on the way.**
+
+- A rich text body was capped at 4,000 characters in the block editor. The
+  French terms of use ran to 4,013 before a word was added, so the legal
+  pages were the one thing on the platform the page editor could not save.
+  The cap is per field now: `BlockType::maxLengthFor()`, 60,000 on a rich
+  text body and 4,000 everywhere else.
+- The same textarea rendered at six rows. Right for an intro, unusable for a
+  privacy notice. The row count follows the field's cap.

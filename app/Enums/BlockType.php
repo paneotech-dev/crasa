@@ -193,6 +193,21 @@ enum BlockType: string
     }
 
     /**
+     * How long one translatable field may be, in characters.
+     *
+     * Four thousand is right for a headline, an intro or a call to action,
+     * and wrong for the only block type that carries a whole document. The
+     * privacy notice and the terms of use are rich text blocks running past
+     * four thousand characters in French before a word is added, so the cap
+     * that protects the short fields made the legal pages the one thing on
+     * the platform the page editor could not save.
+     */
+    public function maxLengthFor(string $field): int
+    {
+        return $this === self::RichText && $field === 'body' ? 60000 : 4000;
+    }
+
+    /**
      * Server-side validation for the settings JSON. An editor cannot give a
      * pillars block five columns, whatever the request body says.
      *

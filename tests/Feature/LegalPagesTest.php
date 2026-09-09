@@ -14,9 +14,9 @@ use Tests\TestCase;
  * All three are linked from the footer of every page on the site, so none of
  * them may be a holding line in front of fourteen regulators.
  *
- * They are drafts and they say so. The distinction that matters is between
- * describing what the platform does — which the build knows and can write —
- * and making a legal commitment, which it cannot. Retention periods,
+ * They are drafts and the back office says so. The distinction that matters
+ * is between describing what the platform does — which the build knows and
+ * can write — and making a legal commitment, which it cannot. Retention periods,
  * governing law and jurisdiction are left as named blanks, because a wrong
  * retention period on a published privacy notice is a compliance failure
  * CRASA would inherit from us.
@@ -53,13 +53,78 @@ class LegalPagesTest extends TestCase
         }
     }
 
-    /** A reader must not mistake a draft for an approved text. */
-    public function test_the_drafts_say_they_are_drafts(): void
+    /**
+     * THE PUBLIC PAGE CARRIES THE TEXT AND NOTHING ABOUT THE PROJECT.
+     *
+     * Until 9 September 2026 the privacy notice and the terms of use each
+     * opened with a paragraph announcing themselves a draft CRASA had not
+     * reviewed. That is a fact about the project rather than a fact about
+     * privacy or about terms of use, and it met every public reader before
+     * the text did. It moved to the back office, where the review state
+     * belongs, and this test holds it there in all three languages.
+     */
+    public function test_no_public_legal_page_announces_its_own_draft_status(): void
     {
-        $this->get('/en/privacy')->assertOk()->assertSee('DRAFT FOR CRASA REVIEW');
-        $this->get('/en/terms')->assertOk()->assertSee('DRAFT FOR CRASA REVIEW');
-        $this->get('/fr/privacy')->assertOk()->assertSee('PROJET SOUMIS');
-        $this->get('/pt/terms')->assertOk()->assertSee('PROJETO PARA REVISÃO');
+        $banners = ['DRAFT FOR CRASA REVIEW', 'PROJET SOUMIS', 'PROJETO PARA REVISÃO'];
+
+        foreach (self::PAGES as $slug) {
+            foreach (Locales::SUPPORTED as $locale) {
+                $html = $this->get('/'.$locale.'/'.$slug)->assertOk()->getContent();
+
+                foreach ($banners as $banner) {
+                    $this->assertStringNotContainsString(
+                        $banner,
+                        $html,
+                        $locale.'/'.$slug.' still announces itself a draft.'
+                    );
+                }
+
+                // And no other spelling of the same idea reaches the page.
+                $this->assertStringNotContainsString('needs_client_review', $html);
+                $this->assertStringNotContainsStringIgnoringCase('awaiting crasa', $html);
+            }
+        }
+    }
+
+    /** The text itself stays. Removing the banner removed a banner. */
+    public function test_the_text_survived_the_banner_going(): void
+    {
+        $this->get('/en/privacy')->assertOk()
+            ->assertSee('What this notice covers', false)
+            ->assertSee('There is no advertising cookie', false);
+
+        $this->get('/en/terms')->assertOk()
+            ->assertSee('What these terms cover', false);
+
+        $this->get('/fr/privacy')->assertOk()->assertSee('avis de confidentialité', false);
+        $this->get('/pt/terms')->assertOk()->assertSee('ecossistema digital da CRASA', false);
+    }
+
+    /**
+     * The review state is administration only, and it names what is still
+     * outstanding: governing law, retention periods, the data protection
+     * contact. The list is read out of the page's own text, so filling a
+     * blank in removes it rather than leaving a stale second list behind.
+     */
+    public function test_the_review_state_is_admin_side_and_lists_the_blanks(): void
+    {
+        foreach (['privacy', 'terms'] as $slug) {
+            $page = Page::where('slug', $slug)->sole();
+
+            $this->assertTrue($page->awaitsClientReview(), $slug.' is not flagged for client review.');
+            $this->assertNotEmpty($page->outstandingClientItems(), $slug.' lists no outstanding item.');
+        }
+
+        $privacy = Page::where('slug', 'privacy')->sole()->outstandingClientItems();
+        $terms = Page::where('slug', 'terms')->sole()->outstandingClientItems();
+
+        $this->assertStringContainsStringIgnoringCase('retention periods', implode(' ', $privacy));
+        $this->assertStringContainsStringIgnoringCase('data protection officer', implode(' ', $privacy));
+        $this->assertStringContainsStringIgnoringCase('governing law', implode(' ', $terms));
+
+        // The accessibility statement is a statement about this build, which
+        // the build knows. It is not waiting on anybody.
+        $this->assertFalse(Page::where('slug', 'accessibility')->sole()->awaitsClientReview());
     }
 
     /**

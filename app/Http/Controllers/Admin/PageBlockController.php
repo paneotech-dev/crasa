@@ -6,6 +6,7 @@ use App\Enums\BlockType;
 use App\Http\Controllers\Controller;
 use App\Models\Page;
 use App\Models\PageBlock;
+use App\Services\PageVersioning;
 use App\Support\Locales;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -32,6 +33,8 @@ use Illuminate\Validation\Rule;
  */
 class PageBlockController extends Controller
 {
+    public function __construct(private readonly PageVersioning $versioning) {}
+
     public function create(Page $page): View
     {
         Gate::authorize('create', PageBlock::class);
@@ -62,6 +65,8 @@ class PageBlockController extends Controller
             'is_visible' => false,
             'settings' => $type->defaultSettings(),
         ]);
+
+        $this->versioning->record($page, __('admin.page_version_block_added', ['type' => $type->label()]));
 
         return redirect()
             ->route('admin.pages.blocks.edit', [
@@ -102,7 +107,7 @@ class PageBlockController extends Controller
 
         foreach (Locales::SUPPORTED as $locale) {
             foreach ($type->translatableFields() as $field) {
-                $rules[$locale.'.'.$field] = ['nullable', 'string', 'max:4000'];
+                $rules[$locale.'.'.$field] = ['nullable', 'string', 'max:'.$type->maxLengthFor($field)];
             }
 
             // Key figures carry a label and a source per item, and both are
@@ -122,6 +127,8 @@ class PageBlockController extends Controller
 
         $data = $request->validate($rules);
 
+        $this->versioning->recordInitial($page);
+
         $settings = $data['settings'] ?? [];
 
         $block->update([
@@ -136,6 +143,8 @@ class PageBlockController extends Controller
                 fn ($value) => $value !== null && trim((string) $value) !== ''
             ));
         }
+
+        $this->versioning->record($page, __('admin.page_version_block_edited', ['type' => $type->label()]));
 
         return redirect()
             ->route('admin.pages.edit', ['locale' => app()->getLocale(), 'page' => $page->slug])

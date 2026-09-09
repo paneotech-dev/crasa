@@ -13,6 +13,7 @@
             ['key' => 'blocks', 'label' => __('admin.col_blocks'), 'numeric' => true],
             ['key' => 'languages', 'label' => __('admin.col_languages'), 'quiet' => true],
             ['key' => 'status', 'label' => __('admin.col_status')],
+            ['key' => 'review', 'label' => __('admin.col_review')],
             ['key' => 'updated', 'label' => __('admin.col_updated'), 'quiet' => true],
         ]"
         :rows="$pages"
@@ -29,6 +30,18 @@
                 'status' => new \Illuminate\Support\HtmlString(
                     '<span class=\'a-pill\' data-status=\'' . $p->status->value . '\'>'
                     . e(__($p->status->labelKey())) . '</span>'
+                ),
+                {{-- Administration only. No public template reads this. The
+                     count is the number of square-bracketed blanks still in
+                     the page's own text, read out of the text itself. --}}
+                'review' => new \Illuminate\Support\HtmlString(
+                    $p->awaitsClientReview()
+                        ? '<span class=\'a-pill\' data-status=\'review\'>'
+                            . e(trans_choice('admin.review_outstanding_n', count($p->outstandingClientItems()), ['n' => count($p->outstandingClientItems())]))
+                            . '</span>'
+                        : ($p->client_reviewed_at
+                            ? '<span class=\'a-hint\'>' . e(__('admin.review_cleared')) . '</span>'
+                            : '')
                 ),
                 'updated' => $p->updated_at?->isoFormat('D MMM YYYY') ?? '',
             ],

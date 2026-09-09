@@ -1585,3 +1585,51 @@ a.e-dash__title:hover { text-decoration: underline; text-underline-offset: 3px; 
 .a-menu__flags { display: flex; flex-wrap: wrap; gap: var(--s-2); flex: none; }
 .a-menu__actions { display: flex; gap: var(--s-2); flex: none; margin-left: auto; }
 .a-menu__actions form { margin: 0; }
+
+/* The client review list and the page history.
+
+   Both are administration surfaces and neither has a screen: screen 14 draws
+   the content editor as panels of rows and stops there. They are built from
+   the panel's own type scale and its rule colour rather than inventing a
+   treatment, and are logged as a variation in docs/OPEN_ITEMS.md. */
+.a-review {
+  margin: var(--s-3) 0 var(--s-4);
+  padding-left: var(--s-5);
+  display: grid;
+  gap: var(--s-2);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--a-ink);
+}
+.a-review li::marker { color: var(--c-amber); }
+
+.a-history {
+  margin: var(--s-3) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0;
+}
+.a-history li {
+  display: grid;
+  grid-template-columns: minmax(0, 96px) minmax(0, 1fr);
+  gap: 2px var(--s-4);
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--c-line);
+}
+.a-history li:last-child { border-bottom: 0; }
+.a-history__n {
+  grid-row: 1 / span 2;
+  font-family: var(--f-admin);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--a-ink-quiet);
+}
+.a-history__what { font-size: 14px; color: var(--a-ink); }
+.a-history__who { font-size: 13px; color: var(--a-ink-quiet); }
+
+@media (max-width: 600px) {
+  .a-history li { grid-template-columns: minmax(0, 1fr); }
+  .a-history__n { grid-row: auto; }
+}

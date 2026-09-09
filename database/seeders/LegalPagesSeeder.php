@@ -46,17 +46,19 @@ class LegalPagesSeeder extends Seeder
          * open: a wrong retention period on a published privacy notice is a
          * compliance failure CRASA would inherit from us.
          *
-         * Each blank is a square-bracketed line naming who must supply it,
-         * and both pages open by saying they are a draft CRASA has not
-         * reviewed. Both stay flagged needs_content, so they remain on the
-         * placeholder list until CRASA signs them off.
+         * Each blank is a square-bracketed line naming who must supply it.
+         * Both pages carry needs_client_review, which is an administration
+         * state: the back office lists the blanks and offers a sign-off, and
+         * the public page shows the text and nothing about the state it is
+         * in. Until 9 September 2026 each page opened by announcing itself a
+         * draft, so every reader of a public legal page met the project's
+         * internal state before meeting the text.
          */
         $this->draftPage(
             'privacy',
             ['en' => 'Privacy notice', 'fr' => 'Avis de confidentialité', 'pt' => 'Aviso de privacidade'],
             [
-                'en' => "DRAFT FOR CRASA REVIEW. This notice was drafted by the platform's builders as a starting point. It has not been reviewed by CRASA or by counsel and it is not yet a legal commitment. Every square-bracketed item below is a decision only CRASA can make.\n\n"
-                    ."What this notice covers. This is the privacy notice for the CRASA Digital Anchor Ecosystem: the public website, the members' extranet and the administration back office. It does not cover the separate systems CRASA links to.\n\n"
+                'en' => "What this notice covers. This is the privacy notice for the CRASA Digital Anchor Ecosystem: the public website, the members' extranet and the administration back office. It does not cover the separate systems CRASA links to.\n\n"
                     ."Who is responsible. The Communications Regulators' Association of Southern Africa, Plot 143, Unit 2, Gaborone International Finance Park, P.O. Box 25793, Gaborone, Botswana. [CRASA to confirm the data controller of record, and whether a data protection officer is appointed and how to reach them.]\n\n"
                     ."What the platform collects, and why.\n\n"
                     ."Enquiries. When you use the contact form the platform records the name, email address and message you provide, so the Secretariat can reply. Nothing else is taken from that form.\n\n"
@@ -72,8 +74,7 @@ class LegalPagesSeeder extends Seeder
                     ."Security. Transport is encrypted. Passwords are hashed. Two-factor authentication is mandatory for administrator accounts. Access is checked on the server for every request rather than by hiding controls. Uploaded files cannot execute code.\n\n"
                     ."Complaints. [CRASA to name the supervisory authority a reader may complain to, and the governing jurisdiction.]\n\n"
                     ."Changes. [CRASA to state how changes to this notice will be communicated.]\n\n",
-                'fr' => "PROJET SOUMIS À LA CRASA. Cet avis a été rédigé par les concepteurs de la plateforme comme point de départ. Il n'a été examiné ni par la CRASA ni par un conseil juridique et ne constitue pas encore un engagement. Chaque élément entre crochets relève d'une décision qui appartient à la CRASA seule.\n\n"
-                    ."Portée. Il s'agit de l'avis de confidentialité de l'écosystème numérique de la CRASA : le site public, l'extranet des membres et le back-office d'administration. Il ne couvre pas les systèmes distincts vers lesquels la CRASA renvoie.\n\n"
+                'fr' => "Portée. Il s'agit de l'avis de confidentialité de l'écosystème numérique de la CRASA : le site public, l'extranet des membres et le back-office d'administration. Il ne couvre pas les systèmes distincts vers lesquels la CRASA renvoie.\n\n"
                     ."Responsable. Communications Regulators' Association of Southern Africa, Plot 143, Unit 2, Gaborone International Finance Park, P.O. Box 25793, Gaborone, Botswana. [La CRASA doit confirmer le responsable du traitement et si un délégué à la protection des données est désigné.]\n\n"
                     ."Ce que la plateforme collecte, et pourquoi.\n\n"
                     ."Demandes. Le formulaire de contact enregistre le nom, l'adresse électronique et le message fournis, afin que le Secrétariat puisse répondre. Rien d'autre.\n\n"
@@ -89,8 +90,7 @@ class LegalPagesSeeder extends Seeder
                     ."Sécurité. Transport chiffré. Mots de passe hachés. Authentification à deux facteurs obligatoire pour les administrateurs. Contrôle d'accès côté serveur à chaque requête. Les fichiers déposés ne peuvent pas exécuter de code.\n\n"
                     ."Réclamations. [La CRASA doit indiquer l'autorité de contrôle compétente et la juridiction applicable.]\n\n"
                     ."Modifications. [La CRASA doit préciser comment les modifications seront communiquées.]\n\n",
-                'pt' => "PROJETO PARA REVISÃO DA CRASA. Este aviso foi redigido pelos construtores da plataforma como ponto de partida. Não foi revisto pela CRASA nem por assessoria jurídica e ainda não constitui um compromisso. Cada item entre parênteses retos é uma decisão que só a CRASA pode tomar.\n\n"
-                    ."Âmbito. Este é o aviso de privacidade do ecossistema digital da CRASA: o sítio público, o extranet dos membros e o back office de administração. Não abrange os sistemas separados para os quais a CRASA remete.\n\n"
+                'pt' => "Âmbito. Este é o aviso de privacidade do ecossistema digital da CRASA: o sítio público, o extranet dos membros e o back office de administração. Não abrange os sistemas separados para os quais a CRASA remete.\n\n"
                     ."Responsável. Communications Regulators' Association of Southern Africa, Plot 143, Unit 2, Gaborone International Finance Park, P.O. Box 25793, Gaborone, Botsuana. [A CRASA deve confirmar o responsável pelo tratamento e se está designado um encarregado da proteção de dados.]\n\n"
                     ."O que a plataforma recolhe, e porquê.\n\n"
                     ."Pedidos. O formulário de contacto regista o nome, o endereço eletrónico e a mensagem fornecidos, para que o Secretariado possa responder. Mais nada.\n\n"
@@ -117,8 +117,7 @@ class LegalPagesSeeder extends Seeder
             'terms',
             ['en' => 'Terms of use', 'fr' => "Conditions d'utilisation", 'pt' => 'Termos de utilização'],
             [
-                'en' => "DRAFT FOR CRASA REVIEW. These terms were drafted by the platform's builders as a starting point. They have not been reviewed by CRASA or by counsel and they are not yet binding. Every square-bracketed item is a decision only CRASA can make.\n\n"
-                    ."What these terms cover. Use of the CRASA Digital Anchor Ecosystem: the public website, the members' extranet and the administration back office.\n\n"
+                'en' => "What these terms cover. Use of the CRASA Digital Anchor Ecosystem: the public website, the members' extranet and the administration back office.\n\n"
                     ."Acceptable use. You may read, download, quote and redistribute the material published here. You may not attempt to reach material your account is not cleared for, probe the platform for weaknesses without written authorisation, or use automated means that degrade the service for others. Reading and downloading at ordinary human pace is expected and welcome; a crawler that ignores the platform's rate limits is not.\n\n"
                     ."The status of the regulatory text published here. CRASA publishes guidelines, model laws and frameworks that member states adopt into national law through their own processes. **Publication here does not itself give a document legal force in any member state.** Where a document has been superseded the platform says so on the document itself and links to what replaced it; where it is in force the platform says that too. A reader relying on a document should check its status on this platform and confirm its standing with the national regulator concerned.\n\n"
                     ."Indicator values. The comparator and the member state pages carry indicator figures supplied by national regulators. Each figure states its source and the period it covers. A figure marked as demonstration data has not been validated by the member state and is shown to demonstrate the platform; that notice stays on screen and in every export until the national regulator confirms the value. **[CRASA and its counsel to state the extent to which CRASA accepts liability for reliance on these figures. The build's position: the figures are reported by member states and CRASA publishes them; it does not warrant them.]**\n\n"
@@ -130,8 +129,7 @@ class LegalPagesSeeder extends Seeder
                     ."Changes to these terms. **[CRASA to state how changes will be communicated and from when they take effect.]**\n\n"
                     ."Governing law and jurisdiction. **[CRASA and its counsel to state the governing law and the courts having jurisdiction. This is not a question the build can answer: CRASA is a Specialised Agency of SADC with fourteen member states, and which law governs its platform is a matter for its own legal framework.]**\n\n"
                     ."Contact. Questions about these terms go to the CRASA Secretariat, whose address is in the footer of every page.\n\n",
-                'fr' => "PROJET SOUMIS À LA CRASA. Ces conditions ont été rédigées par les concepteurs de la plateforme comme point de départ. Elles n'ont été examinées ni par la CRASA ni par un conseil juridique et ne lient encore personne. Chaque élément entre crochets relève d'une décision qui appartient à la CRASA.\n\n"
-                    ."Portée. L'utilisation de l'écosystème numérique de la CRASA : le site public, l'extranet des membres et le back-office d'administration.\n\n"
+                'fr' => "Portée. L'utilisation de l'écosystème numérique de la CRASA : le site public, l'extranet des membres et le back-office d'administration.\n\n"
                     ."Usage acceptable. Vous pouvez lire, télécharger, citer et rediffuser les documents publiés ici. Vous ne pouvez pas tenter d'accéder à des contenus pour lesquels votre compte n'est pas habilité, sonder la plateforme à la recherche de failles sans autorisation écrite, ni employer des moyens automatisés qui dégradent le service pour autrui. La lecture et le téléchargement à un rythme humain sont attendus et bienvenus ; un robot qui ignore les limites de débit ne l'est pas.\n\n"
                     ."Statut des textes réglementaires publiés. La CRASA publie des lignes directrices, des lois types et des cadres de référence que les États membres transposent en droit national par leurs propres procédures. **La publication sur cette plateforme ne confère par elle-même aucune force juridique dans un État membre.** Lorsqu'un document est remplacé, la plateforme l'indique sur le document et renvoie à ce qui le remplace ; lorsqu'il est en vigueur, elle l'indique également. Le lecteur qui s'appuie sur un document doit en vérifier le statut ici et le confirmer auprès du régulateur national concerné.\n\n"
                     ."Valeurs d'indicateurs. Le comparateur et les fiches des États membres présentent des valeurs transmises par les régulateurs nationaux. Chaque valeur indique sa source et la période couverte. Une valeur signalée comme donnée de démonstration n'a pas été validée par l'État membre ; l'avis reste affiché à l'écran et dans chaque export jusqu'à confirmation par le régulateur national. **[La CRASA et son conseil doivent préciser dans quelle mesure la CRASA assume une responsabilité en cas d'utilisation de ces valeurs. Position technique : les valeurs sont transmises par les États membres et la CRASA les publie ; elle ne les garantit pas.]**\n\n"
@@ -143,8 +141,7 @@ class LegalPagesSeeder extends Seeder
                     ."Modifications. **[La CRASA doit indiquer comment les modifications sont communiquées et à partir de quand elles s'appliquent.]**\n\n"
                     ."Droit applicable et juridiction. **[À déterminer par la CRASA et son conseil. La question dépasse la compétence technique : la CRASA est une agence spécialisée de la SADC comptant quatorze États membres, et le droit applicable à sa plateforme relève de son propre cadre juridique.]**\n\n"
                     ."Contact. Les questions relatives à ces conditions s'adressent au Secrétariat de la CRASA, dont l'adresse figure au pied de chaque page.\n\n",
-                'pt' => "PROJETO PARA REVISÃO DA CRASA. Estes termos foram redigidos pelos construtores da plataforma como ponto de partida. Não foram revistos pela CRASA nem por assessoria jurídica e ainda não vinculam ninguém. Cada item entre parênteses retos é uma decisão que cabe à CRASA.\n\n"
-                    ."Âmbito. A utilização do ecossistema digital da CRASA: o sítio público, o extranet dos membros e o back office de administração.\n\n"
+                'pt' => "Âmbito. A utilização do ecossistema digital da CRASA: o sítio público, o extranet dos membros e o back office de administração.\n\n"
                     ."Utilização aceitável. Pode ler, descarregar, citar e redistribuir o material aqui publicado. Não pode tentar aceder a material para o qual a sua conta não está habilitada, sondar a plataforma à procura de vulnerabilidades sem autorização escrita, nem usar meios automatizados que degradem o serviço para os outros. Ler e descarregar a ritmo humano é esperado e bem-vindo; um robô que ignora os limites de taxa não é.\n\n"
                     ."Estatuto dos textos regulatórios publicados. A CRASA publica orientações, leis-modelo e quadros de referência que os Estados membros transpõem para o direito nacional através dos seus próprios processos. **A publicação nesta plataforma não confere, por si só, força jurídica em nenhum Estado membro.** Quando um documento é substituído, a plataforma indica-o no próprio documento e remete para o que o substituiu; quando está em vigor, também o indica. Quem se apoie num documento deve verificar aqui o seu estatuto e confirmá-lo junto do regulador nacional em causa.\n\n"
                     ."Valores dos indicadores. O comparador e as fichas dos Estados membros apresentam valores comunicados pelos reguladores nacionais. Cada valor indica a sua fonte e o período abrangido. Um valor assinalado como dado de demonstração não foi validado pelo Estado membro; o aviso permanece no ecrã e em cada exportação até confirmação pelo regulador nacional. **[A CRASA e a sua assessoria devem indicar em que medida a CRASA assume responsabilidade pela utilização destes valores. Posição técnica: os valores são comunicados pelos Estados membros e a CRASA publica-os; não os garante.]**\n\n"
@@ -210,10 +207,12 @@ class LegalPagesSeeder extends Seeder
     /**
      * A page carrying real drafted copy that still needs CRASA's sign-off.
      *
-     * needs_content stays true, so it remains on the placeholder list and
-     * nobody mistakes a draft for an approved text. What a reader meets is a
-     * complete document rather than a holding line, which is the right state
-     * for a page linked from the footer of every page on the site.
+     * needs_content stays true on the block, so it stays on the
+     * placeholder list, and needs_client_review goes on the page, which is
+     * what the back office and the dashboard read. Neither reaches a public
+     * template. What a reader meets is a complete document rather than a
+     * holding line, which is the right state for a page linked from the
+     * footer of every page on the site.
      *
      * @param  array<string, string>  $titles
      * @param  array<string, string>  $bodies
@@ -221,6 +220,10 @@ class LegalPagesSeeder extends Seeder
     private function draftPage(string $slug, array $titles, array $bodies, string $note): void
     {
         $page = $this->page($slug, collect($titles)->map(fn ($title) => ['title' => $title])->all());
+
+        // Administration only. Cleared by an administrator marking the page
+        // reviewed, which stamps who and when.
+        $page->forceFill(['needs_client_review' => true])->save();
 
         $block = PageBlock::create([
             'page_id' => $page->id,

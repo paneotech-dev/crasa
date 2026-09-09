@@ -6,6 +6,7 @@ use App\Enums\PageStatus;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Page;
+use App\Services\PageVersioning;
 use App\Support\Locales;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -28,12 +29,17 @@ use Illuminate\Validation\Rule;
  */
 class PageAdminController extends Controller
 {
+    public function __construct(private readonly PageVersioning $versioning) {}
+
     public function index(Request $request): View
     {
         Gate::authorize('viewAny', Page::class);
 
         $pages = Page::query()
-            ->with('translations')
+            // blocks.translations, not just a count: the review column reads
+            // the outstanding items out of the text rather than keeping a
+            // second list of them that would go stale.
+            ->with(['translations', 'blocks.translations'])
             ->withCount('blocks')
             ->when($request->string('q')->toString() !== '', function ($query) use ($request) {
                 $term = $request->string('q')->toString();
@@ -56,12 +62,14 @@ class PageAdminController extends Controller
     {
         Gate::authorize('update', $page);
 
-        $page->load(['translations', 'editableBlocks']);
+        $page->load(['translations', 'editableBlocks', 'blocks.translations', 'clientReviewer']);
 
         return view('pages.admin.pages.edit', [
             'page' => $page,
             'locales' => Locales::SUPPORTED,
             'transitions' => $this->allowedTransitions($page),
+            'versions' => $page->versions()->with('author')->limit(20)->get(),
+            'outstanding' => $page->outstandingClientItems(),
         ]);
     }
 
@@ -79,12 +87,16 @@ class PageAdminController extends Controller
 
         $data = $request->validate($rules);
 
+        $this->versioning->recordInitial($page);
+
         foreach (Locales::SUPPORTED as $locale) {
             $page->setTranslations($locale, array_filter(
                 $data[$locale] ?? [],
                 fn ($value) => $value !== null && trim($value) !== ''
             ));
         }
+
+        $this->versioning->record($page, __('admin.page_version_details'));
 
         return redirect()
             ->route('admin.pages.edit', ['locale' => app()->getLocale(), 'page' => $page->slug])
@@ -116,12 +128,44 @@ class PageAdminController extends Controller
             Gate::authorize('publish', $page);
         }
 
+        $this->versioning->recordInitial($page);
+
         $page->update([
             'status' => $target,
             'published_at' => $target === PageStatus::Published ? ($page->published_at ?? now()) : $page->published_at,
         ]);
 
+        $this->versioning->record($page, __('admin.page_version_status', ['status' => __($target->labelKey())]));
+
         return back()->with('status', __($target->labelKey().'_confirmation'));
+    }
+
+    /**
+     * Mark a page reviewed by the client, or send it back for review.
+     *
+     * THIS IS AN ADMINISTRATION STATE AND NOTHING ELSE. No public template
+     * reads needs_client_review, and the square-bracketed blanks the flag
+     * counts are the page's own text, which stays as drafted. What moved off
+     * the public page on 9 September 2026 is the announcement that the text
+     * was a draft, which is a fact about the project rather than a fact
+     * about privacy or about terms of use.
+     *
+     * Clearing it stamps who and when, so the sign-off is itself a record
+     * and "who approved the privacy notice" has an answer.
+     */
+    public function clientReview(Request $request, Page $page): RedirectResponse
+    {
+        Gate::authorize('clientReview', $page);
+
+        $reviewed = $request->boolean('reviewed');
+
+        $this->versioning->recordInitial($page);
+
+        $page->update($reviewed
+            ? ['client_reviewed_at' => now(), 'client_reviewed_by' => auth()->id(), 'needs_client_review' => false]
+            : ['client_reviewed_at' => null, 'client_reviewed_by' => null, 'needs_client_review' => true]);
+
+        return back()->with('status', __($reviewed ? 'admin.page_review_cleared' : 'admin.page_review_reopened'));
     }
 
     /**

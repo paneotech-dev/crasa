@@ -359,6 +359,7 @@ Route::prefix('{locale}')
                 Route::get('pages/{page}', [PageAdminController::class, 'edit'])->name('pages.edit');
                 Route::put('pages/{page}', [PageAdminController::class, 'update'])->name('pages.update');
                 Route::put('pages/{page}/status', [PageAdminController::class, 'updateStatus'])->name('pages.status');
+                Route::put('pages/{page}/client-review', [PageAdminController::class, 'clientReview'])->name('pages.client-review');
                 Route::get('pages/{page}/preview', [PageAdminController::class, 'preview'])->name('pages.preview');
 
                 Route::get('pages/{page}/blocks/add', [PageBlockController::class, 'create'])->name('pages.blocks.create');

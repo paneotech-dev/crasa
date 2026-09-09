@@ -9,6 +9,7 @@ use App\Models\Country;
 use App\Models\Indicator;
 use App\Models\Instrument;
 use App\Models\NewsItem;
+use App\Models\Page;
 use App\Models\Publication;
 use App\Support\Locales;
 use App\Support\SampleData;
@@ -54,6 +55,12 @@ class DashboardController extends Controller
             // The Secretariat's only signal that the platform is not yet
             // clean, now that the public notices are gone.
             'sampleCounts' => SampleData::counts(),
+            // Administration only. The public legal pages carry the text and
+            // none of this; see PageAdminController::clientReview().
+            'awaitingReview' => Page::awaitingClientReview()
+                ->with(['translations', 'blocks.translations'])
+                ->orderBy('slug')
+                ->get(),
         ]);
     }
 

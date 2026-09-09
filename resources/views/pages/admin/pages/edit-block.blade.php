@@ -41,7 +41,10 @@
                                 <div class="a-field">
                                     <label class="a-label" for="{{ $locale }}-{{ $field }}">{{ __('admin.field_'.$field) }}</label>
                                     @if (in_array($field, $long, true))
-                                        <textarea class="a-input" id="{{ $locale }}-{{ $field }}" name="{{ $locale }}[{{ $field }}]" rows="6">{{ $value($locale, $field) }}</textarea>
+                                        {{-- A legal page is a document, not a caption. Six rows is right for an
+                                             intro and unusable for a privacy notice, so the row
+                                             count follows the field's own length cap. --}}
+                                        <textarea class="a-input" id="{{ $locale }}-{{ $field }}" name="{{ $locale }}[{{ $field }}]" rows="{{ $type->maxLengthFor($field) > 4000 ? 24 : 6 }}" maxlength="{{ $type->maxLengthFor($field) }}">{{ $value($locale, $field) }}</textarea>
                                     @else
                                         <input class="a-input" type="text" id="{{ $locale }}-{{ $field }}" name="{{ $locale }}[{{ $field }}]" value="{{ $value($locale, $field) }}">
                                     @endif

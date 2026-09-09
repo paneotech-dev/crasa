@@ -47,6 +47,29 @@
         </div>
     @endif
 
+    {{-- Pages CRASA has still to sign off. Administration only: the public
+         pages show their text and nothing about this. Until 9 September
+         2026 the legal pages announced their own draft status in their
+         opening paragraph, which put the project's internal state in front
+         of every public reader. --}}
+    @if ($awaitingReview->isNotEmpty())
+        <div class="a-band a-band--pending" role="status">
+            <div>
+                <strong>{{ __('admin.review_pending') }}</strong>
+                {{ __('admin.review_pending_body') }}
+            </div>
+
+            <dl class="a-sample">
+                @foreach ($awaitingReview as $page)
+                    <div>
+                        <dt><a href="{{ route('admin.pages.edit', ['locale' => app()->getLocale(), 'page' => $page->slug]) }}">{{ $page->translate('title')?->value ?? $page->slug }}</a></dt>
+                        <dd>{{ count($page->outstandingClientItems()) }}</dd>
+                    </div>
+                @endforeach
+            </dl>
+        </div>
+    @endif
+
     {{-- Screen 09: repeat(auto-fit,minmax(min(100%,236px),1fr)), gap var(--s-4) --}}
     <div class="a-grid a-grid--stats">
         @foreach ($stats as $stat)

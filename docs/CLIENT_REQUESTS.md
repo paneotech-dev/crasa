@@ -297,25 +297,67 @@ to the table at item 4 would do it.
 
 # Blocking a page that must not be empty at go-live
 
-## 8. Privacy notice and terms of use
+## 8. Thirteen decisions in the privacy notice and the terms of use
 
-**Why it blocks.** Both are linked from the footer of every page. Both must
-exist before the platform is public, and neither can be drafted by us.
+**Why it blocks.** Both pages are linked from the footer of every page and
+both must be settled before the platform is public.
 
-**Privacy notice.** What personal data CRASA collects through this platform,
-the lawful basis for holding it, how long it is kept, who it is shared with,
-and the governing jurisdiction. **From CRASA and its counsel.**
+**What is already done.** Both carry a full draft, written from what the
+platform actually does: what it stores, what each cookie is for, that
+publication here gives a document no legal force in any member state, and
+that a demonstration figure stays badged until its own regulator confirms it.
+Neither is a holding line. The accessibility statement beside them is a
+statement about how the platform was built, so it is written and complete and
+needs nothing from CRASA.
 
-**Terms of use.** Acceptable use, the legal status of the regulatory text
-published on the platform, liability for reliance on the indicator values,
-and the governing jurisdiction. **From CRASA and its counsel.**
+**What is left is thirteen decisions**, each one a legal commitment rather
+than a fact about the software. Each appears in the text as a square-bracketed
+sentence naming who must supply it, so nothing is invented and nothing is
+missing without saying so. A wrong retention period on a published privacy
+notice is a compliance failure CRASA would inherit from us.
 
-The accessibility statement, which sits beside these two, is written and
-complete. It is a statement about how the platform was built, so we could
-write it.
+### Privacy notice — seven
 
-**In the meantime** both pages exist and say that the text is being prepared.
-They do not 404, and the footer works.
+| # | Decision |
+|---|---|
+| 1 | The data controller of record, and whether a data protection officer is appointed and how to reach them |
+| 2 | Retention periods. Our recommendation is in the text: enquiries 24 months, audit log for the life of the platform, delegate registrations 12 months after the meeting, accounts until the Secretariat closes them |
+| 3 | Whether any data is shared with COMESA, with SADC or with a funder, and on what basis |
+| 4 | The hosting location, and whether any data leaves the SADC region, backups included |
+| 5 | The rights available to a reader and the law they arise under |
+| 6 | The supervisory authority a reader may complain to, and the governing jurisdiction |
+| 7 | How changes to the notice will be communicated |
+
+### Terms of use — six
+
+| # | Decision |
+|---|---|
+| 8 | Liability for reliance on the indicator values. Our position is in the text: the figures are reported by member states and CRASA publishes them; it does not warrant them |
+| 9 | Which language governs where the English, French and Portuguese differ |
+| 10 | The licence under which CRASA's own material may be reused, and whether attribution is required |
+| 11 | Any service commitment, or an explicit statement that none is made |
+| 12 | How changes to the terms are communicated and from when they take effect |
+| 13 | The governing law and the courts having jurisdiction. Not a question the build can answer: CRASA is a Specialised Agency of SADC with fourteen member states |
+
+**What changed on 9 September 2026.** Each page used to open with a paragraph
+announcing itself a draft CRASA had not reviewed. That is a fact about this
+project rather than a fact about privacy or about terms of use, and it met
+every public reader before the text did. It is gone from the public page. The
+review state now lives in the back office: the page list carries a client
+review column, the dashboard carries a band naming every page still waiting,
+and the page editor lists the outstanding decisions above by name. **None of
+it appears on the public page.** An administrator clears it in one click,
+which stamps who signed it off and when.
+
+**The square brackets themselves are still in the public text**, because they
+are the text and removing them would delete content rather than a banner. Say
+the word and they come out, either by supplying the thirteen answers or by
+telling us to cut the sentences that carry them.
+
+Both pages are editable like every other page: rich text blocks in the page
+editor, three languages side by side, draft, review and published states, and
+a version history that keeps what the page said rather than only that it
+changed.
 
 ---
 
@@ -392,7 +434,7 @@ anything.
 | 5 | About page: governance, executive committee, secretariat, partnerships | Four page sections | CRASA |
 | 6 | Terms of reference for six committees | The committees page, six workspaces | CRASA |
 | 7 | Accession dates | One column on the member states page | CRASA |
-| 8 | Privacy notice and terms of use | Two pages, before go-live | CRASA's counsel |
+| 8 | Thirteen decisions in the privacy notice and terms of use | Two pages, before go-live. Both are drafted; the decisions are named in the text | CRASA's counsel |
 | 9 | The strategic plan | One page section | CRASA |
 | 10 | Single sign-on details | Nothing yet | The identity platform |
 | 11 | Meeting dates | The calendar, when there is one | CRASA |

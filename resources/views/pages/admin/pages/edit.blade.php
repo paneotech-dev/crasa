@@ -177,4 +177,82 @@
             @endforeach
         @endif
     </section>
+
+    {{-- CLIENT REVIEW. Administration only.
+
+         Until 9 September 2026 the privacy notice and the terms of use
+         announced their own draft status in their opening paragraph, so
+         every reader of a public legal page met the project's internal
+         state before meeting the text. The announcement moved here. The
+         text stays exactly as drafted, blanks and all, and the list below
+         is read out of the text rather than kept alongside it: fill a blank
+         in and it leaves the list. --}}
+    @if ($page->needs_client_review || $page->client_reviewed_at)
+        <section class="a-panel">
+            <div class="a-panel__head">
+                <h2>{{ __('admin.client_review') }}</h2>
+                <span class="a-panel__meta">{{ __('admin.client_review_note') }}</span>
+            </div>
+
+            @if ($page->awaitsClientReview())
+                <p class="a-hint">{{ __('admin.client_review_body') }}</p>
+
+                @if ($outstanding === [])
+                    <p class="a-hint">{{ __('admin.client_review_none') }}</p>
+                @else
+                    <ul class="a-review">
+                        @foreach ($outstanding as $item)
+                            <li>{{ $item }}</li>
+                        @endforeach
+                    </ul>
+                @endif
+            @else
+                <p class="a-hint">{{ __('admin.client_review_cleared_by', [
+                    'name' => $page->clientReviewer?->name ?? __('admin.page_history_system'),
+                    'date' => $page->client_reviewed_at?->isoFormat('D MMMM YYYY') ?? '',
+                ]) }}</p>
+            @endif
+
+            @can('clientReview', $page)
+                <form class="a-form__actions" method="POST" action="{{ route('admin.pages.client-review', ['locale' => app()->getLocale(), 'page' => $page->slug]) }}">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="reviewed" value="{{ $page->awaitsClientReview() ? 1 : 0 }}">
+                    <button type="submit" class="a-btn {{ $page->awaitsClientReview() ? 'a-btn--primary' : 'a-btn--secondary' }}">
+                        {{ __($page->awaitsClientReview() ? 'admin.client_review_mark' : 'admin.client_review_reopen') }}
+                    </button>
+                </form>
+            @endcan
+        </section>
+    @endif
+
+    {{-- HISTORY. A version records what the page said, which is the question
+         the audit log cannot answer. --}}
+    <section class="a-panel">
+        <div class="a-panel__head">
+            <h2>{{ __('admin.page_history') }}</h2>
+            <span class="a-panel__meta">{{ __('admin.page_history_note') }}</span>
+        </div>
+
+        @if ($versions->isEmpty())
+            <div class="a-empty">
+                <div class="a-empty__body">{{ __('admin.page_history_empty') }}</div>
+            </div>
+        @else
+            <ol class="a-history">
+                @foreach ($versions as $version)
+                    <li>
+                        <span class="a-history__n">{{ __('admin.page_history_version', ['n' => $version->version_number]) }}</span>
+                        <span class="a-history__what">{{ $version->change_summary }}</span>
+                        <span class="a-history__who">
+                            {{ $version->created_at?->isoFormat('D MMM YYYY, HH:mm') }}
+                            {{ $version->author
+                                ? __('admin.page_history_by', ['name' => $version->author->name])
+                                : __('admin.page_history_system') }}
+                        </span>
+                    </li>
+                @endforeach
+            </ol>
+        @endif
+    </section>
 @endsection

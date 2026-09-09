@@ -597,3 +597,46 @@ For the directory, the same for `.b-directory__acronym` on the Botswana row.
 **Done meanwhile:** E1 was reproducible and is fixed, with its cause named.
 
 ---
+
+---
+
+## The square brackets are still on the public legal pages
+
+*Raised 9 September 2026.*
+
+**Question:** the "DRAFT FOR CRASA REVIEW" banner is gone from the privacy
+notice and the terms of use in all three languages, as instructed, and the
+text stays. But the text contains thirteen square-bracketed sentences, and a
+reader of `/en/privacy` still meets this in the second paragraph:
+
+> Who is responsible. The Communications Regulators' Association of Southern
+> Africa, Plot 143, Unit 2, Gaborone International Finance Park, P.O. Box
+> 25793, Gaborone, Botswana. [CRASA to confirm the data controller of record,
+> and whether a data protection officer is appointed and how to reach them.]
+
+The instruction was "the text itself stays", and a bracketed sentence is
+text. So it stayed. It is worth saying out loud that a public privacy notice
+carrying instructions addressed to the client reads, to a regulator, much
+like the banner did.
+
+**Recommendation:** leave them until the workshop, then take whichever route
+CRASA chooses.
+
+1. **CRASA supplies the thirteen answers.** Best outcome. They are listed by
+   name in `docs/CLIENT_REQUESTS.md` item 8 and in the page editor, and the
+   list empties itself as they are filled in.
+2. **Cut the bracketed sentences before go-live.** The notice then says less
+   but says nothing provisional. The section headings survive, so a reader
+   sees that retention periods exist as a topic and simply reads nothing
+   under them, which is worse than option 1 and better than option 3.
+3. **Leave them.** Only defensible while the site is a preview.
+
+The one thing that must not happen is inventing the answers. A retention
+period we made up would read exactly like one CRASA had decided.
+
+**Done in the meantime:** the brackets stay in the public text, and the back
+office now names every one of them. `pages.needs_client_review` drives a
+column on the admin page list, a band on the dashboard and a panel on the
+page editor; an administrator clears it in one click and the platform stamps
+who and when. No public template reads any of it, held by a static guard as
+well as by rendered-output tests.

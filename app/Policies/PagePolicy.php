@@ -42,6 +42,21 @@ class PagePolicy
         return $user->hasPermission(Permission::PublishContent);
     }
 
+    /**
+     * Recording that CRASA has signed off a page's text.
+     *
+     * Not publish. Screen 13's matrix grants publishing to editors as well
+     * as administrators, and an editor putting a page on the site is an
+     * editorial act. Recording that the client has approved its own legal
+     * text is not: it is a statement about what CRASA has decided, and it
+     * is the thing the privacy notice's outstanding blanks are waiting on.
+     * ManageSettings is the administrator-only grant in the same matrix.
+     */
+    public function clientReview(User $user, Page $page): bool
+    {
+        return $user->hasPermission(Permission::ManageSettings);
+    }
+
     public function delete(User $user, Page $page): bool
     {
         return $user->hasPermission(Permission::DeleteContent);

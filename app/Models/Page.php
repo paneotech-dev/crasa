@@ -7,11 +7,13 @@ use App\Enums\PageStatus;
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\MarksSampleData;
+use App\Support\ClientReview;
 use App\Support\Locales;
 use Database\Factories\PageFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -33,7 +35,10 @@ class Page extends Model
      */
     protected array $translatable = ['title', 'heading', 'standfirst', 'meta_title', 'meta_description'];
 
-    protected $fillable = ['slug', 'template', 'status', 'published_at', 'is_sample'];
+    protected $fillable = [
+        'slug', 'template', 'status', 'published_at', 'is_sample',
+        'needs_client_review', 'client_reviewed_at', 'client_reviewed_by',
+    ];
 
     protected function casts(): array
     {
@@ -41,12 +46,49 @@ class Page extends Model
             'status' => PageStatus::class,
             'published_at' => 'datetime',
             'is_sample' => 'boolean',
+            'needs_client_review' => 'boolean',
+            'client_reviewed_at' => 'datetime',
         ];
     }
 
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * The page's history, newest first. See PageVersioning: a version
+     * records what the page said, which is the question the audit log
+     * cannot answer.
+     */
+    public function versions(): HasMany
+    {
+        return $this->hasMany(PageVersion::class)->orderByDesc('version_number');
+    }
+
+    public function clientReviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'client_reviewed_by');
+    }
+
+    /**
+     * Pages the client has still to sign off. An administration scope: no
+     * public query calls it and no public template renders the flag.
+     */
+    public function scopeAwaitingClientReview(Builder $query): Builder
+    {
+        return $query->where('needs_client_review', true)->whereNull('client_reviewed_at');
+    }
+
+    /** @return list<string> */
+    public function outstandingClientItems(): array
+    {
+        return ClientReview::outstanding($this);
+    }
+
+    public function awaitsClientReview(): bool
+    {
+        return ClientReview::isOutstanding($this);
     }
 
     public function blocks(): HasMany
