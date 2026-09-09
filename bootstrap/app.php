@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureAccountActive;
 use App\Http\Middleware\EnsureTwoFactorEnrolled;
+use App\Http\Middleware\SecurityHeaders;
 use App\Support\Locales;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -39,6 +40,9 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $middleware->web(append: [
+            // First, so every response carries them including the ones the
+            // other two short-circuit.
+            SecurityHeaders::class,
             EnsureAccountActive::class,
             EnsureTwoFactorEnrolled::class,
         ]);

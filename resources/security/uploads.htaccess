@@ -1,0 +1,56 @@
+# CRASA Digital Anchor Ecosystem — the uploads directory.
+#
+# NOTHING IN HERE IS EVER EXECUTED. Files under this directory arrive from
+# the media library and the extranet, which means they arrive from outside.
+# A directory that both accepts uploads and executes code is a web shell
+# waiting for one MIME check to be wrong, and a sibling account on this host
+# had two dropped on it in September 2026.
+#
+# The upload paths already restrict type, strip EXIF and rename every file.
+# This is the layer that holds when one of those is bypassed.
+
+# 1. Turn the interpreter off for this tree.
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+# 2. cPanel usually runs PHP through suPHP, FCGI or LSAPI, where the
+#    directive above is ignored. Remove every handler and type mapping that
+#    could send a file to an interpreter.
+<IfModule mod_suphp.c>
+    suPHP_Engine off
+</IfModule>
+
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .php8 .phps .pht .phar .cgi .pl .py .shtml
+RemoveType .php .phtml .php3 .php4 .php5 .php7 .php8 .phps .pht .phar .cgi .pl .py .shtml
+
+<IfModule mod_mime.c>
+    AddType text/plain .php .phtml .php3 .php4 .php5 .php7 .php8 .phps .pht .phar .cgi .pl .py .shtml .htaccess
+</IfModule>
+
+# 3. And refuse to serve them at all, so a handler we have not thought of
+#    has nothing to receive.
+<FilesMatch "\.(?i:php[0-9]?|phtml|phps|pht|phar|cgi|pl|py|sh|shtml|htaccess|htpasswd|ini|log|env)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# 4. No directory listings. A listing of the media library is a map of it.
+Options -Indexes -ExecCGI
+
+# 5. A browser must not be talked into treating an upload as something else.
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Content-Security-Policy "default-src 'none'; img-src 'self'; media-src 'self'; font-src 'self'; style-src 'none'; script-src 'none'; sandbox"
+</IfModule>

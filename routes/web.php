@@ -95,7 +95,12 @@ Route::prefix('{locale}')
         Route::get('events', [EventsController::class, 'index'])->name('events');
         Route::get('events/{meeting}', [EventsController::class, 'show'])->name('events.show');
         Route::get('events/{meeting}/register', [DelegateRegistrationController::class, 'create'])->name('events.register');
-        Route::post('events/{meeting}/register', [DelegateRegistrationController::class, 'store'])->name('events.register.store');
+        // Throttled: a public form that writes a row, on a page anyone can
+        // reach. Loose enough that a delegate who mistypes a date three
+        // times is not locked out.
+        Route::post('events/{meeting}/register', [DelegateRegistrationController::class, 'store'])
+            ->middleware('throttle:10,60')
+            ->name('events.register.store');
 
         Route::get('privacy', [PageController::class, 'show'])->defaults('slug', 'privacy')->name('privacy');
         Route::get('terms', [PageController::class, 'show'])->defaults('slug', 'terms')->name('terms');
@@ -168,13 +173,21 @@ Route::prefix('{locale}')
          */
         Route::middleware('guest')->group(function () {
             Route::get('login', [LoginController::class, 'show'])->name('login');
-            Route::post('login', [LoginController::class, 'store'])->name('login.store');
+            /*
+             * The controller throttles per address and IP together. This
+             * caps the whole IP as well, so spraying one password across
+             * many addresses is bounded too.
+             */
+            Route::post('login', [LoginController::class, 'store'])
+                ->middleware('throttle:20,10')
+                ->name('login.store');
 
             Route::get('password/forgotten', [PasswordResetController::class, 'request'])->name('password.request');
             Route::post('password/forgotten', [PasswordResetController::class, 'email'])
                 ->middleware('throttle:6,60')->name('password.email');
             Route::get('password/reset/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
-            Route::post('password/reset', [PasswordResetController::class, 'update'])->name('password.update');
+            Route::post('password/reset', [PasswordResetController::class, 'update'])
+                ->middleware('throttle:10,60')->name('password.update');
 
             /*
              * The SSO handoff and its error states, IN-01.
@@ -186,11 +199,23 @@ Route::prefix('{locale}')
              */
             Route::get('sso/redirect', [SsoController::class, 'redirect'])->name('sso.redirect');
             Route::get('sso/callback', [SsoController::class, 'callback'])->name('sso.callback');
-            Route::post('sso/callback', [SsoController::class, 'callback'])->name('sso.callback.post');
+            // Throttled like the other authentication paths: an assertion
+            // endpoint a stranger can post to is an authentication path
+            // whether or not a provider is configured today.
+            Route::post('sso/callback', [SsoController::class, 'callback'])
+                ->middleware('throttle:20,10')
+                ->name('sso.callback.post');
 
             Route::get('two-factor/challenge', [TwoFactorChallengeController::class, 'show'])
                 ->name('two-factor.challenge');
+            /*
+             * The controller already locks an account out after five wrong
+             * codes. This is the layer above it: a single address trying
+             * codes against many accounts never reaches that per-account
+             * counter.
+             */
             Route::post('two-factor/challenge', [TwoFactorChallengeController::class, 'store'])
+                ->middleware('throttle:20,10')
                 ->name('two-factor.challenge.store');
         });
 
