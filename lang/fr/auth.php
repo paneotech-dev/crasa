@@ -55,4 +55,8 @@ return [
     'confirm_password' => 'Confirmer le nouveau mot de passe',
     'set_password' => 'Définir le mot de passe',
     'reset_done' => 'Votre mot de passe a été modifié. Connectez-vous avec celui-ci.',
+    'provider_platform' => 'Compte de la plateforme CRASA',
+    'sso_unavailable' => 'L\'authentification unique n\'est pas encore configurée sur cette plateforme. Connectez-vous avec votre adresse électronique et votre mot de passe.',
+    'sso_no_account' => 'Votre fournisseur d\'identité n\'a identifié aucun compte sur cette plateforme. Le Secrétariat de la CRASA crée les comptes sur invitation : demandez-lui de vous inviter.',
+    'sso_suspended' => 'Ce compte est suspendu. Contactez le Secrétariat de la CRASA.',
 ];

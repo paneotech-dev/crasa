@@ -59,4 +59,8 @@ return [
     'confirm_password' => 'Confirm the new password',
     'set_password' => 'Set the password',
     'reset_done' => 'Your password has been changed. Sign in with it.',
+    'provider_platform' => 'CRASA platform account',
+    'sso_unavailable' => 'Single sign-on is not configured on this platform yet. Sign in with your email address and password.',
+    'sso_no_account' => 'Your identity provider did not identify an account on this platform. The CRASA Secretariat creates accounts by invitation; ask them to invite you.',
+    'sso_suspended' => 'That account is suspended. Contact the CRASA Secretariat.',
 ];

@@ -55,4 +55,8 @@ return [
     'confirm_password' => 'Confirmar a nova palavra-passe',
     'set_password' => 'Definir a palavra-passe',
     'reset_done' => 'A sua palavra-passe foi alterada. Inicie sessão com ela.',
+    'provider_platform' => 'Conta da plataforma CRASA',
+    'sso_unavailable' => 'A autenticação única ainda não está configurada nesta plataforma. Inicie sessão com o seu endereço de correio eletrónico e a sua palavra-passe.',
+    'sso_no_account' => 'O seu fornecedor de identidade não identificou uma conta nesta plataforma. O Secretariado da CRASA cria contas por convite; peça-lhes que o convidem.',
+    'sso_suspended' => 'Essa conta está suspensa. Contacte o Secretariado da CRASA.',
 ];

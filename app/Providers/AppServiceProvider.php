@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Auth\IdentityProvider;
+use App\Auth\PlatformIdentityProvider;
 use App\Search\DatabaseSearchDriver;
 use App\Search\SearchDriver;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -16,6 +18,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        /*
+         * The identity provider. IN-01.
+         *
+         * Bound to this platform's own user store until Form 3 arrives
+         * with the Extranet and EMP platform details. A SAML 2.0 or OAuth
+         * 2.0 implementation is bound here instead and nothing else in the
+         * application changes: see docs/SSO_REQUIREMENTS.md for what CRASA
+         * must supply.
+         */
+        $this->app->bind(
+            IdentityProvider::class,
+            fn () => new PlatformIdentityProvider
+        );
+
         /*
          * The search driver, bound behind its interface.
          *

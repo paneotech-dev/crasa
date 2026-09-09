@@ -430,9 +430,30 @@ that suits it. No headless browser is installed on this box: Playwright or
 Puppeteer on shared cPanel would fight for disk and duplicate that work badly.
 Until then the width pass is manual, in Chrome DevTools at the four widths.
 
-**SSO bridge.** Blocked on Form 3. If the Extranet platform details and test
-credentials have not arrived by the end of phase 2, build the documented
-fallback so IN-01 has a deliverable path.
+**SSO bridge — fallback built, 2026-09-09.** Form 3 has still not come back,
+so there is no identity source, no endpoints and no test credentials. The
+documented fallback is built rather than waiting: the platform authenticates
+against its own user store behind an `App\Auth\IdentityProvider` interface,
+and the SSO handoff and all four of its failure paths exist and are tested
+against a stand-in provider.
+
+**What CRASA must supply is in `docs/SSO_REQUIREMENTS.md`, written to be
+forwarded as it stands.** Seven items: which platform is the identity source,
+which protocol, the endpoints, which attribute is the stable identifier,
+whether the provider may create accounts here, two test accounts, and a named
+technical contact.
+
+One of those seven has a security consequence and carries a recommendation:
+**federated identity should not create accounts on this platform.** Otherwise
+anyone the identity provider trusts becomes a user of a platform holding
+country-scoped data and confidential committee papers, without anyone at the
+Secretariat deciding so.
+
+Two things that do not change when the bridge lands. The password form stays,
+because a bridge that is the only way in becomes an outage for the whole
+platform when the identity provider has one. And two-factor still applies to
+administrators: a federated sign-in is a claim about who someone is, not a
+second factor.
 
 ---
 

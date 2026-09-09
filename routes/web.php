@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Auth\SsoController;
 use App\Http\Controllers\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\Auth\TwoFactorEnrolmentController;
 use App\Http\Controllers\ComparatorController;
@@ -166,6 +167,18 @@ Route::prefix('{locale}')
                 ->middleware('throttle:6,60')->name('password.email');
             Route::get('password/reset/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
             Route::post('password/reset', [PasswordResetController::class, 'update'])->name('password.update');
+
+            /*
+             * The SSO handoff and its error states, IN-01.
+             *
+             * Present and tested even though no provider is configured,
+             * because IN-01's deliverable is the handoff and its failure
+             * paths, and the failure paths are the part that is hard to
+             * add later.
+             */
+            Route::get('sso/redirect', [SsoController::class, 'redirect'])->name('sso.redirect');
+            Route::get('sso/callback', [SsoController::class, 'callback'])->name('sso.callback');
+            Route::post('sso/callback', [SsoController::class, 'callback'])->name('sso.callback.post');
 
             Route::get('two-factor/challenge', [TwoFactorChallengeController::class, 'show'])
                 ->name('two-factor.challenge');
