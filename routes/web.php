@@ -153,7 +153,7 @@ Route::prefix('{locale}')
          * begins for them.
          */
         Route::get('extranet', fn () => auth()->check()
-            ? redirect()->route('extranet.folders', ['locale' => app()->getLocale()])
+            ? redirect()->route('extranet.dashboard', ['locale' => app()->getLocale()])
             : redirect()->route('login', ['locale' => app()->getLocale()]))
             ->name('extranet');
 
@@ -278,6 +278,12 @@ Route::prefix('{locale}')
              * not listed, not searchable and not reachable by guessing an
              * id, because the global scope makes the query return nothing.
              */
+            /*
+             * Screen 11's landing page. A member used to sign in and be
+             * redirected past this into the folder list, so the extranet's
+             * first sentence to a national regulator was a file browser.
+             */
+            Route::get('extranet/dashboard', [ExtranetController::class, 'dashboard'])->name('extranet.dashboard');
             Route::get('extranet/folders', [ExtranetController::class, 'index'])->name('extranet.folders');
             Route::get('extranet/folders/{folder}', [ExtranetController::class, 'folder'])->name('extranet.folder');
             Route::post('extranet/folders/{folder}/upload', [ExtranetController::class, 'upload'])->name('extranet.upload');

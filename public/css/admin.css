@@ -1458,3 +1458,27 @@ body[data-surface="admin"][data-theme="dark"] {
   .e-rail { display: none !important; }
   .e-shell { display: block; }
 }
+
+/* The extranet dashboard, screen 11 -------------------------------------- */
+.e-dash { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: var(--s-5); align-items: start; }
+.e-dash__list { list-style: none; margin: 0; padding: 0; }
+.e-dash__row {
+  display: flex; align-items: center; gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  border-top: 1px solid var(--a-rule);
+  min-width: 0;
+}
+/* The day-and-month chip screen 11 draws. aria-hidden in the markup: the
+   full date is in the meta line beneath, so this is a second rendering of a
+   fact already stated rather than the only place it appears. */
+.e-dash__date {
+  flex: none; width: 46px; text-align: center;
+  border: 1px solid var(--a-rule); border-radius: var(--r-sm);
+  padding: 4px 0; line-height: 1.1;
+}
+.e-dash__day { display: block; font-family: var(--f-admin); font-size: 17px; font-weight: 700; color: var(--a-ink); font-variant-numeric: tabular-nums; }
+.e-dash__month { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--a-ink-quiet); }
+.e-dash__main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.e-dash__title { font-size: 14.5px; font-weight: 600; color: var(--a-ink); text-decoration: none; overflow: hidden; text-overflow: ellipsis; }
+a.e-dash__title:hover { text-decoration: underline; text-underline-offset: 3px; }
+.e-dash__meta { font-size: 12.5px; line-height: 1.4; color: var(--a-ink-quiet); }

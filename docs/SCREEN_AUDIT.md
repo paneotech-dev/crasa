@@ -54,7 +54,7 @@ it was invented.
 | 08 Members | 5 | 1 | 3 |
 | 09 Admin dashboard | 1 | 1 | 2 |
 | 10 Trilingual and architecture | 1 | 1 | 0 |
-| 11 Extranet login | 1 | 0 | 1 |
+| 11 Extranet login | 0 (1 closed) | 0 | 1 |
 | 12 Calendar and folders | 4 | 0 | 1 |
 | 13 Users, roles, audit | 0 | 0 | 2 |
 | 14 Media and editing | 1 | 0 | 1 |
@@ -358,14 +358,16 @@ until Form 3 arrives.
 | Two-factor challenge, step 2 of 2 | | |
 | What each category cannot reach | | |
 
-**The extranet dashboard — GAP, high.** Screen 11's second half draws the
-landing page a member reaches after signing in: next meetings, recently filed
-in your committees, workplan items due, notifications. **The build redirects
-straight to the folder list.** A member signs in and lands in a file browser.
+**The extranet dashboard — CLOSED 9 September**, except the workplan panel.
+Screen 11's second half draws the landing page a member reaches after signing
+in: next meetings, recently filed in your committees, workplan items due,
+notifications. The build redirected straight past it to the folder list, so a
+member signed in and landed in a file browser.
 
-Three of its four panels can be built from data that exists — meetings,
-recent documents, and the notification records. The fourth needs the workplan
-that screen 04 also draws.
+Three of the four panels are now built — meetings scoped to the reader's own
+committees, recent documents filtered through the same Gate the document page
+uses, and notifications — each with its own empty state. The fourth needs the
+workplan model that screen 04 also depends on, and remains a gap.
 
 ---
 

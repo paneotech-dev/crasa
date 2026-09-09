@@ -360,6 +360,6 @@ class ExtranetAccessTest extends TestCase
 
         $this->actingAs($this->botswanaRep)
             ->get('/en/extranet')
-            ->assertRedirectContains('/extranet/folders');
+            ->assertRedirectContains('/extranet/dashboard');
     }
 }

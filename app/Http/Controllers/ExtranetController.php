@@ -7,6 +7,7 @@ use App\Models\Committee;
 use App\Models\Document;
 use App\Models\Folder;
 use App\Models\Meeting;
+use App\Support\ExtranetNavigation;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -159,6 +160,52 @@ class ExtranetController extends Controller
                 ->filter(fn (Meeting $meeting) => Gate::allows('view', $meeting))
                 ->values(),
             'members' => $committee->countries()->orderBy('name')->get(),
+        ]);
+    }
+
+    /**
+     * The extranet landing page, screen 11.
+     *
+     * Until 9 September a member signed in and was redirected straight to
+     * the folder list, so the first thing the extranet said to a national
+     * regulator was "here is a file browser". Screen 11 draws a dashboard:
+     * next meetings, recently filed in your committees, and notifications.
+     *
+     * Everything here is filtered by the same Gate the pages behind it use.
+     * A dashboard is the classic place a permission layer leaks, because it
+     * assembles records from four sources and it is tempting to trust the
+     * query instead of the policy.
+     */
+    public function dashboard(Request $request): View
+    {
+        $user = $request->user();
+        $committees = $user->committees()->pluck('committees.id');
+
+        return view('pages.extranet.dashboard', [
+            // The reader's own committees, or all of them for an account
+            // that sees the whole region.
+            'meetings' => Meeting::upcoming()
+                ->with('committee')
+                ->when(
+                    ! $user->seesAllCountries(),
+                    fn ($q) => $q->whereIn('committee_id', $committees)->orWhereNull('committee_id')
+                )
+                ->limit(5)
+                ->get()
+                ->filter(fn (Meeting $m) => Gate::allows('view', $m))
+                ->values(),
+
+            'documents' => Document::query()
+                ->with(['documentable', 'folder'])
+                ->latest()
+                ->limit(30)
+                ->get()
+                ->filter(fn (Document $d) => Gate::allows('view', $d))
+                ->take(5)
+                ->values(),
+
+            'notifications' => $user->notifications()->limit(5)->get(),
+            'clearance' => ExtranetNavigation::clearance($user),
         ]);
     }
 
