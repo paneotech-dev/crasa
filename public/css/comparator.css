@@ -1,0 +1,454 @@
+/* The regulatory comparator, RP-10.
+ *
+ * Every value here is quoted from screen 03
+ * (03-regulatory-comparator.dc.html). Loaded only on the comparator page,
+ * because nothing else on the site uses it.
+ */
+
+/* Masthead -------------------------------------------------------------- */
+
+/* Screen 03 puts the comparator's title on the navy band, with the
+   demonstration notice beside it rather than under it. */
+.c-cmp__masthead { background: var(--c-navy); color: var(--c-sand); padding-block: var(--s-8); }
+
+.c-cmp__masthead-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-6);
+  align-items: flex-start;
+}
+
+.c-cmp__intro { flex: 999 1 420px; min-width: 0; }
+
+/* font-size:clamp(31px,5.2vw,52px);line-height:1.08;font-weight:600;
+   letter-spacing:-.02em;margin:0 0 var(--s-4) */
+.c-cmp__masthead h1 {
+  font-family: var(--f-head);
+  font-size: clamp(31px, 5.2vw, 52px);
+  line-height: 1.08;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  margin: 0 0 var(--s-4);
+  color: var(--c-white);
+}
+
+/* font-size:19px;line-height:1.6;color:var(--c-sand);max-width:62ch */
+.c-cmp__lead { margin: 0; font-size: 19px; line-height: 1.6; color: var(--c-sand); max-width: 62ch; }
+
+/* background:rgba(194,113,12,.16);border:1px solid #7A4606;
+   border-left:4px solid var(--c-amber);border-radius:var(--r-sm);
+   padding:var(--s-4)
+
+   The 4px amber edge marks a band that qualifies every figure on the page.
+   It is one of three such edges on the platform and each one stops work. */
+.c-cmp__notice {
+  flex: 1 1 320px;
+  min-width: 0;
+  background: rgba(194, 113, 12, .16);
+  border: 1px solid var(--c-amber-dark);
+  border-left: 4px solid var(--c-amber);
+  border-radius: var(--r-sm);
+  padding: var(--s-4);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--c-amber-light);
+}
+
+.c-cmp__notice strong { display: block; margin-bottom: 3px; color: var(--c-white); }
+
+/* Frame ----------------------------------------------------------------- */
+
+.c-cmp { padding-block: var(--s-7); }
+
+.c-cmp__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  flex-wrap: wrap;
+  margin-bottom: var(--s-6);
+}
+
+/* role="group" aria-label="Mode": display:flex;border:1.5px solid
+   var(--c-navy);border-radius:var(--r-sm);overflow:hidden */
+.c-cmp__modes { display: flex; border: 1.5px solid var(--c-navy); border-radius: var(--r-sm); overflow: hidden; }
+
+.c-cmp__modes a {
+  font-family: var(--f-body);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px 16px;
+  color: var(--c-navy);
+  background: transparent;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.c-cmp__modes a[aria-current="true"] { background: var(--c-navy); color: var(--c-white); }
+
+.c-cmp__help { margin: 0; font-size: 15px; color: var(--c-charcoal); max-width: 56ch; }
+.c-cmp__exports { margin-left: auto; display: flex; gap: var(--s-3); flex-wrap: wrap; }
+
+/* display:flex;flex-wrap:wrap;gap:var(--s-6);align-items:flex-start */
+.c-cmp__layout { display: flex; flex-wrap: wrap; gap: var(--s-6); align-items: flex-start; }
+
+/* flex:1 1 280px;max-width:340px */
+.c-cmp__aside { flex: 1 1 280px; max-width: 340px; min-width: 0; display: flex; flex-direction: column; gap: var(--s-5); }
+
+/* flex:999 1 360px */
+.c-cmp__main { flex: 999 1 360px; min-width: 0; display: flex; flex-direction: column; gap: var(--s-6); }
+
+/* background:var(--c-white);border:1px solid var(--c-sand);
+   border-radius:var(--r-md);padding:var(--s-5) */
+.c-cmp__panel {
+  background: var(--c-white);
+  border: 1px solid var(--c-sand);
+  border-radius: var(--r-md);
+  padding: var(--s-5);
+}
+
+.c-cmp__panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3); margin-bottom: var(--s-3); }
+
+/* font-family:var(--f-head);font-size:19px;font-weight:600 */
+.c-cmp__panel h2 { font-family: var(--f-head); font-size: 19px; font-weight: 600; margin: 0 0 var(--s-4); }
+.c-cmp__panel-head h2 { margin: 0; }
+
+.c-cmp__count { font-family: var(--f-admin); font-size: 13px; font-weight: 600; color: var(--c-green-dark); }
+.c-cmp__count[data-full] { color: var(--c-amber-dark); }
+
+.c-cmp__panel-help { margin: 0 0 var(--s-4); font-size: 13.5px; line-height: 1.5; color: var(--c-charcoal); }
+
+/* Member state picker ---------------------------------------------------- */
+
+/* display:flex;flex-direction:column;gap:6px;max-height:430px;overflow:auto */
+.c-cmp__states { display: flex; flex-direction: column; gap: 6px; max-height: 430px; overflow: auto; padding-right: 2px; }
+
+.c-cmp__state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--c-sand);
+  border-radius: var(--r-sm);
+  background: var(--c-white);
+  text-decoration: none;
+  color: var(--c-charcoal);
+  min-width: 0;
+}
+
+.c-cmp__state:hover { border-color: var(--c-border); background: var(--c-cream); }
+.c-cmp__state[aria-pressed="true"] { border-color: var(--c-green-dark); background: var(--c-green-light); }
+
+/* A state that cannot be added because four are already chosen. It stays a
+   link so it can still be read and focused, and says why rather than
+   disappearing. */
+.c-cmp__state[data-at-limit] { opacity: .55; }
+
+/* width:28px;height:28px;border-radius:var(--r-xs);background:var(--c-navy);
+   color:var(--c-cream);font-family:var(--f-admin);font-size:11px;
+   font-weight:700 */
+.c-cmp__code {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-xs);
+  background: var(--c-navy);
+  color: var(--c-cream);
+  display: grid;
+  place-items: center;
+  font-family: var(--f-admin);
+  font-size: 11px;
+  font-weight: 700;
+  flex: none;
+}
+
+.c-cmp__code--on-navy { background: var(--c-green); color: var(--c-white); }
+
+.c-cmp__state-names { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; flex: 1; }
+.c-cmp__state-name { font-size: 14.5px; font-weight: 600; line-height: 1.25; }
+.c-cmp__state-acr { font-size: 12px; color: var(--c-slate); }
+.c-cmp__tick { flex: none; color: var(--c-green-dark); font-weight: 700; }
+
+.c-cmp__clear {
+  display: inline-block;
+  margin-top: var(--s-4);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-green-dark);
+  text-underline-offset: 3px;
+}
+
+/* Categories ------------------------------------------------------------- */
+
+.c-cmp__categories { display: flex; flex-direction: column; gap: var(--s-4); }
+
+.c-cmp__category {
+  display: block;
+  font-family: var(--f-head);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--c-navy);
+  text-decoration: none;
+  padding: 7px 10px;
+  border-radius: var(--r-sm);
+  background: var(--c-cream);
+}
+
+.c-cmp__category[aria-current="true"] { background: var(--c-navy); color: var(--c-white); }
+
+.c-cmp__category-blurb { font-size: 12.5px; line-height: 1.5; color: var(--c-slate); margin: 6px 0 8px; }
+.c-cmp__indicators { display: flex; flex-direction: column; gap: 2px; }
+
+.c-cmp__indicator {
+  font-size: 13.5px;
+  line-height: 1.4;
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  color: var(--c-charcoal);
+  text-decoration: none;
+}
+
+.c-cmp__indicator:hover { background: var(--c-green-light); color: var(--c-navy); }
+.c-cmp__indicator[aria-current="true"] { background: var(--c-green-dark); color: var(--c-white); font-weight: 600; }
+
+/* Empty state ------------------------------------------------------------ */
+
+/* background:var(--c-white);border:1px dashed #B9B2A2;
+   border-radius:var(--r-md);padding:var(--s-9) var(--s-7);text-align:center
+   The dashed rule takes --c-border, which clears 3:1. */
+.c-cmp__empty {
+  background: var(--c-white);
+  border: 1px dashed var(--c-border);
+  border-radius: var(--r-md);
+  padding: var(--s-9) var(--s-7);
+  text-align: center;
+}
+
+.c-cmp__empty h2 { font-family: var(--f-head); font-size: 28px; font-weight: 600; margin: 0 0 var(--s-4); }
+.c-cmp__empty p { margin: 0 auto; font-size: 17px; line-height: 1.6; color: var(--c-charcoal); max-width: 52ch; }
+.c-cmp__empty-actions { display: flex; gap: var(--s-3); flex-wrap: wrap; justify-content: center; margin-top: var(--s-5); }
+
+/* Results ---------------------------------------------------------------- */
+
+.c-cmp__result {
+  background: var(--c-white);
+  border: 1px solid var(--c-sand);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.c-cmp__result-head { padding: var(--s-5); border-bottom: 1px solid var(--c-sand); }
+
+/* Screen 03 sets this in tracked caps. Sentence case here, per the ruling
+   in CLAUDE.md; the size, weight and green are the screen's. */
+.c-cmp__eyebrow { font-size: 13px; font-weight: 600; color: var(--c-green-dark); margin: 0 0 6px; }
+
+/* font-family:var(--f-head);font-size:30px;font-weight:600 */
+.c-cmp__result-head h2 { font-family: var(--f-head); font-size: 30px; font-weight: 600; margin: 0 0 6px; }
+.c-cmp__result-meta { font-size: 14.5px; color: var(--c-charcoal); margin: 0 0 4px; max-width: 70ch; }
+
+/* grid-template-columns:repeat(auto-fit,minmax(430px,1fr)) */
+.c-cmp__split { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr)); }
+.c-cmp__split > :first-child { border-right: 1px solid var(--c-sand); min-width: 0; }
+.c-cmp__regional { padding: var(--s-5); min-width: 0; }
+
+.c-cmp__tablewrap { overflow-x: auto; min-width: 0; }
+
+/* width:100%;border-collapse:collapse;font-size:15.5px */
+.c-cmp__table { width: 100%; border-collapse: collapse; font-size: 15.5px; }
+.c-cmp__table--matrix { min-width: 640px; }
+
+/* background:var(--c-navy);color:var(--c-cream);text-align:left */
+.c-cmp__table thead tr { background: var(--c-navy); color: var(--c-cream); text-align: left; }
+
+/* Screen 03 sets column headers in tracked caps. Sentence case, per the
+   ruling; the size and weight are the screen's. */
+.c-cmp__table th[scope="col"] {
+  padding: 12px var(--s-4);
+  font-size: 13px;
+  font-weight: 600;
+  vertical-align: bottom;
+}
+
+.c-cmp__table th[scope="col"]:first-child { padding-left: var(--s-5); }
+.c-cmp__table tbody tr { border-bottom: 1px solid var(--c-sand); }
+.c-cmp__table tbody tr:last-child { border-bottom: 0; }
+.c-cmp__table td, .c-cmp__table tbody th { padding: 13px var(--s-4); vertical-align: top; }
+.c-cmp__table tbody th { text-align: left; font-weight: 500; padding-left: var(--s-5); }
+.c-cmp__num { text-align: right; font-family: var(--f-admin); font-variant-numeric: tabular-nums; font-weight: 600; }
+
+/* position:sticky;left:0 on the first column, so the indicator name stays
+   readable while the member states scroll. */
+.c-cmp__sticky { position: sticky; left: 0; background: var(--c-white); border-right: 1px solid var(--c-sand); min-width: 230px; }
+.c-cmp__table thead .c-cmp__sticky { background: var(--c-navy); }
+
+.c-cmp__state-cell { display: flex; align-items: center; gap: 10px; }
+.c-cmp__indicator-name { display: block; font-size: 16px; line-height: 1.3; }
+.c-cmp__indicator-unit { display: block; font-size: 12.5px; color: var(--c-slate); margin: 3px 0 0; }
+
+.c-cmp__value { display: block; font-family: var(--f-admin); font-size: 19px; font-weight: 600; color: var(--c-navy); font-variant-numeric: tabular-nums; }
+
+/*
+ * Not reported. Screen 03: italic slate, never a blank and never a zero.
+ * "A blank cell would be indistinguishable from a value of zero."
+ */
+[data-missing] { font-style: italic; color: var(--c-slate); font-weight: 400; font-family: var(--f-body); font-size: 15px; }
+.c-cmp__table tbody tr[data-missing] { background: var(--c-cream); }
+
+.c-cmp__remove {
+  margin-left: 6px;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--c-navy-edge);
+  border-radius: var(--r-xs);
+  color: var(--c-cream);
+  text-decoration: none;
+  flex: none;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.c-cmp__remove:hover { background: var(--c-navy-mid); color: var(--c-white); }
+
+/* The provenance badge. --r-pill, because it is a status badge. */
+.c-cmp__pill {
+  display: inline-block;
+  margin-top: 6px;
+  border-radius: var(--r-pill);
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.c-cmp__pill[data-provenance="validated"] { background: var(--c-green-light); color: var(--c-green-dark); }
+.c-cmp__pill[data-provenance="reported"] { background: var(--c-cream); color: var(--c-charcoal); }
+.c-cmp__pill[data-provenance="sample"] { background: var(--c-amber-light); color: var(--c-amber-dark); }
+.c-cmp__pill[data-provenance="not_reported"] { background: var(--c-sand); color: var(--c-charcoal); }
+
+.c-cmp__source { display: block; font-size: 12.5px; color: var(--c-slate); margin-top: 5px; line-height: 1.45; }
+
+/* Bars ------------------------------------------------------------------- */
+
+.c-cmp__bars { display: flex; flex-direction: column; gap: 9px; }
+.c-cmp__bar-row { display: flex; align-items: center; gap: var(--s-3); }
+
+/* font-family:var(--f-admin);font-size:12px;font-weight:700;width:26px */
+.c-cmp__bar-code { font-family: var(--f-admin); font-size: 12px; font-weight: 700; color: var(--c-charcoal); width: 26px; flex: none; }
+
+/* flex:1;height:20px;background:var(--c-sand);border-radius:2px */
+.c-cmp__bar-track { flex: 1; height: 20px; background: var(--c-sand); border-radius: 2px; overflow: hidden; }
+.c-cmp__bar-fill { display: block; height: 100%; background: var(--c-green-dark); }
+
+/* A member state with no figure gets a hatched track, not an empty one:
+   an empty track is a bar of length zero. */
+.c-cmp__bar-missing {
+  display: block;
+  height: 100%;
+  background: repeating-linear-gradient(135deg, var(--c-sand) 0 4px, var(--c-border) 4px 8px);
+}
+
+.c-cmp__bar-value { font-family: var(--f-admin); font-size: 12.5px; font-weight: 600; color: var(--c-charcoal); width: 92px; text-align: right; flex: none; }
+.c-cmp__note { margin-top: var(--s-3); font-size: 13px; line-height: 1.55; color: var(--c-charcoal); }
+
+/* Foot ------------------------------------------------------------------- */
+
+/* padding:var(--s-4) var(--s-5);border-top:1px solid var(--c-sand);
+   background:var(--c-cream);display:flex;gap:var(--s-5);flex-wrap:wrap */
+.c-cmp__foot {
+  padding: var(--s-4) var(--s-5);
+  border-top: 1px solid var(--c-sand);
+  background: var(--c-cream);
+  display: flex;
+  gap: var(--s-5);
+  flex-wrap: wrap;
+  font-size: 13.5px;
+  color: var(--c-charcoal);
+}
+
+.c-cmp__permalink code { font-family: var(--f-admin); font-size: 12.5px; overflow-wrap: anywhere; }
+
+/* border-left:4px solid var(--c-navy) */
+.c-cmp__explainer {
+  background: var(--c-white);
+  border: 1px solid var(--c-sand);
+  border-left: 4px solid var(--c-navy);
+  border-radius: var(--r-md);
+  padding: var(--s-5);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* The 375px treatment ---------------------------------------------------- */
+
+/*
+ * Screen 03: "A four-column comparison cannot be a table on a phone. Below
+ * 720px the comparison transposes: one card per indicator, member states
+ * stacked inside it as labelled rows."
+ *
+ * Both renderings are in the document and the media query chooses. Hidden
+ * with display:none rather than clipped, so the one that is not shown is
+ * also not announced.
+ */
+.c-cmp__narrow { display: none; }
+
+@media (max-width: 719.98px) {
+  .c-cmp__wide { display: none; }
+  .c-cmp__narrow { display: flex; flex-direction: column; gap: var(--s-4); padding: var(--s-4); }
+  .c-cmp__split > :first-child { border-right: 0; border-bottom: 1px solid var(--c-sand); }
+}
+
+/* background:var(--c-white);border:1px solid var(--c-sand);
+   border-radius:var(--r-sm);padding:var(--s-4) */
+.c-cmp__card {
+  background: var(--c-white);
+  border: 1px solid var(--c-sand);
+  border-radius: var(--r-sm);
+  padding: var(--s-4);
+}
+
+.c-cmp__card h3 { font-size: 16px; font-weight: 600; line-height: 1.3; margin: 0; font-family: var(--f-body); }
+
+/* display:flex;justify-content:space-between;align-items:baseline;
+   padding:9px 0;border-top:1px solid var(--c-sand) */
+.c-cmp__card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s-4);
+  padding: 9px 0;
+  border-top: 1px solid var(--c-sand);
+}
+
+.c-cmp__card-state { font-size: 14.5px; font-weight: 500; }
+.c-cmp__card-value { font-family: var(--f-admin); font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.c-cmp__card-source { margin: 0 0 var(--s-2); }
+
+/* The live panel ---------------------------------------------------------- */
+
+/*
+ * React mounts beside the server-rendered result, never over it, and the
+ * server's copy steps aside only once a live one exists. So the panel is
+ * never empty for a frame, and a reader whose JavaScript fails or is slow
+ * keeps the figures that arrived with the document.
+ */
+[data-comparator][data-live] > .c-cmp__result:not([data-comparator-live]) { display: none; }
+[data-comparator]:not([data-live]) > [data-comparator-live] { display: none; }
+[data-comparator-live][aria-busy="true"] { opacity: .6; }
+
+/* Print ------------------------------------------------------------------ */
+
+/*
+ * Screen 03: the comparator "reads correctly as a printed page". Print gets
+ * the wide table whatever the viewport, loses the controls, and keeps the
+ * demonstration notice and the permalink.
+ */
+@media print {
+  .c-cmp__aside, .c-cmp__bar, .c-cmp__remove, .c-cmp__clear { display: none !important; }
+  .c-cmp__wide { display: block !important; }
+  .c-cmp__narrow { display: none !important; }
+  .c-cmp__masthead { background: none; color: var(--c-charcoal); }
+  .c-cmp__masthead h1 { color: var(--c-charcoal); }
+  .c-cmp__lead, .c-cmp__notice { color: var(--c-charcoal); }
+  .c-cmp__table thead tr { background: none; color: var(--c-charcoal); border-bottom: 2px solid var(--c-charcoal); }
+  .c-cmp__result, .c-cmp__card { break-inside: avoid; }
+}

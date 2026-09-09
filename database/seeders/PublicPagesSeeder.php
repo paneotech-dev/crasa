@@ -43,34 +43,20 @@ class PublicPagesSeeder extends Seeder
     /* Pages the footer links to whose feature is a later phase ------------- */
 
     /**
-     * Screen 02 draws a comparator link and an events link in the footer,
-     * and draws every footer link as href="#". The screen is therefore
-     * silent on where they go, but it is not silent on whether they exist.
-     * Removing them would be a change to the approved design; leaving them
-     * pointing at nothing is a 404 on every page of the site.
+     * Screen 02 draws an events link in the footer and draws every footer
+     * link as href="#". The screen is therefore silent on where it goes,
+     * but it is not silent on whether it exists. Removing it would be a
+     * change to the approved design; leaving it pointing at nothing is a
+     * 404 on every page of the site.
      *
-     * So both slugs resolve, and each says plainly that the feature is being
-     * prepared. Neither invents what the feature will contain. When the
-     * comparator (WS-05) and the public events section (WS-07) are built,
-     * these two pages are deleted, not edited.
+     * So the slug resolves and says plainly that the feature is being
+     * prepared, without inventing what it will contain.
+     *
+     * The comparator's placeholder was here too and has been deleted, not
+     * edited: RP-10 is built and /comparator is the real thing.
      */
     private function awaitingFeature(): void
     {
-        $this->page('comparator', [
-            'en' => ['title' => 'Regulatory comparator', 'meta_description' => 'Compare regulatory indicators across the fourteen CRASA member states.'],
-            'fr' => ['title' => 'Comparateur réglementaire', 'meta_description' => 'Comparer les indicateurs réglementaires des quatorze États membres de la CRASA.'],
-            'pt' => ['title' => 'Comparador regulatório', 'meta_description' => 'Comparar indicadores regulatórios nos catorze Estados membros da CRASA.'],
-        ]);
-
-        $this->placeholder(
-            Page::where('slug', 'comparator')->first(),
-            BlockType::RichText,
-            0,
-            ['alignment' => 'start'],
-            'Comparator tool (WS-05): side-by-side indicator comparison across member states, with the chart and its table equivalent. Not built in this phase. The indicator data it reads is already in place.',
-            []
-        );
-
         $this->page('events', [
             'en' => ['title' => 'Events', 'meta_description' => 'CRASA meetings, workshops and regional events.'],
             'fr' => ['title' => 'Événements', 'meta_description' => 'Réunions, ateliers et événements régionaux de la CRASA.'],

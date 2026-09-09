@@ -44,9 +44,11 @@
                         @foreach ($rows as $row)
                             <tr>
                                 <th scope="row">{{ $row['country'] }}</th>
-                                <td class="is-numeric">
+                                {{-- "Not reported" is set apart from a figure,
+                                     because it is not one. --}}
+                                <td class="is-numeric" @unless ($row['reported']) data-missing @endunless>
                                     {{ $row['value'] ?? __('blocks.not_reported') }}
-                                    @if ($row['confidence'] !== 'reported')
+                                    @if ($row['reported'] && $row['confidence'] !== 'reported')
                                         <span class="c-pill c-pill--pending">{{ $row['confidence'] }}</span>
                                     @endif
                                 </td>
@@ -62,6 +64,13 @@
                      came from. A comparison without one is a number without
                      provenance. --}}
                 <p class="c-source">{{ $indicator->source_standard }}</p>
+            @endif
+
+            {{-- The homepage is an entry point to RP-10, not a picture of
+                 it: the link opens the comparator on exactly these member
+                 states and this indicator. --}}
+            @if (! empty($comparator_url))
+                <p><a class="c-btn c-btn--secondary" href="{{ $comparator_url }}">{{ __('comparator.open_with_these') }}</a></p>
             @endif
 
             @if ($rows->contains(fn ($r) => $r['is_sample']))

@@ -125,3 +125,46 @@ carries the client-supplied copy in all three languages.
 
 ---
 
+## 7. Screen 03 draws neither Chart.js nor Leaflet
+
+**Question:** does the comparator keep the screen's own chart and map
+treatment, or do Chart.js and Leaflet go in because the stack names them?
+
+CLAUDE.md and your brief both name Chart.js for graphs and Leaflet for maps.
+Screen 03 uses neither.
+
+Its "Regional view" bars are DOM elements, each stating its own figure
+beside it:
+
+```
+<span style="flex:1;height:20px;background:var(--c-sand);border-radius:2px">
+  <span style="{{ r.barStyle }}"></span>
+</span>
+<span style="font-family:var(--f-admin);font-size:12.5px;font-weight:600">{{ r.display }}</span>
+```
+
+And its map is the `RegionMap` component in `mode="choropleth"`, the same
+inline SVG already built for the members page, not a tile layer.
+
+**Recommendation: keep what the screen draws.** Three reasons.
+
+A canvas chart needs a table equivalent to satisfy the accessibility clause;
+these bars *are* text, so they satisfy it by construction and they print. A
+Leaflet map needs a tile provider, which is a third-party request from a
+regulator's browser on a platform whose whole pitch is that nothing is
+hotlinked. And screen 03 says in its own words that the screen "reads
+correctly as a printed page and under a screen reader", which a canvas and a
+slippy map both defeat.
+
+Leaflet stays vendored and is still the right tool for the contact page's
+office location. Chart.js is not currently used anywhere; if you want it,
+the natural home is the analytics dashboards, which need no table
+equivalent because they are not published figures.
+
+**Done in the meantime:** built the screen's treatment. Swapping either in
+later is a change to one partial, because the data comes from `Comparison`
+rather than from the view.
+
+---
+
+

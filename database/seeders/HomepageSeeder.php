@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Enums\BlockType;
+use App\Models\Country;
+use App\Models\Indicator;
 use App\Models\Page;
 use App\Models\PageBlock;
 use App\Support\Locales;
@@ -238,8 +240,20 @@ class HomepageSeeder extends Seeder
 
         // 4. Featured comparison. The indicator tables arrive later, so this
         // renders its empty state for now, which is the honest state.
+        /*
+         * Pinned rather than left to pick itself, so the homepage shows the
+         * same four member states every time and the link through to the
+         * comparator reproduces exactly what is on the page. Comoros is one
+         * of the four deliberately: it has not reported this category, and
+         * the homepage should show what a missing figure looks like rather
+         * than only ever showing four filled cells.
+         */
+        $featured = Indicator::where('slug', 'like', '%mobile-cellular%')->first()
+            ?? Indicator::orderBy('display_order')->first();
+
         $this->block($page, BlockType::FeaturedComparison, $position++, [
-            'country_ids' => [],
+            'country_ids' => Country::whereIn('iso_code', ['bw', 'za', 'zm', 'km'])->pluck('id')->all(),
+            'indicator_id' => $featured?->id,
             'chart_type' => 'table',
         ], fn (string $l) => [
             'heading' => $t[$l]['compTitle'],

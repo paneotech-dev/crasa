@@ -14,6 +14,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\Auth\TwoFactorEnrolmentController;
+use App\Http\Controllers\ComparatorController;
 use App\Http\Controllers\CompletenessController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DocumentController;
@@ -64,10 +65,22 @@ Route::prefix('{locale}')
          * not 404.
          */
         /*
+         * The regulatory comparator, RP-10, screen 03.
+         *
+         * Every state is a query string, because a regulator pastes these
+         * into an email and the recipient has to see the same figures. The
+         * exports read the same Comparison object as the page.
+         */
+        Route::get('comparator', [ComparatorController::class, 'index'])->name('comparator');
+        Route::get('comparator/data', [ComparatorController::class, 'data'])->name('comparator.data');
+        Route::get('comparator/export.csv', [ComparatorController::class, 'csv'])->name('comparator.csv');
+        Route::get('comparator/export.png', [ComparatorController::class, 'image'])->name('comparator.png');
+        Route::get('comparator/export.pdf', [ComparatorController::class, 'pdf'])->name('comparator.pdf');
+
+        /*
          * Drawn in the screen 02 footer; the feature itself is a later
          * phase. See PublicPagesSeeder::awaitingFeature().
          */
-        Route::get('comparator', [PageController::class, 'show'])->defaults('slug', 'comparator')->name('comparator');
         Route::get('events', [PageController::class, 'show'])->defaults('slug', 'events')->name('events');
 
         Route::get('privacy', [PageController::class, 'show'])->defaults('slug', 'privacy')->name('privacy');

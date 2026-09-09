@@ -857,3 +857,12 @@
 /* Matched terms in a snippet. mark has a browser default background that is
    not in the palette, so it is set explicitly. */
 .b-row__summary mark { background: var(--c-amber-light); color: var(--c-amber-dark); padding: 0 2px; border-radius: var(--r-xs); }
+
+/* A figure that was never reported, set apart from one that was. "Not
+   reported" and "0" mean opposite things, and the comparator is careful
+   about the distinction, so the homepage is too. */
+.b-comparison [data-missing], .c-table [data-missing] {
+  font-style: italic;
+  color: var(--c-slate);
+  font-weight: 400;
+}

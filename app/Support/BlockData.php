@@ -46,9 +46,10 @@ final class BlockData
      * A pinned comparison, from the sourced indicators.
      *
      * A section whose only content is an empty state is a section that is
-     * not ready. The comparator tool itself is phase 3, but the indicators
-     * and their values exist, so the homepage can show a real pinned
-     * comparison rather than an empty box.
+     * not ready. This one shows a real pinned comparison drawn from the
+     * sourced indicators, and links through to the comparator with the
+     * same states and indicator already selected, so the homepage is an
+     * entry point to RP-10 rather than a picture of one.
      *
      * @return array{rows: Collection<int, array<string, mixed>>, indicator: Indicator|null}
      */
@@ -78,13 +79,44 @@ final class BlockData
             ->sortByDesc('value_numeric')
             ->take(4);
 
+        /*
+         * A pinned member state with no value still appears, and says so.
+         *
+         * Dropping it would leave four filled cells on the homepage and
+         * hide the thing the comparator is careful about: "Not reported"
+         * and "0" mean opposite things, and a reader should meet that
+         * distinction on the front page rather than discover it later.
+         */
+        if ($pinned->isNotEmpty()) {
+            $missing = Country::whereIn('id', $pinned->all())
+                ->whereNotIn('id', $values->pluck('country_id'))
+                ->get()
+                ->map(fn (Country $country) => new IndicatorValue([
+                    'indicator_id' => $indicator->id,
+                    'country_id' => $country->id,
+                ]))
+                ->each(fn (IndicatorValue $v, $i) => $v->setRelation('country', Country::find($v->country_id)));
+
+            $values = $values->concat($missing)->take(4);
+        }
+
+        $codes = $values->map(fn (IndicatorValue $v) => $v->country?->iso_code)->filter()->values();
+
         return [
             'indicator' => $indicator,
+            // The comparator, opened on exactly what the homepage shows.
+            'comparator_url' => route('comparator', [
+                'locale' => app()->getLocale(),
+                'mode' => 'compare',
+                'category' => $indicator->category,
+                'countries' => $codes->implode(','),
+            ]),
             'rows' => $values->map(fn (IndicatorValue $v) => [
                 'country' => $v->country?->name,
                 'value' => $v->value_numeric !== null
                     ? rtrim(rtrim(number_format((float) $v->value_numeric, 1), '0'), '.')
                     : null,
+                'reported' => $v->value_numeric !== null || filled($v->value_text),
                 'unit' => $indicator->unit,
                 'period' => $v->period,
                 'confidence' => $v->confidence,
