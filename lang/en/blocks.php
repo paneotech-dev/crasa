@@ -28,7 +28,9 @@ return [
     'hero_next' => 'Next slide',
     'hero_choose' => 'Choose a slide',
     'hero_pause' => 'Pause',
-    'hero_play' => 'Play',
+    'hero_play' => 'Resume',
+    'hero_pause_action' => 'Pause rotation',
+    'hero_play_action' => 'Resume rotation',
 
     'hero_empty_title' => 'Nothing set for this banner yet',
     'hero_empty_body' => 'Add a headline and a standfirst, and choose where the primary action goes.',
@@ -101,9 +103,6 @@ return [
     'committee_seats_pending' => 'Which member states hold seats on each committee is still to be confirmed by the Secretariat. The seats appear on these cards once it is.',
     'explain_committee_grid' => 'The committees, with what each has published and how many times it has met.',
     'explain_statement_band' => 'One statement on navy, with a figure for each member state beside it counting what that state has reported.',
-    'hero_state_rotating' => 'Rotating every eight seconds.',
-    'hero_state_paused' => 'Paused. Use the arrows or the numbers.',
-    'hero_state_still' => 'Not rotating, at your system setting.',
     'statement_empty_title' => 'Nothing stated here yet',
     'statement_empty_body' => 'Add the statement and where its action goes. The figures beside it come from the register.',
 ];

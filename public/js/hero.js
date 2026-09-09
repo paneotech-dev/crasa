@@ -31,7 +31,6 @@
   var pauseButton = hero.querySelector('[data-hero-pause]');
   var pauseLabel = hero.querySelector('[data-hero-pause-label]');
   var counter = hero.querySelector('[data-hero-counter]');
-  var state = hero.querySelector('[data-hero-state]');
 
   var INTERVAL = 8000;
   var current = 0;
@@ -117,20 +116,8 @@
     }
   }
 
-  /* The state note, screen 02's last element in the controls bar. It says
-     what the carousel is doing, which is the difference between a paused
-     carousel and a broken one. Not a live region: the polite one already
-     announces the slide, and two announcements per change is one too many. */
-  function describe() {
-    if (!state) return;
-    var key = prefersReduced() ? 'still' : (pausedByUser ? 'paused' : 'rotating');
-    var text = state.getAttribute('data-label-' + key);
-    if (text) state.textContent = text;
-  }
-
   function start() {
     stop();
-    describe();
     if (prefersReduced() || pausedByUser || hovered || focused) return;
     timer = window.setInterval(function () { show(current + 1, true); }, INTERVAL);
   }
@@ -176,12 +163,17 @@
     pauseButton.addEventListener('click', function () {
       pausedByUser = !pausedByUser;
       pauseButton.setAttribute('aria-pressed', pausedByUser ? 'true' : 'false');
-      if (pauseLabel) {
-        pauseLabel.textContent = pausedByUser
-          ? pauseButton.getAttribute('data-label-play') || pauseLabel.textContent
-          : pauseButton.getAttribute('data-label-pause') || pauseLabel.textContent;
-      }
-      if (pausedByUser) { stop(); describe(); } else start();
+
+      /* Both names move together. The visible one is a single word; the
+         accessible one says what is being paused, which is what the state
+         note used to carry for a reader who cannot see the control. Each
+         accessible name contains its visible label, per SC 2.5.3. */
+      var visible = pauseButton.getAttribute(pausedByUser ? 'data-label-play' : 'data-label-pause');
+      var spoken = pauseButton.getAttribute(pausedByUser ? 'data-aria-play' : 'data-aria-pause');
+
+      if (pauseLabel && visible) pauseLabel.textContent = visible;
+      if (spoken) pauseButton.setAttribute('aria-label', spoken);
+      if (pausedByUser) stop(); else start();
     });
   }
 

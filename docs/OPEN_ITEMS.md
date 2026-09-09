@@ -817,3 +817,39 @@ comment saying so.
 
 Nothing about the data changed. `is_sample` is untouched on 18 models,
 `content:strip-samples` is unchanged, and `data:check` still runs nightly.
+
+---
+
+## Decision: the hero's state note is removed
+
+*Taken 9 September 2026. Disclosed variation from screen 02.*
+
+Screen 02 closes the carousel's controls bar with a counter and then a note
+on what the carousel is doing — "font-size:13px;color:#B9C2D0" after the
+`margin-left:auto`. The counter stays. The note is gone.
+
+It narrated the control's own behaviour back to a reader who could already
+see the control: three buttons, three numbered dots, a counter, and then a
+sentence saying the thing rotates. What it genuinely carried was for a
+reader who cannot see the bar, and that belongs on the control itself, where
+it is announced at the moment the reader reaches it rather than sitting in
+a paragraph they may never land on.
+
+So the pause button now names its own action. The visible label stays one
+word and the accessible name says what stops:
+
+| Locale | Visible | Accessible |
+|---|---|---|
+| en | Pause / Resume | Pause rotation / Resume rotation |
+| fr | Pause / Reprendre | Pause de la rotation / Reprendre la rotation |
+| pt | Pausa / Retomar | Pausa da rotação / Retomar a rotação |
+
+Both names swap together when the button is pressed. Each accessible name
+contains its visible label, which SC 2.5.3 requires so that a speech-input
+user can say what they see; the first attempt failed that in French and
+Portuguese, where "Interrompre la rotation" does not contain "Pause". A test
+now checks the containment in all three locales rather than trusting the
+translation.
+
+"Play" became "Resume" in the process. It is better English for a carousel
+and it is what makes "Resume rotation" satisfy 2.5.3.

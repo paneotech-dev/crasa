@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\IndicatorValue;
 use App\Models\Publication;
+use App\Support\Locales;
 use Database\Seeders\IndicatorSeeder;
 use Database\Seeders\IndicatorValueSeeder;
 use Database\Seeders\PublicationSeeder;
@@ -251,16 +252,20 @@ class HeroCarouselTest extends TestCase
         );
     }
 
-    public function test_the_bar_carries_a_counter_and_a_state_note(): void
+    public function test_the_bar_carries_a_counter_but_no_state_note(): void
     {
-        // Screen 02 closes the bar with a counter in --f-admin at 13.5px
-        // and a note on what the carousel is doing. The dots say which
-        // slide is current by shape; the counter says it in figures.
+        // Screen 02 closes the bar with a counter and then a note on what
+        // the carousel is doing. The counter stays: the dots say which
+        // slide is current by shape, the counter says it in figures.
+        //
+        // The state note is removed on a ruling of 9 September 2026 and is
+        // a disclosed variation. It narrated the control's behaviour back
+        // to a reader who could see the control.
         $html = $this->home();
 
         $this->assertMatchesRegularExpression('/data-hero-counter[^>]*>1 \/ 3</', $html);
-        $this->assertStringContainsString('data-hero-state', $html);
-        $this->assertStringContainsString('data-label-paused', $html);
+        $this->assertStringNotContainsString('data-hero-state', $html);
+        $this->assertStringNotContainsString('b-hero__state', $html);
 
         // And the dots are numbered, as the screen loops "{{ d.num }}".
         foreach ([1, 2, 3] as $n) {
@@ -269,6 +274,42 @@ class HeroCarouselTest extends TestCase
                 $html,
                 "Dot {$n} is not numbered.",
             );
+        }
+    }
+
+    public function test_the_pause_button_says_what_it_pauses(): void
+    {
+        // With the state note gone, "Pause" alone would tell a screen
+        // reader nothing about what stops. Both names move together when
+        // the button is pressed, and each accessible name contains its
+        // visible label, which SC 2.5.3 requires.
+        $html = $this->home();
+
+        $this->assertMatchesRegularExpression(
+            '/data-hero-pause[^>]*aria-label="Pause rotation"/s',
+            $html,
+        );
+        $this->assertStringContainsString('data-aria-play="Resume rotation"', $html);
+
+        $js = $this->script();
+        $this->assertStringContainsString("setAttribute('aria-label', spoken)", $js);
+    }
+
+    public function test_every_locale_keeps_its_visible_label_inside_its_accessible_name(): void
+    {
+        // SC 2.5.3, Label in Name. A speech-input user says what they see.
+        // The first attempt at this failed in French and Portuguese:
+        // "Interrompre la rotation" does not contain "Pause".
+        foreach (Locales::all() as $locale => $ignored) {
+            $strings = require base_path("lang/{$locale}/blocks.php");
+
+            foreach ([['hero_pause', 'hero_pause_action'], ['hero_play', 'hero_play_action']] as [$visible, $spoken]) {
+                $this->assertNotFalse(
+                    mb_stripos($strings[$spoken], $strings[$visible]),
+                    "{$locale}: the accessible name \"{$strings[$spoken]}\" does not contain "
+                    ."the visible label \"{$strings[$visible]}\".",
+                );
+            }
         }
     }
 }

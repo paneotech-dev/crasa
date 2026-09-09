@@ -381,23 +381,36 @@
                 </svg>
             </button>
 
+            {{-- The accessible name says what is being paused; the visible
+                 label stays one word. "Pause" alone told a screen reader
+                 nothing about what would stop, and the state note that used
+                 to supply that context is gone.
+
+                 Both names contain their visible label, which SC 2.5.3
+                 requires: "Pause rotation" contains Pause, "Resume
+                 rotation" contains Resume. That is why the second word is
+                 Resume rather than Play. --}}
             <button type="button" class="b-hero__pause" data-hero-pause aria-pressed="false"
+                    aria-label="{{ __('blocks.hero_pause_action') }}"
                     data-label-pause="{{ __('blocks.hero_pause') }}"
-                    data-label-play="{{ __('blocks.hero_play') }}">
+                    data-label-play="{{ __('blocks.hero_play') }}"
+                    data-aria-pause="{{ __('blocks.hero_pause_action') }}"
+                    data-aria-play="{{ __('blocks.hero_play_action') }}">
                 <span data-hero-pause-label>{{ __('blocks.hero_pause') }}</span>
             </button>
 
             {{-- Screen 02 closes the bar with a counter in --f-admin at
-                 13.5px and a note on the state, pushed right by
-                 margin-left:auto. The dots say which slide is current by
-                 shape; the counter says it in figures, which is what a
-                 reader glances at rather than counts. --}}
+                 13.5px and, after it, a note on the state. The counter is
+                 kept: the dots say which slide is current by shape, the
+                 counter says it in figures.
+
+                 The state note is removed, on a ruling of 9 September 2026.
+                 Disclosed variation from screen 02. It narrated the
+                 control's own behaviour back to a reader who could see the
+                 control, and what it carried for a reader who could not is
+                 now in the pause button's accessible name, where it belongs
+                 and where it is announced at the moment it matters. --}}
             <p class="b-hero__counter" data-hero-counter aria-hidden="true">1 / {{ $rendered->count() }}</p>
-            <p class="b-hero__state" data-hero-state
-               data-label-rotating="{{ __('blocks.hero_state_rotating') }}"
-               data-label-paused="{{ __('blocks.hero_state_paused') }}"
-               data-label-still="{{ __('blocks.hero_state_still') }}"
-            >{{ __('blocks.hero_state_rotating') }}</p>
         </div>
 
         {{-- Slide changes are announced here, politely, so a screen reader
