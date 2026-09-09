@@ -47,7 +47,13 @@
 
 .b__heading { margin: 0 0 var(--s-3); }
 .b__intro { font-size: var(--t-lead-size); line-height: var(--t-lead-line); color: var(--c-charcoal); max-width: 58ch; margin: 0 0 var(--s-6); }
-.b__eyebrow { font-size: var(--t-eyebrow-size); font-weight: var(--t-eyebrow-weight); color: var(--c-green-dark); margin-bottom: var(--s-2); }
+/* Screen 02, section eyebrow:
+     font-size:13px;font-weight:600;letter-spacing:.14em;
+     text-transform:uppercase;color:var(--c-green-dark);
+     margin-bottom:var(--s-3)
+   Everything but the letterform. The tracked-caps ruling wins; see
+   docs/OPEN_ITEMS.md. */
+.b__eyebrow { font-size: var(--t-eyebrow-size); font-weight: var(--t-eyebrow-weight); color: var(--c-green-dark); margin-bottom: var(--s-3); }
 
 /* Empty states --------------------------------------------------------- */
 /* Never blank space. Every empty state names what is missing and offers the
@@ -166,7 +172,11 @@
 
 .b-hero__copy { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
 
-.b-hero__eyebrow { font-size: var(--t-eyebrow-size); font-weight: 600; color: var(--c-green-light); margin-bottom: var(--s-4); }
+/* Screen 02, hero eyebrow:
+     font-size:13px;font-weight:600;letter-spacing:.14em;
+     text-transform:uppercase;color:var(--c-green-light);
+     margin-bottom:var(--s-5) */
+.b-hero__eyebrow { font-size: var(--t-eyebrow-size); font-weight: 600; color: var(--c-green-light); margin-bottom: var(--s-5); margin-top: 0; }
 
 .b-hero__headline {
   font-family: var(--f-head);

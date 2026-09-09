@@ -19,12 +19,30 @@ class CountryFactory extends Factory
     public function definition(): array
     {
         return [
-            'iso_code' => $this->faker->unique()->lexify('??'),
+            /*
+             * unique() is unique to this factory instance, and the fourteen
+             * real member states are already in the table when a test seeds
+             * them. Two letters is 676 codes, so a collision with a seeded
+             * one is a one-in-fifty flake that only shows up in CI. The
+             * taken codes are excluded explicitly.
+             */
+            'iso_code' => $this->unusedIsoCode(),
             'name' => $this->faker->unique()->country(),
             'official_languages' => $this->faker->randomElement(['en', 'fr', 'pt', 'en,fr']),
             'joined_at' => null,
             'flag_path' => null,
             'hero_image_path' => null,
         ];
+    }
+
+    private function unusedIsoCode(): string
+    {
+        $taken = Country::query()->pluck('iso_code')->map('strtolower')->all();
+
+        do {
+            $code = $this->faker->lexify('??');
+        } while (in_array($code, $taken, true));
+
+        return $code;
     }
 }

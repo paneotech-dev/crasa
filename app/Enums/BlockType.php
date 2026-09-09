@@ -57,7 +57,7 @@ enum BlockType: string
     public function translatableFields(): array
     {
         return match ($this) {
-            self::Hero => ['headline', 'subhead', 'cta_label'],
+            self::Hero => ['eyebrow', 'headline', 'subhead', 'cta_label'],
             self::KeyFigures => ['heading'],
             self::Pillars => ['heading', 'intro'],
             self::RichText => ['heading', 'body'],
@@ -69,6 +69,23 @@ enum BlockType: string
             self::CallToAction => ['headline', 'body', 'cta_label'],
             self::SocialFeed => ['heading'],
             self::DocumentList => ['heading'],
+        };
+    }
+
+    /**
+     * The field whose absence means this block has nothing to show.
+     *
+     * Not the same as the first translatable field. A hero with an eyebrow
+     * and no headline is an empty hero, and the renderer treats it that
+     * way; the eyebrow sits first in the editor because that is where it
+     * sits on the page.
+     */
+    public function primaryField(): ?string
+    {
+        return match ($this) {
+            self::Hero, self::CallToAction => 'headline',
+            self::RichText => 'body',
+            default => $this->translatableFields()[0] ?? null,
         };
     }
 

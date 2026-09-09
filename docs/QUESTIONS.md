@@ -108,27 +108,20 @@ sound authorisation layer.
 
 ---
 
-## 6. Tracked caps in the hero conflict with your own carve-out
+## 6. Tracked caps — ANSWERED 2026-09-09
 
-**Question:** does the hero eyebrow keep its tracked caps?
+**Answer: the ruling wins, in both places.** Sentence case for the hero
+eyebrow and for back office table headers. Footer column headings remain the
+only carve-out.
 
-Screen 02 sets the hero eyebrow in tracked uppercase. Your ruling says the
-footer column headings are the only exception, and names section eyebrows
-explicitly as not exempt.
+Both are logged in `docs/OPEN_ITEMS.md` as disclosed variations, because
+screens 02 and 09 both draw tracked caps and CRASA has seen them.
 
-**Recommendation:** the ruling should win, as it did for contrast. It is
-later than the screen and it is unambiguous.
-
-**Done in the meantime:** the hero renders no eyebrow at all rather than
-choosing between them. The headline carries the slide, which is what the
-approved copy does anyway.
-
-**Same question, second place it bites (added 2026-09-09).** Screen 09 sets
-every column header in the back office in tracked caps, on every table it
-draws, light and dark. Your ruling names table headers as excluded in terms.
-The ruling has been followed there too, for consistency with the answer
-above rather than because the second case is different: the headers keep the
-screen's size, weight and quiet ink and lose only the letterform. It is one
-rule in `public/css/admin.css` either way. **One answer settles both.**
+Done: `.b-hero__eyebrow` and `.b__eyebrow` keep the screens' size, weight,
+colour and spacing and drop `letter-spacing` and `text-transform`. The hero
+eyebrow, which had been rendering as nothing while the question was open, now
+carries the client-supplied copy in all three languages.
+`.a-table th[scope="col"]` was already changed under the same reasoning.
 
 ---
+

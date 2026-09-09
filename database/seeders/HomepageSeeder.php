@@ -182,6 +182,9 @@ class HomepageSeeder extends Seeder
             'image' => 'hero',
             'cta_url' => '/publications',
         ], fn (string $l) => [
+            // Sentence case, per the tracked-caps ruling. The screen's copy
+            // is client-supplied and already in all three languages.
+            'eyebrow' => $t[$l]['eyebrow'],
             'headline' => $t[$l]['headline'],
             'subhead' => $t[$l]['subtext'],
             'cta_label' => $t[$l]['primaryAction'],

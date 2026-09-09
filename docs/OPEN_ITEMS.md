@@ -343,31 +343,57 @@ back office is numbered.
 
 ---
 
-## Disclosed variation: tracked caps on back office table headers
+## Disclosed variation: tracked caps, resolved 2026-09-09
 
-**CLAUDE.md carves tracked caps out for the footer column headings only, and
-names table headers as excluded.** Screen 09 sets every column header in the
-back office in tracked caps:
+**Ruled: the ruling wins, in both places. Sentence case for the hero eyebrow
+and for back office table headers. Footer column headings remain the only
+carve-out.**
+
+Both are departures from an approved screen and CRASA has seen both screens,
+so both are disclosed here.
+
+### 1. The hero eyebrow, screen 02
+
+```
+font-size:13px;font-weight:600;letter-spacing:.14em;
+text-transform:uppercase;color:var(--c-green-light);
+margin-bottom:var(--s-5)
+```
+
+Delivered as `.b-hero__eyebrow`: 13px, weight 600, `--c-green-light`,
+`margin-bottom: var(--s-5)`. The size, the weight, the colour and the spacing
+are the screen's. `letter-spacing` and `text-transform` are dropped.
+
+The same treatment applies to the section eyebrow the screen draws in
+`--c-green-dark` with `margin-bottom:var(--s-3)`, delivered as `.b__eyebrow`.
+
+The eyebrow itself is back. It had been rendered as nothing at all while the
+question was open, which was the reversible option; it now carries the
+client-supplied copy in all three languages.
+
+### 2. Back office table headers, screen 09
 
 ```
 font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
 font-weight:700;color:var(--c-slate)
 ```
 
-on every table it draws, light and dark.
+Delivered as `.a-table th[scope="col"]`: 12px, weight 700, the quiet ink, and
+the rule beneath. Only the letterform changes, so a header still reads as a
+header.
 
-The same conflict was already raised for the hero eyebrow, as question 6 in
-docs/QUESTIONS.md, and the position taken there was that the ruling wins:
-it is later than the screen and it is unambiguous. **The same answer is
-taken here rather than the opposite one on the same question.** The headers
-keep everything else the screen sets — the size, the weight 700, the quiet
-ink, the rule beneath — so a header still reads as a header. Only the
-letterform changes.
+### Why both, and not one of each
 
-One rule in `public/css/admin.css` flips it back if the answer comes the
-other way. Added to question 6.
+Taking the ruling for the hero and the screen for the table would have been
+arbitrary: it is one rule, stated once, and the two cases differ only in
+which surface they sit on. The carve-out in CLAUDE.md names section eyebrows
+and table headers as excluded in terms.
+
+**Footer column headings stay the only place tracked caps are used**, at
+12px, weight 700, `letter-spacing: .1em`, as drawn in screen 02.
 
 ---
+
 
 ## Superseded: the contrast finding that produced the above
 

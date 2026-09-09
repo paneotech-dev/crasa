@@ -452,4 +452,5 @@ return [
     'resourcenote_enquiries' => 'Messages sent through the contact form. Read and answered, never edited.',
     'hint_dismissed' => 'The introduction is closed. It stays on the help page.',
     'hints_restored' => 'The introduction is showing again.',
+    'field_eyebrow' => 'Eyebrow',
 ];

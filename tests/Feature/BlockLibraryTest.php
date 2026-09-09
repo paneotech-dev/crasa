@@ -109,7 +109,7 @@ class BlockLibraryTest extends TestCase
 
             if ($type->translatableFields() !== []) {
                 $this->assertStringContainsString(
-                    strtoupper($locale).' '.$type->translatableFields()[0],
+                    strtoupper($locale).' '.$type->primaryField(),
                     $html,
                     $type->value.' did not render its '.$locale.' text.'
                 );
@@ -124,7 +124,9 @@ class BlockLibraryTest extends TestCase
             $this->markTestSkipped('No translatable fields.');
         }
 
-        $field = $type->translatableFields()[0];
+        // The field that carries the block, not merely its first one: a
+        // hero with an eyebrow and no headline is an empty hero.
+        $field = $type->primaryField();
         $block = $this->block($type, $type->defaultSettings(), ['en' => [$field => 'English only']]);
 
         app()->setLocale('pt');

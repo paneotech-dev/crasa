@@ -452,4 +452,5 @@ return [
     'resourcenote_enquiries' => 'Mensagens enviadas pelo formulário de contacto. Lidas e respondidas, nunca editadas.',
     'hint_dismissed' => 'A introdução foi fechada. Continua na página de ajuda.',
     'hints_restored' => 'A introdução voltou a ser mostrada.',
+    'field_eyebrow' => 'Antetítulo',
 ];

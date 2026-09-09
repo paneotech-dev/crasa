@@ -17,6 +17,7 @@
     // The block's own headline is always the first slide, so a hero with no
     // rotation configured is simply a one-slide carousel.
     $primary = [
+        'eyebrow' => $block->translate('eyebrow'),
         'headline' => $block->translate('headline'),
         'subhead' => $block->translate('subhead'),
         'cta_label' => $block->translate('cta_label'),
@@ -26,6 +27,7 @@
 
     $rendered = collect([$primary])->concat(
         $slides->map(fn ($slide, $i) => [
+            'eyebrow' => $block->translate('slide_'.$i.'_eyebrow'),
             'headline' => $block->translate('slide_'.$i.'_headline'),
             'subhead' => $block->translate('slide_'.$i.'_subhead'),
             'cta_label' => $block->translate('slide_'.$i.'_cta_label'),
@@ -113,6 +115,18 @@
 
             <div class="b-hero__inner">
                 <div class="b-hero__copy">
+                    @if ($slide['eyebrow'])
+                        {{-- Sentence case. Screen 02 sets this in tracked
+                             caps; the ruling in CLAUDE.md excludes section
+                             eyebrows and wins. Everything else the screen
+                             sets is kept: 13px, weight 600, --c-green-light,
+                             margin-bottom var(--s-5). Disclosed variation,
+                             logged in docs/OPEN_ITEMS.md. --}}
+                        <p class="b-hero__eyebrow" @if ($slide['eyebrow']->isFallback()) lang="{{ $slide['eyebrow']->locale }}" @endif>
+                            {{ $slide['eyebrow']->value }}
+                        </p>
+                    @endif
+
                     @if ($index === 0)
                         <h1 class="b-hero__headline" @if ($slide['headline']->isFallback()) lang="{{ $slide['headline']->locale }}" @endif>
                             {{ $slide['headline']->value }}
