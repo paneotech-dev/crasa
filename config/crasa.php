@@ -9,6 +9,21 @@ return [
     'enquiry_recipient' => env('CRASA_ENQUIRY_RECIPIENT', 'crasa@crasa.org'),
 
     /*
+     * The platform's own timezone, for display.
+     *
+     * Storage stays UTC. app.timezone is what Laravel writes to the
+     * database with, and moving it would reinterpret every timestamp
+     * already stored as two hours later than it was.
+     *
+     * This is the other half: what a reader is shown. The Secretariat is in
+     * Gaborone and CRASA's fourteen member states span two hours, so a date
+     * formatted from a UTC instant showed yesterday to anybody in Gaborone
+     * between ten at night and midnight. Central Africa Time is where the
+     * Secretariat sits and where the workshops are held.
+     */
+    'timezone' => env('CRASA_TIMEZONE', 'Africa/Gaborone'),
+
+    /*
      * Search.
      *
      * ElasticSearch is named in the specifications and cannot run on this

@@ -28,7 +28,7 @@
 
     @if ($search)
         <form class="a-top__search" method="GET" action="{{ route('admin.search', ['locale' => $locale]) }}" role="search">
-            <label class="c-sr" for="admin-search">{{ __('admin.search_label') }}</label>
+            <label class="c-sr" for="admin-search">{{ __('admin.search_everything') }}</label>
             <x-shell-icon name="search" :size="17" class="a-top__searchicon" />
             <input class="a-top__field" type="search" id="admin-search" name="q"
                    value="{{ request()->routeIs('admin.search') ? request('q') : '' }}"
@@ -43,7 +43,7 @@
              in that language, so switching never loses the reader's place. --}}
         <div class="a-pills" role="group" aria-label="{{ __('admin.interface_language') }}">
             @foreach (\App\Support\Locales::all() as $code => $language)
-                <a class="a-pills__item @if ($code === $locale) is-current @endif"
+                <a @class(['a-pills__item', 'is-current' => $code === $locale])
                    href="{{ \App\Support\Locales::urlFor($code, request()) }}"
                    @if ($code === $locale) aria-current="true" @endif
                    lang="{{ $code }}">

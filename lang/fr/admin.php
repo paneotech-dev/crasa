@@ -677,4 +677,6 @@ return [
     'side_group_platform' => 'Plateforme',
 
     'stat_users_note' => ':n actifs',
+
+    'search_everything' => 'Rechercher dans l\'administration',
 ];

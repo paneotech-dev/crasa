@@ -57,12 +57,16 @@ class DashboardController extends Controller
             'activity' => $this->recentActivity(),
             'publications' => $this->publicationPage($request),
             /*
-             * The platform's configured timezone, not the server's.
-             * now() already honours app.timezone; the header was
-             * formatting a UTC instant, which showed yesterday to anybody
-             * in Gaborone before two in the morning.
+             * The platform's own timezone, not the server's and not UTC.
+             *
+             * app.timezone is UTC and stays UTC, because it is what Laravel
+             * writes to the database with and moving it would reinterpret
+             * every timestamp already stored. crasa.timezone is the other
+             * half: what a reader is shown. The header was formatting a UTC
+             * instant, so it read "9 September" to somebody in Gaborone for
+             * whom it was already the tenth.
              */
-            'today' => now()->timezone(config('app.timezone')),
+            'today' => now()->timezone(config('crasa.timezone')),
             // The Secretariat's only signal that the platform is not yet
             // clean, now that the public notices are gone.
             'sampleCounts' => SampleData::counts(),

@@ -369,7 +369,12 @@ class ShellTest extends TestCase
     {
         $html = $this->actingAs($this->administrator)->get('/en/admin')->assertOk()->getContent();
 
-        $expected = now()->timezone(config('app.timezone'))->translatedFormat('l j F Y');
+        // The platform's own timezone, not the server's and not UTC.
+        // Storage stays UTC; this is what a reader is shown.
+        $expected = now()->timezone(config('crasa.timezone'))->translatedFormat('l j F Y');
+
+        $this->assertSame('Africa/Gaborone', config('crasa.timezone'));
+        $this->assertSame('UTC', config('app.timezone'), 'Storage must stay UTC.');
 
         $this->assertStringContainsString($expected, $html);
     }
