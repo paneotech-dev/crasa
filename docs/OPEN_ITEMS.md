@@ -477,6 +477,33 @@ and table headers as excluded in terms.
 ---
 
 
+## Disclosed variation: two hero panel colours substituted, 2026-09-09
+
+Screen 02's data panel draws its bar track at `#0B1522` and its bar fill at
+`#2E9C6C`. Neither is a token in the approved foundations.
+
+Rather than promote two more literals, both take the nearest existing token:
+
+| Screen | Token used | Value | Difference |
+|---|---|---|---|
+| `#0B1522` | `--d-bg` | `#0B1220` | 3 on green, 2 on blue |
+| `#2E9C6C` | `--d-green` | `#2FA76F` | 1 on red, 11 on green, 3 on blue |
+
+Neither difference is visible, and both tokens already exist for exactly this
+purpose: they are the dark-surface set from screen 09, and the hero's navy
+band is a dark surface. Adding two tokens to record a difference nobody can
+see would grow the palette for nothing.
+
+Measured, not assumed: `--d-green` on `--d-bg` is 6.13:1, against the 3:1 that
+SC 1.4.11 asks of a non-text graphic. The bar states its own figure as text
+beside it in any case, so the bar is never the only carrier.
+
+The same panel's amber notice uses `--c-amber-dark` where the screen writes
+`#7A4606`, which is the substitution the comparator already made in section
+17 for the identical band.
+
+---
+
 ## Disclosed variation: three colour tokens added for the choropleth, 2026-09-09
 
 The approved foundations carry `--c-green-light` (`#E8F4EC`) and

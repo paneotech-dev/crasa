@@ -197,6 +197,83 @@
 .b-hero__actions { display: flex; flex-wrap: wrap; gap: var(--s-3); }
 .b-hero__aside { min-width: 0; }
 
+/* The hero's data panel ------------------------------------------------ */
+/* Screen 02, the slide with no photograph, verbatim:
+     background:var(--c-navy-mid);border:1px solid #2C3A55;
+     border-radius:var(--r-md);padding:var(--s-6)
+   #2C3A55 is --c-navy-line. */
+.b-hero__panel {
+  min-width: 0;
+  background: var(--c-navy-mid);
+  border: 1px solid var(--c-navy-line);
+  border-radius: var(--r-md);
+  padding: var(--s-6);
+}
+
+/* Screen 02 sets the panel title in tracked caps. The CLAUDE.md ruling
+   excludes eyebrows and wins, as it does for the hero eyebrow. Size,
+   weight, colour and spacing are the screen's. */
+.b-hero__panel-title {
+  font-size: 12px; font-weight: 700; color: var(--c-green-light);
+  margin: 0 0 var(--s-3);
+}
+/* font-size:13.5px;line-height:1.55;color:var(--c-sand);
+   margin-bottom:var(--s-5);max-width:44ch */
+.b-hero__panel-note {
+  font-size: 13.5px; line-height: 1.55; color: var(--c-sand);
+  margin: 0 0 var(--s-5); max-width: 44ch;
+}
+
+.b-hero__bars { display: flex; flex-direction: column; gap: var(--s-4); }
+.b-hero__bar { min-width: 0; }
+.b-hero__bar-head { display: flex; justify-content: space-between; gap: var(--s-3); margin-bottom: 6px; min-width: 0; }
+.b-hero__bar-name { font-size: 14.5px; color: var(--c-cream); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.b-hero__bar-value {
+  font-family: var(--f-admin); font-size: 14.5px; font-weight: 600;
+  color: var(--c-white); flex: none; font-variant-numeric: tabular-nums;
+}
+
+/* height:10px;background:#0B1522;border-radius:2px;overflow:hidden, and
+   the fill background:#2E9C6C.
+
+   Both are substituted with the nearest existing tokens rather than
+   promoted to new ones: --d-bg is #0B1220 against the screen's #0B1522,
+   and --d-green is #2FA76F against #2E9C6C. Both differences are under
+   four units on one channel and neither is visible; adding two tokens for
+   that would grow the palette for nothing. Logged in docs/OPEN_ITEMS.md.
+
+   The screen scales its widths by /1.75 because its values run past 100.
+   These are percentages of a register, so the width is the value. */
+.b-hero__bar-track { height: 10px; background: var(--d-bg); border-radius: 2px; overflow: hidden; }
+.b-hero__bar-fill { display: block; height: 100%; background: var(--d-green); border-radius: 2px; }
+
+/* The counts. Screen 08's band puts these under its own standfirst at
+   36px Lora on --c-white with a 13.5px --c-sand label; at panel width they
+   take the smaller step. Each one is a link to what it counts. */
+.b-hero__counts {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: var(--s-4); margin: var(--s-5) 0 0;
+  border-top: 1px solid var(--c-navy-line); padding-top: var(--s-4);
+}
+.b-hero__counts dd { margin: 0; font-family: var(--f-head); font-size: 28px; font-weight: 600; color: var(--c-white); line-height: 1; }
+.b-hero__counts dd a { color: var(--c-white); text-decoration: none; }
+.b-hero__counts dd a:hover, .b-hero__counts dd a:focus-visible { color: var(--c-green-light); text-decoration: underline; text-underline-offset: 4px; }
+.b-hero__counts dt { font-size: 13.5px; line-height: 1.4; color: var(--c-sand); margin-top: 6px; }
+
+/* rgba(194,113,12,.14) ground, 1px solid #7A4606, 4px amber left edge.
+   The same band the comparator carries, and one of three such edges on the
+   platform. Each one stops work. */
+.b-hero__panel-notice {
+  margin: var(--s-5) 0 0;
+  background: rgba(194, 113, 12, .14);
+  border: 1px solid var(--c-amber-dark);
+  border-left: 4px solid var(--c-amber);
+  border-radius: var(--r-sm);
+  padding: var(--s-3) var(--s-4);
+  font-size: 13.5px; line-height: 1.5; color: var(--c-amber-light);
+}
+.b-hero__panel-notice strong { color: var(--c-white); }
+
 /* Controls. Always visible, never hover-revealed: meaning carried by hover
    alone is meaning a touch or keyboard reader never gets. */
 .b-hero__controls {

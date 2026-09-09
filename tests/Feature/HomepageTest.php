@@ -3,10 +3,16 @@
 namespace Tests\Feature;
 
 use App\Enums\BlockType;
+use App\Models\Country;
+use App\Models\Indicator;
+use App\Models\IndicatorValue;
 use App\Models\NewsItem;
 use App\Models\Page;
 use App\Models\Publication;
+use App\Models\Sector;
+use App\Support\HeroPanel;
 use App\Support\Locales;
+use Database\Seeders\IndicatorSeeder;
 use Database\Seeders\NewsroomSeeder;
 use Database\Seeders\PublicationSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -159,6 +165,120 @@ class HomepageTest extends TestCase
         // on a slide with no photograph, and the headline.
         $this->assertStringContainsString('b-hero__weave', $band);
         $this->assertStringContainsString('b-hero__headline', $band);
+    }
+
+    /**
+     * The panel screen 02 draws in the second column of a slide with no
+     * photograph. Its absence was the gap that made the band read thin at
+     * laptop widths, where the copy has stopped filling the row.
+     */
+    public function test_the_hero_carries_the_data_panel_the_screen_draws(): void
+    {
+        $this->seed(IndicatorSeeder::class);
+        $this->seedIndicatorValues();
+
+        $html = $this->get('/en')->assertOk()->getContent();
+        $band = substr($html, 0, strpos($html, 'b-figures__grid'));
+
+        $this->assertStringContainsString('b-hero__panel', $band);
+
+        // One bar per sector, each stating its own figure as text. A bar a
+        // reader cannot read a number off is a picture of a proportion.
+        foreach (Sector::pluck('name') as $sector) {
+            $this->assertStringContainsString($sector, $band, $sector.' has no bar in the hero panel.');
+        }
+
+        $this->assertMatchesRegularExpression('~b-hero__bar-value">\d+%<~', $band);
+        $this->assertMatchesRegularExpression('~b-hero__bar-fill" style="width: \d+%"~', $band);
+    }
+
+    /**
+     * Every figure in the panel is computed. Screen 08's own band carries
+     * "350M+ citizens served", which is a number nobody has sourced for us.
+     * One invented figure makes every real one on the page unusable.
+     */
+    public function test_every_figure_in_the_hero_panel_is_computed(): void
+    {
+        $this->seed(IndicatorSeeder::class);
+        $this->seedIndicatorValues();
+
+        $panel = HeroPanel::build();
+
+        foreach ($panel['bars'] as $bar) {
+            $this->assertSame(
+                round($bar['filed'] / $bar['expected'] * 100).'%',
+                $bar['value'],
+                'A hero bar states a figure it did not compute.'
+            );
+        }
+
+        $this->assertSame((string) Country::count(), $panel['counts'][0]['value']);
+        $this->assertStringNotContainsString('350M', $this->get('/en')->getContent());
+    }
+
+    /**
+     * The counts under the bars go where they point, like every other count
+     * on the platform.
+     */
+    public function test_the_panel_counts_link_to_what_they_count(): void
+    {
+        $this->seed(IndicatorSeeder::class);
+        $this->seedIndicatorValues();
+
+        $band = substr($this->get('/en')->getContent(), 0, strpos($this->get('/en')->getContent(), 'b-figures__grid'));
+
+        $this->assertMatchesRegularExpression(
+            '~b-hero__counts.*?href="http://localhost/en/members"~s',
+            $band
+        );
+    }
+
+    /**
+     * Per-member-state completeness ranks fourteen sovereign regulators by
+     * how well they have filed. That view lives behind an account on the
+     * completeness dashboard, and publishing it on the front page is
+     * CRASA's decision to take rather than ours.
+     */
+    public function test_the_panel_does_not_rank_member_states_on_the_public_homepage(): void
+    {
+        $this->seed(IndicatorSeeder::class);
+        $this->seedIndicatorValues();
+
+        $band = substr($this->get('/en')->getContent(), 0, strpos($this->get('/en')->getContent(), 'b-figures__grid'));
+        $bars = substr($band, strpos($band, 'b-hero__bars'), 2000);
+
+        foreach (Country::pluck('name') as $name) {
+            $this->assertStringNotContainsString(
+                '>'.$name.'<',
+                $bars,
+                $name.' is named in the hero panel bars, which rank filing performance.'
+            );
+        }
+    }
+
+    /**
+     * A panel with no sector carrying an indicator renders nothing rather
+     * than three empty tracks. An empty bar chart is worse than no bar
+     * chart: it reports zero where it means "not measured".
+     */
+    public function test_the_panel_is_absent_when_there_is_nothing_to_measure(): void
+    {
+        $html = $this->get('/en')->assertOk()->getContent();
+
+        $this->assertStringNotContainsString('b-hero__panel', $html);
+    }
+
+    private function seedIndicatorValues(): void
+    {
+        foreach (Indicator::active()->get() as $indicator) {
+            foreach (Country::limit(9)->get() as $country) {
+                IndicatorValue::factory()->create([
+                    'indicator_id' => $indicator->id,
+                    'country_id' => $country->id,
+                    'period' => '2025',
+                ]);
+            }
+        }
     }
 
     /* Empty states --------------------------------------------------------- */

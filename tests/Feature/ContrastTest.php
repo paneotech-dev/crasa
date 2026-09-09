@@ -99,6 +99,17 @@ class ContrastTest extends TestCase
             'dark dimmed ink on surface' => ['--d-ink-dim', '--d-surface'],
             'dark link on surface' => ['--d-green', '--d-surface'],
             'dark current section' => ['--c-white', '--d-current'],
+
+            // The hero's data panel, screen 02's slide with no photograph.
+            // A navy-mid panel inside a navy band is two dark grounds
+            // stacked, which is exactly where a text colour that cleared
+            // the outer one can fail the inner one.
+            'panel title on navy-mid' => ['--c-green-light', '--c-navy-mid'],
+            'panel note on navy-mid' => ['--c-sand', '--c-navy-mid'],
+            'panel bar name on navy-mid' => ['--c-cream', '--c-navy-mid'],
+            'panel bar value on navy-mid' => ['--c-white', '--c-navy-mid'],
+            'panel count label on navy-mid' => ['--c-sand', '--c-navy-mid'],
+            'panel notice body on navy-mid' => ['--c-amber-light', '--c-navy-mid'],
         ];
     }
 
@@ -126,6 +137,12 @@ class ContrastTest extends TestCase
             // exactly as in light. What is measured is the boundary of a
             // control on the dark surface.
             'control border on dark surface' => ['--c-border', '--d-surface'],
+
+            // The hero panel's bar against its own track. A bar is a
+            // non-text graphic carrying information, so 3:1 under
+            // SC 1.4.11. The figure is printed beside it as well, so the
+            // bar is never the only carrier.
+            'hero bar fill on track' => ['--d-green', '--d-bg'],
         ];
     }
 

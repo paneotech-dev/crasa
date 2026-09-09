@@ -70,4 +70,11 @@ return [
     'comparison_state_b' => 'Comparé à',
     'comparison_apply' => 'Comparer ces États',
     'comparison_status' => ':indicator, :a et :b.',
+    'hero_panel_title' => 'Le registre d\'indicateurs, transmis',
+    'hero_panel_note' => 'Part du registre transmise par les États membres, par secteur, pour les quatorze. Le comparateur ci-dessous reprend les mêmes chiffres État par État.',
+    'hero_bar_detail' => ':sector : :filed transmissions sur :expected attendues.',
+    'hero_panel_demo' => 'Ces transmissions ne sont pas vérifiées et sont présentées à titre de démonstration. L\'avis reste affiché jusqu\'à confirmation de chaque valeur par le régulateur national concerné.',
+    'hero_count_members' => 'Régulateurs membres',
+    'hero_count_indicators' => 'Indicateurs suivis',
+    'hero_count_publications' => 'Publications',
 ];

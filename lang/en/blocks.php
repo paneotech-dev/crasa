@@ -75,4 +75,11 @@ return [
     'comparison_state_b' => 'Compared with',
     'comparison_apply' => 'Compare these',
     'comparison_status' => ':indicator, :a and :b.',
+    'hero_panel_title' => 'The indicator register, filed',
+    'hero_panel_note' => 'How much of the register member states have returned, by sector, across all fourteen. The comparator below reads the same figures state by state.',
+    'hero_bar_detail' => ':sector: :filed of :expected expected returns filed.',
+    'hero_panel_demo' => 'These returns are unverified and are shown to demonstrate the platform. The notice stays until each value is confirmed by its national regulator.',
+    'hero_count_members' => 'Member regulators',
+    'hero_count_indicators' => 'Indicators tracked',
+    'hero_count_publications' => 'Publications',
 ];

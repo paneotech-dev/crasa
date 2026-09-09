@@ -162,11 +162,89 @@
                     @endif
                 </div>
 
-                {{-- No placeholder panel. A grey box reading "photograph
-                     to follow" on the first screen of a treaty body's site
-                     tells a regulator the site is unfinished, which is a
-                     worse first sentence than the headline is a good one.
-                     The empty half of the band is deliberate space. --}}
+                @if (! $image && $index === 0)
+                    {{-- The screen's own answer to a slide with no
+                         photograph. Screen 02 fills the second column with:
+
+                           <div style="min-width:0;background:var(--c-navy-mid);
+                                       border:1px solid #2C3A55;
+                                       border-radius:var(--r-md);padding:var(--s-6)">
+
+                         Leaving it empty was leaving out the thing that
+                         stops 640px of flat navy reading as a container
+                         waiting for content, and it read thinnest at laptop
+                         widths where the copy has stopped filling the row.
+
+                         Still no placeholder box. A grey panel saying
+                         "photograph to follow" on the first screen of a
+                         treaty body's site tells a regulator the site is
+                         unfinished. This one carries figures instead. --}}
+                    @php $panel = \App\Support\HeroPanel::build(); @endphp
+
+                    @if ($panel['bars'] !== [])
+                        <div class="b-hero__panel">
+                            {{-- Screen 02 sets this in tracked caps. The
+                                 ruling in CLAUDE.md excludes eyebrows and
+                                 wins, exactly as it does for the hero
+                                 eyebrow above. Everything else the screen
+                                 sets is kept. Logged in docs/OPEN_ITEMS.md. --}}
+                            <p class="b-hero__panel-title">{{ __('blocks.hero_panel_title') }}</p>
+                            <p class="b-hero__panel-note">{{ __('blocks.hero_panel_note') }}</p>
+
+                            <div class="b-hero__bars">
+                                @foreach ($panel['bars'] as $bar)
+                                    <div class="b-hero__bar">
+                                        <div class="b-hero__bar-head">
+                                            <span class="b-hero__bar-name">{{ $bar['name'] }}</span>
+                                            {{-- The figure as text. A bar a
+                                                 reader cannot read a number
+                                                 off is a picture of a
+                                                 proportion. --}}
+                                            <span class="b-hero__bar-value">{{ $bar['value'] }}</span>
+                                        </div>
+                                        <div class="b-hero__bar-track">
+                                            <span class="b-hero__bar-fill" style="width: {{ $bar['percent'] }}%"></span>
+                                        </div>
+                                        <span class="c-sr">{{ __('blocks.hero_bar_detail', [
+                                            'sector' => $bar['name'],
+                                            'filed' => $bar['filed'],
+                                            'expected' => $bar['expected'],
+                                        ]) }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            @if ($panel['counts'] !== [])
+                                <dl class="b-hero__counts">
+                                    @foreach ($panel['counts'] as $count)
+                                        <div>
+                                            <dd>
+                                                @if ($count['url'])
+                                                    <a href="{{ $count['url'] }}">{{ $count['value'] }}</a>
+                                                @else
+                                                    {{ $count['value'] }}
+                                                @endif
+                                            </dd>
+                                            <dt>{{ $count['label'] }}</dt>
+                                        </div>
+                                    @endforeach
+                                </dl>
+                            @endif
+
+                            @if ($panel['sample'])
+                                {{-- Screen 02 draws this band inside the
+                                     panel: rgba(194,113,12,.14) ground, a
+                                     4px amber left edge. One of three such
+                                     edges on the platform, and each one
+                                     stops work. --}}
+                                <p class="b-hero__panel-notice">
+                                    <strong>{{ __('indicators.demo_title') }}</strong>
+                                    {{ __('blocks.hero_panel_demo') }}
+                                </p>
+                            @endif
+                        </div>
+                    @endif
+                @endif
             </div>
         </div>
     @endforeach

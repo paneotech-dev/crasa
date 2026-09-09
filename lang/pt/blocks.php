@@ -70,4 +70,11 @@ return [
     'comparison_state_b' => 'Comparado com',
     'comparison_apply' => 'Comparar estes Estados',
     'comparison_status' => ':indicator, :a e :b.',
+    'hero_panel_title' => 'O registo de indicadores, comunicado',
+    'hero_panel_note' => 'Quanto do registo os Estados membros comunicaram, por setor, nos catorze. O comparador abaixo apresenta os mesmos valores Estado a Estado.',
+    'hero_bar_detail' => ':sector: :filed comunicações de :expected esperadas.',
+    'hero_panel_demo' => 'Estas comunicações não estão verificadas e são apresentadas para demonstrar a plataforma. O aviso permanece até que cada valor seja confirmado pelo respetivo regulador nacional.',
+    'hero_count_members' => 'Reguladores membros',
+    'hero_count_indicators' => 'Indicadores acompanhados',
+    'hero_count_publications' => 'Publicações',
 ];
