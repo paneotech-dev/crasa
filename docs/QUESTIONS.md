@@ -388,3 +388,31 @@ newsroom takes white instead, preserving the boundary the screen draws. The
 band itself is recorded as a gap in `docs/SCREEN_AUDIT.md`.
 
 ---
+## The chevron on link cards, and the card radius
+
+*Raised 9 September 2026. Resolved against the screens; recorded because
+both went against the brief.*
+
+**Chevron on link cards: rejected.** The brief asks for a circular chevron
+affordance on cards. Screen 02 draws two chevrons and neither is on a card:
+line 168 is the hero action and line 279 is the comparison action, both
+inside filled buttons. Its cards — the publication card at line 341, the
+news cards from 415 — carry no chevron and no arrow. The affordance there is
+the whole card being the target, which the build already does with a
+stretched pseudo-element on the title link, plus a border change on hover.
+Adding a chevron to every card would also collide with the standing rule
+against an arrow appended to link text.
+
+**Card radius: --r-md, not --r-lg.** The brief asks for roughly 12px, which
+is --r-lg at 14px, and the foundations summary in CLAUDE.md says "lg on
+cards and modals". The drawings say otherwise and they are unanimous: screen
+01 line 754 sets the news, publication and event cards to --r-md and gives
+--r-lg only to the modal at line 745; screen 02 declares a radius 125 times
+and --r-lg is not among them. Cards are now --r-md and --r-lg has no user on
+the public site, which is correct — there is no public modal.
+
+The comment in `public/css/tokens.css` has been corrected to match the
+drawings rather than the summary. If the summary is the intended rule and
+the screens are the error, this reverses in one commit.
+
+---

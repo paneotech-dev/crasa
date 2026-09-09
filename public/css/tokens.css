@@ -77,7 +77,14 @@
   --s-6:32px; --s-7:48px; --s-8:64px; --s-9:96px; --s-10:128px;
 
   /* Radius. These carry meaning: xs on inputs and table cells, sm on buttons,
-     md on panels, lg on cards and modals, pill on status badges only. */
+     md on panels and cards, lg on modals, pill on status badges only.
+
+     The foundations summary reads "lg on cards and modals". The drawings do
+     not: screen 01 line 754 sets the news, publication and event cards to
+     --r-md and gives --r-lg only to the modal at line 745, and screen 02
+     uses --r-lg nowhere at all across 125 radius declarations. The screens
+     govern, so cards are --r-md and --r-lg is the modal radius. Nothing on
+     the public site is a modal, so --r-lg currently has no users here. */
   --r-xs:2px; --r-sm:4px; --r-md:8px; --r-lg:14px; --r-pill:999px;
 
   /* Elevation. Three levels, used to encode hierarchy, not to decorate. */
