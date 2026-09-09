@@ -412,3 +412,209 @@ a privacy consequence and has not been taken.
 in the hero eyebrow and in back office table headers are the same conflict
 between your ruling and the approved screens. One answer settles both, and
 either answer is one CSS rule.
+
+---
+---
+
+# Long run, sections 17 to 23 — report
+
+**682 tests, 3713 assertions, all passing. Pint clean. Eight commits, each
+green before committing, none red at any point.**
+
+| # | Section | Commit |
+|---|---|---|
+| — | Question 6 answered: the ruling wins in both places | `b65daad` |
+| 17 | The regulatory comparator | `1c31c36` |
+| 18 | Submissions and e-Forms | `ff68a10` |
+| 19 | Bulk import and export | `946aaa3` |
+| 20 | Reports | `ab59144` |
+| 21 | Extranet, folders and the committee workspace | `97296e1` |
+| 22 | The SSO bridge, or the documented fallback | `2b97088` |
+| 23 | Events and delegate registration | `667ab3c` |
+
+**All seven sections were reached.** 121 routes: 66 public, 55
+administration.
+
+---
+
+## What remains unbuilt
+
+### From BUILD_SPEC
+
+| Item | State |
+|---|---|
+| Report builder and output (RP-12) | **Built**, section 20 |
+| SSO handoff and error states (IN-01) | **Built as the documented fallback**, section 22. The bridge itself waits on Form 3 |
+| Public events section (WS-07) | **Built**, section 23 |
+| Everything else in 3.2 | Built in earlier runs |
+
+Nothing in BUILD_SPEC section 3.2 is now outstanding except the SSO bridge
+itself, and that is blocked on a client dependency rather than on work.
+
+### From DATA_MODEL
+
+Everything in sections 2 to 7 is built. The tables added this run were
+`submissions`, `submission_values`, `submission_field_comments`,
+`submission_events`, `reports`, `folders`, `meetings`,
+`delegate_registrations` and `notifications`.
+
+Two schema corrections found by tests:
+
+- `indicator_values.confidence` gained **validated**, because a figure the
+  Secretariat has checked should not look like one a member state simply
+  typed. It is what the comparator's provenance badge reads.
+- `pages.status` gained **archived** in the previous run and is noted here
+  only because the same enum-rebuild migration pattern was reused.
+
+### Deliberately not built
+
+Nothing conversational, AI-powered, translation-assisting, or search-over-
+documents exists in this codebase. `is_machine_draft` is still set to true by
+**zero** lines in `app/`, and the test that walks the directory still passes.
+
+There is still exactly **one** notification class, `SubmissionStateChanged`,
+and it is about regulatory data. Two separate tests assert that, in sections
+18 and 23, because it is the seam through which delegate reminders would
+arrive.
+
+---
+
+## What CRASA must supply for the real SSO bridge
+
+**`docs/SSO_REQUIREMENTS.md` is written to be forwarded as it stands.** It
+is 154 lines, it asks for exactly what is needed and nothing else, and it
+says plainly that nothing is blocked if no answer comes.
+
+The seven items:
+
+1. **Which platform is the identity source** — the Extranet, the EMP, a
+   third system, or Entra ID / Google Workspace. And which is authoritative
+   if more than one.
+2. **Which protocol** — SAML 2.0, OpenID Connect, or neither.
+3. **The endpoints** — metadata URL, or entity ID, SSO URL, SLO URL and
+   signing certificate. For OIDC, the discovery document or issuer, endpoints,
+   JWKS, client ID and secret, and permitted scopes.
+4. **Which attribute is the stable identifier.** The document says why it
+   must not be the email address: people change addresses, and an email as a
+   primary key silently merges or orphans an account when they do.
+5. **Whether the identity provider may create accounts here.** This is the
+   one with a security consequence and it carries a recommendation: **no.**
+   Otherwise anyone the identity provider trusts becomes a user of a platform
+   holding country-scoped data and confidential committee papers, without
+   anyone at the Secretariat deciding so.
+6. **Two test accounts**, one member state and one Secretariat. A bridge
+   cannot be built against a provider nobody can sign into.
+7. **A named technical contact and the hours they answer in.** A bridge that
+   fails at nine in the morning in Gaborone is not a procurement ticket.
+
+It also carries the two values CRASA must allow-list — the callback URL
+`https://<host>/{locale}/sso/callback` and the proposed entity identifier —
+and states two things that do not change when the bridge lands: the password
+form stays, and two-factor still applies to administrators.
+
+---
+
+## The Secretariat's placeholder list
+
+`php artisan content:placeholders` prints this with the full note for each.
+**Ten blocks**, down from twelve: the comparator and events placeholders were
+deleted, not edited, as promised when they were created.
+
+| Page | Block | What is needed |
+|---|---|---|
+| home | Hero | Institutional photography, three images for the rotation |
+| about | Rich text | Governance: the AGM structure, the meeting cycle, current office holders |
+| about | Rich text | Executive Committee: size, election, terms, current chair and vice-chair |
+| about | Rich text | Secretariat: base, establishment, the Executive Secretary and functional roles |
+| about | Rich text | **Partnerships: client-supplied without exception** |
+| about | Rich text | Strategic plan: the current cycle, its priorities and its dates |
+| committees | Pillars | Terms of reference for the six committees, chairs and seats |
+| members | Rich text | Accession dates, and written consent from each authority to be listed |
+| privacy | Rich text | Privacy notice. Legal text, from CRASA and its counsel |
+| terms | Rich text | Terms of use. Legal text, from CRASA and its counsel |
+
+Two new items that are not blocks and so do not appear in that list:
+
+- **Committee mandates** now have somewhere to live: the workspace shows a
+  designed empty state naming what is missing rather than a blank panel.
+- **Meeting records.** The calendar and the events section are built and
+  empty. Nothing is seeded, because a fabricated Annual General Meeting date
+  on a regulator's platform is worse than an empty calendar.
+
+---
+
+## Underspecified, and what I did
+
+### Raised as question 7: screen 03 uses neither Chart.js nor Leaflet
+
+CLAUDE.md and the brief both name Chart.js for graphs and Leaflet for maps.
+**Screen 03 uses neither.** Its regional-view bars are DOM elements that each
+state their own figure, and its map is the `RegionMap` component in
+`mode="choropleth"`, the same inline SVG already built for the members page.
+
+I built what the screen draws, and gave three reasons in
+`docs/QUESTIONS.md`: a canvas chart needs a table equivalent to satisfy the
+accessibility clause and these bars already are one; a Leaflet map needs a
+tile provider, which is a third-party request from a regulator's browser on a
+platform whose pitch is that nothing is hotlinked; and screen 03 says in its
+own words that the screen "reads correctly as a printed page and under a
+screen reader", which a canvas and a slippy map both defeat.
+
+Swapping either in later is a change to one partial, because the data comes
+from `Comparison` rather than from the view.
+
+### Screen 18 draws more than the scope permits
+
+Not a question, because your instruction settles it: the website collects,
+the Event Management Platform manages. But the difference is worth stating.
+Screen 18 draws accommodation, nights required, dietary requirements and a
+transfer schedule. None is built, and the absence is enforced by tests that
+walk the column names, the form fields and the routes rather than by a
+comment. Logged as a disclosed variation.
+
+### The comparator's country scope
+
+`indicator_values` carries no country scope, and that is deliberate rather
+than an omission: it is the published regional dataset that the public
+comparator and the completeness matrix both read. A member state's
+unvalidated return lives in `submissions` until the Secretariat validates it.
+That separation is what keeps the public read simple and safe, and there is a
+test that submits a return and asserts the comparator still shows nothing.
+
+---
+
+## Three real defects the tests found
+
+**1. A member state representative could have briefed on any member state.**
+Screen 13's matrix grants `ExportReports` **conditionally**, and the report
+controller was treating that as an outright grant. Now a policy, with two
+rules: a country brief only for their own member state, and no indicator
+brief at all, because an indicator brief is by definition the figure across
+all fourteen and that is exactly what the condition withholds.
+
+**2. Regional folders were refused to member state representatives.**
+`FolderPolicy` read a null `country_id` as "not yours" rather than as
+"belongs to no one member state". The model's `countryScopeIncludesShared()`
+and `DocumentPolicy` both had it right; the new policy did not. All three
+now agree.
+
+**3. `CountryFactory` was flaky.** `lexify('??')` is unique per factory
+instance, but the fourteen real member states are already in the table when a
+test seeds them, so a collision with a seeded ISO code was a one-in-fifty
+failure that would have appeared in CI and nowhere else.
+
+Also, a route-ordering bug: `submissions/template.csv` was being matched as a
+submission called "template.csv".
+
+---
+
+## Question 6, resolved
+
+Sentence case for the hero eyebrow and for back office table headers.
+Footer column headings remain the only tracked-caps carve-out. Both are
+logged in `docs/OPEN_ITEMS.md` as disclosed variations, because screens 02
+and 09 both draw tracked caps and CRASA has seen them.
+
+The hero eyebrow is back. It had been rendering as nothing at all while the
+question was open, which left the homepage without a line the approved copy
+supplies in all three languages.
