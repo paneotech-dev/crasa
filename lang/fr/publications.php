@@ -40,4 +40,9 @@ return [
     'band_heading' => 'Lignes directrices, lois types et cadres de référence',
     'sector' => 'Secteur',
     'language' => 'Disponible en',
+    'available_in' => 'Disponible en',
+    'language_missing' => 'Non disponible',
+    'cite' => 'Citer ce document',
+    'cite_reference' => ':author (:year). :title. :url',
+    'cite_note' => 'L\'adresse ci-dessus est permanente. Une citation faite aujourd\'hui reste valable lorsque ce document est remplacé, et la page indique alors ce qui l\'a remplacé.',
 ];

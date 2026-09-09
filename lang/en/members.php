@@ -59,4 +59,8 @@ return [
     'map_select_state' => 'Or select a member state',
     'map_open_state' => 'Open',
     'map_enlarged' => 'Smallest member states, shown at larger scale',
+    'detail_language' => 'Working language',
+    'detail_established' => 'Authority established',
+    'detail_website' => 'Website',
+    'detail_unconfirmed' => 'These details have not yet been confirmed by this member state regulator.',
 ];

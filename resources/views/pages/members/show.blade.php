@@ -60,6 +60,15 @@
                 @endforeach
             </dl>
 
+            {{-- Confirmed by its own regulator, or not yet. A reader of a
+                 member state entry is entitled to know which, and a
+                 platform that showed unconfirmed details as though they
+                 were confirmed would be making a claim on that regulator's
+                 behalf. --}}
+            @unless ($authority?->isConfirmed())
+                <p class="c-note c-note--unconfirmed">{{ __('members.detail_unconfirmed') }}</p>
+            @endunless
+
             <dl class="c-meta">
                 <div>
                     <dt>{{ __('members.detail_iso') }}</dt>
@@ -81,6 +90,31 @@
                     <div>
                         <dt>{{ __('members.detail_joined') }}</dt>
                         <dd>{{ $country->joined_at->isoFormat('D MMMM YYYY') }}</dd>
+                    </div>
+                @endif
+
+                {{-- Screen 08 draws these three on its member profile.
+                     Working language is derived from a column that has been
+                     populated since the country seed; the website and the
+                     year established are collected by the confirmation
+                     session, so they appear as each member state confirms
+                     its own record. --}}
+                @if ($country->locales() !== [])
+                    <div>
+                        <dt>{{ __('members.detail_language') }}</dt>
+                        <dd>{{ collect($country->locales())->map(fn ($l) => \App\Support\Locales::nameOf($l))->implode(', ') }}</dd>
+                    </div>
+                @endif
+                @if ($authority?->established_year)
+                    <div>
+                        <dt>{{ __('members.detail_established') }}</dt>
+                        <dd>{{ $authority->established_year }}</dd>
+                    </div>
+                @endif
+                @if ($authority?->website)
+                    <div>
+                        <dt>{{ __('members.detail_website') }}</dt>
+                        <dd><a href="{{ $authority->website }}" rel="noopener">{{ parse_url($authority->website, PHP_URL_HOST) }}</a></dd>
                     </div>
                 @endif
             </dl>

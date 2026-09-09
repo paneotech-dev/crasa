@@ -59,4 +59,8 @@ return [
     'map_select_state' => 'Ou selecione um Estado membro',
     'map_open_state' => 'Abrir',
     'map_enlarged' => 'Estados membros mais pequenos, a maior escala',
+    'detail_language' => 'Idioma de trabalho',
+    'detail_established' => 'Autoridade criada em',
+    'detail_website' => 'Sítio web',
+    'detail_unconfirmed' => 'Estes dados ainda não foram confirmados pelo regulador deste Estado membro.',
 ];

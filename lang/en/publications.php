@@ -40,4 +40,9 @@ return [
     'band_heading' => 'Guidelines, model laws and frameworks',
     'sector' => 'Sector',
     'language' => 'Available in',
+    'available_in' => 'Available in',
+    'language_missing' => 'Not available',
+    'cite' => 'Cite this document',
+    'cite_reference' => ':author (:year). :title. :url',
+    'cite_note' => 'The address above is permanent. A citation made today still resolves when this document is superseded, and the page it opens says what replaced it.',
 ];

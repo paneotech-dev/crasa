@@ -112,6 +112,55 @@ class MemberPageTest extends TestCase
             ->assertSee('CRAN annual report 2024.');
     }
 
+    /**
+     * Screen 08 draws these on its member profile. Working language comes
+     * from a column populated since the country seed; the website and the
+     * year come from the confirmation session, so they appear as each
+     * member state confirms its own record.
+     */
+    public function test_the_profile_carries_the_fields_screen_08_draws(): void
+    {
+        $country = Country::where('iso_code', 'ao')->firstOrFail();
+        Authority::factory()->create([
+            'country_id' => $country->id,
+            'name' => 'Instituto Angolano das Comunicacoes',
+            'acronym' => 'INACOM',
+            'website' => 'https://www.inacom.gov.ao',
+            'established_year' => 1999,
+        ]);
+
+        $this->get('/en/members/ao')
+            ->assertOk()
+            ->assertSee('Working language')
+            // Angola works in Portuguese, from countries.official_languages.
+            ->assertSee('Portuguese')
+            ->assertSee('Authority established')
+            ->assertSee('1999')
+            ->assertSee('www.inacom.gov.ao');
+    }
+
+    /**
+     * A reader of a member state entry is entitled to know whether that
+     * state has vouched for what is on the page. Showing unconfirmed
+     * details as though they were confirmed makes a claim on a national
+     * regulator's behalf.
+     */
+    public function test_an_unconfirmed_profile_says_so_and_a_confirmed_one_does_not(): void
+    {
+        $country = Country::where('iso_code', 'bw')->firstOrFail();
+        $authority = Authority::factory()->create(['country_id' => $country->id]);
+
+        $this->get('/en/members/bw')->assertOk()->assertSee('not yet been confirmed');
+
+        $authority->update([
+            'is_sample' => false,
+            'confirmed_at' => now(),
+            'confirmed_by_name' => 'A delegate',
+        ]);
+
+        $this->get('/en/members/bw')->assertOk()->assertDontSee('not yet been confirmed');
+    }
+
     public function test_a_state_that_is_not_a_member_is_not_a_page(): void
     {
         // Madagascar and Seychelles are SADC members without a CRASA

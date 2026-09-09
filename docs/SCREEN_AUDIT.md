@@ -500,19 +500,80 @@ Twenty-four remain, and the list below is what is left of the priority order.
 
 ---
 
+## Deferred, with reasoning — decided 9 September
+
+Fourteen days. These are the gaps we are **not** closing before the workshop,
+each with the reason. Nothing here is closed by pretending it does not
+matter; each is a judgement about what a delegate will meet in Lilongwe.
+
+### Genuinely minor. CRASA will not raise these.
+
+| Gap | Screen | Why it can wait |
+|---|---|---|
+| Result layout toggle | 03, 07 | One layout is built and it is the right one for regulatory documents. A grid of covers helps a bookshop and not a library |
+| Sort results on the library | 07 | The library is filtered, not browsed at length, and it is ordered newest first — which is what a regulator wants nine times in ten. The comparator, where sorting matters, now sorts |
+| Week view | 12 | The month grid and the upcoming list cover the same ground. A week view of a calendar that averages two meetings a month shows one meeting or none |
+| Modal | 01 | Screen 01 draws one and nothing on the platform opens one: every destructive action confirms on its own page, which is better. Now documented rather than merely absent |
+| Iconography as a set | 01 | The library is honoured and every icon is Lucide; what is missing is one place collecting them. A tidiness gap with no user-facing effect |
+| Per-language cover image | 05 | Correct for a photograph, wrong for a document cover carrying set type — and CRASA has supplied no document covers in any language, so there is nothing to differ |
+
+### Real, and deferred on a reason.
+
+**Agenda, participants and workplan — screens 04 and 11.** The agenda is
+closest: `meetings.agenda` already exists as a column and is unused, so
+displaying it is small. Participants and the workplan need models that do not
+exist, and the workplan needs a decision about what a workplan item *is* —
+who owns one, what states it moves through, whether it is per committee or
+per cycle. That is a conversation with CRASA rather than a build, and the
+right place for it is the workshop.
+
+**Progressive web app — screen 15.** No manifest, no service worker, no
+offline page. It is worth having for delegates on hotel wifi and it is not
+worth shipping in a fortnight untested: a service worker that caches the
+wrong thing serves a stale page to a regulator and there is no way for them
+to tell. Deferred deliberately, and it is the first thing I would build with
+two more days.
+
+**Document viewer in the extranet — screen 04.** The mechanism exists on the
+public side and moving it is a day. It is deferred because downloading works
+and the demonstration script does not walk the extranet's document view.
+
+**Active filters summary — screen 07.** Real, and the chips already show
+which filters are active with a clear-all from the empty state. What is
+missing is a single place to see and undo four filters at once. A reader with
+four filters applied is an unusual reader.
+
+**Mentioned in the newsroom — screen 08.** The member profile shows
+publications and not news items mentioning that state. Needs a relation that
+does not exist. Small, and nobody has asked for it.
+
+**Analytics panels — screen 09.** No analytics source is provisioned and none
+is in the contract's technology stack. Adding one is a privacy decision as
+well as a build: the platform's own privacy notice currently says there is no
+analytics cookie on any page, and that is a claim worth keeping.
+
+**Calendar subscribe feed — screen 12.** Question 9. It needs a per-user
+token and that is a security decision.
+
+---
+
 ## What to work through with CRASA
 
 Ordered by what a delegate or a Secretariat user meets first.
 
 | # | Gap | Screen | Why it matters |
 |---|---|---|---|
-| 1 | Navigation builder | 14 | The Secretariat cannot change a menu without us. Contradicts the editability target screen 14 itself draws |
-| 2 | Member profile: mandate, location, representatives, contact, working language | 08 | The richest thing screen 08 draws. Working language is derivable today; three of the five need content from CRASA |
-| 3 | Related publications, available languages, share and cite | 07 | A document that will be quoted in a ministerial brief needs a citation |
-| 4 | Agenda, participants, workplan | 04, 11 | Two screens depend on the workplan, and it has no model. `meetings.agenda` already exists as a column |
-| 5 | Progressive web app | 15 | No manifest, no service worker, no offline page. Offline matters on hotel wifi in Lilongwe |
-| 6 | Document viewer in the extranet | 04 | The mechanism already exists on the public side |
-| 7 | Active filters summary | 07 | A reader with four filters applied has nowhere to see or undo them |
-| 8 | Analytics panels | 09 | Needs an analytics source, which is not in the stack |
-| 9 | Choice, upload and search as components | 01 | The select is done; these three are not collected |
-| 10 | Per-language cover image | 05 | Correct for a photograph, wrong for a document cover carrying set type |
+What is left after 9 September, in order.
+
+| # | Gap | Screen | Why it matters |
+|---|---|---|---|
+| 1 | Progressive web app | 15 | Offline matters on hotel wifi in Lilongwe. Deferred on time rather than on merit |
+| 2 | Workplan, and the decision behind it | 04, 11 | Two screens depend on it. What a workplan item *is* needs CRASA, and the workshop is the place to ask |
+| 3 | Agenda and participants on a meeting | 04 | `meetings.agenda` already exists as a column and is unused |
+| 4 | Document viewer in the extranet | 04 | The mechanism exists on the public side |
+| 5 | Member profile: mandate, location, representatives | 08 | All three need content only CRASA has. The confirmation session now collects the website, the year and the sectors |
+| 6 | Related publications | 07 | Screen 07 draws it; needs a relation that does not exist |
+| 7 | Active filters summary | 07 | Real, and only bites a reader with four filters applied |
+| 8 | Choice, upload and search as components | 01 | The select is collected; these three are not |
+| 9 | Mentioned in the newsroom | 08 | Needs a relation. Nobody has asked for it |
+| 10 | Analytics panels | 09 | A privacy decision as much as a build |

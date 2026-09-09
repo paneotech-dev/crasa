@@ -93,6 +93,53 @@
                         <p class="c-preview__note">{{ __('publications.served_here') }}</p>
                     </div>
                 </div>
+
+                {{-- "Available in", screen 07.
+
+                     A regulator who works in French needs to know before
+                     they download whether this document exists in French.
+                     Saying "English only" is more useful than letting them
+                     open it and find out, and a language that is missing is
+                     stated rather than left to be inferred from a list of
+                     one. --}}
+                <div class="c-languages">
+                    <h2 class="c-languages__title">{{ __('publications.available_in') }}</h2>
+                    <ul class="c-languages__list" role="list">
+                        @foreach (\App\Support\Locales::SUPPORTED as $code)
+                            @php $file = $publication->documents->firstWhere('locale', $code); @endphp
+                            <li @class(['c-languages__item', 'is-missing' => ! $file])>
+                                <span class="c-lang-badge">{{ strtoupper($code) }}</span>
+                                @if ($file)
+                                    <a href="{{ route('documents.download', ['locale' => app()->getLocale(), 'document' => $file->id]) }}">
+                                        {{ \App\Support\Locales::nameOf($code) }}
+                                    </a>
+                                    <span class="c-languages__size">{{ $file->readableSize() }}</span>
+                                @else
+                                    {{ \App\Support\Locales::nameOf($code) }}
+                                    <span class="c-languages__size">{{ __('publications.language_missing') }}</span>
+                                @endif
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                {{-- Share and cite, screen 07.
+
+                     A document that will be quoted in a ministerial brief
+                     needs a citation, and a reader who has to assemble one
+                     by hand assembles it differently every time. The
+                     permanent URL is the point: the slug never changes,
+                     because a citation has to keep resolving. --}}
+                <div class="c-cite">
+                    <h2 class="c-cite__title">{{ __('publications.cite') }}</h2>
+                    <p class="c-cite__reference">{{ __('publications.cite_reference', [
+                        'author' => __('site.acronym'),
+                        'year' => $publication->published_on->format('Y'),
+                        'title' => $publication->translated('title', $publication->slug),
+                        'url' => route('publications.show', ['locale' => app()->getLocale(), 'slug' => $publication->slug]),
+                    ]) }}</p>
+                    <p class="c-cite__note">{{ __('publications.cite_note') }}</p>
+                </div>
             @endif
 
             @if ($lineage->count() > 1)

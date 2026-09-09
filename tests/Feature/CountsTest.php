@@ -210,6 +210,44 @@ class CountsTest extends TestCase
         );
     }
 
+    /**
+     * Screen 07's document detail. A regulator who works in French needs to
+     * know before downloading whether the document exists in French, and a
+     * language that is missing is stated rather than left to be inferred
+     * from a list of one.
+     */
+    public function test_a_document_page_states_every_language_including_the_missing_ones(): void
+    {
+        $publication = Publication::listed()->whereHas('documents')->firstOrFail();
+
+        $html = $this->get('/en/publications/'.$publication->slug)->assertOk()->getContent();
+
+        $this->assertStringContainsString('Available in', $html);
+
+        foreach (['English', 'French', 'Portuguese'] as $language) {
+            $this->assertStringContainsString($language, $html, $language.' is not accounted for.');
+        }
+
+        // The ones it is not in say so.
+        $this->assertStringContainsString('Not available', $html);
+    }
+
+    /**
+     * A document that will be quoted in a ministerial brief needs a
+     * citation, and a reader assembling one by hand assembles it
+     * differently every time.
+     */
+    public function test_a_document_page_offers_a_citation_with_a_permanent_url(): void
+    {
+        $publication = Publication::listed()->firstOrFail();
+
+        $this->get('/en/publications/'.$publication->slug)
+            ->assertOk()
+            ->assertSee('Cite this document')
+            // The slug is permanent, which is the whole point of citing it.
+            ->assertSee('/en/publications/'.$publication->slug, false);
+    }
+
     /** @return array<int, int> */
     private function countsFrom(string $html): array
     {

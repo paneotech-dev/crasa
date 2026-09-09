@@ -40,4 +40,9 @@ return [
     'band_heading' => 'Orientações, leis-modelo e quadros de referência',
     'sector' => 'Setor',
     'language' => 'Disponível em',
+    'available_in' => 'Disponível em',
+    'language_missing' => 'Não disponível',
+    'cite' => 'Citar este documento',
+    'cite_reference' => ':author (:year). :title. :url',
+    'cite_note' => 'O endereço acima é permanente. Uma citação feita hoje continua a resolver quando este documento for substituído, e a página indica o que o substituiu.',
 ];

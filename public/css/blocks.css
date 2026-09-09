@@ -835,6 +835,14 @@
 .c-list-plain li { padding: var(--s-3) 0; border-bottom: 1px solid var(--c-sand); display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-3); align-items: baseline; }
 .c-list-plain__note { font-size: 13px; color: var(--c-slate); }
 .c-note { font-size: var(--t-small-size); color: var(--c-slate); margin: 0 0 var(--s-6); }
+/* Not an error and not an apology: a statement about who has vouched for
+   what is on the page. It clears itself when the regulator confirms. */
+.c-note--unconfirmed {
+  background: var(--c-amber-light); color: var(--c-amber-dark);
+  border-left: 3px solid var(--c-amber);
+  padding: var(--s-3) var(--s-4); border-radius: var(--r-sm);
+  max-width: 62ch;
+}
 
 /* Sortable column headings ---------------------------------------------- */
 /* A table heading in a data tool is a control everywhere else a regulator
@@ -1463,3 +1471,27 @@
   color: var(--c-slate);
   font-weight: 400;
 }
+
+/* Available in, and cite — screen 07's document detail ------------------- */
+.c-languages, .c-cite { margin: var(--s-6) 0; padding-top: var(--s-4); border-top: 1px solid var(--c-sand); }
+.c-languages__title, .c-cite__title { font-family: var(--f-admin); font-size: 13px; font-weight: 600; color: var(--c-charcoal); margin: 0 0 var(--s-3); }
+.c-languages__list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); }
+.c-languages__item { display: flex; align-items: baseline; gap: var(--s-2); font-size: 14.5px; }
+/* A language the document is not in is stated, not omitted. A list of one
+   language does not tell a French reader whether French was checked. */
+.c-languages__item.is-missing { color: var(--c-disabled); }
+.c-languages__item.is-missing .c-lang-badge { background: transparent; border: 1px solid var(--c-border); color: var(--c-disabled); }
+.c-languages__size { font-size: 12.5px; color: var(--c-slate); }
+.c-languages__item.is-missing .c-languages__size { color: var(--c-disabled); }
+
+/* The reference is selectable text rather than a copy button: a copy button
+   needs script, and a regulator citing a document is already in a word
+   processor with the page open beside it. */
+.c-cite__reference {
+  font-family: var(--f-admin); font-size: 13.5px; line-height: 1.6;
+  color: var(--c-charcoal); background: var(--c-cream);
+  border-left: 3px solid var(--c-green-dark);
+  padding: var(--s-3) var(--s-4); margin: 0 0 var(--s-3);
+  word-break: break-word;
+}
+.c-cite__note { font-size: 13px; line-height: 1.55; color: var(--c-slate); margin: 0; max-width: 62ch; }
