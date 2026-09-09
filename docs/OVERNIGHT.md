@@ -618,3 +618,196 @@ and 09 both draw tracked caps and CRASA has seen them.
 The hero eyebrow is back. It had been rendering as nothing at all while the
 question was open, which left the homepage without a line the approved copy
 supplies in all three languages.
+
+---
+---
+
+# Consolidation run, sections 24 to 28 — report
+
+**728 tests, 5877 assertions, all passing. Pint clean. Five sections, all
+reached, none red at any point.**
+
+| # | Section | Commit |
+|---|---|---|
+| 24 | The variation note | `b4561e9` |
+| 25 | The Secretariat pack | `e9b4351` |
+| 26 | A demonstrable dataset, and a tested strip | `0e562b0` |
+| 27 | Hardening | `8823ecb` |
+| — | The region map, restored, with the test that settles it | `a14f893` |
+| 28 | The demonstration script | `a1be838` |
+
+Four documents are now ready to send without editing: `VARIATIONS.md`,
+`CLIENT_REQUESTS.md`, `SECURITY_REVIEW.md` and `DEMO_SCRIPT.md`. Tests keep
+each of them in step with the platform, because a document that quietly
+falls out of date turns a disclosed decision back into an undisclosed one.
+
+---
+
+## The security findings, in full
+
+Every one was verified against the running site. Where this says something
+executed, it was made to execute.
+
+### 1. The uploads directory executed PHP — Critical, fixed
+
+A file planted in `storage/app/public` and requested over HTTPS returned
+`EXECUTED:8.3.33`. It executed as `.phtml` as well. On a host where a
+sibling account had two web shells dropped on it the week before, that is
+one mistaken file-type check away from the same outcome.
+
+Fixed in three layers, because a cPanel host may run PHP through any of
+several handlers and only one layer works for each. Re-tested: `403` for the
+canary in both extensions, `200` for a thumbnail.
+
+**The part that mattered as much as the fix:** those rules live in a
+directory the repository excludes, so a deployment to a fresh directory
+would have arrived without them. The canonical copy is now in the
+repository, `php artisan security:harden-uploads` installs it, and `--check`
+reports on it. **That command must run after every deployment.**
+
+### 2. Debug mode was on, on a public host — Critical, fixed
+
+`APP_ENV=local`, `APP_DEBUG=true`, on a host whose URL is a public HTTPS
+domain. Laravel's debug page prints the environment, which on this host
+includes the database password, the mail credentials and the AWS keys, to
+anyone who could cause an error. Now `production` and `false`, verified by a
+404 that leaks nothing.
+
+### 3. No security headers of any kind — High, fixed
+
+No `Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options`,
+`Referrer-Policy`, `Permissions-Policy` or `Strict-Transport-Security`. The
+administration interface could be framed and clicked through, and
+administration URLs naming member states leaked as referrers.
+
+All now set. The content policy costs nothing here because it states what
+was already true: every asset is served from this origin. A test asserts no
+page loads anything the policy would block, so the policy cannot be quietly
+outgrown.
+
+### 4. The session cookie was not marked secure — High, fixed
+
+`SESSION_SECURE_COOKIE` was unset, so the session cookie travelled over
+plain HTTP as well as HTTPS, on a platform holding confidential committee
+papers. Now `secure; httponly; samesite=strict`, encrypted at rest, and no
+longer named after the framework. Verified on the wire.
+
+### 5. Four public write paths were unthrottled — Medium, fixed
+
+Sign-in, the two-factor challenge, password reset and delegate registration
+had no route-level limit. The sign-in and challenge controllers throttle per
+account, which is the more important half, but one address trying one
+password across many accounts never reaches a per-account counter.
+
+**My own test then found a fifth:** the single sign-on callback. A test now
+walks every route and fails if a public write path is added without a limit.
+
+### 6. No off-site backups — Medium, not fixed, needs a decision
+
+A weekly whole-account cPanel backup runs on Saturdays. There is nothing
+hourly and nothing off-site. AWS credentials exist in the environment but
+the S3 driver package is not installed, so nothing can write to S3 today:
+
+```
+Error: Class "League\Flysystem\AwsS3V3\PortableVisibilityConverter" not found
+```
+
+**Exactly what is needed:** `composer require league/flysystem-aws-s3-v3`;
+confirmation that the credentials are current and the bucket writable (not
+tested, because that would write to a bucket this review does not own); a
+backup command; and one cron entry. Roughly half a day once the first two
+are settled.
+
+**Related:** this application has no cron entry at all. The account's
+crontab runs a scheduler and a queue worker for a different site. Nothing in
+the platform currently depends on a queue, but the hourly backup will need
+that entry created.
+
+### 7. Mail is written to a log file — Low, not fixed, needs credentials
+
+`MAIL_MAILER=log`. A password reset would report success and deliver
+nothing. Needs SMTP credentials or an API key, and the from-address the
+Secretariat wants.
+
+### What was checked and found correct
+
+`.env`, `.git`, `vendor`, `composer.json`, `artisan` and `docs/` are all
+unreachable from the web. No directory listings. Documents are never served
+from the filesystem. The country scope is enforced on reads as a global
+scope and on writes by policy, both tested. Confidential documents are gated
+on a committee seat. Two-factor is mandatory for administrators. Passwords
+are bcrypt at 12 rounds; two-factor secrets and recovery codes are encrypted
+at rest. No secret is committed, and a test asserts it. CSRF is on every
+state-changing form. The audit trail throws on update and delete.
+
+---
+
+## What remains unbuilt
+
+### BUILD_SPEC
+
+Nothing in section 3.2 is outstanding except the SSO bridge, which is
+blocked on Form 3 rather than on work. The documented fallback is built,
+tested, and complete as a deliverable.
+
+### DATA_MODEL
+
+Everything in sections 2 to 7 is built.
+
+### Operational, not code
+
+| Item | Needs |
+|---|---|
+| Hourly off-site backups | The S3 package, credential confirmation, one cron entry |
+| Outgoing mail | SMTP credentials |
+| A cron entry for this application | Creating, when the backup lands |
+| The SSO bridge | Form 3 |
+
+### Content, not code
+
+Ten placeholder blocks and the twelve items in `CLIENT_REQUESTS.md`. Every
+one is a place where the software is finished and waiting.
+
+---
+
+## What I would fix first with two more days
+
+**In this order.**
+
+**1. The homepage photograph. Half a day, and it is the highest-value half
+day available.** The banner is a technician at an equipment testing bench,
+which is the closest the supplied library gets to an institutional subject
+and is still wrong for a treaty body that fourteen national regulators
+answer to. It is the first thing anyone sees at the workshop. If CRASA has
+even one usable photograph of a plenary, a signing or the Secretariat
+building, swapping it in is an hour.
+
+**2. Off-site backups. Half a day.** Everything else on this list is
+cosmetic beside a platform with one weekly backup on the same infrastructure
+it is backing up. The work is small and the exposure is not.
+
+**3. Committee terms of reference, if CRASA sends them. Two hours.** Six
+paragraphs turn a page that names six committees and says nothing else into
+a page worth reading, and it fills the largest visible gap after the
+photograph.
+
+**4. A second look at the region map with fresh eyes. Two hours.** It was
+withdrawn and restored during this run on evidence that supported both
+readings. `RegionMapTest` now settles the questions I could identify, but
+the episode says the map deserves one careful look by someone who has not
+been staring at it.
+
+**What I would not spend the two days on:** more features. The contracted
+scope is built. The gap between this platform and a finished one is content
+and operational configuration, not code.
+
+---
+
+## One correction to an earlier report
+
+The section 27 commit message states that a withdrawal of the region map was
+discarded. It was not: the withdrawal was in that commit, and the message
+was wrong. Commit `a14f893` restores the map and explains why both readings
+were available from the same evidence. The map now renders all fourteen
+member states, twelve as mainland shapes and two as inset chips, and a test
+holds each of those conditions.
