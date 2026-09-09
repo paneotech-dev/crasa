@@ -6,6 +6,7 @@ use App\Models\Country;
 use App\Models\Publication;
 use App\Models\Sector;
 use App\Support\SectionCounts;
+use Database\Seeders\CommitteeSeeder;
 use Database\Seeders\CountrySeeder;
 use Database\Seeders\NewsroomSeeder;
 use Database\Seeders\PublicationSeeder;
@@ -32,6 +33,9 @@ class CountsTest extends TestCase
         Storage::fake('public');
         $this->seed(CountrySeeder::class);
         $this->seed(SectorSeeder::class);
+        // A facet with no options is not rendered, so the committee facet
+        // needs committees before it can be asserted on.
+        $this->seed(CommitteeSeeder::class);
         $this->seed(PublicPagesSeeder::class);
         $this->seed(PublicationSeeder::class);
         $this->seed(NewsroomSeeder::class);
@@ -68,24 +72,33 @@ class CountsTest extends TestCase
     {
         $html = $this->get('/en/publications')->assertOk()->getContent();
 
-        $this->assertStringContainsString('c-chip is-empty', $html);
+        // The row keeps its place and reads as unavailable.
+        $this->assertStringContainsString('c-facet is-empty', $html);
 
-        // Present, and not a link: there is no disabled state for an
-        // anchor, and aria-disabled on something still focusable is a
-        // promise the browser does not keep.
-        preg_match('~<span role="listitem" class="c-chip is-empty">\s*([^<]+)~', $html, $match);
-        $this->assertNotEmpty($match, 'No unavailable option is rendered at all.');
-        $this->assertStringNotContainsString('is-empty" href', $html);
+        // And it is genuinely disabled rather than styled to look it. A
+        // control that looks inert and still takes a click is worse than
+        // one that does neither.
+        $this->assertMatchesRegularExpression(
+            '~<label class="c-facet is-empty"[^>]*>\s*<input type="checkbox"[^>]*\sdisabled~s',
+            $html,
+            'An unavailable facet option is styled inert but is still operable.'
+        );
     }
 
     public function test_every_facet_option_carries_its_count(): void
     {
-        foreach (['/en/publications', '/en/newsroom', '/en/search?q=roaming'] as $url) {
+        // The library and the newsroom carry screen 07's sidebar; search
+        // still carries the chip row it was built with.
+        foreach (['/en/publications', '/en/newsroom'] as $url) {
             $html = $this->get($url)->assertOk()->getContent();
 
-            $chips = preg_match_all('~class="c-chip[^"]*"[^>]*>\s*[^<]+<span class="c-chip__count">~', $html);
-            $this->assertGreaterThan(0, $chips, $url.' has facet options with no counts.');
+            $options = preg_match_all('~<span class="c-facet__count">~', $html);
+            $this->assertGreaterThan(0, $options, $url.' has facet options with no counts.');
         }
+
+        $html = $this->get('/en/search?q=roaming')->assertOk()->getContent();
+        $chips = preg_match_all('~class="c-chip[^"]*"[^>]*>\s*[^<]+<span class="c-chip__count">~', $html);
+        $this->assertGreaterThan(0, $chips, '/en/search has facet options with no counts.');
     }
 
     /**
@@ -175,7 +188,11 @@ class CountsTest extends TestCase
         $html = $this->get('/en/publications')->assertOk()->getContent();
 
         foreach (['sector', 'type', 'year', 'committee', 'language'] as $facet) {
-            $this->assertStringContainsString('facet-'.$facet, $html, 'Screen 07 draws a '.$facet.' facet and it is not built.');
+            $this->assertStringContainsString(
+                'name="'.$facet.'[]"',
+                $html,
+                'Screen 07 draws a '.$facet.' facet and it is not built.'
+            );
         }
     }
 

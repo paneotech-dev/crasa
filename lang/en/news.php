@@ -25,4 +25,6 @@ return [
     'count_sectors' => '{0}Sectors covered|{1}Sector covered|[2,*]Sectors covered',
     'band_eyebrow' => 'Newsroom',
     'band_heading' => 'What the region has decided, and when',
+
+    'result_summary' => ':shown of :total items match your filters',
 ];

@@ -222,8 +222,11 @@ class InteractiveSurfacesTest extends TestCase
         $this->seed(NewsroomSeeder::class);
 
         foreach ([
-            '/en/publications' => 'c-filters',
-            '/en/newsroom' => 'c-filters',
+            // Screen 07's sidebar: a GET form of checkboxes with a real
+            // submit button, which filters.js removes only once its own
+            // listeners are attached.
+            '/en/publications' => 'c-facets',
+            '/en/newsroom' => 'c-facets',
             '/en/members' => 'c-map-region__control',
         ] as $url => $marker) {
             $html = $this->get($url)->assertOk()->getContent();

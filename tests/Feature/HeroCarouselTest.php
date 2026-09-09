@@ -125,6 +125,11 @@ class HeroCarouselTest extends TestCase
         return file_get_contents(public_path('js/hero.js'));
     }
 
+    private function css(): string
+    {
+        return file_get_contents(public_path('css/blocks.css'));
+    }
+
     public function test_it_advances_on_an_eight_second_interval(): void
     {
         $this->assertMatchesRegularExpression('/INTERVAL\s*=\s*8000/', $this->script());
@@ -246,52 +251,201 @@ class HeroCarouselTest extends TestCase
         );
     }
 
-    public function test_the_controls_are_a_bar_across_the_band(): void
+    /**
+     * SCREEN 02 DRAWS A STRIP AND IT IS OVERRULED.
+     *
+     * Line 152 draws the controls as a full-width bar across the bottom of
+     * the band, rgba(11,21,34,.86) with a --c-navy-line top border. Ruled
+     * out on 9 September 2026: it put a fourth horizontal band in front of
+     * the reader before any content began, and it cut the hero off from the
+     * figures band the hero belongs with. Logged as a disclosed variation.
+     *
+     * This test holds the replacement rather than the drawing: no strip, a
+     * pill, and every control the screen drew still on the page.
+     */
+    public function test_the_controls_are_an_overlay_and_not_a_strip(): void
     {
-        // "margin-top:auto;background:rgba(11,21,34,.86);border-top:1px
-        //  solid #2C3A55" -- screen 02 line 152. It was a floating cluster
-        // with no ground, sitting on the slide rather than under it.
-        $css = file_get_contents(public_path('css/blocks.css'));
+        $css = $this->css();
 
-        $this->assertMatchesRegularExpression(
-            '/\.b-hero__controls \{[^}]*background: rgba\(11, 21, 34, \.86\)/',
-            $css,
-        );
-        $this->assertMatchesRegularExpression(
-            '/\.b-hero__controls \{[^}]*border-block-start: 1px solid var\(--c-navy-line\)/',
-            $css,
-        );
-        $this->assertMatchesRegularExpression(
-            '/\.b-hero__controls \{[^}]*justify-self: stretch/',
-            $css,
-        );
+        preg_match('/\.b-hero__controls \{([^}]*)\}/', $css, $controls);
+        $this->assertNotEmpty($controls, '.b-hero__controls has no rule.');
+
+        // The strip's two signatures are gone from the wrapper.
+        $this->assertStringNotContainsString('rgba(11, 21, 34, .86)', $controls[1]);
+        $this->assertStringNotContainsString('border-block-start', $controls[1]);
+        $this->assertStringNotContainsString('justify-self: stretch', $controls[1]);
+
+        // Bottom left, on the content column, --s-6 above the band's edge.
+        $this->assertStringContainsString('align-self: end', $controls[1]);
+        $this->assertStringContainsString('max-width: var(--w-page)', $controls[1]);
+        $this->assertStringContainsString('padding-inline: var(--page-x)', $controls[1]);
+        $this->assertStringContainsString('margin: 0 0 var(--s-6)', $controls[1]);
+
+        // The wrapper spans the column, so it must not swallow clicks meant
+        // for the slide behind it.
+        $this->assertStringContainsString('pointer-events: none', $controls[1]);
     }
 
-    public function test_the_bar_carries_a_counter_but_no_state_note(): void
+    /** The pill, at the values the ruling specified. */
+    public function test_the_pill_carries_the_group(): void
     {
-        // Screen 02 closes the bar with a counter and then a note on what
-        // the carousel is doing. The counter stays: the dots say which
-        // slide is current by shape, the counter says it in figures.
-        //
-        // The state note is removed on a ruling of 9 September 2026 and is
-        // a disclosed variation. It narrated the control's behaviour back
-        // to a reader who could see the control.
+        preg_match('/\.b-hero__pill \{([^}]*)\}/', $this->css(), $pill);
+
+        $this->assertNotEmpty($pill, '.b-hero__pill has no rule.');
+        $this->assertStringContainsString('background: rgba(11, 21, 34, .55)', $pill[1]);
+        $this->assertStringContainsString('border-radius: var(--r-pill)', $pill[1]);
+        $this->assertStringContainsString('padding: 6px 10px', $pill[1]);
+        $this->assertStringContainsString('pointer-events: auto', $pill[1]);
+    }
+
+    /**
+     * The cream controls against the pill, measured rather than assumed.
+     *
+     * The group sits at the content column's left edge, where the hero
+     * scrim is rgba(15,27,45,.94). The worst ground the controls can ever
+     * sit on is that scrim over a pure white photograph, with the pill over
+     * it. Everything below is computed from that stack.
+     */
+    public function test_the_controls_clear_their_thresholds_on_the_pill(): void
+    {
+        $over = fn (array $fg, float $alpha, array $bg) => [
+            $alpha * $fg[0] + (1 - $alpha) * $bg[0],
+            $alpha * $fg[1] + (1 - $alpha) * $bg[1],
+            $alpha * $fg[2] + (1 - $alpha) * $bg[2],
+        ];
+
+        $luminance = function (array $rgb): float {
+            $channel = function (float $c): float {
+                $c /= 255;
+
+                return $c <= 0.04045 ? $c / 12.92 : (($c + 0.055) / 1.055) ** 2.4;
+            };
+
+            return 0.2126 * $channel($rgb[0]) + 0.7152 * $channel($rgb[1]) + 0.0722 * $channel($rgb[2]);
+        };
+
+        $ratio = function (array $a, array $b) use ($luminance): float {
+            $la = $luminance($a);
+            $lb = $luminance($b);
+
+            return (max($la, $lb) + 0.05) / (min($la, $lb) + 0.05);
+        };
+
+        // Brightest possible photograph, then the scrim, then the pill.
+        $scrim = $over([15, 27, 45], 0.94, [255, 255, 255]);
+        $ground = $over([11, 21, 34], 0.55, $scrim);
+
+        $cream = [248, 246, 241];
+        $navySoft = [107, 118, 145];   // --c-navy-soft, the control border
+
+        // SC 1.4.3: text and the dots' fill.
+        $this->assertGreaterThanOrEqual(
+            4.5,
+            $ratio($cream, $ground),
+            'Cream on the pill measures '.round($ratio($cream, $ground), 2).':1'
+        );
+
+        // SC 1.4.11: the 1.5px boundary of the arrow and pause buttons.
+        $this->assertGreaterThanOrEqual(
+            3.0,
+            $ratio($navySoft, $ground),
+            'The control border on the pill measures '.round($ratio($navySoft, $ground), 2).':1'
+        );
+
+        // And the CSS actually uses the value that was measured.
+        preg_match('/\.b-hero__ctl \{([^}]*)\}/', $this->css(), $ctl);
+        $this->assertStringContainsString('border: 1.5px solid var(--c-navy-soft)', $ctl[1]);
+    }
+
+    /** 32x32 arrows and pause, 10px dots 12px apart. */
+    public function test_the_group_is_drawn_at_the_sizes_the_ruling_gave(): void
+    {
+        $css = $this->css();
+
+        preg_match('/\.b-hero__ctl \{([^}]*)\}/', $css, $ctl);
+        $this->assertStringContainsString('width: 32px; height: 32px', $ctl[1]);
+        $this->assertStringContainsString('border-radius: var(--r-sm)', $ctl[1]);
+
+        preg_match('/\.b-hero__dots \{([^}]*)\}/', $css, $dots);
+        $this->assertStringContainsString('gap: 12px', $dots[1]);
+
+        preg_match('/\.b-hero__dot \{([^}]*)\}/', $css, $dot);
+        $this->assertStringContainsString('width: 10px; height: 10px', $dot[1]);
+        $this->assertStringContainsString('border: 1.5px solid var(--c-cream)', $dot[1]);
+
+        // Current filled cream, the others outlined.
+        $this->assertMatchesRegularExpression(
+            '/\.b-hero__dot\[aria-selected="true"\] \{ background: var\(--c-cream\); \}/',
+            $css
+        );
+
+        // The 22px hit area, the largest that fits without two targets
+        // overlapping at a 12px gap.
+        $this->assertMatchesRegularExpression('/\.b-hero__dot::after \{[^}]*inset: -6px/', $css);
+    }
+
+    /**
+     * No counter, and no visible numbers on the dots.
+     *
+     * Screen 02 closes its bar with a counter and numbers each dot. Both go
+     * with the bar: three dots already say which of three slides is
+     * current, and a figure beside them says it twice. The position a
+     * reader cannot see is in each dot's accessible name.
+     */
+    public function test_the_dots_carry_the_position_without_numbers(): void
+    {
         $html = $this->home();
 
-        $this->assertMatchesRegularExpression('/data-hero-counter[^>]*>1 \/ 3</', $html);
+        $this->assertStringNotContainsString('data-hero-counter', $html);
+        $this->assertStringNotContainsString('b-hero__counter', $html);
         $this->assertStringNotContainsString('data-hero-state', $html);
         $this->assertStringNotContainsString('b-hero__state', $html);
 
-        // And the dots are numbered, as the screen loops "{{ d.num }}".
         foreach ([1, 2, 3] as $n) {
+            // Empty button, and a name that says where it lands.
             $this->assertMatchesRegularExpression(
-                '/class="b-hero__dot"[^>]*data-hero-dot="'.($n - 1).'".*?>'.$n.'<\/button>/s',
+                '/data-hero-dot="'.($n - 1).'"[^>]*aria-label="Slide '.$n.' of 3: [^"]+"\s*><\/button>/s',
                 $html,
-                "Dot {$n} is not numbered.",
+                "Dot {$n} is numbered on screen or has no accessible name.",
             );
         }
     }
 
+    /**
+     * The copy column clears the group rather than hoping to stop short of
+     * it. 44px is the pill's height, --s-6 its offset from the bottom edge,
+     * --s-4 the gap the call to action keeps above it.
+     */
+    public function test_the_copy_column_clears_the_control_group(): void
+    {
+        $css = $this->css();
+
+        $this->assertStringContainsString(
+            '.b-hero[data-hero] .b-hero__inner { padding-bottom: calc(var(--s-8) + 44px + var(--s-4)); }',
+            $css
+        );
+
+        // And at 375, where the band is shorter and the collision is most
+        // likely.
+        $this->assertMatchesRegularExpression(
+            '/@media \(max-width: 767\.98px\) \{\s*\.b-hero\[data-hero\] \.b-hero__inner \{ padding-bottom: calc\(var\(--s-7\) \+ 44px \+ var\(--s-4\)\); \}/s',
+            $css
+        );
+    }
+
+    /** The pause icon follows aria-pressed in CSS, so they cannot drift. */
+    public function test_the_pause_button_is_an_icon_that_follows_its_state(): void
+    {
+        $html = $this->home();
+        $css = $this->css();
+
+        $this->assertStringContainsString('b-hero__icon--pause', $html);
+        $this->assertStringContainsString('b-hero__icon--play', $html);
+        $this->assertStringNotContainsString('data-hero-pause-label', $html);
+
+        $this->assertStringContainsString('.b-hero__pause .b-hero__icon--play { display: none; }', $css);
+        $this->assertStringContainsString('.b-hero__pause[aria-pressed="true"] .b-hero__icon--pause { display: none; }', $css);
+    }
     public function test_the_pause_button_says_what_it_pauses(): void
     {
         // With the state note gone, "Pause" alone would tell a screen

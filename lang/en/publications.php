@@ -45,4 +45,10 @@ return [
     'cite' => 'Cite this document',
     'cite_reference' => ':author (:year). :title. :url',
     'cite_note' => 'The address above is permanent. A citation made today still resolves when this document is superseded, and the page it opens says what replaced it.',
+
+    'active_filters' => 'Active filters',
+    'clear_all' => 'Clear all',
+    'remove_filter' => 'Remove this filter',
+    'apply_filters' => 'Apply the filters',
+    'result_summary' => ':shown of :total documents match your filters',
 ];

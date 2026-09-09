@@ -351,68 +351,82 @@
     @endif
 
     @if ($multiple)
+        {{-- THE CONTROLS ARE AN OVERLAY, NOT A STRIP.
+
+             Screen 02 line 152 draws them as a full-width bar across the
+             bottom of the band, "background:rgba(11,21,34,.86);
+             border-top:1px solid #2C3A55". Overruled on 9 September 2026
+             and logged as a disclosed variation: the strip put a fourth
+             horizontal band in front of the reader before any content
+             began, and it cut the hero off from the figures band it
+             belongs with. Every control the screen draws is kept. They
+             move onto the hero as one compact group.
+
+             Bottom left, aligned to the content column's left edge, so the
+             group sits under the headline rather than floating in the
+             corner. That is also where the scrim is at its darkest
+             (rgba(15,27,45,.94) at 0%), which is what makes the pill
+             behind them work over an unknown photograph. --}}
         <div class="b-hero__controls">
-            <button type="button" class="b-hero__arrow" data-hero-prev aria-label="{{ __('blocks.hero_previous') }}">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-                    <path d="M15 6l-6 6 6 6"></path>
-                </svg>
-            </button>
+            <div class="b-hero__pill">
+                <button type="button" class="b-hero__ctl" data-hero-prev aria-label="{{ __('blocks.hero_previous') }}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                        <path d="M15 6l-6 6 6 6"></path>
+                    </svg>
+                </button>
 
-            <div class="b-hero__dots" role="tablist" aria-label="{{ __('blocks.hero_choose') }}">
-                @foreach ($rendered as $index => $slide)
-                    <button
-                        type="button"
-                        class="b-hero__dot"
-                        data-hero-dot="{{ $index }}"
-                        role="tab"
-                        aria-selected="{{ $index === 0 ? 'true' : 'false' }}"
-                        aria-label="{{ __('blocks.hero_slide_of', [
-                            'index' => $index + 1,
-                            'total' => $rendered->count(),
-                            'name' => __('blocks.hero_panel_'.($slide['panel'] ?? 'figures').'_name'),
-                        ]) }}"
-                    >{{ $index + 1 }}</button>
-                @endforeach
+                {{-- No visible numbers. The dot's shape says which slide is
+                     current and its accessible name says which slide it is
+                     and what is on it: "Slide 2 of 3: featured comparison".
+                     A dot labelled by its number alone tells a reader how
+                     far along they are and nothing about where they would
+                     land. --}}
+                <div class="b-hero__dots" role="tablist" aria-label="{{ __('blocks.hero_choose') }}">
+                    @foreach ($rendered as $index => $slide)
+                        <button
+                            type="button"
+                            class="b-hero__dot"
+                            data-hero-dot="{{ $index }}"
+                            role="tab"
+                            aria-selected="{{ $index === 0 ? 'true' : 'false' }}"
+                            aria-label="{{ __('blocks.hero_slide_of', [
+                                'index' => $index + 1,
+                                'total' => $rendered->count(),
+                                'name' => __('blocks.hero_panel_'.($slide['panel'] ?? 'figures').'_name'),
+                            ]) }}"
+                        ></button>
+                    @endforeach
+                </div>
+
+                <button type="button" class="b-hero__ctl" data-hero-next aria-label="{{ __('blocks.hero_next') }}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                        <path d="M9 6l6 6-6 6"></path>
+                    </svg>
+                </button>
+
+                {{-- Icon only, so there is no visible label and SC 2.5.3 has
+                     nothing to match: the accessible name is free to say
+                     what is being paused rather than repeating one word.
+                     aria-pressed carries the state, and the icon follows it
+                     in CSS rather than in script, so the two cannot drift.
+
+                     The counter that closed the screen's bar is gone with
+                     the bar. Three dots already say which of three slides
+                     is current, and a figure beside them says it twice. --}}
+                <button type="button" class="b-hero__ctl b-hero__pause" data-hero-pause aria-pressed="false"
+                        aria-label="{{ __('blocks.hero_pause_action') }}"
+                        data-aria-pause="{{ __('blocks.hero_pause_action') }}"
+                        data-aria-play="{{ __('blocks.hero_play_action') }}">
+                    <svg class="b-hero__icon--pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <rect x="7" y="5" width="3.5" height="14" rx="1"></rect>
+                        <rect x="13.5" y="5" width="3.5" height="14" rx="1"></rect>
+                    </svg>
+                    <svg class="b-hero__icon--play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M8 5.5l11 6.5-11 6.5z"></path>
+                    </svg>
+                </button>
             </div>
-
-            <button type="button" class="b-hero__arrow" data-hero-next aria-label="{{ __('blocks.hero_next') }}">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-                    <path d="M9 6l6 6-6 6"></path>
-                </svg>
-            </button>
-
-            {{-- The accessible name says what is being paused; the visible
-                 label stays one word. "Pause" alone told a screen reader
-                 nothing about what would stop, and the state note that used
-                 to supply that context is gone.
-
-                 Both names contain their visible label, which SC 2.5.3
-                 requires: "Pause rotation" contains Pause, "Resume
-                 rotation" contains Resume. That is why the second word is
-                 Resume rather than Play. --}}
-            <button type="button" class="b-hero__pause" data-hero-pause aria-pressed="false"
-                    aria-label="{{ __('blocks.hero_pause_action') }}"
-                    data-label-pause="{{ __('blocks.hero_pause') }}"
-                    data-label-play="{{ __('blocks.hero_play') }}"
-                    data-aria-pause="{{ __('blocks.hero_pause_action') }}"
-                    data-aria-play="{{ __('blocks.hero_play_action') }}">
-                <span data-hero-pause-label>{{ __('blocks.hero_pause') }}</span>
-            </button>
-
-            {{-- Screen 02 closes the bar with a counter in --f-admin at
-                 13.5px and, after it, a note on the state. The counter is
-                 kept: the dots say which slide is current by shape, the
-                 counter says it in figures.
-
-                 The state note is removed, on a ruling of 9 September 2026.
-                 Disclosed variation from screen 02. It narrated the
-                 control's own behaviour back to a reader who could see the
-                 control, and what it carried for a reader who could not is
-                 now in the pause button's accessible name, where it belongs
-                 and where it is announced at the moment it matters. --}}
-            <p class="b-hero__counter" data-hero-counter aria-hidden="true">1 / {{ $rendered->count() }}</p>
         </div>
-
         {{-- Slide changes are announced here, politely, so a screen reader
              is told what happened without being interrupted. --}}
         <div class="c-sr" aria-live="polite" data-hero-live></div>

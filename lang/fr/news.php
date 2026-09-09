@@ -25,4 +25,6 @@ return [
     'count_sectors' => '{0}Secteurs couverts|{1}Secteur couvert|[2,*]Secteurs couverts',
     'band_eyebrow' => 'Salle de presse',
     'band_heading' => 'Ce que la région a décidé, et quand',
+
+    'result_summary' => ':shown actualités sur :total correspondent à vos filtres',
 ];

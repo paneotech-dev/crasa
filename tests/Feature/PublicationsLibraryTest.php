@@ -48,7 +48,8 @@ class PublicationsLibraryTest extends TestCase
 
         $this->assertStringContainsString('Annual report', $html);
         $this->assertStringNotContainsString('roaming guidelines, first edition', $html);
-        $this->assertStringContainsString('One publication', $html);
+        // Screen 07 line 206: "12 of 35 documents match your filters".
+        $this->assertStringContainsString('<strong>1</strong> of '.Publication::listed()->count().' documents', $html);
     }
 
     public function test_the_year_facet_narrows_the_listing(): void

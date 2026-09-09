@@ -114,6 +114,12 @@
 
           if (!replaced) throw new Error('nothing to swap');
 
+          // A swapped region brings back its own apply button, and the
+          // sidebar is inside a swapped region. Removing them once at
+          // start-up leaves the second filter click with a button the
+          // script has already made redundant.
+          dropSubmits();
+
           if (!replace) window.history.pushState({ live: true }, '', url);
           else window.history.replaceState({ live: true }, '', url);
 
@@ -150,9 +156,13 @@
      * only here — after every listener above is attached. A script that
      * threw on the way down leaves the form and its button intact.
      */
-    Array.prototype.forEach.call(region.querySelectorAll('[data-live-submit]'), function (button) {
-      button.remove();
-    });
+    dropSubmits();
+
+    function dropSubmits() {
+      Array.prototype.forEach.call(region.querySelectorAll('[data-live-submit]'), function (button) {
+        button.remove();
+      });
+    }
 
     window.addEventListener('popstate', function () {
       if (busy) return;

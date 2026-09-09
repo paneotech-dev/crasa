@@ -45,4 +45,10 @@ return [
     'cite' => 'Citar este documento',
     'cite_reference' => ':author (:year). :title. :url',
     'cite_note' => 'O endereço acima é permanente. Uma citação feita hoje continua a resolver quando este documento for substituído, e a página indica o que o substituiu.',
+
+    'active_filters' => 'Filtros ativos',
+    'clear_all' => 'Limpar tudo',
+    'remove_filter' => 'Remover este filtro',
+    'apply_filters' => 'Aplicar os filtros',
+    'result_summary' => ':shown de :total documentos correspondem aos seus filtros',
 ];

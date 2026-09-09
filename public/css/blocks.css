@@ -300,113 +300,120 @@
 /* Controls. Always visible, never hover-revealed: meaning carried by hover
    alone is meaning a touch or keyboard reader never gets. */
 /*
- * "margin-top:auto;background:rgba(11,21,34,.86);border-top:1px solid
- *  #2C3A55" -- screen 02 line 152, and inside it
- * "padding:var(--s-3) var(--s-7);display:flex;align-items:center;
- *  gap:var(--s-4);flex-wrap:wrap".
+ * SCREEN 02 DRAWS A STRIP AND IT IS OVERRULED.
  *
- * It was a floating cluster with no ground, inset from the corner. The
- * screen draws a bar across the whole width of the band, which is what
- * separates the controls from the slide rather than leaving them sitting
- * on top of it.
+ * Line 152: "margin-top:auto;background:rgba(11,21,34,.86);border-top:1px
+ * solid #2C3A55", padding var(--s-3) var(--s-7), across the whole width of
+ * the band. Ruled out on 9 September 2026 and logged as a disclosed
+ * variation in docs/OPEN_ITEMS.md. It added a fourth horizontal band before
+ * any content began, and it separated the hero from the figures band the
+ * hero belongs with.
+ *
+ * Every control is kept. They move onto the hero as one compact group at
+ * the bottom left, aligned to the content column's left edge so the group
+ * sits under the headline rather than in the corner of the viewport. The
+ * wrapper is the content column; the pill inside it is the only thing that
+ * takes a pointer.
  */
 .b-hero__controls {
-  position: relative;
-  z-index: 2;
   grid-area: 1 / 1;
   align-self: end;
-  justify-self: stretch;
+  justify-self: center;
+  z-index: 2;
+  width: 100%;
+  max-width: var(--w-page);
+  padding-inline: var(--page-x);
+  margin: 0 0 var(--s-6);
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--s-4);
-  margin: 0;
-  padding: var(--s-3) var(--page-x);
-  background: rgba(11, 21, 34, .86);
-  border-block-start: 1px solid var(--c-navy-line);
+  /* The wrapper spans the column, so it must not swallow clicks aimed at
+     the slide behind it. */
+  pointer-events: none;
 }
-
-.b-hero__arrow {
-  width: 44px; height: 44px;
-  display: grid; place-items: center;
-  background: transparent;
-  border: 1.5px solid var(--c-navy-edge);
-  border-radius: var(--r-sm);
-  color: var(--c-cream);
-  cursor: pointer;
-}
-.b-hero__arrow:hover { background: var(--c-navy-mid); color: var(--c-white); }
-
-.b-hero__dots { display: flex; gap: var(--s-1); align-items: center; }
-.b-hero__dot {
-  width: 44px; height: 44px;
-  display: grid; place-items: center;
-  background: transparent; border: 0; cursor: pointer;
-  padding: 0;
-}
-/* The 44px target is the button; the mark inside it is small. */
-.b-hero__dot::before {
-  content: "";
-  width: 10px; height: 10px;
-  border-radius: var(--r-pill);
-  border: 1.5px solid var(--c-cream);
-}
-.b-hero__dot[aria-selected="true"]::before { background: var(--c-cream); }
 
 /*
- * Numbered, as screen 02 draws them: the dots loop over "{{ d.num }}", not
- * an empty button. A carousel's slides are one of the few things on this
- * platform that genuinely are a sequence, which is the carve-out in the
- * rule against numbered markers.
+ * The pill, measured rather than assumed.
  *
- * The number sits over the dot rather than beside it, so the control keeps
- * its 44px target and the row keeps the width the screen gives it.
+ * The group sits at the content column's left edge, where the hero scrim is
+ * rgba(15,27,45,.94). Composited over the brightest photograph a reader
+ * could ever load, the ground under the controls resolves to #131E2D, and
+ * against that:
+ *
+ *   cream #F8F6F1 on the pill                15.56:1   SC 1.4.3 wants 4.5
+ *   the 1.5px border, --c-navy-soft #6B7691   3.70:1   SC 1.4.11 wants 3
+ *
+ * --c-navy-soft, not --c-navy-edge: the edge token measures 2.92:1 here and
+ * the soft one clears. Both are existing tokens and no colour is added.
  */
-.b-hero__dot {
-  font-family: var(--f-admin);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--c-sand);
-  line-height: 1;
+.b-hero__pill {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 6px 10px;
+  background: rgba(11, 21, 34, .55);
+  border-radius: var(--r-pill);
 }
-.b-hero__dot[aria-selected="true"] { color: var(--c-navy); }
-.b-hero__dot::before { z-index: 0; }
-.b-hero__dot > * , .b-hero__dot { position: relative; }
 
-/* "font-family:var(--f-admin);font-size:13.5px;font-weight:600;
-    color:var(--c-sand);font-variant-numeric:tabular-nums;flex:none" */
-.b-hero__counter {
-  margin: 0 0 0 auto;
+.b-hero__ctl {
+  width: 32px; height: 32px;
   flex: none;
-  font-family: var(--f-admin);
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--c-sand);
-  font-variant-numeric: tabular-nums;
-}
-/* Screen 02 draws a state note after the counter, "font-size:13px;
-   color:#B9C2D0". Removed on a ruling of 9 September 2026 and logged as a
-   disclosed variation: it narrated the control's own behaviour back to a
-   reader who could already see the control, and what it carried for a
-   reader who could not now lives in the pause button's accessible name. */
-
-.b-hero__pause {
-  min-height: 44px;
-  padding: 0 var(--s-4);
+  display: grid; place-items: center;
+  padding: 0;
   background: transparent;
-  border: 1.5px solid var(--c-navy-edge);
+  border: 1.5px solid var(--c-navy-soft);
   border-radius: var(--r-sm);
   color: var(--c-cream);
-  font-family: var(--f-body);
-  font-size: 14px;
-  font-weight: 600;
   cursor: pointer;
 }
-.b-hero__pause:hover { background: var(--c-navy-mid); color: var(--c-white); }
+.b-hero__ctl:hover { background: var(--c-navy-mid); color: var(--c-white); }
 
-/* Under a reduced-motion preference the hero does not rotate at all and the
-   controls have nothing to control, so they are removed rather than left
-   inert. The first slide stands alone. */
+/* "a 12px gap, then pause": var(--s-2) from the row plus var(--s-1). */
+.b-hero__pause { margin-inline-start: var(--s-1); }
+.b-hero__pause .b-hero__icon--play { display: none; }
+.b-hero__pause[aria-pressed="true"] .b-hero__icon--pause { display: none; }
+.b-hero__pause[aria-pressed="true"] .b-hero__icon--play { display: block; }
+
+.b-hero__dots { display: flex; align-items: center; gap: 12px; }
+
+/*
+ * 10px circles, 12px apart. The visible mark is the drawn size; the hit
+ * area is a 22px square drawn by a pseudo-element, which is the largest
+ * that fits between two marks 12px apart without two targets overlapping.
+ * Overlapping targets are worse than small ones: the click lands on
+ * whichever element happens to be later in the source.
+ *
+ * 22px is under WCAG 2.2's 24px minimum. This platform is held to 2.1 AA,
+ * where target size is AAA, and the same three slides are reachable from
+ * the 32px arrows beside them and from the left and right arrow keys.
+ */
+.b-hero__dot {
+  width: 10px; height: 10px;
+  flex: none;
+  padding: 0;
+  position: relative;
+  background: transparent;
+  border: 1.5px solid var(--c-cream);
+  border-radius: var(--r-pill);
+  cursor: pointer;
+}
+.b-hero__dot::after { content: ""; position: absolute; inset: -6px; }
+.b-hero__dot[aria-selected="true"] { background: var(--c-cream); }
+
+/*
+ * The group overlays the bottom of the copy column, so the copy gets out of
+ * its way rather than being hoped to stop short of it. 44px is the pill's
+ * height, var(--s-6) its offset from the bottom edge, var(--s-4) the gap
+ * the call to action keeps above it. Applied at every width, because a long
+ * headline in French can reach the bottom of the band at 1440 as easily as
+ * at 375.
+ */
+.b-hero[data-hero] .b-hero__inner { padding-bottom: calc(var(--s-8) + 44px + var(--s-4)); }
+
+@media (max-width: 767.98px) {
+  .b-hero[data-hero] .b-hero__inner { padding-bottom: calc(var(--s-7) + 44px + var(--s-4)); }
+}
+
+/* Under a reduced-motion preference the hero does not rotate at all. */
 @media (prefers-reduced-motion: reduce) {
   /*
    * The controls stay. They used to be removed here, on the reasoning that
@@ -423,7 +430,6 @@
    */
   .b-hero__pause { display: none; }
 }
-
 /* Key figures ---------------------------------------------------------- */
 /* Counters, no scroll animation. Figures are tabular so they align. */
 
@@ -740,6 +746,125 @@
 .c-map__placeholder { padding: var(--s-6); text-align: center; display: grid; place-items: center; gap: var(--s-4); min-height: 14rem; }
 .c-map__note { font-size: var(--t-small-size); line-height: 1.55; color: var(--c-slate); max-width: 48ch; margin: 0; }
 .c-map__canvas { height: 22rem; width: 100%; }
+
+/* The filter sidebar. Screen 07 lines 113 to 179 ------------------------ */
+
+/* "display:flex;flex-wrap:wrap;gap:var(--s-6);align-items:flex-start",
+   line 113. The sidebar is first in source order, so at one column the
+   filters come before the results, which is where a filter belongs on a
+   phone: a reader who has to scroll past twelve documents to reach the
+   control that removes eleven of them has not been given a filter. */
+.c-library { display: flex; flex-wrap: wrap; gap: var(--s-6); align-items: flex-start; }
+
+/* "flex:1 1 270px;max-width:320px;min-width:0", line 115. The wrapper the
+   live exchange replaces, so the form inside it can be swapped whole. */
+.c-library > #library-filters,
+.c-library > #news-filters { flex: 1 1 270px; max-width: 320px; min-width: 0; }
+
+.c-library__side { display: flex; flex-direction: column; gap: var(--s-5); }
+
+/* "flex:999 1 360px;min-width:0", line 182. The 999 is what keeps the
+   results column taking every spare pixel while the sidebar stays at its
+   drawn width. */
+.c-library__main { flex: 999 1 360px; min-width: 0; display: flex; flex-direction: column; gap: var(--s-6); }
+
+/* "background:var(--c-white);border:1px solid var(--c-line);
+   border-radius:var(--r-md);padding:var(--s-5)", lines 116 and 127. */
+.c-panel {
+  background: var(--c-white);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  padding: var(--s-5);
+}
+
+.c-active__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3); margin-bottom: var(--s-4); }
+.c-active__head h2 { font-family: var(--f-head); font-size: 19px; font-weight: 600; margin: 0; }
+.c-active__head a { font-size: 13.5px; font-weight: 600; }
+.c-active__list { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+
+/* Line 122. A removal control, so it carries the navy border the screen
+   draws and reads as something to act on rather than as a status pill. */
+.c-active__chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 13.5px; font-weight: 600;
+  border: 1.5px solid var(--c-navy); border-radius: var(--r-sm);
+  padding: 6px 11px;
+  color: var(--c-navy);
+  text-decoration: none;
+}
+.c-active__chip:hover { background: var(--c-navy); color: var(--c-white); }
+.c-active__x { font-size: 15px; line-height: 1; }
+
+/* "display:flex;flex-direction:column;gap:var(--s-6)", line 127. */
+.c-facets { display: flex; flex-direction: column; gap: var(--s-6); }
+.c-facets__group { border: 0; padding: 0; margin: 0; min-width: 0; }
+
+/* Line 129 without the tracking and the uppercase. Question 6 was ruled on
+   9 September 2026: sentence case everywhere, footer column headings the
+   only carve-out. Size, weight, colour and spacing are the screen's. */
+.c-facets__legend {
+  font-size: 12px; font-weight: 700;
+  color: var(--c-navy);
+  padding: 0; margin: 0 0 var(--s-3);
+}
+
+.c-facets__options { display: flex; flex-direction: column; gap: 11px; }
+.c-facets__options--bars { gap: 9px; }
+
+/* Line 131. */
+.c-facet { display: flex; align-items: center; gap: 10px; font-size: 15.5px; cursor: pointer; min-width: 0; }
+.c-facet__name { flex: 1; min-width: 0; line-height: 1.4; }
+.c-facet__count { font-family: var(--f-admin); font-size: 13.5px; color: var(--c-slate); flex: none; }
+
+/* The box the screen draws at 20px with --r-xs, styled on the input itself
+   rather than on a span beside a hidden one. A real checkbox keeps the
+   browser's focus ring, its keyboard behaviour and its announcement, and
+   the label wraps it so the whole row is the hit area.
+
+   The border is --c-border, not the screen's #B9B2A2. That value is 2.1:1
+   on white and SC 1.4.11 wants 3:1 for the boundary of a component. WCAG
+   2.1 AA is a contractual acceptance criterion here. */
+.c-facet input[type="checkbox"] {
+  appearance: none; -webkit-appearance: none;
+  width: 20px; height: 20px; flex: none; margin: 0;
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-xs);
+  background: var(--c-white);
+  display: grid; place-items: center;
+  cursor: pointer;
+}
+.c-facet input[type="checkbox"]:checked { background: var(--c-green-dark); border-color: var(--c-green-dark); }
+.c-facet input[type="checkbox"]:checked::after {
+  content: "";
+  width: 10px; height: 5px;
+  border-left: 2.5px solid var(--c-white);
+  border-bottom: 2.5px solid var(--c-white);
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+
+/* An option that would return nothing. Present, so the reader can see the
+   shape of the data, and visibly not a control. */
+.c-facet.is-empty { color: var(--c-disabled); cursor: default; }
+.c-facet.is-empty .c-facet__count { color: var(--c-disabled); }
+.c-facet input[type="checkbox"]:disabled { border-color: var(--c-sand); cursor: default; }
+
+/* The year histogram, line 152. --c-sand track, --c-green-step-2 fill:
+   the choropleth's own scale, so a bar and a map step mean the same thing
+   on the same platform. */
+.c-facet__track { flex: 1; min-width: 0; height: 14px; background: var(--c-sand); border-radius: 2px; overflow: hidden; }
+.c-facet__bar { display: block; height: 100%; background: var(--c-green-step-2); }
+.c-facets__options--bars .c-facet__name { flex: none; width: 52px; font-family: var(--f-admin); font-size: 14px; color: var(--c-charcoal); }
+.c-facets__options--bars .c-facet__count { width: 22px; text-align: right; }
+
+.c-facets__apply { margin-top: calc(var(--s-2) * -1); }
+.c-facets__apply .c-btn { width: 100%; }
+
+/* Windows high contrast paints its own controls, and an appearance:none
+   checkbox is invisible there without this. */
+@media (forced-colors: active) {
+  .c-facet input[type="checkbox"] { appearance: auto; -webkit-appearance: auto; }
+  .c-facet input[type="checkbox"]:checked::after { content: none; }
+}
 
 /* Filters, chips, pagination ------------------------------------------- */
 

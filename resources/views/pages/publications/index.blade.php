@@ -19,89 +19,96 @@
     <div class="c-section">
         <div class="c-page">
 
-            {{-- The filters answer without reloading the page, and they
-                 are chip links, so the floor is a page that filters and
-                 paginates with no script at all. See public/js/filters.js:
-                 nothing there draws a control. --}}
-            <div data-live-filters
+            {{-- Screen 07 line 113: display:flex; flex-wrap:wrap;
+                 gap:var(--s-6); align-items:flex-start. The sidebar is
+                 flex:1 1 270px and the results are flex:999 1 360px, so at
+                 one column the sidebar comes first, which is where a filter
+                 belongs on a phone. --}}
+            <div class="c-library"
+                 data-live-filters
                  data-live-swap="#library-filters,#library-results"
                  data-live-status="#library-count">
-            <nav class="c-filters" id="library-filters" aria-label="{{ __('publications.filters') }}">
-                <x-facet
-                    :legend="__('publications.type')"
-                    field="type"
-                    :active="$filters['type']"
-                    :counts="$counts['type']"
-                    :options="collect($types)->map(fn ($t) => ['value' => $t->value, 'label' => __($t->labelKey())])"
-                />
-                {{-- Screen 07 draws Sector first among its facets. --}}
-                <x-facet
-                    :legend="__('publications.sector')"
-                    field="sector"
-                    :active="$filters['sector']"
-                    :counts="$counts['sector']"
-                    :options="$sectors->map(fn ($s) => ['value' => $s->slug, 'label' => $s->name])"
-                />
-                <x-facet
-                    :legend="__('publications.country')"
-                    field="country"
-                    :active="$filters['country']"
-                    :counts="$counts['country']"
-                    :options="$countries->map(fn ($c) => ['value' => $c->iso_code, 'label' => $c->name])"
-                />
-                <x-facet
-                    :legend="__('publications.committee')"
-                    field="committee"
-                    :active="$filters['committee']"
-                    :counts="$counts['committee']"
-                    :options="$committees->map(fn ($c) => ['value' => $c->slug, 'label' => $c->name])"
-                />
-                {{-- "Available in". A regulator who works in French needs
-                     to filter the library to what exists in French, and
-                     that is a trilingual obligation rather than a
-                     convenience. It reads the attached document's language,
-                     not the record's translations: the title may be
-                     translated while the PDF is not, and it is the PDF the
-                     reader came for. --}}
-                <x-facet
-                    :legend="__('publications.language')"
-                    field="language"
-                    :active="$filters['language']"
-                    :counts="$counts['language']"
-                    :options="collect($languages)->map(fn ($code) => ['value' => $code, 'label' => \App\Support\Locales::nameOf($code)])"
-                />
-                <x-facet
-                    :legend="__('publications.year')"
-                    field="year"
-                    :active="$filters['year']"
-                    :counts="$counts['year']"
-                    :options="$years->map(fn ($y) => ['value' => $y, 'label' => $y])"
-                />
-            </nav>
 
-            {{-- In the document before any exchange begins, so replacing
-                 its text is announced. A results count rebuilt from
-                 scratch is a results count a screen reader never hears. --}}
-            <p class="c-results" id="library-count" role="status">{{ trans_choice('publications.result_count', $publications->total(), ['count' => $publications->total()]) }}</p>
-
-            <div id="library-results">
-            @if ($publications->isEmpty())
-                @include('blocks._empty', [
-                    'title' => __('publications.empty_title'),
-                    'body' => __('publications.empty_body'),
-                    'actionLabel' => __('publications.clear_filters'),
-                    'actionUrl' => route('publications', ['locale' => app()->getLocale()]),
-                ])
-            @else
-                <div class="b-rows">
-                    @foreach ($publications as $publication)
-                        @include('pages.publications._row', ['publication' => $publication])
-                    @endforeach
+                <div id="library-filters">
+                    <x-facet-panel
+                        :action="route('publications', ['locale' => app()->getLocale()])"
+                        :clear="route('publications', ['locale' => app()->getLocale()])"
+                        :label="__('publications.filters')"
+                        :filters="$filters"
+                        :facets="[
+                            [
+                                'legend' => __('publications.sector'),
+                                'field' => 'sector',
+                                'counts' => $counts['sector'],
+                                'options' => $sectors->map(fn ($s) => ['value' => $s->slug, 'label' => $s->name]),
+                            ],
+                            [
+                                'legend' => __('publications.type'),
+                                'field' => 'type',
+                                'counts' => $counts['type'],
+                                'options' => $types->map(fn ($t) => ['value' => $t->value, 'label' => __($t->labelKey())]),
+                            ],
+                            [
+                                'legend' => __('publications.year'),
+                                'field' => 'year',
+                                'counts' => $counts['year'],
+                                'bars' => true,
+                                'options' => $years->map(fn ($y) => ['value' => $y, 'label' => $y]),
+                            ],
+                            [
+                                'legend' => __('publications.committee'),
+                                'field' => 'committee',
+                                'counts' => $counts['committee'],
+                                'options' => $committees->map(fn ($c) => ['value' => $c->slug, 'label' => $c->name]),
+                            ],
+                            [
+                                'legend' => __('publications.country'),
+                                'field' => 'country',
+                                'counts' => $counts['country'],
+                                'options' => $countries->map(fn ($c) => ['value' => $c->iso_code, 'label' => $c->name]),
+                            ],
+                            [
+                                'legend' => __('publications.language'),
+                                'field' => 'language',
+                                'counts' => $counts['language'],
+                                'options' => collect($languages)->map(fn ($code) => ['value' => $code, 'label' => \App\Support\Locales::nameOf($code)]),
+                            ],
+                        ]"
+                    />
                 </div>
 
-                <div class="c-pagination">{{ $publications->links() }}</div>
-            @endif
-            </div>
+                <div class="c-library__main">
+                    {{-- Screen 07 line 206: "12 of 35 documents match your
+                         filters". In the document before any exchange
+                         begins, so replacing its text is announced. A count
+                         rebuilt from scratch is a count a screen reader
+                         never hears. --}}
+                    <p class="c-results" id="library-count" role="status">
+                        {!! __('publications.result_summary', [
+                            'shown' => '<strong>'.number_format($publications->total()).'</strong>',
+                            'total' => number_format($total),
+                        ]) !!}
+                    </p>
+
+                    <div id="library-results">
+                        @if ($publications->isEmpty())
+                            @include('blocks._empty', [
+                                'title' => __('publications.empty_title'),
+                                'body' => __('publications.empty_body'),
+                                'actionLabel' => __('publications.clear_filters'),
+                                'actionUrl' => route('publications', ['locale' => app()->getLocale()]),
+                            ])
+                        @else
+                            <div class="b-rows">
+                                @foreach ($publications as $publication)
+                                    @include('pages.publications._row', ['publication' => $publication])
+                                @endforeach
+                            </div>
+
+                            <div class="c-pagination">{{ $publications->links() }}</div>
+                        @endif
+                    </div>
+                </div>
             </div>
         </div>
     </div>

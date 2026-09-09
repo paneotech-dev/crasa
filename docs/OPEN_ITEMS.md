@@ -1048,3 +1048,146 @@ was that the text stays. Raised in `docs/QUESTIONS.md` and named in
   text body and 4,000 everywhere else.
 - The same textarea rendered at six rows. Right for an intro, unusable for a
   privacy notice. The row count follows the field's cap.
+
+---
+
+## The filter sidebar, and what was actually wrong with the filters
+
+*9 September 2026.*
+
+### The diagnosis, before the rebuild
+
+Both paths worked. `/en/publications?type=guideline` returned one
+publication and said so; the same URL with `X-Requested-With` returned every
+region `filters.js` swaps; the script parsed, was served as `text/javascript`
+with a versioned href, and was byte-identical to the source. Nothing was
+broken in the sense of throwing.
+
+What a reader met was this. **Twelve of the fourteen member state chips were
+inert grey text**, because only two of twelve publications carry a
+`country_id`, and two of the three language chips were inert for the same
+reason. A row of chips where most of the row does not respond to a click
+reads as a broken control, whatever the server does. The count beside each
+chip was also computed with the other filters applied but not its own, which
+is honest for a single-select facet and wrong the moment a facet can hold
+more than one value.
+
+### What was built
+
+Screen 07 line 115 draws an aside at `flex:1 1 270px` with `max-width:320px`
+beside a main at `flex:999 1 360px`, and every facet inside it is a list of
+checkboxes with a count on the right. That is what the library and the
+newsroom now carry. A checkbox holds a set, so every facet takes
+`?type[]=guideline&type[]=study`; a scalar `?type=guideline` still resolves,
+because links written before today have to keep working.
+
+**Every count is now the size of the result the click would produce.** One
+grouped query per facet while that facet has nothing selected, which is the
+ordinary case and the case where a group count is exactly that size. Once a
+facet has a selection, a click changes a set rather than defining one and no
+single grouped query can answer it, so it costs one count per option.
+`Facets::values()` caps a facet's selection at thirty so a crafted query
+string cannot turn one page load into a thousand counts.
+
+`FacetSidebarTest` walks every option of every facet on both pages, clicks
+it, and asserts the result count against the number that was printed beside
+the box. It does the same again from a state that already has a filter on,
+which is the case a single grouped query gets wrong.
+
+### Three variations to disclose
+
+1. **The facet headings are sentence case.** Screen 07 line 129 sets them
+   `font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:
+   uppercase`. Question 6 was ruled on 9 September 2026 and the footer
+   column headings are the only carve-out. Size, weight, colour and spacing
+   are the screen's.
+2. **The checkbox border is `--c-border`, not the screen's `#B9B2A2`.** That
+   value is 2.1:1 on white and SC 1.4.11 wants 3:1 for the boundary of a
+   component.
+3. **The year rows are controls.** Screen 07 line 149 draws year as a label,
+   a bar and a count with nothing to click. A year facet that cannot be
+   operated is not a facet, so the row carries a checkbox and keeps the
+   bar. The bar is filled with `--c-green-step-2`, the choropleth's own
+   scale, so a bar and a map step mean the same thing on the same platform.
+
+### Two bugs fixed on the way
+
+- `filters.js` removed the apply buttons once at start-up. The sidebar is
+  inside a swapped region, so the second filter click brought its button
+  back. It is removed after every swap now.
+- The search page still uses the old chip facets. Not in scope today and
+  not yet rebuilt.
+
+### Not done
+
+Screen 07 also draws a sort control, a search-within-the-library field and a
+much richer empty state that names the filters narrowing the search and
+offers "Remove the year filter, 4 results". None of those is the sidebar and
+none was built today.
+
+---
+
+## The hero controls come off their strip
+
+*9 September 2026, on a ruling.*
+
+**What screen 02 draws.** Line 152: the controls as a bar across the whole
+width of the band, `margin-top:auto;background:rgba(11,21,34,.86);
+border-top:1px solid #2C3A55`, padding `var(--s-3) var(--s-7)`, closing with
+a counter in `--f-admin` at 13.5px.
+
+**Overruled.** The strip added a fourth horizontal band before any content
+began, and it separated the hero from the figures band the hero belongs
+with. Every control the screen draws is kept and moves onto the hero as one
+compact group at the bottom left, aligned to the content column's left edge,
+`--s-6` above the band's bottom edge.
+
+**What is in the group,** left to right: previous, three dots, next, a 12px
+gap, pause. The arrows and the pause button are 32x32 with a 1.5px border
+and `--r-sm`. The dots are 10px circles 12px apart, the current one filled
+cream and the others outlined, with no visible number: each carries the name
+"Slide 2 of 3: featured comparison", which is what a reader needs and what a
+figure alone does not give. The counter is gone with the strip — three dots
+already say which of three slides is current.
+
+**The pill, measured.** `rgba(11,21,34,.55)`, `--r-pill`, padding 6px 10px.
+The group sits where the hero scrim is at its darkest, `rgba(15,27,45,.94)`
+at 0%, and that is what makes a 55% pill work over an unknown photograph.
+Composited over the brightest photograph a reader could load:
+
+| | Measured | Threshold |
+|---|---|---|
+| Cream `#F8F6F1` on the pill | **15.56:1** | SC 1.4.3, 4.5:1 |
+| The 1.5px border, `--c-navy-soft` `#6B7691` | **3.70:1** | SC 1.4.11, 3:1 |
+
+The ruling specified `#6B7691` for the border and the measurement confirms
+it: `--c-navy-edge`, which the old arrows used, measures 2.92:1 on this
+ground and does not clear. Both are existing tokens; no colour was added.
+The arithmetic is in `HeroCarouselTest::test_the_controls_clear_their_thresholds_on_the_pill`,
+so it is re-derived on every run rather than recorded here and trusted.
+
+**Two consequences worth naming.**
+
+1. **The dots' hit area is 22px, not 44px.** A 22px square drawn by a
+   pseudo-element is the largest that fits between two marks 12px apart
+   without two targets overlapping, and overlapping targets are worse than
+   small ones: the click lands on whichever element is later in the source.
+   22px is under WCAG 2.2's 24px minimum; this platform is held to 2.1 AA,
+   where target size is AAA, and the same three slides are reachable from
+   the 32px arrows beside them and from the left and right arrow keys.
+2. **The copy column now clears the group.** `.b-hero[data-hero]
+   .b-hero__inner` takes `padding-bottom: calc(var(--s-8) + 44px +
+   var(--s-4))`, and `var(--s-7)` in place of `--s-8` below 768. Applied at
+   every width rather than only at 375, because a long headline in French
+   can reach the bottom of the band at 1440 as easily as on a phone.
+
+**Every behaviour is unchanged.** Eight-second rotation, pause on hover and
+on focus, never advancing while a control has focus, arrow keys, swipe, the
+polite live region, static under `prefers-reduced-motion`, and readable with
+no script at all.
+
+**SC 2.5.3 no longer applies to the pause button**, because it no longer has
+a visible label: the button is an icon and the criterion matches an
+accessible name against visible text. The lang guard that keeps "Pause
+rotation" containing "Pause" in all three languages is kept anyway, as a
+constraint on the strings should a visible label ever come back.

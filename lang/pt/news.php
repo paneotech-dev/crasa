@@ -25,4 +25,6 @@ return [
     'count_sectors' => '{0}Setores abrangidos|{1}Setor abrangido|[2,*]Setores abrangidos',
     'band_eyebrow' => 'Sala de imprensa',
     'band_heading' => 'O que a região decidiu, e quando',
+
+    'result_summary' => ':shown de :total itens correspondem aos seus filtros',
 ];

@@ -1,4 +1,9 @@
-{{-- Newsroom listing. WS-06. Built from the foundations components. --}}
+{{-- Newsroom listing. WS-06.
+
+     The same filter sidebar the regulatory library uses, per screen 07 line
+     115. No screen draws a second filter treatment for the newsroom, and
+     two treatments for the same job on the same site is how one of them
+     ends up with the counts and the other without. --}}
 @extends('layouts.public')
 
 @section('title', __('news.title'))
@@ -15,59 +20,68 @@
     <div class="c-section">
         <div class="c-page">
 
-            <div data-live-filters
+            <div class="c-library"
+                 data-live-filters
                  data-live-swap="#news-filters,#news-results"
                  data-live-status="#news-count">
-            {{-- The same facet partial the library uses. Three
-                 hand-written copies of the same chip list is how one of
-                 them ends up with the count and the other two without. --}}
-            <nav class="c-filters" id="news-filters" aria-label="{{ __('news.filters') }}">
-                <x-facet
-                    :legend="__('news.category')"
-                    field="category"
-                    :active="$activeCategory"
-                    :counts="$counts['category']"
-                    :options="collect($categories)->map(fn ($case) => ['value' => $case->value, 'label' => __($case->labelKey())])"
-                />
-                <x-facet
-                    :legend="__('news.sector')"
-                    field="sector"
-                    :active="$activeSector"
-                    :counts="$counts['sector']"
-                    :options="$sectors->map(fn ($sector) => ['value' => $sector->slug, 'label' => $sector->name])"
-                />
-                @if ($tags->isNotEmpty())
-                    <x-facet
-                        :legend="__('news.tag')"
-                        field="tag"
-                        :active="$activeTag"
-                        :counts="$counts['tag']"
-                        :options="$tags->map(fn ($tag) => ['value' => $tag->slug, 'label' => $tag->translated('name', $tag->slug)])"
+
+                <div id="news-filters">
+                    <x-facet-panel
+                        :action="route('newsroom', ['locale' => app()->getLocale()])"
+                        :clear="route('newsroom', ['locale' => app()->getLocale()])"
+                        :label="__('news.filters')"
+                        :filters="$filters"
+                        :facets="array_values(array_filter([
+                            [
+                                'legend' => __('news.category'),
+                                'field' => 'category',
+                                'counts' => $counts['category'],
+                                'options' => $categories->map(fn ($case) => ['value' => $case->value, 'label' => __($case->labelKey())]),
+                            ],
+                            [
+                                'legend' => __('news.sector'),
+                                'field' => 'sector',
+                                'counts' => $counts['sector'],
+                                'options' => $sectors->map(fn ($sector) => ['value' => $sector->slug, 'label' => $sector->name]),
+                            ],
+                            $tags->isEmpty() ? null : [
+                                'legend' => __('news.tag'),
+                                'field' => 'tag',
+                                'counts' => $counts['tag'],
+                                'options' => $tags->map(fn ($tag) => ['value' => $tag->slug, 'label' => $tag->translated('name', $tag->slug)]),
+                            ],
+                        ]))"
                     />
-                @endif
-            </nav>
-
-            <p class="c-results" id="news-count" role="status">{{ trans_choice('news.result_count', $items->total(), ['count' => $items->total()]) }}</p>
-
-            <div id="news-results">
-            @if ($items->isEmpty())
-                @include('blocks._empty', [
-                    'title' => __('news.empty_title'),
-                    'body' => __('news.empty_body'),
-                    'actionLabel' => __('news.clear_filters'),
-                    'actionUrl' => route('newsroom', ['locale' => app()->getLocale()]),
-                ])
-            @else
-                <div class="b-cards">
-                    @php $usedImageSlots = collect(); @endphp
-                    @foreach ($items as $item)
-                        @include('pages.newsroom._card', ['item' => $item, 'usedImageSlots' => $usedImageSlots])
-                    @endforeach
                 </div>
 
-                <div class="c-pagination">{{ $items->links() }}</div>
-            @endif
-            </div>
+                <div class="c-library__main">
+                    <p class="c-results" id="news-count" role="status">
+                        {!! __('news.result_summary', [
+                            'shown' => '<strong>'.number_format($items->total()).'</strong>',
+                            'total' => number_format($total),
+                        ]) !!}
+                    </p>
+
+                    <div id="news-results">
+                        @if ($items->isEmpty())
+                            @include('blocks._empty', [
+                                'title' => __('news.empty_title'),
+                                'body' => __('news.empty_body'),
+                                'actionLabel' => __('news.clear_filters'),
+                                'actionUrl' => route('newsroom', ['locale' => app()->getLocale()]),
+                            ])
+                        @else
+                            <div class="b-cards">
+                                @php $usedImageSlots = collect(); @endphp
+                                @foreach ($items as $item)
+                                    @include('pages.newsroom._card', ['item' => $item, 'usedImageSlots' => $usedImageSlots])
+                                @endforeach
+                            </div>
+
+                            <div class="c-pagination">{{ $items->links() }}</div>
+                        @endif
+                    </div>
+                </div>
             </div>
         </div>
     </div>

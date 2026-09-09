@@ -29,7 +29,9 @@
   var dots = Array.prototype.slice.call(hero.querySelectorAll('[data-hero-dot]'));
   var live = hero.querySelector('[data-hero-live]');
   var pauseButton = hero.querySelector('[data-hero-pause]');
-  var pauseLabel = hero.querySelector('[data-hero-pause-label]');
+  // The counter went with the control strip on 9 September 2026. Kept as
+  // a lookup rather than deleted: a hero that still carries one is still
+  // updated, and the guard costs nothing.
   var counter = hero.querySelector('[data-hero-counter]');
 
   var INTERVAL = 8000;
@@ -164,14 +166,12 @@
       pausedByUser = !pausedByUser;
       pauseButton.setAttribute('aria-pressed', pausedByUser ? 'true' : 'false');
 
-      /* Both names move together. The visible one is a single word; the
-         accessible one says what is being paused, which is what the state
-         note used to carry for a reader who cannot see the control. Each
-         accessible name contains its visible label, per SC 2.5.3. */
-      var visible = pauseButton.getAttribute(pausedByUser ? 'data-label-play' : 'data-label-pause');
+      /* The button carries an icon and no visible text, so SC 2.5.3 has
+         nothing to match and the accessible name is free to say what is
+         being paused rather than repeating one word. The icon follows
+         aria-pressed in CSS, so the state and the glyph cannot drift. */
       var spoken = pauseButton.getAttribute(pausedByUser ? 'data-aria-play' : 'data-aria-pause');
 
-      if (pauseLabel && visible) pauseLabel.textContent = visible;
       if (spoken) pauseButton.setAttribute('aria-label', spoken);
       if (pausedByUser) stop(); else start();
     });
