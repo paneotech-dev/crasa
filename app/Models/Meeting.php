@@ -29,8 +29,9 @@ class Meeting extends Model
     use Auditable, HasFactory, MarksSampleData;
 
     protected $fillable = [
-        'committee_id', 'title', 'slug', 'kind', 'starts_on', 'ends_on',
-        'location', 'agenda', 'clearance', 'registration_url', 'is_sample',
+        'committee_id', 'title', 'slug', 'kind', 'category', 'starts_on', 'ends_on',
+        'location', 'venue', 'venue_country', 'agenda', 'summary', 'clearance',
+        'registration_url', 'external_id', 'synced_at', 'is_sample',
     ];
 
     protected function casts(): array
@@ -39,6 +40,7 @@ class Meeting extends Model
             'starts_on' => 'date',
             'ends_on' => 'date',
             'clearance' => Clearance::class,
+            'synced_at' => 'datetime',
             'is_sample' => 'boolean',
         ];
     }
@@ -62,6 +64,48 @@ class Meeting extends Model
     public function delegateRegistrations(): HasMany
     {
         return $this->hasMany(DelegateRegistration::class);
+    }
+
+    /**
+     * RP-05: a meeting scheduled or changed.
+     *
+     * WHY THIS FIRES ON THE MODEL RATHER THAN IN A CONTROLLER. There is no
+     * controller: meetings arrive from the events host, because the website
+     * displays and the Event Management Platform manages. A change reaches
+     * this platform only through the sync.
+     *
+     * WHY IT DOES NOT FIRE ON THE FIRST SYNC. Importing forty-three
+     * meetings would notify every committee about every meeting it already
+     * knew about. A meeting that has been synced before and whose date or
+     * place has moved is the actual event, and it is the only one anybody
+     * wants to hear about.
+     *
+     * This tells people that a meeting exists or has moved. It arranges
+     * nothing, reminds nobody to travel, and there is no trigger in the
+     * enum for anything that would.
+     */
+    protected static function booted(): void
+    {
+        static::updating(function (Meeting $meeting): void {
+            if ($meeting->committee_id === null || $meeting->getOriginal('synced_at') === null) {
+                return;
+            }
+
+            if (! $meeting->isDirty(['starts_on', 'ends_on', 'venue', 'location'])) {
+                return;
+            }
+
+            app(\App\Services\NotifiesMembers::class)->fire(
+                \App\Enums\NotificationTrigger::MeetingChanged,
+                __('notifications.meeting_moved', [
+                    'title' => $meeting->title,
+                    'date' => $meeting->starts_on?->isoFormat('D MMMM YYYY') ?? '',
+                ]),
+                route('extranet.calendar', ['locale' => 'en']),
+                committee: $meeting->committee,
+                payload: ['meeting_id' => $meeting->id],
+            );
+        });
     }
 
     public function scopeUpcoming(Builder $query): Builder

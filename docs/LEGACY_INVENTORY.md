@@ -166,3 +166,91 @@ every URL, the page it was found on, and the page titles.
 **Nothing is downloaded yet.** The PDFs are on the client's CDN and 35 of
 them is a few hundred megabytes; fetching them belongs with the decision
 about which are wanted, not before it.
+
+---
+
+## The import, 10 September 2026
+
+The mapping ruling arrived and the import ran. Four commands, in this
+order, all resumable and all rate-limited to one request a second:
+
+| Command | What it does |
+|---|---|
+| `legacy:import` | The first crawl. URLs, titles, asset links. |
+| `legacy:content` | Fetches each page again for its body, date, category and images, and saves the page as served. `--reparse` re-reads the disk so a parser fix costs no requests. |
+| `legacy:events` | The events host's calendar, over its own JSON API. |
+| `legacy:assets` | Downloads the documents and photographs, strips EXIF, builds derivatives. |
+| `legacy:map` | Writes the records. Idempotent. |
+| `legacy:photographs` | Describes what came back and copies the institutional pictures. |
+
+### Two gaps the first crawl left, found in its own output
+
+Its queue rules matched `/post-category/`, `/news/`, `/blog-categories/`
+and `/publications` and nothing else. So **`/projects/current-projects`,
+`/projects/past-projects` and the whole `/project/<slug>` collection behind
+them were never reached**, and neither was the homepage. Seven more pages,
+four of them real projects with their own photographs and documents.
+
+The events host was never crawled at all. It runs WordPress with The Events
+Calendar, which publishes every event as JSON with its venue and category
+already separated, so `legacy:events` reads that rather than scraping. The
+default query answers with upcoming events only: it reports a total of 1
+against a calendar of 43 unless a start date is given.
+
+### What was imported
+
+| Kind | Count |
+|---|---|
+| Publications | 35 |
+| News items | 33 |
+| News items, archived | 5 |
+| Meetings, from `/post-category/events` | 3 |
+| Meetings, from the events host | 43 |
+| Projects, current | 2 |
+| Projects, past | 2 |
+| About page blocks filled | 4 |
+| Photographs catalogued | 65 |
+| Listing pages redirected | 18 |
+| **Legacy URLs answering a 301** | **141** |
+
+Ninety-eight pages parsed, zero failures. Nothing is `is_sample`: this is
+CRASA's own published material and the go-live purge must not reach it.
+
+### Three things flagged for a person
+
+- **12 rows where the title names a different sector from the legacy
+  category.** The ruling says the title wins; the row carries a note saying
+  which and why. Two electronic-communications guidelines name broadcasting
+  in their titles and are filed under broadcasting.
+- **18 rows with no date anywhere.** No date on the page, no edition year in
+  the standfirst, no year in a filename. The crawl date stands in and
+  `date_source` says `crawl`.
+- **28 headlines re-cased out of capitals.** Most of the legacy site's
+  headlines are shouted. CLAUDE.md's first writing rule is sentence case,
+  and thirty shouted headlines on the newsroom's front page at the workshop
+  is the rule's clearest violation. Acronyms and proper nouns are held by a
+  list, not guessed.
+
+### What the legacy site turned out not to have
+
+**Annual reports.** The category has one page and its Download button goes
+to a SharePoint folder, not a file. The platform will not redirect a reader
+to SharePoint. Raised as Question 12 and recorded in `CLIENT_REQUESTS.md`.
+
+**Its own slugs, in several cases.** The site is built on a Webflow
+template and several CRASA articles kept the template post's slug: the page
+at `/post/brand-optics-and-what-it-means-for-your-business` is a masterclass
+on broadband gap analysis. New slugs come from the titles; the legacy URLs
+still redirect.
+
+### The 301 map
+
+One row per legacy URL in `legacy_records`, with the path stored normalised
+so `crasa.org`, `www.crasa.org`, with and without a trailing slash all
+resolve to the same row. `Route::fallback` answers, so only a request that
+matched no route pays for the lookup. A legacy URL with no mapping still
+404s rather than redirecting to the homepage.
+
+`LegacyImportTest::test_no_mapped_legacy_url_answers_404` walks whatever
+the mapper wrote rather than a hand list, so a mapping that stops
+redirecting fails the suite rather than a regulator following a citation.

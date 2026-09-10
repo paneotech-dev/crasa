@@ -24,7 +24,7 @@ class NewsItem extends Model
 
     protected $fillable = [
         'slug', 'category', 'sector_id', 'published_at',
-        'hero_image_path', 'author_name', 'status', 'is_sample',
+        'hero_image_path', 'author_name', 'status', 'archived', 'is_sample',
     ];
 
     protected function casts(): array
@@ -32,6 +32,7 @@ class NewsItem extends Model
         return [
             'category' => NewsCategory::class,
             'published_at' => 'datetime',
+            'archived' => 'boolean',
             'is_sample' => 'boolean',
         ];
     }

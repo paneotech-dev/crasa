@@ -58,8 +58,10 @@ class HeaderDropdownTest extends TestCase
             $this->assertStringContainsString('>'.$label, $header, $label.' is not in the header.');
         }
 
-        // Two groups drawn, because Projects is hidden.
-        $this->assertSame(2, substr_count($header, 'data-nav-group'));
+        // Three groups drawn. Projects joined About and Publications on
+        // 10 September 2026, when the legacy import landed four projects
+        // and the listing page was built.
+        $this->assertSame(3, substr_count($header, 'data-nav-group'));
     }
 
     public function test_a_group_carries_its_children_and_its_own_page(): void
@@ -79,38 +81,50 @@ class HeaderDropdownTest extends TestCase
     }
 
     /**
-     * Projects is hidden until the legacy import lands. The group and its
-     * children are records either way, so showing it is one toggle in the
-     * builder rather than a deploy.
+     * Projects was seeded hidden, with its children as records, so turning
+     * it on when the legacy import landed was one toggle in the builder
+     * rather than a deploy. This is the state after that toggle, and the
+     * toggle itself is still proved: hiding the group takes all three rows
+     * off the header without deleting anything.
      */
-    public function test_projects_is_a_record_and_is_not_drawn(): void
+    public function test_projects_is_drawn_and_hiding_it_is_still_one_toggle(): void
     {
         $projects = MenuItem::where('menu', 'header')
             ->whereHas('translations', fn ($t) => $t->where('value', 'Projects'))
             ->firstOrFail();
 
-        $this->assertFalse($projects->is_visible);
+        $this->assertTrue($projects->is_visible);
         $this->assertCount(2, $projects->children);
-
-        $this->assertStringNotContainsString('Projects', $this->header());
-        $this->assertStringNotContainsString('Current projects', $this->header());
-
-        // One toggle, and it is there.
-        $projects->update(['is_visible' => true]);
 
         $header = $this->header();
         $this->assertStringContainsString('Projects', $header);
         $this->assertStringContainsString('Current projects', $header);
         $this->assertStringContainsString('Past projects', $header);
+
+        $projects->update(['is_visible' => false]);
+
+        $hidden = $this->header();
+        $this->assertStringNotContainsString('Current projects', $hidden);
+        $this->assertStringNotContainsString('Past projects', $hidden);
+
+        // Hidden, not deleted. The records are still there to turn back on.
+        $this->assertCount(2, $projects->fresh()->children);
     }
 
-    /** A group with no page of its own is a button, not a link to nowhere. */
+    /**
+     * A group with no page of its own is a button, not a link to nowhere.
+     *
+     * Every group in the seeded menu now has a destination -- Projects
+     * gained one when the listing page was built -- so this makes one that
+     * does not, which is the case the builder still allows.
+     */
     public function test_a_group_with_no_destination_is_not_a_link(): void
     {
-        MenuItem::where('menu', 'header')
+        $group = MenuItem::where('menu', 'header')
             ->whereHas('translations', fn ($t) => $t->where('value', 'Projects'))
-            ->firstOrFail()
-            ->update(['is_visible' => true]);
+            ->firstOrFail();
+
+        $group->update(['destination_type' => 'url', 'destination' => null]);
 
         $header = $this->header();
 
@@ -132,8 +146,9 @@ class HeaderDropdownTest extends TestCase
     {
         $header = $this->header();
 
-        // In the markup, not built by script.
-        $this->assertSame(9, substr_count($header, 'class="c-nav__child"'));
+        // In the markup, not built by script. Nine children and one
+        // overview row per group.
+        $this->assertSame(12, substr_count($header, 'class="c-nav__child"'));
 
         $css = file_get_contents(public_path('css/chrome.css'));
         $this->assertStringContainsString('html.has-js .c-nav__menu {', $css);

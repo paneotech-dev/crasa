@@ -37,7 +37,7 @@ class HeaderMenuSeeder extends Seeder
             'key' => 'about', 'type' => 'page', 'destination' => 'about', 'visible' => true,
             'labels' => ['en' => 'About', 'fr' => 'À propos', 'pt' => 'Sobre'],
             'children' => [
-                ['key' => 'vision', 'type' => 'url', 'destination' => '/about#vision',
+                ['key' => 'vision', 'type' => 'url', 'destination' => '/about#vision-mission-history',
                  'labels' => ['en' => 'Vision, mission and history', 'fr' => 'Vision, mission et histoire', 'pt' => 'Visão, missão e história']],
                 ['key' => 'structure', 'type' => 'url', 'destination' => '/about#structure',
                  'labels' => ['en' => 'Structure', 'fr' => 'Structure', 'pt' => 'Estrutura']],
@@ -71,16 +71,17 @@ class HeaderMenuSeeder extends Seeder
         ],
         [
             /*
-             * Hidden until the legacy import lands. The group and its
-             * children are records either way, so showing it is a toggle
-             * rather than a deploy.
+             * Visible from 10 September 2026, when the legacy import landed
+             * four projects and the listing and detail pages were built.
+             * It was hidden rather than absent for exactly this: showing it
+             * was a toggle rather than a deploy.
              */
-            'key' => 'projects', 'type' => 'url', 'destination' => null, 'visible' => false,
+            'key' => 'projects', 'type' => 'route', 'destination' => 'projects', 'visible' => true,
             'labels' => ['en' => 'Projects', 'fr' => 'Projets', 'pt' => 'Projetos'],
             'children' => [
-                ['key' => 'current-projects', 'type' => 'url', 'destination' => '/projects/current',
+                ['key' => 'current-projects', 'type' => 'url', 'destination' => '/projects?state=current',
                  'labels' => ['en' => 'Current projects', 'fr' => 'Projets en cours', 'pt' => 'Projetos em curso']],
-                ['key' => 'past-projects', 'type' => 'url', 'destination' => '/projects/past',
+                ['key' => 'past-projects', 'type' => 'url', 'destination' => '/projects?state=past',
                  'labels' => ['en' => 'Past projects', 'fr' => 'Projets achevés', 'pt' => 'Projetos concluídos']],
             ],
         ],

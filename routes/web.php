@@ -36,10 +36,12 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\FeatureInterestController;
 use App\Http\Controllers\ExtranetController;
+use App\Http\Controllers\LegacyRedirectController;
 use App\Http\Controllers\LocaleRedirectController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\NewsroomController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SubmissionController;
@@ -205,6 +207,16 @@ Route::prefix('{locale}')
         Route::get('publications', [PublicationController::class, 'index'])->name('publications');
         Route::get('publications/{slug}', [PublicationController::class, 'show'])->name('publications.show');
 
+        /*
+         * Projects. WS-12's no-content-loss clause.
+         *
+         * The legacy site carries two project sections behind a top-level
+         * menu item and WS-03's information architecture lists neither.
+         * Current and past are one collection in two states, so the detail
+         * URL does not change on the day a project ends.
+         */
+        Route::get('projects', [ProjectController::class, 'index'])->name('projects');
+        Route::get('projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
         /*
          * Newsroom. WS-06.
          */
@@ -561,3 +573,13 @@ Route::prefix('{locale}')
             ->name('page');
 
     });
+
+/*
+ * A legacy URL that matched nothing above.
+ *
+ * Last in the file and outside the locale group, because a legacy URL
+ * carries no language prefix and because only a request that matched no
+ * route should pay for the lookup. Anything with no mapping falls through
+ * to the ordinary 404.
+ */
+Route::fallback(LegacyRedirectController::class);

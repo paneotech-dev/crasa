@@ -18,6 +18,14 @@ enum NewsCategory: string
     case Consultation = 'consultation';
     case Communique = 'communique';
 
+    /*
+     * Added 10 September 2026 with the legacy import. Eleven of the
+     * legacy site's items are press releases, a grouping CRASA keeps
+     * separate from news, tenders and consultations, and folding them
+     * into news loses a distinction the Secretariat maintains.
+     */
+    case PressRelease = 'press_release';
+
     public function labelKey(): string
     {
         return 'news.category_'.$this->value;

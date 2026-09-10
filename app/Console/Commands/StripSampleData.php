@@ -53,7 +53,8 @@ class StripSampleData extends Command
 {
     protected $signature = 'content:strip-samples
                             {--dry-run : Count what would be removed without removing it}
-                            {--force : Skip the confirmation}';
+                            {--force : Skip the confirmation}
+                            {--only= : Comma-separated record types, e.g. NewsItem,Meeting}';
 
     protected $description = 'Remove every row flagged as demonstration data, before go-live';
 
@@ -179,7 +180,7 @@ class StripSampleData extends Command
         $removed = DB::transaction(function () {
             $removed = 0;
 
-            foreach (self::ORDER as $class) {
+            foreach ($this->order() as $class) {
                 $removed += $this->strip($class);
             }
 
@@ -266,6 +267,16 @@ class StripSampleData extends Command
      */
     private function wouldLockEverybodyOut(): bool
     {
+        /*
+         * Only when this run would actually take accounts. A --only run
+         * that names news and meetings deletes no user, so refusing it
+         * for want of a real administrator would block a safe operation
+         * on the strength of an unrelated one.
+         */
+        if (! in_array(User::class, $this->order(), true)) {
+            return false;
+        }
+
         $survivors = User::query()
             ->where('role', \App\Enums\Role::Administrator)
             ->where('status', \App\Enums\UserStatus::Active)
@@ -280,12 +291,40 @@ class StripSampleData extends Command
         return $survivors === 0 && $going > 0;
     }
 
+    /**
+     * The record types this run touches.
+     *
+     * WHY --only EXISTS. The legacy import writes CRASA's real news and its
+     * real calendar, which makes the seeded demonstration versions of both
+     * misleading rather than useful: a newsroom carrying thirty-three real
+     * items and six invented ones is worse than either. Retiring those two
+     * types is not the same decision as the go-live strip, which also takes
+     * the demonstration accounts the workshop runs on.
+     *
+     * @return list<class-string<Model>>
+     */
+    private function order(): array
+    {
+        $only = $this->option('only');
+
+        if ($only === null || trim($only) === '') {
+            return self::ORDER;
+        }
+
+        $wanted = array_map('trim', explode(',', $only));
+
+        return array_values(array_filter(
+            self::ORDER,
+            fn (string $class) => in_array(class_basename($class), $wanted, true)
+        ));
+    }
+
     /** @return array<class-string<Model>, int> */
     private function counts(): array
     {
         $counts = [];
 
-        foreach (self::ORDER as $class) {
+        foreach ($this->order() as $class) {
             $counts[$class] = $this->query($class)->count();
         }
 

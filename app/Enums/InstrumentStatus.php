@@ -15,15 +15,14 @@ enum InstrumentStatus: string
     case Draft = 'draft';
     case Proposed = 'proposed';
 
+    public function labelKey(): string
+    {
+        return 'instruments.status_'.$this->value;
+    }
+
     public function label(): string
     {
-        return match ($this) {
-            self::InForce => 'In force',
-            self::Amended => 'Amended',
-            self::Repealed => 'Repealed',
-            self::Draft => 'Draft',
-            self::Proposed => 'Proposed',
-        };
+        return __($this->labelKey());
     }
 
     /** The CSS modifier for the status pill. Tokens only. */

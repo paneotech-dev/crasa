@@ -445,3 +445,75 @@ Items 1 to 4 are the ones we would most like before 23 September.
 Please send anything you have, in whatever form you have it. Partial is
 better than complete and late, and we can put a name and a website live
 without waiting for a logo.
+
+---
+
+# Added 10 September 2026, after the legacy import
+
+## The annual reports themselves
+
+**What we need:** the annual report PDFs, one per year, with the year each
+covers.
+
+**Why we are asking:** the legacy site's Annual Reports category has one
+page, and its Download button goes to a SharePoint folder rather than to a
+file. We will not carry that link across. The platform's own words are
+*"Every download comes from the platform itself. No redirect to Google
+Drive or SharePoint anywhere,"* and a treaty body's annual report behind a
+personal OneDrive share also stops working the day that account is closed.
+
+**How much:** the files. Nothing else. The category, the filter and the
+publication type all exist and are wired; the shelf is empty.
+
+## Twelve publications where the title disagrees with the old category
+
+**What we need:** ten minutes with a list.
+
+**Why we are asking:** the ruling on the import says that where a
+guideline's title names a sector and the old category says a different one,
+the title wins and the row is flagged. Twelve rows were flagged. Two
+examples: *SADC ICT and Broadcasting Infrastructure Sharing Guidelines* and
+*Framework on the Establishment of Digital Sound Broadcasting in SADC* were
+filed under electronic communications on the old site and are filed under
+broadcasting here.
+
+**How much:** confirm or correct. The list is in the back office with the
+reason on each row.
+
+## Eighteen items with no date anywhere
+
+**What we need:** the publication dates, where you have them.
+
+**Why we are asking:** eighteen of the imported items state no date on the
+old page, carry no edition year in their standfirst and have no year in
+their filename. They are dated to the day of the crawl and marked as such.
+A regulator citing a guideline needs its year.
+
+## Twenty-eight headlines we re-cased
+
+**What we need:** a read-through, not a decision.
+
+**Why we are asking:** most of the old site's headlines are set in
+capitals. The house style is sentence case, so they were re-cased on
+import, with acronyms and place names held by a list rather than guessed.
+Twenty-eight are flagged so somebody can read them once.
+
+## Twenty-four photographs we would like cleared
+
+**What we need:** confirmation that CRASA holds the rights and that the
+people in them may appear on the public site.
+
+**Why we are asking:** twenty-four of the sixty-five photographs from the
+old site show CRASA meetings, signings, courtesy calls or delegates. They
+are the institutional pictures the platform is short of. Nothing has been
+placed on any page: what a picture shows, and whether the faces in it are
+cleared, is a judgement for the Secretariat. `docs/LEGACY_PHOTOGRAPHS.md`
+lists each one with what it shows and its size.
+
+**Our reading of the two largest:** neither is right for the homepage. One
+is a single speaker under a CRAN pull-up banner, and a regional
+association whose homepage opens on one member state's branding is making a
+claim it does not mean to. The other is a delegation line-up in BEREC's
+lobby in Europe beside an EU flag, which is both outside the region and
+carries an emblem we may not show until CRASA supplies the wording that
+goes with it.

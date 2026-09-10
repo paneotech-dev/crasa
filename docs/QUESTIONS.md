@@ -640,3 +640,76 @@ column on the admin page list, a band on the dashboard and a panel on the
 page editor; an administrator clears it in one click and the platform stamps
 who and when. No public template reads any of it, held by a static guard as
 well as by rendered-output tests.
+
+---
+
+## Question 11: what is CRASA's actual reporting cycle, and when is a return due?
+
+*Raised 10 September 2026, building the country dashboard.*
+
+**Recommendation: annual, closing 31 March for the previous calendar year.
+Implemented as that, labelled provisional everywhere it is shown, and one
+constant away from whatever CRASA answers.**
+
+The country dashboard tells a member state what it owes and when. "What"
+the platform already knows; "when" it did not, because no source available
+to this build states a deadline. The submission form derived its periods as
+"this year and the two before it" and carried no due date at all.
+
+Inventing a deadline and presenting it as the association's is the failure
+mode this project has to avoid, so the date is stated as a convention and
+marked as one: every due date on the dashboard carries the word
+*provisional* beside it, in all three languages.
+
+**What is needed:** three answers.
+
+1. **Is the cycle annual, or annual with quarterly indicators?**
+   `DATA_MODEL` section 10 raises this as open question 3 and it is still
+   open. The `period` column already accepts `2025` and `2025-Q3`, so
+   either works; the completeness matrix and the unique index change
+   meaning depending on the answer.
+2. **When does a return close?** `ReportingPeriods::dueOn()` currently says
+   31 March following the year, and the end of the quarter after a quarterly
+   period.
+3. **How many years back may a return still be opened?**
+   `ReportingPeriods::YEARS_OPEN` is 3.
+
+**What it changes:** one class. All three answers are constants in
+`App\Support\ReportingPeriods`, which the dashboard, the submission form and
+the completeness matrix all read. Nothing else in the platform knows a date.
+
+**Done in the meantime:** the dashboard states the convention, marks it
+provisional, and shows a period nobody has started as due — which is the
+case that matters most and the one a query over submissions cannot see,
+because there is no row for it.
+
+---
+
+## Question 12: annual reports are on SharePoint, and the platform will not link there
+
+*Raised 10 September 2026, mapping the legacy import.*
+
+**Recommendation: ask CRASA for the annual report PDFs themselves. Do not
+carry the SharePoint link across.**
+
+The legacy site's Annual Reports category has exactly one page, and its
+Download button goes to a SharePoint folder on
+`crasaorg143-my.sharepoint.com`, not to a file. Thirty-nine documents came
+back from the crawl and not one of them is an annual report.
+
+That link cannot come across. The platform's own copy says: *"Every download
+comes from the platform itself. No redirect to Google Drive or SharePoint
+anywhere."* A treaty body's annual report behind a personal OneDrive share
+is also a link that breaks the day that account is closed.
+
+**What is needed:** the annual report PDFs, one per year, with the year each
+covers. The import maps them to `publication_type: annual_report` with no
+further decision needed.
+
+**What it changes:** nothing structural. The category, the filter and the
+publication type all exist and are wired; the shelf is empty.
+
+**Done in the meantime:** the external link is recorded in the crawl
+manifest as an `external_documents` entry rather than followed, and the
+annual reports category redirects to a publications filter that will show
+them the moment they exist. Recorded in `docs/CLIENT_REQUESTS.md`.

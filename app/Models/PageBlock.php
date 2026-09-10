@@ -20,7 +20,7 @@ class PageBlock extends Model
 
     protected $fillable = [
         'page_id', 'block_type', 'position', 'anchor', 'is_visible', 'settings',
-        'is_sample', 'needs_content', 'content_note',
+        'is_sample', 'needs_content', 'content_note', 'imported_from_legacy',
     ];
 
     protected function casts(): array
@@ -31,6 +31,7 @@ class PageBlock extends Model
             'is_visible' => 'boolean',
             'is_sample' => 'boolean',
             'needs_content' => 'boolean',
+            'imported_from_legacy' => 'boolean',
         ];
     }
 
