@@ -21,4 +21,5 @@ return [
     'count_past' => '{0}Réunions passées|{1}Réunion passée|[2,*]Réunions passées',
     'band_eyebrow' => 'Réunions et événements',
     'band_heading' => 'Les réunions sur lesquelles repose le travail d\'harmonisation',
+    'agenda_to_be_confirmed' => 'Ordre du jour à confirmer.',
 ];

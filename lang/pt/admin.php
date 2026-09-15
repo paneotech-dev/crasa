@@ -736,4 +736,7 @@ return [
     'diff_added_from' => 'Acrescentado:',
     'diff_removed_from' => 'Removido:',
     'diff_end' => 'Fim da alteração.',
+    'nav_contributions' => 'Entregas',
+    'nav_announcements' => 'Avisos',
+    'nav_authority-changes' => 'Fichas dos membros',
 ];

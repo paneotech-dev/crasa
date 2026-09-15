@@ -57,7 +57,11 @@
 
             @if ($body)
                 <div class="c-prose" @if ($body->isFallback()) lang="{{ $body->locale }}" @endif>
-                    {!! nl2br(e($body->value)) !!}
+                    {{-- Through the renderer, which is what turns the
+                         stored <p> and <sup> into a paragraph and a
+                         superscript rather than into text a reader has to
+                         look past. --}}
+                    {!! app(\App\Services\ContentRenderer::class)->render($body->value, 'news:'.$item->id) !!}
                 </div>
             @endif
 

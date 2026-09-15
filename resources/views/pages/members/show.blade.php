@@ -32,6 +32,23 @@
             </h1>
 
             @if ($authority)
+                {{-- The regulator's own mark, above its name.
+
+                     alt is empty on purpose: the authority's name is the
+                     line directly below this image, so a screen reader
+                     that read the mark as well would hear the same name
+                     twice. The flag beside the heading follows the same
+                     rule for the same reason.
+
+                     Wrapped in its own condition, so a member state with
+                     no logo yet gets exactly the page it gets today. --}}
+                @if ($authority->logo_path)
+                    <p class="c-member__logo">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($authority->logo_path) }}"
+                             alt="" loading="lazy" decoding="async">
+                    </p>
+                @endif
+
                 <p class="c-lead">{{ $authority->name }}</p>
             @endif
 

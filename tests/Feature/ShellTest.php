@@ -90,7 +90,12 @@ class ShellTest extends TestCase
         }
 
         $this->assertStringContainsString('a-side__me', $html);
-        $this->assertStringContainsString($this->administrator->name, $html);
+        // Escaped, because the factory's names are real ones and roughly
+        // one in twenty carries an apostrophe. This test failed for the
+        // first time on 10 September 2026 against "Terrill O'Reilly",
+        // having passed every run before it: a flake that was always there
+        // and only showed when the seed produced one.
+        $this->assertStringContainsString(e($this->administrator->name), $html);
         $this->assertStringContainsString(__('admin.sign_out'), $html);
     }
 

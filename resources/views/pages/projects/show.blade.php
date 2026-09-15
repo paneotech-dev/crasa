@@ -55,7 +55,10 @@
 
             @if ($body)
                 <div class="c-prose" @if ($body->isFallback()) lang="{{ $body->locale }}" @endif>
-                    {!! $body->value !!}
+                    {{-- Was raw. This content is scraped from a third
+                         party and nothing on this platform may print such
+                         a value without sanitising it first. --}}
+                    {!! app(\App\Services\ContentRenderer::class)->render($body->value, 'project:'.$project->id) !!}
                 </div>
             @endif
 

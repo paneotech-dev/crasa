@@ -27,7 +27,8 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name', 'email', 'password', 'country_id', 'authority_id', 'role',
-        'status', 'theme', 'dismissed_hints', 'preferred_locale', 'notification_preferences', 'last_seen_at',
+        'status', 'theme', 'dismissed_hints', 'preferred_locale', 'notification_preferences',
+        'digest_frequency', 'digest_sent_at', 'last_seen_at',
         'is_sample',
     ];
 
@@ -69,6 +70,7 @@ class User extends Authenticatable
             'two_factor_recovery_codes' => 'encrypted',
             'last_login_at' => 'datetime',
             'notification_preferences' => 'array',
+            'digest_sent_at' => 'datetime',
             'last_seen_at' => 'datetime',
         ];
     }

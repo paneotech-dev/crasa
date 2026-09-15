@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Enums\Permission;
+use App\Models\Announcement;
 use App\Models\AuditLog;
 use App\Models\Authority;
 use App\Models\Committee;
@@ -24,6 +25,7 @@ use App\Models\Sector;
 use App\Models\Submission;
 use App\Models\Tag;
 use App\Models\User;
+use App\Policies\AnnouncementPolicy;
 use App\Policies\AuditLogPolicy;
 use App\Policies\AuthorityPolicy;
 use App\Policies\CommitteePolicy;
@@ -52,6 +54,7 @@ class AuthServiceProvider extends ServiceProvider
 {
     /** @var array<class-string, class-string> */
     private array $policies = [
+        Announcement::class => AnnouncementPolicy::class,
         AuditLog::class => AuditLogPolicy::class,
         Authority::class => AuthorityPolicy::class,
         Committee::class => CommitteePolicy::class,

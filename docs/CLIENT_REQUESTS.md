@@ -517,3 +517,80 @@ claim it does not mean to. The other is a delegation line-up in BEREC's
 lobby in Europe beside an EU flag, which is both outside the region and
 carries an emblem we may not show until CRASA supplies the wording that
 goes with it.
+
+## Permission to show the fourteen members' own logos
+
+**What we need:** confirmation that CRASA may publish its member states'
+logos on this platform, and that the member states are content for it to.
+
+**Why we are asking:** the fourteen national regulators' marks are now on
+the members page and the member grid. They came from CRASA's own About
+page, where CRASA has been publishing them for years. That is where the
+question sits: CRASA publishing a member's mark on crasa.org is not
+automatically the same permission as this platform publishing it, and these
+are fourteen registered trademarks belonging to fourteen other
+organisations, several of them state bodies with their own brand rules.
+
+CLAUDE.md already holds one carve-out on exactly this reasoning, for the
+four social network marks, on the grounds that a recoloured brand mark is a
+guideline breach and on a treaty body's site that is a real exposure. The
+same logic applies here, and the same care: every logo is served at its
+original proportions, unmodified, with no border, no background and no
+recolouring.
+
+**How much:** one line from the Secretariat confirming it, and ideally each
+authority's own current mark and its brand guidelines, since several of
+these files are some years old and an authority that has rebranded will
+want the new one.
+
+**What happens if the answer is no, or is slow.** One command clears the
+fourteen `logo_path` values and the pages return to the flag-and-acronym
+treatment they had before. Nothing else depends on them.
+
+**Recorded:** fourteen rows in `docs/LICENCES.csv`, each carrying
+`NOT STATED - CONFIRMATION REQUIRED` as its licence and `Unknown` for
+attribution, with the note naming the authority and the source file.
+
+## Alt text for twenty-five photographs inside imported articles
+
+**What we need:** one sentence describing each photograph, or a note that a
+photograph is decorative.
+
+**Why we are asking:** twenty-five images sit inside the imported news
+articles and project pages. Every one of them carries `alt=""` — Webflow
+wrote the empty attribute and nobody filled it in. WCAG 2.1 AA is a
+contractual acceptance criterion and an image that carries information a
+sighted reader gets is an image that must describe itself.
+
+We have not invented descriptions from filenames. A caption guessed from
+`PHOTO-2023-04-27-11-12-41.jpg` would be worse than none, because a screen
+reader would announce it as though it were true.
+
+**How much:** a sentence each, or "decorative" where the picture adds
+nothing the surrounding text does not already say. Twenty-five in total.
+
+## Four meeting agendas that came across as placeholder text
+
+**What we need:** the real agendas for four public meetings, or
+confirmation that they should stay unpublished.
+
+**Why we are asking:** four of the forty-three meetings imported from the
+events host carry the events theme's demonstration Latin as their agenda
+rather than any CRASA content. The meetings themselves are real: the
+titles, the dates and the committees are all genuine.
+
+- **#54** 1st Universal Service and Access Committee Meeting, 10 June 2024
+- **#55** Postal Committee, 24 June 2024
+- **#56** Human Resource and Development Committee Meeting, 22 July 2024
+- **#57** 1st Finance and Audit Committee Meeting, 25 July 2024
+
+**What the platform does in the meantime:** the pages say "Agenda to be
+confirmed" in all three languages rather than showing the Latin. The
+original text is kept in the database and nothing has been deleted. As soon
+as a real agenda replaces it the notice disappears by itself; there is
+nothing to switch off.
+
+**This is not the same as the bracketed notes on the privacy and terms
+pages.** Those are questions to the Secretariat inside a published
+document. This is a statement to the public that a meeting's agenda is not
+settled yet.

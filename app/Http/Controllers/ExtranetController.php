@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\NotificationTrigger;
 use App\Models\AuditLog;
 use App\Models\Committee;
 use App\Models\Document;
 use App\Models\Folder;
 use App\Models\Meeting;
 use App\Services\CalendarFeed;
+use App\Services\NotifiesMembers;
+use App\Support\CountryDashboard;
 use App\Support\ExtranetNavigation;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
@@ -128,6 +131,28 @@ class ExtranetController extends Controller
             'clearance' => $folder->clearance,
         ]);
 
+        /*
+         * RP-05: a document added to my committee. Fired here rather than
+         * on the model, because a document created by the legacy import or
+         * by a seeder is not something to wake fourteen regulators about.
+         *
+         * The audience is the seats on that committee, worked out at send
+         * time from the pivot rather than from a stored subscription list.
+         */
+        if ($folder->committee !== null) {
+            app(NotifiesMembers::class)->fire(
+                NotificationTrigger::CommitteeDocument,
+                __('notifications.filed', [
+                    'file' => $document->original_filename,
+                    'committee' => $folder->committee->name,
+                ]),
+                route('extranet.folder', ['locale' => app()->getLocale(), 'folder' => $folder->id]),
+                committee: $folder->committee,
+                except: $request->user(),
+                payload: ['document_id' => $document->id],
+            );
+        }
+
         AuditLog::create([
             'user_id' => $request->user()->id,
             'action' => AuditLog::CREATED,
@@ -179,48 +204,27 @@ class ExtranetController extends Controller
      * assembles records from four sources and it is tempting to trust the
      * query instead of the policy.
      */
+    /**
+     * The country dashboard, screen 04 and RP-12.
+     *
+     * WHAT CHANGED AND WHY. This page opened on a welcome and three panels
+     * of recent things. A national regulator signing in wants one question
+     * answered: what does my authority owe, and what has changed since I
+     * was last here. Both are answerable from records the platform already
+     * holds, and neither was being asked.
+     *
+     * A committee member gets the committee view instead, because a person
+     * who holds a seat but represents no member state has no return to
+     * file and no completeness figure of their own. Giving them the
+     * country panels would show them either somebody else's numbers or
+     * three empty boxes.
+     */
     public function dashboard(Request $request): View
     {
         $user = $request->user();
-        $committees = $user->committees()->pluck('committees.id');
 
-        return view('pages.extranet.dashboard', [
-            // The reader's own committees, or all of them for an account
-            // that sees the whole region.
-            'meetings' => Meeting::upcoming()
-                ->with('committee')
-                ->when(
-                    ! $user->seesAllCountries(),
-                    fn ($q) => $q->whereIn('committee_id', $committees)->orWhereNull('committee_id')
-                )
-                ->limit(5)
-                ->get()
-                ->filter(fn (Meeting $m) => Gate::allows('view', $m))
-                ->values(),
-
-            'documents' => Document::query()
-                ->with(['documentable', 'folder'])
-                ->latest()
-                ->limit(30)
-                ->get()
-                ->filter(fn (Document $d) => Gate::allows('view', $d))
-                ->take(5)
-                ->values(),
-
-            /*
-             * The reader's own seats.
-             *
-             * A committee member had no route to their own workspace from
-             * anywhere: the rail is flat and carries no committee, and this
-             * page listed meetings and documents but never the committee
-             * they sit on. The workspace was reachable only by knowing its
-             * slug.
-             */
-            'committees' => $user->committees()
-                ->withCount(['documents', 'meetings'])
-                ->orderBy('name')
-                ->get(),
-
+        return view('pages.extranet.dashboard', CountryDashboard::for($user) + [
+            'isCountryView' => $user->country_id !== null,
             'notifications' => $user->notifications()->limit(5)->get(),
             'clearance' => ExtranetNavigation::clearance($user),
         ]);

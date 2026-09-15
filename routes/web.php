@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\AdminSearchController;
+use App\Http\Controllers\Admin\AnnouncementAdminController;
 use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\AuthorityChangeController;
+use App\Http\Controllers\Admin\ContributionReviewController;
 use App\Http\Controllers\Admin\CommitteeSeatController;
 use App\Http\Controllers\Admin\ConfirmationController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -30,7 +33,11 @@ use App\Http\Controllers\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\Auth\TwoFactorEnrolmentController;
 use App\Http\Controllers\ComparatorController;
 use App\Http\Controllers\CompletenessController;
+use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\AuthorityProfileController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ContributionController;
+use App\Http\Controllers\DirectoryController;
 use App\Http\Controllers\DelegateRegistrationController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EventsController;
@@ -40,9 +47,12 @@ use App\Http\Controllers\LegacyRedirectController;
 use App\Http\Controllers\LocaleRedirectController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\NewsroomController;
+use App\Http\Controllers\NotificationCentreController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PublicationController;
+use App\Http\Controllers\IndicatorReferenceController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\SubmissionImportController;
@@ -339,6 +349,88 @@ Route::prefix('{locale}')
             // regulator cannot put in their own calendar is one they miss.
             Route::get('extranet/calendar.ics', [ExtranetController::class, 'calendarExport'])->name('extranet.calendar.ics');
 
+            /*
+             * Contributing a national instrument, RP-03 and RP-06.
+             *
+             * This is how the register fills: from fourteen members, not
+             * from a Secretariat of five typing in fourteen countries'
+             * legislation. Country scope is enforced on the write, not on
+             * the read: the library is deliberately readable across all
+             * fourteen so the comparator works.
+             */
+            Route::get('contributions', [ContributionController::class, 'index'])->name('contributions');
+            Route::get('contributions/new', [ContributionController::class, 'create'])->name('contributions.create');
+            Route::post('contributions', [ContributionController::class, 'store'])->name('contributions.store');
+            Route::get('contributions/{instrument}', [ContributionController::class, 'edit'])->name('contributions.edit');
+            Route::put('contributions/{instrument}', [ContributionController::class, 'update'])->name('contributions.update');
+            Route::post('contributions/{instrument}/submit', [ContributionController::class, 'submit'])->name('contributions.submit');
+
+            /*
+             * The harmonised register, read by any signed-in member.
+             *
+             * Not country-scoped, deliberately: it exists so fourteen
+             * regulators can read each other's instruments, which is the
+             * harmonisation mandate. Contributing and editing are scoped;
+             * reading is not.
+             */
+            Route::get('register', [RegisterController::class, 'index'])->name('register');
+            Route::get('register/{instrument}', [RegisterController::class, 'show'])->name('register.show');
+
+            /*
+             * The indicator taxonomy, RP-11 and extranet item 11.
+             *
+             * The definitions were stored and appeared only as a truncated
+             * hint under a form field. If fourteen regulators are to report
+             * the same thing, they need somewhere to read what the thing
+             * is.
+             */
+            Route::get('indicators', [IndicatorReferenceController::class, 'index'])->name('indicators.reference');
+
+            /*
+             * The member state's own record, extranet item 3.
+             *
+             * A proposal rather than an edit: the authority record is what
+             * the public members page shows and what a ministry cites, so
+             * it does not change without the Secretariat seeing it.
+             */
+            Route::get('authority', [AuthorityProfileController::class, 'show'])->name('authority');
+            Route::put('authority', [AuthorityProfileController::class, 'update'])->name('authority.update');
+
+            /*
+             * The members directory, extranet item 4.
+             *
+             * Members only. There is no public route to this table, no CSV
+             * of it and no report that reads it: a directory of fourteen
+             * regulators' direct lines is exactly the file that must not
+             * leave the extranet. Consent gates every listing.
+             */
+            Route::get('directory', [DirectoryController::class, 'index'])->name('directory');
+            Route::post('directory', [DirectoryController::class, 'store'])->name('directory.store');
+            Route::put('directory/{contact}', [DirectoryController::class, 'update'])->name('directory.update');
+            Route::delete('directory/{contact}', [DirectoryController::class, 'destroy'])->name('directory.destroy');
+
+            /*
+             * Secretariat announcements, RP-05 and extranet item 10.
+             *
+             * Members only, and the model's scope is what makes that true:
+             * an announcement narrowed to one committee is not listed, not
+             * linked and not reachable by guessing a slug for anyone
+             * without that seat.
+             */
+            Route::get('announcements', [AnnouncementController::class, 'index'])->name('announcements');
+            Route::get('announcements/{announcement}', [AnnouncementController::class, 'show'])->name('announcements.show');
+
+            /*
+             * The notification centre, RP-05 and extranet item 6.
+             *
+             * The bell pointed at an anchor on the account page, where the
+             * five most recent notices sat under the password form.
+             */
+            Route::get('notifications', [NotificationCentreController::class, 'index'])->name('notifications');
+            Route::post('notifications/read-all', [NotificationCentreController::class, 'readAll'])->name('notifications.read-all');
+            Route::put('notifications/preferences', [NotificationCentreController::class, 'preferences'])->name('notifications.preferences');
+            Route::get('notifications/{notification}', [NotificationCentreController::class, 'open'])->name('notifications.open');
+
             Route::get('submissions', [SubmissionController::class, 'index'])->name('submissions');
             Route::post('submissions', [SubmissionController::class, 'store'])->name('submissions.store');
             /*
@@ -555,6 +647,39 @@ Route::prefix('{locale}')
                 Route::put('users/{user}/role', [UserAdminController::class, 'assignRole'])->name('users.role');
                 Route::put('users/{user}/suspend', [UserAdminController::class, 'suspend'])->name('users.suspend');
                 Route::put('users/{user}/reactivate', [UserAdminController::class, 'reactivate'])->name('users.reactivate');
+                /*
+                 * Reviewing what the member states contributed, RP-06. The
+                 * same queue as the data returns, because it is the same
+                 * job done by the same three people.
+                 */
+                Route::get('contributions', [ContributionReviewController::class, 'index'])->name('contributions');
+                Route::get('contributions/{instrument}', [ContributionReviewController::class, 'show'])->name('contributions.show');
+                Route::put('contributions/{instrument}/validate', [ContributionReviewController::class, 'validateContribution'])->name('contributions.validate');
+                Route::put('contributions/{instrument}/return', [ContributionReviewController::class, 'returnContribution'])->name('contributions.return');
+
+                /*
+                 * Approving a member state's proposed record. The same act
+                 * as the Lilongwe confirmation, running the same apply
+                 * step.
+                 */
+                Route::get('authority-changes', [AuthorityChangeController::class, 'index'])->name('authority-changes');
+                Route::get('authority-changes/{change}', [AuthorityChangeController::class, 'show'])->whereNumber('change')->name('authority-changes.show');
+                Route::put('authority-changes/{change}/approve', [AuthorityChangeController::class, 'approve'])->whereNumber('change')->name('authority-changes.approve');
+                Route::put('authority-changes/{change}/return', [AuthorityChangeController::class, 'returnChange'])->whereNumber('change')->name('authority-changes.return');
+
+                /*
+                 * Writing an announcement. Publishing is a separate route
+                 * from saving, because publishing notifies fourteen
+                 * regulators and that is not the same decision.
+                 */
+                Route::get('announcements', [AnnouncementAdminController::class, 'index'])->name('announcements');
+                Route::get('announcements/new', [AnnouncementAdminController::class, 'create'])->name('announcements.create');
+                Route::post('announcements', [AnnouncementAdminController::class, 'store'])->name('announcements.store');
+                Route::get('announcements/{announcement}', [AnnouncementAdminController::class, 'edit'])->name('announcements.edit');
+                Route::put('announcements/{announcement}', [AnnouncementAdminController::class, 'update'])->name('announcements.update');
+                Route::put('announcements/{announcement}/publish', [AnnouncementAdminController::class, 'publish'])->name('announcements.publish');
+                Route::put('announcements/{announcement}/unpublish', [AnnouncementAdminController::class, 'unpublish'])->name('announcements.unpublish');
+
                 Route::get('audit', [AuditLogController::class, 'index'])->name('audit');
             });
         });

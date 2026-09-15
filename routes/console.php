@@ -25,3 +25,17 @@ Artisan::command('inspire', function () {
  * does not yet have. See docs/BACKUP_SETUP.md and docs/PRE_WORKSHOP.md item 2.
  */
 Schedule::command('data:check')->dailyAt('03:20')->withoutOverlapping();
+
+/*
+ * The notification digest, RP-05.
+ *
+ * Once a day at 06:40, which is before the working day in every one of the
+ * fourteen member states' time zones and after any overnight import. An
+ * account set to weekly is only included when its own week is up, tracked
+ * per account rather than on a fixed weekday, so fourteen regulators do not
+ * all receive mail in the same minute.
+ *
+ * Same caveat as the check above: this needs the cron entry that runs
+ * `schedule:run`, which this application does not yet have.
+ */
+Schedule::command('notifications:digest')->dailyAt('06:40')->withoutOverlapping();

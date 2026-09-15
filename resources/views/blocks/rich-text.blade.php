@@ -12,7 +12,7 @@
 
         @if ($body)
             <div class="b-richtext__body" @if ($body->isFallback()) lang="{{ $body->locale }}" @endif>
-                {!! nl2br(e($body->value)) !!}
+                {!! app(\App\Services\ContentRenderer::class)->render($body->value, 'block:'.$block->id) !!}
             </div>
         @else
             @include('blocks._empty', [

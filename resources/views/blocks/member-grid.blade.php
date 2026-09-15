@@ -157,6 +157,17 @@
                                  carries the meaning. --}}
                             <span class="b-directory__mark">
                                 <x-flag :iso="$country->iso_code" />
+                                {{-- The regulator's own mark, with a real
+                                     alt. Unlike the card and the detail
+                                     page, the visible text in this row is
+                                     the acronym, so the full name is
+                                     something the image adds rather than
+                                     something it repeats. --}}
+                                @if ($country->authority?->logo_path)
+                                    <img class="b-directory__logo"
+                                         src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($country->authority->logo_path) }}"
+                                         alt="{{ $country->authority->name }}" loading="lazy" decoding="async">
+                                @endif
                             </span>
                             <span class="b-directory__names">
                                 <span class="b-directory__acronym">{{ $country->authority?->acronym ?: $country->name }}</span>
@@ -193,6 +204,18 @@
                             <a class="b-member__name" href="{{ route('members.show', ['locale' => app()->getLocale(), 'iso' => $country->iso_code]) }}">{{ $country->name }}</a>
                         </span>
                         @if ($country->authority)
+                            {{-- alt is empty on purpose: the country name
+                                 is in the link above and the authority
+                                 name is the line below, so a described
+                                 mark would be the third time a reader
+                                 heard the same thing. --}}
+                            @if ($country->authority->logo_path)
+                                <span class="b-member__logo">
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($country->authority->logo_path) }}"
+                                         alt="" loading="lazy" decoding="async">
+                                </span>
+                            @endif
+
                             <span class="b-member__authority">{{ $country->authority->name }}</span>
                         @endif
                         {{-- A counted seat, including none. The original

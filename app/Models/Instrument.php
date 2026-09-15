@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContributionState;
 use App\Enums\InstrumentStatus;
 use App\Enums\InstrumentType;
 use App\Models\Concerns\Auditable;
@@ -38,6 +39,8 @@ class Instrument extends Model
         'country_id', 'sector_id', 'instrument_type', 'reference_number',
         'enacted_on', 'effective_from', 'status', 'superseded_by_id',
         'current_version_id', 'slug', 'is_sample',
+        'contribution_state', 'contributed_by', 'reviewed_by',
+        'submitted_at', 'reviewed_at', 'review_note',
     ];
 
     protected function casts(): array
@@ -47,6 +50,9 @@ class Instrument extends Model
             'status' => InstrumentStatus::class,
             'enacted_on' => 'date',
             'effective_from' => 'date',
+            'contribution_state' => ContributionState::class,
+            'submitted_at' => 'datetime',
+            'reviewed_at' => 'datetime',
             'is_sample' => 'boolean',
         ];
     }
@@ -124,13 +130,51 @@ class Instrument extends Model
 
     /* Scopes --------------------------------------------------------------- */
 
+    /**
+     * What the public register shows.
+     *
+     * A contribution the Secretariat has not validated is not in the
+     * register, whatever its standing in law says. A null contribution
+     * state means the Secretariat entered it directly, which is every
+     * instrument in the register before member contribution existed.
+     */
     public function scopePublished(Builder $query): Builder
     {
-        return $query->whereIn('status', [
-            InstrumentStatus::InForce->value,
-            InstrumentStatus::Amended->value,
-            InstrumentStatus::Repealed->value,
-        ]);
+        return $query
+            ->whereIn('status', [
+                InstrumentStatus::InForce->value,
+                InstrumentStatus::Amended->value,
+                InstrumentStatus::Repealed->value,
+            ])
+            ->where(fn (Builder $q) => $q
+                ->whereNull('contribution_state')
+                ->orWhere('contribution_state', ContributionState::Validated->value));
+    }
+
+    public function contributor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'contributed_by');
+    }
+
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    /** A contribution still with its author, or sent back to them. */
+    public function scopeWithContributor(Builder $query): Builder
+    {
+        return $query->whereNotNull('contribution_state');
+    }
+
+    public function scopeAwaitingReview(Builder $query): Builder
+    {
+        return $query->where('contribution_state', ContributionState::Submitted->value);
+    }
+
+    public function isEditableByContributor(): bool
+    {
+        return $this->contribution_state?->isEditable() ?? false;
     }
 
     public function scopeInForce(Builder $query): Builder

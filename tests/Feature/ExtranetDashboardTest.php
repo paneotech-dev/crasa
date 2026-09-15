@@ -49,16 +49,25 @@ class ExtranetDashboardTest extends TestCase
             ->assertRedirect('http://localhost/en/extranet/dashboard');
     }
 
-    public function test_the_dashboard_carries_the_three_panels_screen_11_draws(): void
+    /**
+     * The panels screen 11 draws, plus the country panels added on
+     * 10 September 2026. The meetings panel became "your next meeting"
+     * rather than a list of five: a dashboard that lists five meetings and
+     * five documents above what the state actually owes is answering the
+     * wrong question.
+     */
+    public function test_the_dashboard_carries_the_panels_it_is_meant_to(): void
     {
         $user = User::factory()->memberStateRep(Country::first())->create();
 
         $this->actingAs($user)
             ->get('/en/extranet/dashboard')
             ->assertOk()
-            ->assertSee('Your next meetings')
+            ->assertSee('Your next meeting')
             ->assertSee('Recently filed in your committees')
-            ->assertSee('Notifications');
+            ->assertSee('Notifications')
+            ->assertSee('Returns due')
+            ->assertSee('From the Secretariat');
     }
 
     /**
@@ -74,6 +83,7 @@ class ExtranetDashboardTest extends TestCase
             ->get('/en/extranet/dashboard')
             ->assertOk()
             ->assertSee('No meetings scheduled')
+            ->assertSee('Nothing announced')
             ->assertSee('Nothing filed yet')
             ->assertSee('Nothing needs you');
     }

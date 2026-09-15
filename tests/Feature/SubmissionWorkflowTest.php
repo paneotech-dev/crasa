@@ -366,15 +366,38 @@ class SubmissionWorkflowTest extends TestCase
      * RP-05 is regulatory content. Event and travel notifications are
      * reserved commercial scope, and there is deliberately no shared base
      * class for someone to hang a meeting reminder off later.
+     *
+     * WHY THIS IS AN ALLOWLIST RATHER THAN A COUNT OF ONE. The platform now
+     * has more than one regulatory notification, and a test that just
+     * counted them would pass the day somebody added MeetingReminder. Every
+     * name below is here because it carries regulatory content, and adding
+     * a name is the deliberate act this test exists to force.
      */
-    public function test_the_only_notification_on_the_platform_is_about_regulatory_data(): void
+    public function test_every_notification_on_the_platform_is_about_regulatory_data(): void
     {
+        $allowed = [
+            // A member state's data return was validated or returned.
+            'SubmissionStateChanged',
+            // The Secretariat told the membership something about the work.
+            'AnnouncementPublished',
+            // A document, instrument or comment reached the reader's own
+            // committee or sector. RP-05's triggers, none of them logistical.
+            'RegulatoryActivity',
+        ];
+
         $classes = array_map(
             fn ($file) => $file->getFilenameWithoutExtension(),
             File::files(app_path('Notifications'))
         );
 
-        $this->assertSame(['SubmissionStateChanged'], $classes);
+        sort($classes);
+        sort($allowed);
+
+        $this->assertSame(
+            $allowed,
+            $classes,
+            'A notification class was added or removed. If it is about a meeting, a journey or a room, it does not belong in this codebase.'
+        );
     }
 
     /* The trail is a trail ---------------------------------------------------- */

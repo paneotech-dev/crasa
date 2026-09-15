@@ -101,8 +101,12 @@ class ShellChromeTest extends TestCase
         $this->assertSame(3, substr_count($top, 'a-pills__item'), $url.' does not carry all three languages.');
         $this->assertStringContainsString('/admin/help', $top, $url.' has no help icon.');
         $this->assertStringContainsString('a-top__avatar', $top, $url.' has no avatar.');
-        // The bell, by its own path rather than by a class it shares.
-        $this->assertStringContainsString('#notifications', $top, $url.' has no notifications icon.');
+        // The bell, by its own path rather than by a class it shares. It
+        // pointed at an anchor on the account page until 10 September 2026,
+        // when the notification centre was built: five notices under the
+        // password form is not somewhere a regulator can page through a
+        // fortnight's activity or change what they hear about.
+        $this->assertStringContainsString('/notifications', $top, $url.' has no notifications icon.');
     }
 
     public function test_the_top_bar_is_whole_across_the_extranet(): void

@@ -1428,3 +1428,92 @@ Seats are recorded by the Secretariat, so `is_sample` is false and the
 go-live strip leaves them. Every add, change and removal writes an audit
 row naming the state. The counts on the committee cards and the member
 state profiles read this pivot, so they follow with no further work.
+
+---
+
+## The legacy import, 10 September 2026
+
+**Five disclosed decisions, all made once and all reversible.**
+
+**1. New slugs, from titles, not from the legacy paths.** The legacy site is
+built on a Webflow template and several CRASA articles kept the template
+post's slug: the page at
+`/post/brand-optics-and-what-it-means-for-your-business` is a masterclass on
+broadband gap analysis. Carrying that forward would put a marketing phrase
+in a regulator's citation. Every legacy URL still answers a 301, so nothing
+is lost. Held by `LegacyImportTest`.
+
+**2. Twenty-eight headlines re-cased out of capitals.** CLAUDE.md's first
+writing rule is sentence case, with two carve-outs, neither of which is a
+headline. Acronyms and proper nouns are held by an explicit list in
+`App\Support\Legacy\TitleCase`, not guessed, and every re-cased row is
+flagged for a person to read. A title already in mixed case is left exactly
+as its author wrote it.
+
+**3. The sector on twelve rows comes from the title, not the old category.**
+The ruling: where a guideline's title names a sector and the legacy category
+disagrees, the title wins and the row is flagged. Two electronic
+communications guidelines name broadcasting in their titles and are filed
+under broadcasting.
+
+**4. Eighteen items are dated to the crawl.** No date on the page, no
+edition year in the standfirst, no year in the filename. `date_source` says
+`crawl` on each and the row is flagged. A reader looking at a 2000
+publication is entitled to know which of the three sources produced its
+date.
+
+**5. The SharePoint link is recorded and not followed.** The legacy annual
+reports page links to a OneDrive folder rather than to a file. The
+platform's own copy forbids that redirect. Raised as Question 12.
+
+**One new table and one new model, both outside DATA_MODEL's original set.**
+`legacy_records` holds the provenance and the 301 map for every imported
+record; `projects` is the collection WS-03's information architecture never
+listed and WS-12's no-content-loss clause requires. Both are documented in
+`docs/LEGACY_INVENTORY.md`.
+
+---
+
+## The extranet enrichment, 10 September 2026
+
+**One new admin-only CSS rule, `.a-check`.** A checkbox and its label on one
+line with the explanation under both. `.a-field` stacks a label above its
+control, which for a checkbox puts the word above the box and leaves a 16px
+click target. Tokens only; no new colour.
+
+**`.a-chip.is-current` fills rather than outlines,** matching the language
+pills in the top bar. White on navy measures 17.28:1.
+
+**The instrument type and status labels became translatable.** They were
+hard-coded English in the enums, which made them the one thing on a French
+page that could not be in French. `label()` now reads `lang/*/instruments.php`
+and the English strings are unchanged, so nothing that read them moved.
+
+**Two workflows share one vocabulary, deliberately.** A member state's
+instrument contribution moves through draft, submitted, validated and
+returned — the same four words as the data-return workflow, because
+CLAUDE.md fixes that vocabulary, the Secretariat reviews both in the same
+queue, and a regulator who has filed one return already knows what they
+mean.
+
+**A member state's authority record is proposed, not edited.** The record is
+what the public members page shows and what a ministry cites, so a
+representative's change goes to the Secretariat first. Approving a proposal
+runs the same apply step the Lilongwe confirmation session runs, and records
+the same confirmation against the delegate who vouched.
+
+**The notification trigger set is closed and tested as closed.**
+`NotificationTrigger` has six cases, all about regulatory content.
+`NotificationCentreTest::test_the_trigger_set_carries_nothing_logistical`
+fails if a case ever mentions travel, a flight, a hotel, accommodation, a
+transfer, catering, a reminder, a visa or a room.
+
+**The members directory holds named individuals and gates them on consent.**
+`authority_contacts` carries work email addresses and telephone numbers for
+people at fourteen national regulators, under fourteen data protection
+regimes. A row appears in the directory because `listed_at` is set, which
+happens when their own representative records that the person agreed;
+withdrawing it takes them out immediately and keeps the row for that
+representative to manage. There is no public route to the table, no export
+and no report, and `MembersDirectoryTest` reads the codebase to prove it
+rather than trusting that nobody adds one later.

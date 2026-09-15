@@ -53,7 +53,7 @@
             @endforeach
         </div>
 
-        <a class="a-top__icon" href="{{ route('account', ['locale' => $locale]) }}#notifications"
+        <a class="a-top__icon" href="{{ route('notifications', ['locale' => $locale]) }}"
            aria-label="{{ trans_choice('admin.notifications_count', $unread, ['count' => $unread]) }}">
             <x-shell-icon name="bell" :size="19" />
             @if ($unread > 0)

@@ -261,17 +261,44 @@ class EventsAndDelegatesTest extends TestCase
     }
 
     /**
-     * Nothing on this platform sends a reminder or a chase. There is one
-     * notification class and it is about regulatory data.
+     * Nothing on this platform sends a reminder or a chase.
+     *
+     * The platform grew a second and a third notification class on
+     * 10 September 2026, both about regulatory content: an announcement to
+     * the membership, and activity in a reader's own sector or committee.
+     * A count of one would have stopped saying anything the day that
+     * happened, so this reads what the classes are about instead.
+     *
+     * Every notification either names an existing class or fires a trigger
+     * from a closed enum, and neither the class names nor the trigger
+     * values may mention a delegate, a journey or a room. Event and travel
+     * management is a separate commercial agreement.
      */
     public function test_nothing_notifies_a_delegate(): void
     {
+        $forbidden = [
+            'delegate', 'travel', 'flight', 'hotel', 'accommodation',
+            'transfer', 'catering', 'reminder', 'visa', 'room', 'itinerary',
+        ];
+
         $classes = array_map(
             fn ($file) => $file->getFilenameWithoutExtension(),
             File::files(app_path('Notifications'))
         );
 
-        $this->assertSame(['SubmissionStateChanged'], $classes);
+        foreach (array_merge($classes, \App\Enums\NotificationTrigger::values()) as $name) {
+            foreach ($forbidden as $word) {
+                $this->assertStringNotContainsStringIgnoringCase(
+                    $word,
+                    $name,
+                    "[{$name}] notifies about logistics. That is the Event Management Platform's work and a separate commercial agreement."
+                );
+            }
+        }
+
+        // And the registration itself notifies nobody: a delegate who files
+        // an arrival hears nothing back from this platform.
+        $this->assertNotContains('DelegateRegistered', $classes);
     }
 
     /** It is called delegate registration everywhere, including in the copy. */

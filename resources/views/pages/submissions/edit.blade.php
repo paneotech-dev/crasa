@@ -117,7 +117,17 @@
                                                @disabled(! $editable)>
                                     @endif
 
-                                    <p class="s-field__hint">{{ $indicator->definition ?: $indicator->unitLabel() }}</p>
+                                    {{-- The definition, and a way to read
+                                         the whole of it. RP-11: it has to
+                                         be precise enough that fourteen
+                                         regulators report the same thing,
+                                         and a hint truncated by the layout
+                                         is not somewhere anybody can check
+                                         that without losing their place. --}}
+                                    <p class="s-field__hint">
+                                        {{ \Illuminate\Support\Str::limit($indicator->definition ?: $indicator->unitLabel(), 140) }}
+                                        <a href="{{ route('indicators.reference', ['locale' => app()->getLocale(), 'category' => $indicator->category]) }}#i-{{ $indicator->slug }}">{{ __('indicators.what_this_means') }}</a>
+                                    </p>
 
                                     {{-- Screen 06 puts a source field under every
                                          figure and marks it red when it is empty:

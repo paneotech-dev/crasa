@@ -21,4 +21,5 @@ return [
     'count_past' => '{0}Past meetings|{1}Past meeting|[2,*]Past meetings',
     'band_eyebrow' => 'Meetings and events',
     'band_heading' => 'The meetings the harmonisation work runs on',
+    'agenda_to_be_confirmed' => 'Agenda to be confirmed.',
 ];
