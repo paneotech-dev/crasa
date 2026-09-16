@@ -125,9 +125,16 @@ trait HasTranslations
     }
 
     /** The resolved string, or a fallback string, for templates that want plain text. */
-    public function translated(string $field, string $default = '', ?string $locale = null): string
+    /**
+     * The default is nullable because callers pass a nullable column as the
+     * fallback — reference_number, most often — and a string-only parameter
+     * turned every record without one into a TypeError and a 500. Found on
+     * the rebuilt host on 16 September: the members' register failed for all
+     * ten seeded instruments, none of which carries a reference number.
+     */
+    public function translated(string $field, ?string $default = '', ?string $locale = null): string
     {
-        return $this->translate($field, $locale)?->value ?? $default;
+        return $this->translate($field, $locale)?->value ?? ($default ?? '');
     }
 
     /**

@@ -41,7 +41,7 @@
                         @foreach ($awaiting as $instrument)
                             <tr>
                                 <th scope="row">
-                                    <a href="{{ route('admin.contributions.show', ['locale' => app()->getLocale(), 'instrument' => $instrument->slug]) }}">{{ $instrument->translated('title', $instrument->reference_number) }}</a>
+                                    <a href="{{ route('admin.contributions.show', ['locale' => app()->getLocale(), 'instrument' => $instrument->slug]) }}">{{ $instrument->translated('title', $instrument->reference_number ?? $instrument->slug) }}</a>
                                     <span class="a-table__sub">{{ $instrument->reference_number }}</span>
                                 </th>
                                 <td>{{ $instrument->country?->name }}</td>
@@ -75,7 +75,7 @@
                         @foreach ($recent as $instrument)
                             <tr>
                                 <th scope="row">
-                                    <a href="{{ route('admin.contributions.show', ['locale' => app()->getLocale(), 'instrument' => $instrument->slug]) }}">{{ $instrument->translated('title', $instrument->reference_number) }}</a>
+                                    <a href="{{ route('admin.contributions.show', ['locale' => app()->getLocale(), 'instrument' => $instrument->slug]) }}">{{ $instrument->translated('title', $instrument->reference_number ?? $instrument->slug) }}</a>
                                 </th>
                                 <td>{{ $instrument->country?->name }}</td>
                                 <td><span class="a-pill" data-status="{{ $instrument->contribution_state?->value }}">{{ __($instrument->contribution_state->labelKey()) }}</span></td>

@@ -38,7 +38,7 @@
                         @foreach ($contributions as $instrument)
                             <tr>
                                 <th scope="row">
-                                    <a href="{{ route('contributions.edit', ['locale' => app()->getLocale(), 'instrument' => $instrument->slug]) }}">{{ $instrument->translated('title', $instrument->reference_number) }}</a>
+                                    <a href="{{ route('contributions.edit', ['locale' => app()->getLocale(), 'instrument' => $instrument->slug]) }}">{{ $instrument->translated('title', $instrument->reference_number ?? $instrument->slug) }}</a>
                                     <span class="a-table__sub">{{ $instrument->reference_number }}</span>
                                 </th>
                                 <td>{{ $instrument->sector?->name }}</td>

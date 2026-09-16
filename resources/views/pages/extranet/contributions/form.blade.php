@@ -176,7 +176,7 @@
                     <select class="a-select" id="superseded_by_id" name="superseded_by_id">
                         <option value="">{{ __('contributions.supersedes_none') }}</option>
                         @foreach ($related as $other)
-                            <option value="{{ $other->id }}" @selected(old('superseded_by_id', $instrument->superseded_by_id) == $other->id)>{{ $other->translated('title', $other->reference_number) }}</option>
+                            <option value="{{ $other->id }}" @selected(old('superseded_by_id', $instrument->superseded_by_id) == $other->id)>{{ $other->translated('title', $other->reference_number ?? $other->slug) }}</option>
                         @endforeach
                     </select>
                     <p class="a-hint">{{ __('contributions.supersedes_hint') }}</p>

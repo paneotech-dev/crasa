@@ -45,7 +45,7 @@
                         @foreach ($instruments as $instrument)
                             <tr>
                                 <th scope="row">
-                                    <a href="{{ route('register.show', ['locale' => app()->getLocale(), 'instrument' => $instrument->slug]) }}">{{ $instrument->translated('title', $instrument->reference_number) }}</a>
+                                    <a href="{{ route('register.show', ['locale' => app()->getLocale(), 'instrument' => $instrument->slug]) }}">{{ $instrument->translated('title', $instrument->reference_number ?? $instrument->slug) }}</a>
                                     <span class="a-table__sub">{{ $instrument->reference_number }}</span>
                                 </th>
                                 <td>{{ $instrument->country?->name }}</td>
