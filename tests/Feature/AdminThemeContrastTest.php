@@ -32,10 +32,10 @@ class AdminThemeContrastTest extends TestCase
 
     public function test_headings_take_the_theme_ink_at_every_level(): void
     {
-        $this->assertMatchesRegularExpression(
-            '/body\[data-surface="admin"\] h4\s*\{[^}]*color:\s*var\(--a-ink-strong\)/s',
+        $this->assertStringContainsString(
+            ':where(body[data-surface="admin"]) :is(h1, h2, h3, h4) { color: var(--a-ink-strong); }',
             $this->css,
-            'Admin h1 to h4 must set --a-ink-strong; base.css leaves them navy, which is 1.08:1 on the dark ground.'
+            'Admin h1 to h4 must take --a-ink-strong at element specificity; base.css leaves them navy, which is 1.08:1 on the dark ground, and a stronger rule turns the sidebar group labels navy on navy.'
         );
 
         foreach (['h1', 'h2', 'h3'] as $level) {
@@ -51,6 +51,28 @@ class AdminThemeContrastTest extends TestCase
             $this->css,
             'At (0,1,2) the link rule beats every single-class component rule, and an anchor styled as a button turns green on green.'
         );
+    }
+
+    public function test_no_generic_anchor_rule_outranks_a_component(): void
+    {
+        $this->assertDoesNotMatchRegularExpression(
+            '/^body\[data-surface="admin"\] a:(hover|focus)/m',
+            $this->css,
+            'A hover colour at (0,2,2) turned the primary button\'s label navy on navy.'
+        );
+    }
+
+    public function test_status_inks_never_style_the_page_inline(): void
+    {
+        $inline = [];
+
+        foreach (File::allFiles(resource_path('views')) as $view) {
+            if (preg_match('/style="color:\s*var\(--c-/', $view->getContents())) {
+                $inline[] = $view->getRelativePathname();
+            }
+        }
+
+        $this->assertSame([], $inline, 'An inline palette colour cannot follow the theme.');
     }
 
     public function test_the_primary_button_is_drawn_from_the_admin_button_tokens(): void

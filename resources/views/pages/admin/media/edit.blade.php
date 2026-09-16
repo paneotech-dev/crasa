@@ -78,7 +78,7 @@
                         <div class="a-field" data-state="{{ trim((string) $alt) === '' ? 'missing' : 'complete' }}">
                             <label class="a-label" for="alt-{{ $locale }}">
                                 {{ __('admin.alt_for', ['language' => \App\Support\Locales::nameOf($locale)]) }}
-                                <span aria-hidden="true" style="color:var(--c-red)">*</span>
+                                <span class="a-required" aria-hidden="true">*</span>
                                 <span class="c-sr">{{ __('admin.required') }}</span>
                             </label>
                             <input class="a-input" type="text" id="alt-{{ $locale }}" name="{{ $locale }}[alt]" maxlength="255"

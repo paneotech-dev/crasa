@@ -61,18 +61,24 @@ body[data-surface="admin"] h4 {
   font-family: var(--f-head);
   font-weight: 600;
   margin: 0;
-  /* base.css sets h1 to h4 in --c-navy, which is 1.08:1 on the dark ground.
-     --a-ink-strong is navy in the light theme, as screen 09 draws it, and
-     white in the dark one. */
-  color: var(--a-ink-strong);
 }
+
+/* base.css sets h1 to h4 in --c-navy, which is 1.08:1 on the dark ground.
+   --a-ink-strong is navy in the light theme, as screen 09 draws it, and white
+   in the dark one. Held at element specificity, (0,0,1): it beats base.css by
+   load order and loses to any component that colours its own heading, such as
+   the sidebar's group labels on navy. */
+:where(body[data-surface="admin"]) :is(h1, h2, h3, h4) { color: var(--a-ink-strong); }
 
 /* :where() keeps this at element specificity. As body[data-surface] a it
    outranked every single-class component rule, so an anchor styled as a
    primary button took the link colour: green on green, 1.00:1, in the light
    theme as well as the dark. */
 :where(body[data-surface="admin"]) a { color: var(--a-link); text-underline-offset: 3px; }
-body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
+/* Also :where(): at (0,2,2) this turned a hovered primary button's label navy
+   on its navy hover fill in the light theme, and white on light green in the
+   dark. */
+:where(body[data-surface="admin"]) a:hover { color: var(--a-ink-strong); }
 
 /* Header ---------------------------------------------------------------- */
 
@@ -2522,13 +2528,14 @@ html:not(.has-js) [data-modal-close] { display: none; }
 
 /* Status inks that were fixed palette values on a surface that flips. On the
    dark card red measured 2.11:1 and amber-dark 1.55:1; the palette's mid tones
-   measure 9.32:1 and 9.58:1. Same meaning, the theme's value. */
-body[data-surface="admin"][data-theme="dark"] :is(.a-required, .a-linkbutton--danger, .a-altstate[data-state="missing"], .a-btn--danger) { color: var(--c-red-mid); }
-body[data-surface="admin"][data-theme="dark"] :is(.a-coverage__note, .a-altstate[data-state="partial"]) { color: var(--c-amber-mid); }
+   measure 9.32:1 and 9.58:1. Same meaning, the theme's value. :where() keeps
+   these below the tinted-row rules, whose tint does not change with the theme. */
+body[data-surface="admin"][data-theme="dark"] :where(.a-required, .a-linkbutton--danger, .a-altstate[data-state="missing"], .a-btn--danger) { color: var(--c-red-mid); }
+body[data-surface="admin"][data-theme="dark"] :where(.a-coverage__note, .a-altstate[data-state="partial"]) { color: var(--c-amber-mid); }
 body[data-surface="admin"][data-theme="dark"] .a-altstate[data-state="complete"] { color: var(--d-green); }
 @media (prefers-color-scheme: dark) {
-  body[data-surface="admin"][data-theme="system"] :is(.a-required, .a-linkbutton--danger, .a-altstate[data-state="missing"], .a-btn--danger) { color: var(--c-red-mid); }
-  body[data-surface="admin"][data-theme="system"] :is(.a-coverage__note, .a-altstate[data-state="partial"]) { color: var(--c-amber-mid); }
+  body[data-surface="admin"][data-theme="system"] :where(.a-required, .a-linkbutton--danger, .a-altstate[data-state="missing"], .a-btn--danger) { color: var(--c-red-mid); }
+  body[data-surface="admin"][data-theme="system"] :where(.a-coverage__note, .a-altstate[data-state="partial"]) { color: var(--c-amber-mid); }
   body[data-surface="admin"][data-theme="system"] .a-altstate[data-state="complete"] { color: var(--d-green); }
 }
 /* The coverage note on a ready record is green in both themes. */

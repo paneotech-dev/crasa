@@ -80,7 +80,7 @@
 
                         @elseif ($field->control === 'relation')
                             <div class="a-field">
-                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}@if ($field->required)<span aria-hidden="true" style="color:var(--c-red)">*</span><span class="c-sr">{{ __('admin.required') }}</span>@endif</label>
+                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}@if ($field->required)<span class="a-required" aria-hidden="true">*</span><span class="c-sr">{{ __('admin.required') }}</span>@endif</label>
                                 <select class="a-select" id="f-{{ $field->name }}" name="{{ $field->name }}" @required($field->required)>
                                     @unless ($field->required)<option value="">{{ __('admin.setting_none') }}</option>@endunless
                                     @foreach ($options[$field->name] ?? [] as $id => $label)
@@ -95,7 +95,7 @@
 
                         @elseif ($field->control === 'select')
                             <div class="a-field">
-                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}@if ($field->required)<span aria-hidden="true" style="color:var(--c-red)">*</span><span class="c-sr">{{ __('admin.required') }}</span>@endif</label>
+                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}@if ($field->required)<span class="a-required" aria-hidden="true">*</span><span class="c-sr">{{ __('admin.required') }}</span>@endif</label>
                                 <select class="a-select" id="f-{{ $field->name }}" name="{{ $field->name }}" @required($field->required)>
                                     @unless ($field->required)<option value="">{{ __('admin.setting_none') }}</option>@endunless
                                     @foreach ($field->options as $option)
@@ -114,7 +114,7 @@
 
                         @else
                             <div class="a-field">
-                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}@if ($field->required)<span aria-hidden="true" style="color:var(--c-red)">*</span><span class="c-sr">{{ __('admin.required') }}</span>@endif</label>
+                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}@if ($field->required)<span class="a-required" aria-hidden="true">*</span><span class="c-sr">{{ __('admin.required') }}</span>@endif</label>
                                 <input class="a-input"
                                        type="{{ $field->control === 'date' ? 'date' : ($field->control === 'number' ? 'number' : ($field->control === 'url' ? 'url' : 'text')) }}"
                                        id="f-{{ $field->name }}" name="{{ $field->name }}"
