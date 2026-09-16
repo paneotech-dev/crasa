@@ -182,12 +182,25 @@ class RehearseBackup extends Command
         $path = storage_path('app/rehearsal/.my.cnf');
         $connection = config('database.connections.mysql');
 
-        File::put($path, sprintf(
-            "[client]\nuser=%s\npassword=\"%s\"\nhost=%s\n",
-            $connection['username'],
-            $connection['password'],
-            $connection['host']
-        ));
+        // The port and socket come from the same connection the application
+        // uses. Without them the client falls back to its own default, 3306,
+        // which on a host running more than one database server is somebody
+        // else's database: on the rebuilt host that default belongs to another
+        // application's MySQL, and this file used to point every dump and
+        // restore at it.
+        $lines = [
+            '[client]',
+            'user='.$connection['username'],
+            'password="'.$connection['password'].'"',
+            'host='.$connection['host'],
+            'port='.(int) ($connection['port'] ?? 3306),
+        ];
+
+        if (! empty($connection['unix_socket'])) {
+            $lines[] = 'socket='.$connection['unix_socket'];
+        }
+
+        File::put($path, implode("\n", $lines)."\n");
 
         // Readable by nobody else, for as long as it exists.
         chmod($path, 0600);

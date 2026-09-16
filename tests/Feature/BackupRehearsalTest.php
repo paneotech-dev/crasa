@@ -62,6 +62,54 @@ class BackupRehearsalTest extends TestCase
         $this->assertFileDoesNotExist($path, 'The rehearsal left the database password on disk.');
     }
 
+    /**
+     * The credentials file carries the port the application connects on.
+     *
+     * It used to carry user, password and host only, so every client it was
+     * handed fell back to 3306. On the rebuilt host 3306 is another
+     * application's MySQL server and this platform's MariaDB is on 3307: the
+     * rehearsal's dump and restore were aimed at the wrong database server,
+     * and only a per-user client default kept them off it.
+     */
+    public function test_the_credentials_file_carries_the_configured_port(): void
+    {
+        config([
+            'database.connections.mysql.host' => '127.0.0.1',
+            'database.connections.mysql.port' => '3307',
+            'database.connections.mysql.username' => 'crasa',
+            'database.connections.mysql.password' => 'not-a-real-password',
+            'database.connections.mysql.unix_socket' => '',
+        ]);
+
+        $method = new \ReflectionMethod(\App\Console\Commands\RehearseBackup::class, 'credentialsFile');
+        $path = $method->invoke(app(\App\Console\Commands\RehearseBackup::class));
+
+        try {
+            $written = File::get($path);
+
+            $this->assertStringContainsString("\nport=3307\n", $written, 'The credentials file does not carry the port, so the client falls back to 3306.');
+            $this->assertStringContainsString("\nhost=127.0.0.1\n", $written);
+            $this->assertStringNotContainsString('socket=', $written, 'An empty socket must not be written.');
+            $this->assertSame('0600', substr(sprintf('%o', fileperms($path)), -4));
+        } finally {
+            File::delete($path);
+        }
+    }
+
+    public function test_the_credentials_file_carries_a_configured_socket(): void
+    {
+        config(['database.connections.mysql.unix_socket' => '/run/mysqld/mysqld.sock']);
+
+        $method = new \ReflectionMethod(\App\Console\Commands\RehearseBackup::class, 'credentialsFile');
+        $path = $method->invoke(app(\App\Console\Commands\RehearseBackup::class));
+
+        try {
+            $this->assertStringContainsString("\nsocket=/run/mysqld/mysqld.sock\n", File::get($path));
+        } finally {
+            File::delete($path);
+        }
+    }
+
     public function test_it_deletes_the_dump_unless_asked_to_keep_it(): void
     {
         $directory = storage_path('app/rehearsal');
