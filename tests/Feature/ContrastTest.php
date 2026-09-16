@@ -110,6 +110,24 @@ class ContrastTest extends TestCase
             'panel bar value on navy-mid' => ['--c-white', '--c-navy-mid'],
             'panel count label on navy-mid' => ['--c-sand', '--c-navy-mid'],
             'panel notice body on navy-mid' => ['--c-amber-light', '--c-navy-mid'],
+
+            // The back office's dark theme, after the rebuild audit of
+            // 16 September 2026 measured the rendered pages in both themes.
+            'admin heading on dark ground' => ['--c-white', '--d-bg'],
+            'admin heading on dark surface' => ['--c-white', '--d-surface'],
+            'dark primary button' => ['--d-bg', '--d-green'],
+            'dark primary button hover' => ['--d-bg', '--c-green-step-1'],
+            'dark danger ink on surface' => ['--c-red-mid', '--d-surface'],
+            'dark danger ink on ground' => ['--c-red-mid', '--d-bg'],
+            'dark warning ink on surface' => ['--c-amber-mid', '--d-surface'],
+            'dark current item, inverse' => ['--d-surface', '--c-white'],
+            // Tinted status boxes keep their tint in both themes, and their
+            // ink with it.
+            'incomplete row value' => ['--c-charcoal', '--c-amber-light'],
+            'incomplete row meta' => ['--c-slate', '--c-amber-light'],
+            'incomplete row action' => ['--c-green-dark', '--c-amber-light'],
+            'incomplete row delete' => ['--c-red', '--c-amber-light'],
+            'untranslated field text' => ['--c-charcoal', '--c-red-light'],
         ];
     }
 
@@ -143,6 +161,13 @@ class ContrastTest extends TestCase
             // SC 1.4.11. The figure is printed beside it as well, so the
             // bar is never the only carrier.
             'hero bar fill on track' => ['--d-green', '--d-bg'],
+
+            // The dark primary button's fill against what it sits on. The
+            // green-dark fill it replaced measured 1.88:1 on the dark card.
+            'dark primary fill on surface' => ['--d-green', '--d-surface'],
+            'dark primary fill on ground' => ['--d-green', '--d-bg'],
+            'dark primary hover fill on surface' => ['--c-green-step-1', '--d-surface'],
+            'light primary fill on white' => ['--c-green-dark', '--c-white'],
         ];
     }
 

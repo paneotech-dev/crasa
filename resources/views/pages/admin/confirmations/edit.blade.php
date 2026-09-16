@@ -94,7 +94,7 @@
         </div>
 
         <div class="a-form__actions">
-            <button class="a-btn" type="submit" name="confirm" value="0">{{ __('admin.confirm_save_only') }}</button>
+            <button class="a-btn a-btn--secondary" type="submit" name="confirm" value="0">{{ __('admin.confirm_save_only') }}</button>
             <button class="a-btn a-btn--primary" type="submit" name="confirm" value="1">{{ __('admin.confirm_action') }}</button>
         </div>
     </form>

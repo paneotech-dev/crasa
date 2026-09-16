@@ -38,6 +38,13 @@ body[data-surface="admin"] {
   --a-link: var(--c-green-dark);
   --a-current: var(--c-green-light);
   --a-head-ground: var(--c-cream);
+  /* The admin button tokens. Variation V-ADMIN-BUTTON, docs/VARIATIONS.md:
+     proposed and applied 16 September 2026, pending the client's sign-off.
+     Values only from the approved palette. The light theme is unchanged. */
+  --a-btn: var(--c-green-dark);
+  --a-btn-ink: var(--c-white);
+  --a-btn-hover: var(--c-navy);
+  --a-btn-hover-ink: var(--c-white);
 
   background: var(--a-ground);
   color: var(--a-ink);
@@ -49,13 +56,22 @@ body[data-surface="admin"] {
    and on every panel h2. Inter is the interface, not the voice. */
 body[data-surface="admin"] h1,
 body[data-surface="admin"] h2,
-body[data-surface="admin"] h3 {
+body[data-surface="admin"] h3,
+body[data-surface="admin"] h4 {
   font-family: var(--f-head);
   font-weight: 600;
   margin: 0;
+  /* base.css sets h1 to h4 in --c-navy, which is 1.08:1 on the dark ground.
+     --a-ink-strong is navy in the light theme, as screen 09 draws it, and
+     white in the dark one. */
+  color: var(--a-ink-strong);
 }
 
-body[data-surface="admin"] a { color: var(--a-link); text-underline-offset: 3px; }
+/* :where() keeps this at element specificity. As body[data-surface] a it
+   outranked every single-class component rule, so an anchor styled as a
+   primary button took the link colour: green on green, 1.00:1, in the light
+   theme as well as the dark. */
+:where(body[data-surface="admin"]) a { color: var(--a-link); text-underline-offset: 3px; }
 body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
 
 /* Header ---------------------------------------------------------------- */
@@ -261,8 +277,8 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
   line-height: 1.3;
 }
 
-.a-btn--primary { color: var(--c-white); background: var(--c-green-dark); }
-.a-btn--primary:hover { background: var(--a-ink-strong); color: var(--c-white); }
+.a-btn--primary { color: var(--a-btn-ink); background: var(--a-btn); border-color: var(--a-btn); }
+.a-btn--primary:hover { background: var(--a-btn-hover); color: var(--a-btn-hover-ink); border-color: var(--a-btn-hover); }
 
 /* Secondary: color:var(--c-charcoal);background:var(--c-white);
    border:1px solid var(--c-line). The rule is raised to --c-border for the
@@ -602,7 +618,7 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
 /* background:var(--c-navy);color:var(--c-white);font-weight:600 */
 .a-pager__links [aria-current="page"] {
   background: var(--a-ink-strong);
-  color: var(--c-white);
+  color: var(--a-surface);
   font-weight: 600;
   border-color: var(--a-ink-strong);
 }
@@ -682,6 +698,13 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
 
 .a-crow:last-child { border-bottom: 0; }
 .a-crow[data-incomplete] { background: var(--c-amber-light); }
+/* The amber tint stays amber in the dark theme, where the theme ink would
+   sit light-on-light (1.05:1). Inside it the ink is the light theme's. */
+.a-crow[data-incomplete] .a-crow__value { color: var(--c-charcoal); }
+.a-crow[data-incomplete] :is(.a-crow__field, .a-crow__where, .a-langs) { color: var(--c-slate); }
+.a-crow[data-incomplete] .a-linkbutton { color: var(--c-green-dark); }
+.a-crow[data-incomplete] .a-linkbutton--danger { color: var(--c-red); }
+.a-crow[data-incomplete] .a-linkbutton[disabled] { color: var(--c-disabled); }
 
 .a-crow__main { flex: 1 1 280px; min-width: 0; }
 .a-crow__aside { flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
@@ -804,7 +827,7 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
   text-decoration: none;
 }
 
-.a-toggle a[aria-current="true"] { background: var(--a-ink-strong); color: var(--c-white); }
+.a-toggle a[aria-current="true"] { background: var(--a-ink-strong); color: var(--a-surface); }
 
 /* The upload warning band. Screen 14 draws it with a 4px amber left edge,
    which is the one place a coloured left edge is not decoration: it marks
@@ -837,7 +860,7 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
 .a-sample dt { font-size: 13px; min-width: 0; }
 .a-sample dd { margin: 0; font-family: var(--f-admin); font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .a-sample__how { margin: var(--s-4) 0 0; font-size: 13px; }
-.a-sample__how code { font-family: var(--f-admin); font-size: 13px; background: var(--c-white); border: 1px solid var(--c-amber-mid); border-radius: var(--r-xs); padding: 2px 6px; }
+.a-sample__how code { font-family: var(--f-admin); font-size: 13px; background: var(--a-surface); border: 1px solid var(--c-amber-mid); border-radius: var(--r-xs); padding: 2px 6px; }
 
 /* The rights panel: background:var(--c-cream);border-radius:var(--r-sm);
    padding:var(--s-3) var(--s-4);font-size:13.5px;line-height:1.6 */
@@ -946,7 +969,7 @@ body[data-surface="admin"] a:hover { color: var(--a-ink-strong); }
 }
 
 .a-tbox[data-state="machine"] { border: 1.5px solid var(--c-amber); }
-.a-tbox[data-state="untranslated"] { border: 1.5px solid var(--c-red); background: var(--c-red-light); }
+.a-tbox[data-state="untranslated"] { border: 1.5px solid var(--c-red); background: var(--c-red-light); color: var(--c-charcoal); }
 .a-tbox:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
 
 /* The fallback notice under an untranslated field. The 3px red left edge is
@@ -1210,7 +1233,7 @@ textarea.a-input { height: auto; padding: 10px 12px; line-height: 1.5; }
 
 /* The current stage. The status colours keep their fixed meanings:
    green validated, amber pending, red returned. */
-.s-stage[aria-current="step"] { border-color: var(--c-navy); border-width: 1.5px; }
+.s-stage[aria-current="step"] { border-color: var(--a-ink-strong); border-width: 1.5px; }
 .s-stage[aria-current="step"][data-state="draft"]::before,
 .s-stage[aria-current="step"][data-state="submitted"]::before { background: var(--c-amber); color: var(--c-white); }
 .s-stage[aria-current="step"][data-state="validated"]::before { background: var(--c-green-dark); color: var(--c-white); }
@@ -1239,7 +1262,7 @@ textarea.a-input { height: auto; padding: 10px 12px; line-height: 1.5; }
 .s-comments { display: flex; flex-direction: column; gap: var(--s-3); }
 
 .s-comment {
-  background: var(--c-white);
+  background: var(--a-surface);
   border: 1px solid var(--c-red-mid);
   border-radius: var(--r-sm);
   padding: var(--s-4);
@@ -1253,7 +1276,7 @@ textarea.a-input { height: auto; padding: 10px 12px; line-height: 1.5; }
 /* Screen 06 sets the field name in tracked caps. Sentence case, per the
    ruling; the size, weight and quiet ink are the screen's. */
 .s-comment__field { font-size: 12.5px; font-weight: 700; color: var(--c-slate); margin-bottom: 5px; }
-.s-comment__text { font-size: 15.5px; line-height: 1.6; color: var(--c-charcoal); }
+.s-comment__text { font-size: 15.5px; line-height: 1.6; color: var(--a-ink); }
 .s-comment__who { flex: 0 0 200px; font-size: 13.5px; color: var(--c-slate); line-height: 1.6; }
 
 /* fieldset per category */
@@ -1474,6 +1497,11 @@ body[data-surface="admin"][data-theme="dark"] {
   --a-link: var(--d-green);
   --a-current: var(--d-current);
   --a-head-ground: transparent;
+  /* White on --d-green is 3.05:1, so the dark button carries dark ink. */
+  --a-btn: var(--d-green);
+  --a-btn-ink: var(--d-bg);
+  --a-btn-hover: var(--c-green-step-1);
+  --a-btn-hover-ink: var(--d-bg);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1488,6 +1516,11 @@ body[data-surface="admin"][data-theme="dark"] {
     --a-link: var(--d-green);
     --a-current: var(--d-current);
     --a-head-ground: transparent;
+    /* White on --d-green is 3.05:1, so the dark button carries dark ink. */
+    --a-btn: var(--d-green);
+    --a-btn-ink: var(--d-bg);
+    --a-btn-hover: var(--c-green-step-1);
+    --a-btn-hover-ink: var(--d-bg);
   }
 }
 
@@ -1927,8 +1960,8 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
   height: 64px;
   display: flex; align-items: center; gap: var(--s-3);
   padding: 0 var(--s-6);
-  background: var(--c-white);
-  border-bottom: 1px solid var(--c-sand);
+  background: var(--a-surface);
+  border-bottom: 1px solid var(--a-rule);
   box-shadow: var(--e-1);
 }
 
@@ -1943,16 +1976,18 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
 .a-top__search { position: relative; flex: 0 1 360px; min-width: 0; }
 .a-top__searchicon {
   position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-  color: var(--c-slate); pointer-events: none;
+  color: var(--a-ink-quiet); pointer-events: none;
 }
 .a-top__field {
   width: 100%; height: 40px;
   padding: 0 12px 0 38px;
   font-family: var(--f-admin); font-size: 14px;
-  color: var(--a-ink); background: var(--c-white);
-  border: 1.5px solid var(--c-sand); border-radius: var(--r-sm);
+  color: var(--a-ink); background: var(--a-surface);
+  /* --c-border, the platform's control boundary: --c-sand measured 1.28:1
+     against white, under the 3:1 SC 1.4.11 asks of an input. */
+  border: 1.5px solid var(--c-border); border-radius: var(--r-sm);
 }
-.a-top__field::placeholder { color: var(--c-slate); }
+.a-top__field::placeholder { color: var(--a-ink-quiet); }
 .a-top__spacer { flex: 1 1 auto; }
 
 .a-top__utilities { margin-left: auto; display: flex; align-items: center; gap: var(--s-3); }
@@ -1964,12 +1999,12 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
   min-width: 38px; height: 30px;
   display: grid; place-items: center;
   font-family: var(--f-admin); font-size: 12.5px; font-weight: 600;
-  color: var(--c-slate); text-decoration: none;
-  border-right: 1px solid var(--c-sand);
+  color: var(--a-ink-quiet); text-decoration: none;
+  border-right: 1px solid var(--a-rule);
 }
 .a-pills__item:last-child { border-right: 0; }
-.a-pills__item:hover { background: var(--c-cream); color: var(--a-ink-strong); }
-.a-pills__item.is-current { background: var(--c-navy); color: var(--c-white); }
+.a-pills__item:hover { background: var(--a-head-ground); color: var(--a-ink-strong); }
+.a-pills__item.is-current { background: var(--a-ink-strong); color: var(--a-surface); }
 
 .a-top__icon {
   position: relative;
@@ -1977,7 +2012,7 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
   display: grid; place-items: center;
   color: var(--a-ink); border-radius: var(--r-sm); text-decoration: none;
 }
-.a-top__icon:hover { background: var(--c-cream); color: var(--a-ink-strong); }
+.a-top__icon:hover { background: var(--a-head-ground); color: var(--a-ink-strong); }
 .a-top__badge {
   position: absolute; top: 4px; right: 4px;
   min-width: 16px; height: 16px; padding: 0 4px;
@@ -2029,7 +2064,7 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
   float: right; background: transparent; border: 0; padding: 4px;
   color: var(--a-ink-quiet); cursor: pointer; border-radius: var(--r-sm);
 }
-.a-alert__dismiss:hover { background: var(--c-cream); color: var(--a-ink); }
+.a-alert__dismiss:hover { background: var(--a-head-ground); color: var(--a-ink); }
 
 /* The drawer, below 1024 ----------------------------------------------- */
 
@@ -2177,7 +2212,7 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
 .a-table tbody th { font-weight: 600; }
 .a-table tbody tr:last-child th,
 .a-table tbody tr:last-child td { border-bottom: 0; }
-.a-table tbody tr:hover { background: var(--c-cream); }
+.a-table tbody tr:hover { background: var(--a-head-ground); }
 .a-table__num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--f-admin); }
 .a-table__num[scope="col"] { text-align: right; }
 .a-alert__dismissform { float: right; margin-left: var(--s-3); }
@@ -2218,7 +2253,7 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
   cursor: pointer;
   padding: 0;
 }
-.a-iconbtn:hover { background: var(--c-cream); border-color: var(--a-ink-strong); color: var(--a-ink-strong); }
+.a-iconbtn:hover { background: var(--a-head-ground); border-color: var(--a-ink-strong); color: var(--a-ink-strong); }
 
 .a-btn--small { min-height: 32px; padding: 0 12px; font-size: 13.5px; }
 
@@ -2333,7 +2368,7 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
 .a-proposal__status {
   margin: var(--s-5) 0 0;
   padding: var(--s-3) var(--s-4);
-  background: var(--c-cream);
+  background: var(--a-head-ground);
   border-left: 4px solid var(--c-green-light);
   border-radius: var(--r-sm);
   font-family: var(--f-admin);
@@ -2371,7 +2406,7 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
   color: var(--a-ink-quiet); cursor: pointer; border-radius: var(--r-sm);
   flex: none;
 }
-.a-modal__close:hover { background: var(--c-cream); color: var(--a-ink); }
+.a-modal__close:hover { background: var(--a-head-ground); color: var(--a-ink); }
 
 html:not(.has-js) .a-modal {
   display: block;
@@ -2479,8 +2514,26 @@ html:not(.has-js) [data-modal-close] { display: none; }
    outlined, matching the language pills in the top bar: one selected-state
    treatment across the shell rather than two. */
 .a-chip.is-current {
-  background: var(--c-navy);
-  border-color: var(--c-navy);
-  color: var(--c-white);
+  background: var(--a-ink-strong);
+  border-color: var(--a-ink-strong);
+  color: var(--a-surface);
 }
-.a-chip.is-current:hover { background: var(--c-navy-mid); color: var(--c-white); }
+.a-chip.is-current:hover { background: var(--a-ink); border-color: var(--a-ink); color: var(--a-surface); }
+
+/* Status inks that were fixed palette values on a surface that flips. On the
+   dark card red measured 2.11:1 and amber-dark 1.55:1; the palette's mid tones
+   measure 9.32:1 and 9.58:1. Same meaning, the theme's value. */
+body[data-surface="admin"][data-theme="dark"] :is(.a-required, .a-linkbutton--danger, .a-altstate[data-state="missing"], .a-btn--danger) { color: var(--c-red-mid); }
+body[data-surface="admin"][data-theme="dark"] :is(.a-coverage__note, .a-altstate[data-state="partial"]) { color: var(--c-amber-mid); }
+body[data-surface="admin"][data-theme="dark"] .a-altstate[data-state="complete"] { color: var(--d-green); }
+@media (prefers-color-scheme: dark) {
+  body[data-surface="admin"][data-theme="system"] :is(.a-required, .a-linkbutton--danger, .a-altstate[data-state="missing"], .a-btn--danger) { color: var(--c-red-mid); }
+  body[data-surface="admin"][data-theme="system"] :is(.a-coverage__note, .a-altstate[data-state="partial"]) { color: var(--c-amber-mid); }
+  body[data-surface="admin"][data-theme="system"] .a-altstate[data-state="complete"] { color: var(--d-green); }
+}
+/* The coverage note on a ready record is green in both themes. */
+body[data-surface="admin"] .a-coverage[data-ready] .a-coverage__note { color: var(--a-link); }
+
+/* Public components rendered inside the shell (the completeness page) take
+   the shell's quiet ink: slate on the dark ground measured 3.44:1. */
+body[data-surface="admin"] .c-small { color: var(--a-ink-quiet); }

@@ -86,7 +86,7 @@
                                 @endif
                             </td>
                             <td>
-                                <a class="a-btn" href="{{ route('admin.confirmations.edit', ['locale' => app()->getLocale(), 'iso' => $country->iso_code]) }}">
+                                <a class="a-btn a-btn--secondary" href="{{ route('admin.confirmations.edit', ['locale' => app()->getLocale(), 'iso' => $country->iso_code]) }}">
                                     {{ $authority?->isConfirmed() ? __('admin.confirm_review') : __('admin.confirm_open') }}
                                 </a>
                             </td>

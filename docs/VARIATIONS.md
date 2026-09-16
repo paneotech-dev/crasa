@@ -214,6 +214,56 @@ beneath a table heading. Only the letterform changes.
 
 ---
 
+## B3. The back office's main button, in the dark theme
+
+**What the specification says.** Screen 09 draws the back office's main
+action button in dark green, `#0E5536`, with white text, and says the dark
+theme is the same design with different surface and ink values. It does not
+draw the button in the dark theme.
+
+**What was delivered.** In the light theme, exactly what screen 09 draws. In
+the dark theme, the brighter green of the dark surface set, `#2FA76F`, with
+the dark ground's colour, `#0B1220`, for its text. Hovering the button in the
+dark theme fills it with the palette's light green, `#9CCFB2`. All four
+values are already in the approved palette; none is new.
+
+They are carried by four named values scoped to the back office, so the two
+themes can differ without a second set of rules. Adding named values of this
+kind is a design decision the contract places with CRASA.
+
+**Why.** Measured on the rendered pages on 16 September 2026, the drawn
+button failed twice in the dark theme:
+
+| | Drawn value | Delivered | Required |
+|---|---|---|---|
+| The button's edge against a dark card | 1.88 to 1 | 5.47 to 1 | 3 to 1 |
+| The button's edge against the dark page | 2.11 to 1 | 6.13 to 1 | 3 to 1 |
+| Its text on hover | 1.00 to 1, white on white | 10.68 to 1 | 4.5 to 1 |
+| Its text at rest | 6.13 to 1 | 6.13 to 1 | 4.5 to 1 |
+
+White text on the brighter green would have kept the drawn look more
+closely, but it measures 3.05 to 1, which fails. Dark text is the only
+combination in the palette that passes.
+
+The same measurement found a related fault in **both** themes: where the main
+button is a link rather than a form button, the platform's general link
+colour was overriding it, so the button's label was green on green and could
+not be read at all. That is corrected for every button, chip and avatar that
+is also a link.
+
+**What this affects.** The light theme is unchanged. In the dark theme the
+main button reads brighter than the drawing suggests and carries dark rather
+than white text.
+
+**CRASA's options.**
+
+1. Accept the variation. **Recommended.** The drawn value fails WCAG 2.1 AA
+   in the dark theme, which is a contractual acceptance criterion.
+2. Have the designer supply dark-theme button values. We would substitute
+   them and re-run the measurements.
+
+---
+
 # C. Where two contractual documents disagreed
 
 ---
@@ -413,6 +463,7 @@ useful rather than limited to the pages that already existed.
 | A3 | Search on MariaDB | Hosting reality | No. Higher query cost at scale |
 | B1 | Two colours darkened | Standard overrides drawing | No. Improves compliance |
 | B2 | Sentence case for most labels | Client direction | No |
+| B3 | Dark-theme main button | Standard overrides drawing; **new named values** | No. **Sign-off invited** |
 | C1 | Chart.js and Leaflet | **Two documents conflict** | No. **Decision invited** |
 | D1 | Sector mandates in a linking table | Specification correction | No |
 | E1 | Footer destinations | Screen silent | No |
@@ -420,7 +471,7 @@ useful rather than limited to the pages that already existed.
 | E3 | Delegate registration scope | Agreed boundary | No |
 | E4 | Onboarding as a panel | Screen silent | No |
 
-Only **C1** requires a decision from CRASA. The rest are disclosed for the
+**C1** requires a decision from CRASA, and **B3** asks for sign-off on four new named values. The rest are disclosed for the
 record and, unless CRASA says otherwise, will be treated as accepted.
 
 We are happy to talk any of these through.
