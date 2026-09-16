@@ -2448,3 +2448,39 @@ html:not(.has-js) [data-modal-close] { display: none; }
   .a-diff__added,
   .a-diff__removed { background: none; forced-color-adjust: none; }
 }
+
+/* The notification centre -------------------------------------------------- */
+/* A checkbox and its label on one line, with the explanation under both.
+   .a-field stacks a label above its control, which for a checkbox puts the
+   word above the box and leaves the reader clicking a 16px target. */
+.a-check { display: flex; align-items: flex-start; gap: 10px; }
+.a-check input {
+  margin: 2px 0 0;
+  width: 18px; height: 18px;
+  flex: none;
+  accent-color: var(--c-green-dark);
+}
+.a-check__text { min-width: 0; }
+.a-check__label {
+  font-family: var(--f-admin);
+  font-size: 14.5px; font-weight: 600;
+  color: var(--a-ink);
+  display: block;
+  cursor: pointer;
+}
+
+/* An unread row. The word "Unread" is already in the row as a pill, so this
+   is a second channel rather than the only one: a marker rule at the start
+   edge, which survives a monochrome print and a forced-colors mode. */
+.a-row.is-unread { border-inline-start: 3px solid var(--c-green-dark); padding-inline-start: calc(var(--s-4) - 3px); }
+.a-row.is-unread .a-row__grow a { font-weight: 600; }
+
+/* The register's sector filter. The current chip is filled rather than
+   outlined, matching the language pills in the top bar: one selected-state
+   treatment across the shell rather than two. */
+.a-chip.is-current {
+  background: var(--c-navy);
+  border-color: var(--c-navy);
+  color: var(--c-white);
+}
+.a-chip.is-current:hover { background: var(--c-navy-mid); color: var(--c-white); }

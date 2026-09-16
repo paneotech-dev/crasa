@@ -620,6 +620,22 @@
    greening its border, so the whole target is legible without a second
    ring drawn around a ring. */
 .b-member__authority { font-size: 13.5px; line-height: 1.5; color: var(--c-charcoal); }
+
+/* The regulator's own mark on a member card and on the detail page.
+
+   Height-bounded rather than width-bounded, because the fourteen marks are
+   wordmarks of very different proportions: ANRTIC is 696 by 229 and ICASA
+   is 591 by 244, and constraining the width would make one twice the
+   optical weight of the other. object-fit: contain with a left origin keeps
+   each on the same baseline as the text beside it.
+
+   No border and no ground. These are other organisations' trademarks and
+   their owners publish geometry rules; a box around one is a change to it. */
+.b-member__logo { display: block; margin: var(--s-2) 0; }
+.b-member__logo img { height: 30px; width: auto; max-width: 100%; object-fit: contain; object-position: left center; }
+
+.c-member__logo { margin: 0 0 var(--s-3); }
+.c-member__logo img { height: 48px; width: auto; max-width: 100%; object-fit: contain; object-position: left center; }
 .b-member__committees { font-size: 13px; line-height: 1.55; color: var(--c-slate); }
 .b-member__sectors { font-size: 13px; line-height: 1.55; color: var(--c-slate); }
 
@@ -2327,6 +2343,12 @@
    the row. */
 .b-directory__mark { flex: none; display: grid; place-items: center; }
 .b-directory__mark .c-flag { width: 34px; height: 24px; }
+
+/* The directory row carries the flag and the mark stacked, because the row
+   is already three columns wide and a fourth would push the acronym off a
+   narrow screen. */
+.b-directory__mark { gap: var(--s-2); }
+.b-directory__logo { height: 20px; width: auto; max-width: 64px; object-fit: contain; }
 .b-directory__names { flex: 1; min-width: 0; }
 .b-directory__acronym { display: block; font-size: 16.5px; font-weight: 600; line-height: 1.3; }
 .b-directory__full { display: block; font-size: 13.5px; color: var(--c-slate); line-height: 1.4; margin-top: 2px; }
