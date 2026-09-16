@@ -1683,6 +1683,16 @@
 .b[data-ground="navy-mid"] .b__intro { color: var(--c-sand); }
 .b[data-ground="navy"] .b__eyebrow,
 .b[data-ground="navy-mid"] .b__eyebrow { color: var(--c-green-light); }
+/* Components on the dark grounds keep their light-ground inks unless told
+   otherwise. Measured 16 September 2026 in the featured comparison: a member
+   state link was green-dark on navy-mid (1.68:1) and the source line slate
+   (2.73:1). Links are held low, at (0,1,1), so a component that styles its
+   own link on a dark ground, such as the hero panel's, still wins. */
+:where(.b[data-ground="navy"], .b[data-ground="navy-mid"]) a:not(.c-btn) { color: var(--c-green-light); }
+.b[data-ground="navy"] .c-source,
+.b[data-ground="navy-mid"] .c-source { color: var(--c-sand); }
+/* Quiet notes on the sand ground. Slate on sand is 4.13:1. */
+.b[data-ground="sand"] :is(.b-members__head-note, .b-committees__note) { color: var(--c-charcoal); }
 .b[data-ground="navy"] .b-figure,
 .b[data-ground="navy-mid"] .b-figure { border-top-color: var(--c-navy-line); }
 .b[data-ground="navy"] .b-figure__value,
@@ -1816,6 +1826,18 @@
   text-wrap: balance;
   max-width: 14ch;
 }
+/* On a card the slot takes its sector's tint, so the label takes the slot's
+   ink rather than white: white on the telecommunications tint was 1.13:1.
+   And the card is narrower than the article, so the label is smaller and may
+   run to 20ch: "Telecommunications" is 18 characters, and at 14ch it was
+   broken mid-word. */
+.b-card__typeslot[data-sector] .b-card__typeslot-sector { color: inherit; }
+.b-card__typeslot-sector {
+  font-size: clamp(16px, 1.6vw, 22px);
+  max-width: 20ch;
+  overflow-wrap: normal;
+  hyphens: auto;
+}
 
 /* Completeness matrix -------------------------------------------------- */
 /* The gaps are the point, so a gap is the loudest thing in the grid. */
@@ -1900,10 +1922,13 @@
 .c-languages__item { display: flex; align-items: baseline; gap: var(--s-2); font-size: 14.5px; }
 /* A language the document is not in is stated, not omitted. A list of one
    language does not tell a French reader whether French was checked. */
-.c-languages__item.is-missing { color: var(--c-disabled); }
-.c-languages__item.is-missing .c-lang-badge { background: transparent; border: 1px solid var(--c-border); color: var(--c-disabled); }
+/* A language the document is not available in is information, not an
+   inactive control, so the disabled grey's exemption does not apply: it
+   measured 4.06:1 on cream. Slate carries the same quietness and passes. */
+.c-languages__item.is-missing { color: var(--c-slate); }
+.c-languages__item.is-missing .c-lang-badge { background: transparent; border: 1px solid var(--c-border); color: var(--c-slate); }
 .c-languages__size { font-size: 12.5px; color: var(--c-slate); }
-.c-languages__item.is-missing .c-languages__size { color: var(--c-disabled); }
+.c-languages__item.is-missing .c-languages__size { color: var(--c-slate); }
 
 /* The reference is selectable text rather than a copy button: a copy button
    needs script, and a regulator citing a document is already in a word

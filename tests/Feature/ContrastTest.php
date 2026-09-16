@@ -128,6 +128,10 @@ class ContrastTest extends TestCase
             'incomplete row action' => ['--c-green-dark', '--c-amber-light'],
             'incomplete row delete' => ['--c-red', '--c-amber-light'],
             'untranslated field text' => ['--c-charcoal', '--c-red-light'],
+            // Public components, from the same measurement.
+            'postal card label on sand' => ['--c-navy', '--c-sand'],
+            'quiet note on sand' => ['--c-charcoal', '--c-sand'],
+            'link on a dark ground' => ['--c-green-light', '--c-navy-mid'],
         ];
     }
 

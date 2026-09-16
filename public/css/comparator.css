@@ -176,7 +176,8 @@
   flex: none;
 }
 
-.c-cmp__code--on-navy { background: var(--c-green); color: var(--c-white); }
+/* White on --c-green is 4.25:1 at 12px, under AA; green-dark is 8.86:1. */
+.c-cmp__code--on-navy { background: var(--c-green-dark); color: var(--c-white); }
 
 .c-cmp__state-names { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; flex: 1; }
 .c-cmp__state-name { font-size: 14.5px; font-weight: 600; line-height: 1.25; }
@@ -295,6 +296,9 @@
    readable while the member states scroll. */
 .c-cmp__sticky { position: sticky; left: 0; background: var(--c-white); border-right: 1px solid var(--c-sand); min-width: 230px; }
 .c-cmp__table thead .c-cmp__sticky { background: var(--c-navy); }
+/* The acronym under a member state's name in the navy header. Slate on navy
+   measured 3.18:1 on 16 September 2026; sand is the band's quiet ink. */
+.c-cmp__table thead .c-cmp__state-acr { color: var(--c-sand); }
 
 .c-cmp__state-cell { display: flex; align-items: center; gap: 10px; }
 .c-cmp__indicator-name { display: block; font-size: 16px; line-height: 1.3; }
