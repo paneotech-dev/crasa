@@ -1831,7 +1831,7 @@
    And the card is narrower than the article, so the label is smaller and may
    run to 20ch: "Telecommunications" is 18 characters, and at 14ch it was
    broken mid-word. */
-.b-card__typeslot[data-sector] .b-card__typeslot-sector { color: inherit; }
+.b-card__typeslot:is([data-sector="telecommunications"], [data-sector="broadcasting"], [data-sector="postal"]) .b-card__typeslot-sector { color: inherit; }
 .b-card__typeslot-sector {
   font-size: clamp(16px, 1.6vw, 22px);
   max-width: 20ch;
