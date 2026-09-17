@@ -708,7 +708,7 @@ body[data-surface="admin"] h4 {
    sit light-on-light (1.05:1). Inside it the ink is the light theme's. */
 .a-crow[data-incomplete] .a-crow__value { color: var(--c-charcoal); }
 .a-crow[data-incomplete] :is(.a-crow__field, .a-crow__where, .a-langs) { color: var(--c-slate); }
-.a-crow[data-incomplete] .a-linkbutton { color: var(--c-green-dark); }
+.a-crow[data-incomplete] :is(.a-linkbutton, a:not(.a-btn)) { color: var(--c-green-dark); }
 .a-crow[data-incomplete] .a-linkbutton--danger { color: var(--c-red); }
 .a-crow[data-incomplete] .a-linkbutton[disabled] { color: var(--c-disabled); }
 

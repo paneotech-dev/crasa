@@ -145,5 +145,8 @@ class AdminThemeContrastTest extends TestCase
 
         $this->assertMatchesRegularExpression('/\.a-field\[data-state="missing"\] \.a-input \{[^}]*background: var\(--c-red-light\);[^}]*color: var\(--c-charcoal\)/', $this->css);
         $this->assertStringContainsString('.a-notice a { color: var(--c-green-dark); }', $this->css);
+        // The "Edit" link in a cream incomplete row took the dark theme's
+        // light green: 2.72:1.
+        $this->assertStringContainsString('.a-crow[data-incomplete] :is(.a-linkbutton, a:not(.a-btn)) { color: var(--c-green-dark); }', $this->css);
     }
 }
