@@ -57,9 +57,17 @@ final class Assets
             : '0';
     }
 
-    /** Forget the memoised versions. Only the tests need this. */
+    /**
+     * Forget the memoised versions, as a new request would. Only the tests
+     * need this.
+     *
+     * PHP also resets its stat cache between requests, and a test runs in
+     * one process, so that is cleared here too. On PHP 8.3.6 (Ubuntu 24.04)
+     * touch() does not clear it, and filemtime() kept returning the old time.
+     */
     public static function flush(): void
     {
         self::$versions = [];
+        clearstatcache();
     }
 }

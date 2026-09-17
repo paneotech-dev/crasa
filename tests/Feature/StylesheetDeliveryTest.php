@@ -176,17 +176,21 @@ class StylesheetDeliveryTest extends TestCase
 
         $this->assertNotSame('0', $before, 'blocks.css is not on disk.');
 
-        touch(public_path($path), time() + 60);
-        Assets::flush();
+        try {
+            touch(public_path($path), time() + 60);
+            Assets::flush();
 
-        $this->assertNotSame(
-            $before,
-            Assets::version($path),
-            'Editing a stylesheet does not change its URL, which is the whole defect.',
-        );
-
-        touch(public_path($path), time());
-        Assets::flush();
+            $this->assertNotSame(
+                $before,
+                Assets::version($path),
+                'Editing a stylesheet does not change its URL, which is the whole defect.',
+            );
+        } finally {
+            // Put the time back even when the assertion fails, or the file
+            // is left dated in the future.
+            touch(public_path($path), time());
+            Assets::flush();
+        }
     }
 
     public function test_every_linked_stylesheet_exists_on_disk(): void
