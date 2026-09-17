@@ -161,9 +161,10 @@ Nothing in this table may be copied from the old server.
 | `DB_PASSWORD` | **Generate** |
 | `DB_REHEARSAL_DATABASE` | `crasa_rehearsal`. Read by `backup:rehearse`; not in `.env.example` |
 | `SESSION_DRIVER` | `database` |
-| `SESSION_LIFETIME`, `SESSION_ENCRYPT`, `SESSION_PATH`, `SESSION_DOMAIN` | As in `.env.example` |
+| `SESSION_LIFETIME`, `SESSION_PATH`, `SESSION_DOMAIN` | As in `.env.example` |
+| `SESSION_ENCRYPT` | `true`. SECURITY_REVIEW finding 4; `SecurityHardeningTest` fails without it |
 | `SESSION_SECURE_COOKIE` | `true`. Not in `.env.example`; add it |
-| `SESSION_SAME_SITE` | `lax`. Not in `.env.example`; add it |
+| `SESSION_SAME_SITE` | `strict`. SECURITY_REVIEW finding 4. (This line said `lax` until 17 September 2026, which undid that finding on the rebuilt server.) Revisit only when an SSO provider is connected: a provider that posts back cross-site needs `lax` |
 | `SESSION_COOKIE` | A name for the session cookie. Not in `.env.example`; add it |
 | `BROADCAST_CONNECTION` | `log` |
 | `FILESYSTEM_DISK` | `local` |

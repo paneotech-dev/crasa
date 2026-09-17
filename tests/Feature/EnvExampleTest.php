@@ -82,6 +82,11 @@ class EnvExampleTest extends TestCase
         $example = File::get(base_path('.env.example'));
 
         $this->assertMatchesRegularExpression('/^SESSION_SECURE_COOKIE=true$/m', $example);
+        // SECURITY_REVIEW finding 4. The rebuild procedure said lax and left
+        // encryption off, and the rebuilt server ran that way until the
+        // hardening test caught it.
+        $this->assertMatchesRegularExpression('/^SESSION_SAME_SITE=strict$/m', $example);
+        $this->assertMatchesRegularExpression('/^SESSION_ENCRYPT=true$/m', $example);
         $this->assertMatchesRegularExpression('/^APP_KEY=$/m', $example, 'The template must not carry an application key.');
         $this->assertDoesNotMatchRegularExpression('/^#?\s*DB_USERNAME=root$/m', $example, 'root is not this platform\'s database user.');
         $this->assertDoesNotMatchRegularExpression('/^(DB_PASSWORD|MAIL_PASSWORD|AWS_SECRET_ACCESS_KEY)=(?!null$|$).+/m', $example, 'The template carries a secret.');
