@@ -81,6 +81,20 @@ class GoLiveBlockersTest extends TestCase
             ->assertSee('log', false);
     }
 
+    public function test_a_member_state_representative_is_not_shown_a_setting_they_cannot_change(): void
+    {
+        $this->seed(\Database\Seeders\CountrySeeder::class);
+        config(['mail.default' => 'log']);
+        $this->app['env'] = 'production';
+
+        $rep = User::factory()->memberStateRep(\App\Models\Country::where('iso_code', 'bw')->sole())->create();
+
+        $this->actingAs($rep)
+            ->get('/en/submissions')
+            ->assertOk()
+            ->assertDontSee('Mail is not being delivered.');
+    }
+
     public function test_the_back_office_says_nothing_when_mail_is_configured(): void
     {
         config([
