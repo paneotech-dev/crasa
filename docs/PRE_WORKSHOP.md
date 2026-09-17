@@ -3,397 +3,237 @@
 **CRASA Digital Anchor Ecosystem**
 Contract ZM-COMESA-CRASA/WEBSITE/25/07/2025-as
 Workshop 23 to 25 September 2026, Lilongwe
-Written 9 September 2026 — **fourteen days**
+Rewritten 17 September 2026 against the live host — **six days**
 
 ---
 
 ## Read this first
 
-Ordered by what blocks the most. Every item has one owner and one of three
-states.
+Every item has an owner, a date and one of four states: **DONE** (done and
+verified today), **NOT DONE** (will be, by the date shown), **BLOCKED**
+(waiting on someone else), **WILL NOT BE READY** (plan the workshop around
+it).
 
-| | |
+"Emile" is the platform owner. "Build" is the development work on the
+server. "CRASA" is the Secretariat.
+
+### What will not be ready on the 23rd, bluntly
+
+1. **Email, unless a credential arrives.** Nothing the platform sends is
+   delivered. The demonstration script now works around it, and says which
+   screens cannot be shown.
+2. **Authority confirmations.** None of the fourteen regulators has
+   confirmed its entry. That is what the confirmation session at the
+   workshop is for.
+3. **Committee terms of reference, the About page's four sections, and the
+   legal pages in final form.** All CRASA's to supply; the pages show named
+   gaps or marked drafts.
+4. **Photography CRASA owns.** The homepage runs on a supplied boardroom
+   photograph whose licence nobody has recorded. The sixty-five photographs
+   from crasa.org have no alt text in any language.
+5. **Dates for fourteen imported items** (twelve articles, two meetings),
+   which now read "Date not stated".
+6. **Scripted regression tests (D3).** `qa:crawl` is the interim answer and
+   says so.
+
+### What must happen this week or the workshop is at risk
+
+| # | What | Owner | By |
+|---|---|---|---|
+| A | **The cutover.** `crasadev.paneo.tech` still points at the old server. Delegates will open the old site unless DNS moves | Emile, with the build watching | **21 Sep** |
+| B | **Two-factor enrolment of `admin@crasadev.invalid`**, on a phone that travels to Lilongwe. The account opens nothing else until it is done | Emile | 21 Sep |
+| C | **Get the code off this server.** The deploy key is read-only, so the build's commits since `ccd8b9e` exist only here and in the nightly encrypted bundle | Emile | 19 Sep |
+| D | **One off-machine copy of the backup** (laptop pull, one command) | Emile | 19 Sep |
+
+---
+
+# The items
+
+## 1. Mail — BLOCKED — Emile — decision 21 September
+
+**State:** `MAIL_MAILER=log`. Verified 17 September by a real delivery
+attempt: Gmail refuses direct mail from this server (`550 5.7.26`, no SPF or
+DKIM for it), so there is no way round a relay.
+
+**Done without you:**
+
+- `docs/MAIL_ACTION.md`, the ten-minute instruction. The recommendation is
+  **Brevo**: paneo.tech is already authenticated there (DKIM and DMARC are
+  in Cloudflare), the relay is reachable, and no DNS change is needed.
+- `sudo crasa-mail-configure brevo you@example.org` asks for the key,
+  writes `.env`, sends a real test and **puts `.env` back if the relay
+  refuses**. Tested with a wrong key on 17 September: refused, restored.
+- `php artisan mail:check` sends one message now and prints the relay's
+  answer.
+- **`CRASA_ENQUIRY_RECIPIENT` is set to emiletg@gmail.com** on the server,
+  so the contact form cannot reach CRASA's real inbox. Change it at
+  handover.
+- The red mail banner stays, **for administrators only**. Member state
+  representatives no longer see it (their screens are on the projector).
+
+**If nothing arrives by 21 September:** the demonstration script's mail
+table applies. Screens that cannot be shown: password reset, user
+invitation, contact-form delivery, notification emails. The submission and
+review steps are still shown; the presenter says the email is waiting on the
+mail service. Two-factor sign-in is not affected.
+
+## 2. Backups — DONE on the server; off-machine copy BLOCKED — Emile — 19 September
+
+**Running since 16 September**, nightly at 01:10 UTC: database, all files,
+**the code (added 17 September)** and the `.env`, as one encrypted bundle
+your SSH keys open, decrypt-verified every night.
+
+**Proven 17 September:** a full restore from the bundle into the rehearsal
+database and a scratch copy of the application. Row counts matched
+production table for table; all 48 documents and 105 images resolved and
+downloaded; two-factor secrets decrypted; the code cloned from the bundle.
+
+**Still true:** every copy is on this one disk until you do one of the
+following. `docs/BACKUP_ACTION.md` has each spelled out:
+
+- today: `ssh emile@102.68.86.17 sudo crasa-backup-export > crasa-latest.tar.age`;
+- for go-live: an S3 or R2 bucket and `sudo crasa-backup-s3-configure`. The
+  push and its verification were proven against a stand-in bucket.
+
+## 3. The cutover — NOT DONE — Emile, build watching — 21 September
+
+`docs/CUTOVER.md`: Origin Certificate, **Full (strict) through a
+Configuration Rule for this hostname only**, the DNS change, verification
+and rollback. Not run: DNS is not pointed here and no certificate is
+installed, as instructed. The self-signed certificate stays for testing and
+expires 16 October.
+
+**Why it is on the critical path:** the workshop uses
+`crasadev.paneo.tech`, and that name still reaches the old server (the one
+in `INCIDENT_2026-09-15.md`).
+
+## 4. Demonstration accounts — DONE; admin 2FA NOT DONE — Emile — 21 September
+
+Eight accounts, all flagged as demonstration data. The two added on
+17 September are the Namibia and Zambia representatives, so the review queue
+has a return waiting (see item 6). Passwords are in
+`/home/emile/crasa-demo-accounts.txt` (mode 600). Nothing about them is in
+git or in these documents.
+
+`admin@crasadev.invalid` has **not** enrolled two-factor. Do it before
+travelling.
+
+## 5. The import — DONE, one article missing — build
+
+Run 16 September 23:00 to 23:11, every step exit 0.
+
+| Type | Imported |
 |---|---|
-| **READY** | Done and verified. Nothing to do |
-| **DO** | Not done, and it will be. Named owner, named date |
-| **WILL NOT BE READY** | Not achievable in fourteen days, or blocked on something outside our control. Say so now and plan the workshop around it |
+| Pages parsed | 98 (91 pages fetched, 0 failed to parse) |
+| Publications | 35, with 38 documents on disk (39 downloaded) |
+| News | 38 (33 current, 5 archived) |
+| Meetings | 46 (3 from articles, 43 from the events site) |
+| Projects | 4 (2 current, 2 past) |
+| Photographs | 65 catalogued, 24 institutional; **69** kept by the importer since 17 September (4 article pictures added) |
+| Authority logos | 14 of 14 |
+| About page blocks | 4 filled |
+| Redirects (legacy records) | 141, including 18 listing pages |
 
-**Three things will not be ready and one of them matters.** They are in
-their own section at the end. Read that section before the rest.
+**One failure:** the article "2nd meeting of the Finance and Audit Committee"
+did not answer when fetched. Retry with `php artisan legacy:import` after the
+cutover. Owner: build, 22 September.
 
----
+## 6. The demonstration walk — DONE — build — re-walk 22 September
 
-# Blocking the most
+Walked 17 September with the demonstration accounts. It found and fixed:
 
-## 1. Mail delivery — DO — CRASA, this week
+- the comparator could not take a fourth member state, and after the first
+  click its list and exports kept the previous selection (step 5);
+- the exported PDF's mark printed black, and its sources were missing;
+- the media library answered 500 for every imported photograph;
+- twelve articles and two meetings showed the import date as their date;
+- the review queue was empty (no Namibia or Zambia returns);
+- the mail banner showed on member state screens.
 
-**State: not working.** `MAIL_MAILER=log` on a production host. Every
-notification the platform sends is written to a log file and delivered to
-nobody. Password resets, submission notifications and enquiry receipts are
-all affected.
+`docs/DEMO_SCRIPT.md` is rewritten step by step. **Re-walk after the
+cutover**, through Cloudflare.
 
-**Why it is first.** It fails silently. A delegate at the workshop who asks
-for a password reset gets nothing, and the platform tells them it was sent.
-It also blocks item 2: a backup system whose only failure signal is an email
-cannot report that it has stopped.
+## 7. Tests — DONE — build
 
-**What CRASA must provide.** Either a mailbox on a CRASA domain with its SMTP
-credentials, or an API key for a transactional service. Plus DNS access for
-SPF, DKIM and DMARC — **that is the part that takes longest**, and without it
-mail to fourteen government domains is filed as spam with no bounce.
+Full suite green on 17 September. The failures earlier in the run were a
+session setting the rebuild procedure had weakened (fixed; `REBUILD.md`
+corrected) and a PHP 8.3.6 stat-cache behaviour in a test helper (fixed).
 
-**Everything else is written.** `docs/MAIL_SETUP.md` has both routes, what
-each needs, and a verification procedure that ends at a real external
-mailbox. Configuration is under an hour once the credentials arrive.
+## 8. Security — DONE 17 September — recheck the morning of the 23rd — build
 
-### The workshop deadline inside this deadline
+Planted PHP in the uploads is refused and never runs; `.env`, `.git`,
+`vendor`, `storage`, `docs`, the scraped archive and the held-for-review
+photographs are unreachable; `APP_DEBUG` is off and an error shows no trace;
+the country-scope and markup guards are green; search and autocomplete leak
+nothing across countries (tested with planted restricted records); CRASA is
+isolated from PSC Hub (FPM, CLI, database); PSC Hub answered every
+30-second check with 200 throughout.
 
-**SMTP is deferred, but not past 23 September.** Two things the demonstration
-depends on send mail, and both fail silently:
+**Morning of the 23rd:**
+`curl -sI https://crasadev.paneo.tech/.env` (403) and
+`sudo -u crasa php /var/www/crasa/artisan about --only=environment` (Debug
+Mode OFF).
 
-| What | Where | What happens with no SMTP |
-|---|---|---|
-| Submission notifications | **Script steps 7 and 8** | Pressing validate or return sends a notification to the member state representative. It is written to the log and nobody receives it. The screen says it was sent |
-| Password reset | Not in the script, but one prompt away | A delegate who asks to see it gets a success message and no email |
+## 9. Go-live clean-up — rehearsed — DECISION needed — Emile and CRASA — before go-live
 
-**Either SMTP is configured before 23 September, or those steps come out of
-the script.** They cannot be left in and quietly not work: step 8's whole
-point is that validating a return notifies the member state, and saying so
-while it does not happen is worse than not saying it.
+Rehearsed twice on a restored copy, 17 September:
 
-**Two-factor enrolment is fine without mail** and stays in. It is TOTP: the
-QR code and the recovery codes are on the screen, and nothing is emailed. The
-brief listed it as a mail step; it is not one.
+- **As things stand:** 201 demonstration rows go, every imported record
+  stays, no orphans, no errors, 900 pages crawled clean. **All fourteen
+  authorities go too**, with their logos, because none is confirmed.
+- **After the fourteen confirmations:** the authorities stay. **The six
+  committees still go**: no screen confirms a committee.
 
-**The decision point is 19 September.** If credentials have not arrived by
-then, rewrite steps 7 and 8 to stop at the state change and say plainly that
-the notification is configured and awaiting CRASA's mail credentials. That is
-a better sentence in a plenary than a promise the platform did not keep.
+**Decide before go-live:** add a confirm action for committees, or run the
+clean-up without committees
+(`content:strip-samples --only=` listing every other type). The eight
+demonstration accounts are flagged and would be removed. The command
+refuses to run until a real administrator exists.
 
-**If nothing arrives:** the back office already shows a red banner on every
-screen saying mail is not delivered, so nobody discovers it at the workshop
-by accident.
+## 10. Authority confirmations — WILL NOT BE READY before; session at the workshop — CRASA
 
----
+`/en/admin/confirmations`, one screen per member state, on the projector.
+Budget an hour. Confirming is what keeps a regulator through the clean-up.
 
-## 2. Off-site backups — DO — CRASA decides, we build
+## 11. Library order — DECISION — Emile — 21 September
 
-**State: none.** No backup package, no off-site destination, and **no cron
-entry for this application at all** — verified 9 September, the account's
-crontab runs a scheduler for a different site and nothing for this one.
+The twelve demonstration publications are dated newer than anything
+imported, so they lead the library and the homepage's "latest" row, each
+marked "Demonstration record". Keep them (step 4 needs the series) or strip
+them. The script assumes keep.
 
-At risk: 40 tables holding the submission history, the audit log and every
-instrument version, none of it reconstructible; and 195 MB of uploaded
-documents that exist nowhere but this disk. This host had two web shells
-dropped on a sibling account in the week before this was written.
+## 12. Build housekeeping — build — today
 
-**What CRASA must provide.** A decision, then two credentials. S3-compatible
-bucket, key ID, secret. Or one of the three alternatives in
-`docs/BACKUP_SETUP.md` if a cloud account is not possible — a second server
-over SSH, cPanel's remote destination, or local backups downloaded weekly by
-a named person.
-
-**What we do regardless, this week:** add the cron entry, install the
-package, configure retention against a local disk, and run a restore test.
-The destination then becomes two lines in `.env` on the day the credentials
-arrive, with everything around it already proven.
-
-**The restore procedure has been rehearsed**, on 9 September, against the
-real database. It found three defects, all fixed. See item 6.
+Remove the temporary audit administrator and its credential files, the
+scratch copy, the rehearsal database contents and the test accounts file.
+The libc6 reboot is scheduled for **17 September 19:30 UTC**; it restarts
+PSC Hub as well.
 
 ---
 
-## 3. Demonstration accounts — DO — us, by 19 September
-
-**State: none. Zero user accounts exist on this platform.**
-
-That is deliberate and it is a hard rule: no seeder on this platform creates
-an account, because a seeded credential on a public development URL is how a
-demo password reached a circulated PDF on this project. A test enforces it.
-
-**What has to happen.** Four accounts created interactively with
-`php artisan user:create`, on the day, with passwords chosen at the keyboard
-and not written down anywhere that travels:
-
-| Account | For |
-|---|---|
-| Administrator | The back office walkthrough |
-| Secretariat | The submission review queue |
-| Member state representative, Botswana | Filing a return, and the country boundary |
-| Member state representative, Namibia | Being refused Botswana's folder |
-
-**The fourth account is the point.** The extranet demonstration turns on
-showing a real refusal, and that needs a second member state.
-
-**Two-factor is mandatory for administrators.** Enrol the administrator
-account on a device that will be in Lilongwe, not on one that stays behind.
-
----
-
-## 4. The four documents to CRASA — DO — us, by 12 September
-
-All written, all test-guarded so they cannot drift out of step with the
-platform, all ready to send unedited.
-
-| Document | Lines | What it is for |
-|---|---|---|
-| `VARIATIONS.md` | 426 | The disclosed differences from the signed annexure |
-| `CLIENT_REQUESTS.md` | 384 | Everything CRASA must supply, ordered by what blocks most |
-| `SSO_REQUIREMENTS.md` | 154 | Exactly what is needed for the identity bridge |
-| `SECURITY_REVIEW.md` | 274 | The findings, what was fixed, what is open |
-
-**Send them before the workshop, not at it.** Every one contains something
-CRASA has to act on, and a document handed over in a plenary is a document
-read on the plane home.
-
-Three more should go with them: `BACKUP_SETUP.md`, `MAIL_SETUP.md` and
-`SCREEN_AUDIT.md`. The first two are decisions; the third is the conformance
-record against the approved screens and is the honest basis for the D2
-conversation.
-
----
-
-## 5. Imagery — WILL NOT BE READY — CRASA
-
-**State: the platform carries two photographs.** A test bench on
-telecommunications news cards and a parcel handover on postal ones. Both are
-correct for where they sit. Every other public page — homepage, members,
-publications, committees, about, events — carries no photograph at all.
-
-**The homepage banner runs on navy and typography.** That is a decision, not
-an omission: the supplied library has no institutional subject, and a market
-scene or a laboratory bench on the first screen is a false claim about what
-CRASA is. It looks composed rather than unfinished, and it is screen 02's own
-photograph-free composition.
-
-**This will not change by 23 September** unless CRASA's own archive turns up.
-Commissioning is out of time and buying stock reintroduces the problem.
-
-**The single highest-value thing CRASA could send this week** is its own AGM
-and committee photography. Even phone-camera pictures from a delegate. A
-reader who sat in that room recognises it, and a record of what CRASA did
-cannot be wrong about what CRASA is. `CLIENT_REQUESTS.md` section 1 says this
-in the terms to forward.
-
-**Plan the walkthrough around it.** Do not apologise for the banner. It is a
-deliberate composition and it will read as one unless somebody says otherwise.
-
----
-
-## 6. Sample data, badged and strippable — READY
-
-**State: verified 9 September against the real database.**
-
-Every demonstration figure carries `is_sample`, and the badge is on screen:
-the comparator shows "Demonstration data" and the notice stays in every
-export until each value is confirmed by its national regulator. Screen 03
-requires exactly that.
-
-The purge was rehearsed end to end — dump, census, dry run, purge, verify,
-restore. It removes 196 flagged rows and 76 more behind foreign keys, and
-leaves the fourteen member states, three sectors, fourteen indicators and
-seven composed pages. Every public route returned 200 against the stripped
-database in all three languages.
-
-It found three defects, all now fixed and all now under test: 337 orphaned
-translation rows the purge left behind, a database-only restore that broke
-every document download, and a documented restore command that could not
-authenticate. See the commit for 42.
-
-**Nothing to do before the workshop.** Do not run the purge before it: the
-demonstration data is what there is to demonstrate.
-
----
-
-## 7. Security hardening on the deployed environment — READY, recheck on the day
-
-**State: verified 9 September.**
-
-| Check | State |
-|---|---|
-| `APP_DEBUG` | `false` |
-| `APP_ENV` | `production` |
-| Uploads cannot execute PHP | Verified by requesting a planted file, not by reading the config |
-| `security:harden-uploads --check` | "The uploads directory is protected" |
-| Session cookies | `SESSION_SECURE_COOKIE=true`, `SESSION_ENCRYPT=true` |
-| Rate limiting on public write paths | Every route walked by test |
-
-**Do on the morning of 23 September**, because a deploy can undo any of it:
-run `php artisan security:harden-uploads --check`, confirm `APP_DEBUG=false`,
-and request a planted `.php` file from the uploads directory to confirm it is
-refused.
-
----
-
-## 8. Authority details confirmed — WILL NOT BE READY — CRASA
-
-**State: all fourteen unverified.** Every authority record on the platform is
-flagged `is_sample`, which means no member state has confirmed its own
-regulator's name, acronym or mandate in writing.
-
-`CLIENT_REQUESTS.md` section 4 carries the table for CRASA to correct, and
-section 3 asks for written consent from each authority to be listed with its
-name and mark.
-
-**Fourteen confirmations from fourteen national regulators will not arrive in
-fourteen days.** They are worth starting now for delivery, not for the
-workshop.
-
-**For the workshop this is an asset, not a problem, and it is now built.**
-
-`/{locale}/admin/confirmations` presents the fourteen member states with
-their regulator's name, acronym, website, year, mandated sectors and
-committee seats. Every field is editable in place, and a confirm action
-records who vouched for it and when.
-
-**Run it as a session.** Put it on the projector, work down the list, and let
-each delegate correct and confirm their own member state. The count of
-confirmed against outstanding is on screen so the room can see progress: ten
-of fourteen at the coffee break is a different conversation from a list
-somebody promises to return by email.
-
-Confirming clears `is_sample`, so a confirmed authority survives the go-live
-purge and an unconfirmed one does not. Every confirmation writes an audit row
-naming both the account that made it and the delegate who vouched — those are
-rarely the same person, and a confirmation recording only the operator
-confirms nothing.
-
-**Budget an hour.** Fourteen states at four minutes each, and it converts the
-platform's largest content gap into signed-off data. It also fills
-`committee_country`, which is empty today and is the reason every committee
-card reads "0 member states".
-
----
-
-## 9. Content placeholders — WILL NOT BE READY in full — CRASA
-
-**State: ten blocks carry placeholder copy**, each naming exactly what is
-missing and who has it.
-
-| Page | Waiting on |
-|---|---|
-| About | Governance, Executive Committee, Secretariat, Partnerships |
-| Committees | Terms of reference for the six committees |
-| Members | Accession dates, and written consent to be listed |
-| Privacy | The privacy notice, from CRASA's counsel |
-| Terms | Terms of use, from CRASA's counsel |
-| Home | Banner photography |
-
-The legal pages now carry full drafts rather than holding lines, marked as
-drafts CRASA has not reviewed. What is left in them is only what the build
-must not invent: retention periods, governing law, jurisdiction, the
-supervisory authority, the reuse licence. Each is a named blank saying who
-must supply it.
-
-That changes what happens if counsel does not come back in a fortnight. A
-delegate opening the privacy page meets a complete document that says it is a
-draft, rather than a sentence saying content is being prepared.
-
-**Every placeholder states what it is waiting for and does not pretend.** A
-delegate who opens the privacy page sees a designed holding line naming what
-CRASA has to supply, not a blank page and not invented legal text.
-
-`php artisan content:placeholders` lists all ten at any time.
-
----
-
-## 10. Logos and partner marks — WILL NOT BE READY — CRASA
-
-**State: the space is empty and stays empty.**
-
-Partner and funder attribution is supplied by the client, never drafted,
-never approximated. The EU emblem in particular has binding rules on
-proportion, clear space and accompanying wording, and a wrong one on a
-donor-funded platform is raised formally rather than corrected quietly.
-
-**We will not guess at this and it should not be improvised for the
-workshop.** If donor visibility must appear on the day, CRASA supplies the
-marks and the exact funding statement, and we place them. Otherwise the space
-stays empty and that is the correct state.
-
-The fourteen national flags are on the platform and correct — sourced from a
-public-domain set, each verified against its authoritative description, with
-licences recorded. Those are not the same thing as authority logos, which are
-item 8.
-
----
-
-# What will not be ready, in one place
-
-**1. Imagery.** The banner will run on navy and typography. It is a
-composition rather than a gap, and it will read as one unless somebody
-apologises for it. The only thing that changes it is CRASA's own archive.
-
-**2. Authority confirmations.** Fourteen written confirmations from fourteen
-regulators inside fourteen days is not realistic, and the platform no longer
-asks for them by email: the confirmation session at
-`/{locale}/admin/confirmations` is built for the room. Whether it is *done*
-depends on an hour of the agenda, which is CRASA's to give.
-
-**3. Legal pages, in their final form.** Privacy and terms carry full drafts
-and are marked as drafts. Only counsel can close the bracketed items —
-retention, governing law, jurisdiction, the supervisory authority — and
-counsel does not work to a fortnight. What a delegate meets in the meantime is
-a complete document rather than a holding line.
-
-**And two that are not ours to finish:** mail and backups are both one
-credential away, and both are listed first because a fortnight is enough time
-for CRASA to send a credential and not enough to chase one.
-
----
-
-# The fortnight, as a plan
-
-| By | Who | What |
-|---|---|---|
-| 12 September | Us | Send all seven documents |
-| 12 September | Us | Cron entry, backup package, retention, restore test against local disk |
-| 15 September | CRASA | Mail credentials |
-| 19 September | Us | **Decision point:** no credentials means steps 7 and 8 of the demo script are rewritten to stop at the state change |
-| 15 September | CRASA | Backup destination decision |
-| 17 September | CRASA | Anything from the AGM photography archive, if it exists |
-| 19 September | Us | Four demonstration accounts created interactively, 2FA enrolled |
-| 19 September | Us | Walk the demonstration script end to end on the live host |
-| 22 September | Us | Final security recheck, and a fresh database dump kept off the machine |
-| 23 September | Us | Morning-of hardening check before the room fills |
-
----
-
-# Two things worth deciding before the room
-
-**Question 8 is answered and built** — the committees are listed. **Question
-9 is open**: whether the meetings calendar should offer a subscribe feed as
-well as a download. It is a security decision about a per-user token, and it
-is in `docs/QUESTIONS.md` with a recommendation.
-
-**The screen audit is the D2 conversation.** `docs/SCREEN_AUDIT.md` records
-all sixteen screens against the build: what conforms, what is missing, and
-what was built that no screen draws. Thirty-one gaps were found and several
-are now closed. Going into the workshop with that document is a better
-position than going in without it, because every gap in it is one we found
-rather than one a delegate found.
-
----
-
-## Six demonstration accounts exist, and they are rotated before Lilongwe
-
-*Added 9 September 2026.*
-
-One account per role was created on the development host so each landing
-page and each permission boundary could be walked rather than reasoned
-about: an administrator, an editor, two member state representatives
-(Botswana and Mozambique, so country scoping can be shown failing to leak),
-a committee member seated on Spectrum and Frequency Management, and a
-viewer.
-
-**All six are flagged `is_sample`,** so `php artisan content:strip-samples`
-removes them with the rest of the demonstration data. The command refuses to
-run at all if that would leave no administrator who can still sign in.
-
-**They are development accounts and they do not travel.** Before the
-workshop, either delete them with the strip or rotate every password. Their
-credentials are in a mode-600 file outside the repository; nothing about
-them is in git, in `docs/`, or in any test.
-
-**Owner:** the build. **When:** with the go-live strip, or sooner if the
-platform is shown to anyone outside the project.
+# What CRASA still owes
+
+Numbered as in `CLIENT_REQUESTS.md`. State as of 17 September.
+
+| # | Item | State | Blocks |
+|---|---|---|---|
+| 1 | Photography of its own; **the licence for the boardroom photograph on the homepage** (supplied 9 September, "likely Rawpixel", not recorded) | Owed | Homepage banner, About, Committees and Events bands |
+| 2 | Logos: CRASA's own mark in vector | Owed | Exports use the app icon |
+| 2 | The fourteen authority logos | **Now on the site**, taken from crasa.org; licence "not stated" | Consent, item 3 |
+| 3 | Written consent from each authority to be listed with name and mark | Owed | Go-live |
+| 4 | Confirmation of each authority's details | Owed; **workshop session** | Clean-up keeps only confirmed authorities |
+| 5 | About page: Governance, Executive Committee, Secretariat, Partnerships | Owed | Visible gaps on About |
+| 6 | Terms of reference for the six committees, chairs, seats | Owed | Committee pages; "0 member state seats" |
+| 7 | Accession dates | Owed | Members page |
+| 8 | Thirteen decisions for the privacy notice and terms of use | Owed | Legal pages remain marked drafts |
+| 9 | The strategic plan | Owed | About |
+| 10 | Single sign-on details | Owed | Not visible |
+| 11 | Upcoming meeting dates | Owed | Events shows "Nothing scheduled publicly" |
+| 12 | Indicator values | Owed; the submission form is how | Comparator runs on demonstration figures |
+| — | The annual reports themselves | Owed | Library |
+| — | Twelve publications whose title and old category disagree | Owed | Sector labels |
+| — | **Dates for the fourteen items shown as "Date not stated"** (twelve articles, two meetings) | Owed | Newsroom and events |
+| — | Twenty-eight re-cased headlines to check | Owed | Newsroom |
+| — | Twenty-four photographs to clear, plus **alt text for all sixty-five** | Owed | Imported photographs cannot be placed in page blocks until described in each language |
+| — | Confirmation that the partner logo strip in the Cullen scholarship article may still be shown | **New** | One article |
+| — | A mail domain for go-live (SPF and DKIM on crasa.org) and the address enquiries should reach | **New** | Mail at go-live |

@@ -71,6 +71,6 @@ on the admin ground, border 1.61:1) is identified by its label;
 | Run | Before | After |
 |---|---|---|
 | Admin light theme, 120 pages | 271 failing text nodes | 20, all exempt (disabled controls) |
-| Admin dark theme, 120 pages | 1,520 | 351 after the import, then fixed to the exempt set |
+| Admin dark theme, 120 pages | 1,520 | 36 before the import; 351 after it (the media library had content for the first time); **20**, all exempt, after the 17 September fixes |
 | Public, 3 languages | 12 failing signatures | disabled facet options only |
 | `qa:crawl`, visitor + 7 accounts, production | 1 failure (media library 500) | 0 |
