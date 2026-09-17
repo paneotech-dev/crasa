@@ -61,6 +61,21 @@ class FetchLegacyAssets extends Command
      */
     private const CHROME = ['icon-', 'favicon', 'webclip', 'np_', 'logo', 'placeholder', '-thumbnail'];
 
+    /**
+     * Article pictures that look like chrome. Each is the only illustration
+     * of a news item (a partnership lock-up, a committee banner), so the
+     * filename and size filters would leave the article with a gap. Named
+     * one by one, after the Secretariat's own material was checked against
+     * the article it sits in; see docs/LICENCES.csv. A name here is kept
+     * even if an earlier run recorded it as skipped.
+     */
+    public const ARTICLE_CONTENT = [
+        'CRASA Logo - High Resolution.jpg',
+        'CRASA LOGS.png',
+        'Doc2.png',
+        '66daaea809fb08282926d972_LOGOS.png',
+    ];
+
     /** @var array<string, mixed> */
     private array $manifest;
 
@@ -150,13 +165,16 @@ class FetchLegacyAssets extends Command
             $folder = Str::slug(basename(parse_url($url, PHP_URL_PATH) ?: 'home')) ?: 'home';
 
             foreach ($page['images'] as $image) {
-                if (isset($this->manifest['images'][$image]) || isset($this->manifest['skipped'][$image])) {
+                $original = Mapping::originalFilename($image);
+                $kept = in_array($original, self::ARTICLE_CONTENT, true);
+
+                if (isset($this->manifest['images'][$image]) || (isset($this->manifest['skipped'][$image]) && ! $kept)) {
                     continue;
                 }
 
-                $original = Mapping::originalFilename($image);
+                unset($this->manifest['skipped'][$image]);
 
-                if ($this->isChrome($original) || str_ends_with(strtolower($original), '.svg')) {
+                if (! $kept && ($this->isChrome($original) || str_ends_with(strtolower($original), '.svg'))) {
                     $this->manifest['skipped'][$image] = ['reason' => 'chrome', 'name' => $original];
 
                     continue;
@@ -182,7 +200,7 @@ class FetchLegacyAssets extends Command
                  * up as a very small image. Recorded rather than deleted,
                  * because the write-up has to say what was seen.
                  */
-                if (($shape['width'] ?? 0) < 320 || ($shape['height'] ?? 0) < 240) {
+                if (! $kept && (($shape['width'] ?? 0) < 320 || ($shape['height'] ?? 0) < 240)) {
                     $this->manifest['skipped'][$image] = [
                         'reason' => 'too small: '.($shape['width'] ?? 0).'x'.($shape['height'] ?? 0),
                         'name' => $original,
@@ -339,7 +357,7 @@ class FetchLegacyAssets extends Command
         );
     }
 
-    private function fetch(string $url): ?string
+    protected function fetch(string $url): ?string
     {
         $handle = curl_init($url);
 
