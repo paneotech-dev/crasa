@@ -14,6 +14,7 @@ use App\Models\Page;
 use App\Support\Legacy\AboutSections;
 use App\Support\Legacy\Mapping;
 use App\Support\Legacy\PageParser;
+use App\Support\Legacy\Renditions;
 use App\Support\Legacy\TitleCase;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -453,7 +454,7 @@ class MapLegacyContent extends Command
                     'width' => $asset['width'],
                     'height' => $asset['height'],
                     'checksum' => hash('sha256', $url),
-                    'renditions' => $asset['renditions'],
+                    'renditions' => Renditions::fromManifest($asset['renditions'] ?? [], $asset['path'], $asset['width'] ?? null),
                     'rights_holder' => 'CRASA',
                     'licence' => "The client's own material, from crasa.org",
                     'is_sample' => false,
@@ -696,7 +697,7 @@ class MapLegacyContent extends Command
                     'width' => $asset['width'],
                     'height' => $asset['height'],
                     'checksum' => hash('sha256', $url),
-                    'renditions' => $asset['renditions'],
+                    'renditions' => Renditions::fromManifest($asset['renditions'] ?? [], $asset['path'], $asset['width'] ?? null),
                     'rights_holder' => 'CRASA',
                     'licence' => "The client's own material, from crasa.org",
                     'is_sample' => false,
