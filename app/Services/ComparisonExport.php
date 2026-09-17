@@ -173,7 +173,26 @@ final class ComparisonExport
         $columnWidth = (int) (($width - $labelWidth - 80) / $columnCount);
         $rowHeight = 64;
         $top = 208;
-        $height = $top + ($indicators->count() * $rowHeight) + 150;
+
+        /*
+         * Every reported figure's source, numbered once each. The footer says
+         * each figure carries its source; until 17 September 2026 the table
+         * carried only the period, so the sentence was not true. A footnote
+         * number beside the period, and the list under the table, keep a
+         * long source from being cut to fit a column.
+         */
+        $sources = [];
+        foreach ($indicators as $indicator) {
+            foreach ($countries as $country) {
+                $source = ($cells[$indicator->id][$country->id] ?? null)?->source();
+                if ($source !== null && ! in_array($source, $sources, true)) {
+                    $sources[] = $source;
+                }
+            }
+        }
+
+        $sourcesHeight = $sources === [] ? 0 : 40 + (count($sources) * 20);
+        $height = $top + ($indicators->count() * $rowHeight) + $sourcesHeight + 150;
 
         $e = fn (?string $s) => htmlspecialchars((string) $s, ENT_QUOTES | ENT_XML1, 'UTF-8');
         $parts = [];
@@ -228,12 +247,26 @@ final class ComparisonExport
                     ? '<text x="'.$x.'" y="'.($y + 6).'" font-family="Helvetica,Arial,sans-serif" font-size="19" font-weight="600" fill="#0F1B2D">'.$e($cell->display()).'</text>'
                     : '<text x="'.$x.'" y="'.($y + 6).'" font-family="Helvetica,Arial,sans-serif" font-size="15" font-style="italic" fill="#5C6B7E">'.$e($cell->display()).'</text>';
 
-                if ($cell->period()) {
-                    $parts[] = '<text x="'.$x.'" y="'.($y + 26).'" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5C6B7E">'.$e($cell->period()).'</text>';
+                $note = $cell->source() !== null ? array_search($cell->source(), $sources, true) + 1 : null;
+                $meta = trim(($cell->period() ?? '').($note !== null ? '  ['.$note.']' : ''));
+
+                if ($meta !== '') {
+                    $parts[] = '<text x="'.$x.'" y="'.($y + 26).'" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5C6B7E">'.$e($meta).'</text>';
                 }
             }
 
             $parts[] = '<line x1="40" y1="'.($y + 38).'" x2="'.($width - 40).'" y2="'.($y + 38).'" stroke="#E5E0D5" stroke-width="1"/>';
+        }
+
+        if ($sources !== []) {
+            $sy = $top + ($indicators->count() * $rowHeight) + 20;
+            $parts[] = '<text x="40" y="'.$sy.'" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="700" fill="#1F2937">'
+                .$e(__('comparator.csv_source')).'</text>';
+
+            foreach ($sources as $n => $source) {
+                $parts[] = '<text x="40" y="'.($sy + 20 + ($n * 20)).'" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5C6B7E">'
+                    .$e('['.($n + 1).'] '.Str::limit($source, 170)).'</text>';
+            }
         }
 
         $footY = $height - 96;
@@ -252,30 +285,29 @@ final class ComparisonExport
             .$e($comparison->permalink()).'</text>';
 
         return '<?xml version="1.0" encoding="UTF-8"?>'
-            .'<svg xmlns="http://www.w3.org/2000/svg" width="'.$width.'" height="'.$height.'" viewBox="0 0 '.$width.' '.$height.'">'
+            .'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'.$width.'" height="'.$height.'" viewBox="0 0 '.$width.' '.$height.'">'
             .implode('', $parts)
             .'</svg>';
     }
 
-    /** The CRASA mark, read from the same file the site serves. */
+    /**
+     * The CRASA mark, as the raster the site's app icon uses.
+     *
+     * The vector logo fills its globe with a gradient set in a style
+     * attribute, which ImageMagick's built-in SVG renderer (this host has no
+     * librsvg) paints solid black: the exported PDF carried a black disc
+     * where the mark should be. An embedded PNG renders the same everywhere.
+     */
     private function mark(int $x, int $y): string
     {
-        $path = public_path('img/crasa-logo.svg');
+        $path = public_path('img/app/icon-192.png');
 
         if (! is_readable($path)) {
             return '';
         }
 
-        $svg = file_get_contents($path);
-        $inner = preg_replace(['/^.*?<svg[^>]*>/s', '/<\/svg>.*$/s'], '', $svg);
-
-        preg_match('/viewBox="([^"]+)"/', $svg, $box);
-        $view = $box[1] ?? '0 0 48 48';
-        [, , $w, $h] = array_map('floatval', preg_split('/[\s,]+/', $view));
-
-        $scale = $w > 0 ? 48 / $w : 1;
-
-        return '<g transform="translate('.$x.','.$y.') scale('.round($scale, 4).')">'.$inner.'</g>';
+        return '<image x="'.$x.'" y="'.$y.'" width="48" height="48" xlink:href="data:image/png;base64,'
+            .base64_encode((string) file_get_contents($path)).'"/>';
     }
 
     private function rasterise(Comparison $comparison, string $format): string

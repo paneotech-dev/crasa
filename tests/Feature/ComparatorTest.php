@@ -382,4 +382,27 @@ class ComparatorTest extends TestCase
         $this->assertSame(10, $xpath->query('//a[contains(@class,"c-cmp__state")][@data-at-limit][@aria-disabled="true"]')->length);
         $this->assertSame(4, $xpath->query('//a[contains(@class,"c-cmp__state")][@aria-pressed="true"][not(@data-at-limit)]')->length);
     }
+
+    /**
+     * The exported document says each figure carries its source. It did
+     * not, and its mark rendered as a black disc. Found walking step 5.8.
+     */
+    public function test_the_exported_document_lists_each_figures_source_and_embeds_the_mark_as_a_raster(): void
+    {
+        $query = ['mode' => 'compare', 'category' => $this->indicator->category, 'countries' => 'bw,km'];
+        $comparison = Comparison::fromQuery($query);
+        $source = $comparison->cells()[$this->indicator->id][Country::where('iso_code', 'bw')->value('id')]->source();
+
+        $this->assertNotNull($source, 'The fixture has a reported Botswana figure with a source.');
+
+        $svg = app(ComparisonExport::class)->svg($comparison);
+
+        $this->assertStringContainsString('[1] '.htmlspecialchars(\Illuminate\Support\Str::limit($source, 170), ENT_QUOTES | ENT_XML1), $svg);
+        $this->assertMatchesRegularExpression('/>[^<]*\s\[1\]</', $svg, 'The figure points at its source.');
+        $this->assertStringContainsString('xlink:href="data:image/png;base64,', $svg);
+        $this->assertStringNotContainsString('url(#_Radial1)', $svg);
+
+        $pdf = $this->get('/en/comparator/export.pdf?'.http_build_query($query))->assertOk();
+        $this->assertStringStartsWith('%PDF', $pdf->getContent());
+    }
 }
