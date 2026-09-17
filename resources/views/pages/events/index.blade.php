@@ -57,7 +57,11 @@
                     @foreach ($past as $meeting)
                         <li class="c-event">
                             <p class="c-event__when">
-                                <time datetime="{{ $meeting->starts_on->toDateString() }}">{{ $meeting->starts_on->isoFormat('D MMMM YYYY') }}</time>
+                                @if ($meeting->date_unknown)
+                                    <span>{{ __('events.date_not_stated') }}</span>
+                                @else
+                                    <time datetime="{{ $meeting->starts_on->toDateString() }}">{{ $meeting->starts_on->isoFormat('D MMMM YYYY') }}</time>
+                                @endif
                             </p>
                             <h3 class="c-event__title">
                                 <a href="{{ route('events.show', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug]) }}">{{ $meeting->title }}</a>

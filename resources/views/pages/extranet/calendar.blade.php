@@ -128,8 +128,8 @@
                             @foreach ($meetings as $meeting)
                                 <tr>
                                     <th scope="row">
-                                        {{ $meeting->starts_on->isoFormat('D MMM YYYY') }}
-                                        @if ($meeting->ends_on && ! $meeting->ends_on->isSameDay($meeting->starts_on))
+                                        {{ $meeting->date_unknown ? __('events.date_not_stated') : $meeting->starts_on->isoFormat('D MMM YYYY') }}
+                                        @if (! $meeting->date_unknown && $meeting->ends_on && ! $meeting->ends_on->isSameDay($meeting->starts_on))
                                             <span class="a-table__sub">{{ __('extranet.until', ['date' => $meeting->ends_on->isoFormat('D MMM')]) }}</span>
                                         @endif
                                     </th>

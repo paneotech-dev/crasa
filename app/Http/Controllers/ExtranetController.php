@@ -183,6 +183,7 @@ class ExtranetController extends Controller
                 ->filter(fn (Folder $folder) => Gate::allows('view', $folder))
                 ->values(),
             'meetings' => Meeting::where('committee_id', $committee->id)
+                ->orderBy('date_unknown')
                 ->orderByDesc('starts_on')
                 ->get()
                 ->filter(fn (Meeting $meeting) => Gate::allows('view', $meeting))
@@ -259,7 +260,8 @@ class ExtranetController extends Controller
             'month' => $month,
             'committeeFilter' => $committee,
             'committees' => Committee::where('is_active', true)->orderBy('name')->get(),
-            'inMonth' => $visible(Meeting::query()
+            // A meeting with no stated date has no day to sit on.
+            'inMonth' => $visible(Meeting::dated()
                 ->whereBetween('starts_on', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
                 ->orderBy('starts_on')),
             'upcoming' => $visible(Meeting::upcoming()),
@@ -282,7 +284,7 @@ class ExtranetController extends Controller
 
         $month = $this->monthFrom($request->query('month'));
 
-        $meetings = Meeting::query()
+        $meetings = Meeting::dated()
             ->whereBetween('starts_on', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
             ->orderBy('starts_on')
             ->get()

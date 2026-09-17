@@ -11,6 +11,8 @@ return [
     'lead' => 'Réunions des comités de la CRASA, Assemblée générale annuelle et ateliers régionaux. L\'inscription à chaque événement est gérée par les organisateurs.',
     'upcoming' => 'À venir',
     'past' => 'Passés',
+    // The legacy site gave no date; the stored one is the day it was read.
+    'date_not_stated' => 'Date non précisée',
     'none_upcoming_title' => 'Rien de prévu publiquement',
     'none_upcoming_body' => 'Les réunions apparaissent ici une fois publiées par le Secrétariat. Les réunions de comité figurent dans l\'extranet pour les États membres qui y siègent.',
     'agenda' => 'Ordre du jour',

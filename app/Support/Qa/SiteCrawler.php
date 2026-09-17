@@ -55,6 +55,14 @@ final class SiteCrawler
         '/submissions', '/contributions', '/directory', '/register', '/authority', '/completeness',
         '/indicators', '/announcements', '/notifications', '/account'];
 
+    /**
+     * Query-string variants followed per path. The extranet calendar links
+     * one month forward for ever and the facet filters combine into
+     * thousands of URLs, and a crawl that follows all of them spends its
+     * whole budget on one page's pagination.
+     */
+    private const VARIANTS_PER_PATH = 12;
+
     private CookieJar $jar;
 
     /** @var array<string, int> */
@@ -133,6 +141,7 @@ final class SiteCrawler
         }
 
         $queue = $seeds;
+        $variants = [];
         $referrer = [];
         $seen = [];
         $pages = [];
@@ -205,10 +214,22 @@ final class SiteCrawler
                     continue;
                 }
 
-                if (preg_match($scope, $link) && ! isset($seen[$link]) && ! in_array($link, $queue, true)) {
-                    $queue[] = $link;
-                    $referrer[$link] = $path;
+                if (! preg_match($scope, $link) || isset($seen[$link]) || in_array($link, $queue, true)) {
+                    continue;
                 }
+
+                $bare = strtok($link, '?');
+
+                if ($bare !== $link && ($variants[$bare] ?? 0) >= self::VARIANTS_PER_PATH) {
+                    continue;
+                }
+
+                if ($bare !== $link) {
+                    $variants[$bare] = ($variants[$bare] ?? 0) + 1;
+                }
+
+                $queue[] = $link;
+                $referrer[$link] = $path;
             }
         }
 

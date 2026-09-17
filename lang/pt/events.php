@@ -11,6 +11,8 @@ return [
     'lead' => 'Reuniões dos comités da CRASA, a Assembleia Geral Anual e seminários regionais. A inscrição em cada um é tratada pelos organizadores.',
     'upcoming' => 'Próximos',
     'past' => 'Passados',
+    // The legacy site gave no date; the stored one is the day it was read.
+    'date_not_stated' => 'Data não indicada',
     'none_upcoming_title' => 'Nada agendado publicamente',
     'none_upcoming_body' => 'As reuniões aparecem aqui assim que o Secretariado as publicar. As reuniões de comité constam da extranet para os Estados membros que nelas têm assento.',
     'agenda' => 'Ordem de trabalhos',

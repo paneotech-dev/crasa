@@ -202,7 +202,7 @@ class DatabaseSearchDriver implements SearchDriver
             ->whereIn('id', array_keys($ids))
             ->with(['translations', 'sector'])
             ->when($filters['sector'] ?? null, fn ($q, $v) => $q->whereHas('sector', fn ($s) => $s->where('slug', $v)))
-            ->when($filters['year'] ?? null, fn ($q, $v) => $q->whereYear('published_at', $v))
+            ->when($filters['year'] ?? null, fn ($q, $v) => $q->where('date_unknown', false)->whereYear('published_at', $v))
             ->get()
             ->map(fn (NewsItem $n) => new SearchHit(
                 type: 'news',
@@ -211,7 +211,7 @@ class DatabaseSearchDriver implements SearchDriver
                 url: route('newsroom.show', ['locale' => app()->getLocale(), 'slug' => $n->slug]),
                 meta: __($n->category->labelKey()),
                 sector: $n->sector?->name,
-                year: $n->published_at?->year,
+                year: $n->date_unknown ? null : $n->published_at?->year,
                 score: $ids[$n->id] ?? 0,
             ));
     }

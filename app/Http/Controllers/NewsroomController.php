@@ -53,6 +53,7 @@ class NewsroomController extends Controller
 
         $items = $this->query($filters)
             ->with(['translations', 'sector', 'tags.translations'])
+            ->orderBy('date_unknown')
             ->orderByDesc('published_at')
             ->paginate(9)
             ->withQueryString();

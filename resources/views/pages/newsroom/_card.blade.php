@@ -54,7 +54,7 @@
             <p class="b-card__summary">{{ \Illuminate\Support\Str::limit($summary->value, 140) }}</p>
         @endif
         <div class="b-card__meta">
-            <span>{{ $item->published_at?->translatedFormat('j F Y') }}</span>
+            <span>{{ $item->date_unknown ? __('events.date_not_stated') : $item->published_at?->translatedFormat('j F Y') }}</span>
             @if ($item->sector)<span>{{ $item->sector->name }}</span>@endif
         </div>
     </div>

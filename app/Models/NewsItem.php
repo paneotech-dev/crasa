@@ -23,7 +23,7 @@ class NewsItem extends Model
     protected array $translatable = ['title', 'summary', 'body'];
 
     protected $fillable = [
-        'slug', 'category', 'sector_id', 'published_at',
+        'slug', 'category', 'sector_id', 'published_at', 'date_unknown',
         'hero_image_path', 'author_name', 'status', 'archived', 'is_sample',
     ];
 
@@ -32,6 +32,7 @@ class NewsItem extends Model
         return [
             'category' => NewsCategory::class,
             'published_at' => 'datetime',
+            'date_unknown' => 'boolean',
             'archived' => 'boolean',
             'is_sample' => 'boolean',
         ];

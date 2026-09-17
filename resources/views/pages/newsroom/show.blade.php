@@ -28,7 +28,7 @@
             @endif
 
             <p class="c-article__meta">
-                <span>{{ $item->published_at?->translatedFormat('j F Y') }}</span>
+                <span>{{ $item->date_unknown ? __('events.date_not_stated') : $item->published_at?->translatedFormat('j F Y') }}</span>
                 @if ($item->author_name)<span>{{ $item->author_name }}</span>@endif
                 @if ($item->sector)<span>{{ $item->sector->name }}</span>@endif
             </p>

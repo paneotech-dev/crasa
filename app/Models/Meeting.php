@@ -29,7 +29,7 @@ class Meeting extends Model
     use Auditable, HasFactory, MarksSampleData;
 
     protected $fillable = [
-        'committee_id', 'title', 'slug', 'kind', 'category', 'starts_on', 'ends_on',
+        'committee_id', 'title', 'slug', 'kind', 'category', 'starts_on', 'ends_on', 'date_unknown',
         'location', 'venue', 'venue_country', 'agenda', 'summary', 'clearance',
         'registration_url', 'external_id', 'synced_at', 'is_sample',
     ];
@@ -39,6 +39,7 @@ class Meeting extends Model
         return [
             'starts_on' => 'date',
             'ends_on' => 'date',
+            'date_unknown' => 'boolean',
             'clearance' => Clearance::class,
             'synced_at' => 'datetime',
             'is_sample' => 'boolean',
@@ -108,14 +109,30 @@ class Meeting extends Model
         });
     }
 
+    /**
+     * A meeting whose date is not known is never upcoming: its stored date
+     * is the day the legacy site was read, not the day it met.
+     */
     public function scopeUpcoming(Builder $query): Builder
     {
-        return $query->whereDate('starts_on', '>=', now()->toDateString())->orderBy('starts_on');
+        return $query->where('date_unknown', false)
+            ->whereDate('starts_on', '>=', now()->toDateString())->orderBy('starts_on');
     }
 
+    /** Past meetings, newest first, and those with no stated date after them. */
     public function scopePast(Builder $query): Builder
     {
-        return $query->whereDate('starts_on', '<', now()->toDateString())->orderByDesc('starts_on');
+        return $query->where(fn (Builder $q) => $q
+            ->where('date_unknown', true)
+            ->orWhereDate('starts_on', '<', now()->toDateString()))
+            ->orderBy('date_unknown')
+            ->orderByDesc('starts_on');
+    }
+
+    /** Meetings that can be placed on a calendar day. */
+    public function scopeDated(Builder $query): Builder
+    {
+        return $query->where('date_unknown', false);
     }
 
     /** Public meetings only, for the events section. */

@@ -8,7 +8,11 @@
             <p class="b__eyebrow">{{ $meeting->committee?->name ?? __('extranet.regional') }}</p>
             <h1>{{ $meeting->title }}</h1>
             <p class="c-lead">
-                <time datetime="{{ $meeting->starts_on->toDateString() }}">{{ $meeting->starts_on->isoFormat('D MMMM YYYY') }}</time>@if ($meeting->ends_on && ! $meeting->ends_on->isSameDay($meeting->starts_on)) {{ __('extranet.until', ['date' => $meeting->ends_on->isoFormat('D MMMM YYYY')]) }}@endif
+                @if ($meeting->date_unknown)
+                    {{ __('events.date_not_stated') }}
+                @else
+                    <time datetime="{{ $meeting->starts_on->toDateString() }}">{{ $meeting->starts_on->isoFormat('D MMMM YYYY') }}</time>@if ($meeting->ends_on && ! $meeting->ends_on->isSameDay($meeting->starts_on)) {{ __('extranet.until', ['date' => $meeting->ends_on->isoFormat('D MMMM YYYY')]) }}@endif
+                @endif
                 @if ($meeting->location) — {{ $meeting->location }}@endif
             </p>
         </div>
@@ -38,7 +42,7 @@
 
             <h2>{{ __('events.registration') }}</h2>
 
-            @if ($meeting->starts_on->isPast())
+            @if ($meeting->date_unknown || $meeting->starts_on->isPast())
                 <p>{{ __('delegates.closed') }}</p>
             @else
                 <p>{{ __('events.registration_body') }}</p>

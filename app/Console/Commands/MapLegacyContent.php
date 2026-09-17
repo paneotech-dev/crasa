@@ -197,6 +197,8 @@ class MapLegacyContent extends Command
             'category' => $rule['type'],
             'sector_id' => $sector['sector'] === null ? null : ($this->sectors[$sector['sector']] ?? null),
             'published_at' => $date['date'],
+            // The crawl date keeps the ordering working; this keeps it off the page.
+            'date_unknown' => $date['unknown'],
             'status' => 'published',
             'archived' => in_array(LegacyRecord::normalise($url), $this->archived, true),
             'hero_image_path' => $this->heroPath($page),
@@ -235,15 +237,19 @@ class MapLegacyContent extends Command
         $title = TitleCase::apply($page['title']);
         $date = $this->dateFor($page);
 
+        // Event dates on the page outrank everything dateFor() reads.
+        if (($page['event_dates']['start'] ?? null) !== null) {
+            $date = ['date' => $this->parse($page['event_dates']['start']), 'source' => 'page', 'unknown' => false];
+        }
+
         $meeting = Meeting::firstOrNew(['slug' => $this->uniqueSlug(Meeting::class, $title, $url)]);
 
         $meeting->fill([
             'title' => $title,
             'kind' => 'committee',
             'category' => 'Meeting',
-            'starts_on' => ($page['event_dates']['start'] ?? null) !== null
-                ? $this->parse($page['event_dates']['start'])
-                : $date['date'],
+            'starts_on' => $date['date'],
+            'date_unknown' => $date['unknown'],
             'ends_on' => ($page['event_dates']['end'] ?? null) !== null
                 ? $this->parse($page['event_dates']['end'])
                 : null,

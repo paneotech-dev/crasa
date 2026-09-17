@@ -94,7 +94,7 @@ class AdminSearchController extends Controller
                 ->limit(self::LIMIT)->get()
                 ->map(fn (NewsItem $item) => [
                     'title' => $item->translated('title', $item->slug),
-                    'meta' => $item->published_at?->isoFormat('D MMMM YYYY') ?? '',
+                    'meta' => $item->date_unknown ? __('events.date_not_stated') : ($item->published_at?->isoFormat('D MMMM YYYY') ?? ''),
                     'url' => route('admin.resources.edit', ['locale' => $locale, 'resource' => 'news', 'id' => $item->id]),
                 ]));
         }

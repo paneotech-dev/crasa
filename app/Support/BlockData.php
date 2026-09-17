@@ -60,12 +60,12 @@ final class BlockData
         return [
             'items' => Meeting::query()
                 ->public()
-                ->when($block->setting('upcoming_only', true), fn ($q) => $q->upcoming(), fn ($q) => $q->orderByDesc('starts_on'))
+                ->when($block->setting('upcoming_only', true), fn ($q) => $q->upcoming(), fn ($q) => $q->orderBy('date_unknown')->orderByDesc('starts_on'))
                 ->limit(max(1, min(12, $limit)))
                 ->get()
                 ->map(fn ($meeting) => [
                     'title' => $meeting->title,
-                    'kicker' => $meeting->starts_on->isoFormat('D MMMM YYYY'),
+                    'kicker' => $meeting->date_unknown ? __('events.date_not_stated') : $meeting->starts_on->isoFormat('D MMMM YYYY'),
                     'meta' => $meeting->location ?? '',
                     'url' => route('events.show', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug]),
                 ]),
@@ -240,6 +240,7 @@ final class BlockData
         return NewsItem::published()
             ->with(['translations', 'sector'])
             ->when($filter['sector'] ?? null, fn ($q, $v) => $q->whereHas('sector', fn ($s) => $s->where('slug', $v)))
+            ->orderBy('date_unknown')
             ->orderByDesc('published_at')
             ->limit((int) $block->setting('limit', 3))
             ->get()

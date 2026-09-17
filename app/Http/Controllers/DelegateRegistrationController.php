@@ -33,7 +33,7 @@ class DelegateRegistrationController extends Controller
 {
     public function create(Meeting $meeting): View
     {
-        abort_if($meeting->starts_on->isPast(), 410, __('delegates.closed'));
+        abort_if($meeting->date_unknown || $meeting->starts_on->isPast(), 410, __('delegates.closed'));
 
         return view('pages.events.register', [
             'meeting' => $meeting,
@@ -53,7 +53,7 @@ class DelegateRegistrationController extends Controller
 
     public function store(StoreDelegateRegistrationRequest $request, Meeting $meeting): RedirectResponse
     {
-        abort_if($meeting->starts_on->isPast(), 410, __('delegates.closed'));
+        abort_if($meeting->date_unknown || $meeting->starts_on->isPast(), 410, __('delegates.closed'));
 
         $data = $request->safe()->except('website');
         $user = $request->user();
