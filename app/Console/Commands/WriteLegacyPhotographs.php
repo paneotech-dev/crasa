@@ -361,36 +361,68 @@ class WriteLegacyPhotographs extends Command
         $path = base_path('docs/LICENCES.csv');
         $existing = file($path, FILE_IGNORE_NEW_LINES) ?: [];
 
-        // Rows already written by an earlier run are replaced, not doubled.
-        $kept = array_values(array_filter(
-            $existing,
-            fn (string $line) => ! str_contains($line, 'images/legacy/')
-        ));
+        file_put_contents($path, implode("\n", self::licenceLines($existing, $photographs, now()->toDateString()))."\n");
+    }
 
-        $handle = fopen($path, 'w');
+    /**
+     * The register with this command's rows replaced.
+     *
+     * Only rows this command wrote are replaced, so a hand-written row about
+     * another legacy image survives a re-run. A photograph already listed
+     * keeps the date it was first obtained: a re-run changes nothing unless
+     * the photographs did.
+     *
+     * @param  list<string>  $existing
+     * @param  list<array<string, mixed>>  $photographs
+     * @return list<string>
+     */
+    public static function licenceLines(array $existing, array $photographs, string $today): array
+    {
+        $prefix = '"Legacy photograph: ';
+        $obtained = [];
+        $kept = [];
 
-        foreach ($kept as $line) {
-            fwrite($handle, $line."\n");
+        foreach ($existing as $line) {
+            if (! str_starts_with($line, $prefix)) {
+                $kept[] = $line;
+
+                continue;
+            }
+
+            $row = str_getcsv($line, ',', '"', '\\');
+            $obtained[$row[1] ?? ''] = $row[6] ?? $today;
         }
 
         foreach ($photographs as $photograph) {
-            fputcsv($handle, [
+            $kept[] = self::csvLine([
                 'Legacy photograph: '.$photograph['original_filename'],
                 $photograph['path'],
                 'crasa.org',
                 '',
                 "The client's own material",
                 'No',
-                now()->toDateString(),
+                $obtained[$photograph['path']] ?? $today,
                 sprintf(
                     '%s. %dx%d. Downloaded at the largest size the legacy CDN holds, EXIF stripped. Not placed on any page.',
                     str_replace('"', "'", $photograph['subject']),
                     $photograph['width'] ?? 0,
                     $photograph['height'] ?? 0
                 ),
-            ], ',', '"', '\\');
+            ]);
         }
 
+        return $kept;
+    }
+
+    /** @param list<string> $fields */
+    private static function csvLine(array $fields): string
+    {
+        $handle = fopen('php://memory', 'r+');
+        fputcsv($handle, $fields, ',', '"', '\\');
+        rewind($handle);
+        $line = rtrim((string) stream_get_contents($handle), "\n");
         fclose($handle);
+
+        return $line;
     }
 }
