@@ -144,6 +144,12 @@ class PublicationSeeder extends Seeder
         ]);
     }
 
+    /*
+     * One ">" too many after the stream length made the page content
+     * unreadable: every demonstration document downloaded as a blank page and
+     * rendered a blank thumbnail, which the rebuild of 16 September found by
+     * measuring the thumbnails. DemonstrationDocumentTest reads the text back.
+     */
     private function placeholderPdf(string $label): string
     {
         $text = 'Demonstration document: '.substr($label, 0, 40);
@@ -154,7 +160,7 @@ class PublicationSeeder extends Seeder
             ."2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n"
             .'3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 420 420]/Contents 4 0 R'
             ."/Resources<</Font<</F1 5 0 R>>>>>>endobj\n"
-            .'4 0 obj<</Length '.strlen($stream).">>>stream\n".$stream."\nendstream\nendobj\n"
+            .'4 0 obj<</Length '.strlen($stream).">>stream\n".$stream."\nendstream\nendobj\n"
             ."5 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>endobj\n"
             ."trailer<</Root 1 0 R>>\n";
     }
