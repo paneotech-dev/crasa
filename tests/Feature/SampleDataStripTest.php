@@ -503,4 +503,32 @@ class SampleDataStripTest extends TestCase
             'A document row survived a restore without its file and the seeder could not repair it.'
         );
     }
+
+    public function test_the_warning_names_unconfirmed_regulators_and_committees_separately(): void
+    {
+        $this->fullDataset();
+
+        $this->artisan('content:strip-samples --force')
+            ->expectsOutputToContain('unconfirmed authorities')
+            ->expectsOutputToContain('No screen confirms a committee yet')
+            ->assertSuccessful();
+    }
+
+    /**
+     * The go-live order: the member states confirm on the 23rd, then the
+     * strip runs. The regulators must survive it, and the warning must not
+     * claim otherwise. Rehearsed on a copy of the live data on 17 September.
+     */
+    public function test_confirmed_regulators_survive_and_the_warning_says_only_committees_go(): void
+    {
+        $this->fullDataset();
+        \App\Models\Authority::query()->update(['is_sample' => false, 'confirmed_at' => now(), 'confirmed_by_name' => 'Delegate']);
+
+        $this->artisan('content:strip-samples --force')
+            ->doesntExpectOutputToContain('no named regulator')
+            ->expectsOutputToContain('No screen confirms a committee yet')
+            ->assertSuccessful();
+
+        $this->assertSame(14, \App\Models\Authority::count());
+    }
 }

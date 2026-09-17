@@ -160,12 +160,24 @@ class StripSampleData extends Command
             );
         }
 
-        $organisations = ($counts[Authority::class] ?? 0) + ($counts[Committee::class] ?? 0);
+        $authorities = $counts[Authority::class] ?? 0;
+        $committees = $counts[Committee::class] ?? 0;
 
-        if ($organisations > 0) {
+        // Named separately: once the member states have confirmed their
+        // regulators on the confirmation screen, only the committees are
+        // left, and a warning about regulators would then be false.
+        if ($authorities > 0) {
             $this->warn(
-                'This includes '.$organisations.' authority and committee records. Removing them leaves '
-                .'the fourteen member states with no named regulator until CRASA confirms the details.'
+                'This includes '.$authorities.' unconfirmed authorit'.($authorities === 1 ? 'y' : 'ies').'. Removing '
+                .($authorities === 1 ? 'it leaves its member state' : 'them leaves those member states')
+                .' with no named regulator until CRASA confirms the details on the confirmation screen.'
+            );
+        }
+
+        if ($committees > 0) {
+            $this->warn(
+                'This includes '.$committees.' committee'.($committees === 1 ? '' : 's').'. No screen confirms a '
+                .'committee yet, so every committee still flagged is removed, with its seats.'
             );
         }
 
