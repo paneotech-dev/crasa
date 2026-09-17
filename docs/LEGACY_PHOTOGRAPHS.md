@@ -124,7 +124,7 @@ A CRASA meeting, delegates, the Chairperson, a host minister or a signing.
 | `Independent Communications Authority of South Africa  (ICASA).png` | Independent Communications Authority of South Africa (ICASA) (seen only on a listing page; the article it belongs to is not recorded) | 591&times;244 | article or card — Sized for a card rather than a band. |
 | `Communications Regulatory Authority of Namibia (CRAN).png` | Communications Regulatory Authority of Namibia (CRAN) (seen only on a listing page; the article it belongs to is not recorded) | 591&times;244 | article or card — Sized for a card rather than a band. |
 
-## Not kept — 30
+## Not kept — 26
 
 Site furniture and images too small to be a photograph. Recorded rather than
 silently dropped, so the count adds up.
@@ -132,13 +132,9 @@ silently dropped, so the count adds up.
 | File | Why |
 |---|---|
 | `icon-arrow-right.svg` | chrome |
-| `CRASA Logo - High Resolution.jpg` | chrome |
 | `icon-arrow-right.svg` | chrome |
 | `icon-breadcrumb-arrow.svg` | chrome |
 | `LOGOS.png` | chrome |
-| `CRASA LOGS.png` | too small: 120x126 |
-| `Doc2.png` | too small: 273x75 |
-| `66daaea809fb08282926d972_LOGOS.png` | chrome |
 | `np_map_2021908_FFFFFF.svg` | chrome |
 | `np_presentation_2383303_FFFFFF.svg` | chrome |
 | `np_research_2087116_FFFFFF.svg` | chrome |
