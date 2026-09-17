@@ -57,4 +57,14 @@ class LegacyLicenceLinesTest extends TestCase
 
         $this->assertSame(['asset,where used'], WriteLegacyPhotographs::licenceLines($first, [], '2026-09-16'));
     }
+
+    public function test_a_re_run_puts_its_rows_back_where_they_were(): void
+    {
+        $first = WriteLegacyPhotographs::licenceLines(['asset,where used'], [$this->photograph()], '2026-09-10');
+        $first[] = '"Authority logo: BOCRA (Botswana)",x,y,,z,Unknown,2026-09-10,note';
+
+        $second = WriteLegacyPhotographs::licenceLines($first, [$this->photograph()], '2026-09-16');
+
+        $this->assertSame($first, $second);
+    }
 }

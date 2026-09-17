@@ -54,6 +54,12 @@ class WriteLegacyPhotographs extends Command
         $this->pages = json_decode(Storage::disk('local')->get('legacy/content.json'), true)['pages'] ?? [];
 
         foreach ($manifest['images'] as $url => $asset) {
+            // A logo kept for its article is not a photograph: it is never
+            // an institutional card, and its licence row is written by hand.
+            if (in_array($asset['original_filename'] ?? '', FetchLegacyAssets::ARTICLE_CONTENT, true)) {
+                continue;
+            }
+
             $asset = $this->attribute($url, $asset);
             $subject = $this->subject($asset);
             $institutional = $this->isInstitutional($asset, $subject);
@@ -381,6 +387,7 @@ class WriteLegacyPhotographs extends Command
         $prefix = '"Legacy photograph: ';
         $obtained = [];
         $kept = [];
+        $at = null;
 
         foreach ($existing as $line) {
             if (! str_starts_with($line, $prefix)) {
@@ -389,12 +396,18 @@ class WriteLegacyPhotographs extends Command
                 continue;
             }
 
+            // The rows go back where they were, so a re-run does not
+            // reorder the register around them.
+            $at ??= count($kept);
+
             $row = str_getcsv($line, ',', '"', '\\');
             $obtained[$row[1] ?? ''] = $row[6] ?? $today;
         }
 
+        $rows = [];
+
         foreach ($photographs as $photograph) {
-            $kept[] = self::csvLine([
+            $rows[] = self::csvLine([
                 'Legacy photograph: '.$photograph['original_filename'],
                 $photograph['path'],
                 'crasa.org',
@@ -410,6 +423,8 @@ class WriteLegacyPhotographs extends Command
                 ),
             ]);
         }
+
+        array_splice($kept, $at ?? count($kept), 0, $rows);
 
         return $kept;
     }
