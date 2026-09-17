@@ -138,4 +138,18 @@ class QaCrawlTest extends TestCase
             ->expectsOutputToContain('No failures.')
             ->assertSuccessful();
     }
+
+    public function test_an_endless_calendar_does_not_swallow_the_crawl(): void
+    {
+        Http::fake(function (Request $request) {
+            $month = (int) (parse_url($request->url(), PHP_URL_QUERY) ? substr(parse_url($request->url(), PHP_URL_QUERY), 6) : 0);
+
+            return Http::response('<html><body><a href="/en/calendar?month='.($month + 1).'">next</a><a href="/en/about">About</a></body></html>', 200, ['Content-Type' => 'text/html']);
+        });
+
+        $urls = array_column((new SiteCrawler(self::BASE, maxPages: 100))->crawl(false)['pages'], 'url');
+
+        $this->assertContains('/en/about', $urls);
+        $this->assertLessThanOrEqual(14, count($urls), 'Twelve calendar months, the page itself and the about page.');
+    }
 }
