@@ -140,4 +140,39 @@ class ThumbnailGenerationTest extends TestCase
 
         $this->assertTrue(true);
     }
+
+    public function test_the_command_rebuilds_a_thumbnail_whose_file_has_gone(): void
+    {
+        if (! class_exists(\Imagick::class)) {
+            $this->markTestSkipped('Imagick is not available on this host.');
+        }
+
+        Storage::fake('local');
+        Storage::fake('public');
+
+        $document = $this->document($this->minimalPdf());
+        $document->forceFill(['thumbnail_path' => 'thumbnails/'.$document->id.'.jpg'])->saveQuietly();
+
+        $this->artisan('documents:thumbnails', ['--sync' => true])
+            ->expectsOutput('Generated 1 thumbnail(s).')
+            ->assertSuccessful();
+
+        Storage::disk('public')->assertExists('thumbnails/'.$document->id.'.jpg');
+    }
+
+    public function test_the_command_leaves_a_present_thumbnail_alone(): void
+    {
+        Storage::fake('local');
+        Storage::fake('public');
+
+        $document = $this->document($this->minimalPdf());
+        $document->forceFill(['thumbnail_path' => 'thumbnails/'.$document->id.'.jpg'])->saveQuietly();
+        Storage::disk('public')->put('thumbnails/'.$document->id.'.jpg', 'existing');
+
+        $this->artisan('documents:thumbnails', ['--sync' => true])
+            ->expectsOutput('Every PDF already has a thumbnail.')
+            ->assertSuccessful();
+
+        $this->assertSame('existing', Storage::disk('public')->get('thumbnails/'.$document->id.'.jpg'));
+    }
 }
