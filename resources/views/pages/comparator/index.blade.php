@@ -101,7 +101,10 @@
                                     $codes = $comparison->countries->pluck('iso_code');
                                     $next = $selected
                                         ? $codes->reject(fn ($c) => $c === $country->iso_code)
-                                        : $codes->push($country->iso_code)->take(\App\Support\Comparison::MAX_COUNTRIES);
+                                        // concat, not push: push changes $codes itself, and the
+                                        // limit test below then counted the state being added, so
+                                        // a fourth could never be chosen.
+                                        : $codes->concat([$country->iso_code])->take(\App\Support\Comparison::MAX_COUNTRIES);
                                     $atLimit = ! $selected && $codes->count() >= \App\Support\Comparison::MAX_COUNTRIES;
                                 @endphp
                                 <a class="c-cmp__state"

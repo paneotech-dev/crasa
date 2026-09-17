@@ -346,4 +346,40 @@ class ComparatorTest extends TestCase
 
         return $query;
     }
+
+    /**
+     * Found walking the demonstration script: with three states chosen,
+     * every other state was marked at the limit, so the fourth the script
+     * asks the presenter to add could not be added.
+     */
+    public function test_a_fourth_member_state_can_be_added_to_three(): void
+    {
+        $html = $this->get('/en/comparator?mode=compare&category=licensing&countries=bw,mz,za')->assertOk()->getContent();
+
+        $dom = new \DOMDocument;
+        @$dom->loadHTML($html);
+        $xpath = new \DOMXPath($dom);
+
+        $unselected = $xpath->query('//a[contains(@class,"c-cmp__state")][@aria-pressed="false"]');
+        $this->assertSame(11, $unselected->length);
+        $this->assertSame(0, $xpath->query('//a[contains(@class,"c-cmp__state")][@data-at-limit]')->length, 'A fourth state is offered.');
+
+        foreach ($unselected as $link) {
+            $query = [];
+            parse_str((string) parse_url(html_entity_decode($link->getAttribute('href')), PHP_URL_QUERY), $query);
+            $this->assertCount(4, explode(',', $query['countries']));
+        }
+    }
+
+    public function test_with_four_chosen_the_others_are_at_the_limit_and_the_chosen_can_be_removed(): void
+    {
+        $html = $this->get('/en/comparator?mode=compare&category=licensing&countries=bw,mz,za,km')->assertOk()->getContent();
+
+        $dom = new \DOMDocument;
+        @$dom->loadHTML($html);
+        $xpath = new \DOMXPath($dom);
+
+        $this->assertSame(10, $xpath->query('//a[contains(@class,"c-cmp__state")][@data-at-limit][@aria-disabled="true"]')->length);
+        $this->assertSame(4, $xpath->query('//a[contains(@class,"c-cmp__state")][@aria-pressed="true"][not(@data-at-limit)]')->length);
+    }
 }

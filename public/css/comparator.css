@@ -451,8 +451,8 @@
  * never empty for a frame, and a reader whose JavaScript fails or is slow
  * keeps the figures that arrived with the document.
  */
-[data-comparator][data-live] > .c-cmp__result:not([data-comparator-live]) { display: none; }
-[data-comparator]:not([data-live]) > [data-comparator-live] { display: none; }
+/* The React mount renders nothing visible; the server markup is the result. */
+[data-comparator-live] { display: none; }
 [data-comparator-live][aria-busy="true"] { opacity: .6; }
 
 /* Print ------------------------------------------------------------------ */
