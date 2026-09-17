@@ -126,4 +126,24 @@ class AdminThemeContrastTest extends TestCase
 
         $this->assertSame([], $bare, 'A bare .a-btn takes the browser\'s default grey fill, which is 1.04:1 on the admin ground.');
     }
+
+    /**
+     * Found by the rendered audit once the media library held imported
+     * photographs without alt text: red on the dark card measured 2.11:1,
+     * the dark-red hint 1.45:1, and light theme ink in the red-tinted
+     * field 1.03:1.
+     */
+    public function test_the_missing_alt_states_follow_the_dark_theme(): void
+    {
+        foreach (['body[data-surface="admin"][data-theme="dark"]', '  body[data-surface="admin"][data-theme="system"]'] as $scope) {
+            $this->assertMatchesRegularExpression(
+                '/'.preg_quote($scope, '/').' :where\([^)]*\.a-asset__warning, \.a-asset__usage\[data-unused\]\) \{ color: var\(--c-red-mid\); \}/',
+                $this->css
+            );
+            $this->assertStringContainsString($scope.' .a-field[data-state="missing"] .a-hint { color: var(--c-red-mid); }', $this->css);
+        }
+
+        $this->assertMatchesRegularExpression('/\.a-field\[data-state="missing"\] \.a-input \{[^}]*background: var\(--c-red-light\);[^}]*color: var\(--c-charcoal\)/', $this->css);
+        $this->assertStringContainsString('.a-notice a { color: var(--c-green-dark); }', $this->css);
+    }
 }

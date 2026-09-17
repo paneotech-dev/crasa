@@ -814,7 +814,7 @@ body[data-surface="admin"] h4 {
 /* A field whose language is missing takes the red treatment the screen
    gives the Portuguese alt text: "Required. This asset cannot appear on
    the Portuguese site until it is filled." */
-.a-field[data-state="missing"] .a-input { border-color: var(--c-red); background: var(--c-red-light); }
+.a-field[data-state="missing"] .a-input { border-color: var(--c-red); background: var(--c-red-light); color: var(--c-charcoal); }
 .a-field[data-state="missing"] .a-hint { color: var(--c-red-dark); font-weight: 600; }
 
 /* The layout toggle:
@@ -1478,6 +1478,9 @@ textarea.a-input { height: auto; padding: 10px 12px; line-height: 1.5; }
 .a-notice--success { background: var(--c-green-light); border-color: var(--c-green-mid); color: var(--c-green-dark); }
 .a-notice--pending { background: var(--c-amber-light); border-color: var(--c-amber-mid); color: var(--c-amber-dark); }
 .a-notice--error { background: var(--c-red-light); border-color: var(--c-red-mid); color: var(--c-red-dark); }
+/* The notice tints do not change with the theme, so neither does a link on
+   them. On the dark theme the shell's link ink measured 2.72:1 on amber. */
+.a-notice a { color: var(--c-green-dark); }
 
 /* Dark surface set ------------------------------------------------------ */
 
@@ -2530,11 +2533,13 @@ html:not(.has-js) [data-modal-close] { display: none; }
    dark card red measured 2.11:1 and amber-dark 1.55:1; the palette's mid tones
    measure 9.32:1 and 9.58:1. Same meaning, the theme's value. :where() keeps
    these below the tinted-row rules, whose tint does not change with the theme. */
-body[data-surface="admin"][data-theme="dark"] :where(.a-required, .a-linkbutton--danger, .a-altstate[data-state="missing"], .a-btn--danger) { color: var(--c-red-mid); }
+body[data-surface="admin"][data-theme="dark"] :where(.a-required, .a-linkbutton--danger, .a-altstate[data-state="missing"], .a-btn--danger, .a-asset__warning, .a-asset__usage[data-unused]) { color: var(--c-red-mid); }
+body[data-surface="admin"][data-theme="dark"] .a-field[data-state="missing"] .a-hint { color: var(--c-red-mid); }
 body[data-surface="admin"][data-theme="dark"] :where(.a-coverage__note, .a-altstate[data-state="partial"]) { color: var(--c-amber-mid); }
 body[data-surface="admin"][data-theme="dark"] .a-altstate[data-state="complete"] { color: var(--d-green); }
 @media (prefers-color-scheme: dark) {
-  body[data-surface="admin"][data-theme="system"] :where(.a-required, .a-linkbutton--danger, .a-altstate[data-state="missing"], .a-btn--danger) { color: var(--c-red-mid); }
+  body[data-surface="admin"][data-theme="system"] :where(.a-required, .a-linkbutton--danger, .a-altstate[data-state="missing"], .a-btn--danger, .a-asset__warning, .a-asset__usage[data-unused]) { color: var(--c-red-mid); }
+  body[data-surface="admin"][data-theme="system"] .a-field[data-state="missing"] .a-hint { color: var(--c-red-mid); }
   body[data-surface="admin"][data-theme="system"] :where(.a-coverage__note, .a-altstate[data-state="partial"]) { color: var(--c-amber-mid); }
   body[data-surface="admin"][data-theme="system"] .a-altstate[data-state="complete"] { color: var(--d-green); }
 }

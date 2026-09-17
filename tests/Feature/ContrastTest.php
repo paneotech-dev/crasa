@@ -128,6 +128,9 @@ class ContrastTest extends TestCase
             'incomplete row action' => ['--c-green-dark', '--c-amber-light'],
             'incomplete row delete' => ['--c-red', '--c-amber-light'],
             'untranslated field text' => ['--c-charcoal', '--c-red-light'],
+            'notice link on pending tint' => ['--c-green-dark', '--c-amber-light'],
+            'notice link on error tint' => ['--c-green-dark', '--c-red-light'],
+            'notice link on success tint' => ['--c-green-dark', '--c-green-light'],
             // Public components, from the same measurement.
             'postal card label on sand' => ['--c-navy', '--c-sand'],
             'quiet note on sand' => ['--c-charcoal', '--c-sand'],
