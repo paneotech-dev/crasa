@@ -110,6 +110,10 @@ class DelegateRegistrationTest extends TestCase
         $this->assertNull($registration->user_id);
         $this->assertSame('filed', $registration->status);
 
+        // The delegate is told it worked.
+        $this->followingRedirects()->register(['country_id' => $malawi->id])
+            ->assertSee(__('delegates.filed', ['name' => 'Thandiwe Moyo']), false);
+
         // The Secretariat's roster now has a row, and so does the export.
         $admin = User::factory()->administrator()->create();
 

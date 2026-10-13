@@ -20,6 +20,20 @@
 
     <div class="c-section">
         <div class="c-page">
+            {{-- The registration form redirects here; without this the
+                 delegate filed and saw no confirmation. --}}
+            @if (session('status'))
+                <div class="c-notice c-notice--success" role="status">
+                    <svg class="c-notice__icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                         stroke="var(--c-green-dark)" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+                        <path d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <div>
+                        <div class="c-notice__body">{{ session('status') }}</div>
+                    </div>
+                </div>
+            @endif
+
             @if ($meeting->agenda)
                 <h2>{{ __('events.agenda') }}</h2>
 
