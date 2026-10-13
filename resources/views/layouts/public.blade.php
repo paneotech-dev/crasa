@@ -53,6 +53,10 @@
     @stack('styles')
 </head>
 <body>
+{{-- Cloudflare's email obfuscation is told to leave this page alone. Its
+     decoder throws on the SVG map links, and the addresses are meant to be
+     read and clicked anyway. --}}
+<!--email_off-->
     <a class="c-skip" href="#content">{{ __('nav.skip') }}</a>
 
     @include('partials.site-header')
@@ -112,5 +116,6 @@
     <script src="{{ \App\Support\Assets::url('js/hero.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/app.js') }}" defer></script>
     @stack('scripts')
+<!--/email_off-->
 </body>
 </html>

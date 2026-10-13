@@ -39,11 +39,14 @@ class SecurityHeaders
          */
         $policy = implode('; ', [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline'",
+            // Cloudflare injects its Web Analytics beacon in front of the
+            // site; without these two hosts the browser logs a CSP error on
+            // every page.
+            "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com",
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data:",
             "font-src 'self'",
-            "connect-src 'self'",
+            "connect-src 'self' https://cloudflareinsights.com",
             "form-action 'self'",
             "frame-ancestors 'none'",
             "base-uri 'self'",

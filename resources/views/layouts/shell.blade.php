@@ -41,6 +41,10 @@
     @stack('styles')
 </head>
 <body data-surface="admin" data-theme="{{ (auth()->user()?->theme ?? \App\Enums\Theme::System)->value }}">
+{{-- Cloudflare's email obfuscation is told to leave this page alone. Its
+     decoder throws on the SVG map links, and the addresses are meant to be
+     read and clicked anyway. --}}
+<!--email_off-->
     <a class="c-skip" href="#content">{{ __('nav.skip') }}</a>
 
     <div class="a-shell">
@@ -82,5 +86,6 @@
     <script src="{{ \App\Support\Assets::url('js/shell.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/modal.js') }}" defer></script>
     @stack('scripts')
+<!--/email_off-->
 </body>
 </html>
