@@ -33,10 +33,16 @@ enum Role: string
     /**
      * 2FA is mandatory for administrators and enforced at login, not offered
      * in settings. See CLAUDE.md and DATA_MODEL section 7.
+     *
+     * Switchable for a demonstration: CRASA_TWO_FACTOR_REQUIRED=false in .env
+     * (config crasa.two_factor_required) lifts the requirement for every
+     * account. Remove the line, or set it to true, and clear the config cache
+     * to require it again. An account that has enrolled is still asked for
+     * its code either way.
      */
     public function requiresTwoFactor(): bool
     {
-        return $this === self::Administrator;
+        return $this === self::Administrator && (bool) config('crasa.two_factor_required', true);
     }
 
     /**

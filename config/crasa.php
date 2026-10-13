@@ -9,6 +9,18 @@ return [
     'enquiry_recipient' => env('CRASA_ENQUIRY_RECIPIENT', 'crasa@crasa.org'),
 
     /*
+     * Two-factor for administrators. On by default; false only for a
+     * demonstration (see App\Enums\Role::requiresTwoFactor).
+     */
+    'two_factor_required' => env('CRASA_TWO_FACTOR_REQUIRED', true),
+
+    /*
+     * Whether the "mail is not being delivered" check writes to the log on
+     * every boot. The administration banner says the same thing regardless.
+     */
+    'mail_log_warning' => env('CRASA_MAIL_LOG_WARNING', true),
+
+    /*
      * The platform's own timezone, for display.
      *
      * Storage stays UTC. app.timezone is what Laravel writes to the

@@ -61,7 +61,10 @@ final class DeliveryCheck
      */
     public static function report(): void
     {
-        if (self::$warned || app()->environment('testing')) {
+        // CRASA_MAIL_LOG_WARNING=false stops the log entry while mail is off
+        // on purpose (it was written on every scheduler tick, about 1,700 a
+        // day). The banner on the administration screens is unaffected.
+        if (self::$warned || app()->environment('testing') || ! (bool) config('crasa.mail_log_warning', true)) {
             return;
         }
 

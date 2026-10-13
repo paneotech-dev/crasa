@@ -33,6 +33,18 @@ class TwoFactorEnforcementTest extends TestCase
             ->assertRedirect(route('two-factor.enrol', ['locale' => 'en']));
     }
 
+    public function test_the_requirement_can_be_switched_off_and_on_again(): void
+    {
+        $admin = User::factory()->administrator()->withoutTwoFactor()->create();
+
+        config(['crasa.two_factor_required' => false]);
+        $this->actingAs($admin)->get('/t/anything')->assertOk();
+        $this->assertFalse($admin->fresh()->mustEnrolInTwoFactor());
+
+        config(['crasa.two_factor_required' => true]);
+        $this->actingAs($admin)->get('/t/anything')->assertRedirect(route('two-factor.enrol', ['locale' => 'en']));
+    }
+
     public function test_an_enrolled_administrator_passes_through(): void
     {
         $this->actingAs(User::factory()->administrator()->create())
