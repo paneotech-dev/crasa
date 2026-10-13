@@ -98,7 +98,7 @@ class DashboardController extends Controller
      * Every figure is a link to what it counts. A number on a dashboard
      * that a reader cannot follow is a number they have to go and find.
      *
-     * @return list<array{n: int, label: string, note: string, icon: string, url: string}>
+     * @return list<array{n: int, label: string, note: string, icon: string, url: ?string}>
      */
     private function tiles(): array
     {
@@ -134,7 +134,7 @@ class DashboardController extends Controller
                 'label' => __('admin.dash_stat_users'),
                 'note' => __('admin.stat_users_note', ['n' => User::where('status', 'active')->count()]),
                 'icon' => 'users',
-                'url' => route('admin.users', ['locale' => $locale]),
+                'url' => auth()->user()?->can('viewAny', User::class) ? route('admin.users', ['locale' => $locale]) : null,
             ],
         ];
     }

@@ -235,7 +235,9 @@
         <section class="a-resource">
             <div class="a-resource__head">
                 <h2 class="a-resource__title">{{ __('extranet.dash_documents') }}</h2>
-                <a href="{{ route('extranet.folders', ['locale' => app()->getLocale()]) }}">{{ __('extranet.dash_all_documents') }}</a>
+                @can('viewAny', \App\Models\Folder::class)
+                    <a href="{{ route('extranet.folders', ['locale' => app()->getLocale()]) }}">{{ __('extranet.dash_all_documents') }}</a>
+                @endcan
             </div>
 
             @if ($documents->isEmpty())

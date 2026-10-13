@@ -61,9 +61,12 @@
             @endif
         </a>
 
-        <a class="a-top__icon" href="{{ route('admin.help', ['locale' => $locale]) }}" aria-label="{{ __('help.title') }}">
-            <x-shell-icon name="help" :size="19" />
-        </a>
+        {{-- The help pages are the back office's; the extranet gets a 403. --}}
+        @can('enter-back-office')
+            <a class="a-top__icon" href="{{ route('admin.help', ['locale' => $locale]) }}" aria-label="{{ __('help.title') }}">
+                <x-shell-icon name="help" :size="19" />
+            </a>
+        @endcan
 
         {{-- The initials open the account. A menu with two items that are
              both one click away already is a menu that adds a click. --}}

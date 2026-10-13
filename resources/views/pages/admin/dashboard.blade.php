@@ -18,7 +18,11 @@
 @section('note', __('admin.dashboard_note', ['date' => $today->translatedFormat('l j F Y')]))
 
 @section('actions')
-    <a class="a-btn a-btn--secondary" href="{{ route('admin.audit', ['locale' => app()->getLocale()]) }}">{{ __('admin.open_audit') }}</a>
+    {{-- Only links a reader is allowed to follow: an editor cannot open
+         the audit log, the sample list or the users. --}}
+    @can('viewAny', \App\Models\AuditLog::class)
+        <a class="a-btn a-btn--secondary" href="{{ route('admin.audit', ['locale' => app()->getLocale()]) }}">{{ __('admin.open_audit') }}</a>
+    @endcan
     @if (Route::has('admin.pages'))
         {{-- Labelled. The primary action on this page used to be a green
              button with no text in it. --}}
@@ -47,7 +51,9 @@
             </form>
             <strong>{{ trans_choice('admin.sample_present', $sampleTotal, ['count' => number_format($sampleTotal)]) }}</strong>
             {{ __('admin.sample_body') }}
-            <a href="{{ route('admin.samples', ['locale' => app()->getLocale()]) }}">{{ __('admin.nav_samples') }}</a>
+            @can(\App\Enums\Permission::ManageSettings->value)
+                <a href="{{ route('admin.samples', ['locale' => app()->getLocale()]) }}">{{ __('admin.nav_samples') }}</a>
+            @endcan
         </div>
     @endif
 
@@ -73,14 +79,14 @@
     {{-- 2. FOUR TILES. Every figure is a link to what it counts. --}}
     <div class="a-tiles">
         @foreach ($tiles as $tile)
-            <a class="a-tile" href="{{ $tile['url'] }}">
+            <{{ $tile['url'] ? 'a' : 'div' }} class="a-tile" @if ($tile['url']) href="{{ $tile['url'] }}" @endif>
                 <span class="a-tile__icon" aria-hidden="true"><x-shell-icon :name="$tile['icon']" :size="20" /></span>
                 <span class="a-tile__text">
                     <span class="a-tile__n">{{ number_format($tile['n']) }}</span>
                     <span class="a-tile__label">{{ $tile['label'] }}</span>
                     <span class="a-tile__note">{{ $tile['note'] }}</span>
                 </span>
-            </a>
+            </{{ $tile['url'] ? 'a' : 'div' }}>
         @endforeach
     </div>
 
@@ -89,7 +95,9 @@
         <section class="a-card">
             <div class="a-card__head">
                 <h2>{{ __('admin.dash_activity') }}</h2>
-                <a class="a-card__meta" href="{{ route('admin.audit', ['locale' => app()->getLocale()]) }}">{{ __('admin.open_audit') }}</a>
+                @can('viewAny', \App\Models\AuditLog::class)
+                    <a class="a-card__meta" href="{{ route('admin.audit', ['locale' => app()->getLocale()]) }}">{{ __('admin.open_audit') }}</a>
+                @endcan
             </div>
 
             @if ($activity->isEmpty())

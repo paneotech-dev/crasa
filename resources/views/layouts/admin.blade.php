@@ -9,6 +9,12 @@
 --}}
 @extends('layouts.shell', [
     'groups' => \App\Support\ShellNavigation::administration(),
-    'brand' => __('admin.back_office'),
-    'home' => route('admin.dashboard', ['locale' => app()->getLocale()]),
+    // The submission pages use this layout for member-state representatives
+    // too, who cannot enter the back office: their wordmark is the extranet's.
+    'brand' => \App\Support\Workspace::isBackOffice(auth()->user())
+        ? __('admin.back_office')
+        : __('extranet.title'),
+    'home' => \App\Support\Workspace::isBackOffice(auth()->user())
+        ? route('admin.dashboard', ['locale' => app()->getLocale()])
+        : route('extranet.dashboard', ['locale' => app()->getLocale()]),
 ])
