@@ -4,7 +4,7 @@
 @section('note', __('extranet.workspace_note'))
 
 @section('crumbs')
-    <li><a href="{{ route('extranet.folders', ['locale' => app()->getLocale()]) }}">{{ __('extranet.title') }}</a></li>
+    <li><a href="{{ route('extranet.dashboard', ['locale' => app()->getLocale()]) }}">{{ __('extranet.title') }}</a></li>
     <li aria-current="page">{{ $committee->name }}</li>
 @endsection
 

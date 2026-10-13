@@ -4,7 +4,7 @@
 @section('note', __('extranet.calendar_note'))
 
 @section('crumbs')
-    <li><a href="{{ route('extranet.folders', ['locale' => app()->getLocale()]) }}">{{ __('extranet.title') }}</a></li>
+    <li><a href="{{ route('extranet.dashboard', ['locale' => app()->getLocale()]) }}">{{ __('extranet.title') }}</a></li>
     <li aria-current="page">{{ __('extranet.calendar') }}</li>
 @endsection
 
