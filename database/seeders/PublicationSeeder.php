@@ -9,6 +9,7 @@ use App\Models\Country;
 use App\Models\Document;
 use App\Models\Publication;
 use App\Models\Sector;
+use App\Support\SampleDocumentPdf;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 
@@ -121,10 +122,15 @@ class PublicationSeeder extends Seeder
          * document whose row survived without its file is a repairable
          * state, so it repairs.
          */
-        if (! Storage::disk('local')->exists($path)) {
-            // A minimal real PDF, so the thumbnail pipeline has something to
-            // render rather than a byte string that would fail.
-            Storage::disk('local')->put($path, $this->placeholderPdf($publication->slug));
+        // A multi-page sample (14 October 2026), written when the file is
+        // missing or is still the one-line placeholder of earlier builds.
+        $existing = Storage::disk('local')->exists($path) ? Storage::disk('local')->get($path) : null;
+        if (SampleDocumentPdf::isPlaceholder($existing)) {
+            Storage::disk('local')->put($path, SampleDocumentPdf::forPublication(
+                (string) $publication->translated('title', $publication->slug, 'en'),
+                $publication->publication_type->value,
+                (int) $publication->published_on?->year ?: (int) now()->year,
+            ));
         }
 
         if ($publication->documents()->exists()) {
@@ -142,26 +148,5 @@ class PublicationSeeder extends Seeder
             'clearance' => Clearance::Public,
             'is_sample' => true,
         ]);
-    }
-
-    /*
-     * One ">" too many after the stream length made the page content
-     * unreadable: every demonstration document downloaded as a blank page and
-     * rendered a blank thumbnail, which the rebuild of 16 September found by
-     * measuring the thumbnails. DemonstrationDocumentTest reads the text back.
-     */
-    private function placeholderPdf(string $label): string
-    {
-        $text = 'Demonstration document: '.substr($label, 0, 40);
-        $stream = 'BT /F1 14 Tf 40 380 Td ('.str_replace(['(', ')'], '', $text).') Tj ET';
-
-        return "%PDF-1.4\n"
-            ."1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n"
-            ."2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n"
-            .'3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 420 420]/Contents 4 0 R'
-            ."/Resources<</Font<</F1 5 0 R>>>>>>endobj\n"
-            .'4 0 obj<</Length '.strlen($stream).">>stream\n".$stream."\nendstream\nendobj\n"
-            ."5 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>endobj\n"
-            ."trailer<</Root 1 0 R>>\n";
     }
 }

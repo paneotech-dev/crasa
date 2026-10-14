@@ -114,6 +114,11 @@ trait HasTranslations
      */
     public function translate(string $field, ?string $locale = null): ?ResolvedText
     {
+        // A record not saved yet (an empty "new" form) has no text to find.
+        if (! $this->exists && ! $this->relationLoaded('translations')) {
+            return null;
+        }
+
         return TranslationResolver::resolve(
             $this->translationValuesFor($field),
             $locale,

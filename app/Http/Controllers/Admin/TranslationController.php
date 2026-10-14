@@ -30,6 +30,13 @@ use Illuminate\Support\Facades\Gate;
  * plainly and it is the rule: "Machine drafts are never published as
  * approved copy for this client."
  *
+ * One import, on the platform owner's instruction (14 October 2026): the
+ * French and Portuguese for every text that had only English, and English
+ * summaries for 29 news items that had none, written by machine. Every one
+ * of those rows has is_machine_draft set, so this screen shows each as a
+ * machine draft until an editor approves or rewrites it, and the coverage
+ * figure does not count them. docs/TRANSLATION_REVIEW.md lists them.
+ *
  * The coverage figure counts approved fields only, so a language that is
  * entirely machine-drafted reads as not ready rather than as finished.
  */

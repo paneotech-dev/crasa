@@ -27,12 +27,20 @@
     </button>
 
     @if ($search)
-        <form class="a-top__search" method="GET" action="{{ route('admin.search', ['locale' => $locale]) }}" role="search">
-            <label class="c-sr" for="admin-search">{{ __('admin.search_everything') }}</label>
+        {{-- Back-office roles search the administration. Every other role
+             searches the public site: the administration search refuses
+             them, and a box that leads to a refusal is worse than none
+             (presentation of 14 October 2026). --}}
+        @php
+            $adminSearch = $user?->can('enter-back-office') ?? false;
+            $searchRoute = $adminSearch ? 'admin.search' : 'search';
+        @endphp
+        <form class="a-top__search" method="GET" action="{{ route($searchRoute, ['locale' => $locale]) }}" role="search">
+            <label class="c-sr" for="admin-search">{{ $adminSearch ? __('admin.search_everything') : __('search.label') }}</label>
             <x-shell-icon name="search" :size="17" class="a-top__searchicon" />
             <input class="a-top__field" type="search" id="admin-search" name="q"
-                   value="{{ request()->routeIs('admin.search') ? request('q') : '' }}"
-                   placeholder="{{ __('admin.search_placeholder') }}">
+                   value="{{ request()->routeIs($searchRoute) ? request('q') : '' }}"
+                   placeholder="{{ $adminSearch ? __('admin.search_placeholder') : __('search.label').'…' }}">
         </form>
     @else
         <span class="a-top__spacer"></span>

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\Auditable;
+use App\Models\Concerns\HasLocalisedNames;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\MarksSampleData;
 use Database\Factories\CommitteeFactory;
@@ -20,7 +21,13 @@ use Illuminate\Support\Facades\DB;
 class Committee extends Model
 {
     /** @use HasFactory<CommitteeFactory> */
-    use Auditable, HasFactory, HasTranslations;
+    use Auditable, HasFactory, HasLocalisedNames, HasTranslations;
+
+    /** French and Portuguese names: lang/{fr,pt}/names.php. */
+    protected function localisedNames(): array
+    {
+        return ['group' => 'committees', 'key' => 'slug', 'fields' => ['name']];
+    }
 
     use MarksSampleData;
 

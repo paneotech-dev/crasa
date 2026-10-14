@@ -8,6 +8,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -51,4 +53,41 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        /*
+         * Error pages in the reader's language. An address that matches no
+         * route never reaches SetLocale, so the language is taken from the
+         * first segment here, before any error view renders, and route
+         * helpers get the same default the routed pages have.
+         */
+        $exceptions->render(function (Throwable $e, Request $request) {
+            $segment = $request->segment(1);
+            $locale = Locales::isSupported($segment) ? $segment : Locales::FALLBACK;
+            app()->setLocale($locale);
+            URL::defaults(['locale' => $locale]);
+
+            return null;
+        });
+
+        /*
+         * An expired form (419). The reader is sent back to the form they
+         * were filling in, with what they typed (never a password) and a
+         * notice saying the session expired and to try again, instead of a
+         * page that only says "Page Expired".
+         */
+        // Laravel has already turned TokenMismatchException into an HTTP 419 here.
+        $exceptions->render(function (HttpException $e, Request $request) {
+            if ($e->getStatusCode() !== 419 || $request->expectsJson()) {
+                return null;
+            }
+
+            $home = url('/'.app()->getLocale());
+            $previous = (string) ($request->headers->get('referer') ?: ($request->hasSession() ? $request->session()->previousUrl() : ''));
+            $sameSite = str_starts_with($previous, url('/').'/') || (str_starts_with($previous, '/') && ! str_starts_with($previous, '//'));
+            $back = $sameSite && ! $request->is('*/logout') ? $previous : $home;
+
+            return redirect()->to($back)
+                ->withInput($request->except(['password', 'password_confirmation', 'current_password', '_token']))
+                ->with('expired', __('errors.expired_notice'));
+        });
     })->create();

@@ -164,7 +164,7 @@ Nothing in this table may be copied from the old server.
 | `SESSION_LIFETIME`, `SESSION_PATH`, `SESSION_DOMAIN` | As in `.env.example` |
 | `SESSION_ENCRYPT` | `true`. SECURITY_REVIEW finding 4; `SecurityHardeningTest` fails without it |
 | `SESSION_SECURE_COOKIE` | `true`. Not in `.env.example`; add it |
-| `SESSION_SAME_SITE` | `strict`. SECURITY_REVIEW finding 4. (This line said `lax` until 17 September 2026, which undid that finding on the rebuilt server.) Revisit only when an SSO provider is connected: a provider that posts back cross-site needs `lax` |
+| `SESSION_SAME_SITE` | `lax` since 14 October 2026. It was `strict` (SECURITY_REVIEW finding 4), but then a signed-in reader who opened a link from Teams or an email arrived signed out, which happened in the presentation of 14 October. Lax still keeps the cookie off cross-site POSTs, and every form carries a CSRF token |
 | `SESSION_COOKIE` | A name for the session cookie. Not in `.env.example`; add it |
 | `BROADCAST_CONNECTION` | `log` |
 | `FILESYSTEM_DISK` | `local` |

@@ -2,6 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\Role;
+use App\Enums\UserStatus;
+use App\Models\Announcement;
 use App\Models\Authority;
 use App\Models\Committee;
 use App\Models\DelegateRegistration;
@@ -72,6 +75,8 @@ class StripSampleData extends Command
         // Deepest first.
         DelegateRegistration::class,
         Submission::class,
+        // Announcements are is_sample too (the demonstration notices of 14 October 2026).
+        Announcement::class,
         IndicatorValue::class,
         Document::class,
         Report::class,
@@ -290,13 +295,13 @@ class StripSampleData extends Command
         }
 
         $survivors = User::query()
-            ->where('role', \App\Enums\Role::Administrator)
-            ->where('status', \App\Enums\UserStatus::Active)
+            ->where('role', Role::Administrator)
+            ->where('status', UserStatus::Active)
             ->where('is_sample', false)
             ->count();
 
         $going = User::query()
-            ->where('role', \App\Enums\Role::Administrator)
+            ->where('role', Role::Administrator)
             ->where('is_sample', true)
             ->count();
 

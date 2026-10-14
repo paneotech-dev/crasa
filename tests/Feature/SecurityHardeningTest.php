@@ -154,7 +154,13 @@ class SecurityHardeningTest extends TestCase
         // path can take.
         $this->assertTrue(config('session.secure'), 'The session cookie is not marked secure.');
         $this->assertTrue(config('session.http_only'));
-        $this->assertSame('strict', config('session.same_site'));
+        // Lax, not strict (14 October 2026). With strict, a signed-in
+        // reader who opened a link from Teams or an email arrived signed
+        // out, because the browser withholds a strict cookie on any
+        // navigation that starts on another site. Lax still withholds it
+        // from a cross-site POST, which is what protects the forms, and
+        // every form also carries a CSRF token.
+        $this->assertSame('lax', config('session.same_site'));
 
         // Encrypted at rest as well: session payloads carry the user id and
         // whatever a controller flashed into them.

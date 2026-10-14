@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\Auditable;
+use App\Models\Concerns\HasLocalisedNames;
 use Database\Factories\SectorFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +16,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Sector extends Model
 {
     /** @use HasFactory<SectorFactory> */
-    use Auditable, HasFactory;
+    use Auditable, HasFactory, HasLocalisedNames;
+
+    /** French and Portuguese names: lang/{fr,pt}/names.php. */
+    protected function localisedNames(): array
+    {
+        return ['group' => 'sectors', 'key' => 'slug', 'fields' => ['name']];
+    }
 
     public const TELECOMMUNICATIONS = 'telecommunications';
 

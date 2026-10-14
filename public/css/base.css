@@ -210,3 +210,15 @@ table { border-collapse: collapse; }
   h1, h2, h3 { break-after: avoid; }
   thead { display: table-header-group; }
 }
+
+/* Show password (public/js/password.js), 14 October 2026. The field keeps
+   its full width; the eye sits inside its right edge. */
+.c-pw { position: relative; display: block; }
+.c-pw > input { width: 100%; padding-right: 48px; }
+.c-pw__toggle {
+  position: absolute; top: 50%; right: 4px; transform: translateY(-50%);
+  width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center;
+  border: 0; border-radius: var(--r-sm); background: transparent; color: inherit; cursor: pointer;
+}
+.c-pw__toggle:hover { background: rgba(0, 0, 0, .06); }
+.c-pw__toggle:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 1px; }

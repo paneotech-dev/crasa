@@ -140,7 +140,8 @@ class TranslationResolutionTest extends TestCase
 
     public function test_a_field_missing_in_every_language_logs_and_returns_null(): void
     {
-        Log::shouldReceive('warning')->once();
+        Log::shouldReceive('warning')->never();
+        Log::shouldReceive('debug')->once();
 
         $record = $this->record(['fr' => ['title' => 'Loi type']]);
 
@@ -153,7 +154,7 @@ class TranslationResolutionTest extends TestCase
      */
     public function test_a_missing_field_renders_as_nothing_not_as_an_empty_heading(): void
     {
-        Log::shouldReceive('warning')->once();
+        Log::shouldReceive('debug')->once();
 
         $record = $this->record(['en' => ['title' => 'Model Law']]);
 

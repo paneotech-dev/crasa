@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasLocalisedNames;
 use Database\Factories\IndicatorFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +13,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Indicator extends Model
 {
     /** @use HasFactory<IndicatorFactory> */
-    use HasFactory;
+    use HasFactory, HasLocalisedNames;
+
+    /** French and Portuguese names: lang/{fr,pt}/names.php. */
+    protected function localisedNames(): array
+    {
+        return ['group' => 'indicators', 'key' => 'slug', 'fields' => ['name', 'definition']];
+    }
 
     /** @var list<string> */
     public const CATEGORIES = [

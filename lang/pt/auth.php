@@ -59,4 +59,6 @@ return [
     'sso_unavailable' => 'A autenticação única ainda não está configurada nesta plataforma. Inicie sessão com o seu endereço de correio eletrónico e a sua palavra-passe.',
     'sso_no_account' => 'O seu fornecedor de identidade não identificou uma conta nesta plataforma. O Secretariado da CRASA cria contas por convite; peça-lhes que o convidem.',
     'sso_suspended' => 'Essa conta está suspensa. Contacte o Secretariado da CRASA.',
+    'show_password' => 'Mostrar a palavra-passe',
+    'hide_password' => 'Ocultar a palavra-passe',
 ];

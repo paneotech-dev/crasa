@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\Document;
 use Database\Seeders\PublicationSeeder;
 use Database\Seeders\ReferenceDataSeeder;
+use Database\Seeders\SampleDocumentsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\ExecutableFinder;
@@ -57,9 +59,31 @@ class DemonstrationDocumentTest extends TestCase
             $process = new Process([$binary, '-q', $file, '-']);
             $process->run();
 
-            $this->assertStringContainsString('Demonstration document', $process->getOutput());
+            $this->assertStringContainsString('Sample document', $process->getOutput());
+            // A real document, not a one-line placeholder (14 October 2026).
+            $this->assertGreaterThanOrEqual(3, substr_count($process->getOutput(), "\f"), 'Fewer than three pages.');
         } finally {
             @unlink($file);
         }
+    }
+
+    public function test_the_live_repair_seeder_replaces_a_placeholder_and_only_a_placeholder(): void
+    {
+        Storage::fake('local');
+        $this->seed(ReferenceDataSeeder::class);
+        $this->seed(PublicationSeeder::class);
+
+        $documents = Document::withoutGlobalScopes()->where('is_sample', true)->get();
+        [$old, $kept] = [$documents[0], $documents[1]];
+        $placeholder = "%PDF-1.4\n1 0 obj<<>>endobj\nBT (Demonstration document: x) Tj ET\n";
+        Storage::disk('local')->put($old->file_path, $placeholder);
+        $old->forceFill(['thumbnail_path' => 'thumbnails/old.png'])->save();
+        $before = Storage::disk('local')->get($kept->file_path);
+
+        $this->seed(SampleDocumentsSeeder::class);
+
+        $this->assertStringContainsString('Sample document', Storage::disk('local')->get($old->file_path));
+        $this->assertNull($old->fresh()->thumbnail_path);
+        $this->assertSame($before, Storage::disk('local')->get($kept->file_path));
     }
 }

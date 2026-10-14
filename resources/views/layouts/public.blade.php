@@ -11,6 +11,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="crasa-pw-show" content="{{ __('auth.show_password') }}">
+    <meta name="crasa-pw-hide" content="{{ __('auth.hide_password') }}">
     <script>document.documentElement.classList.add('has-js');</script>
 
     <title>@yield('title', __('site.acronym')) — {{ __('site.acronym') }}</title>
@@ -62,6 +64,15 @@
     @include('partials.site-header')
 
     <main id="content" tabindex="-1">
+        @if (session('expired'))
+            <div class="c-section">
+                <div class="c-page c-page--reading">
+                    <div class="c-notice c-notice--error" role="alert">
+                        <div><div class="c-notice__body">{{ session('expired') }}</div></div>
+                    </div>
+                </div>
+            </div>
+        @endif
         @yield('content')
     </main>
 
@@ -115,6 +126,7 @@
     <script src="{{ \App\Support\Assets::url('js/nav.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/hero.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/app.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/password.js') }}" defer></script>
     @stack('scripts')
 <!--/email_off-->
 </body>

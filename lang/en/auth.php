@@ -63,4 +63,6 @@ return [
     'sso_unavailable' => 'Single sign-on is not configured on this platform yet. Sign in with your email address and password.',
     'sso_no_account' => 'Your identity provider did not identify an account on this platform. The CRASA Secretariat creates accounts by invitation; ask them to invite you.',
     'sso_suspended' => 'That account is suspended. Contact the CRASA Secretariat.',
+    'show_password' => 'Show password',
+    'hide_password' => 'Hide password',
 ];

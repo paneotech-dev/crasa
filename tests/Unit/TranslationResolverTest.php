@@ -48,9 +48,22 @@ class TranslationResolverTest extends TestCase
         $this->assertTrue($resolved->isFallback());
     }
 
-    public function test_it_hides_the_field_and_logs_when_english_is_also_missing(): void
+    public function test_it_hides_the_field_and_warns_when_only_another_language_has_text(): void
     {
         Log::shouldReceive('warning')->once();
+
+        $resolved = TranslationResolver::resolve(['fr' => 'Loi type'], 'pt', [
+            'field' => 'title',
+            'translatable' => 'App\Models\Instrument#12',
+        ]);
+
+        $this->assertNull($resolved);
+    }
+
+    public function test_a_field_empty_in_every_language_is_hidden_without_a_warning(): void
+    {
+        Log::shouldReceive('warning')->never();
+        Log::shouldReceive('debug')->once();
 
         $resolved = TranslationResolver::resolve(['fr' => null], 'pt', [
             'field' => 'title',

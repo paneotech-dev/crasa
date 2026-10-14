@@ -6,8 +6,10 @@ use App\Enums\Clearance;
 use App\Enums\InstrumentStatus;
 use App\Enums\Role;
 use App\Enums\SubmissionStatus;
+use App\Models\Announcement;
 use App\Models\Committee;
 use App\Models\Country;
+use App\Models\Document;
 use App\Models\Folder;
 use App\Models\Indicator;
 use App\Models\IndicatorValue;
@@ -20,7 +22,9 @@ use App\Models\Submission;
 use App\Models\SubmissionEvent;
 use App\Models\SubmissionFieldComment;
 use App\Models\User;
+use App\Support\SampleDocumentPdf;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Enough data to demonstrate every surface at the validation workshop,
@@ -59,6 +63,7 @@ class DemonstrationSeeder extends Seeder
         $this->indicatorGaps();
         $this->submissionsInEveryState();
         $this->meetingsAndFolders();
+        $this->rehearsalContent();
     }
 
     /**
@@ -499,6 +504,210 @@ class DemonstrationSeeder extends Seeder
      * they have not. An unattributed return is a smaller problem than an
      * account nobody created on purpose.
      */
+    /**
+     * What the demonstration accounts need so that no page they open is empty.
+     *
+     * Added after the presentation of 14 October 2026, where the South Africa
+     * (ICASA) account opened an empty submissions list, empty folders and an
+     * empty announcements page in front of the room. Every row here is
+     * is_sample and labelled as a demonstration record, so
+     * content:strip-samples removes it.
+     *
+     * South Africa gets two validated returns, for the two years before the
+     * current one: the current year is left open, so the full submission
+     * workflow can still be shown from a blank return. Each country, committee
+     * and Secretariat folder gets demonstration papers, and three notices are
+     * published in English, French and Portuguese.
+     */
+    private function rehearsalContent(): void
+    {
+        $za = Country::where('iso_code', 'za')->first();
+        $year = (int) now()->year;
+
+        if ($za !== null && ($author = $this->representativeFor($za)) !== null) {
+            // Demonstration figures, in the range of South Africa's published
+            // ITU series, not its actual returns.
+            $figures = [
+                'fixed-telephone-subscriptions' => [1.4, 1.2],
+                'mobile-cellular-subscriptions' => [168.9, 172.4],
+                'fixed-broadband-subscriptions' => [2.6, 3.1],
+                'active-mobile-broadband-subscriptions' => [109.5, 114.2],
+            ];
+
+            foreach ([$year - 2, $year - 1] as $i => $period) {
+                $submission = Submission::withoutGlobalScopes()->updateOrCreate(
+                    ['country_id' => $za->id, 'period' => (string) $period],
+                    [
+                        'submitted_by' => $author->id,
+                        'status' => SubmissionStatus::Validated,
+                        'submitted_at' => now()->subMonths(12 - ($i * 6))->subDays(9),
+                        'reviewed_at' => now()->subMonths(12 - ($i * 6))->subDays(3),
+                        'is_sample' => true,
+                    ]
+                );
+
+                foreach ($figures as $slug => $values) {
+                    $indicator = Indicator::where('slug', $slug)->first();
+                    if ($indicator === null) {
+                        continue;
+                    }
+                    $value = $submission->values()->updateOrCreate(
+                        ['indicator_id' => $indicator->id],
+                        ['value_numeric' => $values[$i], 'source_note' => 'Demonstration figure. ICASA annual report '.$period.'.']
+                    );
+                    IndicatorValue::updateOrCreate(
+                        ['indicator_id' => $indicator->id, 'country_id' => $za->id, 'period' => (string) $period],
+                        ['value_numeric' => $value->value_numeric, 'source_note' => $value->source_note, 'submission_id' => $submission->id, 'confidence' => 'validated', 'is_sample' => true]
+                    );
+                }
+
+                $this->trailFor($submission, SubmissionStatus::Validated, $author);
+            }
+        }
+
+        // South Africa's folders, like Botswana's and Mozambique's.
+        if ($za !== null) {
+            $root = Folder::withoutGlobalScopes()->updateOrCreate(
+                ['parent_id' => null, 'slug' => 'za'],
+                ['country_id' => $za->id, 'name' => $za->rawName(), 'clearance' => Clearance::Member, 'is_sample' => true]
+            );
+            Folder::withoutGlobalScopes()->updateOrCreate(
+                ['parent_id' => $root->id, 'slug' => $year.'-cycle'],
+                ['country_id' => $za->id, 'name' => $year.' cycle', 'clearance' => Clearance::Member, 'is_sample' => true]
+            );
+        }
+
+        // Papers in every folder, so none opens empty: two multi-page sample
+        // documents each, addressed to the folder's country, committee or the
+        // Secretariat (App\Support\SampleDocumentPdf).
+        foreach (Folder::withoutGlobalScopes()->where('is_sample', true)->get() as $folder) {
+            $scope = $folder->country_id ? Country::find($folder->country_id)?->rawName()
+                : ($folder->committee_id ? 'the '.Committee::find($folder->committee_id)?->rawName().' Committee' : 'the CRASA Secretariat');
+            foreach ($this->samplePapers((string) $scope) as $slug => [$title, $subtitle, $sections]) {
+                $path = 'extranet/'.$folder->id.'/'.$slug.'.pdf';
+                // Always rewritten: the content is generated, and an older one-line placeholder is replaced.
+                Storage::disk('local')->put($path, SampleDocumentPdf::make($title, $subtitle, now()->isoFormat('D MMMM YYYY'), $sections));
+                Document::withoutGlobalScopes()->updateOrCreate(
+                    ['folder_id' => $folder->id, 'file_path' => $path],
+                    [
+                        'documentable_type' => Folder::class,
+                        'documentable_id' => $folder->id,
+                        'country_id' => $folder->country_id,
+                        'committee_id' => $folder->committee_id,
+                        'original_filename' => $slug.'.pdf',
+                        'mime_type' => 'application/pdf',
+                        'size_bytes' => Storage::disk('local')->size($path),
+                        'locale' => 'en',
+                        'clearance' => $folder->clearance,
+                        'is_sample' => true,
+                    ]
+                );
+            }
+        }
+
+        $notices = [
+            'demonstration-notice-annual-returns' => [
+                'committee' => null, 'days' => 2,
+                'en' => ['Demonstration notice: annual returns window open', "Demonstration record.\n\nThe window for the annual indicator returns is open. Representatives can file their return from the Submissions page, save it as a draft and submit it when every figure has a source."],
+                'fr' => ['Avis de démonstration : ouverture de la période des déclarations annuelles', "Contenu de démonstration.\n\nLa période de dépôt des déclarations annuelles d'indicateurs est ouverte. Les représentants peuvent déposer leur déclaration depuis la page Déclarations, l'enregistrer comme brouillon et la soumettre lorsque chaque chiffre est accompagné de sa source."],
+                'pt' => ['Aviso de demonstração: período das declarações anuais aberto', "Conteúdo de demonstração.\n\nEstá aberto o período das declarações anuais de indicadores. Os representantes podem apresentar a sua declaração na página Declarações, guardá-la como rascunho e submetê-la quando cada valor tiver uma fonte."],
+            ],
+            'demonstration-notice-workshop-papers' => [
+                'committee' => null, 'days' => 5,
+                'en' => ['Demonstration notice: workshop papers in the document folders', "Demonstration record.\n\nThe papers for the regional workshop are in the document folders. Each member state sees its own folder; committee papers are visible to the members of that committee."],
+                'fr' => ['Avis de démonstration : documents de l\'atelier dans les dossiers', "Contenu de démonstration.\n\nLes documents de l'atelier régional se trouvent dans les dossiers de documents. Chaque État membre voit son propre dossier ; les documents d'un comité sont visibles par les membres de ce comité."],
+                'pt' => ['Aviso de demonstração: documentos do seminário nas pastas', "Conteúdo de demonstração.\n\nOs documentos do seminário regional estão nas pastas de documentos. Cada Estado-Membro vê a sua própria pasta; os documentos de um comité são visíveis para os membros desse comité."],
+            ],
+            'demonstration-notice-spectrum-committee' => [
+                'committee' => Committee::where('slug', 'spectrum-and-frequency-management')->value('id'), 'days' => 1,
+                'en' => ['Demonstration notice: spectrum committee working papers', "Demonstration record.\n\nThe working papers for the next session of the Spectrum and Frequency Management Committee are in the committee's folder."],
+                'fr' => ['Avis de démonstration : documents de travail du comité du spectre', "Contenu de démonstration.\n\nLes documents de travail de la prochaine session du Comité de gestion du spectre et des fréquences se trouvent dans le dossier du comité."],
+                'pt' => ['Aviso de demonstração: documentos de trabalho do comité do espetro', "Conteúdo de demonstração.\n\nOs documentos de trabalho da próxima sessão do Comité de Gestão do Espetro e das Frequências estão na pasta do comité."],
+            ],
+        ];
+        foreach ($notices as $slug => $notice) {
+            $announcement = Announcement::withoutGlobalScopes()->updateOrCreate(
+                ['slug' => $slug],
+                ['committee_id' => $notice['committee'], 'status' => 'published', 'published_at' => now()->subDays($notice['days']), 'is_sample' => true]
+            );
+            foreach (['en', 'fr', 'pt'] as $locale) {
+                $announcement->setTranslation('title', $locale, $notice[$locale][0]);
+                $announcement->setTranslation('body', $locale, $notice[$locale][1]);
+            }
+        }
+    }
+
+    /**
+     * The two sample papers for one folder: title, subtitle, sections.
+     *
+     * @return array<string, array{0: string, 1: string, 2: list<array{heading: string, paragraphs: list<string>}>}>
+     */
+    private function samplePapers(string $scope): array
+    {
+        $year = now()->year;
+
+        return [
+            'sample-annual-return-guidance' => [
+                "Annual regulatory return {$year}: guidance",
+                "Guidance note for {$scope}",
+                [
+                    ['heading' => '1. Purpose of this note', 'paragraphs' => [
+                        "This note explains how {$scope} completes the annual regulatory return for {$year} on the CRASA platform. The return collects a small set of harmonised indicators from every member regulator, so that the region can be compared on the same definitions, for the same period, from figures each regulator has verified.",
+                        'The return replaces the spreadsheet exchange used in earlier cycles. Each figure is entered once, carries its source, and moves through the same review steps for every member state: draft, submitted, returned for correction where needed, and validated. Only validated figures are published in the regional comparator.',
+                    ]],
+                    ['heading' => '2. The indicators requested', 'paragraphs' => [
+                        'Fixed-telephone subscriptions per 100 inhabitants. Count active analogue lines, voice-over-IP subscriptions, fixed wireless local loop subscriptions, ISDN voice-channel equivalents and fixed public payphones, divided by the population and multiplied by 100.',
+                        'Mobile-cellular subscriptions per 100 inhabitants. Count postpaid subscriptions and prepaid accounts active in the last three months that offer voice communications. Exclude data cards, USB modems, M2M and telemetry subscriptions.',
+                        'Fixed-broadband subscriptions per 100 inhabitants. Count fixed subscriptions to the public Internet at downstream speeds of 256 kbit/s or more, whatever the technology: DSL, cable, fibre, satellite, fixed wireless and fixed WiMAX.',
+                        'Active mobile-broadband subscriptions per 100 inhabitants. Count handset-based and computer-based subscriptions that include a recurring fee or have been used to reach the Internet in the last three months.',
+                    ]],
+                    ['heading' => '3. Sources and evidence', 'paragraphs' => [
+                        'Every figure needs a source note: the operator returns, licensee reports or national statistics it was compiled from, and the date of extraction. Where a figure has been estimated, say how. Where it differs materially from the previous year, explain the change in one or two sentences; the reviewer will otherwise return it with a question.',
+                        'Population figures should come from the national statistics office and match the year of the return. Where the office has revised its estimates, use the revised series for both years and note the revision, so that the change in the indicator reflects the market and not the denominator.',
+                    ]],
+                    ['heading' => '4. Timetable and review', 'paragraphs' => [
+                        "The return for {$year} opens with this note. A draft can be saved at any point and completed over several sessions. When every figure has a source, the representative submits the return, and the Secretariat is notified.",
+                        'The Secretariat reviews each return against the definitions above and the previous year. A return may be validated as it stands or returned with comments against specific figures. A returned return reopens for editing, keeps the comments beside the figures they concern, and is submitted again when corrected.',
+                        'Validated figures are published in the comparator and the indicator pages with the source note shown beside them. Figures that are submitted but not yet validated are visible to the Secretariat and the submitting regulator only.',
+                    ]],
+                    ['heading' => '5. Contacts', 'paragraphs' => [
+                        'Questions on definitions, sources or the review should go to the CRASA Secretariat through the contact form on the platform. Questions on access to the platform, or on who in the regulator holds the representative account, should go to the same address and will be answered by the platform administrator.',
+                    ]],
+                ],
+            ],
+            'sample-market-review-summary' => [
+                "Electronic communications market review {$year}",
+                "Summary paper for {$scope}",
+                [
+                    ['heading' => '1. Summary', 'paragraphs' => [
+                        "This paper summarises the main developments in the electronic communications and postal markets relevant to {$scope} over the past twelve months, as background for the regional discussion. It draws on the indicators reported to CRASA, on published regulator decisions and on operator announcements. It makes no recommendations of its own.",
+                        'Three themes recur across the region: the continued growth of mobile broadband, now the main route to the Internet for most users; pressure on wholesale prices for international connectivity as new submarine and terrestrial capacity comes into service; and the reform of postal universal service obligations as letter volumes fall.',
+                    ]],
+                    ['heading' => '2. Mobile and broadband', 'paragraphs' => [
+                        'Mobile-cellular subscriptions per 100 inhabitants are above 100 in most member states, which reflects multiple SIM ownership rather than universal individual access. Mobile-broadband subscriptions continue to grow faster than voice subscriptions, driven by smartphone adoption and lower data prices on prepaid bundles.',
+                        'Fixed broadband remains concentrated in urban areas and among businesses. Fibre deployment is extending from the main cities along existing infrastructure corridors, and several regulators are consulting on access obligations for passive infrastructure such as ducts and poles, to reduce the cost of duplicating networks.',
+                        '4G population coverage is high where spectrum in the sub-1 GHz bands has been assigned, and lower where rural coverage depends on higher bands alone. The assignment of the 700 MHz and 800 MHz bands, and the conditions attached to it, remains one of the main levers for rural coverage.',
+                    ]],
+                    ['heading' => '3. Spectrum and cross-border coordination', 'paragraphs' => [
+                        'Harmful interference along borders continues to be reported in the broadcasting and mobile bands. The regional frequency allocation plan provides the common framework, and bilateral coordination agreements set out how stations near borders are planned. Regulators are encouraged to share planned assignments near borders before licences are issued.',
+                        'The preparation for the next World Radiocommunication Conference is under way, and common regional positions will be discussed in the relevant committee. Member regulators are asked to circulate their national positions in good time so that areas of agreement can be identified early.',
+                    ]],
+                    ['heading' => '4. Consumers and quality of service', 'paragraphs' => [
+                        'Complaints to regulators concern mainly billing, the expiry of prepaid bundles, unsolicited messages and the quality of mobile data services. Several regulators now publish quality-of-service measurements by operator and by area, which gives consumers a basis for comparison and operators an incentive to improve.',
+                        'Roaming within the region remains a priority. Regional roaming arrangements have reduced retail prices for voice and data in participating states, and the remaining member states are invited to report the barriers they face in joining them.',
+                    ]],
+                    ['heading' => '5. Postal services', 'paragraphs' => [
+                        'Letter-post volumes continue to decline while parcel volumes grow with electronic commerce. Designated operators are reviewing their networks of permanent post offices, and several regulators are revising the scope and funding of the universal service obligation to reflect this shift.',
+                        'Transit-time standards for domestic priority mail are being reviewed against measured performance, so that the published standards match what users actually receive and can be monitored on a common basis across the region.',
+                    ]],
+                    ['heading' => '6. Points for discussion', 'paragraphs' => [
+                        'Members may wish to discuss the sharing of border assignment plans before licensing, the common reporting of quality-of-service measurements, and the timetable for national positions ahead of the next World Radiocommunication Conference.',
+                    ]],
+                ],
+            ],
+        ];
+    }
+
     /**
      * An existing representative for this member state, or nobody.
      *

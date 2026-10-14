@@ -23,6 +23,10 @@
     </div>
 @endif
 
+@if (session('expired'))
+    <div class="a-alert a-alert--error" role="alert">{{ session('expired') }}</div>
+@endif
+
 @if (session('status'))
     <div class="a-alert a-alert--success" role="status">{{ session('status') }}</div>
 @endif

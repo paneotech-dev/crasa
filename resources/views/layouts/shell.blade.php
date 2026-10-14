@@ -21,6 +21,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="crasa-pw-show" content="{{ __('auth.show_password') }}">
+    <meta name="crasa-pw-hide" content="{{ __('auth.hide_password') }}">
     <script>document.documentElement.classList.add('has-js');</script>
 
     <title>@yield('title', $brand) — {{ $brand }}</title>
@@ -84,6 +86,7 @@
     </div>
 
     <script src="{{ \App\Support\Assets::url('js/shell.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/password.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/modal.js') }}" defer></script>
     @stack('scripts')
 <!--/email_off-->

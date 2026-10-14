@@ -46,10 +46,7 @@ on the server (mode 600). Eight accounts, all flagged as demonstration data:
 administrator, editor, committee member, viewer, and representatives for
 Botswana, Malawi, Namibia and Zambia.
 
-**Links into the back office from email or chat open signed out.** Session
-cookies are `SameSite=Strict` (a security finding). If you click a link to an
-admin page from outside the site and land on the sign-in page, reload once or
-type the address. Public pages are unaffected.
+**Links from email or chat open signed in.** Session cookies are `SameSite=Lax` since 14 October 2026 (they were `Strict`, which made such links open signed out).
 
 ---
 

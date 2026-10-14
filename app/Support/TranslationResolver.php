@@ -29,12 +29,28 @@ final class TranslationResolver
             }
         }
 
+        $present = array_keys(array_filter(
+            $values,
+            fn ($value) => is_string($value) && trim($value) !== ''
+        ));
+
+        // A field written in no language at all is an optional field nobody
+        // filled in (a hero with no separate heading, a figure with no
+        // source): normal, and only worth a debug line. Until 14 October
+        // 2026 every one was a warning, about 190 a day, which buried the
+        // case that matters: text that exists in another language but not
+        // in the reader's or in English.
+        if ($present === []) {
+            Log::debug('Translatable field is empty in every language. The field is hidden.', $context + [
+                'requested_locale' => $requested,
+            ]);
+
+            return null;
+        }
+
         Log::warning('Translatable field has no text in the requested language or in English. The field is hidden.', $context + [
             'requested_locale' => $requested,
-            'locales_present' => array_keys(array_filter(
-                $values,
-                fn ($value) => is_string($value) && trim($value) !== ''
-            )),
+            'locales_present' => $present,
         ]);
 
         return null;

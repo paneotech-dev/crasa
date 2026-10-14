@@ -95,6 +95,7 @@
                 </span>
             </a>
 
+            @can('viewAny', \App\Models\Submission::class)
             <a class="a-tile" href="{{ route('submissions', ['locale' => app()->getLocale()]) }}">
                 <span class="a-tile__icon" aria-hidden="true"><x-shell-icon name="submissions" :size="20" /></span>
                 <span class="a-tile__text">
@@ -103,8 +104,12 @@
                     <span class="a-tile__note">{{ __('extranet.dash_due_note') }}</span>
                 </span>
             </a>
+            @endcan
         </div>
 
+        {{-- Returns are filed by member state representatives. A committee
+             member tied to a country cannot open them, so is not shown them. --}}
+        @can('viewAny', \App\Models\Submission::class)
         <section class="a-resource">
             <div class="a-resource__head">
                 <h2 class="a-resource__title">{{ __('extranet.dash_due_title') }}</h2>
@@ -138,6 +143,7 @@
                 </ul>
             @endif
         </section>
+        @endcan
 
         <section class="a-resource">
             <div class="a-resource__head">

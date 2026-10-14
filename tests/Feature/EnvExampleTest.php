@@ -85,7 +85,7 @@ class EnvExampleTest extends TestCase
         // SECURITY_REVIEW finding 4. The rebuild procedure said lax and left
         // encryption off, and the rebuilt server ran that way until the
         // hardening test caught it.
-        $this->assertMatchesRegularExpression('/^SESSION_SAME_SITE=strict$/m', $example);
+        $this->assertMatchesRegularExpression('/^SESSION_SAME_SITE=lax$/m', $example);
         $this->assertMatchesRegularExpression('/^SESSION_ENCRYPT=true$/m', $example);
         $this->assertMatchesRegularExpression('/^APP_KEY=$/m', $example, 'The template must not carry an application key.');
         $this->assertDoesNotMatchRegularExpression('/^#?\s*DB_USERNAME=root$/m', $example, 'root is not this platform\'s database user.');

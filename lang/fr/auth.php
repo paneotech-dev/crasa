@@ -59,4 +59,6 @@ return [
     'sso_unavailable' => 'L\'authentification unique n\'est pas encore configurée sur cette plateforme. Connectez-vous avec votre adresse électronique et votre mot de passe.',
     'sso_no_account' => 'Votre fournisseur d\'identité n\'a identifié aucun compte sur cette plateforme. Le Secrétariat de la CRASA crée les comptes sur invitation : demandez-lui de vous inviter.',
     'sso_suspended' => 'Ce compte est suspendu. Contactez le Secrétariat de la CRASA.',
+    'show_password' => 'Afficher le mot de passe',
+    'hide_password' => 'Masquer le mot de passe',
 ];

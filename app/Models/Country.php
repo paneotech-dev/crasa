@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\Auditable;
+use App\Models\Concerns\HasLocalisedNames;
 use Database\Factories\CountryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,13 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Country extends Model
 {
     /** @use HasFactory<CountryFactory> */
-    use Auditable, HasFactory;
+    use Auditable, HasFactory, HasLocalisedNames;
+
+    /** French and Portuguese names: lang/{fr,pt}/names.php. */
+    protected function localisedNames(): array
+    {
+        return ['group' => 'countries', 'key' => 'iso_code', 'fields' => ['name']];
+    }
 
     protected $fillable = [
         'iso_code',
