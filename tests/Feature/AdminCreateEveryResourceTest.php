@@ -6,6 +6,7 @@ use App\Admin\ResourceRegistry;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -76,6 +77,47 @@ class AdminCreateEveryResourceTest extends TestCase
                 ->assertRedirect("/en/admin/data/{$key}/new")
                 ->assertSessionHasErrors($field);
         }
+    }
+
+    public function test_a_second_figure_for_the_same_period_is_a_message_not_a_server_error(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+        config(['crasa.two_factor_required' => false]);
+        $admin = User::factory()->administrator()->create();
+        $figure = ['indicator_id' => DB::table('indicators')->value('id'), 'country_id' => DB::table('countries')->value('id'), 'period' => '1999', 'value_numeric' => 1];
+
+        $this->actingAs($admin)->post('/en/admin/data/indicator-values', $figure)->assertSessionHasNoErrors();
+        $this->actingAs($admin)->from('/en/admin/data/indicator-values/new')
+            ->post('/en/admin/data/indicator-values', $figure)
+            ->assertRedirect('/en/admin/data/indicator-values/new')
+            ->assertSessionHasErrors('period');
+    }
+
+    public function test_a_damaged_image_is_a_message_not_a_server_error(): void
+    {
+        if (! extension_loaded('imagick')) {
+            $this->markTestSkipped('Imagick is not installed.');
+        }
+        Storage::fake('public');
+        $this->seed(DatabaseSeeder::class);
+        config(['crasa.two_factor_required' => false]);
+        $admin = User::factory()->administrator()->create();
+        // A PNG signature and header followed by a corrupt image chunk.
+        $png = UploadedFile::fake()->createWithContent('damaged.png', base64_decode('iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAFklEQVR4nGNk+M9AEmAcVTCqYFQBVQEA0bAEEQ2gFG0AAAAASUVORK5CYII='));
+
+        $this->actingAs($admin)->from('/en/admin/media/upload')
+            ->post('/en/admin/media', ['file' => $png])
+            ->assertRedirect('/en/admin/media/upload')
+            ->assertSessionHasErrors('file');
+    }
+
+    public function test_a_required_text_area_is_marked_required(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+        config(['crasa.two_factor_required' => false]);
+        $html = $this->actingAs(User::factory()->administrator()->create())->get('/en/admin/data/indicators/new')->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression('/<textarea[^>]*name="definition"[^>]*required/', $html);
     }
 
     private function valueFor(string $field, array $rules): mixed

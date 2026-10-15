@@ -739,4 +739,5 @@ return [
     'nav_contributions' => 'Entregas',
     'nav_announcements' => 'Avisos',
     'nav_authority-changes' => 'Fichas dos membros',
+    'media_unreadable' => 'Não foi possível ler este ficheiro como imagem. Pode estar danificado: exporte-o de novo e carregue a nova cópia.',
 ];

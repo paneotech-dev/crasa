@@ -739,4 +739,5 @@ return [
     'nav_contributions' => 'Contributions',
     'nav_announcements' => 'Annonces',
     'nav_authority-changes' => 'Fiches des membres',
+    'media_unreadable' => 'Ce fichier n\'a pas pu être lu comme une image. Il est peut-être endommagé : exportez-le à nouveau et téléversez la nouvelle copie.',
 ];

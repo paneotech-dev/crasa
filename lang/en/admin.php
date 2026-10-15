@@ -739,4 +739,5 @@ return [
     'nav_contributions' => 'Contributions',
     'nav_announcements' => 'Announcements',
     'nav_authority-changes' => 'Member records',
+    'media_unreadable' => 'This file could not be read as an image. It may be damaged; export it again and upload the new copy.',
 ];

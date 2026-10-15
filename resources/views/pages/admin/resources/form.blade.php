@@ -108,8 +108,8 @@
 
                         @elseif ($field->control === 'textarea')
                             <div class="a-field">
-                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}</label>
-                                <textarea class="a-input" id="f-{{ $field->name }}" name="{{ $field->name }}" rows="4">{{ $current }}</textarea>
+                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}@if ($field->required)<span class="a-required" aria-hidden="true">*</span><span class="c-sr">{{ __('admin.required') }}</span>@endif</label>
+                                <textarea class="a-input" id="f-{{ $field->name }}" name="{{ $field->name }}" rows="4" @required($field->required)>{{ $current }}</textarea>
                             </div>
 
                         @else

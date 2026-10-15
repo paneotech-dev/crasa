@@ -20,6 +20,7 @@ use App\Models\Tag;
 use App\Rules\SupersedesRule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 
 /**
@@ -342,6 +343,18 @@ final class ResourceRegistry
                     // A figure with no source note cannot be defended when a
                     // member state queries it.
                     'source_note' => ['nullable', 'string', 'max:500'],
+                ],
+                // One figure per indicator, member state and period: the
+                // schema's unique key turned a second one into a 500 (live
+                // audit, 15 October 2026). Now it is a message on the field.
+                rulesUsing: fn (?Model $record, Request $request) => [
+                    'period' => [
+                        'required', 'string', 'max:20',
+                        Rule::unique('indicator_values', 'period')
+                            ->where('indicator_id', $request->integer('indicator_id'))
+                            ->where('country_id', $request->integer('country_id'))
+                            ->ignore($record instanceof IndicatorValue && $record->exists ? $record->id : null),
+                    ],
                 ],
                 searchable: ['period'],
                 with: ['indicator', 'country'],

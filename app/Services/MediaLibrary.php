@@ -6,6 +6,7 @@ use App\Models\MediaAsset;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Imagick;
 use RuntimeException;
 
@@ -237,7 +238,13 @@ final class MediaLibrary
         }
 
         $image = new Imagick;
-        $image->readImageBlob($contents);
+        try {
+            $image->readImageBlob($contents);
+        } catch (\ImagickException) {
+            // A damaged or mislabelled file is a message on the upload field,
+            // not a 500 (live audit, 15 October 2026).
+            throw ValidationException::withMessages(['file' => __('admin.media_unreadable')]);
+        }
         $image->stripImage();
         $stripped = $image->getImageBlob();
         $image->clear();
