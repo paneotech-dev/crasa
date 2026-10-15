@@ -208,15 +208,18 @@ class ReportsTest extends TestCase
         Storage::disk('public')->assertMissing($report->fresh()->pdf_path);
     }
 
-    public function test_the_demonstration_notice_reaches_the_document(): void
+    public function test_the_document_carries_no_demonstration_notice_but_the_back_office_is_told(): void
     {
         IndicatorValue::where('indicator_id', $this->indicator->id)->update(['is_sample' => true]);
 
         $report = $this->report();
         $document = app(ReportDocument::class);
 
-        $this->assertStringContainsString(__('comparator.sample_notice_short'), $document->cover($report));
-        $this->assertStringContainsString(__('comparator.sample_notice_short'), $document->body($report));
+        // The circulated document: no notice (owner's instruction, 15 October 2026).
+        $this->assertStringNotContainsString(__('comparator.sample_notice_short'), $document->cover($report));
+        $this->assertStringNotContainsString(__('comparator.sample_notice_short'), $document->body($report));
+
+        // The administrator's own screen still says the figures are samples.
 
         $this->actingAs($this->secretariat)
             ->get('/en/admin/reports/'.$report->id)

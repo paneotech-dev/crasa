@@ -5,9 +5,9 @@ use App\Http\Controllers\Admin\AdminSearchController;
 use App\Http\Controllers\Admin\AnnouncementAdminController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\AuthorityChangeController;
-use App\Http\Controllers\Admin\ContributionReviewController;
 use App\Http\Controllers\Admin\CommitteeSeatController;
 use App\Http\Controllers\Admin\ConfirmationController;
+use App\Http\Controllers\Admin\ContributionReviewController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DelegateListController;
 use App\Http\Controllers\Admin\DismissController;
@@ -25,24 +25,25 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SubmissionReviewController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserAdminController;
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AppManifestController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\SsoController;
 use App\Http\Controllers\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\Auth\TwoFactorEnrolmentController;
+use App\Http\Controllers\AuthorityProfileController;
 use App\Http\Controllers\ComparatorController;
 use App\Http\Controllers\CompletenessController;
-use App\Http\Controllers\AnnouncementController;
-use App\Http\Controllers\AuthorityProfileController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ContributionController;
-use App\Http\Controllers\DirectoryController;
 use App\Http\Controllers\DelegateRegistrationController;
+use App\Http\Controllers\DirectoryController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EventsController;
-use App\Http\Controllers\FeatureInterestController;
 use App\Http\Controllers\ExtranetController;
+use App\Http\Controllers\FeatureInterestController;
+use App\Http\Controllers\IndicatorReferenceController;
 use App\Http\Controllers\LegacyRedirectController;
 use App\Http\Controllers\LocaleRedirectController;
 use App\Http\Controllers\MemberController;
@@ -51,7 +52,6 @@ use App\Http\Controllers\NotificationCentreController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PublicationController;
-use App\Http\Controllers\IndicatorReferenceController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SubmissionController;
@@ -266,12 +266,15 @@ Route::prefix('{locale}')
         Route::middleware('guest')->group(function () {
             Route::get('login', [LoginController::class, 'show'])->name('login');
             /*
-             * The controller throttles per address and IP together. This
-             * caps the whole IP as well, so spraying one password across
-             * many addresses is bounded too.
+             * The controller throttles failures per address and IP together,
+             * and failures per IP across addresses, so spraying one password
+             * across many accounts is bounded. This only caps raw volume: it
+             * counts every attempt, including successful ones, so it is set
+             * for a workshop room behind one address (it was 20, which the
+             * 21st delegate on the venue Wi-Fi would have hit).
              */
             Route::post('login', [LoginController::class, 'store'])
-                ->middleware('throttle:20,10')
+                ->middleware('throttle:100,10')
                 ->name('login.store');
 
             Route::get('password/forgotten', [PasswordResetController::class, 'request'])->name('password.request');

@@ -88,10 +88,6 @@ final class ReportDocument
         $parts[] = '<text x="96" y="'.(self::HEIGHT - 168).'" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="#0E5536">'
             .$e($this->permalink($report)).'</text>';
 
-        if ($compiled['sample']) {
-            $parts[] = $this->sampleBand(96, self::HEIGHT - 132);
-        }
-
         return $this->svg($parts);
     }
 
@@ -151,10 +147,6 @@ final class ReportDocument
 
         $footY = self::HEIGHT - 120;
 
-        if ($compiled['sample']) {
-            $parts[] = $this->sampleBand(96, $footY - 56);
-        }
-
         $parts[] = '<line x1="96" y1="'.$footY.'" x2="'.(self::WIDTH - 96).'" y2="'.$footY.'" stroke="#E5E0D5" stroke-width="1"/>';
         $parts[] = '<text x="96" y="'.($footY + 24).'" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#5C6B7E">'
             .$e(__('reports.foot_note', ['date' => now()->isoFormat('D MMMM YYYY')])).'</text>';
@@ -167,15 +159,6 @@ final class ReportDocument
     private function permalink(Report $report): string
     {
         return route('admin.reports.show', ['locale' => $report->locale, 'report' => $report->id]);
-    }
-
-    private function sampleBand(int $x, int $y): string
-    {
-        $text = htmlspecialchars(__('comparator.sample_notice_short'), ENT_QUOTES | ENT_XML1, 'UTF-8');
-
-        return '<rect x="'.$x.'" y="'.$y.'" width="'.(self::WIDTH - 2 * $x).'" height="40" fill="#FDF0DC" stroke="#E5BE87"/>'
-            .'<rect x="'.$x.'" y="'.$y.'" width="4" height="40" fill="#C2710C"/>'
-            .'<text x="'.($x + 18).'" y="'.($y + 25).'" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="#5C3404">'.$text.'</text>';
     }
 
     private function mark(int $x, int $y, int $size): string

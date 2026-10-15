@@ -7,6 +7,7 @@ use App\Models\Committee;
 use App\Models\Country;
 use App\Models\Page;
 use App\Models\Publication;
+use App\Models\User;
 use Database\Seeders\CommitteeSeeder;
 use Database\Seeders\CountrySeeder;
 use Database\Seeders\PublicPagesSeeder;
@@ -147,11 +148,10 @@ class CommitteeGridTest extends TestCase
     public function test_the_block_renders_its_empty_state_rather_than_a_blank_section(): void
     {
         Committee::query()->delete();
-
-        $this->get('/en/committees')
-            ->assertOk()
-            ->assertSee('No committees are listed yet')
-            ->assertDontSee('b-committees', false);
+        // A reader gets no editor guidance (15 October 2026); the back office does.
+        $this->get('/en/committees')->assertOk()->assertDontSee('No committees are listed yet')->assertDontSee('b-committees', false);
+        $this->actingAs(User::factory()->editor()->create())
+            ->get('/en/committees')->assertOk()->assertSee('No committees are listed yet');
     }
 
     /** Derived from member_grid, so it inherits the geometry rule too. */

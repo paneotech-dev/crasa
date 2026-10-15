@@ -115,12 +115,6 @@ final class ComparisonExport
             }
         }
 
-        // The notice is a row of the file, not a header a spreadsheet drops.
-        if ($comparison->carriesSampleData()) {
-            fputcsv($handle, []);
-            fputcsv($handle, [__('comparator.sample_notice_short')]);
-        }
-
         fputcsv($handle, []);
         fputcsv($handle, [__('comparator.csv_permalink'), $comparison->permalink()]);
         fputcsv($handle, [__('comparator.csv_generated'), now()->toDayDateTimeString()]);
@@ -270,13 +264,6 @@ final class ComparisonExport
         }
 
         $footY = $height - 96;
-
-        if ($comparison->carriesSampleData()) {
-            $parts[] = '<rect x="40" y="'.($footY - 44).'" width="'.($width - 80).'" height="36" fill="#FDF0DC" stroke="#E5BE87"/>';
-            $parts[] = '<rect x="40" y="'.($footY - 44).'" width="4" height="36" fill="#C2710C"/>';
-            $parts[] = '<text x="56" y="'.($footY - 20).'" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="#5C3404">'
-                .$e(__('comparator.sample_notice_short')).'</text>';
-        }
 
         $parts[] = '<line x1="40" y1="'.$footY.'" x2="'.($width - 40).'" y2="'.$footY.'" stroke="#E5E0D5" stroke-width="1"/>';
         $parts[] = '<text x="40" y="'.($footY + 22).'" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#5C6B7E">'

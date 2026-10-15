@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Enums\BlockType;
+use App\Models\PageBlock;
 use App\Support\Locales;
 use Database\Seeders\CommitteeSeeder;
 use Database\Seeders\CountrySeeder;
@@ -65,7 +67,18 @@ class SiteNavigationTest extends TestCase
 
     public function test_every_footer_link_to_a_page_fragment_lands_on_a_real_anchor(): void
     {
+        // Unwritten sections are not shown and not linked (15 October 2026),
+        // so write one, as the Secretariat will, and check its link lands.
+        $written = PageBlock::whereNotNull('anchor')->where('block_type', BlockType::RichText->value)
+            ->where('anchor', 'governance')->whereHas('page', fn ($q) => $q->where('slug', 'about'))->firstOrFail();
+        $written->setTranslation('body', 'en', 'The text of this section, as written by the Secretariat.');
+        $unwritten = PageBlock::unwrittenAnchors()['about'] ?? [];
+
         $html = $this->get('/en')->assertOk()->getContent();
+        $this->assertStringContainsString('/about#'.$written->anchor.'"', $html, 'A written section has no footer link.');
+        foreach ($unwritten as $anchor) {
+            $this->assertStringNotContainsString('/about#'.$anchor.'"', $html, "The footer links to the unwritten section #{$anchor}.");
+        }
 
         preg_match_all('~href="[^"]*/([a-z0-9\-/]+)#([a-z0-9\-]+)"~i', $html, $matches, PREG_SET_ORDER);
 

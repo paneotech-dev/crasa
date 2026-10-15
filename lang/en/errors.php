@@ -10,6 +10,8 @@ return [
     '404_body' => 'The page may have moved, or the address may be mistyped. Use the menu or the search to find what you were looking for.',
     '419_title' => 'Your session expired',
     '419_body' => 'Your session expired, please try again. The form has been reloaded so you can send it again.',
+    '429_title' => 'Too many attempts',
+    '429_body' => 'Too many attempts were made from this connection in a short time. Wait a few minutes, then try again.',
     '500_title' => 'Something went wrong on our side',
     '500_body' => 'The page could not be shown because of a fault on the server. It has been recorded. Please try again in a few minutes.',
     '503_title' => 'The platform is being updated',

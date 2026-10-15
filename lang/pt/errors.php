@@ -10,6 +10,8 @@ return [
     '404_body' => 'A página pode ter mudado de endereço, ou o endereço pode ter um erro. Utilize o menu ou a pesquisa para encontrar o que procurava.',
     '419_title' => 'A sua sessão expirou',
     '419_body' => 'A sua sessão expirou, tente novamente. O formulário foi recarregado para que o possa enviar de novo.',
+    '429_title' => 'Demasiadas tentativas',
+    '429_body' => 'Foram feitas demasiadas tentativas a partir desta ligação num curto espaço de tempo. Aguarde alguns minutos e tente novamente.',
     '500_title' => 'Ocorreu um problema do nosso lado',
     '500_body' => 'Não foi possível mostrar a página devido a uma falha no servidor. A falha foi registada. Tente novamente dentro de alguns minutos.',
     '503_title' => 'A plataforma está a ser atualizada',

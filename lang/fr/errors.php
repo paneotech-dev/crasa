@@ -10,6 +10,8 @@ return [
     '404_body' => 'La page a peut-être été déplacée, ou l\'adresse contient une faute de frappe. Utilisez le menu ou la recherche pour trouver ce que vous cherchiez.',
     '419_title' => 'Votre session a expiré',
     '419_body' => 'Votre session a expiré, veuillez réessayer. Le formulaire a été rechargé pour que vous puissiez l\'envoyer à nouveau.',
+    '429_title' => 'Trop de tentatives',
+    '429_body' => 'Trop de tentatives ont été faites depuis cette connexion en peu de temps. Patientez quelques minutes, puis réessayez.',
     '500_title' => 'Un problème est survenu de notre côté',
     '500_body' => 'La page n\'a pas pu être affichée en raison d\'une panne du serveur. L\'incident a été enregistré. Veuillez réessayer dans quelques minutes.',
     '503_title' => 'La plateforme est en cours de mise à jour',

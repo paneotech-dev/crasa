@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\MenuItem;
+use App\Models\PageBlock;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
@@ -65,6 +66,12 @@ final class Navigation
                     continue;
                 }
 
+                // Nor a link to a section nobody has written yet: that
+                // section is not shown, so the link would scroll nowhere.
+                if (self::pointsAtUnwrittenSection($url)) {
+                    continue;
+                }
+
                 $links[] = ['label' => $child->labelFor(), 'url' => $url];
             }
 
@@ -97,6 +104,10 @@ final class Navigation
                     : (Route::has($link['route']) ? route($link['route'], ['locale' => app()->getLocale()]) : null);
 
                 if ($url === null) {
+                    continue;
+                }
+
+                if (self::pointsAtUnwrittenSection($url)) {
                     continue;
                 }
 
@@ -221,6 +232,16 @@ final class Navigation
     }
 
     /** A path inside the language currently being rendered. */
+    /** Whether a URL ends in #anchor of a section that is not written yet. */
+    public static function pointsAtUnwrittenSection(string $url): bool
+    {
+        if (! preg_match('~/(?:[a-z]{2}/)?([a-z0-9\-]+)#([a-z0-9\-]+)$~i', $url, $m)) {
+            return false;
+        }
+
+        return in_array($m[2], PageBlock::unwrittenAnchors()[$m[1]] ?? [], true);
+    }
+
     public static function url(string $path): string
     {
         $locale = app()->getLocale();

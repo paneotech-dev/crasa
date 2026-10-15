@@ -86,14 +86,28 @@ class AuthenticationTest extends TestCase
         // Read off the rendered page, which is where the sender sees it.
         $this->followingRedirects()
             ->post('/en/login', ['email' => $user->email, 'password' => 'nope'])
-            ->assertSee('4 attempts remain');
+            ->assertSee('9 attempts remain');
     }
 
-    public function test_five_failures_lock_the_account_for_thirty_minutes(): void
+    public function test_a_few_typos_never_lock_the_account(): void
     {
         $user = $this->account();
 
-        for ($i = 0; $i < 5; $i++) {
+        // Nine misses in front of a room, then the right password: still in (15 October 2026).
+        for ($i = 0; $i < 9; $i++) {
+            $this->post('/en/login', ['email' => $user->email, 'password' => 'nope']);
+        }
+
+        $this->post('/en/login', ['email' => $user->email, 'password' => self::PASSWORD])
+            ->assertSessionHasNoErrors();
+        $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_ten_failures_lock_the_account_for_thirty_minutes(): void
+    {
+        $user = $this->account();
+
+        for ($i = 0; $i < 10; $i++) {
             $this->post('/en/login', ['email' => $user->email, 'password' => 'nope']);
         }
 

@@ -6,6 +6,7 @@ use App\Enums\BlockType;
 use App\Models\Country;
 use App\Models\Page;
 use App\Models\PageBlock;
+use App\Models\User;
 use App\Support\Locales;
 use Database\Seeders\AuthoritySeeder;
 use Database\Seeders\CountrySeeder;
@@ -53,9 +54,16 @@ class BlockLibraryTest extends TestCase
 
     /* Every type renders --------------------------------------------------- */
 
+    /** The back office, where an empty block is shown with what it needs (15 October 2026). */
+    private function asEditor(): void
+    {
+        $this->actingAs(User::factory()->editor()->create());
+    }
+
     #[DataProvider('blockTypes')]
     public function test_a_block_renders_with_empty_settings(BlockType $type): void
     {
+        $this->asEditor();
         $html = $this->render($this->block($type, $type->defaultSettings()));
 
         $this->assertNotSame('', trim($html), $type->value.' rendered nothing at all.');
@@ -83,11 +91,27 @@ class BlockLibraryTest extends TestCase
     #[DataProvider('blockTypes')]
     public function test_an_empty_block_shows_an_empty_state_rather_than_blank_space(BlockType $type): void
     {
+        $this->asEditor();
         $html = $this->render($this->block($type, $this->emptiedSettings($type)));
 
         $hasEmptyState = str_contains($html, 'b__empty') || str_contains($html, 'b__slot');
 
         $this->assertTrue($hasEmptyState, $type->value.' renders blank space when it has nothing to show.');
+    }
+
+    /**
+     * A reader never sees guidance written for an editor ("Add the copy for
+     * this section", "Nothing set for this banner yet"): owner's instruction,
+     * 15 October 2026. Reader messages (no results) still show.
+     */
+    #[DataProvider('blockTypes')]
+    public function test_a_visitor_never_sees_editor_guidance(BlockType $type): void
+    {
+        $html = $this->render($this->block($type, $this->emptiedSettings($type)));
+
+        foreach (['hero', 'figures', 'pillars', 'richtext', 'comparison', 'cta', 'social', 'statement', 'members', 'committees'] as $key) {
+            $this->assertStringNotContainsString(e(__("blocks.{$key}_empty_body")), $html, $type->value);
+        }
     }
 
     #[DataProvider('blockTypes')]

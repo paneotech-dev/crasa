@@ -36,6 +36,7 @@
 
         @if ($rows->isEmpty())
             @include('blocks._empty', [
+                'editorOnly' => true,
                 'title' => __('blocks.comparison_empty_title'),
                 'body' => __('blocks.comparison_empty_body'),
             ])

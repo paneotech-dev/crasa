@@ -77,14 +77,10 @@
                 @endforeach
             </dl>
 
-            {{-- Confirmed by its own regulator, or not yet. A reader of a
-                 member state entry is entitled to know which, and a
-                 platform that showed unconfirmed details as though they
-                 were confirmed would be making a claim on that regulator's
-                 behalf. --}}
-            @unless ($authority?->isConfirmed())
-                <p class="c-note c-note--unconfirmed">{{ __('members.detail_unconfirmed') }}</p>
-            @endunless
+            {{-- Whether the regulator has confirmed these details is kept in
+                 the database (is_sample, confirmed_at) and shown in the back
+                 office. On the owner's instruction of 15 October 2026 it is
+                 not shown to readers. --}}
 
             <dl class="c-meta">
                 <div>

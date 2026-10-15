@@ -21,7 +21,8 @@
             @endif
             @if (! $headline)
                 @include('blocks._empty', [
-                    'title' => __('blocks.cta_empty_title'),
+                    'editorOnly' => true,
+                'title' => __('blocks.cta_empty_title'),
                     'body' => __('blocks.cta_empty_body'),
                 ])
             @endif

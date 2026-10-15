@@ -129,6 +129,7 @@
 
         @if ($countries->isEmpty())
             @include('blocks._empty', [
+                'editorOnly' => true,
                 'title' => __('blocks.members_empty_title'),
                 'body' => __('blocks.members_empty_body'),
             ])

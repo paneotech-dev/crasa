@@ -56,6 +56,7 @@
     <div class="b__inner b-statement__inner">
         @if ($statement === null && $cells === [])
             @include('blocks._empty', [
+                'editorOnly' => true,
                 'title' => __('blocks.statement_empty_title'),
                 'body' => __('blocks.statement_empty_body'),
             ])

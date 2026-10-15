@@ -35,6 +35,7 @@
 
         @if ($committees->isEmpty())
             @include('blocks._empty', [
+                'editorOnly' => true,
                 'title' => __('blocks.committees_empty_title'),
                 'body' => __('blocks.committees_empty_body'),
             ])

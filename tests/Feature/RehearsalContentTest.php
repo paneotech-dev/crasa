@@ -6,6 +6,7 @@ use App\Models\Announcement;
 use App\Models\Country;
 use App\Models\Document;
 use App\Models\Folder;
+use App\Models\IndicatorValue;
 use App\Models\Submission;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
@@ -45,9 +46,9 @@ class RehearsalContentTest extends TestCase
 
         $folder = Folder::withoutGlobalScopes()->where('slug', 'za')->sole();
         $this->get('/en/extranet/folders')->assertOk()->assertSee('South Africa');
-        $this->get('/en/extranet/folders/'.$folder->getRouteKey())->assertOk()->assertSee('sample-annual-return-guidance');
+        $this->get('/en/extranet/folders/'.$folder->getRouteKey())->assertOk()->assertSee('sample-validated-returns');
 
-        $this->get('/en/announcements')->assertOk()->assertSee('annual returns window open');
+        $this->get('/en/announcements')->assertOk()->assertSee('Annual returns window open');
         $this->get('/fr/announcements')->assertOk()->assertSee('déclarations annuelles', false);
         $this->get('/pt/announcements')->assertOk()->assertSee('declarações anuais', false);
     }
@@ -60,7 +61,7 @@ class RehearsalContentTest extends TestCase
             foreach ($documents as $document) {
                 $pdf = Storage::disk('local')->get($document->file_path);
                 $this->assertStringStartsWith('%PDF-1.4', $pdf);
-                $this->assertGreaterThanOrEqual(3, substr_count($pdf, '/Type/Page/'), 'A sample paper has fewer than three pages.');
+                $this->assertGreaterThanOrEqual(3, substr_count($pdf, '/Type/Page/'), $document->original_filename.' has '.substr_count($pdf, '/Type/Page/').' pages.');
                 $this->assertStringContainsString('Sample document', $pdf);
             }
         }
@@ -74,12 +75,37 @@ class RehearsalContentTest extends TestCase
         $this->assertSame(3, Announcement::where('is_sample', true)->count());
     }
 
+    public function test_each_folder_holds_papers_for_what_it_is_for(): void
+    {
+        $za = Folder::withoutGlobalScopes()->where('slug', 'za')->sole();
+        $returns = Document::withoutGlobalScopes()->where('folder_id', $za->id)->where('original_filename', 'sample-validated-returns.pdf')->sole();
+        $pdf = Storage::disk('local')->get($returns->file_path);
+        // The figures as filed, from the sample returns.
+        $this->assertStringContainsString('168.9', $pdf);
+        $this->assertStringContainsString('ICASA annual report', $pdf);
+
+        $committee = Folder::withoutGlobalScopes()->whereNotNull('committee_id')->first();
+        $this->assertSame(['sample-committee-agenda.pdf', 'sample-committee-working-paper.pdf'],
+            Document::withoutGlobalScopes()->where('folder_id', $committee->id)->orderBy('original_filename')->pluck('original_filename')->all());
+
+        $secretariat = Folder::withoutGlobalScopes()->where('slug', 'secretariat-papers')->sole();
+        $this->assertSame(2, Document::withoutGlobalScopes()->where('folder_id', $secretariat->id)->where('original_filename', 'like', 'sample-secretariat-note-%')->count());
+    }
+
     public function test_strip_samples_removes_all_of_it(): void
     {
+        $files = Document::withoutGlobalScopes()->where('is_sample', true)->pluck('file_path')->all();
+        $this->assertNotEmpty($files);
+
         $this->artisan('content:strip-samples', ['--force' => true])->assertSuccessful();
 
         $this->assertSame(0, Submission::where('country_id', $this->member->country_id)->count());
         $this->assertSame(0, Announcement::withTrashed()->where('is_sample', true)->count());
         $this->assertSame(0, Document::withoutGlobalScopes()->whereNotNull('folder_id')->where('is_sample', true)->count());
+        $this->assertSame(0, Folder::withoutGlobalScopes()->withTrashed()->where('is_sample', true)->count());
+        $this->assertSame(0, IndicatorValue::where('is_sample', true)->count());
+        foreach ($files as $file) {
+            $this->assertFalse(Storage::disk('local')->exists($file), "{$file} is still on disk after strip-samples.");
+        }
     }
 }

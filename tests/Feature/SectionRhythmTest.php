@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\BlockType;
+use App\Models\PageBlock;
 use App\Support\Locales;
 use Database\Seeders\CommitteeSeeder;
 use Database\Seeders\PublicPagesSeeder;
@@ -100,7 +101,13 @@ class SectionRhythmTest extends TestCase
 
     public function test_a_run_of_one_block_type_still_separates(): void
     {
-        // Six rich-text blocks in a row must not read as one wall.
+        // Six rich-text blocks in a row must not read as one wall. Written
+        // first, as the Secretariat will: unwritten sections are not shown.
+        foreach (PageBlock::whereHas('page', fn ($q) => $q->where('slug', 'about'))->get() as $block) {
+            if ($block->isUnwritten()) {
+                $block->setTranslation('body', 'en', 'Text written by the Secretariat for this section.');
+            }
+        }
         $grounds = $this->grounds('/en/about');
 
         $this->assertGreaterThan(3, count($grounds));

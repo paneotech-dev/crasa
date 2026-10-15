@@ -94,9 +94,9 @@ class NewsroomSeeder extends Seeder
     ];
 
     private const DEMO_BODY = [
-        'en' => "This is demonstration content. It is not a CRASA announcement, and nothing in it should be cited or relied on.\n\nThe article exists so the newsroom listing, the filters and the article layout can be reviewed with realistic proportions before the Secretariat supplies real copy. It will be removed with all other sample data before go-live.",
-        'fr' => "Ceci est un contenu de démonstration. Il ne s'agit pas d'une communication de la CRASA et rien de ce qui suit ne doit être cité ni utilisé comme référence.\n\nCet article existe pour que la salle de presse, les filtres et la mise en page puissent être examinés avec des proportions réalistes avant que le Secrétariat ne fournisse le texte définitif. Il sera supprimé avec toutes les autres données de démonstration avant la mise en service.",
-        'pt' => "Este é um conteúdo de demonstração. Não é um comunicado da CRASA e nada aqui deve ser citado ou utilizado como referência.\n\nO artigo existe para que a sala de imprensa, os filtros e a disposição do artigo possam ser avaliados com proporções realistas antes de o Secretariado fornecer o texto definitivo. Será removido com todos os outros dados de demonstração antes da entrada em serviço.",
+        'en' => "The CRASA Secretariat publishes news on the work of the member regulators, the standing committees and the regional meetings here.\n\nEach article states its date and the committee or sector it concerns, and links to the documents it refers to in the library.",
+        'fr' => "Le Secrétariat de la CRASA publie ici les actualités relatives aux travaux des régulateurs membres, des comités permanents et des réunions régionales.\n\nChaque article indique sa date ainsi que le comité ou le secteur concerné, et renvoie aux documents de la bibliothèque qu'il cite.",
+        'pt' => "O Secretariado da CRASA publica aqui as notícias sobre o trabalho dos reguladores membros, dos comités permanentes e das reuniões regionais.\n\nCada artigo indica a sua data e o comité ou setor a que diz respeito, e remete para os documentos da biblioteca que refere.",
     ];
 
     public function run(): void

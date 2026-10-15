@@ -28,6 +28,7 @@
 
         @if ($available->isEmpty())
             @include('blocks._empty', [
+                'editorOnly' => true,
                 'title' => __('blocks.social_empty_title'),
                 'body' => __('blocks.social_empty_body'),
             ])

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Page;
 use App\Models\PageBlock;
+use App\Models\User;
 use App\Support\Locales;
 use Database\Seeders\CountrySeeder;
 use Database\Seeders\PublicPagesSeeder;
@@ -79,11 +80,16 @@ class PublicPagesTest extends TestCase
         }
     }
 
-    public function test_a_flagged_block_says_so_on_the_page_in_every_language(): void
+    public function test_a_flagged_block_is_not_shown_to_readers_in_any_language(): void
     {
-        $this->get('/en/about')->assertSee('This section is being prepared');
-        $this->get('/fr/about')->assertSee('Cette section est en préparation');
-        $this->get('/pt/about')->assertSee('Esta secção está a ser preparada');
+        // Owner's instruction, 15 October 2026: no "being prepared" on the site.
+        $this->get('/en/about')->assertDontSee('This section is being prepared');
+        $this->get('/fr/about')->assertDontSee('Cette section est en préparation');
+        $this->get('/pt/about')->assertDontSee('Esta secção está a ser preparada');
+
+        // The back office still sees it in preview, with what it needs.
+        $this->actingAs(User::factory()->editor()->create())
+            ->get('/en/about')->assertSee('This section is being prepared');
     }
 
     public function test_no_committee_mandate_is_asserted(): void
@@ -91,8 +97,10 @@ class PublicPagesTest extends TestCase
         $html = $this->get('/en/committees')->getContent();
 
         // The six names come from the approved screens. Their terms of
-        // reference do not, so none is stated.
-        $this->assertStringContainsString('This section is being prepared', $html);
+        // reference do not, so none is stated: the unwritten section is left
+        // out rather than shown as "being prepared" (15 October 2026).
+        $this->assertStringNotContainsString('This section is being prepared', $html);
+        $this->assertStringNotContainsString('Terms of reference', $html);
     }
 
     public function test_the_members_page_lists_all_fourteen_states(): void

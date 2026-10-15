@@ -134,21 +134,23 @@ class LegalPagesTest extends TestCase
      */
     public function test_every_legal_commitment_is_left_as_a_named_blank(): void
     {
-        $privacy = $this->get('/en/privacy')->assertOk()->getContent();
-
+        // Named blanks for CRASA, in the stored text and in the back office's
+        // outstanding list; not shown to readers (owner, 15 October 2026).
+        $privacyItems = implode(' ', Page::where('slug', 'privacy')->sole()->outstandingClientItems());
         foreach (['retention periods', 'data protection officer', 'supervisory authority', 'hosting location'] as $blank) {
-            $this->assertStringContainsStringIgnoringCase($blank, $privacy, 'The privacy notice does not raise: '.$blank);
+            $this->assertStringContainsStringIgnoringCase($blank, $privacyItems, 'The privacy notice does not raise: '.$blank);
         }
 
-        $terms = $this->get('/en/terms')->assertOk()->getContent();
-
+        $termsItems = implode(' ', Page::where('slug', 'terms')->sole()->outstandingClientItems());
         foreach (['governing law', 'jurisdiction', 'liability'] as $blank) {
-            $this->assertStringContainsStringIgnoringCase($blank, $terms, 'The terms do not raise: '.$blank);
+            $this->assertStringContainsStringIgnoringCase($blank, $termsItems, 'The terms do not raise: '.$blank);
         }
 
-        // And each is bracketed as a decision, not asserted as a fact.
-        $this->assertStringContainsString('CRASA to', $privacy);
-        $this->assertStringContainsString('CRASA and its counsel to', $terms);
+        // A reader sees the document without the notes.
+        foreach (['/en/privacy', '/fr/privacy', '/pt/privacy', '/en/terms', '/fr/terms', '/pt/terms'] as $path) {
+            $html = $this->get($path)->assertOk()->getContent();
+            $this->assertDoesNotMatchRegularExpression('/\[(CRASA|La CRASA|A CRASA) /u', strip_tags($html), $path);
+        }
     }
 
     /** They stay on the placeholder list until CRASA signs them off. */

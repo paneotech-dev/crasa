@@ -343,7 +343,8 @@
         <div class="b-hero__inner">
             <div class="b-hero__copy">
                 @include('blocks._empty', [
-                    'title' => __('blocks.hero_empty_title'),
+                    'editorOnly' => true,
+                'title' => __('blocks.hero_empty_title'),
                     'body' => __('blocks.hero_empty_body'),
                 ])
             </div>

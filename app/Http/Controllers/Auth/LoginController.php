@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Enums\Permission;
+use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -20,14 +20,31 @@ use Illuminate\Validation\ValidationException;
  * used to discover who has one. Screen 11 states this explicitly and it is
  * the reason the wording looks vaguer than a normal login.
  *
- * Five attempts, then thirty minutes, keyed on the address and the IP
+ * Ten attempts, then thirty minutes, keyed on the address and the IP
  * together so one attacker cannot lock a known user out by guessing at them.
  */
 class LoginController extends Controller
 {
-    private const MAX_ATTEMPTS = 5;
+    /*
+     * Ten, not five (15 October 2026): a few typos in front of a room must
+     * never lock a demonstration account. Still per address and IP together,
+     * still thirty minutes.
+     */
+    private const MAX_ATTEMPTS = 10;
 
     private const LOCKOUT_SECONDS = 1800;
+
+    /*
+     * Failed sign-ins from one IP, across all addresses, before that IP is
+     * paused (14 October 2026). Only failures count: a workshop room behind
+     * one address can sign everyone in, while spraying one password across
+     * many accounts is still bounded. Until then the route allowed 20 sign-in
+     * attempts per IP per 10 minutes, successful or not, and the 21st
+     * delegate on the venue's Wi-Fi got a bare "429 Too Many Requests".
+     */
+    private const MAX_FAILURES_PER_IP = 30;
+
+    private const IP_WINDOW_SECONDS = 600;
 
     public function show()
     {
@@ -43,6 +60,18 @@ class LoginController extends Controller
 
         $key = $this->throttleKey($request);
 
+        $ipKey = 'login-ip:'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($ipKey, self::MAX_FAILURES_PER_IP)) {
+            $this->recordFailure($request, $credentials['email'], 'ip_paused');
+
+            throw ValidationException::withMessages([
+                'email' => __('auth.locked', [
+                    'minutes' => ceil(RateLimiter::availableIn($ipKey) / 60),
+                ]),
+            ])->redirectTo($this->formUrl());
+        }
+
         if (RateLimiter::tooManyAttempts($key, self::MAX_ATTEMPTS)) {
             $this->recordFailure($request, $credentials['email'], 'locked');
 
@@ -57,6 +86,7 @@ class LoginController extends Controller
 
         if ($user === null || ! Hash::check($credentials['password'], $user->password)) {
             RateLimiter::hit($key, self::LOCKOUT_SECONDS);
+            RateLimiter::hit($ipKey, self::IP_WINDOW_SECONDS);
             $this->recordFailure($request, $credentials['email'], 'invalid');
 
             throw ValidationException::withMessages([

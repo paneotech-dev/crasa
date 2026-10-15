@@ -11,6 +11,7 @@ use Database\Seeders\CountrySeeder;
 use Database\Seeders\IndicatorSeeder;
 use Database\Seeders\SectorSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 /**
@@ -301,10 +302,10 @@ class ComparatorTest extends TestCase
         $this->assertStringNotContainsString('c-cmp__notice', $html);
 
         $csv = $this->get('/en/comparator/export.csv?'.http_build_query($query))->streamedContent();
-        $this->assertStringContainsString(__('comparator.sample_notice_short'), $csv);
+        $this->assertStringNotContainsString(__('comparator.sample_notice_short'), $csv);
 
         $svg = app(ComparisonExport::class)->svg(Comparison::fromQuery($query));
-        $this->assertStringContainsString(__('comparator.sample_notice_short'), $svg);
+        $this->assertStringNotContainsString(__('comparator.sample_notice_short'), $svg);
     }
 
     public function test_the_notice_disappears_by_itself_once_the_figures_are_confirmed(): void
@@ -397,7 +398,7 @@ class ComparatorTest extends TestCase
 
         $svg = app(ComparisonExport::class)->svg($comparison);
 
-        $this->assertStringContainsString('[1] '.htmlspecialchars(\Illuminate\Support\Str::limit($source, 170), ENT_QUOTES | ENT_XML1), $svg);
+        $this->assertStringContainsString('[1] '.htmlspecialchars(Str::limit($source, 170), ENT_QUOTES | ENT_XML1), $svg);
         $this->assertMatchesRegularExpression('/>[^<]*\s\[1\]</', $svg, 'The figure points at its source.');
         $this->assertStringContainsString('xlink:href="data:image/png;base64,', $svg);
         $this->assertStringNotContainsString('url(#_Radial1)', $svg);

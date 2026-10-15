@@ -109,7 +109,7 @@ class DemonstrationSeeder extends Seeder
 
             $instrument->setTranslations('en', [
                 'title' => $title,
-                'summary' => 'Demonstration record. Terms on which licensed operators interconnect, '
+                'summary' => 'Terms on which licensed operators interconnect, '
                     .'and the basis on which facilities are leased between them.',
             ]);
 
@@ -119,8 +119,8 @@ class DemonstrationSeeder extends Seeder
                 ['instrument_id' => $instrument->id, 'version_number' => 1],
                 [
                     'changed_by' => null,
-                    'change_summary' => 'Demonstration record.',
-                    'payload' => ['title' => $title, 'note' => 'Demonstration record.'],
+                    'change_summary' => 'Version adopted.',
+                    'payload' => ['title' => $title, 'note' => 'Version adopted.'],
                 ]
             );
 
@@ -182,14 +182,14 @@ class DemonstrationSeeder extends Seeder
 
             $publication->setTranslations('en', [
                 'title' => $title,
-                'summary' => 'Demonstration record. The regional framework for roaming: tariff principles, '
+                'summary' => 'The regional framework for roaming: tariff principles, '
                     .'transparency for the consumer, and reporting by the member states.',
             ]);
 
             $publication->setTranslations('fr', [
                 'title' => str_replace(['SADC', 'revision'], ['SADC', 'revision'], $title),
-                'summary' => 'Enregistrement de demonstration. Le cadre regional de l\'itinerance : principes '
-                    .'tarifaires, transparence pour le consommateur et rapports des Etats membres.',
+                'summary' => 'Le cadre régional de l\'itinérance : principes tarifaires, transparence '
+                    .'pour le consommateur et rapports des États membres.',
             ]);
 
             $previous = $publication;
@@ -287,7 +287,7 @@ class DemonstrationSeeder extends Seeder
                     'submitted_at' => $status === SubmissionStatus::Draft ? null : now()->subDays(9),
                     'reviewed_at' => $status->isReviewDecision() ? now()->subDays(3) : null,
                     'review_note' => $status === SubmissionStatus::Returned
-                        ? 'Demonstration record. Two figures need supporting data before this can be validated.'
+                        ? 'Two figures need supporting data before this can be validated.'
                         : null,
                     'is_sample' => true,
                 ]
@@ -304,7 +304,7 @@ class DemonstrationSeeder extends Seeder
                     ['indicator_id' => $indicator->id],
                     [
                         'value_numeric' => round(20 + ($index * 17) + (crc32($code) % 40), 1),
-                        'source_note' => 'Demonstration source. '.strtoupper($code).' annual report 2026.',
+                        'source_note' => strtoupper($code).' annual report 2026.',
                     ]
                 );
             }
@@ -315,7 +315,7 @@ class DemonstrationSeeder extends Seeder
                 SubmissionFieldComment::updateOrCreate(
                     ['submission_id' => $submission->id, 'indicator_id' => $indicators->first()->id],
                     [
-                        'comment' => 'Demonstration comment. This figure is materially above the 2025 return. '
+                        'comment' => 'This figure is materially above the 2025 return. '
                             .'Please attach the operator data behind the revision, or correct the figure.',
                         'resolved' => false,
                     ]
@@ -403,7 +403,7 @@ class DemonstrationSeeder extends Seeder
                 'from_status' => $from,
                 'to_status' => $to,
                 'actor_id' => $author?->id,
-                'note' => 'Demonstration record.',
+                'note' => null,
                 'created_at' => now()->subDays(9 - ($i * 3)),
             ]);
         }
@@ -422,26 +422,25 @@ class DemonstrationSeeder extends Seeder
         $committee = Committee::first();
 
         $public = Meeting::updateOrCreate(
-            ['slug' => 'demonstration-regional-workshop'],
+            ['slug' => 'regional-workshop'],
             [
                 'committee_id' => $committee?->id,
-                'title' => 'Demonstration record: regional workshop',
+                'title' => 'Regional workshop of member regulators',
                 'kind' => 'workshop',
                 'starts_on' => now()->addMonths(2)->startOfMonth()->addDays(9),
                 'ends_on' => now()->addMonths(2)->startOfMonth()->addDays(11),
                 'location' => 'Gaborone, Botswana',
-                'agenda' => 'Demonstration record. This entry exists so the calendar and the events section '
-                    ."have something to show.\n\nReal meeting dates come from the Secretariat.",
+                'agenda' => "Opening by the chair of the Executive Committee.\n\nSessions of the standing committees on their work programmes, the annual regulatory return and the regional comparator.\n\nConclusions of the workshop and closing.",
                 'clearance' => Clearance::Public,
                 'is_sample' => true,
             ]
         );
 
         Meeting::updateOrCreate(
-            ['slug' => 'demonstration-closed-session'],
+            ['slug' => 'closed-committee-session'],
             [
                 'committee_id' => $committee?->id,
-                'title' => 'Demonstration record: closed committee session',
+                'title' => 'Closed committee session',
                 'kind' => 'committee',
                 'starts_on' => now()->addMonth()->startOfMonth()->addDays(15),
                 'location' => 'Online',
@@ -553,7 +552,7 @@ class DemonstrationSeeder extends Seeder
                     }
                     $value = $submission->values()->updateOrCreate(
                         ['indicator_id' => $indicator->id],
-                        ['value_numeric' => $values[$i], 'source_note' => 'Demonstration figure. ICASA annual report '.$period.'.']
+                        ['value_numeric' => $values[$i], 'source_note' => 'ICASA annual report '.$period.'.']
                     );
                     IndicatorValue::updateOrCreate(
                         ['indicator_id' => $indicator->id, 'country_id' => $za->id, 'period' => (string) $period],
@@ -577,15 +576,16 @@ class DemonstrationSeeder extends Seeder
             );
         }
 
-        // Papers in every folder, so none opens empty: two multi-page sample
-        // documents each, addressed to the folder's country, committee or the
-        // Secretariat (App\Support\SampleDocumentPdf).
+        // Papers in every folder, so none opens empty, each matching its
+        // folder: a country's returns and market review, the cycle's guidance,
+        // a committee's working papers, the Secretariat's notes. Multi-page
+        // sample PDFs (App\Support\SampleDocumentPdf), all is_sample.
         foreach (Folder::withoutGlobalScopes()->where('is_sample', true)->get() as $folder) {
-            $scope = $folder->country_id ? Country::find($folder->country_id)?->rawName()
-                : ($folder->committee_id ? 'the '.Committee::find($folder->committee_id)?->rawName().' Committee' : 'the CRASA Secretariat');
-            foreach ($this->samplePapers((string) $scope) as $slug => [$title, $subtitle, $sections]) {
+            $papers = $this->papersFor($folder);
+            $keep = [];
+            foreach ($papers as $slug => [$title, $subtitle, $sections]) {
                 $path = 'extranet/'.$folder->id.'/'.$slug.'.pdf';
-                // Always rewritten: the content is generated, and an older one-line placeholder is replaced.
+                $keep[] = $path;
                 Storage::disk('local')->put($path, SampleDocumentPdf::make($title, $subtitle, now()->isoFormat('D MMMM YYYY'), $sections));
                 Document::withoutGlobalScopes()->updateOrCreate(
                     ['folder_id' => $folder->id, 'file_path' => $path],
@@ -597,32 +597,38 @@ class DemonstrationSeeder extends Seeder
                         'original_filename' => $slug.'.pdf',
                         'mime_type' => 'application/pdf',
                         'size_bytes' => Storage::disk('local')->size($path),
+                        'thumbnail_path' => null,
                         'locale' => 'en',
                         'clearance' => $folder->clearance,
                         'is_sample' => true,
                     ]
                 );
             }
+            // Sample papers this seeder wrote before and no longer writes.
+            foreach (Document::withoutGlobalScopes()->where('folder_id', $folder->id)->where('is_sample', true)->whereNotIn('file_path', $keep)->where('file_path', 'like', 'extranet/'.$folder->id.'/sample-%')->get() as $stale) {
+                Storage::disk('local')->delete($stale->file_path);
+                $stale->forceDelete();
+            }
         }
 
         $notices = [
-            'demonstration-notice-annual-returns' => [
+            'annual-returns-window-open' => [
                 'committee' => null, 'days' => 2,
-                'en' => ['Demonstration notice: annual returns window open', "Demonstration record.\n\nThe window for the annual indicator returns is open. Representatives can file their return from the Submissions page, save it as a draft and submit it when every figure has a source."],
-                'fr' => ['Avis de démonstration : ouverture de la période des déclarations annuelles', "Contenu de démonstration.\n\nLa période de dépôt des déclarations annuelles d'indicateurs est ouverte. Les représentants peuvent déposer leur déclaration depuis la page Déclarations, l'enregistrer comme brouillon et la soumettre lorsque chaque chiffre est accompagné de sa source."],
-                'pt' => ['Aviso de demonstração: período das declarações anuais aberto', "Conteúdo de demonstração.\n\nEstá aberto o período das declarações anuais de indicadores. Os representantes podem apresentar a sua declaração na página Declarações, guardá-la como rascunho e submetê-la quando cada valor tiver uma fonte."],
+                'en' => ['Annual returns window open', 'The window for the annual indicator returns is open. Representatives can file their return from the Submissions page, save it as a draft and submit it when every figure has a source.'],
+                'fr' => ['Ouverture de la période des déclarations annuelles', "La période de dépôt des déclarations annuelles d'indicateurs est ouverte. Les représentants peuvent déposer leur déclaration depuis la page Déclarations, l'enregistrer comme brouillon et la soumettre lorsque chaque chiffre est accompagné de sa source."],
+                'pt' => ['Período das declarações anuais aberto', 'Está aberto o período das declarações anuais de indicadores. Os representantes podem apresentar a sua declaração na página Declarações, guardá-la como rascunho e submetê-la quando cada valor tiver uma fonte.'],
             ],
-            'demonstration-notice-workshop-papers' => [
+            'workshop-papers-in-folders' => [
                 'committee' => null, 'days' => 5,
-                'en' => ['Demonstration notice: workshop papers in the document folders', "Demonstration record.\n\nThe papers for the regional workshop are in the document folders. Each member state sees its own folder; committee papers are visible to the members of that committee."],
-                'fr' => ['Avis de démonstration : documents de l\'atelier dans les dossiers', "Contenu de démonstration.\n\nLes documents de l'atelier régional se trouvent dans les dossiers de documents. Chaque État membre voit son propre dossier ; les documents d'un comité sont visibles par les membres de ce comité."],
-                'pt' => ['Aviso de demonstração: documentos do seminário nas pastas', "Conteúdo de demonstração.\n\nOs documentos do seminário regional estão nas pastas de documentos. Cada Estado-Membro vê a sua própria pasta; os documentos de um comité são visíveis para os membros desse comité."],
+                'en' => ['Workshop papers in the document folders', 'The papers for the regional workshop are in the document folders. Each member state sees its own folder; committee papers are visible to the members of that committee.'],
+                'fr' => ['Documents de l\'atelier dans les dossiers', "Les documents de l'atelier régional se trouvent dans les dossiers de documents. Chaque État membre voit son propre dossier ; les documents d'un comité sont visibles par les membres de ce comité."],
+                'pt' => ['Documentos do seminário nas pastas', 'Os documentos do seminário regional estão nas pastas de documentos. Cada Estado-Membro vê a sua própria pasta; os documentos de um comité são visíveis para os membros desse comité.'],
             ],
-            'demonstration-notice-spectrum-committee' => [
+            'spectrum-committee-working-papers' => [
                 'committee' => Committee::where('slug', 'spectrum-and-frequency-management')->value('id'), 'days' => 1,
-                'en' => ['Demonstration notice: spectrum committee working papers', "Demonstration record.\n\nThe working papers for the next session of the Spectrum and Frequency Management Committee are in the committee's folder."],
-                'fr' => ['Avis de démonstration : documents de travail du comité du spectre', "Contenu de démonstration.\n\nLes documents de travail de la prochaine session du Comité de gestion du spectre et des fréquences se trouvent dans le dossier du comité."],
-                'pt' => ['Aviso de demonstração: documentos de trabalho do comité do espetro', "Conteúdo de demonstração.\n\nOs documentos de trabalho da próxima sessão do Comité de Gestão do Espetro e das Frequências estão na pasta do comité."],
+                'en' => ['Spectrum committee working papers', "The working papers for the next session of the Spectrum and Frequency Management Committee are in the committee's folder."],
+                'fr' => ['Documents de travail du comité du spectre', 'Les documents de travail de la prochaine session du Comité de gestion du spectre et des fréquences se trouvent dans le dossier du comité.'],
+                'pt' => ['Documentos de trabalho do comité do espetro', 'Os documentos de trabalho da próxima sessão do Comité de Gestão do Espetro e das Frequências estão na pasta do comité.'],
             ],
         ];
         foreach ($notices as $slug => $notice) {
@@ -638,11 +644,51 @@ class DemonstrationSeeder extends Seeder
     }
 
     /**
-     * The two sample papers for one folder: title, subtitle, sections.
+     * The two sample papers for one folder, matching what the folder is for.
      *
      * @return array<string, array{0: string, 1: string, 2: list<array{heading: string, paragraphs: list<string>}>}>
      */
-    private function samplePapers(string $scope): array
+    private function papersFor(Folder $folder): array
+    {
+        $year = (int) now()->year;
+
+        if ($folder->country_id !== null) {
+            $country = Country::find($folder->country_id);
+            $scope = (string) $country?->rawName();
+            $common = $this->countryPapers($scope);
+
+            // The cycle folder holds this year's guidance and checklist; the
+            // country's own folder its returns and the market review.
+            if ($folder->parent_id !== null) {
+                return [
+                    'sample-annual-return-guidance' => $common['sample-annual-return-guidance'],
+                    'sample-return-checklist' => $this->returnChecklist($scope, $year),
+                ];
+            }
+
+            return [
+                'sample-validated-returns' => $this->returnsSummary($country),
+                'sample-market-review-summary' => $common['sample-market-review-summary'],
+            ];
+        }
+
+        if ($folder->committee_id !== null) {
+            $committee = (string) Committee::find($folder->committee_id)?->rawName();
+
+            return [
+                'sample-committee-working-paper' => $this->committeeWorkingPaper($committee, $year),
+                'sample-committee-agenda' => $this->committeeAgenda($committee, $year),
+            ];
+        }
+
+        return [
+            'sample-secretariat-note-workshop' => $this->secretariatWorkshopNote($year),
+            'sample-secretariat-note-platform' => $this->secretariatPlatformNote($year),
+        ];
+    }
+
+    /** @return array<string, array{0: string, 1: string, 2: list<array{heading: string, paragraphs: list<string>}>}> */
+    private function countryPapers(string $scope): array
     {
         $year = now()->year;
 
@@ -704,6 +750,238 @@ class DemonstrationSeeder extends Seeder
                         'Members may wish to discuss the sharing of border assignment plans before licensing, the common reporting of quality-of-service measurements, and the timetable for national positions ahead of the next World Radiocommunication Conference.',
                     ]],
                 ],
+            ],
+        ];
+    }
+
+    /** The validated returns of one member state, with the figures as filed. */
+    private function returnsSummary(?Country $country): array
+    {
+        $name = (string) $country?->rawName();
+        $authority = $country?->authorities()->first()?->acronym ?? 'the national regulator';
+        $rows = [];
+        foreach (Submission::withoutGlobalScopes()->where('country_id', $country?->id)->where('status', SubmissionStatus::Validated)->orderBy('period')->get() as $submission) {
+            $lines = [];
+            foreach ($submission->values()->with('indicator')->get() as $value) {
+                $lines[] = $value->indicator?->rawName().': '.rtrim(rtrim(number_format((float) $value->value_numeric, 1, '.', ' '), '0'), '.').'. Source: '.$value->source_note;
+            }
+            $rows[] = ['heading' => 'Return for '.$submission->period.' (validated)', 'paragraphs' => array_merge(
+                ['Filed by '.$authority.' and validated by the Secretariat'.($submission->reviewed_at ? ' on '.$submission->reviewed_at->isoFormat('D MMMM YYYY') : '').'. The figures below are those published in the regional comparator.'],
+                $lines ?: ['No figures were filed for this period.']
+            )];
+        }
+
+        return [
+            "{$name}: validated annual returns",
+            "Figures filed by {$authority} through the CRASA platform",
+            array_merge([
+                ['heading' => '1. About this paper', 'paragraphs' => [
+                    "This paper sets out the annual regulatory returns that {$authority} has filed for {$name} on the CRASA platform and that the Secretariat has validated. Each figure is shown as filed, with its source note. Validated figures are the ones the regional comparator publishes.",
+                    'Definitions follow the indicator definitions on the platform, which are those of the ITU for telecommunications and broadcasting and of the UPU for postal services. Any revision of a published figure is made by filing a corrected return, so that the history of the figure stays visible.',
+                ]],
+            ], $rows ?: [['heading' => 'Returns', 'paragraphs' => ['No return has been validated yet for this member state.']]], [
+                ['heading' => 'How to read these figures', 'paragraphs' => [
+                    'Subscriptions per 100 inhabitants are counts of subscriptions divided by the population and multiplied by 100. They can exceed 100 where people hold more than one subscription, which is common for mobile services, and they say nothing on their own about how many individuals have access.',
+                    'Year-on-year changes reflect the market, but also changes in how operators count active subscriptions, in particular the period of inactivity after which a prepaid account is no longer counted. Where an operator has changed its method, the source note says so, and the change should be read with that in mind.',
+                    'Comparisons with other member states are most reliable for the indicators whose definitions have been applied in the same way for several years. The regional comparator shows, for each figure, the period it refers to and whether it has been validated.',
+                ]],
+                ['heading' => 'The indicators', 'paragraphs' => [
+                    'Fixed-telephone subscriptions per 100 inhabitants: active analogue lines, voice-over-IP subscriptions, fixed wireless local loop subscriptions, ISDN voice-channel equivalents and fixed public payphones, divided by the population and multiplied by 100.',
+                    'Mobile-cellular subscriptions per 100 inhabitants: postpaid subscriptions and prepaid accounts active in the last three months that offer voice communications, excluding data cards, USB modems, M2M and telemetry subscriptions.',
+                    'Fixed-broadband subscriptions per 100 inhabitants: fixed subscriptions to the public Internet at downstream speeds of 256 kbit/s or more, whatever the technology.',
+                    'Active mobile-broadband subscriptions per 100 inhabitants: handset-based and computer-based subscriptions with a recurring fee, or used to reach the Internet in the last three months.',
+                ]],
+                ['heading' => 'How a return is reviewed', 'paragraphs' => [
+                    'The Secretariat checks each submitted figure against its definition, its source note and the previous year. A figure may be accepted as filed, or the return may be sent back with a comment against that figure. Comments stay beside the figure they concern until they are resolved.',
+                    'Once every figure is accepted, the return is validated and its figures are published. The review history, including who filed and who validated the return and when, is kept with the return on the platform.',
+                ]],
+                ['heading' => 'Next steps', 'paragraphs' => [
+                    'The return for the current year is open on the platform. Figures that change materially from the previous year should carry a short explanation in their source note, which shortens the review.',
+                ]],
+            ]),
+        ];
+    }
+
+    private function returnChecklist(string $scope, int $year): array
+    {
+        return [
+            "Annual return {$year}: checklist",
+            "Before submitting, for {$scope}",
+            [
+                ['heading' => '1. Before you start', 'paragraphs' => [
+                    'Confirm who in the regulator holds the representative account, and that the person has signed in to the platform at least once. Gather the operator returns, licensee reports and national statistics the figures will come from, with their dates of extraction.',
+                    'Check that the population estimate you will use matches the reporting year and comes from the national statistics office. If the office has revised its series, use the revised series for both this year and last year.',
+                ]],
+                ['heading' => '2. While filling in the return', 'paragraphs' => [
+                    'Enter each figure with its source note: what it was compiled from, and when. A figure without a source will be returned by the reviewer. The return can be saved as a draft at any point and completed over several sessions.',
+                    'Where a figure differs from last year by more than about ten per cent, add one or two sentences explaining why: a new operator, a change of definition, a data cleaning exercise. The reviewer will otherwise ask.',
+                    'Where a figure is estimated, say how. An estimate with a stated method is more useful to the region than a blank.',
+                ]],
+                ['heading' => '3. Before submitting', 'paragraphs' => [
+                    'Read the return through once on screen. Check the units: subscriptions per 100 inhabitants are not counts, and percentages are not fractions. Check that every figure has a source note.',
+                    'Submit the return. The Secretariat is notified, and the return is locked until it is reviewed. If it is returned, the comments appear beside the figures they concern, and the return reopens for correction.',
+                ]],
+                ['heading' => '4. After validation', 'paragraphs' => [
+                    'Validated figures are published in the regional comparator and on the indicator pages with their source notes. A correction after validation is made by filing a corrected return, not by editing the published figure.',
+                ]],
+                ['heading' => '5. Common reasons a return is sent back', 'paragraphs' => [
+                    'A figure has no source note, or the note names a source without saying when the data was extracted. The reviewer needs both to compare the figure with other years and other member states.',
+                    'A per-100 indicator has been filed as a count, or a count as a per-100 figure. The units are shown beside each field; a mobile subscription figure in the millions is almost always a count entered in the wrong field.',
+                    'A large change from the previous year is not explained. A new operator, a change in how prepaid accounts are counted, or a revised population series are all good explanations, but they need to be stated.',
+                    'The population used does not match the reporting year, or differs from the one used by the national statistics office. Use the office series, and the same series for both years being compared.',
+                    'An estimate is given without its method. Estimates are welcome where no measured figure exists; the method is what makes them usable.',
+                ]],
+                ['heading' => '6. Help', 'paragraphs' => [
+                    'Questions about definitions or sources go to the CRASA Secretariat through the contact form on the platform. The indicator pages on the platform give the full definition of each indicator and the standard it follows.',
+                ]],
+            ],
+        ];
+    }
+
+    private function committeeWorkingPaper(string $committee, int $year): array
+    {
+        return [
+            "{$committee} Committee: working paper",
+            "Regional priorities for {$year} and ".($year + 1),
+            [
+                ['heading' => '1. Purpose', 'paragraphs' => [
+                    "This working paper sets out, for discussion at the next session of the {$committee} Committee, the regional priorities proposed for {$year} and ".($year + 1).'. It summarises the work completed since the last session, the questions on which members are asked to agree a common position, and the deliverables proposed for the coming period.',
+                ]],
+                ['heading' => '1a. Background', 'paragraphs' => [
+                    'Member regulators regulate markets that are increasingly regional: operators hold licences in several member states, services cross borders, and consumers expect the same protections wherever they are. Regional instruments give regulators a common starting point, while national law decides how each one is applied.',
+                    'The committee agreed at its last session to review how the existing regional instrument has been implemented, to identify where national practice has diverged, and to propose revisions where the divergence makes cross-border services harder or leaves consumers with uneven protection.',
+                    'The review has drawn on the annual regulatory returns filed on the CRASA platform, on a survey of national practice, and on written comments from member regulators on the first draft of the revised guidelines.',
+                ]],
+                ['heading' => '2. Work completed since the last session', 'paragraphs' => [
+                    'The draft guidelines circulated after the last session received comments from most member regulators. The comments have been consolidated, and a revised draft reflecting them is annexed to the session papers. Points on which comments diverged are listed in section 3.',
+                    'The survey of national practice agreed at the last session has been completed. Its results, by member state, are available in the committee folder. Most member regulators have adopted the core provisions of the existing regional instrument, with differences mainly in reporting periods and in the treatment of smaller operators.',
+                ]],
+                ['heading' => '3. Questions for the committee', 'paragraphs' => [
+                    'Whether the revised guidelines should set a common reporting period for all member regulators, or allow national periods with a common annual summary.',
+                    'Whether smaller operators should be exempt from some obligations below a threshold, and if so whether the threshold should be set regionally or nationally.',
+                    'How the committee should coordinate with the other standing committees where the subject overlaps, in particular on consumer protection and on spectrum matters.',
+                ]],
+                ['heading' => '4. Proposed deliverables', 'paragraphs' => [
+                    'A final draft of the revised guidelines for adoption at the next Annual General Meeting. A short regional report on national implementation, compiled from the annual returns. A capacity-building session for member regulator staff, subject to funding.',
+                ]],
+                ['heading' => '5. Decision requested', 'paragraphs' => [
+                    'The committee is invited to discuss the questions in section 3, to agree the deliverables in section 4, and to mandate the Secretariat to prepare the final draft accordingly.',
+                ]],
+                ['heading' => 'Annex: summary of comments received', 'paragraphs' => [
+                    'Most comments supported the structure of the revised draft and asked for clearer definitions of the terms used in the reporting obligations, so that figures from different member states can be compared without adjustment.',
+                    'Several member regulators asked for a transition period before any new reporting obligation applies, to allow operators to adapt their systems. A period of twelve months from adoption was the most common proposal.',
+                    'Some comments asked that obligations be proportionate to the size of the operator. Others warned that thresholds can be avoided by structuring a business across several licences. The committee is asked to weigh both concerns (section 3).',
+                    'A few comments raised matters outside the scope of the guidelines, such as taxation of services and spectrum fees. These have been noted and passed to the relevant committees.',
+                ]],
+            ],
+        ];
+    }
+
+    private function committeeAgenda(string $committee, int $year): array
+    {
+        return [
+            "{$committee} Committee: draft agenda",
+            "Next ordinary session, {$year}",
+            [
+                ['heading' => 'Draft agenda', 'paragraphs' => [
+                    '1. Opening and welcome by the chair.',
+                    '2. Adoption of the agenda.',
+                    '3. Adoption of the record of the previous session.',
+                    '4. Matters arising from the record.',
+                    '5. Report of the Secretariat on work completed since the previous session.',
+                    '6. Working paper: regional priorities for the coming period (for discussion and decision).',
+                    '7. Reports from member regulators on national developments (short oral updates).',
+                    '8. Coordination with the other standing committees.',
+                    '9. Work programme and deliverables for the coming period.',
+                    '10. Date and venue of the next session.',
+                    '11. Any other business.',
+                    '12. Closing.',
+                ]],
+                ['heading' => 'Annotations', 'paragraphs' => [
+                    'Item 3. The record of the previous session was circulated after that session. Members who have corrections are asked to send them to the Secretariat before the session so that the record can be adopted without discussion.',
+                    'Item 5. The Secretariat will report on the review of national implementation, the survey of national practice, and the consolidation of comments on the draft guidelines. The written report is in the committee folder.',
+                    'Item 6. The working paper sets out the questions on which the committee is asked to agree a common position. The chair will take the questions in the order of the paper and invite a decision on each.',
+                    'Item 7. Each member regulator is invited to give a short update, of no more than five minutes, on national developments relevant to the committee. Written updates may be sent to the Secretariat for the record instead.',
+                    'Item 8. The chairs of the other standing committees have been invited to identify subjects on which joint work would avoid duplication. Their replies will be summarised at the session.',
+                    'Item 9. The work programme will be updated to reflect the decisions taken under item 6 and submitted to the Executive Committee.',
+                ]],
+                ['heading' => 'Practical arrangements', 'paragraphs' => [
+                    'The session papers are in the committee folder on the CRASA platform, which is open to the members of the committee. Members are asked to send any comments on the working paper to the Secretariat at least one week before the session, so that they can be consolidated.',
+                    'Members who will attend in person are asked to register for the meeting on the platform. Remote participation will be available; the connection details will be sent to registered participants.',
+                ]],
+                ['heading' => 'Documents for the session', 'paragraphs' => [
+                    'Working paper on regional priorities. Record of the previous session. Report of the Secretariat. Results of the survey of national practice.',
+                ]],
+            ],
+        ];
+    }
+
+    private function secretariatWorkshopNote(int $year): array
+    {
+        return [
+            'Secretariat note: regional workshop',
+            "Preparations and logistics, {$year}",
+            [
+                ['heading' => '1. Purpose', 'paragraphs' => [
+                    'This note records the preparations for the regional workshop and the decisions still needed from the Executive Committee. It is for the Secretariat and the Executive Committee only.',
+                ]],
+                ['heading' => '2. Programme', 'paragraphs' => [
+                    'The draft programme runs over three days: an opening session with the heads of member regulators; two days of technical sessions organised by the standing committees; and a closing session adopting the workshop conclusions. Each committee has been asked to confirm its session leads and speakers.',
+                    'A demonstration of the CRASA platform is scheduled on the first day, covering the public site, the members area, the annual return and the regional comparator. Each member regulator is asked to confirm who holds its representative account before the workshop.',
+                ]],
+                ['heading' => '3. Participation', 'paragraphs' => [
+                    'Delegates register for the workshop on the platform. Registrations are confirmed by the Secretariat, and a confirmation is shown on the meeting page. The Secretariat follows up with member regulators that have not registered a delegate two weeks before the opening.',
+                    'Delegates will share the venue connection. The platform has been checked for a room of delegates signing in from one address at the same time.',
+                ]],
+                ['heading' => '4. Decisions needed', 'paragraphs' => [
+                    'Confirmation of the venue and dates. Approval of the draft programme. Confirmation of the budget for interpretation into French and Portuguese.',
+                ]],
+                ['heading' => '5. Budget and logistics', 'paragraphs' => [
+                    'The main costs are the venue, interpretation into French and Portuguese, and travel support for delegates from member regulators that have requested it. Quotations for the venue and interpretation have been received and are summarised for the Executive Committee.',
+                    'The host regulator has offered support with local transport and with the reception on the first evening. The Secretariat will confirm the arrangements in writing once the dates are fixed.',
+                    'Session papers will be published in the committee folders on the platform rather than printed, with a limited number of printed copies available at the venue.',
+                ]],
+                ['heading' => '6. Risks', 'paragraphs' => [
+                    'Late registration by some member regulators, which makes interpretation and room planning harder. Mitigation: reminders at four and two weeks before the opening, and a registration deadline published on the meeting page.',
+                    'Connectivity at the venue for the platform demonstration. Mitigation: a tested connection, a mobile hotspot as fallback, and the demonstration rehearsed in the room on the day before.',
+                ]],
+            ],
+        ];
+    }
+
+    private function secretariatPlatformNote(int $year): array
+    {
+        return [
+            'Secretariat note: the CRASA platform',
+            "Status and next steps, {$year}",
+            [
+                ['heading' => '1. Status', 'paragraphs' => [
+                    'The platform is in its pilot phase. The public site, the members area, the annual return, the committee workspaces and the regional comparator are in place and have been tested with test accounts.',
+                ]],
+                ['heading' => '2. Before go-live', 'paragraphs' => [
+                    'Representative accounts for each member regulator, created by the Secretariat and enrolled by their holders. Two-factor sign-in for administrators. Delivery of platform email (password resets, notifications and enquiries) through an email service. Review of the French and Portuguese translations by native speakers. Removal of the test content.',
+                ]],
+                ['heading' => '3. Roles', 'paragraphs' => [
+                    'Administrators manage accounts and settings. Editors maintain the public content. Member state representatives file their returns and contributions. Committee members read and contribute to their committee workspace. Viewers read the members area without filing anything.',
+                ]],
+                ['heading' => '4. Support', 'paragraphs' => [
+                    'Questions from member regulators about access or use of the platform are received through the contact form and answered by the Secretariat, with the platform administrator where needed.',
+                ]],
+                ['heading' => '5. Security and data', 'paragraphs' => [
+                    'Access to the members area depends on the role of each account and, for representatives, on their member state: a regulator sees its own returns and folders, and the papers of the committees it sits on. Confidential and Secretariat papers are visible only to those cleared for them.',
+                    'Every sign-in, failed sign-in and change to content is recorded in an audit trail that administrators can read. Repeated failed sign-ins pause the account concerned for thirty minutes.',
+                    'The platform is backed up every night, and the backups are encrypted so that only the platform owner can read them.',
+                ]],
+                ['heading' => '6. Training', 'paragraphs' => [
+                    'A short guided session for representatives is proposed at the regional workshop, covering signing in, the annual return, the folders and the committee workspaces. A written guide in English, French and Portuguese will be published on the platform.',
+                    'Editors at the Secretariat will receive a separate session on the public content, the translations and the publication of news and documents.',
+                ]],
+                ['heading' => '7. Timeline', 'paragraphs' => [
+                    'Pilot phase: the platform is shown to member regulators, and their comments are collected through the Secretariat.',
+                    'Preparation for go-live: representative accounts are created and enrolled, email delivery is configured, the translations are reviewed by native speakers, and two-factor sign-in is switched on for administrators.',
+                    'Go-live: the test content is removed, the first real annual returns are opened, and the public site replaces the previous website.',
+                    'After go-live: a review after the first reporting cycle, covering what representatives found difficult, the quality of the returns, and the changes needed for the second cycle.',
+                ]],
             ],
         ];
     }

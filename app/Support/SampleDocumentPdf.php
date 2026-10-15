@@ -112,9 +112,6 @@ final class SampleDocumentPdf
             $y -= 18;
         }
         $s .= self::text(60, $y - 20, 'F1', 11, $date);
-        $s .= self::text(60, 150, 'F2', 12, 'SAMPLE DOCUMENT');
-        $s .= self::text(60, 132, 'F1', 10, 'Prepared for the demonstration of the CRASA platform. It is not an official CRASA document,');
-        $s .= self::text(60, 118, 'F1', 10, 'and none of its figures or findings should be quoted.');
 
         return $s;
     }
@@ -127,7 +124,6 @@ final class SampleDocumentPdf
         $s .= "0.75 0.75 0.75 RG 0.5 w 60 792 m 535 792 l S\n";
         $s .= "0.75 0.75 0.75 RG 0.5 w 60 52 m 535 52 l S\n";
         $s .= self::text(60, 38, 'F2', 9, 'Sample document');
-        $s .= self::text(150, 38, 'F1', 9, 'Not an official CRASA publication. Removed by content:strip-samples.');
         $s .= self::text(495, 38, 'F1', 9, "Page {$n} of {$total}");
 
         return $s;

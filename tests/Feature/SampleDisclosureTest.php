@@ -164,13 +164,13 @@ class SampleDisclosureTest extends TestCase
         $this->assertStringNotContainsString('data-dismissable="samples"', $html);
     }
 
-    public function test_an_export_still_carries_the_notice_in_writing(): void
+    public function test_no_export_carries_a_demonstration_notice(): void
     {
-        // Kept deliberately. An export leaves the platform and can reach a
-        // ministerial brief; the ruling was about pages.
-        $service = file_get_contents(base_path('app/Services/ComparisonExport.php'));
-
-        $this->assertStringContainsString('comparator.sample_notice_short', $service);
+        // Owner's instruction, 15 October 2026: no demonstration notice
+        // anywhere a reader can see it, exports included. The flags stay.
+        foreach (['app/Services/ComparisonExport.php', 'app/Services/ReportDocument.php'] as $file) {
+            $this->assertStringNotContainsString('comparator.sample_notice_short', file_get_contents(base_path($file)), $file);
+        }
     }
 
     public function test_the_presenter_is_told_to_say_it_once(): void

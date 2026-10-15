@@ -10,6 +10,7 @@ use App\Models\NewsItem;
 use App\Models\Page;
 use App\Models\Publication;
 use App\Models\Sector;
+use App\Models\User;
 use App\Support\HeroPanel;
 use App\Support\Locales;
 use Database\Seeders\IndicatorSeeder;
@@ -372,8 +373,10 @@ class HomepageTest extends TestCase
 
         $this->assertStringContainsString('No publications match this filter', $html);
         $this->assertStringContainsString('No updates yet', $html);
-        // Indicators arrive with the completeness dashboard.
-        $this->assertStringContainsString('Nothing selected yet', $html);
+        // Editor guidance ("Nothing selected yet") is for the back office only (15 October 2026).
+        $this->assertStringNotContainsString('Nothing selected yet', $html);
+        $this->actingAs(User::factory()->editor()->create());
+        $this->assertStringContainsString('Nothing selected yet', $this->get('/en')->getContent());
     }
 
     /* Layout at 375px ------------------------------------------------------ */

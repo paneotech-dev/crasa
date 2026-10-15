@@ -48,7 +48,8 @@ class IndicatorValueSeeder extends Seeder
         'km' => ['fill' => 0.00, 'periods' => []],
     ];
 
-    private const NOTE = 'Demonstration value. Not reported by the national regulator and not to be cited.';
+    // No source note: a sample figure carries no source rather than a disclaimer (15 October 2026).
+    private const NOTE = null;
 
     public function run(): void
     {

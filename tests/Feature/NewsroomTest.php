@@ -49,12 +49,12 @@ class NewsroomTest extends TestCase
         $this->get('/pt/newsroom')->assertSee('Comité de Gestão do Espectro');
     }
 
-    public function test_every_sample_article_says_it_is_demonstration_content(): void
+    public function test_no_sample_article_carries_a_disclaimer(): void
     {
-        $html = $this->get('/en/newsroom/spectrum-committee-ninth-meeting')->getContent();
+        $html = $this->get('/en/newsroom/spectrum-committee-ninth-meeting')->assertOk()->getContent();
 
-        $this->assertStringContainsString('demonstration content', $html);
-        $this->assertStringContainsString('should be cited', $html);
+        $this->assertStringNotContainsString('demonstration content', $html);
+        $this->assertStringNotContainsString('should be cited', $html);
     }
 
     /* Filtering ------------------------------------------------------------- */

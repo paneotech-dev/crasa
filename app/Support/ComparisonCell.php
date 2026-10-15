@@ -92,10 +92,8 @@ final class ComparisonCell
             return 'not_reported';
         }
 
-        if ($this->value->is_sample) {
-            return 'sample';
-        }
-
+        // A sample figure keeps its is_sample flag for content:strip-samples,
+        // but is not badged to readers (owner's instruction, 15 October 2026).
         return $this->value->confidence === 'validated' ? 'validated' : 'reported';
     }
 

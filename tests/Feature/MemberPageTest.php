@@ -145,12 +145,15 @@ class MemberPageTest extends TestCase
      * details as though they were confirmed makes a claim on a national
      * regulator's behalf.
      */
-    public function test_an_unconfirmed_profile_says_so_and_a_confirmed_one_does_not(): void
+    public function test_neither_an_unconfirmed_nor_a_confirmed_profile_carries_a_banner(): void
     {
         $country = Country::where('iso_code', 'bw')->firstOrFail();
         $authority = Authority::factory()->create(['country_id' => $country->id]);
 
-        $this->get('/en/members/bw')->assertOk()->assertSee('not yet been confirmed');
+        // Owner's instruction, 15 October 2026: the confirmation state is kept
+        // (is_sample, confirmed_at) and shown in the back office, not to readers.
+        $this->get('/en/members/bw')->assertOk()->assertDontSee('not yet been confirmed');
+        $this->assertNull($authority->fresh()->confirmed_at);
 
         $authority->update([
             'is_sample' => false,

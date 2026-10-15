@@ -134,12 +134,14 @@ class CompletenessTest extends TestCase
         $this->assertSame(IndicatorValue::count(), IndicatorValue::sample()->count());
     }
 
-    public function test_every_seeded_value_says_it_is_not_a_return(): void
+    public function test_every_seeded_value_is_flagged_and_carries_no_disclaimer(): void
     {
         $this->seed(IndicatorValueSeeder::class);
 
+        // Flagged for content:strip-samples, never labelled for readers (15 October 2026).
         foreach (IndicatorValue::limit(20)->get() as $value) {
-            $this->assertStringContainsString('Demonstration', $value->source_note);
+            $this->assertTrue($value->is_sample);
+            $this->assertStringNotContainsString('Demonstration', (string) $value->source_note);
         }
     }
 

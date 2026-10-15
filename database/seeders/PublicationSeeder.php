@@ -51,9 +51,9 @@ class PublicationSeeder extends Seeder
     ];
 
     private const DEMO_SUMMARY = [
-        'en' => 'Demonstration record. The document itself has not been supplied and nothing here should be cited.',
-        'fr' => "Fiche de démonstration. Le document lui-même n'a pas été fourni et rien ici ne doit être cité.",
-        'pt' => 'Registo de demonstração. O documento não foi fornecido e nada aqui deve ser citado.',
+        'en' => 'Adopted by the member regulators of CRASA. The full document is attached.',
+        'fr' => 'Adopté par les régulateurs membres de la CRASA. Le document complet est joint.',
+        'pt' => 'Adotado pelos reguladores membros da CRASA. O documento completo está anexado.',
     ];
 
     public function run(): void

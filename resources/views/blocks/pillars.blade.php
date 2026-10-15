@@ -23,6 +23,7 @@
 
         @if ($items->isEmpty())
             @include('blocks._empty', [
+                'editorOnly' => true,
                 'title' => __('blocks.pillars_empty_title'),
                 'body' => __('blocks.pillars_empty_body'),
             ])

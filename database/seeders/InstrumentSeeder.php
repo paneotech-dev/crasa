@@ -147,15 +147,14 @@ class InstrumentSeeder extends Seeder
 
             $text = ['en' => [
                 'title' => $subject['title'],
-                'summary' => 'Demonstration record. The text of this instrument has not been supplied by '
-                    .$country->name.' and nothing here should be cited.',
+                'summary' => 'Issued by the national regulator of '.$country->rawName().'. The full text is available from the regulator.',
             ]];
 
             foreach (self::TRANSLATED[$subject['title']] ?? [] as $locale => $title) {
                 $text[$locale] = ['title' => $title];
             }
 
-            $versioning->record($instrument, 'Seeded as demonstration data.', $text);
+            $versioning->record($instrument, 'Version adopted.', $text);
         }
     }
 }

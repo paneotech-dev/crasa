@@ -25,6 +25,7 @@
 
         @if ($items->isEmpty())
             @include('blocks._empty', [
+                'editorOnly' => true,
                 'title' => __('blocks.figures_empty_title'),
                 'body' => __('blocks.figures_empty_body'),
             ])
