@@ -78,7 +78,7 @@ class IndicatorValueSeeder extends Seeder
                             'period' => $period,
                         ],
                         [
-                            'value_numeric' => $this->plausibleValue($indicator, $index, $iso),
+                            'value_numeric' => self::figureFor($indicator->slug, $iso, (string) $period) ?? $this->plausibleValue($indicator, $index, $iso),
                             'source_note' => self::NOTE,
                             'confidence' => $index % 5 === 0 ? 'estimated' : 'reported',
                             'is_sample' => true,
@@ -90,27 +90,49 @@ class IndicatorValueSeeder extends Seeder
     }
 
     /**
-     * A figure of the right order of magnitude for its unit, so a column of
-     * them reads correctly. Not a claim about any member state.
+     * Plausible regional ranges, per indicator (15 October 2026). The earlier
+     * ranges were per unit, so a fixed-telephone figure could read 131 per
+     * 100 inhabitants and letters could be fewer than parcels: a regulator
+     * looking at their own page would not believe it. Not a claim about any
+     * member state; is_sample stays set.
      *
-     * The seed mixes the indicator and the country, because varying by
-     * indicator alone gave every member state the same figure and a
-     * comparison of four identical numbers demonstrates nothing.
+     * @var array<string, array{0: float, 1: float, 2: int}> slug => [low, high, decimals]
      */
+    public const RANGES = [
+        'fixed-telephone-subscriptions' => [0.2, 8.0, 1],
+        'mobile-cellular-subscriptions' => [55.0, 170.0, 1],
+        'fixed-broadband-subscriptions' => [0.1, 5.0, 1],
+        'active-mobile-broadband-subscriptions' => [20.0, 115.0, 1],
+        'international-bandwidth-per-inhabitant' => [3000.0, 60000.0, 0],
+        'population-covered-3g' => [62.0, 99.0, 1],
+        'multichannel-tv-subscriptions' => [2.0, 28.0, 1],
+        'licensed-postal-operators' => [4.0, 60.0, 0],
+        'permanent-post-offices' => [40.0, 1200.0, 0],
+        'letter-post-items-domestic' => [2000000.0, 90000000.0, 0],
+        'postal-parcels-domestic' => [8000.0, 400000.0, 0],
+        'postal-staff-total' => [300.0, 14000.0, 0],
+        'postal-transit-time-standard' => [1.0, 3.0, 0],
+        'postal-items-within-standard' => [60.0, 94.0, 1],
+    ];
+
+    /** The same figure for the same indicator, state and period, every run. */
+    public static function figureFor(string $slug, string $iso, string $period): ?float
+    {
+        if (! isset(self::RANGES[$slug])) {
+            return null;
+        }
+
+        [$low, $high, $decimals] = self::RANGES[$slug];
+        $position = (crc32($slug.'|'.$iso) % 1000) / 1000;
+        // A small movement between years, so a series is not a flat line.
+        $drift = 1 + (((crc32($slug.'|'.$iso.'|'.$period) % 100) - 50) / 1000);
+        $value = min($high, max($low, ($low + $position * ($high - $low)) * $drift));
+
+        return round($value, $decimals);
+    }
+
     private function plausibleValue(Indicator $indicator, int $index, string $iso): float
     {
-        $seed = $index * 31 + (ord($iso[0]) * 7) + ord($iso[1]);
-
-        return match ($indicator->unit) {
-            'percent' => round(45 + (($seed * 7) % 50), 1),
-            'subscriptions_per_100' => round(3 + (($seed * 17) % 150), 1),
-            'bits_per_second_per_inhabitant' => round(1200 + (($seed * 311) % 40000)),
-            'offices' => 120 + (($seed * 37) % 900),
-            'operators' => 3 + (($seed * 3) % 40),
-            'items' => 250000 + (($seed * 91237) % 8000000),
-            'staff' => 400 + (($seed * 53) % 9000),
-            'days' => 1 + ($seed % 3),
-            default => round(10 + (($seed * 13) % 200), 1),
-        };
+        return self::figureFor($indicator->slug, $iso, '0') ?? round(10 + ((crc32($indicator->slug.$iso) % 1000) / 10), 1);
     }
 }

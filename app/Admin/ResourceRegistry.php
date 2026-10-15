@@ -75,14 +75,16 @@ final class ResourceRegistry
                 columns: ['name', 'acronym', 'country', 'established_year'],
                 fields: [
                     Field::text('name', required: true),
-                    Field::text('acronym'),
+                    // Required: the column is NOT NULL, so an empty acronym was a 500
+                    // rather than a message (found by the live audit, 15 October 2026).
+                    Field::text('acronym', required: true),
                     Field::belongsTo('country_id', 'country', required: true),
                     Field::url('website'),
                     Field::number('established_year'),
                 ],
                 rules: [
                     'name' => ['required', 'string', 'max:200'],
-                    'acronym' => ['nullable', 'string', 'max:20'],
+                    'acronym' => ['required', 'string', 'max:20'],
                     'country_id' => ['required', 'exists:countries,id'],
                     'website' => ['nullable', 'url', 'max:255'],
                     'established_year' => ['nullable', 'integer', 'min:1800', 'max:2100'],
@@ -134,24 +136,32 @@ final class ResourceRegistry
                 model: Indicator::class,
                 columns: ['name', 'category', 'unit', 'periodicity'],
                 fields: [
+                    // Every NOT NULL column is a required field with the values the
+                    // column accepts. Category and data type were missing, and
+                    // periodicity offered "monthly", which the column rejects: no
+                    // indicator could be created (live audit, 15 October 2026).
                     Field::text('name', required: true),
-                    Field::textarea('definition'),
-                    Field::text('unit'),
-                    Field::select('periodicity', ['annual', 'quarterly', 'monthly']),
+                    Field::select('category', ['licensing', 'spectrum', 'interconnection', 'market', 'quality', 'universal_access'], required: true),
+                    Field::select('data_type', ['numeric', 'currency', 'percentage', 'text', 'boolean', 'date'], required: true),
+                    Field::textarea('definition', required: true),
+                    Field::text('unit', required: true),
+                    Field::select('periodicity', ['annual', 'biannual', 'quarterly', 'ad_hoc'], required: true),
                     Field::belongsTo('sector_id', 'sector'),
-                    Field::text('source_standard'),
+                    Field::text('source_standard', required: true),
                     Field::url('source_url'),
                     Field::boolean('is_active'),
                 ],
                 rules: [
                     'name' => ['required', 'string', 'max:200'],
-                    'definition' => ['nullable', 'string', 'max:2000'],
-                    'unit' => ['nullable', 'string', 'max:60'],
-                    'periodicity' => ['nullable', 'in:annual,quarterly,monthly'],
+                    'category' => ['required', 'in:licensing,spectrum,interconnection,market,quality,universal_access'],
+                    'data_type' => ['required', 'in:numeric,currency,percentage,text,boolean,date'],
+                    'definition' => ['required', 'string', 'max:2000'],
+                    'unit' => ['required', 'string', 'max:40'],
+                    'periodicity' => ['required', 'in:annual,biannual,quarterly,ad_hoc'],
                     'sector_id' => ['nullable', 'exists:sectors,id'],
                     // An indicator without a source is a number nobody can
                     // defend in a ministerial brief.
-                    'source_standard' => ['nullable', 'string', 'max:200'],
+                    'source_standard' => ['required', 'string', 'max:200'],
                     'source_url' => ['nullable', 'url', 'max:255'],
                     'is_active' => ['nullable', 'boolean'],
                 ],
@@ -181,8 +191,10 @@ final class ResourceRegistry
                     'reference_number' => ['required', 'string', 'max:120'],
                     'country_id' => ['required', 'exists:countries,id'],
                     'sector_id' => ['required', 'exists:sectors,id'],
-                    'instrument_type' => ['required', 'string', 'max:60'],
-                    'status' => ['required', 'string', 'max:40'],
+                    // The enum's own values: "string, max 60" let any other value through to
+                    // the model's enum cast, which answered 500 (live audit, 15 October 2026).
+                    'instrument_type' => ['required', 'in:'.implode(',', array_column(InstrumentType::cases(), 'value'))],
+                    'status' => ['required', 'in:'.implode(',', array_column(InstrumentStatus::cases(), 'value'))],
                     'enacted_on' => ['nullable', 'date'],
                     'effective_from' => ['nullable', 'date'],
                 ],
@@ -258,7 +270,7 @@ final class ResourceRegistry
                     }),
                 ],
                 rules: [
-                    'publication_type' => ['required', 'string', 'max:60'],
+                    'publication_type' => ['required', 'in:'.implode(',', array_column(PublicationType::cases(), 'value'))],
                     'sector_id' => ['nullable', 'exists:sectors,id'],
                     'committee_id' => ['nullable', 'exists:committees,id'],
                     'country_id' => ['nullable', 'exists:countries,id'],
@@ -295,7 +307,7 @@ final class ResourceRegistry
                     Field::text('author_name'),
                 ],
                 rules: [
-                    'category' => ['required', 'string', 'max:60'],
+                    'category' => ['required', 'in:'.implode(',', array_column(NewsCategory::cases(), 'value'))],
                     'sector_id' => ['nullable', 'exists:sectors,id'],
                     'status' => ['required', 'in:draft,published'],
                     'published_at' => ['nullable', 'date'],
