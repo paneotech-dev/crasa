@@ -61,7 +61,16 @@ class DocumentController extends Controller
             );
         }
 
-        $document->increment('download_count');
+        // A read is a read (19 October 2026). Incrementing through the model
+        // fired its "updated" event, so every download, by anybody, wrote an
+        // "updated Document" row to the append-only audit log and moved the
+        // document's updated_at. The counter is bumped in the database
+        // directly: no model event, no timestamp. A download of a restricted
+        // document is still recorded above, as what it is.
+        Document::withoutGlobalScopes()
+            ->whereKey($document->getKey())
+            ->toBase()
+            ->increment('download_count');
 
         return Storage::disk('local')->response(
             $document->file_path,

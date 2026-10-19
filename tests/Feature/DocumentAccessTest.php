@@ -196,6 +196,43 @@ class DocumentAccessTest extends TestCase
         $this->assertSame(0, AuditLog::where('action', AuditLog::DOCUMENT_DOWNLOADED)->count());
     }
 
+    public function test_reading_a_public_document_writes_nothing_to_the_audit_log_or_the_record(): void
+    {
+        $document = $this->documentFor($this->namibia, Clearance::Public);
+        $updatedAt = $document->fresh()->updated_at;
+        $before = AuditLog::count();
+
+        $this->travel(5)->minutes();
+
+        // Anonymous, then signed in; download, then open in the browser.
+        $this->get($this->url($document).'/download')->assertOk();
+        $this->get($this->url($document))->assertOk();
+        $this->actingAs(User::factory()->viewer()->create())->get($this->url($document).'/download')->assertOk();
+
+        $this->assertSame(0, AuditLog::where('action', AuditLog::UPDATED)
+            ->where('auditable_type', $document->getMorphClass())->count(), 'A download wrote an "updated Document" row.');
+        $this->assertSame($before + 1, AuditLog::count(), 'Only the viewer\'s account creation may have been audited.');
+
+        $fresh = $document->fresh();
+        $this->assertSame(3, $fresh->download_count);
+        $this->assertTrue($fresh->updated_at->equalTo($updatedAt), 'A download moved the document\'s updated_at.');
+    }
+
+    public function test_a_restricted_download_writes_one_row_and_it_says_downloaded(): void
+    {
+        $document = $this->documentFor($this->namibia, Clearance::Member);
+        $rep = User::factory()->memberStateRep($this->namibia)->create();
+        $lastId = (int) AuditLog::max('id');
+
+        $this->actingAs($rep)->get($this->url($document).'/download')->assertOk();
+
+        $this->assertSame(
+            [AuditLog::DOCUMENT_DOWNLOADED],
+            AuditLog::where('id', '>', $lastId)->orderBy('id')->pluck('action')->all(),
+        );
+        $this->assertSame(1, $document->fresh()->download_count);
+    }
+
     public function test_a_refused_request_streams_nothing_and_writes_no_audit_row(): void
     {
         $document = $this->documentFor($this->zambia, Clearance::Member);
