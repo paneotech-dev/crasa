@@ -6,11 +6,13 @@ use App\Models\AuthorityChange;
 use App\Models\Committee;
 use App\Models\Sector;
 use App\Services\AuthorityProfile;
+use App\Support\SafeImage;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 /**
  * A member state maintaining its own authority record. Extranet item 3.
@@ -74,7 +76,9 @@ class AuthorityProfileController extends Controller
             'sectors.*' => ['integer', 'exists:sectors,id'],
             'committees' => ['array'],
             'committees.*' => ['integer', 'exists:committees,id'],
-            'logo' => ['nullable', 'image', 'max:2048', 'mimes:png,jpg,svg'],
+            // The type is judged from the content in logo(), never the name:
+            // see SafeImage.
+            'logo' => ['nullable', 'file', 'max:2048'],
         ]);
 
         $payload = [
@@ -95,9 +99,13 @@ class AuthorityProfileController extends Controller
     /**
      * The regulator's own mark.
      *
-     * Stored under the member state's ISO code so a second upload replaces
-     * rather than accumulates, and on the public disk because a logo on the
-     * members page is public by definition.
+     * Public by definition, so it is on the public disk; but its name and
+     * extension are chosen here, from the file's content, never from what
+     * the uploader typed (19 October 2026: a JPEG named logo.html used to be
+     * stored and served as bw.html). A random part in the name means a
+     * proposal never overwrites the logo readers see before the Secretariat
+     * approves it. nginx serves /storage with a strict content security
+     * policy and image types only.
      */
     private function logo(Request $request, string $iso): ?string
     {
@@ -105,10 +113,15 @@ class AuthorityProfileController extends Controller
             return null;
         }
 
-        $file = $request->file('logo');
-        $path = 'images/authorities/'.Str::lower($iso).'.'.Str::lower($file->getClientOriginalExtension());
+        $extension = SafeImage::extensionFor($request->file('logo'));
 
-        Storage::disk('public')->put($path, file_get_contents($file->getRealPath()));
+        if ($extension === null) {
+            throw ValidationException::withMessages(['logo' => __('authority.logo_refused')]);
+        }
+
+        $path = 'images/authorities/'.Str::lower($iso).'-'.Str::lower(Str::random(12)).'.'.$extension;
+
+        Storage::disk('public')->put($path, file_get_contents($request->file('logo')->getRealPath()));
 
         return $path;
     }

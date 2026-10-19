@@ -190,15 +190,93 @@ class AuthorityProfileTest extends TestCase
         $this->assertSame([$postal->id], $authority->sectors->pluck('id')->all());
     }
 
-    public function test_a_logo_is_stored_on_the_public_disk_under_the_iso_code(): void
+    public function test_a_logo_is_stored_under_a_name_the_server_chooses(): void
     {
         $this->actingAs($this->botswanaRep)
             ->put('/en/authority', $this->payload([
                 'logo' => UploadedFile::fake()->image('bocra.png', 200, 200),
             ]))
-            ->assertRedirect();
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
 
-        Storage::disk('public')->assertExists('images/authorities/bw.png');
+        $path = AuthorityChange::sole()->payload['logo_path'];
+
+        $this->assertMatchesRegularExpression('~^images/authorities/bw-[a-z0-9]{12}\.png$~', $path);
+        Storage::disk('public')->assertExists($path);
+    }
+
+    /* Logo uploads are judged by their content (19 October 2026) ------------ */
+
+    private function uploadLogo(UploadedFile $file)
+    {
+        return $this->actingAs($this->botswanaRep)
+            ->from('/en/authority')
+            ->put('/en/authority', $this->payload(['logo' => $file]));
+    }
+
+    /** @return list<string> */
+    private function storedLogos(): array
+    {
+        return Storage::disk('public')->files('images/authorities');
+    }
+
+    public function test_an_html_file_is_refused_as_a_logo(): void
+    {
+        $html = UploadedFile::fake()->createWithContent('logo.html', '<html><body><script>alert(document.cookie)</script></body></html>');
+
+        $this->uploadLogo($html)->assertSessionHasErrors('logo');
+
+        $this->assertSame([], $this->storedLogos());
+        $this->assertSame(0, AuthorityChange::count());
+    }
+
+    public function test_an_html_file_named_like_an_image_is_refused(): void
+    {
+        $html = UploadedFile::fake()->createWithContent('logo.png', '<!doctype html><html><script>alert(1)</script></html>');
+
+        $this->uploadLogo($html)->assertSessionHasErrors('logo');
+        $this->assertSame([], $this->storedLogos());
+    }
+
+    public function test_an_svg_containing_a_script_is_refused(): void
+    {
+        $svgs = [
+            '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script><circle r="4"/></svg>',
+            '<svg xmlns="http://www.w3.org/2000/svg" onload="alert(1)"><circle r="4"/></svg>',
+            '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><a xlink:href="javascript:alert(1)"><circle r="4"/></a></svg>',
+            '<svg xmlns="http://www.w3.org/2000/svg"><foreignObject><div xmlns="http://www.w3.org/1999/xhtml">x</div></foreignObject></svg>',
+            '<?xml version="1.0"?><!DOCTYPE svg [<!ENTITY x SYSTEM "file:///etc/passwd">]><svg xmlns="http://www.w3.org/2000/svg"><text>&x;</text></svg>',
+        ];
+
+        foreach ($svgs as $i => $svg) {
+            $this->uploadLogo(UploadedFile::fake()->createWithContent("logo{$i}.svg", $svg))
+                ->assertSessionHasErrors('logo');
+        }
+
+        $this->assertSame([], $this->storedLogos());
+    }
+
+    public function test_a_plain_svg_drawing_is_accepted(): void
+    {
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><title>BOCRA</title><circle cx="5" cy="5" r="4" fill="#003366"/></svg>';
+
+        $this->uploadLogo(UploadedFile::fake()->createWithContent('bocra.svg', $svg))->assertSessionHasNoErrors();
+
+        $this->assertMatchesRegularExpression('~^images/authorities/bw-[a-z0-9]{12}\.svg$~', AuthorityChange::sole()->payload['logo_path']);
+    }
+
+    public function test_a_real_image_with_a_misleading_name_is_stored_under_its_true_type(): void
+    {
+        // A genuine JPEG named logo.html: accepted, because it is an image,
+        // but stored as .jpg, so it can never be served as a page.
+        $jpeg = UploadedFile::fake()->image('ignored.jpg', 50, 50);
+        $file = UploadedFile::fake()->createWithContent('logo.html', (string) file_get_contents($jpeg->getRealPath()));
+
+        $this->uploadLogo($file)->assertSessionHasNoErrors();
+
+        $path = AuthorityChange::sole()->payload['logo_path'];
+        $this->assertStringEndsWith('.jpg', $path);
+        $this->assertStringNotContainsString('html', $path);
     }
 
     /* The boundary ---------------------------------------------------------- */

@@ -78,7 +78,7 @@
                 @if ($values['logo_path'] ?? null)
                     <img class="a-media" alt="" width="120" src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($values['logo_path']) }}">
                 @endif
-                <input class="a-input" type="file" id="logo" name="logo" accept="image/png,image/jpeg,image/svg+xml">
+                <input class="a-input" type="file" id="logo" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">
                 <p class="a-hint">{{ __('authority.logo_hint') }}</p>
                 @error('logo')<p class="a-hint" role="alert">{{ $message }}</p>@enderror
             </div>
