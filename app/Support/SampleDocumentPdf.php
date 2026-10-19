@@ -66,6 +66,21 @@ final class SampleDocumentPdf
         return $bytes === null || $bytes === '' || (strlen($bytes) < 2048 && str_contains($bytes, 'Demonstration document:'));
     }
 
+    /**
+     * A sample file that must be written again: a placeholder, or a paper
+     * from the 14 October generator, whose title page carried a "SAMPLE
+     * DOCUMENT ... Prepared for the demonstration of the CRASA platform"
+     * banner. That banner was removed from the generator on 15 October, but
+     * the files already written kept it, and ten of them were downloadable
+     * from the public library, two from links on the home page.
+     */
+    public static function isOutdated(?string $bytes): bool
+    {
+        return self::isPlaceholder($bytes)
+            || str_contains((string) $bytes, '(SAMPLE DOCUMENT)')
+            || str_contains((string) $bytes, 'Prepared for the demonstration of the CRASA platform');
+    }
+
     /** A sample for a demonstration publication, from its title, type and year. */
     public static function forPublication(string $title, string $type, int $year): string
     {

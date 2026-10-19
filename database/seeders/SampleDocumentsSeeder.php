@@ -10,11 +10,13 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * Replace the one-line placeholder PDFs of sample publications with
- * multi-page sample documents, and nothing else (14 October 2026).
+ * multi-page sample documents, and nothing else (14 October 2026). Since
+ * 19 October it also replaces the 14 October papers whose title page still
+ * carries the "SAMPLE DOCUMENT" banner (SampleDocumentPdf::isOutdated).
  *
  * Safe to run on a live site: it touches only documents flagged is_sample
- * whose file is still a placeholder, rewrites the file, and clears the
- * thumbnail so `php artisan documents:thumbnails` draws it again.
+ * whose file is outdated, rewrites the file, and clears the thumbnail so
+ * `php artisan documents:thumbnails --sync` draws it again.
  *
  *   php artisan db:seed --class=SampleDocumentsSeeder --force
  */
@@ -27,7 +29,7 @@ class SampleDocumentsSeeder extends Seeder
         foreach (Document::withoutGlobalScopes()->where('is_sample', true)->where('documentable_type', Publication::class)->get() as $document) {
             $disk = Storage::disk('local');
             $bytes = $disk->exists($document->file_path) ? $disk->get($document->file_path) : null;
-            if (! SampleDocumentPdf::isPlaceholder($bytes)) {
+            if (! SampleDocumentPdf::isOutdated($bytes)) {
                 continue;
             }
 

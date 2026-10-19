@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Document;
+use App\Support\SampleDocumentPdf;
 use Database\Seeders\PublicationSeeder;
 use Database\Seeders\ReferenceDataSeeder;
 use Database\Seeders\SampleDocumentsSeeder;
@@ -85,5 +86,38 @@ class DemonstrationDocumentTest extends TestCase
         $this->assertStringContainsString('Sample document', Storage::disk('local')->get($old->file_path));
         $this->assertNull($old->fresh()->thumbnail_path);
         $this->assertSame($before, Storage::disk('local')->get($kept->file_path));
+    }
+
+    public function test_the_repair_seeder_replaces_a_paper_that_still_carries_the_old_banner(): void
+    {
+        Storage::fake('local');
+        $this->seed(ReferenceDataSeeder::class);
+        $this->seed(PublicationSeeder::class);
+
+        $documents = Document::withoutGlobalScopes()->where('is_sample', true)->get();
+        [$old, $kept] = [$documents[0], $documents[1]];
+
+        // What the 14 October generator wrote on the title page.
+        Storage::disk('local')->put($old->file_path, "%PDF-1.4\n".str_repeat('x', 4000)
+            ."\nBT (SAMPLE DOCUMENT) Tj ET\nBT (Prepared for the demonstration of the CRASA platform. It is not an official CRASA document,) Tj ET\n");
+        $old->forceFill(['thumbnail_path' => 'thumbnails/old.jpg'])->save();
+        $before = Storage::disk('local')->get($kept->file_path);
+
+        $this->seed(SampleDocumentsSeeder::class);
+
+        $replaced = Storage::disk('local')->get($old->file_path);
+        $this->assertStringNotContainsString('SAMPLE DOCUMENT', $replaced);
+        $this->assertStringNotContainsString('Prepared for the demonstration', $replaced);
+        $this->assertNull($old->fresh()->thumbnail_path, 'The old thumbnail shows the banner and must be drawn again.');
+        $this->assertSame($before, Storage::disk('local')->get($kept->file_path));
+    }
+
+    public function test_the_current_generator_writes_no_banner(): void
+    {
+        $pdf = SampleDocumentPdf::forPublication('AGM communique 2025', 'communique', 2025);
+
+        $this->assertStringNotContainsString('SAMPLE DOCUMENT', $pdf);
+        $this->assertStringNotContainsString('Prepared for the demonstration', $pdf);
+        $this->assertFalse(SampleDocumentPdf::isOutdated($pdf));
     }
 }

@@ -125,7 +125,7 @@ class PublicationSeeder extends Seeder
         // A multi-page sample (14 October 2026), written when the file is
         // missing or is still the one-line placeholder of earlier builds.
         $existing = Storage::disk('local')->exists($path) ? Storage::disk('local')->get($path) : null;
-        if (SampleDocumentPdf::isPlaceholder($existing)) {
+        if (SampleDocumentPdf::isOutdated($existing)) {
             Storage::disk('local')->put($path, SampleDocumentPdf::forPublication(
                 (string) $publication->translated('title', $publication->slug, 'en'),
                 $publication->publication_type->value,
