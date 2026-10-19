@@ -21,13 +21,9 @@ enum Role: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::Administrator => 'Administrator',
-            self::Editor => 'Editor',
-            self::MemberStateRep => 'Member State Representative',
-            self::CommitteeMember => 'Committee Member',
-            self::Viewer => 'Viewer',
-        };
+        // In the reader's language: the role appears in invitations, the
+        // users list and flashes, and used to stay English on /fr and /pt.
+        return __('roles.'.$this->value);
     }
 
     /**

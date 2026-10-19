@@ -65,4 +65,22 @@ return [
     'sso_suspended' => 'That account is suspended. Contact the CRASA Secretariat.',
     'show_password' => 'Show password',
     'hide_password' => 'Hide password',
+
+    // Account mails: the invitation and the password reset.
+    'mail_greeting' => 'Hello :name,',
+    'mail_signature' => 'The CRASA Secretariat',
+    'mail_link_fallback' => 'If the button does not open, copy this address into your browser:',
+    'invite_mail_subject' => 'You are invited to the CRASA platform',
+    'invite_mail_body_by' => ':inviter has invited you to the CRASA platform as :role.',
+    'invite_mail_body' => 'You have been invited to the CRASA platform as :role.',
+    'invite_mail_choose' => 'To accept, choose your password. Your account is ready as soon as you have.',
+    'invite_mail_action' => 'Choose your password',
+    'invite_mail_expiry' => '{1} This link works for one day.|[2,*] This link works for :days days.',
+    'invite_mail_ignore' => 'If you were not expecting this invitation, ignore this message and no account will be opened.',
+    'invite_done' => 'Your account is ready. Sign in with the password you have just chosen.',
+    'reset_mail_subject' => 'Reset your CRASA platform password',
+    'reset_mail_body' => 'Someone asked to reset the password of your CRASA platform account.',
+    'reset_mail_action' => 'Choose a new password',
+    'reset_mail_expiry' => 'This link works for :minutes minutes.',
+    'reset_mail_ignore' => 'If you did not ask for this, ignore this message: your password stays as it is.',
 ];

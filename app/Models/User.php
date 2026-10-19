@@ -12,7 +12,10 @@ use App\Enums\UserStatus;
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\MarksSampleData;
 use App\Support\PermissionMatrix;
+use App\Notifications\PasswordResetLink;
+use App\Support\Locales;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -20,7 +23,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use RuntimeException;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasLocalePreference
 {
     /** @use HasFactory<UserFactory> */
     use Auditable, HasFactory, MarksSampleData, Notifiable;
@@ -186,6 +189,21 @@ class User extends Authenticatable
     public function mayUsePlatform(): bool
     {
         return $this->status->mayUsePlatform();
+    }
+
+    /**
+     * Every notification to this person goes out in their own language,
+     * not in the language of whoever triggered it (an administrator in
+     * Portuguese inviting a French reader used to send them Portuguese).
+     */
+    public function preferredLocale(): string
+    {
+        return Locales::isSupported($this->preferred_locale) ? $this->preferred_locale : Locales::FALLBACK;
+    }
+
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        $this->notify(new PasswordResetLink($token));
     }
 
     /** The seat this person holds on a committee, if any. */

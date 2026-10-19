@@ -61,4 +61,22 @@ return [
     'sso_suspended' => 'Ce compte est suspendu. Contactez le Secrétariat de la CRASA.',
     'show_password' => 'Afficher le mot de passe',
     'hide_password' => 'Masquer le mot de passe',
+
+    // Courriels de compte : l'invitation et la réinitialisation.
+    'mail_greeting' => 'Bonjour :name,',
+    'mail_signature' => 'Le Secrétariat de la CRASA',
+    'mail_link_fallback' => "Si le bouton ne s'ouvre pas, copiez cette adresse dans votre navigateur :",
+    'invite_mail_subject' => 'Vous êtes invité sur la plateforme de la CRASA',
+    'invite_mail_body_by' => ':inviter vous invite sur la plateforme de la CRASA en tant que :role.',
+    'invite_mail_body' => 'Vous êtes invité sur la plateforme de la CRASA en tant que :role.',
+    'invite_mail_choose' => "Pour accepter, choisissez votre mot de passe. Votre compte est prêt dès que c'est fait.",
+    'invite_mail_action' => 'Choisir votre mot de passe',
+    'invite_mail_expiry' => '{1} Ce lien est valable un jour.|[2,*] Ce lien est valable :days jours.',
+    'invite_mail_ignore' => "Si vous n'attendiez pas cette invitation, ignorez ce message : aucun compte ne sera ouvert.",
+    'invite_done' => 'Votre compte est prêt. Connectez-vous avec le mot de passe que vous venez de choisir.',
+    'reset_mail_subject' => 'Réinitialiser votre mot de passe de la plateforme de la CRASA',
+    'reset_mail_body' => 'Une réinitialisation du mot de passe de votre compte sur la plateforme de la CRASA a été demandée.',
+    'reset_mail_action' => 'Choisir un nouveau mot de passe',
+    'reset_mail_expiry' => 'Ce lien est valable :minutes minutes.',
+    'reset_mail_ignore' => "Si vous n'êtes pas à l'origine de cette demande, ignorez ce message : votre mot de passe reste inchangé.",
 ];

@@ -53,6 +53,8 @@ class AuditLog extends Model
 
     public const REACTIVATED = 'reactivated';
 
+    public const INVITATION_ACCEPTED = 'invitation_accepted';
+
     protected $table = 'audit_log';
 
     public $timestamps = false;

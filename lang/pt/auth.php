@@ -61,4 +61,22 @@ return [
     'sso_suspended' => 'Essa conta está suspensa. Contacte o Secretariado da CRASA.',
     'show_password' => 'Mostrar a palavra-passe',
     'hide_password' => 'Ocultar a palavra-passe',
+
+    // Mensagens de conta: o convite e a reposição da palavra-passe.
+    'mail_greeting' => 'Olá :name,',
+    'mail_signature' => 'O Secretariado da CRASA',
+    'mail_link_fallback' => 'Se o botão não abrir, copie este endereço para o seu navegador:',
+    'invite_mail_subject' => 'Foi convidado para a plataforma da CRASA',
+    'invite_mail_body_by' => ':inviter convidou-o para a plataforma da CRASA como :role.',
+    'invite_mail_body' => 'Foi convidado para a plataforma da CRASA como :role.',
+    'invite_mail_choose' => 'Para aceitar, escolha a sua palavra-passe. A sua conta fica pronta logo que o fizer.',
+    'invite_mail_action' => 'Escolher a sua palavra-passe',
+    'invite_mail_expiry' => '{1} Esta ligação é válida durante um dia.|[2,*] Esta ligação é válida durante :days dias.',
+    'invite_mail_ignore' => 'Se não esperava este convite, ignore esta mensagem e nenhuma conta será aberta.',
+    'invite_done' => 'A sua conta está pronta. Inicie sessão com a palavra-passe que acabou de escolher.',
+    'reset_mail_subject' => 'Repor a sua palavra-passe da plataforma da CRASA',
+    'reset_mail_body' => 'Foi pedida a reposição da palavra-passe da sua conta na plataforma da CRASA.',
+    'reset_mail_action' => 'Escolher uma nova palavra-passe',
+    'reset_mail_expiry' => 'Esta ligação é válida durante :minutes minutos.',
+    'reset_mail_ignore' => 'Se não fez este pedido, ignore esta mensagem: a sua palavra-passe mantém-se.',
 ];

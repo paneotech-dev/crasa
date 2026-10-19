@@ -10,6 +10,7 @@ use App\Models\AuditLog;
 use App\Models\Authority;
 use App\Models\Country;
 use App\Models\User;
+use App\Notifications\AccountInvitation;
 use App\Support\Locales;
 use App\Support\PermissionMatrix;
 use Illuminate\Http\Request;
@@ -70,7 +71,12 @@ class UserAdminController extends Controller
             'status' => UserStatus::Invited,
         ]);
 
-        Password::sendResetLink(['email' => $user->email]);
+        // An invitation, not a reset: its own wording, the invitee's
+        // language, and the seven-day invitations broker.
+        $user->notify(new AccountInvitation(
+            Password::broker('invitations')->createToken($user),
+            $request->user()->name,
+        ));
 
         AuditLog::record(AuditLog::CREATED, $user, ['invited_as' => $data['role']], $request->user());
 

@@ -23,6 +23,7 @@ return [
     'action_password_changed' => 'Changement d\'un mot de passe',
     'action_password_reset' => 'Réinitialisation d\'un mot de passe',
     'action_suspended' => 'Suspension d\'un compte',
+    'action_invitation_accepted' => "Acceptation d'une invitation",
     'action_reactivated' => 'Réactivation d\'un compte',
     'subject_page' => 'une page',
     'subject_pageblock' => 'un bloc',

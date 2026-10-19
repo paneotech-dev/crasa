@@ -99,6 +99,19 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+
+        /*
+         * Invitations from screen 13. Same table and provider as a reset,
+         * so a reset requested later simply replaces the invitation token;
+         * only the lifetime differs. Seven days, because an invitation
+         * crosses fourteen countries and is rarely opened within the hour.
+         */
+        'invitations' => [
+            'provider' => 'users',
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60 * 24 * 7,
+            'throttle' => 0,
+        ],
     ],
 
     /*

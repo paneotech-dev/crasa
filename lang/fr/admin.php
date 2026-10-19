@@ -4,7 +4,7 @@ return [
     'users_title' => 'Utilisateurs et accès',
     'invite' => 'Inviter un utilisateur',
     'invite_intro' => 'Le titulaire du compte définit lui-même son mot de passe à partir du lien qui lui est envoyé. Un administrateur ne le saisit jamais.',
-    'invite_note' => "Un lien de réinitialisation est envoyé à l'adresse. Le compte reste invité tant qu'il n'est pas utilisé.",
+    'invite_note' => "Une invitation est envoyée à l'adresse, dans la langue choisie ci-dessous. Le compte devient actif lorsque son titulaire choisit un mot de passe ; le lien est valable sept jours.",
     'send_invite' => "Envoyer l'invitation",
     'invited' => 'Une invitation a été envoyée à :email.',
     'secretariat_no_country' => 'Secrétariat, aucun État membre',

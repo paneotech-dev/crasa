@@ -23,6 +23,7 @@ return [
     'action_password_changed' => 'Changed a password',
     'action_password_reset' => 'Reset a password',
     'action_suspended' => 'Suspended an account',
+    'action_invitation_accepted' => "Accepted an invitation",
     'action_reactivated' => 'Reactivated an account',
     'subject_page' => 'a page',
     'subject_pageblock' => 'a block',

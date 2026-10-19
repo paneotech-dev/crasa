@@ -4,7 +4,7 @@ return [
     'users_title' => 'Users and access',
     'invite' => 'Invite a user',
     'invite_intro' => 'The account holder sets their own password from the link they are sent. An administrator never types it.',
-    'invite_note' => 'A reset link is sent to the address. The account stays invited until they use it.',
+    'invite_note' => 'An invitation is sent to the address, in the language chosen below. The account becomes active when its holder chooses a password; the link works for seven days.',
     'send_invite' => 'Send the invitation',
     'invited' => 'An invitation has been sent to :email.',
     'secretariat_no_country' => 'Secretariat, no member state',

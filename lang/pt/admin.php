@@ -4,7 +4,7 @@ return [
     'users_title' => 'Utilizadores e acesso',
     'invite' => 'Convidar um utilizador',
     'invite_intro' => 'O titular da conta define a sua própria palavra-passe a partir do link que recebe. Um administrador nunca a escreve.',
-    'invite_note' => 'É enviado um link de reposição para o endereço. A conta permanece convidada até ser utilizado.',
+    'invite_note' => 'É enviado um convite para o endereço, no idioma escolhido abaixo. A conta fica ativa quando o titular escolher uma palavra-passe; a ligação é válida durante sete dias.',
     'send_invite' => 'Enviar o convite',
     'invited' => 'Foi enviado um convite para :email.',
     'secretariat_no_country' => 'Secretariado, sem Estado membro',
