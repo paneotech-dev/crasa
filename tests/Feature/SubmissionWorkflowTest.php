@@ -383,6 +383,12 @@ class SubmissionWorkflowTest extends TestCase
             // A document, instrument or comment reached the reader's own
             // committee or sector. RP-05's triggers, none of them logistical.
             'RegulatoryActivity',
+            // Account mails, not regulatory content but not logistics either
+            // (19 October 2026): the invitation to the platform and the
+            // password reset link, in the holder's own language. Before, both
+            // were the framework's English reset mail.
+            'AccountInvitation',
+            'PasswordResetLink',
         ];
 
         $classes = array_map(
