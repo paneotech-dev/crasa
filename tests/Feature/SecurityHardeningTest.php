@@ -47,6 +47,29 @@ class SecurityHardeningTest extends TestCase
         }
 
         $this->assertStringContainsString('Options -Indexes', $rules);
+
+        // Images only, and nothing else served at all (as nginx does on the
+        // ai host): a non-image name is a 404, the review folder refused.
+        $this->assertStringContainsString('RewriteCond %{REQUEST_FILENAME} !\\.(?:jpe?g|png|webp|gif|avif|svg)$ [NC]', $rules);
+        $this->assertStringContainsString('RewriteRule ^ - [R=404,L]', $rules);
+        $this->assertStringContainsString('_review-needed/ - [F,L]', $rules);
+        $this->assertStringContainsString("sandbox", $rules);
+    }
+
+    /* Moving hosts: the database clock and logged mail (19 October 2026) ---- */
+
+    public function test_the_database_connection_is_pinned_to_utc(): void
+    {
+        foreach (['mysql', 'mariadb'] as $connection) {
+            $this->assertSame('+00:00', config("database.connections.{$connection}.timezone"));
+        }
+    }
+
+    public function test_logged_mail_is_recorded_whatever_the_log_level(): void
+    {
+        $this->assertSame('mail', config('mail.mailers.log.channel'));
+        $this->assertSame('debug', config('logging.channels.mail.level'));
+        $this->assertStringEndsWith('logs/mail.log', config('logging.channels.mail.path'));
     }
 
     /**

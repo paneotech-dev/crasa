@@ -65,6 +65,21 @@ return [
             'replace_placeholders' => true,
         ],
 
+        /*
+         * Mail written by the "log" mailer (19 October 2026). The log mailer
+         * writes at debug level, and production logs at warning, so every
+         * message was discarded without trace. This channel keeps them, and
+         * keeps them apart from the application log: they contain reset and
+         * invitation links, so storage/logs must stay private.
+         */
+        'mail' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/mail.log'),
+            'level' => 'debug',
+            'days' => 30,
+            'replace_placeholders' => true,
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),

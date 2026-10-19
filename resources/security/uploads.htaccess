@@ -50,7 +50,20 @@ RemoveType .php .phtml .php3 .php4 .php5 .php7 .php8 .phps .pht .phar .cgi .pl .
 Options -Indexes -ExecCGI
 
 # 5. A browser must not be talked into treating an upload as something else.
+#    The same policy nginx sends on the ai host: nothing runs, and an SVG
+#    opened on its own may still use its inline styles.
 <IfModule mod_headers.c>
     Header always set X-Content-Type-Options "nosniff"
-    Header always set Content-Security-Policy "default-src 'none'; img-src 'self'; media-src 'self'; font-src 'self'; style-src 'none'; script-src 'none'; sandbox"
+    Header always set Content-Security-Policy "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox"
+</IfModule>
+
+# 6. Images only (19 October 2026). Everything public under this directory is
+#    an image, so anything else is a 404 whatever its name: a file uploaded as
+#    logo.html can never be served as a page on the site's address. Photographs
+#    held for review are refused outright. Mirrors the nginx /storage block.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^images/crasa-images/_review-needed/ - [F,L]
+    RewriteCond %{REQUEST_FILENAME} !\.(?:jpe?g|png|webp|gif|avif|svg)$ [NC]
+    RewriteRule ^ - [R=404,L]
 </IfModule>

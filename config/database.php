@@ -46,6 +46,10 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
+            // The application runs in UTC. Pin the session so a database
+            // server on local time (HostAfrica is UTC+2) cannot stamp rows two
+            // hours off. Laravel sets it with SET time_zone on connect.
+            'timezone' => env('DB_TIMEZONE', '+00:00'),
             'url' => env('DB_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
@@ -66,6 +70,10 @@ return [
 
         'mariadb' => [
             'driver' => 'mariadb',
+            // The application runs in UTC. Pin the session so a database
+            // server on local time (HostAfrica is UTC+2) cannot stamp rows two
+            // hours off. Laravel sets it with SET time_zone on connect.
+            'timezone' => env('DB_TIMEZONE', '+00:00'),
             'url' => env('DB_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
