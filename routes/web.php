@@ -172,7 +172,7 @@ Route::prefix('{locale}')
         // reach. Loose enough that a delegate who mistypes a date three
         // times is not locked out.
         Route::post('events/{meeting}/register', [DelegateRegistrationController::class, 'store'])
-            ->middleware('throttle:10,60')
+            ->middleware('throttle:registration')
             ->name('events.register.store');
 
         Route::get('privacy', [PageController::class, 'show'])->defaults('slug', 'privacy')->name('privacy');
@@ -195,7 +195,7 @@ Route::prefix('{locale}')
          * See docs/OPEN_ITEMS.md, and FeatureInterestController.
          */
         Route::post('extranet/interest', [FeatureInterestController::class, 'store'])
-            ->middleware(['auth', 'throttle:20,60'])
+            ->middleware(['auth', 'throttle:feature-interest'])
             ->name('extranet.interest');
 
         Route::get('extranet', fn () => auth()->check()
@@ -209,7 +209,7 @@ Route::prefix('{locale}')
          */
         Route::get('search', [SearchController::class, 'index'])->name('search');
         Route::get('search/suggest', [SearchController::class, 'suggest'])
-            ->middleware('throttle:60,1')->name('search.suggest');
+            ->middleware('throttle:search-suggest')->name('search.suggest');
 
         /*
          * The regulatory library. WS-05.
@@ -259,30 +259,30 @@ Route::prefix('{locale}')
          * Authentication. Screens 11 and 13.
          *
          * The guest routes carry the guest middleware so a signed-in reader
-         * is not offered a login form, and both throttles are keyed on the
-         * address and the IP together so one attacker cannot lock out a
-         * known account by guessing at it.
+         * is not offered a login form. Each path has its own named limiter;
+         * sign-in failures are counted per account in LoginController.
          */
         Route::middleware('guest')->group(function () {
             Route::get('login', [LoginController::class, 'show'])->name('login');
             /*
-             * The controller throttles failures per address and IP together,
-             * and failures per IP across addresses, so spraying one password
-             * across many accounts is bounded. This only caps raw volume: it
-             * counts every attempt, including successful ones, so it is set
-             * for a workshop room behind one address (it was 20, which the
-             * 21st delegate on the venue Wi-Fi would have hit).
+             * The controller counts failures per account, wherever they come
+             * from, and failures per IP across accounts, so spraying one
+             * password across many accounts is bounded. This only caps raw
+             * volume from one address, successes included, and is set well
+             * above a workshop room on one Wi-Fi. Every path below has its
+             * own named limiter (AppServiceProvider), so none shares a
+             * counter with sign-in.
              */
             Route::post('login', [LoginController::class, 'store'])
-                ->middleware('throttle:100,10')
+                ->middleware('throttle:sign-in')
                 ->name('login.store');
 
             Route::get('password/forgotten', [PasswordResetController::class, 'request'])->name('password.request');
             Route::post('password/forgotten', [PasswordResetController::class, 'email'])
-                ->middleware('throttle:6,60')->name('password.email');
+                ->middleware('throttle:password-email')->name('password.email');
             Route::get('password/reset/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
             Route::post('password/reset', [PasswordResetController::class, 'update'])
-                ->middleware('throttle:10,60')->name('password.update');
+                ->middleware('throttle:password-update')->name('password.update');
 
             /*
              * The SSO handoff and its error states, IN-01.
@@ -298,7 +298,7 @@ Route::prefix('{locale}')
             // endpoint a stranger can post to is an authentication path
             // whether or not a provider is configured today.
             Route::post('sso/callback', [SsoController::class, 'callback'])
-                ->middleware('throttle:20,10')
+                ->middleware('throttle:sso-callback')
                 ->name('sso.callback.post');
 
             Route::get('two-factor/challenge', [TwoFactorChallengeController::class, 'show'])
@@ -310,7 +310,7 @@ Route::prefix('{locale}')
              * counter.
              */
             Route::post('two-factor/challenge', [TwoFactorChallengeController::class, 'store'])
-                ->middleware('throttle:20,10')
+                ->middleware('throttle:two-factor')
                 ->name('two-factor.challenge.store');
         });
 

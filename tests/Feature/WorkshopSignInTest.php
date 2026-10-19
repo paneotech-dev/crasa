@@ -19,7 +19,8 @@ use Tests\TestCase;
  * Until 14 October 2026 the sign-in route allowed 20 attempts per IP per
  * ten minutes, successful or not: the 21st delegate on the venue Wi-Fi got a
  * bare English "429 Too Many Requests". Now only failures count against the
- * address (30 per ten minutes), and the raw cap is 100.
+ * address (200 per ten minutes since 19 October; 30 before), and the raw cap
+ * is 600.
  */
 class WorkshopSignInTest extends TestCase
 {
@@ -45,9 +46,9 @@ class WorkshopSignInTest extends TestCase
         }
     }
 
-    public function test_thirty_failures_from_one_address_pause_it_in_the_readers_language(): void
+    public function test_two_hundred_failures_from_one_address_pause_it_in_the_readers_language(): void
     {
-        for ($i = 0; $i < 30; $i++) {
+        for ($i = 0; $i < 200; $i++) {
             $this->post('/fr/login', ['email' => "nobody{$i}@example.test", 'password' => 'wrong']);
         }
 

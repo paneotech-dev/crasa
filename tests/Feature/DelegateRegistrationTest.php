@@ -195,12 +195,13 @@ class DelegateRegistrationTest extends TestCase
 
     public function test_the_form_is_rate_limited(): void
     {
-        // Ten in an hour, per the route. The eleventh is refused.
-        for ($i = 0; $i < 10; $i++) {
+        // Sixty in an hour per address (a room registering on one Wi-Fi),
+        // on the registration limiter's own counter. The sixty-first is refused.
+        for ($i = 0; $i < 60; $i++) {
             $this->register(['delegate_email' => "delegate{$i}@example.test"])->assertRedirect();
         }
 
-        $this->register(['delegate_email' => 'eleventh@example.test'])->assertStatus(429);
+        $this->register(['delegate_email' => 'one-too-many@example.test'])->assertStatus(429);
     }
 
     public function test_a_departure_before_an_arrival_is_refused(): void

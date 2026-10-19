@@ -80,6 +80,35 @@ class AppServiceProvider extends ServiceProvider
         Paginator::defaultView('pagination::default');
         Paginator::defaultSimpleView('pagination::simple-default');
 
+        /*
+         * One named limiter per public write path (19 October 2026).
+         *
+         * These routes used to carry anonymous throttle:N,M middleware, and
+         * for a signed-out reader Laravel keys every anonymous limit on the
+         * same domain-and-address string: six failed sign-ins from a
+         * workshop's Wi-Fi then used up the password reset allowance of the
+         * whole room, and a few registrations blocked the next language's
+         * form. A named limiter's counter is prefixed with its own name, so
+         * no path can spend another's allowance.
+         *
+         * The per-address figures are set for a room of a hundred people on
+         * one address. The real protection against guessing is per account:
+         * LoginController locks an account after ten failures, wherever they
+         * come from, and the two-factor challenge after five wrong codes.
+         */
+        RateLimiter::for('sign-in', fn (Request $request) => Limit::perMinutes(10, 600)->by($request->ip()));
+        RateLimiter::for('password-email', fn (Request $request) => [
+            Limit::perHour(60)->by($request->ip()),
+            // One address cannot be flooded with reset mails.
+            Limit::perHour(5)->by('to:'.strtolower((string) $request->input('email'))),
+        ]);
+        RateLimiter::for('password-update', fn (Request $request) => Limit::perHour(60)->by($request->ip()));
+        RateLimiter::for('two-factor', fn (Request $request) => Limit::perMinutes(10, 60)->by($request->ip()));
+        RateLimiter::for('sso-callback', fn (Request $request) => Limit::perMinutes(10, 60)->by($request->ip()));
+        RateLimiter::for('registration', fn (Request $request) => Limit::perHour(60)->by($request->ip()));
+        RateLimiter::for('feature-interest', fn (Request $request) => Limit::perHour(20)->by((string) ($request->user()?->id ?? $request->ip())));
+        RateLimiter::for('search-suggest', fn (Request $request) => Limit::perMinute(120)->by($request->ip()));
+
         // Six enquiries an hour per address. Enough that a regulator sending
         // two in a morning is never stopped; few enough that a script is.
         RateLimiter::for('enquiries', fn (Request $request) => Limit::perHour(6)

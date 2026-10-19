@@ -20,15 +20,17 @@ use Illuminate\Validation\ValidationException;
  * used to discover who has one. Screen 11 states this explicitly and it is
  * the reason the wording looks vaguer than a normal login.
  *
- * Ten attempts, then thirty minutes, keyed on the address and the IP
- * together so one attacker cannot lock a known user out by guessing at them.
+ * Ten failed attempts on one account, then thirty minutes. Since 19 October
+ * 2026 the count is per account, wherever the attempts come from: it was per
+ * account and address, which let a guesser who changed networks start again.
+ * The trade-off, accepted on the owner's instruction: someone who knows an
+ * address can lock that account for thirty minutes. Nobody else is affected.
  */
 class LoginController extends Controller
 {
     /*
      * Ten, not five (15 October 2026): a few typos in front of a room must
-     * never lock a demonstration account. Still per address and IP together,
-     * still thirty minutes.
+     * never lock a demonstration account. Per account, thirty minutes.
      */
     private const MAX_ATTEMPTS = 10;
 
@@ -36,13 +38,14 @@ class LoginController extends Controller
 
     /*
      * Failed sign-ins from one IP, across all addresses, before that IP is
-     * paused (14 October 2026). Only failures count: a workshop room behind
+     * paused (14 October 2026; raised from 30 to 200 on 19 October so a
+     * room of a hundred people mistyping cannot pause itself). Only failures count: a workshop room behind
      * one address can sign everyone in, while spraying one password across
      * many accounts is still bounded. Until then the route allowed 20 sign-in
      * attempts per IP per 10 minutes, successful or not, and the 21st
      * delegate on the venue's Wi-Fi got a bare "429 Too Many Requests".
      */
-    private const MAX_FAILURES_PER_IP = 30;
+    private const MAX_FAILURES_PER_IP = 200;
 
     private const IP_WINDOW_SECONDS = 600;
 
@@ -203,8 +206,13 @@ class LoginController extends Controller
         return route('login', ['locale' => app()->getLocale()]);
     }
 
+    /**
+     * Failures are counted per account, not per account and address: the
+     * person who mistypes is the one who waits, whichever network they are
+     * on, and nobody else in the room is affected (19 October 2026).
+     */
     private function throttleKey(Request $request): string
     {
-        return 'login:'.strtolower($request->input('email')).'|'.$request->ip();
+        return 'login:'.sha1(strtolower(trim((string) $request->input('email'))));
     }
 }
