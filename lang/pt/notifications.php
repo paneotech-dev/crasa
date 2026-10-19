@@ -41,4 +41,7 @@ return [
     'trigger_announcement_note' => 'Avisos aos membros, por vezes limitados a um setor ou a um comite.',
     'filed' => "':file' foi entregue em :committee.",
     'meeting_moved' => "':title' passa a ser a :date.",
+
+    // The label of a stored return-decision notice.
+    'trigger_submission' => 'Uma decisão sobre uma declaração de dados',
 ];

@@ -27,4 +27,7 @@ return [
     'band_heading' => 'O que a região decidiu, e quando',
 
     'result_summary' => ':shown de :total itens correspondem aos seus filtros',
+
+    // The legacy site's press releases (category added 10 September 2026).
+    'category_press_release' => 'Comunicado de imprensa',
 ];

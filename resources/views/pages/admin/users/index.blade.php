@@ -100,7 +100,7 @@
             <tbody>
                 @foreach ($permissions as $permission)
                     <tr>
-                <th scope="row">{{ $permission->value }}</th>
+                <th scope="row">{{ $permission->label() }}</th>
                 @foreach ($roles as $role)
                     @php $grant = $matrix::grant($role, $permission); @endphp
                     <td class="is-{{ $grant->value }}">

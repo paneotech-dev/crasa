@@ -49,4 +49,7 @@ return [
     'trigger_announcement_note' => 'Notices to the membership, sometimes narrowed to one sector or one committee.',
     'filed' => "':file' was filed into :committee.",
     'meeting_moved' => "':title' is now :date.",
+
+    // The label of a stored return-decision notice.
+    'trigger_submission' => 'A decision on a data return',
 ];

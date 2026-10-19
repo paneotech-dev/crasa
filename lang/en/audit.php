@@ -42,4 +42,19 @@ return [
     'subject_enquiry' => 'an enquiry',
     'subject_tag' => 'a tag',
     'subject_sector' => 'a sector',
+
+    // Record types added since the first list (19 October 2026).
+    'subject_announcement' => 'an announcement',
+    'subject_authoritychange' => 'a proposed change to an authority',
+    'subject_authoritycontact' => 'an authority contact',
+    'subject_delegateregistration' => 'a delegate registration',
+    'subject_folder' => 'a folder',
+    'subject_mediaasset' => 'an image',
+    'subject_meeting' => 'a meeting',
+    'subject_menuitem' => 'a menu item',
+    'subject_project' => 'a project',
+    'subject_report' => 'a report',
+    'subject_submission' => 'a data return',
+    'subject_submissionfieldcomment' => 'a comment on a data return',
+    'subject_submissionvalue' => 'a figure in a data return',
 ];

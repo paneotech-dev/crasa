@@ -42,4 +42,19 @@ return [
     'subject_enquiry' => 'une demande',
     'subject_tag' => 'une étiquette',
     'subject_sector' => 'un secteur',
+
+    // Record types added since the first list (19 October 2026).
+    'subject_announcement' => 'une annonce',
+    'subject_authoritychange' => "une modification proposée d'une autorité",
+    'subject_authoritycontact' => "un contact d'une autorité",
+    'subject_delegateregistration' => "l'inscription d'un délégué",
+    'subject_folder' => 'un dossier',
+    'subject_mediaasset' => 'une image',
+    'subject_meeting' => 'une réunion',
+    'subject_menuitem' => 'un élément de menu',
+    'subject_project' => 'un projet',
+    'subject_report' => 'un rapport',
+    'subject_submission' => 'une déclaration de données',
+    'subject_submissionfieldcomment' => 'un commentaire sur une déclaration de données',
+    'subject_submissionvalue' => 'une valeur dans une déclaration de données',
 ];

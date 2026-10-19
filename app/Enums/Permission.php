@@ -41,6 +41,16 @@ enum Permission: string
     case ReadAuditLog = 'audit.read';
     case ManageSettings = 'settings.manage';
 
+    /**
+     * What an administrator reads on screen 13. The code stays the stored
+     * value; it used to be the only thing shown, so the matrix read
+     * "users.manage", "audit.read" in every language.
+     */
+    public function label(): string
+    {
+        return __('permissions.'.str_replace('.', '_', $this->value));
+    }
+
     public function group(): string
     {
         return match (true) {
