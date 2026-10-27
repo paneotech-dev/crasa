@@ -406,6 +406,8 @@ return [
     'field_is_public' => 'Público',
     'field_category' => 'Categoria',
     'field_author_name' => 'Autor',
+    'field_hero_image_path' => 'Fotografia',
+    'field_hero_image_path_hint' => 'Da biblioteca multimédia. Deixar vazio para a imagem do tipo.',
     'field_indicator_id' => 'Indicador',
     'field_indicator' => 'Indicador',
     'field_period' => 'Período',

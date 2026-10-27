@@ -406,6 +406,8 @@ return [
     'field_is_public' => 'Public',
     'field_category' => 'Catégorie',
     'field_author_name' => 'Auteur',
+    'field_hero_image_path' => 'Photographie',
+    'field_hero_image_path_hint' => 'Depuis la médiathèque. Laisser vide pour l\'illustration du type.',
     'field_indicator_id' => 'Indicateur',
     'field_indicator' => 'Indicateur',
     'field_period' => 'Période',

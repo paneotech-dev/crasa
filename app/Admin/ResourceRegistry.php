@@ -306,8 +306,19 @@ final class ResourceRegistry
                     Field::select('status', ['draft', 'published'], required: true),
                     Field::date('published_at'),
                     Field::text('author_name'),
+
+                    // The photograph, chosen from the media library. Empty
+                    // means the placeholder of the item's type.
+                    Field::scoped('hero_image_path', fn () => \App\Models\MediaAsset::query()
+                        ->where('disk', 'public')
+                        ->where('mime_type', 'like', 'image/%')
+                        ->orderByDesc('id')
+                        ->limit(200)
+                        ->pluck('original_name', 'path')
+                        ->all()),
                 ],
                 rules: [
+                    'hero_image_path' => ['nullable', 'string', Rule::exists('media_assets', 'path')->whereNull('deleted_at')],
                     'category' => ['required', 'in:'.implode(',', array_column(NewsCategory::cases(), 'value'))],
                     'sector_id' => ['nullable', 'exists:sectors,id'],
                     'status' => ['required', 'in:draft,published'],

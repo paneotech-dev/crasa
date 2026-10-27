@@ -406,6 +406,8 @@ return [
     'field_is_public' => 'Public',
     'field_category' => 'Category',
     'field_author_name' => 'Author',
+    'field_hero_image_path' => 'Photograph',
+    'field_hero_image_path_hint' => 'From the media library. Leave empty for the placeholder of the type.',
     'field_indicator_id' => 'Indicator',
     'field_indicator' => 'Indicator',
     'field_period' => 'Period',
