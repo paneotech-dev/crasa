@@ -21,6 +21,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @if (config('crasa.noindex'))<meta name="robots" content="noindex, nofollow">@endif
     <meta name="crasa-pw-show" content="{{ __('auth.show_password') }}">
     <meta name="crasa-pw-hide" content="{{ __('auth.hide_password') }}">
     <script>document.documentElement.classList.add('has-js');</script>

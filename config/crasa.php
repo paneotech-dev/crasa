@@ -15,6 +15,14 @@ return [
     'two_factor_required' => env('CRASA_TWO_FACTOR_REQUIRED', true),
 
     /*
+     * Keep search engines out while the site is a demonstration: a robots
+     * meta tag on every page and an X-Robots-Tag header on every response.
+     * Off by default; set CRASA_NOINDEX=true on a demonstration host and
+     * remove it at go-live.
+     */
+    'noindex' => (bool) env('CRASA_NOINDEX', false),
+
+    /*
      * Whether the "mail is not being delivered" check writes to the log on
      * every boot. The administration banner says the same thing regardless.
      */
