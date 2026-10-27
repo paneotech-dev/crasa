@@ -258,11 +258,13 @@ class DatabaseSearchDriver implements SearchDriver
             ->where('translatable_type', $type)
             ->when(
                 $this->supportsFulltext(),
+                // A match in the title counts double: a record about the
+                // term outranks one that mentions it in passing.
                 fn ($q) => $q
-                    ->selectRaw('translatable_id, MAX(MATCH(value) AGAINST (? IN NATURAL LANGUAGE MODE)) as score', [$query])
+                    ->selectRaw("translatable_id, MAX(MATCH(value) AGAINST (? IN NATURAL LANGUAGE MODE) * CASE WHEN field = 'title' THEN 2 ELSE 1 END) as score", [$query])
                     ->whereRaw('MATCH(value) AGAINST (? IN NATURAL LANGUAGE MODE)', [$query]),
                 fn ($q) => $q
-                    ->selectRaw('translatable_id, 1 as score')
+                    ->selectRaw("translatable_id, MAX(CASE WHEN field = 'title' THEN 2 ELSE 1 END) as score")
                     ->where('value', 'like', '%'.$query.'%')
             )
             ->groupBy('translatable_id')

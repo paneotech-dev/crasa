@@ -395,4 +395,16 @@ class SearchTest extends TestCase
 
         $this->assertSame(['zz-newer-edition', 'zz-older-edition'], array_slice($slugs, 0, 2));
     }
+
+    public function test_a_title_match_outranks_a_mention_in_the_body(): void
+    {
+        $about = Publication::factory()->create(['slug' => 'zz-about-quokkas', 'published_on' => '2015-01-01']);
+        $about->setTranslations('en', ['title' => 'Quokka guidelines', 'summary' => 'Guidance.']);
+        $mention = NewsItem::factory()->create(['slug' => 'zz-mentions-quokkas', 'status' => 'published', 'published_at' => '2024-01-01']);
+        $mention->setTranslations('en', ['title' => 'Spectrum plan', 'body' => 'It also touches on quokka matters.']);
+
+        $slugs = collect($this->driver()->search('quokka')->hits)->map(fn ($hit) => basename($hit->url))->values()->all();
+
+        $this->assertSame('zz-about-quokkas', $slugs[0] ?? null);
+    }
 }
