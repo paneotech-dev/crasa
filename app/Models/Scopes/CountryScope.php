@@ -17,7 +17,8 @@ use Illuminate\Database\Eloquent\Scope;
  *
  * It fails closed. A user whose role is country-scoped but who has no
  * country_id sees nothing, because a misconfigured account should return no
- * rows rather than every row.
+ * rows rather than every row. The one exception is a committee seat: on a
+ * model that names its committee column, it opens that committee's rows.
  *
  * An administrator or editor is not constrained. Any other bypass must go
  * through the named acrossAllCountries() scope, which checks authorisation
@@ -42,19 +43,36 @@ class CountryScope implements Scope
 
         $column = $model->getTable().'.'.$model->countryScopeColumn();
 
+        // A committee seat opens that committee's rows whatever the country:
+        // a committee member may sit for the region and hold no country. A
+        // model opts in by naming its committee column; the policies still
+        // decide clearance row by row.
+        $committeeColumn = method_exists($model, 'countryScopeCommitteeColumn') ? $model->countryScopeCommitteeColumn() : null;
+        $seats = $committeeColumn !== null ? $user->committees()->pluck('committees.id')->all() : [];
+
         if ($user->country_id === null) {
-            $builder->whereRaw('1 = 0');
+            if ($seats === []) {
+                $builder->whereRaw('1 = 0');
+
+                return;
+            }
+
+            $builder->whereIn($model->getTable().'.'.$committeeColumn, $seats);
 
             return;
         }
 
-        $builder->where(function (Builder $query) use ($column, $user, $model): void {
+        $builder->where(function (Builder $query) use ($column, $user, $model, $committeeColumn, $seats): void {
             $query->where($column, $user->country_id);
 
             // Some tables use a null country to mean regional, visible to
             // everyone. A model opts into that; it is not the default.
             if ($model->countryScopeIncludesShared()) {
                 $query->orWhereNull($column);
+            }
+
+            if ($seats !== []) {
+                $query->orWhereIn($model->getTable().'.'.$committeeColumn, $seats);
             }
         });
     }

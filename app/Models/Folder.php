@@ -75,6 +75,12 @@ class Folder extends Model
         return true;
     }
 
+    /** A committee folder is opened by a seat on that committee. */
+    public function countryScopeCommitteeColumn(): ?string
+    {
+        return 'committee_id';
+    }
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');

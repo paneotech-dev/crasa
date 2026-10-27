@@ -84,6 +84,10 @@ class SecurityHeaders
             $headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains';
         }
 
+        if (config('crasa.noindex')) {
+            $headers['X-Robots-Tag'] = 'noindex, nofollow';
+        }
+
         foreach ($headers as $name => $value) {
             // Never overwrite a header a controller set deliberately. The
             // media library sets its own policy on asset responses.
