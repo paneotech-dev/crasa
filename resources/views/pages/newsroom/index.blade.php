@@ -98,7 +98,7 @@
 
                 <div class="c-library__main">
                     <div id="news-results">
-                        <p class="c-results" id="news-count" role="status">
+                        <p class="c-results" id="news-count" role="status" data-total="{{ $matching }}">
                             @if ($matching > 0)
                                 {{ __('news.showing', [
                                     'from' => $featured ? 1 : $items->firstItem() + ($matching - $items->total()),
@@ -122,7 +122,7 @@
 
                             <div class="n-grid">
                                 @foreach ($items as $item)
-                                    @include('pages.newsroom._card', ['item' => $item])
+                                    @include('pages.newsroom._card', ['item' => $item, 'featured' => false])
                                 @endforeach
                             </div>
 

@@ -101,6 +101,11 @@ class FacetSidebarTest extends TestCase
 
         $this->assertNotNull($node, 'No element with id '.$id.' on '.$url);
 
+        // The newsroom says "Showing 1 to 12 of 38" and states its total.
+        if ($node instanceof \DOMElement && $node->hasAttribute('data-total')) {
+            return (int) $node->getAttribute('data-total');
+        }
+
         // "1 of 12 documents match your filters" -- the first number.
         preg_match('/\d[\d,]*/', $node->textContent, $m);
 

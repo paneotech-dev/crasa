@@ -2629,3 +2629,6 @@
 .n-pager { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-3); margin-top: var(--s-6); padding-top: var(--s-4); border-top: 1px solid var(--c-sand); }
 .n-pager__steps { display: flex; flex-direction: column; gap: var(--s-2); align-items: flex-end; }
 @media (max-width: 640px) { .n-pager__steps { align-items: flex-start; } }
+/* The pager's own line counts only the grid; the newsroom states its total
+   above the cards, featured item included. */
+.n-library .c-pager__status { display: none; }

@@ -93,7 +93,7 @@
                 <h2>{{ __('news.related') }}</h2>
                 <div class="n-grid">
                     @foreach ($related as $item)
-                        @include('pages.newsroom._card', ['item' => $item])
+                        @include('pages.newsroom._card', ['item' => $item, 'featured' => false])
                     @endforeach
                 </div>
             </div>
