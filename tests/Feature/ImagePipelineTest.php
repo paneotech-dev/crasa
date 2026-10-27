@@ -15,11 +15,10 @@ use Tests\TestCase;
 /**
  * The supplied photograph library, and what reaches a page from it.
  *
- * These tests used to run through the homepage hero. The hero now carries no
- * photograph at all — a treaty body's first screen making the wrong claim
- * about what it is was worse than a band with no picture in it — so they run
- * through the newsroom instead, where the library is still the source of
- * every image on the page.
+ * These tests have moved twice. The homepage hero lost its photograph, so
+ * they ran through the newsroom; since 27 October 2026 a news item without
+ * a photograph of its own shows its type's placeholder, so they run through
+ * the homepage again, whose other blocks still draw from the library.
  *
  * The pipeline is unchanged and still has to hold: derivatives rather than
  * archive originals, WebP with a JPEG fallback, and a crop per breakpoint
@@ -40,7 +39,8 @@ class ImagePipelineTest extends TestCase
 
     public function test_a_library_image_is_served_as_derivatives_never_the_original(): void
     {
-        $html = $this->get('/en/newsroom')->assertOk()->getContent();
+        // Was /en/newsroom; see the class comment.
+        $html = $this->get('/en')->assertOk()->getContent();
 
         $this->assertStringContainsString('images/derivatives/', $html);
         // The archive originals are 20 MB files and none of them is a URL.
@@ -49,7 +49,8 @@ class ImagePipelineTest extends TestCase
 
     public function test_a_library_image_offers_a_webp_source_and_a_jpeg_fallback(): void
     {
-        $html = $this->get('/en/newsroom')->assertOk()->getContent();
+        // Was /en/newsroom; see the test above.
+        $html = $this->get('/en')->assertOk()->getContent();
 
         $this->assertStringContainsString('type="image/webp"', $html);
         $this->assertStringContainsString('.jpg', $html);
