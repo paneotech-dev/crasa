@@ -125,14 +125,19 @@ final class SectionCounts
     /** @return array<int, array{value: string, label: string, url: string|null}> */
     public static function newsroom(): array
     {
-        return [
+        // What a reader can use: how many articles, how many press releases,
+        // and how fresh the newsroom is.
+        $newest = NewsItem::published()->where('date_unknown', false)->max('published_at');
+
+        return array_values(array_filter([
             self::count(NewsItem::published()->count(), 'news.count_items', null),
-            self::count(
-                NewsItem::published()->whereNotNull('sector_id')->distinct()->count('sector_id'),
-                'news.count_sectors',
-                null
-            ),
-        ];
+            self::count(NewsItem::published()->where('category', 'press_release')->count(), 'news.count_press_releases', null),
+            $newest ? [
+                'value' => \App\Support\NewsFormat::longDate(\Illuminate\Support\Carbon::parse($newest)),
+                'label' => __('news.count_updated'),
+                'url' => null,
+            ] : null,
+        ]));
     }
 
     /** @return array<int, array{value: string, label: string, url: string|null}> */

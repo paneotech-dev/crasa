@@ -30,4 +30,22 @@ return [
 
     // The legacy site's press releases (category added 10 September 2026).
     'category_press_release' => 'Communiqué de presse',
+
+    // Newsroom rebuild, 27 October 2026.
+    'count_press_releases' => '{0}Communiqués de presse|{1}Communiqué de presse|[2,*]Communiqués de presse',
+    'count_updated' => 'Dernière mise à jour',
+    'read_more' => 'Lire la suite',
+    'filter_button' => 'Filtrer',
+    'search_label' => 'Rechercher dans les actualités',
+    'search_placeholder' => 'Mot-clé',
+    'year' => 'Année',
+    'all_years' => 'Toutes les années',
+    'sort' => 'Ordre',
+    'sort_newest' => 'Les plus récentes',
+    'sort_oldest' => 'Les plus anciennes',
+    'showing' => 'Affichage de :from à :to sur :total',
+    'back' => 'Retour aux actualités',
+    'newer' => 'Plus récent',
+    'older' => 'Plus ancien',
+    'copy_link' => 'Lien vers cet article',
 ];

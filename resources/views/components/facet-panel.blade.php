@@ -63,6 +63,10 @@
     @endif
 
     <div class="c-panel c-facets">
+        {{-- Extra controls a page puts inside the same form (the newsroom's
+             keyword, year and order), so they travel in the same URL. --}}
+        {{ $slot ?? '' }}
+
         {{-- A facet with no options at all is a heading over nothing. A
              library with no committees does not need a committee heading
              telling the reader so. --}}

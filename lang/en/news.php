@@ -30,4 +30,22 @@ return [
 
     // The legacy site's press releases (category added 10 September 2026).
     'category_press_release' => 'Press release',
+
+    // Newsroom rebuild, 27 October 2026.
+    'count_press_releases' => '{0}Press releases|{1}Press release|[2,*]Press releases',
+    'count_updated' => 'Last updated',
+    'read_more' => 'Read more',
+    'filter_button' => 'Filter',
+    'search_label' => 'Search the newsroom',
+    'search_placeholder' => 'Keyword',
+    'year' => 'Year',
+    'all_years' => 'All years',
+    'sort' => 'Order',
+    'sort_newest' => 'Newest first',
+    'sort_oldest' => 'Oldest first',
+    'showing' => 'Showing :from to :to of :total',
+    'back' => 'Back to the newsroom',
+    'newer' => 'Newer',
+    'older' => 'Older',
+    'copy_link' => 'Link to this article',
 ];

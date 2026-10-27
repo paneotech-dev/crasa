@@ -33,6 +33,9 @@ use Illuminate\Http\Request;
  */
 class NewsroomController extends Controller
 {
+    /** Cards per page: three columns, four full rows. */
+    public const PER_PAGE = 12;
+
     public function index(Request $request)
     {
         $filters = [
@@ -40,6 +43,10 @@ class NewsroomController extends Controller
             'sector' => Facets::values($request, 'sector'),
             'tag' => Facets::values($request, 'tag'),
         ];
+
+        $year = (int) $request->query('year') ?: null;
+        $search = trim((string) $request->query('q', ''));
+        $sort = $request->query('sort') === 'oldest' ? 'oldest' : 'newest';
 
         $categories = collect(NewsCategory::cases());
         $sectors = Sector::orderBy('name')->get();
@@ -51,17 +58,32 @@ class NewsroomController extends Controller
             'tag' => $tags->pluck('slug')->all(),
         ];
 
-        $items = $this->query($filters)
+        $ordered = fn () => $this->query($filters, $year, $search)
             ->with(['translations', 'sector', 'tags.translations'])
             ->orderBy('date_unknown')
-            ->orderByDesc('published_at')
-            ->paginate(9)
+            ->orderBy('published_at', $sort === 'oldest' ? 'asc' : 'desc')
+            ->orderBy('id', $sort === 'oldest' ? 'asc' : 'desc');
+
+        // The newest item leads page 1 as a wide card and is left out of the
+        // grid on every page, so the grid is always whole rows of twelve.
+        $page = max(1, (int) $request->query('page', 1));
+        $featured = $sort === 'newest' ? $ordered()->first() : null;
+
+        $items = $ordered()
+            ->when($featured, fn ($q) => $q->whereKeyNot($featured->getKey()))
+            ->paginate(self::PER_PAGE)
             ->withQueryString();
 
         return view('pages.newsroom.index', [
             'items' => $items,
+            'featured' => $page === 1 ? $featured : null,
+            'matching' => $items->total() + ($featured ? 1 : 0),
             'filters' => $filters,
-            'counts' => $this->facetCounts($filters, $options),
+            'year' => $year,
+            'search' => $search,
+            'sort' => $sort,
+            'years' => $this->yearCounts($filters, $search),
+            'counts' => $this->facetCounts($filters, $options, $year, $search),
             'total' => NewsItem::published()->count(),
             'sectors' => $sectors,
             'tags' => $tags,
@@ -70,15 +92,36 @@ class NewsroomController extends Controller
     }
 
     /**
+     * Years that hold at least one dated item under the other filters.
+     *
+     * @param  array<string, list<string>>  $filters
+     * @return array<int, int>
+     */
+    private function yearCounts(array $filters, string $search): array
+    {
+        return $this->query($filters, null, $search)
+            ->where('date_unknown', false)
+            ->get(['published_at'])
+            ->groupBy(fn (NewsItem $item) => (int) $item->published_at->year)
+            ->map->count()
+            ->sortKeysDesc()
+            ->all();
+    }
+
+    /**
      * @param  array<string, list<string>>  $filters
      * @return Builder<NewsItem>
      */
-    private function query(array $filters): Builder
+    private function query(array $filters, ?int $year = null, string $search = ''): Builder
     {
         return NewsItem::published()
             ->when($filters['category'], fn ($q, $v) => $q->whereIn('category', $v))
             ->when($filters['sector'], fn ($q, $v) => $q->whereHas('sector', fn ($s) => $s->whereIn('slug', $v)))
-            ->when($filters['tag'], fn ($q, $v) => $q->whereHas('tags', fn ($t) => $t->whereIn('slug', $v)));
+            ->when($filters['tag'], fn ($q, $v) => $q->whereHas('tags', fn ($t) => $t->whereIn('slug', $v)))
+            ->when($year, fn ($q, $v) => $q->where('date_unknown', false)->whereYear('published_at', $v))
+            ->when($search !== '', fn ($q) => $q->whereHas('translations', fn ($t) => $t
+                ->whereIn('field', ['title', 'summary', 'body'])
+                ->where('value', 'like', '%'.addcslashes($search, '%_\\').'%')));
     }
 
     /**
@@ -86,7 +129,7 @@ class NewsroomController extends Controller
      * @param  array<string, list<string>>  $options
      * @return array<string, array<string, int>>
      */
-    private function facetCounts(array $filters, array $options): array
+    private function facetCounts(array $filters, array $options, ?int $year = null, string $search = ''): array
     {
         // Closures, so a facet that has a selection never runs the grouped
         // query whose answer it would throw away.
@@ -120,10 +163,10 @@ class NewsroomController extends Controller
 
         foreach ($options as $key => $values) {
             $counts[$key] = ($filters[$key] ?? []) === []
-                ? $grouped[$key]($this->query(array_merge($filters, [$key => []])))
+                ? $grouped[$key]($this->query(array_merge($filters, [$key => []]), $year, $search))
                     ->map(fn ($total) => (int) $total)
                     ->all()
-                : $this->countsFor($filters, $key, $values);
+                : $this->countsFor($filters, $key, $values, $year, $search);
         }
 
         return $counts;
@@ -134,7 +177,7 @@ class NewsroomController extends Controller
      * @param  list<string>  $options
      * @return array<string, int>
      */
-    private function countsFor(array $filters, string $key, array $options): array
+    private function countsFor(array $filters, string $key, array $options, ?int $year = null, string $search = ''): array
     {
         $counts = [];
 
@@ -145,7 +188,7 @@ class NewsroomController extends Controller
                 ? array_values(array_diff($filters[$key], [$option]))
                 : [...$filters[$key], $option];
 
-            $counts[$option] = $this->query(array_merge($filters, [$key => $next]))->count();
+            $counts[$option] = $this->query(array_merge($filters, [$key => $next]), $year, $search)->count();
         }
 
         return $counts;
@@ -160,9 +203,23 @@ class NewsroomController extends Controller
 
         abort_if($item === null, 404);
 
+        // Previous and next in the newsroom's own order, newest first.
+        $newer = NewsItem::published()->with('translations')
+            ->where('date_unknown', $item->date_unknown)
+            ->where(fn ($q) => $q->where('published_at', '>', $item->published_at)
+                ->orWhere(fn ($q) => $q->where('published_at', $item->published_at)->where('id', '>', $item->id)))
+            ->orderBy('published_at')->orderBy('id')->first();
+        $older = NewsItem::published()->with('translations')
+            ->where('date_unknown', $item->date_unknown)
+            ->where(fn ($q) => $q->where('published_at', '<', $item->published_at)
+                ->orWhere(fn ($q) => $q->where('published_at', $item->published_at)->where('id', '<', $item->id)))
+            ->orderByDesc('published_at')->orderByDesc('id')->first();
+
         return view('pages.newsroom.show', [
             'item' => $item,
             'related' => $item->related(),
+            'newer' => $newer,
+            'older' => $older,
         ]);
     }
 }

@@ -5,7 +5,6 @@
     $title = $item->translate('title');
     $summary = $item->translate('summary');
     $body = $item->translate('body');
-    $slot = $item->fallbackImageSlot();
     $url = route('newsroom.show', ['locale' => app()->getLocale(), 'slug' => $item->slug]);
 @endphp
 
@@ -15,7 +14,7 @@
 @endif
 
 @section('content')
-    <article class="c-section">
+    <article class="c-section n-article">
         <div class="c-page c-page--reading">
             <nav class="c-breadcrumb" aria-label="{{ __('news.breadcrumb') }}">
                 <a href="{{ route('newsroom', ['locale' => app()->getLocale()]) }}">{{ __('news.title') }}</a>
@@ -27,28 +26,15 @@
                 <h1 @if ($title->isFallback()) lang="{{ $title->locale }}" @endif>{{ $title->value }}</h1>
             @endif
 
-            <p class="c-article__meta">
-                <span>{{ $item->date_unknown ? __('events.date_not_stated') : $item->published_at?->translatedFormat('j F Y') }}</span>
-                @if ($item->author_name)<span>{{ $item->author_name }}</span>@endif
-                @if ($item->sector)<span>{{ $item->sector->name }}</span>@endif
-            </p>
+            @include('pages.newsroom._meta', ['item' => $item])
 
             @if ($title?->isFallback())
                 <x-fallback-notice />
             @endif
 
-            <figure class="c-article__hero">
-                @if ($item->hero_image_path)
-                    <img class="c-img" src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($item->hero_image_path) }}"
-                         alt="" loading="eager" decoding="async">
-                @elseif ($slot)
-                    <x-responsive-image :name="$slot" :alt="__('images.'.$slot)" sizes="(max-width: 1240px) 100vw, 1240px" loading="eager" />
-                    <figcaption class="c-article__caption">{{ __('images.illustrative') }}</figcaption>
-                @else
-                    <div class="c-article__typeslot">
-                        <span>{{ $item->sector?->name ?? __('news.title') }}</span>
-                    </div>
-                @endif
+            <figure class="c-article__hero n-hero">
+                <img src="{{ $item->hero_image_path ? \Illuminate\Support\Facades\Storage::disk('public')->url($item->hero_image_path) : \App\Support\NewsFormat::placeholder($item->category->value) }}"
+                     alt="" loading="eager" decoding="async">
             </figure>
 
             @if ($summary)
@@ -81,6 +67,22 @@
                 <a class="c-chip" rel="noopener" href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode($url) }}">LinkedIn</a>
                 <a class="c-chip" rel="noopener" href="https://x.com/intent/tweet?url={{ urlencode($url) }}&amp;text={{ urlencode($title?->value ?? '') }}">X</a>
                 <a class="c-chip" href="mailto:?subject={{ rawurlencode($title?->value ?? '') }}&amp;body={{ rawurlencode($url) }}">{{ __('news.share_email') }}</a>
+                <label class="n-link">
+                    <span>{{ __('news.copy_link') }}</span>
+                    <input class="c-input" type="text" readonly value="{{ $url }}" onclick="this.select()">
+                </label>
+            </nav>
+
+            <nav class="n-pager" aria-label="{{ __('news.title') }}">
+                <a class="n-pager__back" href="{{ route('newsroom', ['locale' => app()->getLocale()]) }}">{{ __('news.back') }}</a>
+                <span class="n-pager__steps">
+                    @if ($newer)
+                        <a rel="prev" href="{{ route('newsroom.show', ['locale' => app()->getLocale(), 'slug' => $newer->slug]) }}">{{ __('news.newer') }}: {{ \App\Support\NewsFormat::excerpt($newer->translated('title'), 60) }}</a>
+                    @endif
+                    @if ($older)
+                        <a rel="next" href="{{ route('newsroom.show', ['locale' => app()->getLocale(), 'slug' => $older->slug]) }}">{{ __('news.older') }}: {{ \App\Support\NewsFormat::excerpt($older->translated('title'), 60) }}</a>
+                    @endif
+                </span>
             </nav>
         </div>
     </article>
@@ -89,7 +91,7 @@
         <div class="c-section b--tight">
             <div class="c-page">
                 <h2>{{ __('news.related') }}</h2>
-                <div class="b-cards">
+                <div class="n-grid">
                     @foreach ($related as $item)
                         @include('pages.newsroom._card', ['item' => $item])
                     @endforeach
