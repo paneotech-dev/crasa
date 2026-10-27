@@ -38,6 +38,9 @@
   --c-green-mid:#B6DCC5;
   --c-red-mid:#E3B7B8; --c-red-dark:#6E1A1D;
 
+  /* Newsroom type badges: public consultation (purple) and communique (grey). */
+  --c-purple-light:#EFEAF7; --c-purple-dark:#45306E; --c-grey-light:#ECEEF1;
+
   /* Choropleth steps. RegionMap.dc.html:
        SHADES = ["#E8F4EC", "#9CCFB2", "#4FA97B", "#0E5536"]
      One hue in four steps, the ends of which are --c-green-light and

@@ -67,9 +67,9 @@
                 <a class="c-chip" rel="noopener" href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode($url) }}">LinkedIn</a>
                 <a class="c-chip" rel="noopener" href="https://x.com/intent/tweet?url={{ urlencode($url) }}&amp;text={{ urlencode($title?->value ?? '') }}">X</a>
                 <a class="c-chip" href="mailto:?subject={{ rawurlencode($title?->value ?? '') }}&amp;body={{ rawurlencode($url) }}">{{ __('news.share_email') }}</a>
-                <label class="n-link">
+                <label class="n-link" for="news-link">
                     <span>{{ __('news.copy_link') }}</span>
-                    <input class="c-input" type="text" readonly value="{{ $url }}" onclick="this.select()">
+                    <input class="c-input" id="news-link" type="text" readonly value="{{ $url }}">
                 </label>
             </nav>
 

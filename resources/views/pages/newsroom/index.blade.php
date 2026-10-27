@@ -69,14 +69,14 @@
                             :facets="$facets"
                         >
                             <div class="n-controls">
-                                <label class="n-controls__field">
+                                <label class="n-controls__field" for="news-q">
                                     <span>{{ __('news.search_label') }}</span>
-                                    <input class="c-input" type="search" name="q" value="{{ $search }}" placeholder="{{ __('news.search_placeholder') }}">
+                                    <input class="c-input" id="news-q" type="search" name="q" value="{{ $search }}" placeholder="{{ __('news.search_placeholder') }}">
                                 </label>
                                 @if ($years !== [])
-                                    <label class="n-controls__field">
+                                    <label class="n-controls__field" for="news-year">
                                         <span>{{ __('news.year') }}</span>
-                                        <select class="c-input" name="year">
+                                        <select class="c-input" id="news-year" name="year">
                                             <option value="">{{ __('news.all_years') }}</option>
                                             @foreach ($years as $y => $n)
                                                 <option value="{{ $y }}" @selected($year === $y)>{{ $y }} ({{ $n }})</option>
@@ -84,9 +84,9 @@
                                         </select>
                                     </label>
                                 @endif
-                                <label class="n-controls__field">
+                                <label class="n-controls__field" for="news-sort">
                                     <span>{{ __('news.sort') }}</span>
-                                    <select class="c-input" name="sort">
+                                    <select class="c-input" id="news-sort" name="sort">
                                         <option value="newest" @selected($sort === 'newest')>{{ __('news.sort_newest') }}</option>
                                         <option value="oldest" @selected($sort === 'oldest')>{{ __('news.sort_oldest') }}</option>
                                     </select>
