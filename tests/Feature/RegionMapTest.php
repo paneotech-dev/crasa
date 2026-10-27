@@ -116,7 +116,10 @@ class RegionMapTest extends TestCase
 
         // Every member shape links to its own entry, and the svg carries a
         // label, because a screen reader gets nothing from fourteen paths.
-        $this->assertStringContainsString('role="img"', $html);
+        // A group, not an image: an image may not hold links (axe,
+        // nested-interactive).
+        $this->assertStringContainsString('class="c-map-region__svg"', $html);
+        $this->assertMatchesRegularExpression('/class="c-map-region__svg"[^>]*role="group"/s', $html);
         $this->assertStringContainsString(__('members.map_label'), $html);
     }
 

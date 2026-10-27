@@ -150,7 +150,7 @@
                  does not fall back to something smaller, it falls back to
                  something enormous. --}}
             width="100%"
-            role="img"
+            role="group"
             aria-label="{{ $view->isShaded() ? __('members.map_label_shaded', ['dataset' => $view->title()]) : __('members.map_label') }}"
             focusable="false"
         >
