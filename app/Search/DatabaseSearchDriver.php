@@ -50,7 +50,10 @@ class DatabaseSearchDriver implements SearchDriver
             ->concat($this->publications($query, $filters))
             ->concat($this->news($query, $filters))
             ->concat($this->members($query, $filters))
-            ->sortByDesc(fn (SearchHit $hit) => $hit->score)
+            // Equal relevance, newer first: two editions of the same
+            // instrument score alike on their titles, and the reader is
+            // after the current one.
+            ->sort(fn (SearchHit $a, SearchHit $b) => [$b->score, $b->year ?? 0] <=> [$a->score, $a->year ?? 0])
             ->values();
 
         $facets = $this->facetsFor($hits);

@@ -380,4 +380,19 @@ class SearchTest extends TestCase
         $this->assertStringContainsString('b-row__title', $html);
         $this->assertStringContainsString('c-chip', $html);
     }
+
+    public function test_equal_relevance_puts_the_newer_edition_first(): void
+    {
+        $old = Publication::factory()->create(['slug' => 'zz-older-edition', 'published_on' => '2015-01-01']);
+        $old->setTranslations('en', ['title' => 'Zebracrossing policy', 'summary' => 'Zebracrossing']);
+        $new = Publication::factory()->create(['slug' => 'zz-newer-edition', 'published_on' => '2021-01-01']);
+        $new->setTranslations('en', ['title' => 'Zebracrossing guidelines', 'summary' => 'Zebracrossing']);
+
+        $slugs = collect($this->driver()->search('zebracrossing')->hits)
+            ->map(fn ($hit) => basename($hit->url))
+            ->values()
+            ->all();
+
+        $this->assertSame(['zz-newer-edition', 'zz-older-edition'], array_slice($slugs, 0, 2));
+    }
 }
