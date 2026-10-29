@@ -191,29 +191,25 @@ class SocialAccountsTest extends TestCase
         }
     }
 
-    public function test_the_newsroom_ends_with_the_channels_and_a_lazy_facebook_timeline(): void
+    /**
+     * The Facebook page box rendered empty on the newsroom and is gone (C13,
+     * 29 October 2026). The posts themselves come from the newsroom feed
+     * partial, which carries its own tests.
+     */
+    public function test_the_newsroom_has_no_empty_facebook_page_box(): void
     {
-        $texts = [
-            'en' => ['CRASA on social media', "Read CRASA's posts on Facebook"],
-            'fr' => ['La CRASA sur les réseaux sociaux', 'Lire les publications de la CRASA sur Facebook'],
-            'pt' => ['A CRASA nas redes sociais', 'Ler as publicações da CRASA no Facebook'],
-        ];
-
-        foreach ($texts as $locale => [$heading, $link]) {
+        foreach (['en', 'fr', 'pt'] as $locale) {
             $html = $this->get("/{$locale}/newsroom")->assertOk()->getContent();
 
-            $this->assertStringContainsString($heading, $html);
-            foreach (['x', 'facebook', 'linkedin'] as $network) {
-                $this->assertStringContainsString('href="'.e(SiteSetting::get('social_'.$network)).'"', $html);
-            }
-
-            // The frame is not in the markup: a script adds it near the
-            // viewport. The plain link is there without the script.
-            $this->assertMatchesRegularExpression('/data-fb-timeline\s+data-src="https:\/\/www\.facebook\.com\/plugins\/page\.php\?href=/', $html);
+            $this->assertStringNotContainsString('data-fb-timeline', $html);
+            $this->assertStringNotContainsString('plugins/page.php', $html);
             $this->assertStringNotContainsString('<iframe', $html);
-            $this->assertStringContainsString(e($link), $html);
-            $this->assertStringContainsString('js/social-timeline.js', $html);
         }
+
+        $this->assertStringContainsString(
+            "@includeIf('partials.newsroom.social')",
+            file_get_contents(resource_path('views/pages/newsroom/index.blade.php'))
+        );
     }
 
     public function test_the_policy_frames_facebook_and_nothing_else(): void

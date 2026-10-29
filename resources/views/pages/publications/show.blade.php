@@ -28,19 +28,6 @@
 
     <section class="u-hero cp-hero cp-doc-hero">
         <div class="u-container">
-            <p class="u-eyebrow">{{ __($publication->publication_type->labelKey()) }}@if ($publication->sector), {{ $publication->sector->name }}@endif</p>
-            <h1 class="u-h1" @if ($title?->isFallback()) lang="{{ $title->locale }}" @endif>{{ $title?->value ?? $publication->slug }}</h1>
-            @if ($summary)
-                <p class="u-lead">{{ $summary->value }}</p>
-            @endif
-            @if ($title?->isFallback())
-                <x-fallback-notice />
-            @endif
-        </div>
-    </section>
-
-    <section class="u-section cp-doc-page">
-        <div class="u-container">
             @if ($superseded)
                 {{-- A reader who arrives at a superseded document from a
                      search result or an old citation must be told before
@@ -63,6 +50,19 @@
                     </div>
                 </div>
             @endif
+            <p class="u-eyebrow">{{ __($publication->publication_type->labelKey()) }}@if ($publication->sector), {{ $publication->sector->name }}@endif</p>
+            <h1 class="u-h1" @if ($title?->isFallback()) lang="{{ $title->locale }}" @endif>{{ $title?->value ?? $publication->slug }}</h1>
+            @if ($summary)
+                <p class="u-lead">{{ $summary->value }}</p>
+            @endif
+            @if ($title?->isFallback())
+                <x-fallback-notice />
+            @endif
+        </div>
+    </section>
+
+    <section class="u-section cp-doc-page">
+        <div class="u-container">
 
             <div class="u-main-side">
                 <div class="cp-doc-main">
@@ -102,7 +102,7 @@
                                        data-saved-label="{{ __('app.saved') }}"
                                        data-refused-label="{{ __('app.save_refused') }}">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"/></svg>
-                                        {{ __('cpages_b.save_document') }}
+                                        {{ __('app.save_offline') }}
                                     </a>
                                 </div>
                                 <p class="u-help" id="cp-save-hint">{{ __('cpages_b.save_hint') }} {{ __('publications.served_here') }}</p>

@@ -10,7 +10,7 @@
         $loc = app()->getLocale();
         $heroFigures = collect(\App\Support\SectionCounts::publications())
             ->filter(fn ($c) => $c['value'] !== '0')
-            ->map(fn ($c) => ['value' => $c['value'], 'label' => $c['label']])
+            ->map(fn ($c) => ['value' => $c['value'], 'label' => $c['label'], 'url' => $c['url'] ?? null])
             ->take(2)->values()->all();
         $sectorLinks = $sectors->filter(fn ($s) => ($counts['sector'][$s->slug] ?? 0) > 0);
     @endphp

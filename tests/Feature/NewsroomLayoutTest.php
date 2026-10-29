@@ -63,11 +63,11 @@ class NewsroomLayoutTest extends TestCase
         $this->assertSame('item-30', $slugs[0]);
         $this->assertCount(13, $slugs);
         $this->assertSame('item-18', end($slugs));
-        $this->assertSame(1, substr_count($first, 'n-card--featured'));
+        $this->assertSame(1, substr_count($first, 'cp-news-card--featured'));
         $this->assertStringContainsString('Showing 1 to 13 of 30', $first);
 
         $second = $this->get('/en/newsroom?page=2')->assertOk()->getContent();
-        $this->assertStringNotContainsString('n-card--featured', $second);
+        $this->assertStringNotContainsString('cp-news-card--featured', $second);
         $this->assertCount(12, $this->slugsIn($second));
         $this->assertSame('item-17', $this->slugsIn($second)[0]);
         $this->assertStringContainsString('Showing 14 to 25 of 30', $second);

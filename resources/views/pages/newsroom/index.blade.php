@@ -41,25 +41,33 @@
 @endphp
 
 @section('content')
-    <div class="n-band">
-        <x-section-band
-            :eyebrow="__('news.band_eyebrow')"
-            :title="__('news.band_heading')"
-            :lead="__('news.intro')"
-            :counts="\App\Support\SectionCounts::newsroom()"
-        />
-    </div>
+    @include('partials.cpages.styles')
+    @php
+        // Two counts beside the title; the third entry (the date of the
+        // latest item) is already on the featured card below.
+        $newsFigures = collect(\App\Support\SectionCounts::newsroom())
+            ->map(fn ($c) => ['value' => $c['value'], 'label' => $c['label'], 'url' => $c['url'] ?? null])
+            ->take(2)->values()->all();
+    @endphp
+    @include('partials.cpages.hero', [
+        'eyebrow' => __('news.band_eyebrow'),
+        'title' => __('news.band_heading'),
+        'lead' => __('news.intro'),
+        'figures' => $newsFigures,
+    ])
 
-    <div class="c-section n-section">
-        <div class="c-page">
-
-            <div class="c-library n-library"
+    <section class="u-section cp-library cp-newsroom">
+        <div class="u-container">
+            <div class="c-library cp-library__grid"
                  data-live-filters
                  data-live-swap="#news-filters,#news-results"
                  data-live-status="#news-count">
 
-                <details class="n-filters" open>
-                    <summary class="n-filters__toggle c-btn c-btn--secondary">{{ __('news.filter_button') }}</summary>
+                <details class="cp-filters n-filters" open data-cp-filters>
+                    <summary class="u-btn u-btn--secondary cp-filters__toggle">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+                        {{ __('news.filter_button') }}
+                    </summary>
                     <div id="news-filters">
                         <x-facet-panel
                             :action="route('newsroom', ['locale' => $locale])"
@@ -68,37 +76,37 @@
                             :filters="$filters"
                             :facets="$facets"
                         >
-                            <div class="n-controls">
-                                <label class="n-controls__field" for="news-q">
-                                    <span>{{ __('news.search_label') }}</span>
-                                    <input class="c-input" id="news-q" type="search" name="q" value="{{ $search }}" placeholder="{{ __('news.search_placeholder') }}">
-                                </label>
+                            <div class="n-controls cp-news-controls">
+                                <div class="u-field">
+                                    <label for="news-q">{{ __('news.search_label') }}</label>
+                                    <input class="u-input" id="news-q" type="search" name="q" value="{{ $search }}" placeholder="{{ __('news.search_placeholder') }}">
+                                </div>
                                 @if ($years !== [])
-                                    <label class="n-controls__field" for="news-year">
-                                        <span>{{ __('news.year') }}</span>
-                                        <select class="c-input" id="news-year" name="year">
+                                    <div class="u-field">
+                                        <label for="news-year">{{ __('news.year') }}</label>
+                                        <select class="u-select" id="news-year" name="year">
                                             <option value="">{{ __('news.all_years') }}</option>
                                             @foreach ($years as $y => $n)
                                                 <option value="{{ $y }}" @selected($year === $y)>{{ $y }} ({{ $n }})</option>
                                             @endforeach
                                         </select>
-                                    </label>
+                                    </div>
                                 @endif
-                                <label class="n-controls__field" for="news-sort">
-                                    <span>{{ __('news.sort') }}</span>
-                                    <select class="c-input" id="news-sort" name="sort">
+                                <div class="u-field">
+                                    <label for="news-sort">{{ __('news.sort') }}</label>
+                                    <select class="u-select" id="news-sort" name="sort">
                                         <option value="newest" @selected($sort === 'newest')>{{ __('news.sort_newest') }}</option>
                                         <option value="oldest" @selected($sort === 'oldest')>{{ __('news.sort_oldest') }}</option>
                                     </select>
-                                </label>
+                                </div>
                             </div>
                         </x-facet-panel>
                     </div>
                 </details>
 
-                <div class="c-library__main">
+                <div class="c-library__main cp-library__main">
                     <div id="news-results">
-                        <p class="c-results" id="news-count" role="status" data-total="{{ $matching }}">
+                        <p class="c-results cp-results" id="news-count" role="status" aria-live="polite" data-total="{{ $matching }}">
                             @if ($matching > 0)
                                 {{ __('news.showing', [
                                     'from' => $featured ? 1 : $items->firstItem() + ($matching - $items->total()),
@@ -117,14 +125,14 @@
                             ])
                         @else
                             @if ($featured)
-                                @include('pages.newsroom._card', ['item' => $featured, 'featured' => true])
+                                @include('pages.newsroom._ucard', ['item' => $featured, 'featured' => true])
                             @endif
 
-                            <div class="n-grid">
+                            <ul class="u-cols-3 cp-news-grid" role="list">
                                 @foreach ($items as $item)
-                                    @include('pages.newsroom._card', ['item' => $item, 'featured' => false])
+                                    <li>@include('pages.newsroom._ucard', ['item' => $item, 'featured' => false])</li>
                                 @endforeach
-                            </div>
+                            </ul>
 
                             <div class="c-pagination">{{ $items->links() }}</div>
                         @endif
@@ -132,17 +140,18 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    {{-- CRASA on social media. The three channels, and the Facebook page
-         timeline, which loads only when the reader scrolls near it. --}}
-    <section class="c-section n-social" id="social" aria-labelledby="news-social-heading">
-        <div class="c-page">
-            <h2 class="n-social__heading" id="news-social-heading">{{ __('social.heading') }}</h2>
-            <p class="n-social__intro">{{ __('social.intro') }}</p>
-            @include('partials.social-channels', ['timeline' => true])
-        </div>
     </section>
+
+    {{-- Posts from CRASA's channels: the feed partial is supplied separately.
+         The empty Facebook page box that stood here is gone (C13). --}}
+    @includeIf('partials.newsroom.social')
+
+    @include('partials.cpages.cta', [
+        'ctaTitle' => __('cpages_b.cta_news_title'),
+        'ctaText' => __('cpages_b.cta_news_text'),
+        'ctaPrimary' => [__('cpages_b.cta_events'), route('events', ['locale' => $locale])],
+        'ctaSecondary' => [__('cpages_b.cta_library'), route('publications', ['locale' => $locale])],
+    ])
 @endsection
 
 @push('scripts')
@@ -151,7 +160,7 @@
         // On a phone the filters start folded behind the "Filter" button.
         (function () {
             var panel = document.querySelector('.n-filters');
-            if (panel && window.matchMedia('(max-width: 760px)').matches) panel.removeAttribute('open');
+            if (panel && window.matchMedia('(max-width: 991.98px)').matches) panel.removeAttribute('open');
         })();
     </script>
 @endpush
