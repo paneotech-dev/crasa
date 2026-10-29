@@ -406,4 +406,70 @@ class ComparatorTest extends TestCase
         $pdf = $this->get('/en/comparator/export.pdf?'.http_build_query($query))->assertOk();
         $this->assertStringStartsWith('%PDF', $pdf->getContent());
     }
+    /**
+     * Browse mode exported fourteen member states as fourteen columns at a
+     * print width, so the names and figures ran into each other and the
+     * PNG and PDF could not be read. Browse exports a row per member state.
+     */
+    public function test_the_browse_export_draws_a_row_per_member_state(): void
+    {
+        $query = ['mode' => 'browse', 'indicator' => $this->indicator->slug];
+
+        foreach (['png' => "\x89PNG", 'pdf' => '%PDF'] as $format => $magic) {
+            $response = $this->get("/en/comparator/export.{$format}?".http_build_query($query))->assertOk();
+            $this->assertStringStartsWith($magic, $response->getContent());
+            $this->assertStringContainsString('attachment; filename="crasa-'.$this->indicator->slug, $response->headers->get('Content-Disposition'));
+        }
+
+        $svg = app(ComparisonExport::class)->svg(Comparison::fromQuery($query));
+
+        $countries = Country::count();
+        $this->assertSame(14, $countries);
+
+        // Every member state's name on its own line, one under the other.
+        preg_match_all('/<text x="76" y="(\d+)"[^>]*>([^<]+)<\/text>/', $svg, $rows);
+        $this->assertCount($countries, $rows[2]);
+        $this->assertContains('Botswana', $rows[2]);
+        $this->assertSame($rows[1], array_values(array_unique($rows[1])), 'No two member states share a line.');
+
+        // The country list is not crammed into the subtitle any more.
+        $this->assertStringNotContainsString(Country::orderBy('name')->pluck('name')->implode(', '), $svg);
+        $this->assertStringContainsString(__('comparator.not_reported'), $svg);
+    }
+
+    /**
+     * Mobile subscriptions per 100 inhabitants run above 100 in ordinary
+     * markets. The note travels with the indicator, on screen and in the
+     * export, whichever member state is shown, and nowhere else.
+     */
+    public function test_an_indicator_that_can_exceed_a_hundred_carries_its_note(): void
+    {
+        $mobile = Indicator::where('slug', 'mobile-cellular-subscriptions')->firstOrFail();
+        $this->assertTrue($mobile->canExceedHundred());
+        $this->assertFalse($this->indicator->canExceedHundred());
+
+        IndicatorValue::create([
+            'indicator_id' => $mobile->id,
+            'country_id' => Country::where('iso_code', 'mu')->value('id'),
+            'period' => '2025',
+            'value_numeric' => 118.5,
+            'confidence' => 'reported',
+            'is_sample' => false,
+        ]);
+
+        foreach (['en', 'fr', 'pt'] as $locale) {
+            app()->setLocale($locale);
+            $note = __('comparator.note_above_100');
+            $this->get("/{$locale}/comparator?mode=browse&indicator={$mobile->slug}")->assertOk()->assertSee($note);
+            $this->get("/{$locale}/comparator?mode=compare&category={$mobile->category}&countries=mu,bw")->assertOk()->assertSee($note);
+            $this->get("/{$locale}/members/mu")->assertOk()->assertSee($note);
+        }
+
+        app()->setLocale('en');
+        $this->get('/en/comparator?mode=browse&indicator='.$this->indicator->slug)
+            ->assertOk()->assertDontSee(__('comparator.note_above_100'));
+
+        $svg = app(ComparisonExport::class)->svg(Comparison::fromQuery(['mode' => 'browse', 'indicator' => $mobile->slug]));
+        $this->assertStringContainsString(htmlspecialchars(__('comparator.note_above_100'), ENT_QUOTES | ENT_XML1), $svg);
+    }
 }

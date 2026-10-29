@@ -201,6 +201,8 @@ return [
     'setting_items' => 'Elementos',
     'setting_columns' => 'Colunas',
     'setting_alignment' => 'Alinhamento',
+    'setting_layout' => 'Disposição (texto, colunas de secções com título ou grelha de pessoas)',
+    'setting_also_anchor' => 'Segunda âncora para ligações (opcional)',
     'setting_limit' => 'Quantos mostrar',
     'setting_filter' => 'Filtro',
     'setting_sector' => 'Setor',

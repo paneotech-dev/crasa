@@ -246,6 +246,12 @@ enum BlockType: string
             ],
             self::RichText => [
                 'alignment' => ['nullable', 'string', 'in:start,center'],
+                // Prose by default. Columns sets headed sections side by
+                // side, people sets "Name, title" lines as a grid; both
+                // read the plain text, see App\Support\StructuredText.
+                'layout' => ['nullable', 'string', 'in:prose,columns,people'],
+                // A second id for the section, so an old link still lands.
+                'also_anchor' => ['nullable', 'string', 'max:64', 'regex:/^[a-z0-9-]+$/'],
             ],
             self::FeaturedPublications, self::DocumentList => [
                 'limit' => ['nullable', 'integer', 'min:1', 'max:12'],

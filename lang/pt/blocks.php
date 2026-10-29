@@ -38,6 +38,8 @@ return [
 
     'richtext_empty_title' => 'Ainda não há texto aqui',
     'richtext_empty_body' => 'Adicione o texto desta secção em inglês. O francês e o português podem seguir-se.',
+    'people_empty_title' => 'Ainda não há pessoas',
+    'people_empty_body' => 'Acrescente uma linha por pessoa, no formato Nome, função. Cada linha torna-se um cartão com um espaço para a fotografia.',
 
     'publications_empty_title' => 'Nenhuma publicação corresponde a este filtro',
     'publications_empty_body' => 'Alargue o filtro por setor, comité ou país, ou percorra toda a biblioteca regulatória.',

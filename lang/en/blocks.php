@@ -43,6 +43,8 @@ return [
 
     'richtext_empty_title' => 'Nothing written here yet',
     'richtext_empty_body' => 'Add the copy for this section in English. French and Portuguese can follow.',
+    'people_empty_title' => 'No people listed yet',
+    'people_empty_body' => 'Add one line per person, as Name, title. Each line becomes a card with a photograph placeholder.',
 
     'publications_empty_title' => 'No publications match this filter',
     'publications_empty_body' => 'Widen the sector, committee or country filter, or browse the whole regulatory library.',

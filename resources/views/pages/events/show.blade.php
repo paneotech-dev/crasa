@@ -9,12 +9,12 @@
             <h1>{{ $meeting->title }}</h1>
             <p class="c-lead">
                 @if ($meeting->date_unknown)
-                    {{ __('events.date_not_stated') }}
+                    <span>{{ __('events.date_not_stated') }}</span>{{ $meeting->location ? ', '.$meeting->location : '' }}
                 @else
-                    <time datetime="{{ $meeting->starts_on->toDateString() }}">{{ $meeting->starts_on->isoFormat('D MMMM YYYY') }}</time>@if ($meeting->ends_on && ! $meeting->ends_on->isSameDay($meeting->starts_on)) {{ __('extranet.until', ['date' => $meeting->ends_on->isoFormat('D MMMM YYYY')]) }}@endif
+                    <time datetime="{{ $meeting->starts_on->toDateString() }}">{{ $meeting->starts_on->isoFormat('D MMMM YYYY') }}</time>{{ $meeting->ends_on && ! $meeting->ends_on->isSameDay($meeting->starts_on) ? ' '.__('extranet.until', ['date' => $meeting->ends_on->isoFormat('D MMMM YYYY')]) : '' }}{{ $meeting->location ? ', '.$meeting->location : '' }}
                 @endif
-                @if ($meeting->location) — {{ $meeting->location }}@endif
             </p>
+            @include('pages.events._add-to-calendar', ['meeting' => $meeting])
         </div>
     </div>
 

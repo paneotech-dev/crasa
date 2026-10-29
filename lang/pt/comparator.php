@@ -81,4 +81,6 @@ return [
     'blurb_universal_access' => 'Cobertura das redes e alcance da rede postal.',
     'open_with_these' => 'Abrir no comparador',
     'count_categories' => '{0}Categorias|{1}Categoria|[2,*]Categorias',
+    'note_above_100' => 'Valores acima de 100 são normais para assinaturas por 100 habitantes: uma pessoa pode ter mais de uma assinatura.',
+    'export_browse_scope' => 'Os catorze Estados membros da CRASA',
 ];

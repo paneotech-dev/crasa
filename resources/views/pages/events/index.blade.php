@@ -46,6 +46,7 @@
                             @if ($meeting->location)
                                 <p class="c-event__where">{{ $meeting->location }}</p>
                             @endif
+                            @include('pages.events._add-to-calendar', ['meeting' => $meeting, 'compact' => true])
                         </li>
                     @endforeach
                 </ul>

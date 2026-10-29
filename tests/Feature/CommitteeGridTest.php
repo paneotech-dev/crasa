@@ -154,11 +154,17 @@ class CommitteeGridTest extends TestCase
             ->get('/en/committees')->assertOk()->assertSee('No committees are listed yet');
     }
 
-    /** Derived from member_grid, so it inherits the geometry rule too. */
-    public function test_committee_card_heights_follow_their_own_content(): void
+    /**
+     * CRASA asked on 29 October 2026 for the six committees as three per row
+     * in two rows, the cards of a row at one height, with the tally on the
+     * foot of each so the rules line up.
+     */
+    public function test_committee_cards_sit_three_to_a_row_at_one_height(): void
     {
         $css = file_get_contents(public_path('css/blocks.css'));
 
-        $this->assertMatchesRegularExpression('~\.b-committees \{[^}]*align-items: start~', $css);
+        $this->assertMatchesRegularExpression('~\.b-committees \{[^}]*align-items: stretch~', $css);
+        $this->assertMatchesRegularExpression('~@media \(min-width: 992px\) \{ \.b-committees \{ grid-template-columns: repeat\(3, minmax\(0, 1fr\)\); \} \}~', $css);
+        $this->assertStringContainsString('.b-committee > .b-committee__tally, .b-committee > .b-committee__dormant { margin-top: auto; }', $css);
     }
 }
