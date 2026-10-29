@@ -2781,3 +2781,15 @@ body[data-surface="admin"] .a-btn:active { transform: translateY(1px); }
 }
 /* The group labels are Inter, not the heading face (CLAUDE.md carve-out). */
 body[data-surface="admin"] .a-side__grouplabel { font-family: var(--f-admin); font-size: 11px; font-weight: 700; letter-spacing: .1em; }
+
+/* Focus (g fixes 17 and 18): one 2px ring in the platform's blue ink on the
+   light set, white on the dark set. The search fields drop the input's own
+   ring, so their wrapper carries it. */
+body[data-surface="admin"][data-theme="dark"] { --a-focus: var(--c-white); }
+@media (prefers-color-scheme: dark) {
+  body[data-surface="admin"][data-theme="system"] { --a-focus: var(--c-white); }
+}
+body[data-surface="admin"] .a-search:focus-within { outline: 2px solid var(--a-focus); outline-offset: 2px; }
+body[data-surface="admin"] .a-top__field:focus-visible { outline: 2px solid var(--a-focus); outline-offset: 2px; }
+body[data-surface="admin"] :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible { outline-width: 2px; outline-style: solid; outline-color: var(--a-focus); }
+body[data-surface="admin"] .a-search input:focus-visible { outline: 0; }
