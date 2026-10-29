@@ -88,7 +88,7 @@ return [
     'reg_next_title' => 'Ce qui se passe ensuite',
     'reg_next_copy' => 'Vous recevez une copie de votre inscription à l\'adresse électronique indiquée.',
     'reg_next_review' => 'Le Secrétariat de la CRASA reçoit votre inscription, la confirme ou la refuse, et vous écrit dans les deux cas avant le :date.',
-    'reg_next_change' => 'Pour modifier une information, remplissez à nouveau le formulaire avec la même adresse électronique. La nouvelle inscription remplace l\'ancienne.',
+    'reg_next_change' => 'Pour modifier une information, connectez-vous avec le compte de votre adresse électronique et remplissez à nouveau le formulaire, ou écrivez au Secrétariat. La nouvelle inscription remplace l\'ancienne.',
     // Finding the form (member area) and after sending
     'reg_members_only' => 'Cette réunion est réservée aux membres : connectez-vous avec votre compte de la plateforme pour remplir le formulaire.',
     'reg_yours' => 'Vous vous êtes inscrit à cette réunion. Statut : :status.',
@@ -100,7 +100,7 @@ return [
     'done_title' => 'Inscription reçue',
     'done_lead' => 'Le Secrétariat a reçu votre arrivée et votre départ. Statut : :status.',
     'done_sent' => 'Ce que vous avez envoyé',
-    'done_edit' => 'Vous pouvez modifier votre inscription tant que le Secrétariat ne l\'a pas confirmée : rouvrez le formulaire et renvoyez-le avec la même adresse électronique.',
+    'done_edit' => 'Vous pouvez modifier votre inscription tant que le Secrétariat ne l\'a pas confirmée : connectez-vous avec le compte de cette adresse électronique et renvoyez le formulaire, ou écrivez au Secrétariat.',
     'done_confirmed' => 'Le Secrétariat a confirmé votre inscription. Pour toute modification, écrivez au Secrétariat.',
     'back_to_event' => 'Retour à la réunion',
     'register_attendance' => 'M\'inscrire à la réunion',
