@@ -8,6 +8,9 @@
     $figures = array_values(array_filter($figures ?? [], fn ($f) => ($f['value'] ?? '') !== '' && $f['value'] !== null));
     $photo = $photo ?? null;
     $heroAside = $heroAside ?? null;
+    // Without a photograph the figures take the right-hand column, so the
+    // hero never leaves its right side empty (C2).
+    $figuresAside = empty($photoName) && ! $photo && ! $heroAside && $figures !== [];
 @endphp
 <section class="u-hero {{ ($tone ?? 'green') === 'blue' ? 'u-hero--blue' : '' }} cp-hero">
     <div class="u-container">
@@ -16,7 +19,7 @@
                 @if (! empty($eyebrow))<p class="u-eyebrow">{{ $eyebrow }}</p>@endif
                 <h1 class="u-h1">{{ $title }}</h1>
                 @if (! empty($lead))<p class="u-lead">{{ $lead }}</p>@endif
-                @if ($figures !== [])
+                @if ($figures !== [] && ! $figuresAside)
                     <dl class="u-figures">
                         @foreach ($figures as $figure)
                             <div class="u-figure"><dd>{{ $figure['value'] }}</dd><dt>{{ $figure['label'] }}</dt></div>
@@ -33,6 +36,12 @@
                 <figure class="u-hero__photo">
                     <img src="{{ $photo['src'] }}" @if (! empty($photo['srcset'])) srcset="{{ $photo['srcset'] }}" sizes="(max-width: 991px) 100vw, 480px" @endif alt="{{ $photo['alt'] ?? '' }}" width="{{ $photo['width'] ?? 800 }}" height="{{ $photo['height'] ?? 600 }}" fetchpriority="high" style="object-position: {{ $photo['position'] ?? '50% 40%' }}">
                 </figure>
+            @elseif ($figuresAside)
+                <dl class="u-figures cp-hero__figures">
+                    @foreach ($figures as $figure)
+                        <div class="u-figure"><dd>{{ $figure['value'] }}</dd><dt>{{ $figure['label'] }}</dt></div>
+                    @endforeach
+                </dl>
             @elseif ($heroAside)
                 <div class="cp-hero__aside">{!! $heroAside !!}</div>
             @endif
