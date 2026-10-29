@@ -84,10 +84,14 @@ class ConceptHomeTest extends TestCase
     {
         $html = $this->get('/en')->assertOk()->getContent();
 
-        // Without the other streams' partials the page still renders, with
-        // the channel cards in one row as the social fallback.
+        // The page renders with or without the other streams' partials: the
+        // social feed when it exists, otherwise the channel cards in one row.
         $this->assertStringContainsString('class="k-home"', $html);
-        $this->assertStringContainsString('class="k-sbtns"', $html);
+        if (\Illuminate\Support\Facades\View::exists('partials.home.social')) {
+            $this->assertStringContainsString('id="latest-from-crasa"', $html);
+        } else {
+            $this->assertStringContainsString('class="k-sbtns"', $html);
+        }
         $this->assertStringContainsString('class="k-dir"', $html);
 
         $view = file_get_contents(resource_path('views/pages/home.blade.php'));
