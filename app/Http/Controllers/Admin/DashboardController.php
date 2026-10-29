@@ -235,7 +235,7 @@ class DashboardController extends Controller
         $types = [];
 
         foreach ($publications as $publication) {
-            $label = __($publication->publication_type->labelKey());
+            $label = $publication->typeLabel();
             $isPostal = $publication->sector?->slug === 'postal';
 
             $types[$label] ??= ['label' => $label, 'ict' => 0, 'postal' => 0, 'total' => 0];

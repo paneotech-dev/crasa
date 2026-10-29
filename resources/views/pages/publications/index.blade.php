@@ -74,7 +74,7 @@
                                     'legend' => __('publications.type'),
                                     'field' => 'type',
                                     'counts' => $counts['type'],
-                                    'options' => $types->map(fn ($t) => ['value' => $t->value, 'label' => __($t->labelKey())]),
+                                    'options' => $types->map(fn ($t) => ['value' => $t->slug, 'label' => $t->label()]),
                                 ],
                                 [
                                     'legend' => __('publications.year'),

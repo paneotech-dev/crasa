@@ -43,6 +43,8 @@ return [
     'subject_enquiry' => 'um pedido',
     'subject_tag' => 'uma etiqueta',
     'subject_sector' => 'um setor',
+    'subject_newscategory' => 'uma categoria de notícias',
+    'subject_publicationtype' => 'um tipo de publicação',
 
     // Record types added since the first list (19 October 2026).
     'subject_announcement' => 'um aviso',

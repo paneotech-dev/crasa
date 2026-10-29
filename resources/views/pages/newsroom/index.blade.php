@@ -23,7 +23,7 @@
             'legend' => __('news.category'),
             'field' => 'category',
             'counts' => $counts['category'],
-            'options' => $categories->map(fn ($case) => ['value' => $case->value, 'label' => __($case->labelKey())]),
+            'options' => $categories->map(fn ($term) => ['value' => $term->slug, 'label' => $term->label()]),
         ],
         [
             'legend' => __('news.sector'),

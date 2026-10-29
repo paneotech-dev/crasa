@@ -8,7 +8,7 @@
     $url = route('newsroom.show', ['locale' => app()->getLocale(), 'slug' => $item->slug]);
     $featured ??= false;
     $titleTag = ($headingLevel ?? 2) === 3 ? 'h3' : 'h2';
-    $typeLabel = __($item->category->labelKey());
+    $typeLabel = $item->categoryLabel();
 @endphp
 
 <article @class(['u-card', 'cp-news-card', 'cp-news-card--featured' => $featured])>
@@ -18,7 +18,7 @@
             <img src="{{ $photo['src'] }}"
                  @if ($photo['srcset']) srcset="{{ $photo['srcset'] }}" sizes="{{ $featured ? '(max-width: 760px) 100vw, 60vw' : '(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw' }}" @endif
                  @if ($photo['width'] && $photo['height']) width="{{ $photo['width'] }}" height="{{ $photo['height'] }}" @endif
-                 alt="" loading="{{ $featured ? 'eager' : 'lazy' }}" @if ($featured) fetchpriority="high" @endif decoding="{{ $featured ? 'sync' : 'async' }}">
+                 alt="" loading="{{ $featured ? 'eager' : 'lazy' }}" @if ($featured) fetchpriority="high" @endif decoding="{{ $featured ? 'sync' : 'async' }}" @if ($item->hero_focal_x !== null) style="object-position: {{ $item->heroPosition() }}" @endif>
         @else
             <span class="cp-news-ph" aria-hidden="true">
                 <img src="{{ asset('img/crasa-logo.svg') }}" alt="" width="56" height="56">

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Enums\NewsCategory;
 use App\Models\NewsItem;
 use App\Support\NewsFormat;
 use Database\Seeders\SectorSeeder;
@@ -33,7 +32,7 @@ class NewsroomLayoutTest extends TestCase
         for ($i = 1; $i <= $count; $i++) {
             $item = NewsItem::factory()->create([
                 'slug' => sprintf('item-%02d', $i),
-                'category' => NewsCategory::News,
+                'category' => 'news',
                 'status' => 'published',
                 'published_at' => Carbon::parse('2025-01-01')->addDays($i),
                 'date_unknown' => false,

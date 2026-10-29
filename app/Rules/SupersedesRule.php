@@ -50,11 +50,9 @@ class SupersedesRule implements ValidationRule
             return;
         }
 
-        // publication_type is cast to an enum on the model and arrives
-        // from the form as a string. Compared as values, not as objects.
-        $earlierType = $earlier->publication_type instanceof \BackedEnum
-            ? $earlier->publication_type->value
-            : (string) $earlier->publication_type;
+        // publication_type is read as a PublicationType row on the model
+        // and arrives from the form as a slug. Compared as slugs.
+        $earlierType = $earlier->typeSlug();
 
         if ($this->type !== null && $earlierType !== $this->type) {
             $fail(__('admin.supersedes_type'));

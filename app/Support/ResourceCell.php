@@ -63,6 +63,12 @@ final class ResourceCell
             return '';
         }
 
+        // A taxonomy term held by slug (news category, publication type)
+        // reads as its name in the interface language.
+        if ($value instanceof Model && method_exists($value, 'label')) {
+            return $value->label();
+        }
+
         if ($value instanceof Carbon) {
             return $value->displayed()->isoFormat('D MMM YYYY');
         }

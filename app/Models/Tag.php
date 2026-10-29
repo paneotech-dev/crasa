@@ -17,7 +17,7 @@ class Tag extends Model
     /** @var list<string> */
     protected array $translatable = ['name'];
 
-    protected $fillable = ['slug', 'is_sample'];
+    protected $fillable = ['slug', 'sort_order', 'is_sample'];
 
     protected function casts(): array
     {
@@ -27,6 +27,12 @@ class Tag extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /** The order set under Content > Taxonomies, then the slug, as before. */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('sort_order')->orderBy('slug');
     }
 
     public function newsItems(): MorphToMany

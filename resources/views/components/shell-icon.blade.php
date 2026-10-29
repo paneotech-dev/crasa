@@ -54,6 +54,10 @@
         @case('navigation')
             <path d="M4 6h16"></path><path d="M4 12h10"></path><path d="M4 18h7"></path>
             @break
+        @case('tag')
+            <path d="M12.6 2.6A2 2 0 0011.2 2H4a2 2 0 00-2 2v7.2a2 2 0 00.6 1.4l8.7 8.7a2.4 2.4 0 003.4 0l6.6-6.6a2.4 2.4 0 000-3.4z"></path>
+            <circle cx="7.5" cy="7.5" r="1" fill="currentColor"></circle>
+            @break
         @case('translations')
             <path d="M4 6h9"></path><path d="M8 4v2"></path>
             <path d="M11 6c0 4-3 8-7 9"></path><path d="M6 11c1.5 2.5 3.5 4 6 5"></path>

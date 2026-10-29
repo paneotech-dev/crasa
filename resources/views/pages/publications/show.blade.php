@@ -50,7 +50,7 @@
                     </div>
                 </div>
             @endif
-            <p class="u-eyebrow">{{ __($publication->publication_type->labelKey()) }}@if ($publication->sector), {{ $publication->sector->name }}@endif</p>
+            <p class="u-eyebrow">{{ $publication->typeLabel() }}@if ($publication->sector), {{ $publication->sector->name }}@endif</p>
             <h1 class="u-h1" @if ($title?->isFallback()) lang="{{ $title->locale }}" @endif>{{ $title?->value ?? $publication->slug }}</h1>
             @if ($summary)
                 <p class="u-lead">{{ $summary->value }}</p>
@@ -169,7 +169,7 @@
                     <div class="u-panel">
                         <h2 class="u-h3">{{ __('cpages_b.about_document') }}</h2>
                         <dl class="u-facts">
-                            <div><dt>{{ __('publications.type') }}</dt><dd>{{ __($publication->publication_type->labelKey()) }}</dd></div>
+                            <div><dt>{{ __('publications.type') }}</dt><dd>{{ $publication->typeLabel() }}</dd></div>
                             <div><dt>{{ __('publications.published') }}</dt><dd>{{ $publication->published_on?->translatedFormat('j F Y') ?? __('office.date_not_recorded') }}</dd></div>
                             @if ($publication->sector)
                                 <div><dt>{{ __('publications.sector') }}</dt><dd>{{ $publication->sector->name }}</dd></div>

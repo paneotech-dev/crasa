@@ -337,7 +337,7 @@
                     <div class="k-lead__ph">
                         @if ($lead['image'])
                             <img src="{{ $lead['image']['src'] }}" @if ($lead['image']['srcset']) srcset="{{ $lead['image']['srcset'] }}" sizes="(max-width: 720px) 100vw, 420px" @endif
-                                 @if ($lead['image']['width']) width="{{ $lead['image']['width'] }}" height="{{ $lead['image']['height'] }}" @endif alt="" loading="lazy" decoding="async">
+                                 @if ($lead['image']['width']) width="{{ $lead['image']['width'] }}" height="{{ $lead['image']['height'] }}" @endif alt="" loading="lazy" decoding="async" @if (! empty($lead['position'])) style="object-position: {{ $lead['position'] }}" @endif>
                         @else
                             @include('partials.k.placeholder', ['label' => $lead['type']])
                         @endif
@@ -355,7 +355,7 @@
                             <article class="k-mini u-reveal">
                                 <div class="k-mini__ph">
                                     @if ($n['image'])
-                                        <img src="{{ $n['image']['src'] }}" @if ($n['image']['width']) width="{{ $n['image']['width'] }}" height="{{ $n['image']['height'] }}" @endif alt="" loading="lazy" decoding="async">
+                                        <img src="{{ $n['image']['src'] }}" @if ($n['image']['width']) width="{{ $n['image']['width'] }}" height="{{ $n['image']['height'] }}" @endif alt="" loading="lazy" decoding="async" @if (! empty($n['position'])) style="object-position: {{ $n['position'] }}" @endif>
                                     @else
                                         @include('partials.k.placeholder', ['label' => $n['type'], 'small' => true])
                                     @endif

@@ -43,6 +43,8 @@ return [
     'subject_enquiry' => 'an enquiry',
     'subject_tag' => 'a tag',
     'subject_sector' => 'a sector',
+    'subject_newscategory' => 'a news category',
+    'subject_publicationtype' => 'a publication type',
 
     // Record types added since the first list (19 October 2026).
     'subject_announcement' => 'an announcement',

@@ -4,8 +4,6 @@ namespace App\Admin;
 
 use App\Enums\InstrumentStatus;
 use App\Enums\InstrumentType;
-use App\Enums\NewsCategory;
-use App\Enums\PublicationType;
 use App\Models\Authority;
 use App\Models\Committee;
 use App\Models\Country;
@@ -13,8 +11,10 @@ use App\Models\Enquiry;
 use App\Models\Indicator;
 use App\Models\IndicatorValue;
 use App\Models\Instrument;
+use App\Models\NewsCategory;
 use App\Models\NewsItem;
 use App\Models\Publication;
+use App\Models\PublicationType;
 use App\Models\Sector;
 use App\Models\Tag;
 use App\Rules\SupersedesRule;
@@ -210,7 +210,8 @@ final class ResourceRegistry
                 model: Publication::class,
                 columns: ['title', 'publication_type', 'published_on', 'is_public', 'languages', 'has_file', 'updated_at'],
                 fields: [
-                    Field::select('publication_type', array_column(PublicationType::cases(), 'value'), required: true),
+                    // From the list kept under Content > Taxonomies.
+                    self::term('publication_type', PublicationType::class),
                     Field::belongsTo('sector_id', 'sector'),
                     Field::belongsTo('committee_id', 'committee'),
                     Field::belongsTo('country_id', 'country'),
@@ -240,7 +241,7 @@ final class ResourceRegistry
 
                         return Publication::query()
                             ->with('translations')
-                            ->where('publication_type', $record->publication_type)
+                            ->where('publication_type', $record->typeSlug())
                             ->when($record->exists, fn ($q) => $q->whereKeyNot($record->getKey()))
                             ->when(
                                 $record->published_on !== null,
@@ -276,7 +277,7 @@ final class ResourceRegistry
                     }),
                 ],
                 rules: [
-                    'publication_type' => ['required', 'in:'.implode(',', array_column(PublicationType::cases(), 'value'))],
+                    'publication_type' => ['required', 'string', Rule::exists('publication_types', 'slug')],
                     'sector_id' => ['nullable', 'exists:sectors,id'],
                     'committee_id' => ['nullable', 'exists:committees,id'],
                     'country_id' => ['nullable', 'exists:countries,id'],
@@ -317,7 +318,7 @@ final class ResourceRegistry
                 orderBy: 'published_on',
                 orderDirection: 'desc',
                 filters: [
-                    ['key' => 'type', 'column' => 'publication_type', 'options' => collect(PublicationType::cases())->mapWithKeys(fn ($t) => [$t->value => $t->labelKey()])->all()],
+                    ['key' => 'type', 'column' => 'publication_type', 'options' => fn () => PublicationType::terms()->mapWithKeys(fn ($t) => [$t->slug => $t->label()])->all()],
                     ['key' => 'year', 'column' => 'published_on', 'type' => 'year'],
                     ['key' => 'visibility', 'column' => 'is_public', 'options' => ['1' => 'office.visibility_public', '0' => 'office.visibility_hidden']],
                 ],
@@ -328,15 +329,16 @@ final class ResourceRegistry
                 model: NewsItem::class,
                 columns: ['title', 'category', 'status', 'published_at', 'languages'],
                 fields: [
-                    Field::select('category', array_column(NewsCategory::cases(), 'value'), required: true),
+                    self::term('category', NewsCategory::class),
                     Field::belongsTo('sector_id', 'sector'),
                     Field::select('status', ['draft', 'published'], required: true),
                     Field::date('published_at'),
                     Field::text('author_name'),
 
-                    // The photograph, chosen from the media library. Empty
-                    // means the placeholder of the item's type.
-                    Field::scoped('hero_image_path', fn () => \App\Models\MediaAsset::query()
+                    // The photograph, chosen from the media library or
+                    // uploaded on the form, with its focal point (Day 3).
+                    // Empty means the placeholder of the item's type.
+                    new Field('hero_image_path', 'photo', options: ['x' => 'hero_focal_x', 'y' => 'hero_focal_y'], optionsUsing: fn () => \App\Models\MediaAsset::query()
                         ->where('disk', 'public')
                         ->where('mime_type', 'like', 'image/%')
                         ->orderByDesc('id')
@@ -344,9 +346,10 @@ final class ResourceRegistry
                         ->pluck('original_name', 'path')
                         ->all()),
                 ],
+                rulesUsing: fn (?Model $record, Request $request) => \App\Support\NewsPhoto::rules(),
                 rules: [
                     'hero_image_path' => ['nullable', 'string', Rule::exists('media_assets', 'path')->whereNull('deleted_at')],
-                    'category' => ['required', 'in:'.implode(',', array_column(NewsCategory::cases(), 'value'))],
+                    'category' => ['required', 'string', Rule::exists('news_categories', 'slug')],
                     'sector_id' => ['nullable', 'exists:sectors,id'],
                     'status' => ['required', 'in:draft,published'],
                     'published_at' => ['nullable', 'date'],
@@ -360,7 +363,7 @@ final class ResourceRegistry
                 orderBy: 'published_at',
                 orderDirection: 'desc',
                 filters: [
-                    ['key' => 'category', 'column' => 'category', 'options' => collect(NewsCategory::cases())->mapWithKeys(fn ($c) => [$c->value => $c->labelKey()])->all()],
+                    ['key' => 'category', 'column' => 'category', 'options' => fn () => NewsCategory::terms()->mapWithKeys(fn ($c) => [$c->slug => $c->label()])->all()],
                     ['key' => 'year', 'column' => 'published_at', 'type' => 'year'],
                     ['key' => 'status', 'column' => 'status', 'options' => ['draft' => 'admin.status_draft', 'review' => 'office.status_review', 'published' => 'admin.status_published']],
                 ],
@@ -483,6 +486,19 @@ final class ResourceRegistry
                 creatable: false,
             ),
         ];
+    }
+
+    /**
+     * A required choice from one taxonomy list, held by slug: news
+     * categories and publication types, kept under Content > Taxonomies.
+     *
+     * @param  class-string<NewsCategory|PublicationType>  $term
+     */
+    private static function term(string $name, string $term): Field
+    {
+        return new Field($name, 'relation', required: true, optionsUsing: fn () => $term::terms()
+            ->mapWithKeys(fn ($t) => [$t->slug => $t->label()])
+            ->all());
     }
 
     public static function find(string $key): Resource

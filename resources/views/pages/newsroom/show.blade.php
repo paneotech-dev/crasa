@@ -17,12 +17,12 @@
     @include('partials.cpages.styles')
     @php
         $loc = app()->getLocale();
-        $typeLabel = __($item->category->labelKey());
+        $typeLabel = $item->categoryLabel();
         $dateText = $item->date_unknown ? __('events.date_not_stated') : \App\Support\NewsFormat::longDate($item->published_at);
         $heroPhoto = null;
         if ($item->hero_image_path) {
             $p = \App\Support\ResizedImage::attributes($item->hero_image_path, 'hero');
-            $heroPhoto = ['src' => $p['src'], 'srcset' => $p['srcset'] ?? null, 'alt' => '', 'width' => $p['width'] ?? 1200, 'height' => $p['height'] ?? 800, 'position' => '50% 30%'];
+            $heroPhoto = ['src' => $p['src'], 'srcset' => $p['srcset'] ?? null, 'alt' => '', 'width' => $p['width'] ?? 1200, 'height' => $p['height'] ?? 800, 'position' => $item->heroPosition('50% 30%')];
         }
     @endphp
 

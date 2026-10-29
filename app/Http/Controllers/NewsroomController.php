@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\NewsCategory;
+use App\Models\NewsCategory;
 use App\Models\NewsItem;
 use App\Models\Sector;
 use App\Models\Tag;
@@ -48,12 +48,12 @@ class NewsroomController extends Controller
         $search = trim((string) $request->query('q', ''));
         $sort = $request->query('sort') === 'oldest' ? 'oldest' : 'newest';
 
-        $categories = collect(NewsCategory::cases());
-        $sectors = Sector::orderBy('name')->get();
-        $tags = Tag::with('translations')->orderBy('slug')->get();
+        $categories = NewsCategory::terms();
+        $sectors = Sector::ordered()->get();
+        $tags = Tag::with('translations')->ordered()->get();
 
         $options = [
-            'category' => $categories->map(fn ($c) => (string) $c->value)->all(),
+            'category' => $categories->map(fn ($c) => $c->slug)->all(),
             'sector' => $sectors->pluck('slug')->all(),
             'tag' => $tags->pluck('slug')->all(),
         ];
