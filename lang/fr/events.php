@@ -13,6 +13,7 @@ return [
     'past' => 'Passés',
     // The legacy site gave no date; the stored one is the day it was read.
     'date_not_stated' => 'Date non précisée',
+    'none_past' => 'Aucune réunion passée n\'est encore répertoriée.',
     'none_upcoming_title' => 'Rien de prévu publiquement',
     'none_upcoming_body' => 'Les réunions apparaissent ici une fois publiées par le Secrétariat. Les réunions de comité figurent dans l\'espace membres pour les États membres qui y siègent.',
     'agenda' => 'Ordre du jour',

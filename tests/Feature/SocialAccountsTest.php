@@ -206,8 +206,10 @@ class SocialAccountsTest extends TestCase
             $this->assertStringNotContainsString('<iframe', $html);
         }
 
+        // The feed partial is drawn when it exists; until then the channel
+        // cards stand in, under the id="social" the footer links to.
         $this->assertStringContainsString(
-            "@includeIf('partials.newsroom.social')",
+            "view()->exists('partials.newsroom.social')",
             file_get_contents(resource_path('views/pages/newsroom/index.blade.php'))
         );
     }

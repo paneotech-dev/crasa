@@ -171,7 +171,16 @@
         </div>
     </section>
 
-    @if ($pastByYear->isNotEmpty())
+    {{-- The footer links to #past, so the section stays when nothing is
+         listed yet and says so. --}}
+    @if ($pastByYear->isEmpty())
+        <section class="u-section" id="past" aria-labelledby="past-title">
+            <div class="u-container">
+                <h2 class="u-h2" id="past-title">{{ __('events.past') }}</h2>
+                <p>{{ __('events.none_past') }}</p>
+            </div>
+        </section>
+    @else
         <section class="u-section" id="past" aria-labelledby="past-title" data-past>
             <div class="u-container">
                 <div class="e-past-head">
