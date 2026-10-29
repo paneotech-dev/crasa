@@ -35,22 +35,17 @@ p { margin: 0 0 var(--s-4); max-width: 66ch; }
 a { color: var(--c-green-dark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
 a:hover { color: var(--c-navy); }
 
-/* Focus: a 2px ring at 2px offset on every interactive element, with a
-   2px white band filling the offset, so the ring shows on any ground.
-   Logo blue #7A90C8 is 3.16:1 on white but 2.81:1 on the green and blue
-   tints and 2.44:1 on deep green, so the ring is blue ink #2F4F8F (7.97:1
-   on white, 7.09:1 or more on every tint); on deep green and green fills
-   the white band carries it (7.72:1 and 4.54:1). Nothing in this
-   platform removes it. */
-:root { --focus-ring: var(--u-focus, var(--c-blue-ink, var(--c-navy))); --focus-halo: var(--c-white); }
-/* ui.css draws the same ring on a, button, input, select, textarea,
-   summary and [tabindex]; this rule covers everything else and adds the
-   white band, so there is one ring, not two. */
-:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 2px var(--focus-halo);
-}
+/* Focus: a 2px ring at 2px offset on every interactive element, the same
+   ring ui.css draws. Logo blue #7A90C8 is 3.16:1 on white but 2.81:1 on
+   the green and blue tints and 2.44:1 on deep green, so the ring is blue
+   ink #2F4F8F (7.97:1 on white, 7.09:1 or more on every tint). On a dark
+   band (deep green #0B5F3E, where blue ink is 1.03:1) the band sets
+   --focus-ring and --u-focus to white (7.72:1); the footer and the call
+   to action band do so here, and any other dark band does the same with
+   those two properties. Nothing in this platform removes the ring. */
+:root { --focus-ring: var(--u-focus, var(--c-blue-ink, var(--c-navy))); }
+:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+footer, .u-cta, [data-surface-tone="dark"] { --focus-ring: var(--c-white); --u-focus: var(--c-white); }
 
 table { border-collapse: collapse; }
 
@@ -134,7 +129,7 @@ table { border-collapse: collapse; }
   border: 1px solid var(--c-border);
   border-radius: var(--r-xs);
 }
-.c-select:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; box-shadow: 0 0 0 2px var(--focus-halo); }
+.c-select:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .c-select:disabled { color: var(--c-disabled); background: var(--c-cream); cursor: not-allowed; }
 
 /*
@@ -241,4 +236,4 @@ table { border-collapse: collapse; }
   border: 0; border-radius: var(--r-sm); background: transparent; color: inherit; cursor: pointer;
 }
 .c-pw__toggle:hover { background: rgba(0, 0, 0, .06); }
-.c-pw__toggle:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; box-shadow: 0 0 0 2px var(--focus-halo); }
+.c-pw__toggle:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
