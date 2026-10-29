@@ -405,7 +405,7 @@
 
 {{-- ================= MEMBERS (C10) ================= --}}
 @if ($membersBlock)
-@php $countries = \App\Models\Country::with(['authority'])->orderBy('name')->get(); @endphp
+@php $countries = \App\Models\Country::with(['authority.sectors', 'committees'])->orderBy('name')->get(); @endphp
 <section class="k-sec k-memsec" id="members" aria-labelledby="k-mem-h">
     <div class="k-wrap">
         <div class="k-sh u-reveal">
