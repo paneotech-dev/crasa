@@ -29,10 +29,7 @@
                 'title' => $p->translate('title')?->value ?? $p->slug,
                 'slug' => '/' . $p->slug,
                 'blocks' => $p->blocks_count,
-                'languages' => new \Illuminate\Support\HtmlString(
-                    '<span class=\'a-langs\'' . (count($p->localesWithTitle()) < 3 ? ' data-incomplete' : '') . '>'
-                    . e(implode(' ', array_map('strtoupper', $p->localesWithTitle()))) . '</span>'
-                ),
+                'languages' => \App\Support\TranslationState::cell($p),
                 'status' => new \Illuminate\Support\HtmlString(
                     '<span class=\'a-pill\' data-status=\'' . $p->status->value . '\'>'
                     . e(__($p->status->labelKey())) . '</span>'

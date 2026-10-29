@@ -42,4 +42,7 @@ return [
     'area_admin' => 'Administration',
     'area_member' => 'Espace membres',
     'area_public' => 'Site public',
+    'tr_state_missing' => 'manquante',
+    'tr_state_machine' => 'traduction automatique',
+    'tr_state_reviewed' => 'relue',
 ];

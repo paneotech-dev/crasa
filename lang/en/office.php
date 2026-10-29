@@ -42,4 +42,7 @@ return [
     'area_admin' => 'Administration',
     'area_member' => 'Member area',
     'area_public' => 'Public site',
+    'tr_state_missing' => 'missing',
+    'tr_state_machine' => 'machine translated',
+    'tr_state_reviewed' => 'reviewed',
 ];

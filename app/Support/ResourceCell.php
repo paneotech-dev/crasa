@@ -21,6 +21,15 @@ final class ResourceCell
 {
     public static function render(Resource $definition, Model $record, string $column): string|HtmlString
     {
+        // Virtual columns (UX-05, TR-03): the state of each language, and
+        // whether the record has a file of its own.
+        if ($column === 'languages' && $definition->translatable !== []) {
+            return TranslationState::cell($record, $definition->translatable[0]);
+        }
+        if ($column === 'has_file' && method_exists($record, 'hasFile')) {
+            return __($record->hasFile() ? 'admin.yes' : 'admin.no');
+        }
+
         // A translatable field comes from the translations table, with the
         // English fallback and its notice already applied.
         if (in_array($column, $definition->translatable, true) && method_exists($record, 'translate')) {

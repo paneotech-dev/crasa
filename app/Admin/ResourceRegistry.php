@@ -208,7 +208,7 @@ final class ResourceRegistry
             'publications' => new Resource(
                 key: 'publications',
                 model: Publication::class,
-                columns: ['title', 'publication_type', 'sector', 'published_on', 'is_public'],
+                columns: ['title', 'publication_type', 'published_on', 'is_public', 'languages', 'has_file', 'updated_at'],
                 fields: [
                     Field::select('publication_type', array_column(PublicationType::cases(), 'value'), required: true),
                     Field::belongsTo('sector_id', 'sector'),
@@ -326,7 +326,7 @@ final class ResourceRegistry
             'news' => new Resource(
                 key: 'news',
                 model: NewsItem::class,
-                columns: ['title', 'category', 'status', 'published_at'],
+                columns: ['title', 'category', 'status', 'published_at', 'languages'],
                 fields: [
                     Field::select('category', array_column(NewsCategory::cases(), 'value'), required: true),
                     Field::belongsTo('sector_id', 'sector'),

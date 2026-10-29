@@ -42,4 +42,7 @@ return [
     'area_admin' => 'Administração',
     'area_member' => 'Área de membros',
     'area_public' => 'Sítio público',
+    'tr_state_missing' => 'em falta',
+    'tr_state_machine' => 'tradução automática',
+    'tr_state_reviewed' => 'revista',
 ];
