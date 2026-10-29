@@ -22,6 +22,12 @@ final class StatementGrid
     /** @return array<int, array{value: string, label: string}> */
     public static function build(): array
     {
+        return PublicCache::remember('statement-grid', fn () => self::compute());
+    }
+
+    /** @return array<int, array{value: string, label: string}> */
+    private static function compute(): array
+    {
         $counts = IndicatorValue::query()
             ->selectRaw('country_id, count(*) as filed')
             ->whereHas('indicator', fn ($q) => $q->where('is_active', true))

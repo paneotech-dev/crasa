@@ -51,6 +51,12 @@ final class HeroPanel
      */
     public static function build(): array
     {
+        return PublicCache::remember('hero-figures', fn () => self::computeFigures());
+    }
+
+    /** @return array<string, mixed> */
+    private static function computeFigures(): array
+    {
         $countries = Country::count();
         $locale = app()->getLocale();
 
@@ -105,6 +111,12 @@ final class HeroPanel
      * @return array{indicator: string, unit: string|null, period: string|null, url: string, sample: bool, rows: array<int, array{country: string, code: string, value: string}>}|null
      */
     public static function comparison(): ?array
+    {
+        return PublicCache::remember('hero-comparison', fn () => self::computeComparison());
+    }
+
+    /** @return array<string, mixed>|null */
+    private static function computeComparison(): ?array
     {
         $indicator = Indicator::active()
             ->withCount('values')
@@ -165,6 +177,12 @@ final class HeroPanel
      * @return array{title: string, kind: string, year: string|null, format: string|null, size: string|null, sample: bool, url: string}|null
      */
     public static function publication(): ?array
+    {
+        return PublicCache::remember('hero-publication', fn () => self::computePublication());
+    }
+
+    /** @return array<string, mixed>|null */
+    private static function computePublication(): ?array
     {
         $publication = Publication::listed()
             ->with('translations')
