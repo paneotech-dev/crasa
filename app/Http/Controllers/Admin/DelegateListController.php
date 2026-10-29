@@ -47,6 +47,20 @@ class DelegateListController extends Controller
         ]);
     }
 
+    /** Confirm or decline one delegate, or put them back to filed. */
+    public function decide(Request $request, Meeting $meeting, int $registration): \Illuminate\Http\RedirectResponse
+    {
+        Gate::authorize(Permission::ManageMeetings->value);
+
+        $row = DelegateRegistration::where('meeting_id', $meeting->id)->findOrFail($registration);
+        $status = $request->validate(['status' => ['required', 'in:filed,confirmed,declined']])['status'];
+        $row->update(['status' => $status]);
+
+        return redirect()
+            ->route('admin.delegates', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug])
+            ->with('status', __('e.delegate_updated', ['name' => $row->delegate_name, 'status' => __('e.delegate_'.$status)]));
+    }
+
     /**
      * The export. This is the handover point to the Event Management
      * Platform: the website has collected the information and this is how
@@ -77,6 +91,7 @@ class DelegateListController extends Controller
                 __('delegates.col_departure_on'), __('delegates.col_departure_at'),
                 __('delegates.col_departure_reference'),
                 __('delegates.col_notes'),
+                __('e.delegate_status'),
             ]);
 
             foreach ($registrations as $row) {
@@ -93,6 +108,7 @@ class DelegateListController extends Controller
                     $row->departure_at,
                     $row->departure_reference,
                     $row->notes,
+                    __('e.delegate_'.($row->status ?: 'filed')),
                 ]);
             }
 
