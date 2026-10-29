@@ -1470,15 +1470,16 @@ textarea.a-input { height: auto; padding: 10px 12px; line-height: 1.5; }
  * merely hidden but unreachable.
  */
 .e-boundary {
-  background: var(--c-red-light);
-  border: 1px solid var(--c-red-mid);
-  border-left: 4px solid var(--c-red);
+  /* A statement of how access works, not an error: neutral, in the blue. */
+  background: var(--c-white);
+  border: 1px solid var(--a-rule);
+  border-left: 4px solid var(--a-blue);
   border-radius: var(--r-md);
   padding: var(--s-5);
-  color: var(--c-red-dark);
+  color: var(--a-ink);
 }
 
-.e-boundary__kicker { font-size: 12px; font-weight: 700; color: var(--c-red); margin: 0 0 var(--s-3); }
+.e-boundary__kicker { font-size: 15px; font-weight: 700; color: var(--a-blue); margin: 0 0 var(--s-2); }
 .e-boundary p { margin: 0; font-size: 15px; line-height: 1.6; }
 
 /* Notices --------------------------------------------------------------- */
@@ -2415,10 +2416,8 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
    proposal somebody quotes as a commitment. */
 .a-proposal__label {
   font-family: var(--f-admin);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .1em;
-  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 400;
   color: var(--c-slate);
   margin: 4px 0 0;
 }

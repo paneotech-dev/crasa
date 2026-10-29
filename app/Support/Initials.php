@@ -12,7 +12,11 @@ final class Initials
 {
     public static function of(string $name): string
     {
-        $words = preg_split('/\s+/u', trim($name), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        // Words that start with a letter: "Demo Member (ICASA)" is DM, not D(.
+        $words = array_values(array_filter(
+            preg_split('/\s+/u', trim($name), -1, PREG_SPLIT_NO_EMPTY) ?: [],
+            fn (string $word) => preg_match('/^\p{L}/u', $word) === 1,
+        ));
 
         if ($words === []) {
             return '';
