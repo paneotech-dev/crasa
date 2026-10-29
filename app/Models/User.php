@@ -51,7 +51,8 @@ class User extends Authenticatable implements HasLocalePreference
      * @var array<string, mixed>
      */
     protected $attributes = [
-        'theme' => 'system',
+        // F11: the back office opens light; "system" follows the device.
+        'theme' => 'light',
     ];
 
     protected function casts(): array

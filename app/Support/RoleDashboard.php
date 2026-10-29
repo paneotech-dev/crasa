@@ -64,6 +64,18 @@ final class RoleDashboard
         ];
     }
 
+    /** Country returns waiting for validation, for the sidebar badge. */
+    public static function submissionsWaiting(): int
+    {
+        return Submission::where('status', SubmissionStatus::Submitted)->count();
+    }
+
+    /** Social posts saved but not on the site, for the sidebar badge. */
+    public static function socialDrafts(): int
+    {
+        return Schema::hasTable('social_posts') ? SocialPost::where('status', 'draft')->count() : 0;
+    }
+
     /** The role this dashboard is drawn for, as a plain key. */
     public static function roleKey(User $user): string
     {
@@ -203,7 +215,7 @@ final class RoleDashboard
                 'url' => Route::has('admin.approvals') ? route('admin.approvals') : null, 'meta' => null, 'comment' => null];
         }
 
-        $submissions = Submission::where('status', SubmissionStatus::Submitted)->count();
+        $submissions = self::submissionsWaiting();
         if ($submissions > 0) {
             $rows[] = ['label' => trans_choice('fb.dash_att_submissions', $submissions, ['count' => $submissions]),
                 'url' => Route::has('admin.submissions') ? route('admin.submissions') : null, 'meta' => null, 'comment' => null];
@@ -217,7 +229,7 @@ final class RoleDashboard
                 'url' => Route::has('admin.users') ? route('admin.users', ['status' => 'invited']) : null, 'meta' => __('fb.dash_att_invitations_meta'), 'comment' => null];
         }
 
-        $drafts = SocialPost::query()->when(! Schema::hasTable('social_posts'), fn ($q) => $q->whereRaw('1 = 0'))->where('status', 'draft')->count();
+        $drafts = self::socialDrafts();
         if ($drafts > 0) {
             $rows[] = ['label' => trans_choice('fb.dash_att_social', $drafts, ['count' => $drafts]),
                 'url' => route('admin.social'), 'meta' => null, 'comment' => null];

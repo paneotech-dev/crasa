@@ -54,7 +54,7 @@ return [
     'frame_title' => 'Publicação da CRASA no :network',
 
     // Dashboards per role
-    'dash_heading_administrator' => 'Precisa da sua atenção',
+    'dash_heading_administrator' => 'Hoje na plataforma',
     'dash_heading_moderator' => 'As suas aprovações',
     'dash_heading_editor' => 'O seu trabalho',
     'dash_heading_auditor' => 'Visão só de leitura',
@@ -142,4 +142,5 @@ return [
     'dash_sparkline' => ':label por semana nas últimas oito semanas: :values',
     'dash_shortcuts' => 'Atalhos',
     'dash_waiting' => '{0} nada em espera|{1} :count em espera|[2,*] :count em espera',
+    'side_waiting' => '{1} :count em espera|[2,*] :count em espera',
 ];

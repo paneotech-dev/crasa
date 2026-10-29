@@ -56,7 +56,7 @@ return [
     'frame_title' => 'CRASA post on :network',
 
     // Dashboards per role
-    'dash_heading_administrator' => 'Needs your attention',
+    'dash_heading_administrator' => 'Today on the platform',
     'dash_heading_moderator' => 'Your approvals',
     'dash_heading_editor' => 'Your work',
     'dash_heading_auditor' => 'Read-only overview',
@@ -144,4 +144,5 @@ return [
     'dash_sparkline' => ':label per week for the last eight weeks: :values',
     'dash_shortcuts' => 'Shortcuts',
     'dash_waiting' => '{0} nothing waiting|{1} :count waiting|[2,*] :count waiting',
+    'side_waiting' => '{1} :count waiting|[2,*] :count waiting',
 ];

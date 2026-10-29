@@ -211,13 +211,15 @@ class AdminShellTest extends TestCase
         $this->assertStringContainsString('a-pill', $html);
     }
 
-    public function test_the_theme_is_an_account_setting_that_defaults_to_the_operating_system(): void
+    public function test_the_theme_is_an_account_setting_that_defaults_to_light(): void
     {
-        $this->assertSame(Theme::System, $this->administrator->theme);
+        // F11 (29 October 2026): the back office opens light for the
+        // workshop; "system" (follow the device) stays one click away.
+        $this->assertSame(Theme::Light, $this->administrator->theme);
 
         $this->actingAs($this->administrator)
             ->get('/en/admin')
-            ->assertSee('data-theme="system"', false);
+            ->assertSee('data-theme="light"', false);
 
         $this->actingAs($this->administrator)
             ->from('/en/admin')
@@ -238,6 +240,6 @@ class AdminShellTest extends TestCase
             ->put('/en/account/theme', ['theme' => 'midnight'])
             ->assertSessionHasErrors('theme');
 
-        $this->assertSame(Theme::System, $this->administrator->fresh()->theme);
+        $this->assertSame(Theme::Light, $this->administrator->fresh()->theme);
     }
 }

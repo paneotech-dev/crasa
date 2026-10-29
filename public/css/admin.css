@@ -29,21 +29,25 @@ body[data-surface="admin"] {
    * Scoped to the administered surfaces. It is not in tokens.css and no
    * public rule may reach it.
    */
-  --a-ground: #F0F4F1;
+  /* F11 (29 October 2026): the light set is the green and white family of
+     the UI system (ui.css, loaded before this sheet). The values before
+     were cream, charcoal and navy; the fallbacks keep them if ui.css is
+     ever missing. */
+  --a-ground: var(--u-pale, var(--c-admin-bg));
   --a-surface: var(--c-white);
-  --a-rule: var(--c-line);
-  --a-ink: var(--c-charcoal);
-  --a-ink-quiet: var(--c-slate);
-  --a-ink-strong: var(--c-navy);
-  --a-link: var(--c-green-dark);
-  --a-current: var(--c-green-light);
-  --a-head-ground: var(--c-cream);
+  --a-rule: var(--u-line, var(--c-line));
+  --a-ink: var(--u-ink, var(--c-charcoal));
+  --a-ink-quiet: var(--u-muted, var(--c-slate));
+  --a-ink-strong: var(--u-green-deep, var(--c-navy));
+  --a-link: var(--u-green-deep, var(--c-green-dark));
+  --a-current: var(--u-tint-green, var(--c-green-light));
+  --a-head-ground: var(--c-white);
   /* The admin button tokens. Variation V-ADMIN-BUTTON, docs/VARIATIONS.md:
      proposed and applied 16 September 2026, pending the client's sign-off.
      Values only from the approved palette. The light theme is unchanged. */
-  --a-btn: var(--c-green-dark);
+  --a-btn: var(--u-green, var(--c-green-dark));
   --a-btn-ink: var(--c-white);
-  --a-btn-hover: var(--c-navy);
+  --a-btn-hover: var(--u-green-deep, var(--c-navy));
   --a-btn-hover-ink: var(--c-white);
 
   background: var(--a-ground);
@@ -2660,3 +2664,120 @@ span.rd__label { color: var(--a-ink); }
 @media (max-width: 900px) {
   .rd__grid, .rd__figures { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* =========================================================================
+   F11, 29 October 2026: the light back office in the green and white
+   family. The rules above read surface tokens; this section re-points the
+   light set and puts the sidebar on its own tokens, so the dark set (the
+   account's "dark" setting, or "system" on a device in dark mode) is
+   unchanged. Measured pairs, light set (scripted, WCAG 2.1):
+     ink #25384A on white 12.05, on ground #F4F8F6 11.34
+     quiet #3F5264 on white 8.07, on ground 7.60, on tint #EAF4EF 7.18
+     deep green #0B5F3E on white 7.72, on tint 6.87, on ground 7.26
+     white on button #0F8757 4.54, on hover #0B5F3E 7.72
+     sidebar: ink #25384A on white 12.05; label #3F5264 on white 8.07;
+     hover ink #0B5F3E on #EAF4EF 6.87; pressed on green-mid 5.16; current white on #0F8757 4.54;
+     focus ring #2F4F8F on white 7.97 (3:1 needed); rule #D9E3EC is a
+     divider only, never the edge of a control.
+   ========================================================================= */
+body[data-surface="admin"] {
+  --a-focus: var(--u-focus, var(--u-blue-ink));
+  --a-side-bg: var(--c-white);
+  --a-side-edge: var(--u-line);
+  --a-side-ink: var(--u-ink);
+  --a-side-ink-strong: var(--u-green-deep);
+  --a-side-label: var(--u-muted);
+  --a-side-hover: var(--u-tint-green);
+  --a-side-hover-ink: var(--u-green-deep);
+  --a-side-active: var(--c-green-mid);
+  --a-side-current: var(--u-green);
+  --a-side-current-ink: var(--c-white);
+  --a-side-badge: var(--u-blue-ink);
+  --a-side-badge-ink: var(--c-white);
+}
+
+body[data-surface="admin"][data-theme="dark"] {
+  --a-focus: var(--c-amber);
+  --a-side-bg: var(--c-navy);
+  --a-side-edge: var(--c-navy-line);
+  --a-side-ink: color-mix(in srgb, var(--c-cream) 85%, var(--c-navy));
+  --a-side-ink-strong: var(--c-cream);
+  --a-side-label: var(--c-green-light);
+  --a-side-hover: var(--c-navy-line);
+  --a-side-hover-ink: var(--c-cream);
+  --a-side-active: var(--c-navy-deep);
+  --a-side-current: var(--c-navy-mid);
+  --a-side-current-ink: var(--c-white);
+  --a-side-badge: var(--c-green-light);
+  --a-side-badge-ink: var(--c-navy);
+}
+@media (prefers-color-scheme: dark) {
+  body[data-surface="admin"][data-theme="system"] {
+    --a-focus: var(--c-amber);
+    --a-side-bg: var(--c-navy);
+    --a-side-edge: var(--c-navy-line);
+    --a-side-ink: color-mix(in srgb, var(--c-cream) 85%, var(--c-navy));
+    --a-side-ink-strong: var(--c-cream);
+    --a-side-label: var(--c-green-light);
+    --a-side-hover: var(--c-navy-line);
+    --a-side-hover-ink: var(--c-cream);
+    --a-side-active: var(--c-navy-deep);
+    --a-side-current: var(--c-navy-mid);
+    --a-side-current-ink: var(--c-white);
+    --a-side-badge: var(--c-green-light);
+    --a-side-badge-ink: var(--c-navy);
+  }
+}
+
+/* The sidebar on its tokens. Hover, focus, pressed and current are four
+   different looks: hover tints the row and underlines the label, focus is
+   the ring, pressed is the deeper tint, current is the filled row. */
+body[data-surface="admin"] .a-side { background: var(--a-side-bg); color: var(--a-side-ink); border-right: 1px solid var(--a-side-edge); }
+body[data-surface="admin"] .a-side__mark,
+body[data-surface="admin"] .a-side__areas,
+body[data-surface="admin"] .a-side__me { border-color: var(--a-side-edge); }
+body[data-surface="admin"] .a-side__mark { color: var(--a-side-ink-strong); }
+body[data-surface="admin"] .a-side__mark:hover { color: var(--a-side-ink-strong); text-decoration: underline; text-underline-offset: 3px; }
+body[data-surface="admin"] .a-side__area { color: var(--a-side-ink); border-color: var(--a-side-edge); min-height: 32px; }
+body[data-surface="admin"] .a-side__area:hover { background: var(--a-side-hover); color: var(--a-side-hover-ink); }
+body[data-surface="admin"] .a-side__area.is-current { background: var(--a-side-current); border-color: var(--a-side-current); color: var(--a-side-current-ink); }
+body[data-surface="admin"] .a-side__grouplabel { color: var(--a-side-label); }
+body[data-surface="admin"] .a-side__link { color: var(--a-side-ink); border-left-color: transparent; border-radius: 0 8px 8px 0; margin-right: 8px; min-height: 40px; transition: background-color 150ms ease, color 150ms ease; }
+body[data-surface="admin"] .a-side__link:hover { background: var(--a-side-hover); color: var(--a-side-hover-ink); }
+body[data-surface="admin"] .a-side__link:active { background: var(--a-side-active); color: var(--a-side-hover-ink); }
+body[data-surface="admin"] .a-side__link.is-current { background: var(--a-side-current); color: var(--a-side-current-ink); border-left-color: var(--a-side-current); font-weight: 600; }
+body[data-surface="admin"] .a-side__link.is-current:hover span { text-decoration: none; }
+body[data-surface="admin"] .a-side__name { color: var(--a-side-ink-strong); }
+body[data-surface="admin"] .a-side__name:hover { color: var(--a-side-ink-strong); }
+body[data-surface="admin"] .a-side__role { color: var(--a-side-label); }
+body[data-surface="admin"] .a-side__out { color: var(--a-side-ink); }
+body[data-surface="admin"] .a-side__out:hover { background: var(--a-side-hover); color: var(--a-side-hover-ink); }
+body[data-surface="admin"] .a-side__avatar { background: var(--a-side-hover); color: var(--a-side-ink-strong); }
+body[data-surface="admin"] :is(.a-side__link, .a-side__area, .a-side__out, .a-side__mark, .a-side__summary):focus-visible { outline: 2px solid var(--a-focus); outline-offset: -2px; }
+body[data-surface="admin"] .a-side__area:focus-visible, body[data-surface="admin"] .a-side__out:focus-visible { outline-offset: 2px; }
+body[data-surface="admin"] :is(a, button, input, select, textarea, summary):focus-visible { outline-color: var(--a-focus); }
+
+/* Collapsible groups with count badges. */
+.a-side__details { margin: 0; }
+.a-side__summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; list-style: none; cursor: pointer; padding: 6px var(--s-5) 6px 0; min-height: 32px; border-radius: 4px; }
+.a-side__summary::-webkit-details-marker { display: none; }
+.a-side__summary .a-side__grouplabel { margin: 0; }
+.a-side__chev { flex: none; width: 16px; height: 16px; color: var(--a-side-label); transition: transform 150ms ease; }
+.a-side__details:not([open]) .a-side__chev { transform: rotate(-90deg); }
+body[data-surface="admin"] .a-side__summary:hover .a-side__grouplabel { color: var(--a-side-hover-ink); text-decoration: underline; text-underline-offset: 3px; }
+.a-side__badge { margin-left: auto; flex: none; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px; display: inline-grid; place-items: center; font: 700 12px/1 var(--f-admin); background: var(--a-side-badge); color: var(--a-side-badge-ink); }
+body[data-surface="admin"] .a-side__link.is-current .a-side__badge { background: var(--a-side-current-ink); color: var(--a-side-current); }
+.a-side__summary .a-side__badge { margin-left: 0; }
+.a-side__group { margin-top: var(--s-4); }
+
+/* Cards, buttons and type on the UI system's measures (12px cards, 44px
+   buttons, 16px body). */
+body[data-surface="admin"] .a-card { border-radius: 12px; border-color: var(--a-rule); }
+body[data-surface="admin"] .a-btn { min-height: 44px; border-radius: 6px; transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease; }
+body[data-surface="admin"] .a-btn:active { transform: translateY(1px); }
+@media (prefers-reduced-motion: reduce) {
+  body[data-surface="admin"] .a-btn:active { transform: none; }
+  .a-side__chev { transition: none; }
+}
+/* The group labels are Inter, not the heading face (CLAUDE.md carve-out). */
+body[data-surface="admin"] .a-side__grouplabel { font-family: var(--f-admin); font-size: 11px; font-weight: 700; letter-spacing: .1em; }

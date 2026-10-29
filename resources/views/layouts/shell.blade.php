@@ -39,6 +39,8 @@
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/vendor/bootstrap-grid.min.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/grid.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/base.css') }}">
+    {{-- The UI system's tokens (--u-*), which the light back office reads. --}}
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/ui.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/admin.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/print.css') }}" media="print">
     @stack('styles')

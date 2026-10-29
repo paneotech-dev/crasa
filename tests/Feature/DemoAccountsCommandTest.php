@@ -54,7 +54,7 @@ class DemoAccountsCommandTest extends TestCase
         $this->assertSame($hash, $existing->fresh()->password);
         $this->assertStringNotContainsString('demo.editor@crasadev.invalid ', $contents);
 
-        preg_match('/^demo\.viewer2@crasadev\.invalid  ([a-z]+-[a-z]+-[a-z]+-[a-z]+)  /m', $contents, $m);
+        preg_match('/^demo\.viewer2@crasadev\.invalid\s+Viewer\s+((?:[A-Z][a-z]+){4}\d\d)$/m', $contents, $m);
         $this->assertNotEmpty($m, 'four-word password line for demo.viewer2');
         $viewer2 = User::firstWhere('email', 'demo.viewer2@crasadev.invalid');
         $this->assertTrue(Hash::check($m[1], $viewer2->password));
@@ -71,7 +71,7 @@ class DemoAccountsCommandTest extends TestCase
         $output = \Illuminate\Support\Facades\Artisan::output();
         $contents = file_get_contents($this->file);
 
-        preg_match_all('/  ([a-z]+-[a-z]+-[a-z]+-[a-z]+)  /', $contents, $m);
+        preg_match_all('/\s((?:[A-Z][a-z]+){4}\d\d)$/m', $contents, $m);
         $this->assertNotEmpty($m[1]);
         foreach ($m[1] as $password) {
             $this->assertStringNotContainsString($password, $output);

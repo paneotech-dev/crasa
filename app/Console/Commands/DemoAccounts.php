@@ -162,8 +162,10 @@ class DemoAccounts extends Command
 
         if ($created !== []) {
             $lines = ['', 'Day 2 accounts ('.now()->timezone(config('crasa.timezone', 'Africa/Gaborone'))->format('Y-m-d H:i').')'];
+            // The layout of the lines already in the file: email, role,
+            // password last.
             foreach ($created as [$email, $roleLabel, $password]) {
-                $lines[] = $email.'  '.$password.'  ('.$roleLabel.')';
+                $lines[] = str_pad($email, 34).str_pad($roleLabel, 32).$password;
             }
             file_put_contents($file, implode(PHP_EOL, $lines).PHP_EOL, FILE_APPEND | LOCK_EX);
             @chmod($file, 0600);
@@ -176,14 +178,18 @@ class DemoAccounts extends Command
         return self::SUCCESS;
     }
 
-    /** Four words, joined by hyphens, from a cryptographic source. */
+    /**
+     * Four capitalised words and two digits, from a cryptographic source:
+     * the same shape as the Day 1 passwords, and it meets the password
+     * rule (letters and numbers, twelve characters or more).
+     */
     private function passphrase(): string
     {
         $words = [];
         for ($i = 0; $i < 4; $i++) {
-            $words[] = self::WORDS[random_int(0, count(self::WORDS) - 1)];
+            $words[] = ucfirst(self::WORDS[random_int(0, count(self::WORDS) - 1)]);
         }
 
-        return implode('-', $words);
+        return implode('', $words).str_pad((string) random_int(10, 99), 2, '0', STR_PAD_LEFT);
     }
 }

@@ -66,7 +66,8 @@ final class ShellNavigation
                 ['key' => 'media', 'route' => 'admin.media', 'icon' => 'media', 'permission' => Permission::ManageContent],
                 ['key' => 'navigation', 'route' => 'admin.menus', 'icon' => 'navigation', 'permission' => Permission::ManageContent],
                 ['key' => 'announcements', 'route' => 'admin.announcements', 'icon' => 'bell', 'permission' => Permission::ManageContent],
-                ['key' => 'social', 'route' => 'admin.social', 'icon' => 'newsroom', 'permission' => Permission::ManageContent, 'label' => __('fb.nav_social')],
+                ['key' => 'social', 'route' => 'admin.social', 'icon' => 'newsroom', 'permission' => Permission::ManageContent, 'label' => __('fb.nav_social'),
+                    'badge' => fn () => \App\Support\RoleDashboard::socialDrafts()],
                 ['key' => 'translations', 'route' => 'admin.translations', 'icon' => 'translations', 'permission' => Permission::EditTranslations],
                 ['key' => 'legal', 'route' => 'admin.pages', 'query' => ['template' => 'legal'], 'icon' => 'legal', 'permission' => Permission::ManageContent],
             ],
@@ -76,7 +77,8 @@ final class ShellNavigation
                 ['key' => 'committees', 'route' => 'admin.resources', 'params' => ['resource' => 'committees'], 'icon' => 'committees', 'permission' => null],
                 ['key' => 'indicators', 'route' => 'admin.resources', 'params' => ['resource' => 'indicators'], 'icon' => 'indicators', 'permission' => null],
                 ['key' => 'instruments', 'route' => 'admin.resources', 'params' => ['resource' => 'instruments'], 'icon' => 'instruments', 'permission' => null],
-                ['key' => 'submissions', 'route' => 'admin.submissions', 'icon' => 'submissions', 'permission' => Permission::ValidateSubmission],
+                ['key' => 'submissions', 'route' => 'admin.submissions', 'icon' => 'submissions', 'permission' => Permission::ValidateSubmission,
+                    'badge' => fn () => \App\Support\RoleDashboard::submissionsWaiting()],
                 ['key' => 'contributions', 'route' => 'admin.contributions', 'icon' => 'instruments', 'permission' => Permission::ValidateSubmission],
                 ['key' => 'reports', 'route' => 'admin.reports', 'icon' => 'reports', 'permission' => Permission::ExportReports],
             ],
@@ -194,6 +196,7 @@ final class ShellNavigation
                 $url = route($definition['route'], $params + ($definition['query'] ?? []));
 
                 $items[] = [
+                    'badge' => isset($definition['badge']) ? ($definition['badge'])() : null,
                     'key' => $definition['key'],
                     'label' => $definition['label'] ?? __($namespace.'.nav_'.$definition['key']),
                     'url' => $url,

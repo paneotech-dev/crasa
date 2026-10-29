@@ -54,22 +54,41 @@
 
     <div class="a-side__scroll">
         @foreach ($groups as $group)
+            @php
+                $groupBadge = collect($group['items'])->sum(fn ($i) => (int) ($i['badge'] ?? 0));
+                $groupCurrent = collect($group['items'])->contains(fn ($i) => $i['current']);
+            @endphp
+            {{-- Collapsible (F11). Open by default; the group holding the
+                 current page cannot be closed out of sight on load. The
+                 summary's badge is the sum of its rows' badges, so a closed
+                 group still says something is waiting in it. --}}
             <div class="a-side__group">
-                {{-- The second sanctioned caps carve-out. See CLAUDE.md. --}}
-                <h2 class="a-side__grouplabel" id="side-group-{{ $group['key'] }}">{{ $group['label'] }}</h2>
+                <details class="a-side__details" open data-side-group="{{ $group['key'] }}" @if ($groupCurrent) data-current @endif>
+                    <summary class="a-side__summary">
+                        {{-- The second sanctioned caps carve-out. See CLAUDE.md. --}}
+                        <h2 class="a-side__grouplabel" id="side-group-{{ $group['key'] }}">{{ $group['label'] }}</h2>
+                        @if ($groupBadge > 0)
+                            <span class="a-side__badge" aria-label="{{ trans_choice('fb.side_waiting', $groupBadge, ['count' => $groupBadge]) }}">{{ $groupBadge }}</span>
+                        @endif
+                        <svg class="a-side__chev" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </summary>
 
-                <ul class="a-side__items" role="list" aria-labelledby="side-group-{{ $group['key'] }}">
-                    @foreach ($group['items'] as $item)
-                        <li>
-                            <a @class(['a-side__link', 'is-current' => $item['current']])
-                               href="{{ $item['url'] }}"
-                               @if ($item['current']) aria-current="page" @endif>
-                                <x-shell-icon :name="$item['icon']" />
-                                <span>{{ $item['label'] }}</span>
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
+                    <ul class="a-side__items" role="list" aria-labelledby="side-group-{{ $group['key'] }}">
+                        @foreach ($group['items'] as $item)
+                            <li>
+                                <a @class(['a-side__link', 'is-current' => $item['current']])
+                                   href="{{ $item['url'] }}"
+                                   @if ($item['current']) aria-current="page" @endif>
+                                    <x-shell-icon :name="$item['icon']" />
+                                    <span>{{ $item['label'] }}</span>
+                                    @if (($item['badge'] ?? 0) > 0)
+                                        <span class="a-side__badge"><span aria-hidden="true">{{ $item['badge'] }}</span><span class="rd-sr">{{ trans_choice('fb.side_waiting', $item['badge'], ['count' => $item['badge']]) }}</span></span>
+                                    @endif
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </details>
             </div>
         @endforeach
     </div>

@@ -150,8 +150,10 @@ class DesignSystemTest extends TestCase
     {
         $admin = preg_replace('#/\*.*?\*/#s', '', $this->css('css/admin.css'));
 
-        $this->assertSame(1, substr_count($admin, '#F0F4F1'), '--a-ground is written more than once.');
-        $this->assertMatchesRegularExpression('/--a-ground:\s*#F0F4F1;/', $admin);
+        // F11 (29 October 2026): the light ground is the UI system's pale
+        // green, --u-pale (#F4F8F6), declared once; the old #F0F4F1 is gone.
+        $this->assertSame(1, substr_count($admin, '--a-ground: var(--u-pale'), '--a-ground is written more than once.');
+        $this->assertSame(0, substr_count($admin, '#F0F4F1'));
 
         // Not offered to the public surfaces.
         foreach (['css/tokens.css', 'css/base.css', 'css/chrome.css', 'css/blocks.css'] as $sheet) {
