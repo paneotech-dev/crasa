@@ -56,7 +56,7 @@
                                     @endif
                                 </td>
                                 <td><span class="a-pill" data-status="{{ $announcement->status }}">{{ __('announcements.status_'.$announcement->status) }}</span></td>
-                                <td>{{ $announcement->published_at?->displayed()->isoFormat('D MMMM YYYY') ?? '—' }}</td>
+                                <td>{{ $announcement->published_at?->displayed()->isoFormat('D MMMM YYYY') ?? __('office.date_not_recorded') }}</td>
                                 <td class="a-table__actions">
                                     <a href="{{ route('admin.announcements.edit', ['locale' => app()->getLocale(), 'announcement' => $announcement->slug]) }}">{{ __('admin.edit') }}</a>
                                 </td>

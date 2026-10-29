@@ -35,7 +35,7 @@
             <div><dt>{{ __('contributions.field_status') }}</dt><dd>{{ __($instrument->status->labelKey()) }}</dd></div>
             <div><dt>{{ __('contributions.field_reference') }}</dt><dd>{{ $instrument->reference_number }}</dd></div>
             <div><dt>{{ __('contributions.contributed_by') }}</dt><dd>{{ $instrument->contributor?->name ?? '—' }}</dd></div>
-            <div><dt>{{ __('contributions.col_submitted') }}</dt><dd>{{ $instrument->submitted_at?->displayed()->isoFormat('D MMMM YYYY') ?? '—' }}</dd></div>
+            <div><dt>{{ __('contributions.col_submitted') }}</dt><dd>{{ $instrument->submitted_at?->displayed()->isoFormat('D MMMM YYYY') ?? __('office.date_not_recorded') }}</dd></div>
         </dl>
 
         @if ($summary)
