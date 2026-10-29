@@ -137,6 +137,24 @@ class SecurityHardeningTest extends TestCase
     }
 
     /**
+     * The contact map's tiles come from one third-party host, loaded only
+     * when the reader asks for the map. The policy refused them, so the map
+     * was a pin on a blank square. That host is allowed for images, nothing
+     * else is, and it never reaches script-src or connect-src.
+     */
+    public function test_the_policy_allows_the_map_tile_host_for_images_only(): void
+    {
+        config(['crasa.map.tile_url' => 'https://tile.openstreetmap.org/{z}/{x}/{y}.png']);
+        $policy = $this->get('/en')->headers->get('Content-Security-Policy');
+
+        $this->assertMatchesRegularExpression("~img-src 'self' data: https://tile\\.openstreetmap\\.org(;|$)~", $policy);
+        $this->assertSame(1, substr_count($policy, 'openstreetmap'));
+
+        config(['crasa.map.tile_url' => 'javascript:alert(1)']);
+        $this->assertStringContainsString("img-src 'self' data:;", $this->get('/en')->headers->get('Content-Security-Policy'));
+    }
+
+    /**
      * The policy is a statement of what is already true. Every script,
      * style, font and image is served from this platform, which is the
      * platform's own stated position, so the policy costs nothing and a
