@@ -66,7 +66,7 @@
                                 <span class="a-row__time">{{ $meeting->date_unknown ? __('events.date_not_stated') : $meeting->starts_on->isoFormat('D MMM YYYY') }}</span>
                                 <span class="a-row__grow">
                                     {{ $meeting->title }}
-                                    @if ($meeting->location)<span class="a-crow__where" style="display:block">{{ $meeting->location }}</span>@endif
+                                    @if ($meeting->location)<span class="a-crow__where" style="display:block">{{ $meeting->displayLocation() }}</span>@endif
                                 </span>
                                 <span class="a-row__who">{{ __('extranet.kind_'.$meeting->kind) }}</span>
                             </div>

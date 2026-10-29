@@ -40,7 +40,7 @@ class SampleDocumentsSeeder extends Seeder
 
             $disk->put($document->file_path, SampleDocumentPdf::forPublication(
                 (string) $publication->translated('title', $publication->slug, 'en'),
-                $publication->publication_type->value,
+                $publication->typeSlug(),
                 (int) $publication->published_on?->year ?: (int) now()->year,
             ));
             $document->forceFill(['size_bytes' => $disk->size($document->file_path), 'thumbnail_path' => null])->save();

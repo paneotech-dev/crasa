@@ -223,7 +223,9 @@ class NotificationCentreTest extends TestCase
             }
         }
 
-        $this->assertCount(6, NotificationTrigger::cases());
+        // Seven since Day 3: a confirmed registration (client brief item 7)
+        // tells the person and their member state; it arranges nothing.
+        $this->assertCount(7, NotificationTrigger::cases());
     }
 
     public function test_the_digest_sends_nothing_to_an_account_with_nothing_unread(): void

@@ -61,7 +61,7 @@ return [
     'summary_label' => 'In words',
     'open_full' => 'Open these in the comparator',
     'home_heading' => 'Compare member states',
-    'home_intro' => 'Pick an indicator and two member states. The table and the chart change as you choose.',
+    'home_intro' => 'Pick an indicator and two member states.',
     'home_indicator' => 'Indicator',
     'home_state_a' => 'First member state',
     'home_state_b' => 'Second member state',

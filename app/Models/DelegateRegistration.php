@@ -23,7 +23,7 @@ class DelegateRegistration extends Model
     use Auditable, CountryScoped, HasFactory, MarksSampleData;
 
     protected $fillable = [
-        'meeting_id', 'user_id', 'country_id',
+        'meeting_id', 'user_id', 'country_id', 'authority_id',
         'delegate_name', 'delegate_email', 'delegate_role',
         'arrival_point', 'arrival_on', 'arrival_at', 'arrival_reference',
         'departure_on', 'departure_at', 'departure_reference',
@@ -42,6 +42,11 @@ class DelegateRegistration extends Model
     public function meeting(): BelongsTo
     {
         return $this->belongsTo(Meeting::class);
+    }
+
+    public function authority(): BelongsTo
+    {
+        return $this->belongsTo(Authority::class);
     }
 
     public function user(): BelongsTo

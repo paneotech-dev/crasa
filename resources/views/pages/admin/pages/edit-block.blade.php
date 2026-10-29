@@ -114,7 +114,7 @@
                                                     <select class="a-select" id="s-{{ $key }}-{{ $i }}-{{ $sub }}" name="{{ $name }}">
                                                         <option value="">{{ __('admin.setting_none') }}</option>
                                                         @foreach ($subField['options'] as $option)
-                                                            <option value="{{ $option }}" @selected($subValue === $option)>{{ $option }}</option>
+                                                            <option value="{{ $option }}" @selected($subValue === $option)>{{ \Illuminate\Support\Facades\Lang::has('d3_i18n.block_option_'.$option) ? __('d3_i18n.block_option_'.$option) : $option }}</option>
                                                         @endforeach
                                                     </select>
                                                 @else
@@ -146,7 +146,7 @@
                                 <label class="a-label" for="s-{{ $key }}">{{ __('admin.setting_'.$key) }}</label>
                                 <select class="a-select" id="s-{{ $key }}" name="settings[{{ $key }}]">
                                     @foreach ($field['options'] as $option)
-                                        <option value="{{ $option }}" @selected($current === $option)>{{ $option }}</option>
+                                        <option value="{{ $option }}" @selected($current === $option)>{{ \Illuminate\Support\Facades\Lang::has('d3_i18n.block_option_'.$option) ? __('d3_i18n.block_option_'.$option) : $option }}</option>
                                     @endforeach
                                 </select>
                             </div>

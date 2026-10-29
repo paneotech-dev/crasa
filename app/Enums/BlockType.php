@@ -106,24 +106,10 @@ enum BlockType: string
         };
     }
 
-    public function label(): string
+    /** The block's name in the interface language, or in the one given. */
+    public function label(?string $locale = null): string
     {
-        return match ($this) {
-            self::Hero => 'Hero',
-            self::KeyFigures => 'Key figures',
-            self::Pillars => 'Pillars',
-            self::RichText => 'Rich text',
-            self::FeaturedPublications => 'Featured publications',
-            self::FeaturedComparison => 'Featured comparison',
-            self::NewsroomStrip => 'Newsroom strip',
-            self::EventsStrip => 'Events strip',
-            self::MemberGrid => 'Member grid',
-            self::CommitteeGrid => 'Committee grid',
-            self::CallToAction => 'Call to action',
-            self::StatementBand => 'Statement band',
-            self::SocialFeed => 'Social feed',
-            self::DocumentList => 'Document list',
-        };
+        return __('d3_i18n.block_'.$this->value, [], $locale);
     }
 
     public function view(): string

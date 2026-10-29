@@ -110,7 +110,16 @@ class SubmissionReviewController extends Controller
 
         // RP-05. The member state is told what happened to their return,
         // which is regulatory content. Nothing here notifies about events.
-        $submission->author?->notify(new SubmissionStateChanged($submission->refresh()));
+        // Client brief item 7: every representative of that member state
+        // hears the result, not only the one who filed it.
+        $submission->refresh();
+        \App\Support\Notifier::send(
+            collect([$submission->author])->concat(\App\Support\Notifier::representativesOf($submission->country_id)),
+            new SubmissionStateChanged($submission),
+            'validation',
+            'submission:'.$submission->id.':'.$submission->status->value.':'.$submission->updated_at?->timestamp,
+            fn (\App\Models\User $user) => \Illuminate\Support\Facades\Gate::forUser($user)->allows('view', $submission),
+        );
 
         return redirect()
             ->route('admin.submissions.show', ['locale' => app()->getLocale(), 'submission' => $submission->id])

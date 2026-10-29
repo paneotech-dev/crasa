@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\Auditable;
+use App\Models\Concerns\HasLocalisedNames;
 use App\Models\Concerns\MarksSampleData;
 use Database\Factories\AuthorityFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,7 +18,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Authority extends Model
 {
     /** @use HasFactory<AuthorityFactory> */
-    use Auditable, HasFactory;
+    use Auditable, HasFactory, HasLocalisedNames;
+
+    /**
+     * French and Portuguese names, when the Secretariat writes them in the
+     * back office. There is no lang file group: an authority's own name is
+     * what its statute says, and most have none in another language.
+     */
+    protected function localisedNames(): array
+    {
+        return ['group' => 'authorities', 'key' => null, 'fields' => ['name']];
+    }
 
     use MarksSampleData;
 

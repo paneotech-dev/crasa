@@ -1,7 +1,6 @@
 @extends('layouts.extranet')
 
 @section('title', __('extranet.folders'))
-@section('note', __('extranet.note'))
 
 @section('content')
     {{-- Screen 12 states the boundary on screen rather than leaving it to
@@ -18,8 +17,7 @@
     <div class="a-split">
         <section class="a-resource a-split__main" style="flex:999 1 460px">
             <div class="a-resource__head">
-                <h2 class="a-resource__title">{{ __('extranet.folders') }}</h2>
-                <div class="a-resource__note">{{ __('extranet.folders_note') }}</div>
+                <h2 class="a-resource__title">{{ __('d3_look.my_folders') }}</h2>
             </div>
 
             @if ($roots->isEmpty())
@@ -81,7 +79,7 @@
                                 <span class="a-row__time">{{ $meeting->starts_on->isoFormat('D MMM') }}</span>
                                 <span class="a-row__grow">
                                     {{ $meeting->title }}
-                                    @if ($meeting->location)<span class="a-crow__where" style="display:block">{{ $meeting->location }}</span>@endif
+                                    @if ($meeting->location)<span class="a-crow__where" style="display:block">{{ $meeting->displayLocation() }}</span>@endif
                                 </span>
                             </div>
                         @endforeach

@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Admin\ResourceRegistry;
 use App\Enums\BlockType;
-use App\Enums\NewsCategory;
 use App\Enums\NotificationTrigger;
 use App\Enums\Permission;
 use App\Http\Controllers\Admin\TranslationController;
@@ -123,7 +122,7 @@ class NoRawTranslationKeysTest extends TestCase
         $this->seed(DatabaseSeeder::class);
 
         // The category whose label was missing, so its filter is on the page.
-        NewsItem::factory()->create(['category' => NewsCategory::PressRelease]);
+        NewsItem::factory()->create(['category' => 'press_release']);
 
         $files = array_map(fn ($f) => basename($f, '.php'), glob(lang_path('en/*.php')));
         $pattern = '/(?<![\w\/@:.-])('.implode('|', $files).')\.([a-z][a-z0-9_]*)(?![\w.]*\.(?:org|com|net|int|africa|tech)\b)(?!\.[a-z])/';

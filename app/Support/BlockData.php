@@ -237,7 +237,7 @@ final class BlockData
             ->limit((int) $block->setting('limit', 3))
             ->get()
             ->map(fn (Publication $p) => [
-                'kicker' => __($p->publication_type->labelKey()),
+                'kicker' => $p->typeLabel(),
                 'title' => $p->translated('title', $p->slug),
                 // Screen 07's document row carries a summary and a
                 // thumbnail, not a label and a date. A third of the page
@@ -275,7 +275,7 @@ final class BlockData
                 // The record itself, for the newsroom's own card partial
                 // (29 October 2026). The keys below stay for other callers.
                 'model' => $n,
-                'kicker' => __($n->category->labelKey()),
+                'kicker' => $n->categoryLabel(),
                 'title' => $n->translated('title', $n->slug),
                 'summary' => $n->translated('summary', ''),
                 'image_slot' => $n->fallbackImageSlot(),

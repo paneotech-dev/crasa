@@ -117,7 +117,10 @@ class SampleDisclosureTest extends TestCase
         $breakdown = $this->actingAs($admin)->get('/en/admin/samples')->assertOk()->getContent();
 
         $this->assertStringContainsString('content:strip-samples', $breakdown);
-        $this->assertStringContainsString('IndicatorValue', $breakdown);
+        // Record types read in plain language since 29 October (item 8e),
+        // the same label the audit log uses.
+        $this->assertStringContainsString(e(\App\Models\AuditLog::typeLabel('IndicatorValue')), $breakdown);
+        $this->assertStringNotContainsString('>IndicatorValue<', $breakdown);
     }
 
     /** And no purge button, on the dashboard or on the breakdown. */

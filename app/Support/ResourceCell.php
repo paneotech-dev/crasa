@@ -42,11 +42,21 @@ final class ResourceCell
             $related = $record->getAttribute($column);
 
             if ($related instanceof Model) {
+                if (method_exists($related, 'displayName')) {
+                    return $related->displayName();
+                }
+
                 return (string) ($related->getAttribute('name')
                     ?? $related->getAttribute('title')
                     ?? $related->getAttribute('slug')
                     ?? '#'.$related->getKey());
             }
+        }
+
+        // A name held in one column and translated in names.php or under
+        // Taxonomies reads in the interface language in the list too.
+        if (method_exists($record, 'localisedFields') && in_array($column, $record->localisedFields(), true)) {
+            return $record->displayName($column);
         }
 
         $value = $record->getAttribute($column);
@@ -63,6 +73,12 @@ final class ResourceCell
             return '';
         }
 
+        // A taxonomy term held by slug (news category, publication type)
+        // reads as its name in the interface language.
+        if ($value instanceof Model && method_exists($value, 'label')) {
+            return $value->label();
+        }
+
         if ($value instanceof Carbon) {
             return $value->displayed()->isoFormat('D MMM YYYY');
         }
@@ -74,7 +90,9 @@ final class ResourceCell
             return __($value->labelKey());
         }
 
+        $statusLabel = null;
         if ($value instanceof BackedEnum) {
+            $statusLabel = method_exists($value, 'labelKey') ? __($value->labelKey()) : (method_exists($value, 'label') ? $value->label() : null);
             $value = $value->value;
         }
 
@@ -86,9 +104,18 @@ final class ResourceCell
         // validated and in force, amber for draft and pending, red for
         // repealed and rejected, slate for archived and superseded.
         if (in_array($column, ['status', 'state'], true)) {
-            return new HtmlString(
-                '<span class="a-pill" data-status="'.e((string) $value).'">'.e(__('admin.status_'.$value) === 'admin.status_'.$value ? (string) $value : __('admin.status_'.$value)).'</span>'
-            );
+            $statusLabel ??= collect(['admin.status_'.$value, 'admin.option_'.$value, 'instruments.status_'.$value, 'd3_i18n.status_'.$value])
+                ->first(fn (string $key) => \Illuminate\Support\Facades\Lang::has($key));
+            $statusLabel = $statusLabel === null ? (string) $value : (\Illuminate\Support\Facades\Lang::has($statusLabel) ? __($statusLabel) : $statusLabel);
+
+            return new HtmlString('<span class="a-pill" data-status="'.e((string) $value).'">'.e($statusLabel).'</span>');
+        }
+
+        // A stored code with a label in the resource's own language file
+        // (an indicator's category, unit or periodicity) reads as the label.
+        $key = $definition->key.'.'.$column.'_'.$value;
+        if (is_string($value) && preg_match('/^[a-z0-9_]+$/', $value) && \Illuminate\Support\Facades\Lang::has($key)) {
+            return __($key);
         }
 
         return (string) $value;

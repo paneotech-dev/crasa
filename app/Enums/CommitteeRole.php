@@ -14,11 +14,7 @@ enum CommitteeRole: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::Member => 'Member',
-            self::Chair => 'Chair',
-            self::Observer => 'Observer',
-        };
+        return __('d3_i18n.committee_role_'.$this->value);
     }
 
     /**

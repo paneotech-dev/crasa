@@ -36,7 +36,7 @@ final class AdminAlerts
             $locale = $admin->preferredLocale();
             $line = __('fa.alert_'.$event, $context + ['actor' => $actor->name], $locale);
 
-            $admin->notify(new AdminActivity($event, $line, $url));
+            Notifier::send([$admin], new AdminActivity($event, $line, $url), 'other');
 
             if (Schema::hasTable('held_mail')) {
                 DB::table('held_mail')->insert([

@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Enums\Clearance;
 use App\Enums\Permission;
 use App\Models\Document;
+use App\Models\Folder;
 use App\Models\User;
 
 /**
@@ -33,11 +34,21 @@ class DocumentPolicy
         // open to anyone who cleared the grade above.
         $countryId = $document->owningCountryId();
 
-        if ($countryId === null) {
-            return true;
+        if ($countryId !== null && ! $user->mayActOnCountry($countryId)) {
+            return false;
         }
 
-        return $user->mayActOnCountry($countryId);
+        // A file in a folder is open to whoever may open the folder, and to
+        // nobody else: by id, by share link, by version or through search.
+        if ($document->folder_id !== null) {
+            $folder = $document->relationLoaded('folder') && $document->getRelation('folder') !== null
+                ? $document->getRelation('folder')
+                : Folder::unscoped()->find($document->folder_id);
+
+            return $folder !== null && (new FolderPolicy)->view($user, $folder);
+        }
+
+        return true;
     }
 
     public function download(?User $user, Document $document): bool

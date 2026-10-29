@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\PublicationType;
+use App\Casts\TermBySlug;
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\MarksSampleData;
@@ -33,7 +33,7 @@ class Publication extends Model
     protected function casts(): array
     {
         return [
-            'publication_type' => PublicationType::class,
+            'publication_type' => TermBySlug::class.':'.PublicationType::class,
             'published_on' => 'date',
             'is_public' => 'boolean',
             'is_sample' => 'boolean',
@@ -70,6 +70,18 @@ class Publication extends Model
                 );
             }
         });
+    }
+
+    /** The publication type's name in the page language. */
+    public function typeLabel(): string
+    {
+        return $this->publication_type?->label() ?? $this->typeSlug();
+    }
+
+    /** The type slug as stored, without resolving the term. */
+    public function typeSlug(): string
+    {
+        return (string) ($this->getAttributes()['publication_type'] ?? '');
     }
 
     public function sector(): BelongsTo

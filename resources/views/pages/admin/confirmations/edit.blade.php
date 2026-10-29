@@ -11,12 +11,12 @@
 --}}
 @extends('layouts.admin')
 
-@section('title', $country->name)
+@section('title', $country->displayName())
 @section('note', __('admin.confirm_edit_note'))
 
 @section('crumbs')
     <li><a href="{{ route('admin.confirmations', ['locale' => app()->getLocale()]) }}">{{ __('admin.confirmations') }}</a></li>
-    <li aria-current="page">{{ $country->name }}</li>
+    <li aria-current="page">{{ $country->displayName() }}</li>
 @endsection
 
 @section('content')
@@ -67,7 +67,7 @@
                 <div class="c-field c-field--inline">
                     <input type="checkbox" id="sector-{{ $sector->id }}" name="sectors[]" value="{{ $sector->id }}"
                            @checked(in_array($sector->id, old('sectors', $authority?->sectors->pluck('id')->all() ?? []), false))>
-                    <label for="sector-{{ $sector->id }}">{{ $sector->name }}</label>
+                    <label for="sector-{{ $sector->id }}">{{ $sector->displayName() }}</label>
                 </div>
             @endforeach
         </fieldset>
@@ -79,7 +79,7 @@
                 <div class="c-field c-field--inline">
                     <input type="checkbox" id="committee-{{ $committee->id }}" name="committees[]" value="{{ $committee->id }}"
                            @checked(in_array($committee->id, old('committees', $seated), false))>
-                    <label for="committee-{{ $committee->id }}">{{ $committee->name }}</label>
+                    <label for="committee-{{ $committee->id }}">{{ $committee->displayName() }}</label>
                 </div>
             @endforeach
         </fieldset>

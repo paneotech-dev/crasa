@@ -73,10 +73,8 @@ class SupersessionTest extends TestCase
         return $this->actingAs($this->admin)->put(
             "/en/admin/data/publications/{$publication->id}",
             array_merge([
-                // Cast to an enum on the model; the form sends its value.
-                'publication_type' => $publication->publication_type instanceof \BackedEnum
-                    ? $publication->publication_type->value
-                    : $publication->publication_type,
+                // Read as a term on the model; the form sends its slug.
+                'publication_type' => $publication->typeSlug(),
                 'sector_id' => $publication->sector_id,
                 'published_on' => $publication->published_on->toDateString(),
                 'is_public' => 1,

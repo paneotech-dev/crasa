@@ -7,6 +7,7 @@ use App\Admin\ResourceRegistry;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Support\Locales;
+use App\Support\NewsPhoto;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
@@ -141,6 +142,7 @@ class ResourceController extends Controller
         $data = $request->validate($this->rules($definition, new $definition->model, $request));
 
         $record = new $definition->model;
+        $data = NewsPhoto::apply($definition, $record, $request, $data);
         $record->fill($this->attributes($definition, $data));
         $wentLive = $this->guardPublishing($record);
         $this->assignSlug($definition, $record, $data);
@@ -181,6 +183,7 @@ class ResourceController extends Controller
         $this->authorizeAction('update', $definition, $record);
 
         $data = $request->validate($this->rules($definition, $record, $request));
+        $data = NewsPhoto::apply($definition, $record, $request, $data);
 
         $record->fill($this->attributes($definition, $data));
         $wentLive = $this->guardPublishing($record);
@@ -217,6 +220,11 @@ class ResourceController extends Controller
             throw ValidationException::withMessages([
                 'record' => __('admin.resource_not_deletable', ['name' => $definition->singular()]),
             ]);
+        }
+
+        // Day 3: refused while anything still points at it, naming what.
+        if (($refusal = $definition->refusalFor($record)) !== null) {
+            throw ValidationException::withMessages(['record' => $refusal]);
         }
 
         /*
@@ -304,7 +312,11 @@ class ResourceController extends Controller
                     ->mapWithKeys(fn ($year) => [$year => $year])
                     ->all();
             } else {
-                $options = collect($filter['options'])->map(fn ($key) => __($key))->all();
+                // A closure lists names already in the interface language
+                // (the taxonomy lists); otherwise the options are lang keys.
+                $options = $filter['options'] instanceof \Closure
+                    ? ($filter['options'])()
+                    : collect($filter['options'])->map(fn ($key) => __($key))->all();
             }
 
             $asked = $request->string($filter['key'])->toString();
@@ -408,6 +420,12 @@ class ResourceController extends Controller
             foreach ($definition->translatable as $field) {
                 $rules[$locale.'.'.$field] = ['nullable', 'string', 'max:20000'];
             }
+
+            if ($locale !== Locales::FALLBACK) {
+                foreach ($definition->localised as $field) {
+                    $rules['localised.'.$locale.'.'.$field] = ['nullable', 'string', 'max:2000'];
+                }
+            }
         }
 
         $rules['confirm'] = ['nullable', 'string', 'max:255'];
@@ -427,6 +445,15 @@ class ResourceController extends Controller
             // Shown, never written. See Field::readOnly.
             if ($field->readOnly) {
                 continue;
+            }
+
+            // The photograph also carries its focal point (Day 3, taxo).
+            if ($field->control === 'photo') {
+                foreach ($field->options as $column) {
+                    if (array_key_exists($column, $data)) {
+                        $attributes[$column] = $data[$column];
+                    }
+                }
             }
 
             if ($field->control === 'checkbox') {
@@ -457,9 +484,11 @@ class ResourceController extends Controller
             return;
         }
 
-        $base = Str::slug(
-            $data[Locales::FALLBACK][$definition->translatable[0] ?? ''] ?? $data['name'] ?? $data['reference_number'] ?? 'record'
-        ) ?: 'record';
+        // A name first where the model has one: a committee's first
+        // translatable field is its mandate, a paragraph rather than a name.
+        $base = Str::limit(Str::slug(
+            $data['name'] ?? $data[Locales::FALLBACK][$definition->translatable[0] ?? ''] ?? $data['reference_number'] ?? 'record'
+        ), 70, '') ?: 'record';
 
         $slug = $base;
         $suffix = 2;
@@ -491,6 +520,36 @@ class ResourceController extends Controller
     private function writeTranslations(Resource $definition, Model $record, array $data, int $by): void
     {
         $changed = [];
+
+        /*
+         * Day 3. French and Portuguese for an English column (a member
+         * state's name, an indicator's definition). Kept beside the other
+         * translations and audited with them.
+         */
+        if ($definition->localised !== [] && method_exists($record, 'setLocalisedName')) {
+            foreach (Locales::SUPPORTED as $locale) {
+                if ($locale === Locales::FALLBACK) {
+                    continue;
+                }
+
+                foreach ($definition->localised as $field) {
+                    // Not posted is not cleared: a save from elsewhere that
+                    // carries only the columns leaves these alone.
+                    if (! \Illuminate\Support\Arr::has($data, 'localised.'.$locale.'.'.$field)) {
+                        continue;
+                    }
+
+                    $before = $record->storedLocalisedName($field, $locale);
+                    $after = $data['localised'][$locale][$field] ?? null;
+
+                    $record->setLocalisedName($field, $locale, $after, $by);
+
+                    if (trim((string) $before) !== trim((string) $record->storedLocalisedName($field, $locale))) {
+                        $changed[] = $field.'.'.$locale;
+                    }
+                }
+            }
+        }
 
         foreach (Locales::SUPPORTED as $locale) {
             foreach ($definition->translatable as $field) {
@@ -550,7 +609,8 @@ class ResourceController extends Controller
                 ->orderBy($related->getAttribute('name') !== null || in_array('name', $related->getFillable(), true) ? 'name' : $related->getKeyName())
                 ->get()
                 ->mapWithKeys(fn (Model $row) => [
-                    $row->getKey() => $row->getAttribute('name')
+                    $row->getKey() => (method_exists($row, 'displayName') ? $row->displayName() : null)
+                        ?? $row->getAttribute('name')
                         ?? $row->getAttribute('title')
                         ?? $row->getAttribute('slug')
                         ?? ('#'.$row->getKey()),

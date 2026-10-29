@@ -1,304 +1,342 @@
 {{--
-    The country dashboard, screen 04 and RP-12.
+    The member area's home page, screen 04 and RP-12, redrawn on Day 3 (8c)
+    on the UI system's card anatomy: 12px radius, a 1px border, no shadow.
 
-    WHAT THIS PAGE ANSWERS. A national regulator signing in wants one
-    question answered: what does my authority owe, and what has changed
-    since I was last here. The page opened on a welcome and three panels of
-    recent things, which answered neither.
+    WHAT THIS PAGE ANSWERS. A national regulator signing in wants to know
+    what their authority owes and what has changed since they were last
+    here. So: a returned return first, then my return with its completion
+    and the next field to fill, then meetings, the Secretariat's notices
+    and my folders. The right-hand column carries notifications, quick
+    actions, the completeness figure and the reader's clearance.
 
-    ORDER IS THE DESIGN, and it is not recency. Anything the Secretariat has
-    returned comes first, because it is the only thing on the page that is
-    blocked on this reader. Then what the state stands at and what is due.
-    Then what has changed. A dashboard sorted by recency puts a document
-    filed this morning above a return that was sent back three weeks ago.
+    A committee member gets their committees in place of the return. A
+    person who represents no member state has no return to file; showing
+    them the country cards would show them somebody else's numbers or an
+    empty box.
 
-    A committee member gets the committee panels without the country ones. A
-    person who holds a seat but represents no member state has no return to
-    file and no completeness figure of their own; showing them the country
-    panels would show them either somebody else's numbers or three empty
-    boxes.
+    Everything is filtered by the same Gate or scope the page behind it
+    uses (App\Support\MemberHome, CountryDashboard, RoleDashboard).
 
-    Everything here is filtered by the same Gate the pages behind it use. A
-    dashboard is the classic place a permission layer leaks, because it
-    assembles records from six sources and it is tempting to trust the
-    query rather than the policy.
-
-    Every panel has an empty state. A member state that has filed nothing
-    and sits on no committee should meet a sentence, not six blank boxes.
+    Two cards are built by other streams and dropped in when they exist:
+    partials.extranet.next-meeting-card and partials.notifications.latest.
+    Until then this page draws its own.
 --}}
 @extends('layouts.extranet')
 
 @section('title', __('extranet.dashboard_title'))
-@section('note', $clearance['scope'] ?? '')
+@section('heading', $greeting['name'])
+@section('note', $greeting['line'])
+
+@push('styles')
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/member-home.css') }}">
+@endpush
 
 @section('content')
-    {{-- The reader's own clearance.
+@php
+    $locale = app()->getLocale();
+    $isRep = $myReturn !== null;
+    $upcoming = $roleBlocks->get('upcoming');
+    $indicators = $roleBlocks->get('indicators');
+    // The last three files in the reader's folders; a reader with no
+    // folder files (the Secretariat) gets what was filed most recently.
+    $files = $myFolders['files']->isNotEmpty() ? $myFolders['files'] : $documents->take(3);
+@endphp
+<div class="mh" data-role="{{ $roleKey }}">
 
-         Screen 04 pins this to the bottom of the rail. It moved here with
-         the shell on 10 September 2026: the rail now carries a row per
-         committee the reader sits on, and a boundary statement under a
-         scrolling list is a boundary statement nobody reads. Here it sits
-         above the folders it describes.
-
-         A reader who does not know their own clearance reads an empty
-         folder list as a fault rather than as a boundary. --}}
-    @if ($clearance)
-        <div class="a-alert" role="note">
-            <strong>{{ __('extranet.clearance_title') }}</strong>
-            {{ $clearance['level'] }}. {{ $clearance['scope'] }}
+    {{-- Returned first: the only thing on the page that is blocked on the
+         reader. --}}
+    @if ($isCountryView && $returned->isNotEmpty())
+        <div class="a-band a-band--error mh-returned" role="alert">
+            <strong>{{ trans_choice('extranet.dash_returned_title', $returned->count(), ['count' => $returned->count()]) }}</strong>
+            {{ __('extranet.dash_returned_body') }}
+            <ul class="a-stack">
+                @foreach ($returned as $submission)
+                    <li>
+                        <a href="{{ route('submissions.edit', ['locale' => $locale, 'submission' => $submission->id]) }}">{{ __('extranet.dash_returned_row', ['period' => $submission->period]) }}</a>
+                        @if ($submission->review_note)
+                            <span class="e-dash__meta">{{ \Illuminate\Support\Str::limit($submission->review_note, 160) }}</span>
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
         </div>
     @endif
 
-    {{-- The role's own blocks first (F4). --}}
-    @include('partials.role-dashboard')
+    <div class="mh-cols">
+        <div class="mh-main">
 
-    {{-- A proposal, not a feature. Member state representatives and
-         committee members only. See the partial. --}}
-    @include('partials.assistant-proposal')
-
-
-    @if ($isCountryView)
-        {{-- Returned first. It is the only item on this page that is
-             blocked on the reader, and a returned submission that scrolls
-             under three panels of recent activity is one nobody answers. --}}
-        @if ($returned->isNotEmpty())
-            <div class="a-band a-band--error" role="alert">
-                <strong>{{ trans_choice('extranet.dash_returned_title', $returned->count(), ['count' => $returned->count()]) }}</strong>
-                {{ __('extranet.dash_returned_body') }}
-                <ul class="a-stack">
-                    @foreach ($returned as $submission)
-                        <li>
-                            <a href="{{ route('submissions.edit', ['locale' => app()->getLocale(), 'submission' => $submission->id]) }}">
-                                {{ __('extranet.dash_returned_row', ['period' => $submission->period]) }}
-                            </a>
-                            @if ($submission->reviewed_at)
-                                <span class="e-dash__meta">{{ $submission->reviewed_at->displayed()->isoFormat('D MMMM YYYY') }}</span>
+            @if ($isRep)
+                {{-- My return: the open period this country should be
+                     working on, how far it is, and the next field. --}}
+                <section class="mh-card" aria-labelledby="mh-return-h" data-block="return">
+                    <div class="mh-card__head">
+                        <h2 class="mh-card__title" id="mh-return-h">{{ __('d3_look.my_return') }}</h2>
+                        <span class="a-pill" data-status="{{ $myReturn['status'] === 'not_started' ? 'archived' : $myReturn['status'] }}">{{ __('extranet.period_'.$myReturn['status']) }}</span>
+                    </div>
+                    <p class="mh-return__period">
+                        <b>{{ __('extranet.dash_return_for', ['period' => $myReturn['period']]) }}</b>
+                        <span class="mh-meta">{{ __('d3_look.due', ['date' => $myReturn['due_on']->isoFormat('D MMMM YYYY')]) }}</span>
+                    </p>
+                    <div class="mh-progress">
+                        <div class="mh-progress__label">
+                            <span id="mh-progress-l">{{ __('d3_look.progress', ['filled' => $myReturn['filled'], 'total' => $myReturn['total']]) }}</span>
+                            <b>{{ $myReturn['percent'] }}%</b>
+                        </div>
+                        <div class="mh-bar" role="progressbar" aria-labelledby="mh-progress-l" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $myReturn['percent'] }}">
+                            <span class="mh-bar__fill" style="width: {{ $myReturn['percent'] }}%"></span>
+                        </div>
+                    </div>
+                    <dl class="mh-next">
+                        <dt>{{ __('d3_look.next_field') }}</dt>
+                        <dd>
+                            @if ($myReturn['next'] && $myReturn['submission'] && $myReturn['editable'])
+                                <a href="{{ route('submissions.edit', ['locale' => $locale, 'submission' => $myReturn['submission']->id]) }}#v-{{ $myReturn['next']->id }}">{{ $myReturn['next']->name }}</a>
+                            @elseif ($myReturn['next'])
+                                {{ $myReturn['next']->name }}
+                            @else
+                                {{ __('d3_look.next_field_none') }}
                             @endif
-                            @if ($submission->review_note)
-                                <span class="e-dash__meta">{{ \Illuminate\Support\Str::limit($submission->review_note, 160) }}</span>
-                            @endif
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        {{-- The figure and where it stands. A percentage on its own says
-             nothing a regulator can act on: sixty is good or bad depending
-             on whether the region is at forty or at ninety, and the
-             comparison is the reason the matrix exists. --}}
-        <div class="a-tiles">
-            <a class="a-tile" href="{{ route('completeness', ['locale' => app()->getLocale()]) }}">
-                <span class="a-tile__icon" aria-hidden="true"><x-shell-icon name="completeness" :size="20" /></span>
-                <span class="a-tile__text">
-                    <span class="a-tile__n">{{ $completeness['percent'] }}%</span>
-                    <span class="a-tile__label">{{ __('extranet.dash_completeness_label', ['country' => $country?->name ?? '']) }}</span>
-                    @if ($completeness['rank'])
-                        <span class="a-tile__note">{{ __('extranet.dash_rank', ['rank' => $completeness['rank'], 'of' => $completeness['of']]) }}</span>
-                    @endif
-                </span>
-            </a>
-
-            @can('viewAny', \App\Models\Submission::class)
-            <a class="a-tile" href="{{ route('submissions', ['locale' => app()->getLocale()]) }}">
-                <span class="a-tile__icon" aria-hidden="true"><x-shell-icon name="submissions" :size="20" /></span>
-                <span class="a-tile__text">
-                    <span class="a-tile__n">{{ $due->count() }}</span>
-                    <span class="a-tile__label">{{ __('extranet.dash_due_label') }}</span>
-                    <span class="a-tile__note">{{ __('extranet.dash_due_note') }}</span>
-                </span>
-            </a>
-            @endcan
-        </div>
-
-        {{-- Returns are filed by member state representatives. A committee
-             member tied to a country cannot open them, so is not shown them. --}}
-        @can('viewAny', \App\Models\Submission::class)
-        <section class="a-resource">
-            <div class="a-resource__head">
-                <h2 class="a-resource__title">{{ __('extranet.dash_due_title') }}</h2>
-                <a href="{{ route('submissions', ['locale' => app()->getLocale()]) }}">{{ __('extranet.dash_all_returns') }}</a>
-            </div>
-
-            @if ($due->isEmpty())
-                <div class="a-empty">
-                    <p class="a-empty__title">{{ __('extranet.dash_no_due_title') }}</p>
-                    <p class="a-empty__body">{{ __('extranet.dash_no_due_body') }}</p>
-                </div>
-            @else
-                <ul class="e-dash__list" role="list">
-                    @foreach ($due as $period)
-                        <li class="e-dash__row">
-                            <span class="e-dash__main">
-                                <a class="e-dash__title" href="{{ route('submissions', ['locale' => app()->getLocale()]) }}">
-                                    {{ __('extranet.dash_return_for', ['period' => $period['period']]) }}
-                                </a>
-                                {{-- The due date is a convention this build
-                                     states as provisional, not a deadline
-                                     CRASA has set. See QUESTIONS.md. --}}
-                                <span class="e-dash__meta">
-                                    {{ __('extranet.dash_due_by', ['date' => $period['due_on']->isoFormat('D MMMM YYYY')]) }}
-                                    @if ($period['provisional'])({{ __('extranet.dash_provisional') }})@endif
-                                </span>
-                            </span>
-                            <span class="a-pill" data-status="{{ $period['status'] }}">{{ __('extranet.period_'.$period['status']) }}</span>
-                        </li>
-                    @endforeach
-                </ul>
+                        </dd>
+                    </dl>
+                    <p class="mh-meta">{{ __('fb.dash_next_'.($myReturn['status'] === 'not_started' ? 'none' : $myReturn['status'])) }}</p>
+                    <div class="mh-card__actions">
+                        @if ($myReturn['editable'])
+                            <a class="a-btn a-btn--primary" href="{{ route('submissions.edit', ['locale' => $locale, 'submission' => $myReturn['submission']->id]) }}">{{ __('d3_look.continue_return') }}</a>
+                        @elseif ($myReturn['can_open'])
+                            <form method="POST" action="{{ route('submissions.store', ['locale' => $locale]) }}">
+                                @csrf
+                                <input type="hidden" name="period" value="{{ $myReturn['period'] }}">
+                                <button type="submit" class="a-btn a-btn--primary">{{ __('d3_look.open_return', ['period' => $myReturn['period']]) }}</button>
+                            </form>
+                        @elseif ($myReturn['submission'])
+                            <a href="{{ route('submissions.edit', ['locale' => $locale, 'submission' => $myReturn['submission']->id]) }}">{{ __('d3_look.view_return') }}</a>
+                        @endif
+                        <a href="{{ route('submissions', ['locale' => $locale]) }}">{{ __('extranet.dash_all_returns') }}</a>
+                    </div>
+                </section>
             @endif
-        </section>
-        @endcan
 
-        <section class="a-resource">
-            <div class="a-resource__head">
-                <h2 class="a-resource__title">{{ __('extranet.dash_announcements') }}</h2>
-            </div>
-
-            @if ($announcements->isEmpty())
-                <div class="a-empty">
-                    <p class="a-empty__title">{{ __('extranet.dash_no_announcements_title') }}</p>
-                    <p class="a-empty__body">{{ __('extranet.dash_no_announcements_body') }}</p>
+            {{-- Meetings: the next one, with its registration, and for a
+                 representative the two after it. --}}
+            <section class="mh-card" aria-labelledby="mh-meet-h" data-block="next">
+                <div class="mh-card__head">
+                    <h2 class="mh-card__title" id="mh-meet-h">{{ __('d3_look.meetings') }}</h2>
+                    <a href="{{ route('extranet.calendar', ['locale' => $locale]) }}">{{ __('extranet.dash_open_calendar') }}</a>
                 </div>
-            @else
-                <ul class="e-dash__list" role="list">
-                    @foreach ($announcements as $announcement)
-                        <li class="e-dash__row">
-                            <span class="e-dash__main">
-                                <a class="e-dash__title" href="{{ route('announcements.show', ['locale' => app()->getLocale(), 'announcement' => $announcement->slug]) }}">{{ $announcement->translated('title') }}</a>
-                                {{-- The audience, where there is one. An
-                                     announcement with neither is for every
-                                     member state. --}}
-                                @php($audience = collect([$announcement->sector?->name, $announcement->committee?->name])->filter())
-                                <span class="e-dash__meta">
-                                    {{ collect([$announcement->published_at?->displayed()->isoFormat('D MMMM YYYY')])->filter()->merge($audience)->implode(', ') }}
-                                </span>
-                            </span>
-                        </li>
-                    @endforeach
-                </ul>
-            @endif
-        </section>
-    @endif
+                <h3 class="mh-sub">{{ __('extranet.dash_next_meeting') }}</h3>
+                {{-- The registration card when a meeting of yours is open for
+                     registration; otherwise the next meeting as it stands. --}}
+                @if ($regMeeting = \App\Support\NextRegistration::for(auth()->user()))
+                    @include('partials.extranet.next-meeting-card', ['user' => auth()->user(), 'registrationMeeting' => $regMeeting])
+                @elseif ($next_meeting === null)
+                    <div class="a-empty">
+                        <p class="a-empty__title">{{ __('extranet.dash_no_meetings_title') }}</p>
+                        <p class="a-empty__body">{{ __('extranet.dash_no_meetings_body') }}</p>
+                    </div>
+                @else
+                    <div class="mh-meeting">
+                        <span class="u-date" aria-hidden="true">
+                            <span class="u-date__day">{{ $next_meeting->starts_on->isoFormat('D') }}</span>
+                            <span class="u-date__month">{{ $next_meeting->starts_on->copy()->locale($locale)->isoFormat('MMM') }}</span>
+                        </span>
+                        <div class="mh-meeting__body">
+                            <p class="mh-meeting__title">{{ $next_meeting->title }}</p>
+                            <p class="mh-meta">
+                                {{ collect([$next_meeting->starts_on->copy()->locale($locale)->isoFormat('D MMMM YYYY'), $next_meeting->committee?->name, $next_meeting->displayLocation()])->filter()->implode(', ') }}
+                            </p>
+                        </div>
+                    </div>
+                @endif
 
-    <div class="e-dash">
-        <section class="a-resource">
-            <div class="a-resource__head">
-                <h2 class="a-resource__title">{{ __('extranet.dash_next_meeting') }}</h2>
-                <a href="{{ route('extranet.calendar', ['locale' => app()->getLocale()]) }}">{{ __('extranet.dash_open_calendar') }}</a>
-            </div>
-
-            @if ($next_meeting === null)
-                <div class="a-empty">
-                    <p class="a-empty__title">{{ __('extranet.dash_no_meetings_title') }}</p>
-                    <p class="a-empty__body">{{ __('extranet.dash_no_meetings_body') }}</p>
-                </div>
-            @else
-                <ul class="e-dash__list" role="list">
-                    @php($meeting = $next_meeting)
-                        <li class="e-dash__row">
-                            {{-- The day-and-month chip screen 11 draws. The
-                                 date is also in the link text, so the chip
-                                 is decoration for a fact already stated. --}}
-                            <span class="e-dash__date" aria-hidden="true">
-                                <span class="e-dash__day">{{ $meeting->starts_on->format('j') }}</span>
-                                <span class="e-dash__month">{{ $meeting->starts_on->isoFormat('MMM') }}</span>
-                            </span>
-                            <span class="e-dash__main">
-                                <a class="e-dash__title" href="{{ route('extranet.calendar', ['locale' => app()->getLocale()]) }}">{{ $meeting->title }}</a>
-                                <span class="e-dash__meta">
-                                    {{ $meeting->starts_on->isoFormat('D MMMM YYYY') }}@if ($meeting->committee), {{ $meeting->committee->name }}@endif
-                                    @if ($meeting->location), {{ $meeting->location }}@endif
-                                </span>
-                            </span>
-                            <span class="a-pill" data-status="{{ $meeting->kind }}">{{ __('extranet.kind_'.$meeting->kind) }}</span>
-                        </li>
-                </ul>
-            @endif
-        </section>
-
-        {{-- The reader's own seats. A committee member had no route to
-             their own workspace from anywhere on the platform: the rail is
-             flat and carries no committee, and this page listed what had
-             been filed without saying where. --}}
-        @if ($committees->isNotEmpty())
-            <section class="a-resource">
-                <div class="a-resource__head">
-                    <h2 class="a-resource__title">{{ __('extranet.dash_committees') }}</h2>
-                </div>
-
-                <ul class="e-dash__list" role="list">
-                    @foreach ($committees as $committee)
-                        <li class="e-dash__row">
-                            <span class="e-dash__main">
-                                <a class="e-dash__title" href="{{ route('extranet.committee', ['locale' => app()->getLocale(), 'committee' => $committee->slug]) }}">{{ $committee->name }}</a>
-                                <span class="e-dash__meta">
-                                    {{ trans_choice('extranet.dash_committee_documents', $committee->documents_count, ['count' => $committee->documents_count]) }},
-                                    {{ trans_choice('extranet.dash_committee_meetings', $committee->meetings_count, ['count' => $committee->meetings_count]) }}
-                                </span>
-                            </span>
-                            <span class="a-pill" data-status="{{ $committee->pivot->role }}">{{ __('extranet.seat_'.$committee->pivot->role) }}</span>
-                        </li>
-                    @endforeach
-                </ul>
+                @if ($isRep && $upcoming)
+                    @php($later = collect($upcoming['rows'])->reject(fn ($row) => $next_meeting && $row['label'] === $next_meeting->title)->take(2))
+                    <div data-block="upcoming">
+                        @if ($later->isNotEmpty())
+                            <h3 class="mh-sub">{{ __('d3_look.also_coming') }}</h3>
+                            <ul class="mh-list" role="list">
+                                @foreach ($later as $row)
+                                    <li class="mh-list__row">
+                                        @if ($row['url'])<a href="{{ $row['url'] }}">{{ $row['label'] }}</a>@else<span>{{ $row['label'] }}</span>@endif
+                                        @if ($row['meta'])<span class="mh-meta">{{ $row['meta'] }}</span>@endif
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+                @endif
             </section>
-        @endif
-        <section class="a-resource">
-            <div class="a-resource__head">
-                <h2 class="a-resource__title">{{ __('extranet.dash_documents') }}</h2>
-                @can('viewAny', \App\Models\Folder::class)
-                    <a href="{{ route('extranet.folders', ['locale' => app()->getLocale()]) }}">{{ __('extranet.dash_all_documents') }}</a>
-                @endcan
-            </div>
 
-            @if ($documents->isEmpty())
-                <div class="a-empty">
-                    <p class="a-empty__title">{{ __('extranet.dash_no_documents_title') }}</p>
-                    <p class="a-empty__body">{{ __('extranet.dash_no_documents_body') }}</p>
-                </div>
-            @else
-                <ul class="e-dash__list" role="list">
-                    @foreach ($documents as $document)
-                        <li class="e-dash__row">
-                            <span class="c-filetype" aria-hidden="true">{{ strtoupper(pathinfo($document->original_filename, PATHINFO_EXTENSION)) }}</span>
-                            <span class="e-dash__main">
-                                <a class="e-dash__title" href="{{ route('documents.show', ['locale' => app()->getLocale(), 'document' => $document->id]) }}">{{ $document->original_filename }}</a>
-                                <span class="e-dash__meta">
-                                    {{ $document->created_at?->displayed()->isoFormat('D MMMM YYYY') }}, {{ $document->readableSize() }}
+            @if (! $isRep && $committees->isNotEmpty())
+                <section class="mh-card" aria-labelledby="mh-com-h" data-block="committees">
+                    <div class="mh-card__head">
+                        <h2 class="mh-card__title" id="mh-com-h">{{ __('d3_look.my_committees') }}</h2>
+                    </div>
+                    <ul class="mh-list" role="list">
+                        @foreach ($committees as $committee)
+                            <li class="mh-list__row mh-list__row--split">
+                                <span>
+                                    <a href="{{ route('extranet.committee', ['locale' => $locale, 'committee' => $committee->slug]) }}">{{ $committee->name }}</a>
+                                    <span class="mh-meta">
+                                        {{ trans_choice('extranet.dash_committee_documents', $committee->documents_count, ['count' => $committee->documents_count]) }},
+                                        {{ trans_choice('extranet.dash_committee_meetings', $committee->meetings_count, ['count' => $committee->meetings_count]) }}
+                                    </span>
                                 </span>
-                            </span>
-                            {{-- Clearance carried as a label, never as
-                                 colour alone: screen 04's rule for the
-                                 confidentiality key applies wherever a
-                                 clearance is drawn. --}}
-                            <span class="a-pill" data-clearance="{{ $document->clearance->value }}">{{ $document->clearance->label() }}</span>
-                        </li>
-                    @endforeach
-                </ul>
+                                <span class="a-pill" data-status="{{ $committee->pivot->role }}">{{ __('extranet.seat_'.$committee->pivot->role) }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </section>
             @endif
-        </section>
 
-        <section class="a-resource">
-            <div class="a-resource__head">
-                <h2 class="a-resource__title">{{ __('extranet.dash_notifications') }}</h2>
-            </div>
-
-            @if ($notifications->isEmpty())
-                <div class="a-empty">
-                    <p class="a-empty__title">{{ __('extranet.dash_no_notifications_title') }}</p>
-                    <p class="a-empty__body">{{ __('extranet.dash_no_notifications_body') }}</p>
+            {{-- From the Secretariat: the three latest notices. --}}
+            <section class="mh-card" aria-labelledby="mh-notices-h">
+                <div class="mh-card__head">
+                    <h2 class="mh-card__title" id="mh-notices-h">{{ __('extranet.dash_announcements') }}</h2>
+                    <a href="{{ route('announcements', ['locale' => $locale]) }}">{{ __('d3_look.all_notices') }}</a>
                 </div>
-            @else
-                <ul class="e-dash__list" role="list">
-                    @foreach ($notifications as $notification)
-                        <li class="e-dash__row">
-                            <span class="e-dash__main">
-                                <span class="e-dash__title">{{ $notification->data['title'] ?? __('extranet.dash_notification') }}</span>
-                                <span class="e-dash__meta">{{ $notification->created_at?->diffForHumans() }}</span>
-                            </span>
-                        </li>
+                @if ($notices->isEmpty())
+                    <div class="a-empty">
+                        <p class="a-empty__title">{{ __('extranet.dash_no_announcements_title') }}</p>
+                        <p class="a-empty__body">{{ __('extranet.dash_no_announcements_body') }}</p>
+                    </div>
+                @else
+                    @include('pages.extranet._notice-list', ['items' => $notices, 'compact' => true])
+                @endif
+            </section>
+
+            {{-- My folders, and the last three files filed in them. --}}
+            <section class="mh-card" aria-labelledby="mh-folders-h" data-block="documents">
+                <div class="mh-card__head">
+                    <h2 class="mh-card__title" id="mh-folders-h">{{ __('d3_look.my_folders') }}</h2>
+                    @can('viewAny', \App\Models\Folder::class)
+                        <a href="{{ route('extranet.folders', ['locale' => $locale]) }}">{{ __('d3_look.all_folders') }}</a>
+                    @endcan
+                </div>
+                @if ($myFolders['folders']->isNotEmpty())
+                    <ul class="mh-folderlinks" role="list" aria-label="{{ __('d3_look.folders') }}">
+                        @foreach ($myFolders['folders'] as $folder)
+                            <li><a href="{{ route('extranet.folder', ['locale' => $locale, 'folder' => $folder->id]) }}">{{ $folder->name }}</a> <span class="mh-meta">{{ trans_choice('d3_look.folder_files', $folder->documents_count, ['count' => $folder->documents_count]) }}</span></li>
+                        @endforeach
+                    </ul>
+                @endif
+                <div>
+                    <div>
+                        <h3 class="mh-sub">{{ __('d3_look.latest_files') }}</h3>
+                        @if ($files->isEmpty())
+                            <div class="a-empty">
+                                <p class="a-empty__title">{{ __('extranet.dash_no_documents_title') }}</p>
+                                <p class="a-empty__body">{{ __('extranet.dash_no_documents_body') }}</p>
+                            </div>
+                        @else
+                            <ul class="mh-list" role="list">
+                                @foreach ($files as $document)
+                                    <li class="mh-list__row mh-file">
+                                        <span class="c-filetype" aria-hidden="true">{{ strtoupper(pathinfo($document->original_filename, PATHINFO_EXTENSION)) }}</span>
+                                        <span class="mh-file__text">
+                                            <a href="{{ route('documents.show', ['locale' => $locale, 'document' => $document->id]) }}">{{ $document->original_filename }}</a>
+                                            <span class="mh-meta">{{ $document->folder?->name ? $document->folder->name.', ' : '' }}{{ $document->created_at?->displayed()->isoFormat('D MMMM YYYY') }}, {{ $document->readableSize() }}</span>
+                                        </span>
+                                        <span class="a-pill" data-clearance="{{ $document->clearance->value }}">{{ $document->clearance->label() }}</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+                </div>
+            </section>
+
+            @if ($isRep)
+                <section class="mh-card" aria-labelledby="mh-due-h">
+                    <div class="mh-card__head">
+                        <h2 class="mh-card__title" id="mh-due-h">{{ __('extranet.dash_due_title') }}</h2>
+                    </div>
+                    @if ($due->isEmpty())
+                        <div class="a-empty">
+                            <p class="a-empty__title">{{ __('extranet.dash_no_due_title') }}</p>
+                            <p class="a-empty__body">{{ __('extranet.dash_no_due_body') }}</p>
+                        </div>
+                    @else
+                        <ul class="mh-list" role="list">
+                            @foreach ($due as $period)
+                                <li class="mh-list__row mh-list__row--split">
+                                    <span>
+                                        <b>{{ __('extranet.dash_return_for', ['period' => $period['period']]) }}</b>
+                                        <span class="mh-meta">{{ __('d3_look.due', ['date' => $period['due_on']->isoFormat('D MMMM YYYY')]) }}</span>
+                                    </span>
+                                    <span class="a-pill" data-status="{{ $period['status'] === 'not_started' ? 'archived' : $period['status'] }}">{{ __('extranet.period_'.$period['status']) }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </section>
+            @endif
+        </div>
+
+        <aside class="mh-side" aria-label="{{ __('d3_look.side') }}">
+            <section class="mh-card" aria-labelledby="mh-notif-h">
+                <div class="mh-card__head">
+                    <h2 class="mh-card__title" id="mh-notif-h">{{ __('extranet.dash_notifications') }}</h2>
+                    <a href="{{ route('notifications', ['locale' => $locale]) }}">{{ __('d3_look.all_notifications') }}</a>
+                </div>
+                @if ($notifications->isEmpty())
+                    <div class="a-empty">
+                        <p class="a-empty__title">{{ __('extranet.dash_no_notifications_title') }}</p>
+                        <p class="a-empty__body">{{ __('extranet.dash_no_notifications_body') }}</p>
+                    </div>
+                @elseif (View::exists('partials.notifications.latest'))
+                    {{-- The bell's list, with its Mark as read buttons. --}}
+                    @include('partials.notifications.latest', ['limit' => 5])
+                @else
+                    <ul class="mh-list" role="list">
+                        @foreach ($notifications as $notification)
+                            <li class="mh-list__row">
+                                <a href="{{ route('notifications.open', ['locale' => $locale, 'notification' => $notification->id]) }}">{{ \App\Support\MemberHome::notificationLabel($notification) }}</a>
+                                <span class="mh-meta">
+                                    {{ $notification->created_at?->displayed()->isoFormat('D MMMM YYYY') }}
+                                    @if ($notification->read_at === null)<span class="a-pill" data-status="pending">{{ __('d3_look.unread') }}</span>@endif
+                                </span>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </section>
+
+            <nav class="mh-card" aria-labelledby="mh-qa-h">
+                <div class="mh-card__head">
+                    <h2 class="mh-card__title" id="mh-qa-h">{{ __('d3_look.quick_actions') }}</h2>
+                </div>
+                <ul class="mh-links" role="list">
+                    @foreach ($quickActions as $action)
+                        <li><a href="{{ $action['url'] }}">{{ $action['label'] }}</a></li>
                     @endforeach
                 </ul>
+            </nav>
+
+            @if ($isRep)
+                <section class="mh-card" aria-labelledby="mh-comp-h" data-block="indicators">
+                    <div class="mh-card__head">
+                        <h2 class="mh-card__title" id="mh-comp-h">{{ __('d3_look.completeness') }}</h2>
+                    </div>
+                    <p class="mh-figure"><b>{{ min(100, $completeness['percent']) }}%</b> {{ __('extranet.dash_completeness_label', ['country' => $country?->name ?? '']) }}</p>
+                    @if ($completeness['rank'])
+                        <p class="mh-meta">{{ __('extranet.dash_rank', ['rank' => $completeness['rank'], 'of' => $completeness['of']]) }}</p>
+                    @endif
+                    @if ($indicators && $indicators['rows'] !== [])
+                        <p class="mh-meta">{{ $indicators['rows'][0]['label'] }}, {{ $indicators['rows'][0]['meta'] }}</p>
+                    @endif
+                    <p class="mh-more"><a href="{{ route('completeness', ['locale' => $locale]) }}">{{ __('d3_look.open_completeness') }}</a></p>
+                </section>
             @endif
-        </section>
+
+            @if ($clearance)
+                <section class="mh-card mh-card--quiet" aria-labelledby="mh-clear-h">
+                    <h2 class="mh-card__title" id="mh-clear-h">{{ __('extranet.clearance_title') }}</h2>
+                    <p class="mh-meta">{{ $clearance['level'] }}. {{ $clearance['scope'] }}</p>
+                </section>
+            @endif
+
+            @include('partials.assistant-proposal')
+        </aside>
     </div>
+</div>
 @endsection

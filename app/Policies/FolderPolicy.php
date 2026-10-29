@@ -6,6 +6,7 @@ use App\Enums\Clearance;
 use App\Enums\Permission;
 use App\Models\Folder;
 use App\Models\User;
+use App\Support\Documents\FolderAccess;
 
 /**
  * Who may open a folder, and who may put something in it.
@@ -40,28 +41,44 @@ class FolderPolicy
          * A null country means the folder is regional: a committee's
          * working papers, or something CRASA shares with everyone. It
          * belongs to no single member state, so the country gate has
-         * nothing to compare and the clearance gate above is the whole
-         * answer. This mirrors countryScopeIncludesShared() on the model
-         * and DocumentPolicy, so the three cannot disagree.
+         * nothing to compare. This mirrors countryScopeIncludesShared() on
+         * the model and DocumentPolicy, so the three cannot disagree.
          */
-        if ($folder->country_id === null) {
+        if ($folder->country_id !== null && ! $user->mayActOnCountry($folder->country_id)) {
+            return false;
+        }
+
+        // The folder's own rule, or the one it inherits (FolderAccess).
+        // With none, clearance and country above are the whole answer.
+        $rules = FolderAccess::effective($folder)['rules'];
+
+        if ($rules === null || $user->seesAllCountries()) {
             return true;
         }
 
-        return $user->mayActOnCountry($folder->country_id);
+        return FolderAccess::matches($user, $rules['view'] ?? []);
     }
 
     /**
-     * Uploading into a folder.
+     * Uploading into a folder, and managing the files in it (rename, move,
+     * replace, the recycle bin).
      *
-     * A member state representative uploads into their own country's
-     * folders: that is the point of the extranet. The Secretariat uploads
-     * anywhere it can read.
+     * With no rule set: a member state representative uploads into their
+     * own country's folders, which is the point of the extranet, and the
+     * Secretariat uploads anywhere it can read. With a rule, the rule
+     * names who, and the Secretariat still may.
      */
     public function upload(User $user, Folder $folder): bool
     {
         if (! $this->view($user, $folder)) {
             return false;
+        }
+
+        $rules = FolderAccess::effective($folder)['rules'];
+
+        if ($rules !== null) {
+            return FolderAccess::isSecretariat($user)
+                || ($user->mayUsePlatform() && FolderAccess::matches($user, $rules['upload'] ?? []));
         }
 
         if ($folder->country_id !== null) {
@@ -71,6 +88,22 @@ class FolderPolicy
 
         return $user->hasPermission(Permission::ManageContent)
             || $user->hasPermission(Permission::UploadToCountryFolder);
+    }
+
+    /** Marking a file in the folder as validated. The Secretariat always may. */
+    public function validate(User $user, Folder $folder): bool
+    {
+        if (! $this->view($user, $folder)) {
+            return false;
+        }
+
+        if (FolderAccess::isSecretariat($user)) {
+            return true;
+        }
+
+        $rules = FolderAccess::effective($folder)['rules'];
+
+        return $rules !== null && $user->mayUsePlatform() && FolderAccess::matches($user, $rules['validate'] ?? []);
     }
 
     public function create(User $user): bool

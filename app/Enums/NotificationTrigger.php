@@ -37,6 +37,13 @@ enum NotificationTrigger: string
     /** The Secretariat published an announcement. */
     case Announcement = 'announcement';
 
+    /**
+     * A registration for a meeting was confirmed (client brief, item 7). It
+     * tells the person registered and their member state's representatives
+     * that the Secretariat accepted the registration; it arranges nothing.
+     */
+    case RegistrationConfirmed = 'registration_confirmed';
+
     public function labelKey(): string
     {
         return 'notifications.trigger_'.$this->value;

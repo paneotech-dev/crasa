@@ -99,7 +99,7 @@
                 <select class="a-select" id="sector_id" name="sector_id">
                     <option value="">{{ __('announcements.audience_all') }}</option>
                     @foreach ($sectors as $sector)
-                        <option value="{{ $sector->id }}" @selected(old('sector_id', $announcement->sector_id) == $sector->id)>{{ $sector->name }}</option>
+                        <option value="{{ $sector->id }}" @selected(old('sector_id', $announcement->sector_id) == $sector->id)>{{ $sector->displayName() }}</option>
                     @endforeach
                 </select>
             </div>
@@ -109,7 +109,7 @@
                 <select class="a-select" id="committee_id" name="committee_id">
                     <option value="">{{ __('announcements.audience_all') }}</option>
                     @foreach ($committees as $committee)
-                        <option value="{{ $committee->id }}" @selected(old('committee_id', $announcement->committee_id) == $committee->id)>{{ $committee->name }}</option>
+                        <option value="{{ $committee->id }}" @selected(old('committee_id', $announcement->committee_id) == $committee->id)>{{ $committee->displayName() }}</option>
                     @endforeach
                 </select>
             </div>

@@ -1,7 +1,8 @@
 {{--
     One event as a card: date block, committee code, title, date range,
     place or Online, who can see it, its status, and the action that fits:
-    Add to my calendar and Register before it, the report after it.
+    Add to calendar (a link to the event page's options) and Register
+    before it, the report after it.
     $level is the heading level (3 on the events page, 3 on home).
 --}}
 @php
@@ -41,19 +42,16 @@
             </p>
         @endif
         <p class="e-card__pills">
-            @if ($meeting->isCancelled())
-                <span class="u-pill e-pill--cancelled"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>{{ __('e.status_cancelled') }}</span>
-            @elseif ($meeting->isPostponed())
-                <span class="u-pill u-pill--notice"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>{{ __('e.status_postponed') }}</span>
-            @endif
-            @if ($meeting->clearance === \App\Enums\Clearance::Public && $isPast)
-            @elseif ($meeting->clearance === \App\Enums\Clearance::Public)
-                <span class="u-pill u-pill--muted"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>{{ __('e.visibility_public') }}</span>
-            @else
+            @include('pages.events._status', ['meeting' => $meeting, 'quiet' => true])
+            {{-- "Public" is the default and states nothing; a badge is shown
+                 only for a meeting restricted to members. --}}
+            @if ($meeting->clearance !== \App\Enums\Clearance::Public)
                 <span class="u-pill"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>{{ __('e.visibility_members') }}</span>
             @endif
-            @if ($isPast && ($label ?? false))
-                <span class="u-pill u-pill--muted">{{ __('events.past') }}</span>
+            {{-- A past meeting already reads Held, Cancelled or Postponed from
+                 the status pill; Past is added only where that says nothing. --}}
+            @if (($label ?? false) && ! ($isPast && $meeting->displayStatus() !== 'scheduled'))
+                <span @class(['u-pill', 'u-pill--muted' => $isPast])>{{ $isPast ? __('events.past') : __('events.upcoming') }}</span>
             @endif
         </p>
     </div>
@@ -61,7 +59,7 @@
     @if (! $isPast || $hasReport)
     <div class="u-card__actions e-card__actions">
         @if (! $isPast)
-            @include('pages.events._add-to-calendar', ['meeting' => $meeting, 'compact' => true])
+            @include('pages.events._add-to-calendar', ['meeting' => $meeting, 'link' => true])
             @if ($meeting->registrationIsOpen() && ! ($noRegister ?? false))
                 <a class="u-btn u-btn--secondary e-card__btn" href="{{ route('events.register', ['locale' => $locale, 'meeting' => $meeting->slug]) }}">{{ __('e.register') }}<span class="c-sr"> {{ __('events.calendar_for', ['event' => $meeting->title]) }}</span></a>
             @endif

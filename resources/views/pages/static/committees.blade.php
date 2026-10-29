@@ -61,7 +61,6 @@
         <div class="cp-com-head">
             <div>
                 @if ($gridBlock?->translate('heading'))<h2 class="u-h2">{{ $gridBlock->translate('heading')->value }}</h2>@endif
-                @if ($gridBlock?->translate('intro'))<p class="u-text u-muted cp-com-intro">{{ $gridBlock->translate('intro')->value }}</p>@endif
             </div>
             @if ($introBlock?->translate('body'))
                 {{-- The page's own introduction, beside the grid heading
@@ -91,7 +90,6 @@
                     <li class="u-card cp-com-card" id="committee-{{ $committee->slug }}">
                         <div class="u-card__body">
                             <div class="cp-com-card__top">
-                                <span class="cp-icon-badge">@include('partials.cpages.committee-icon', ['slug' => $committee->slug])</span>
                                 <span class="u-card__label">{{ $sectorName }}</span>
                             </div>
                             <h3 class="u-card__title"><a href="{{ route('committees.show', ['locale' => $locale, 'committee' => $committee->slug]) }}">{{ $committee->name }}</a></h3>

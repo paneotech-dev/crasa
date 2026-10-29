@@ -63,17 +63,25 @@ class AreaSwitcherTest extends TestCase
         $this->assertContains('public', $this->areas($html));
     }
 
-    /** UX-15, UX-17: Sign out is a word, and help opens the guide for the role. */
+    /**
+     * UX-15, UX-17: Sign out is a word, and help reaches the guide for the
+     * role. Since Day 3 (client brief item 7) the help icon opens the help
+     * page for the current screen, and that page links to the role guide in
+     * a new tab.
+     */
     public function test_sign_out_is_labelled_and_help_opens_the_role_guide(): void
     {
         $rep = User::factory()->memberStateRep(Country::where('iso_code', 'bw')->sole())->create();
         $html = $this->actingAs($rep)->get('/en/extranet/calendar')->assertOk()->getContent();
 
         $this->assertMatchesRegularExpression('/class="a-side__out">.*?<span>Sign out<\/span>/s', $html);
-        $this->assertStringContainsString('href="'.config('crasa.role_guide_url').'#member"', $html);
-        $this->assertMatchesRegularExpression('/#member"\s*target="_blank" rel="noopener"/', $html);
+        $this->assertStringContainsString('href="'.url('/en/help/extranet.calendar'), $html);
+
+        $help = $this->actingAs($rep)->get('/en/help/extranet.calendar')->assertOk()->getContent();
+        $this->assertStringContainsString('href="'.config('crasa.role_guide_url').'#member"', $help);
+        $this->assertMatchesRegularExpression('/#member"\s*target="_blank" rel="noopener"/', $help);
 
         $admin = User::factory()->administrator()->create();
-        $this->assertStringContainsString(config('crasa.role_guide_url').'#admin', $this->actingAs($admin)->get('/en/admin')->getContent());
+        $this->assertStringContainsString(config('crasa.role_guide_url').'#admin', $this->actingAs($admin)->get('/en/help/admin.dashboard')->getContent());
     }
 }

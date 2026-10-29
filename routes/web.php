@@ -184,6 +184,10 @@ Route::prefix('{locale}')
         Route::post('events/{meeting}/register', [DelegateRegistrationController::class, 'store'])
             ->middleware(['throttle:registration', VerifyTurnstile::class])
             ->name('events.register.store');
+        // Day 3: people (public)
+        // After sending: what was filed and what happens next.
+        Route::get('events/{meeting}/register/done', [DelegateRegistrationController::class, 'done'])->name('events.register.done');
+        // end Day 3: people (public)
 
         Route::get('privacy', [PageController::class, 'show'])->defaults('slug', 'privacy')->name('privacy');
         Route::get('terms', [PageController::class, 'show'])->defaults('slug', 'terms')->name('terms');
@@ -377,6 +381,43 @@ Route::prefix('{locale}')
             // regulator cannot put in their own calendar is one they miss.
             Route::get('extranet/calendar.ics', [ExtranetController::class, 'calendarExport'])->middleware('can:enter-member-area')->name('extranet.calendar.ics');
 
+            // Day 3: docs
+            /*
+             * Document management: folders (create, rename, describe, move,
+             * access, delete when empty), files (rename, move, replace with a
+             * new version, validate, the recycle bin), earlier versions and
+             * share links. Every action re-checks the folder and document
+             * policies; another member state's file answers 404.
+             */
+            Route::middleware('can:enter-member-area')->group(function () {
+                Route::get('extranet/documents/folders/new', [\App\Http\Controllers\FolderManagementController::class, 'create'])->name('extranet.folders.create');
+                Route::post('extranet/documents/folders', [\App\Http\Controllers\FolderManagementController::class, 'store'])->name('extranet.folders.store');
+                Route::get('extranet/documents/folders/{folder}/edit', [\App\Http\Controllers\FolderManagementController::class, 'edit'])->whereNumber('folder')->name('extranet.folders.edit');
+                Route::put('extranet/documents/folders/{folder}', [\App\Http\Controllers\FolderManagementController::class, 'update'])->whereNumber('folder')->name('extranet.folders.update');
+                Route::delete('extranet/documents/folders/{folder}', [\App\Http\Controllers\FolderManagementController::class, 'destroy'])->whereNumber('folder')->name('extranet.folders.destroy');
+                Route::get('extranet/documents/bin', [\App\Http\Controllers\FolderDocumentController::class, 'bin'])->name('extranet.documents.bin');
+                Route::put('extranet/documents/{document}/restore', [\App\Http\Controllers\FolderDocumentController::class, 'restore'])->whereNumber('document')->name('extranet.documents.restore');
+                Route::get('extranet/documents/{document}', [\App\Http\Controllers\FolderDocumentController::class, 'show'])->whereNumber('document')->name('extranet.document');
+                Route::put('extranet/documents/{document}/name', [\App\Http\Controllers\FolderDocumentController::class, 'rename'])->whereNumber('document')->name('extranet.document.rename');
+                Route::put('extranet/documents/{document}/folder', [\App\Http\Controllers\FolderDocumentController::class, 'move'])->whereNumber('document')->name('extranet.document.move');
+                Route::post('extranet/documents/{document}/versions', [\App\Http\Controllers\FolderDocumentController::class, 'replace'])->whereNumber('document')->name('extranet.document.replace');
+                Route::put('extranet/documents/{document}/validate', [\App\Http\Controllers\FolderDocumentController::class, 'validateFile'])->whereNumber('document')->name('extranet.document.validate');
+                Route::delete('extranet/documents/{document}', [\App\Http\Controllers\FolderDocumentController::class, 'destroy'])->whereNumber('document')->name('extranet.document.destroy');
+                Route::get('extranet/versions/{version}', [\App\Http\Controllers\FolderDocumentController::class, 'version'])->whereNumber('version')->name('extranet.version');
+                Route::get('extranet/shared/{token}', [\App\Http\Controllers\FolderDocumentController::class, 'shared'])->name('extranet.shared');
+            });
+            Route::middleware('can:enter-back-office')->group(function () {
+                Route::get('admin/documents', [\App\Http\Controllers\FolderManagementController::class, 'index'])->name('admin.documents');
+                Route::get('admin/documents/folders/new', [\App\Http\Controllers\FolderManagementController::class, 'create'])->name('admin.documents.create');
+                Route::post('admin/documents/folders', [\App\Http\Controllers\FolderManagementController::class, 'store'])->name('admin.documents.store');
+                Route::get('admin/documents/folders/{folder}/edit', [\App\Http\Controllers\FolderManagementController::class, 'edit'])->whereNumber('folder')->name('admin.documents.edit');
+                Route::put('admin/documents/folders/{folder}', [\App\Http\Controllers\FolderManagementController::class, 'update'])->whereNumber('folder')->name('admin.documents.update');
+                Route::delete('admin/documents/folders/{folder}', [\App\Http\Controllers\FolderManagementController::class, 'destroy'])->whereNumber('folder')->name('admin.documents.destroy');
+                Route::get('admin/documents/bin', [\App\Http\Controllers\FolderDocumentController::class, 'bin'])->name('admin.documents.bin');
+                Route::put('admin/documents/files/{document}/restore', [\App\Http\Controllers\FolderDocumentController::class, 'restore'])->whereNumber('document')->name('admin.documents.restore');
+            });
+            // end Day 3: docs
+
             /*
              * Contributing a national instrument, RP-03 and RP-06.
              *
@@ -458,6 +499,14 @@ Route::prefix('{locale}')
             Route::post('notifications/read-all', [NotificationCentreController::class, 'readAll'])->name('notifications.read-all');
             Route::put('notifications/preferences', [NotificationCentreController::class, 'preferences'])->name('notifications.preferences');
             Route::get('notifications/{notification}', [NotificationCentreController::class, 'open'])->name('notifications.open');
+
+            // Day 3: notify
+            // Mark one notice read from the bell list or the page; the help
+            // page per screen, keyed by route name (lang/*/screenhelp_*.php).
+            Route::post('notifications/{notification}/read', [NotificationCentreController::class, 'markRead'])->name('notifications.read');
+            Route::get('help/{screen}', [\App\Http\Controllers\ScreenHelpController::class, 'show'])
+                ->where('screen', '[A-Za-z0-9._-]+')->name('screen-help');
+            // end Day 3: notify
 
             Route::get('submissions', [SubmissionController::class, 'index'])->name('submissions');
             Route::post('submissions', [SubmissionController::class, 'store'])->name('submissions.store');
@@ -667,6 +716,12 @@ Route::prefix('{locale}')
                 Route::put('committees/{committee}/seats/{country}', [CommitteeSeatController::class, 'update'])->name('committees.seats.update');
                 Route::delete('committees/{committee}/seats/{country}', [CommitteeSeatController::class, 'destroy'])->name('committees.seats.destroy');
 
+                // Day 3: crud
+                Route::post('committees/{committee}/members', [\App\Http\Controllers\Admin\CommitteeMemberController::class, 'store'])->name('committees.members.store');
+                Route::put('committees/{committee}/members/{user}', [\App\Http\Controllers\Admin\CommitteeMemberController::class, 'update'])->whereNumber('user')->name('committees.members.update');
+                Route::delete('committees/{committee}/members/{user}', [\App\Http\Controllers\Admin\CommitteeMemberController::class, 'destroy'])->whereNumber('user')->name('committees.members.destroy');
+                // end Day 3: crud
+
                 Route::get('meetings', [MeetingListController::class, 'index'])->name('meetings');
                 Route::get('meetings/{meeting}/delegates', [DelegateListController::class, 'index'])->name('delegates');
                 Route::get('meetings/{meeting}/delegates.csv', [DelegateListController::class, 'csv'])->name('delegates.csv');
@@ -698,6 +753,18 @@ Route::prefix('{locale}')
                 Route::put('users/{user}/suspend', [UserAdminController::class, 'suspend'])->name('users.suspend');
                 Route::put('users/{user}/reactivate', [UserAdminController::class, 'reactivate'])->name('users.reactivate');
                 Route::delete('users/{user}', [UserAdminController::class, 'destroy'])->name('users.destroy');
+                // Day 3: people (back office)
+                // One account and its audit trail, and editing it.
+                Route::get('users/{user}', [UserAdminController::class, 'show'])->whereNumber('user')->name('users.show');
+                Route::get('users/{user}/edit', [UserAdminController::class, 'edit'])->whereNumber('user')->name('users.edit');
+                Route::put('users/{user}', [UserAdminController::class, 'update'])->whereNumber('user')->name('users.update');
+                // Every delegate registration, grouped by event.
+                Route::get('registrations', [\App\Http\Controllers\Admin\RegistrationAdminController::class, 'index'])->name('registrations');
+                Route::get('registrations/export.csv', [\App\Http\Controllers\Admin\RegistrationAdminController::class, 'csv'])->name('registrations.csv');
+                Route::get('registrations/export.xlsx', [\App\Http\Controllers\Admin\RegistrationAdminController::class, 'xlsx'])->name('registrations.xlsx');
+                Route::put('registrations/{registration}/status', [\App\Http\Controllers\Admin\RegistrationAdminController::class, 'decide'])->whereNumber('registration')->name('registrations.decide');
+                Route::post('registrations/{registration}/resend', [\App\Http\Controllers\Admin\RegistrationAdminController::class, 'resend'])->whereNumber('registration')->name('registrations.resend');
+                // end Day 3: people (back office)
                 // Roles under People (F3).
                 Route::get('roles', [\App\Http\Controllers\Admin\RoleController::class, 'index'])->name('roles');
                 Route::get('roles/new', [\App\Http\Controllers\Admin\RoleController::class, 'create'])->name('roles.create');
@@ -753,6 +820,26 @@ Route::prefix('{locale}')
                 Route::delete('social-posts/{post}', [SocialPostAdminController::class, 'destroy'])->whereNumber('post')->name('social.destroy');
 
                 Route::get('audit', [AuditLogController::class, 'index'])->name('audit');
+
+                // Day 3: taxo
+                /*
+                 * Content > Taxonomies: news categories, publication types,
+                 * sectors and tags. ManageSettings, checked in the
+                 * controller on every action.
+                 */
+                Route::get('taxonomies/{kind?}', [\App\Http\Controllers\Admin\TaxonomyController::class, 'index'])
+                    ->where('kind', 'categories|publication-types|sectors|tags')->name('taxonomies');
+                Route::get('taxonomies/{kind}/new', [\App\Http\Controllers\Admin\TaxonomyController::class, 'create'])
+                    ->where('kind', 'categories|publication-types|sectors|tags')->name('taxonomies.create');
+                Route::post('taxonomies/{kind}', [\App\Http\Controllers\Admin\TaxonomyController::class, 'store'])
+                    ->where('kind', 'categories|publication-types|sectors|tags')->name('taxonomies.store');
+                Route::get('taxonomies/{kind}/{id}', [\App\Http\Controllers\Admin\TaxonomyController::class, 'edit'])
+                    ->where('kind', 'categories|publication-types|sectors|tags')->whereNumber('id')->name('taxonomies.edit');
+                Route::put('taxonomies/{kind}/{id}', [\App\Http\Controllers\Admin\TaxonomyController::class, 'update'])
+                    ->where('kind', 'categories|publication-types|sectors|tags')->whereNumber('id')->name('taxonomies.update');
+                Route::delete('taxonomies/{kind}/{id}', [\App\Http\Controllers\Admin\TaxonomyController::class, 'destroy'])
+                    ->where('kind', 'categories|publication-types|sectors|tags')->whereNumber('id')->name('taxonomies.destroy');
+                // end Day 3: taxo
 
                 /*
                  * Moderated publishing (F2): the awaiting approval inbox,

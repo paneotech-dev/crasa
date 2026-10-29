@@ -17,12 +17,16 @@
     @include('partials.cpages.styles')
     @php
         $loc = app()->getLocale();
-        $typeLabel = __($item->category->labelKey());
+        $typeLabel = $item->categoryLabel();
         $dateText = $item->date_unknown ? __('events.date_not_stated') : \App\Support\NewsFormat::longDate($item->published_at);
         $heroPhoto = null;
         if ($item->hero_image_path) {
             $p = \App\Support\ResizedImage::attributes($item->hero_image_path, 'hero');
-            $heroPhoto = ['src' => $p['src'], 'srcset' => $p['srcset'] ?? null, 'alt' => '', 'width' => $p['width'] ?? 1200, 'height' => $p['height'] ?? 800, 'position' => '50% 30%'];
+            // The media library's alt text in the reader's language, when the
+            // photograph has one; decorative otherwise, the title carries it.
+            $heroAsset = \App\Models\MediaAsset::where('path', $item->hero_image_path)->first();
+            $heroAlt = $heroAsset?->mayAppearIn($loc) ? ($heroAsset->translationValuesFor('alt')[$loc] ?? '') : '';
+            $heroPhoto = ['src' => $p['src'], 'srcset' => $p['srcset'] ?? null, 'alt' => $heroAlt, 'width' => $p['width'] ?? 1200, 'height' => $p['height'] ?? 800, 'position' => $item->heroPosition('50% 30%')];
         }
     @endphp
 
@@ -31,7 +35,7 @@
             <div class="u-hero__grid">
                 <div>
                     <p class="cp-news-card__line cp-article-hero__line">
-                        <span class="u-pill">{{ $typeLabel }}</span>
+                        @if ($item->categorySlug() !== 'news')<span class="u-card__label">{{ $typeLabel }}</span>@endif
                         <span class="cp-news-card__date">{{ $dateText }}</span>
                         @if ($item->sector)<span class="cp-news-card__date">{{ $item->sector->name }}</span>@endif
                     </p>
@@ -49,11 +53,10 @@
                 <figure class="u-hero__photo cp-article-hero__photo">
                     @if ($heroPhoto)
                         <img src="{{ $heroPhoto['src'] }}" @if ($heroPhoto['srcset']) srcset="{{ $heroPhoto['srcset'] }}" sizes="(max-width: 991px) 100vw, 500px" @endif
-                             width="{{ $heroPhoto['width'] }}" height="{{ $heroPhoto['height'] }}" alt="" loading="eager" fetchpriority="high" style="object-position: {{ $heroPhoto['position'] }}">
+                             width="{{ $heroPhoto['width'] }}" height="{{ $heroPhoto['height'] }}" alt="{{ $heroPhoto['alt'] }}" loading="eager" fetchpriority="high" style="object-position: {{ $heroPhoto['position'] }}">
                     @else
                         <span class="cp-news-ph" aria-hidden="true">
                             <img src="{{ asset('img/crasa-logo.svg') }}" alt="" width="72" height="72">
-                            <span class="cp-news-ph__label">{{ $typeLabel }}</span>
                         </span>
                     @endif
                 </figure>

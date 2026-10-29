@@ -36,7 +36,7 @@
                 {{ __('admin.menu_under', ['parent' => $item->parent->labelFor()]) }},
             @endif
             @if ($item->hasDestination())
-                {{ __('admin.menu_type_'.$item->destination_type) }}: {{ $item->destination }}
+                {{ __('d3_i18n.label_value', ['label' => __('admin.menu_type_'.$item->destination_type), 'value' => $item->destination]) }}
             @else
                 {{ __('admin.menu_heading_only') }}
             @endif

@@ -68,7 +68,7 @@
                                 <td>
                                     @if ($row->country)
                                         <x-flag :iso="$row->country->iso_code" />
-                                        {{ $row->country->name }}
+                                        {{ $row->country->displayName() }}
                                     @endif
                                 </td>
                                 <td>

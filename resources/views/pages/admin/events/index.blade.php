@@ -65,16 +65,8 @@
                                     </span>
                                 </th>
                                 <td>{{ $meeting->dateRange() }}</td>
-                                <td>
-                                    @if ($meeting->isCancelled())
-                                        <span class="a-pill" data-status="rejected">{{ __('e.status_cancelled') }}</span>
-                                    @elseif ($meeting->isPostponed())
-                                        <span class="a-pill" data-status="pending">{{ __('e.status_postponed') }}</span>
-                                    @else
-                                        <span class="a-pill" data-status="validated">{{ __('e.status_scheduled') }}</span>
-                                    @endif
-                                </td>
-                                <td class="a-table__num"><a href="{{ route('admin.delegates', ['locale' => $locale, 'meeting' => $meeting->slug]) }}">{{ number_format($meeting->delegate_registrations_count) }}<span class="c-sr"> {{ __('e.admin_delegates') }}, {{ $meeting->title }}</span></a></td>
+                                <td>@include('pages.events._status', ['meeting' => $meeting, 'surface' => 'admin'])</td>
+                                <td class="a-table__num"><a href="{{ route('admin.registrations', ['locale' => $locale, 'meeting' => $meeting->slug]) }}">{{ number_format($meeting->delegate_registrations_count) }}<span class="c-sr"> {{ __('e.admin_delegates') }}, {{ $meeting->title }}</span></a></td>
                                 <td>
                                     <span class="e-admin-actions">
                                         @can('edit', $meeting)

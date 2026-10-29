@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\NewsCategory;
+use App\Casts\TermBySlug;
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\MarksSampleData;
@@ -24,13 +24,15 @@ class NewsItem extends Model
 
     protected $fillable = [
         'slug', 'category', 'sector_id', 'published_at', 'date_unknown',
-        'hero_image_path', 'author_name', 'status', 'archived', 'is_sample',
+        'hero_image_path', 'hero_focal_x', 'hero_focal_y', 'author_name', 'status', 'archived', 'is_sample',
     ];
 
     protected function casts(): array
     {
         return [
-            'category' => NewsCategory::class,
+            'category' => TermBySlug::class.':'.NewsCategory::class,
+            'hero_focal_x' => 'integer',
+            'hero_focal_y' => 'integer',
             'published_at' => 'datetime',
             'date_unknown' => 'boolean',
             'archived' => 'boolean',
@@ -41,6 +43,32 @@ class NewsItem extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /** The category slug as stored, without resolving the term. */
+    public function categorySlug(): string
+    {
+        return (string) ($this->getAttributes()['category'] ?? '');
+    }
+
+    /** The category name in the page language. */
+    public function categoryLabel(): string
+    {
+        return $this->category?->label() ?? $this->categorySlug();
+    }
+
+    /**
+     * The photograph's focal point for CSS object-position, or the
+     * framing the surface used before focal points existed when none is
+     * set: centred on a card, 50% 30% in the article hero.
+     */
+    public function heroPosition(string $default = '50% 50%'): string
+    {
+        if ($this->hero_focal_x === null || $this->hero_focal_y === null) {
+            return $default;
+        }
+
+        return max(0, min(100, $this->hero_focal_x)).'% '.max(0, min(100, $this->hero_focal_y)).'%';
     }
 
     public function sector(): BelongsTo
@@ -70,7 +98,7 @@ class NewsItem extends Model
             ->whereKeyNot($this->getKey())
             ->with(['translations', 'sector'])
             ->orderByRaw('CASE WHEN sector_id = ? THEN 0 ELSE 1 END', [$this->sector_id])
-            ->orderByRaw('CASE WHEN category = ? THEN 0 ELSE 1 END', [$this->category->value])
+            ->orderByRaw('CASE WHEN category = ? THEN 0 ELSE 1 END', [$this->categorySlug()])
             ->orderByDesc('published_at')
             ->limit($limit)
             ->get();

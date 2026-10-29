@@ -248,7 +248,7 @@
                 @foreach ($versions as $version)
                     <li>
                         <span class="a-history__n">{{ __('admin.page_history_version', ['n' => $version->version_number]) }}</span>
-                        <span class="a-history__what">{{ $version->change_summary }}</span>
+                        <span class="a-history__what">{{ $version->displaySummary() }}</span>
                         <span class="a-history__who">
                             {{ $version->created_at?->displayed()->isoFormat('D MMM YYYY, HH:mm') }}
                             {{ $version->author

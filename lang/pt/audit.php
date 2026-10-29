@@ -25,6 +25,21 @@ return [
     'action_suspended' => 'Suspensão de uma conta',
     'action_invitation_accepted' => "Aceitação de um convite",
     'action_reactivated' => 'Reativação de uma conta',
+    'action_registration_resent' => 'Reenvio a um delegado da cópia da sua inscrição',
+    'action_registrations_exported' => 'Exportação das inscrições dos delegados',
+    // Day 3: docs
+    'action_document_added' => 'Adição de um ficheiro a uma pasta',
+    'action_document_replaced' => 'Adição de uma nova versão de um ficheiro',
+    'action_document_renamed' => 'Mudança do nome de um ficheiro',
+    'action_document_moved' => 'Deslocação de um ficheiro',
+    'action_document_binned' => 'Envio de um ficheiro para a reciclagem',
+    'action_document_restored' => 'Restauro de um ficheiro da reciclagem',
+    'action_document_validated' => 'Validação de um ficheiro',
+    'action_document_purged' => 'Eliminação definitiva de um ficheiro da reciclagem',
+    'action_folder_created' => 'Criação de uma pasta',
+    'action_folder_changed' => 'Alteração de uma pasta',
+    'action_folder_deleted' => 'Eliminação de uma pasta',
+    // end Day 3: docs
     'subject_page' => 'uma página',
     'subject_pageblock' => 'um bloco',
     'subject_publication' => 'uma publicação',
@@ -43,6 +58,8 @@ return [
     'subject_enquiry' => 'um pedido',
     'subject_tag' => 'uma etiqueta',
     'subject_sector' => 'um setor',
+    'subject_newscategory' => 'uma categoria de notícias',
+    'subject_publicationtype' => 'um tipo de publicação',
 
     // Record types added since the first list (19 October 2026).
     'subject_announcement' => 'um aviso',
@@ -58,4 +75,6 @@ return [
     'subject_submission' => 'uma declaração de dados',
     'subject_submissionfieldcomment' => 'um comentário sobre uma declaração de dados',
     'subject_submissionvalue' => 'um valor numa declaração de dados',
+    'subject_featureinterest' => 'um interesse registado numa funcionalidade',
+    'subject_documentversion' => 'uma versão de um documento',
 ];

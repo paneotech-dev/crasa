@@ -44,8 +44,8 @@
                                     <a href="{{ route('admin.contributions.show', ['locale' => app()->getLocale(), 'instrument' => $instrument->slug]) }}">{{ $instrument->translated('title', $instrument->reference_number ?? $instrument->slug) }}</a>
                                     <span class="a-table__sub">{{ $instrument->reference_number }}</span>
                                 </th>
-                                <td>{{ $instrument->country?->name }}</td>
-                                <td>{{ $instrument->sector?->name }}</td>
+                                <td>{{ $instrument->country?->displayName() }}</td>
+                                <td>{{ $instrument->sector?->displayName() }}</td>
                                 <td>{{ $instrument->submitted_at?->displayed()->isoFormat('D MMMM YYYY') }}</td>
                             </tr>
                         @endforeach
@@ -77,7 +77,7 @@
                                 <th scope="row">
                                     <a href="{{ route('admin.contributions.show', ['locale' => app()->getLocale(), 'instrument' => $instrument->slug]) }}">{{ $instrument->translated('title', $instrument->reference_number ?? $instrument->slug) }}</a>
                                 </th>
-                                <td>{{ $instrument->country?->name }}</td>
+                                <td>{{ $instrument->country?->displayName() }}</td>
                                 <td><span class="a-pill" data-status="{{ $instrument->contribution_state?->value }}">{{ __($instrument->contribution_state->labelKey()) }}</span></td>
                                 <td>{{ $instrument->reviewed_at?->displayed()->isoFormat('D MMMM YYYY') }}</td>
                             </tr>

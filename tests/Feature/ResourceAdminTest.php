@@ -129,16 +129,19 @@ class ResourceAdminTest extends TestCase
         $this->assertSame('English', $country->fresh()->official_languages);
     }
 
-    public function test_reference_data_cannot_be_deleted_even_by_an_administrator(): void
+    public function test_reference_data_cannot_be_deleted_while_anything_points_at_it(): void
     {
         $country = Country::where('name', 'Namibia')->sole();
+        \App\Models\Authority::factory()->create(['country_id' => $country->id]);
 
+        // Day 3: a member state can be deleted, but only once nothing points
+        // at it. Deleting the row for Namibia does not remove Namibia from
+        // SADC; it orphans every instrument, value and account attached.
         $this->actingAs($this->administrator)
             ->from('/en/admin/data/countries/'.$country->id)
-            ->delete('/en/admin/data/countries/'.$country->id, ['confirm' => 'Namibia']);
+            ->delete('/en/admin/data/countries/'.$country->id, ['confirm' => 'Namibia'])
+            ->assertSessionHasErrors('record');
 
-        // Deleting the row for Namibia does not remove Namibia from SADC. It
-        // orphans every instrument, value and account attached to it.
         $this->assertDatabaseHas('countries', ['id' => $country->id]);
     }
 

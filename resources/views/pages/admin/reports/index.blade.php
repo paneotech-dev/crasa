@@ -20,7 +20,7 @@
                     <label class="a-label" for="country">{{ __('admin.field_country') }}</label>
                     <select class="a-select" id="country" name="subject_key">
                         @foreach ($countries as $country)
-                            <option value="{{ $country->iso_code }}">{{ $country->name }}</option>
+                            <option value="{{ $country->iso_code }}">{{ $country->displayName() }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -50,7 +50,7 @@
                     <label class="a-label" for="indicator">{{ __('admin.field_indicator') }}</label>
                     <select class="a-select" id="indicator" name="subject_key">
                         @foreach ($indicators as $indicator)
-                            <option value="{{ $indicator->slug }}">{{ $indicator->name }}</option>
+                            <option value="{{ $indicator->slug }}">{{ $indicator->displayName() }}</option>
                         @endforeach
                     </select>
                 </div>

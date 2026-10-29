@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Enums\DigestFrequency;
 use App\Enums\NotificationTrigger;
+use App\Support\Locales;
+use App\Support\Notifier;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,8 +32,28 @@ class NotificationCentreController extends Controller
     {
         $user = $request->user();
 
+        // Day 3: filters by type and by read state, in the query string so
+        // a filtered list can be bookmarked and works with no script.
+        $type = in_array($request->query('type'), Notifier::CATEGORIES, true) ? $request->query('type') : null;
+        $state = in_array($request->query('state'), ['unread', 'read'], true) ? $request->query('state') : null;
+
+        $query = $user->notifications();
+
+        if ($type !== null) {
+            $query->where('data->category', $type);
+        }
+
+        if ($state === 'unread') {
+            $query->whereNull('read_at');
+        } elseif ($state === 'read') {
+            $query->whereNotNull('read_at');
+        }
+
         return view('pages.notifications.index', [
-            'notifications' => $user->notifications()->paginate(20),
+            'notifications' => $query->paginate(20)->withQueryString(),
+            'type' => $type,
+            'state' => $state,
+            'categories' => Notifier::CATEGORIES,
             'unread' => $user->unreadNotifications()->count(),
             'triggers' => NotificationTrigger::cases(),
             'chosen' => $user->notification_preferences ?? NotificationTrigger::defaults(),
@@ -57,7 +79,31 @@ class NotificationCentreController extends Controller
             return redirect()->route('notifications', ['locale' => app()->getLocale()]);
         }
 
-        return redirect()->to($target);
+        return redirect()->to(self::inCurrentLanguage($target));
+    }
+
+    /** Mark one notice read without opening it (Day 3, the bell list). */
+    public function markRead(Request $request, string $notification): RedirectResponse
+    {
+        $request->user()->notifications()->findOrFail($notification)->markAsRead();
+
+        return back()->with('status', __('d3_notify.marked_read'));
+    }
+
+    /**
+     * A stored link carries the language the notice was written in. The
+     * reader opens it in the language they are reading now.
+     */
+    private static function inCurrentLanguage(string $url): string
+    {
+        $base = url('/');
+        $path = substr($url, strlen($base));
+
+        if (preg_match('~^/([a-z]{2})(/|$)~', $path, $m) && Locales::isSupported($m[1])) {
+            return $base.'/'.app()->getLocale().substr($path, 3);
+        }
+
+        return $url;
     }
 
     public function readAll(Request $request): RedirectResponse

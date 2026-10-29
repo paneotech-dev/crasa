@@ -44,7 +44,7 @@ return [
     'rejected' => 'Cette inscription n\'a pas pu être acceptée. Écrivez directement au Secrétariat.',
     'confirmation_subject' => 'Votre inscription à :meeting',
     'confirmation_intro' => 'Le Secrétariat de la CRASA a enregistré votre arrivée et votre départ pour cette réunion.',
-    'confirmation_amend' => 'Pour modifier ces informations, remplissez à nouveau le formulaire avec la même adresse électronique. La nouvelle saisie remplace celle-ci.',
+    'confirmation_amend' => 'Pour modifier ces informations avant leur confirmation par le Secrétariat, connectez-vous avec le compte de cette adresse électronique et remplissez à nouveau le formulaire, ou écrivez au Secrétariat.',
     'confirmation_boundary' => 'L\'hébergement, les transferts et la restauration sont organisés par les organisateurs de la réunion et non par cette plateforme.',
     'confirmation_none' => 'Non précisé',
 ];

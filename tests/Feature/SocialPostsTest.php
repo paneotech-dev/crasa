@@ -141,11 +141,11 @@ class SocialPostsTest extends TestCase
     {
         $html = view('partials.home.social')->render();
 
-        $this->assertStringContainsString('Latest from CRASA', $html);
+        $this->assertStringContainsString('CRASA on social media', $html);
         $this->assertSame(3, substr_count($html, '<article class="u-card s-post"'));
         $this->assertStringContainsString('s-posts--row', $html);
         $newest = SocialPost::live()->first();
-        $this->assertStringContainsString(e($newest->url), $html);
+        $this->assertStringContainsString(e($newest->embed_url ?: $newest->url), $html);
     }
 
     public function test_home_without_posts_shows_the_three_channel_cards_and_no_frame(): void
@@ -162,7 +162,9 @@ class SocialPostsTest extends TestCase
     public function test_the_newsroom_feed_partial_lists_posts_newest_first_with_the_channels(): void
     {
         $html = view('partials.newsroom.social')->render();
-        $urls = SocialPost::live()->pluck('url')->map(fn ($u) => e($u))->all();
+        // An embedded post has no second link under it (item 8f): it is
+        // found by its frame address, a post without an embed by its link.
+        $urls = SocialPost::live()->get()->map(fn ($p) => e($p->embed_url ?: $p->url))->all();
 
         $positions = array_map(fn ($u) => strpos($html, $u), $urls);
         $sorted = $positions;

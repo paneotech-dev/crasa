@@ -95,21 +95,37 @@ class UserAdminController extends Controller
             'role' => ['required', 'in:'.implode(',', $keys)],
         ]);
 
-        $definition = \App\Models\RoleDefinition::where('key', $data['role'])->first();
-        $builtIn = Role::tryFrom($data['role']);
         $from = $user->customRole?->key ?? $user->role->value;
-        $fromLabel = $user->roleLabel();
 
         if ($from === $data['role']) {
             return back();
         }
+
+        if (! $this->applyRole($request, $user, $data['role'])) {
+            return back()->withErrors(['role' => __('fa.two_admins')]);
+        }
+
+        return back()->with('status', __('admin.role_changed'));
+    }
+
+    /**
+     * The role change itself, shared by the list's role control and the
+     * edit form so both keep the same rules. False when it would leave fewer
+     * than two active administrators.
+     */
+    private function applyRole(Request $request, User $user, string $key): bool
+    {
+        $definition = \App\Models\RoleDefinition::where('key', $key)->first();
+        $builtIn = Role::tryFrom($key);
+        $from = $user->customRole?->key ?? $user->role->value;
+        $fromLabel = $user->roleLabel();
 
         // AP-12: at least two active administrators remain.
         // A suspended administrator is not one of the active two, so moving
         // it to another role leaves the count where it is.
         if ($user->role === Role::Administrator && $user->custom_role_id === null && $builtIn !== Role::Administrator
             && $user->status === UserStatus::Active && $this->activeAdministrators() <= 2) {
-            return back()->withErrors(['role' => __('fa.two_admins')]);
+            return false;
         }
 
         $user->update($builtIn !== null
@@ -119,14 +135,14 @@ class UserAdminController extends Controller
 
         AuditLog::record(AuditLog::ROLE_CHANGED, $user, [
             'from' => $from,
-            'to' => $data['role'],
+            'to' => $key,
         ], $request->user());
 
         \App\Support\AdminAlerts::send($request->user(), 'role_changed', [
             'subject' => $user->name, 'from' => $fromLabel, 'to' => $user->roleLabel(),
         ], route('admin.users', ['locale' => app()->getLocale()]));
 
-        return back()->with('status', __('admin.role_changed'));
+        return true;
     }
 
     private function activeAdministrators(): int
@@ -209,6 +225,144 @@ class UserAdminController extends Controller
 
         return redirect()->route('admin.users', ['locale' => app()->getLocale()])
             ->with('status', __('fa.user_deleted', ['name' => $name]));
+    }
+
+    /**
+     * One account: its details and its audit trail. Entries about the
+     * account (it was invited, edited, suspended) and entries by it (what
+     * the holder did) are both here, newest first, because a question about
+     * a person is usually both at once.
+     */
+    public function show(Request $request, User $user)
+    {
+        $this->authorize('viewAny', User::class);
+        abort_if($user->anonymised_at !== null, 404);
+
+        $show = in_array($request->query('show'), ['about', 'by'], true) ? $request->query('show') : 'all';
+        $morph = $user->getMorphClass();
+
+        $entries = AuditLog::query()
+            ->with('user')
+            ->where(function ($q) use ($show, $morph, $user) {
+                if ($show !== 'by') {
+                    $q->orWhere(fn ($about) => $about->where('auditable_type', $morph)->where('auditable_id', $user->id));
+                }
+                if ($show !== 'about') {
+                    $q->orWhere('user_id', $user->id);
+                }
+            })
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->paginate(25)
+            ->withQueryString();
+
+        return view('pages.admin.users.show', [
+            'account' => $user->load(['country', 'authority', 'committees', 'customRole']),
+            'entries' => $entries,
+            'show' => $show,
+        ]);
+    }
+
+    public function edit(Request $request, User $user)
+    {
+        $this->authorize('viewAny', User::class);
+        $this->authorize('update', $user);
+        abort_if($user->anonymised_at !== null, 404);
+
+        return view('pages.admin.users.edit', [
+            'account' => $user->load(['committees', 'customRole']),
+            'countries' => Country::orderBy('name')->get(),
+            'authorities' => Authority::withoutGlobalScopes()->with('country')->orderBy('acronym')->get(),
+            'committees' => \App\Models\Committee::withoutGlobalScopes()->orderBy('name')->get(),
+            'roleOptions' => \App\Models\RoleDefinition::orderByDesc('is_built_in')->orderBy('id')->get(),
+            'seatRoles' => \App\Enums\CommitteeRole::cases(),
+            'mayAssignRole' => $request->user()->can('assignRole', $user),
+        ]);
+    }
+
+    /**
+     * Name, email, authority, country and committee seats, with the role
+     * where the editor may change it. The role goes through the same
+     * applyRole as the list's control, so the two-administrator rule and
+     * "not your own role" hold here as well.
+     */
+    public function update(Request $request, User $user)
+    {
+        $this->authorize('viewAny', User::class);
+        $this->authorize('update', $user);
+        abort_if($user->anonymised_at !== null, 404);
+
+        $seatValues = array_column(\App\Enums\CommitteeRole::cases(), 'value');
+        $roleKeys = \App\Models\RoleDefinition::pluck('key')->all() ?: array_column(Role::cases(), 'value');
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:160', \Illuminate\Validation\Rule::unique('users', 'email')->ignore($user->id)],
+            'country_id' => ['nullable', 'integer', 'exists:countries,id'],
+            'authority_id' => ['nullable', 'integer', 'exists:authorities,id'],
+            'role' => ['nullable', 'in:'.implode(',', $roleKeys)],
+            'committees' => ['nullable', 'array'],
+            'committees.*' => ['nullable', 'in:'.implode(',', $seatValues)],
+        ], [], [
+            'name' => __('account.name'),
+            'email' => __('auth.email'),
+        ]);
+
+        // Ruling 5, as a message rather than the model's exception.
+        if (! empty($data['authority_id'])) {
+            $authorityCountry = Authority::withoutGlobalScopes()->whereKey($data['authority_id'])->value('country_id');
+            if ($authorityCountry !== null && (int) $authorityCountry !== (int) ($data['country_id'] ?? 0)) {
+                return back()->withInput()->withErrors(['authority_id' => __('d3_people.authority_country_mismatch')]);
+            }
+        }
+
+        $committeeIds = \App\Models\Committee::withoutGlobalScopes()->pluck('id')->all();
+        $seats = collect($data['committees'] ?? [])
+            ->filter(fn ($role, $id) => $role !== null && $role !== '' && in_array((int) $id, $committeeIds, true))
+            ->mapWithKeys(fn ($role, $id) => [(int) $id => $role])
+            ->sortKeys()
+            ->all();
+
+        $currentRole = $user->customRole?->key ?? $user->role->value;
+        $newRole = $data['role'] ?? $currentRole;
+
+        if ($newRole !== $currentRole && ! $request->user()->can('assignRole', $user)) {
+            abort(403);
+        }
+
+        $error = \Illuminate\Support\Facades\DB::transaction(function () use ($request, $user, $data, $seats, $newRole, $currentRole) {
+            if ($newRole !== $currentRole && ! $this->applyRole($request, $user, $newRole)) {
+                return __('fa.two_admins');
+            }
+
+            // The model's own audit records name, email, country and authority.
+            $user->update([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'country_id' => $data['country_id'] ?? null,
+                'authority_id' => $data['authority_id'] ?? null,
+            ]);
+
+            $before = $user->committees()->withoutGlobalScopes()->get()
+                ->mapWithKeys(fn ($c) => [$c->id => $c->pivot->role])->sortKeys()->all();
+
+            if ($before !== $seats) {
+                $user->committees()->sync(collect($seats)->map(fn ($role) => ['role' => $role])->all());
+
+                AuditLog::record(AuditLog::UPDATED, $user, [
+                    'committees' => ['from' => $before, 'to' => $seats],
+                ], $request->user());
+            }
+
+            return null;
+        });
+
+        if ($error !== null) {
+            return back()->withInput()->withErrors(['role' => $error]);
+        }
+
+        return redirect()->route('admin.users.show', ['locale' => app()->getLocale(), 'user' => $user->id])
+            ->with('status', __('d3_people.user_saved', ['name' => $user->name]));
     }
 
     public function form(Request $request)

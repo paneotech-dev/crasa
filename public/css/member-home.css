@@ -1,0 +1,129 @@
+/* The member area's home page, the notice list and the data submission
+ * page (Day 3, 8c). Cards follow the public site's anatomy (ui.css u-card):
+ * 12px radius, a 1px rule, 24px padding, 18px titles, 14px meta. No shadow,
+ * no icon tiles, no eyebrow labels. Colours are tokens only. Two columns
+ * from 1100px, one below.
+ */
+
+.mh { --mh-gap: 24px; }
+
+.mh-cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--mh-gap); align-items: start; }
+@media (min-width: 1100px) {
+  .mh-cols { grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); }
+}
+.mh-main, .mh-side { display: grid; gap: var(--mh-gap); min-width: 0; align-content: start; }
+.mh-returned { margin-bottom: var(--mh-gap); }
+
+.mh-card {
+  min-width: 0; padding: 24px; background: var(--a-surface); color: var(--a-ink);
+  border: 1px solid var(--a-rule); border-radius: 12px; box-shadow: none;
+}
+.mh-card--quiet { background: var(--a-ground); }
+.mh-card__head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; margin-bottom: 16px; }
+body[data-surface="admin"] .mh-card__title { margin: 0; font-family: var(--f-head); font-size: 22px; line-height: 1.3; font-weight: 600; color: var(--a-ink-strong); }
+.mh-card--quiet .mh-card__title { font-size: 18px; margin-bottom: 6px; }
+.mh-card__head a, .mh-more a { font-size: 14px; font-weight: 600; }
+.mh-card__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 20px; }
+.mh-card__actions form { margin: 0; }
+.mh-card .a-empty { padding: 0; text-align: left; }
+
+body[data-surface="admin"] .mh-sub { margin: 20px 0 8px; font-family: var(--f-admin); font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--a-ink-quiet); }
+.mh-card__head + .mh-sub { margin-top: 0; }
+.mh-meta { display: block; font-size: 14px; line-height: 1.45; color: var(--a-ink-quiet); }
+.mh-meta .a-pill { margin-left: 6px; vertical-align: middle; }
+.mh-card p { margin: 0; }
+
+/* My return */
+.mh-return__period { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 16px; }
+.mh-return__period .mh-meta { display: inline; }
+.mh-progress { margin-top: 16px; }
+.mh-progress__label { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; margin-bottom: 6px; }
+.mh-progress__label b { font-size: 16px; font-variant-numeric: tabular-nums; }
+.mh-bar { height: 10px; border-radius: 999px; background: var(--a-ground); border: 1px solid var(--c-border); overflow: hidden; }
+.mh-bar__fill { display: block; height: 100%; background: var(--a-series-1, var(--a-green)); }
+.mh-next { margin: 16px 0 8px; display: grid; gap: 2px; }
+.mh-next dt { font-size: 14px; color: var(--a-ink-quiet); }
+.mh-next dd { margin: 0; font-size: 16px; font-weight: 600; }
+
+/* Meetings */
+.mh-meeting { display: flex; gap: 16px; align-items: flex-start; }
+.mh-meeting__body { min-width: 0; }
+.mh-meeting__title { font-size: 18px; font-weight: 600; line-height: 1.35; margin: 0 0 4px; }
+
+/* Lists inside cards */
+.mh-list { list-style: none; margin: 0; padding: 0; }
+.mh-list__row { display: grid; gap: 2px; padding: 10px 0; border-top: 1px solid var(--a-rule); min-width: 0; }
+.mh-list__row:first-child { border-top: 0; padding-top: 0; }
+.mh-list__row a { font-weight: 600; overflow-wrap: anywhere; }
+.mh-list__row--split { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.mh-list__row--split > span:first-child { min-width: 0; display: grid; gap: 2px; }
+.mh-file { display: flex; align-items: flex-start; gap: 12px; }
+.mh-file__text { flex: 1 1 auto; min-width: 0; display: grid; gap: 2px; }
+.mh-folders { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px 32px; }
+@media (min-width: 760px) {
+  .mh-folders { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+  .mh-folders .mh-sub { margin-top: 0; }
+}
+
+.mh-links { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.mh-links li { border-top: 1px solid var(--a-rule); }
+.mh-links li:first-child { border-top: 0; }
+.mh-links a { display: flex; align-items: center; min-height: 44px; font-weight: 600; }
+
+.mh-figure { font-size: 16px; }
+.mh-figure b { font-family: var(--f-head); font-size: 32px; line-height: 1.1; margin-right: 6px; color: var(--a-ink-strong); }
+.mh-more { margin-top: 12px !important; }
+
+/* Notices */
+.mh-notices { list-style: none; margin: 0; padding: 0; }
+.mh-notice { padding: 16px 0; border-top: 1px solid var(--a-rule); }
+.mh-notice:first-child { border-top: 0; padding-top: 0; }
+.mh-notice:last-child { padding-bottom: 0; }
+.mh-notice__top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-bottom: 6px; }
+.mh-notice__top .mh-meta { display: inline; margin-left: auto; }
+.mh-type { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border-radius: 999px; font-size: 13px; font-weight: 600; background: var(--u-tint-blue); color: var(--u-blue-ink); border: 1px solid transparent; }
+.mh-type[data-type="general"] { background: var(--u-tint-green); color: var(--a-green-deep); }
+body[data-surface="admin"] .mh-notice__title { margin: 0; font-family: var(--f-admin); font-size: 17px; line-height: 1.4; font-weight: 600; }
+.mh-notice.is-unread .mh-notice__title a { font-weight: 700; }
+.mh-notice__summary { margin: 4px 0 0 !important; font-size: 15px; line-height: 1.5; color: var(--a-ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.mh-notice__foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 8px 16px; margin-top: 10px; }
+.mh-attach { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 14px; }
+.mh-attach .mh-meta { display: inline; }
+.mh-read { font-size: 13px; font-weight: 600; color: var(--a-ink-quiet); }
+.mh-read[data-read="false"] { color: var(--a-ink-strong); }
+.mh-noticepage { display: grid; gap: 24px; max-width: 960px; }
+.mh-noticepage__count { margin: 0; }
+.mh-month .mh-card__title { margin-bottom: 16px; }
+
+/* Data submission: the period picker and the returns. A table from 760px,
+   one card per return below. */
+.mh-picker { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 16px; }
+.mh-picker .a-field { margin: 0; min-width: 200px; }
+.mh-returns { width: 100%; border-collapse: collapse; font-size: 15px; }
+.mh-returns th { text-align: left; font-size: 14px; font-weight: 600; color: var(--a-ink-quiet); padding: 0 12px 10px 0; border-bottom: 1px solid var(--a-rule); }
+.mh-returns td { padding: 12px 12px 12px 0; border-bottom: 1px solid var(--a-rule); vertical-align: middle; }
+.mh-returns tr:last-child td { border-bottom: 0; }
+.mh-returns .mh-bar { width: 120px; display: inline-block; vertical-align: middle; margin-right: 8px; }
+@media (max-width: 759.98px) {
+  .mh-returns thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .mh-returns, .mh-returns tbody, .mh-returns tr, .mh-returns td { display: block; width: 100%; }
+  .mh-returns tr { border: 1px solid var(--a-rule); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+  .mh-returns td { border: 0; padding: 4px 0; display: flex; justify-content: space-between; gap: 12px; }
+  .mh-returns td::before { content: attr(data-label); font-size: 14px; color: var(--a-ink-quiet); }
+  .mh-returns td[data-label=""]::before { content: none; }
+  .mh-returns td.mh-returns__lead { font-size: 18px; font-weight: 600; }
+}
+
+@media (max-width: 599.98px) {
+  .mh-card { padding: 16px; }
+  .mh-notice__top .mh-meta { margin-left: 0; width: 100%; }
+}
+.mh-picker-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px 40px; }
+.mh-picker-row .mh-picker .mh-meta { flex-basis: 100%; }
+.mh-folderlinks { list-style: none; margin: 0 0 16px; padding: 0 0 16px; border-bottom: 1px solid var(--a-rule); display: flex; flex-wrap: wrap; gap: 8px 28px; }
+.mh-folderlinks a { font-weight: 600; }
+.mh-folderlinks .mh-meta { display: inline; margin-left: 4px; }
+.mh-picker { flex: 1 1 320px; }
+.mh-card .a-empty { border: 0; background: none; margin: 0; }
+.mh-noticepage { max-width: none; }
+.mh-month .mh-card__title { margin-bottom: 20px; }

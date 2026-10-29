@@ -112,6 +112,32 @@ class CompletenessTest extends TestCase
     }
 
     /**
+     * Found on 29 October: South Africa read 129 percent, because a value
+     * reported for 2024 and again for 2025 counted twice. Without a period
+     * the matrix counts indicators reported, not values.
+     */
+    public function test_several_periods_of_one_indicator_count_once(): void
+    {
+        $country = Country::first();
+        IndicatorValue::where('country_id', $country->id)->delete();
+        $indicators = Indicator::active()->get();
+
+        foreach ($indicators as $indicator) {
+            foreach (['2023', '2024', '2025'] as $period) {
+                IndicatorValue::create([
+                    'indicator_id' => $indicator->id, 'country_id' => $country->id,
+                    'period' => $period, 'value_numeric' => 1, 'is_sample' => true,
+                ]);
+            }
+        }
+
+        $totals = CompletenessMatrix::build()['totals'][$country->id];
+
+        $this->assertSame($indicators->count(), $totals['reported']);
+        $this->assertSame(100, $totals['percent']);
+    }
+
+    /**
      * The demonstration must be uneven, or the dashboard proves nothing.
      */
     public function test_the_seeded_values_are_genuinely_sparse(): void

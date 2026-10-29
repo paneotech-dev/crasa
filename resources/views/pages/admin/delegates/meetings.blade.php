@@ -40,7 +40,7 @@
                             <th scope="row">
                                 <a href="{{ route('admin.delegates', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug]) }}">{{ $meeting->title }}</a>
                                 @if ($meeting->committee)
-                                    <span class="a-results__meta">{{ $meeting->committee->name }}</span>
+                                    <span class="a-results__meta">{{ $meeting->committee->displayName() }}</span>
                                 @endif
                             </th>
                             <td>

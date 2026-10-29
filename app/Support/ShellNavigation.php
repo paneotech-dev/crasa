@@ -56,19 +56,30 @@ final class ShellNavigation
         return self::build([
             'overview' => [
                 ['key' => 'dashboard', 'route' => 'admin.dashboard', 'icon' => 'dashboard', 'permission' => null],
+                ['key' => 'notifications', 'route' => 'notifications', 'icon' => 'bell', 'permission' => null, 'label' => __('extranet.nav_notifications')],
+                ['key' => 'help', 'route' => 'admin.help', 'icon' => 'help', 'permission' => null, 'label' => __('d3_nav.help')],
                 ['key' => 'audit', 'route' => 'admin.audit', 'icon' => 'audit', 'permission' => Permission::ReadAuditLog],
                 // F2. 'badge' is the count the sidebar shows beside the label.
-                ['key' => 'approvals', 'route' => 'admin.approvals', 'icon' => 'confirmations', 'permission' => Permission::ApproveContent,
+                // Who may open the inbox, as ApprovalController decides it: an
+                // editor reads "Sent by me" there.
+                ['key' => 'approvals', 'route' => 'admin.approvals', 'icon' => 'confirmations', 'permission' => null,
+                    'can' => fn () => auth()->user()?->hasAnyPermission([Permission::ApproveContent, Permission::ManageContent, Permission::ManageMeetings]),
                     'badge' => fn () => \App\Support\Approvals::awaitingCountFor(auth()->user())],
             ],
             'content' => [
-                ['key' => 'pages', 'route' => 'admin.pages', 'icon' => 'pages', 'permission' => Permission::ManageContent],
+                ['key' => 'pages', 'route' => 'admin.pages', 'icon' => 'pages', 'permission' => null,
+                    'can' => fn () => Gate::allows('viewAny', \App\Models\Page::class)],
                 ['key' => 'publications', 'route' => 'admin.resources', 'params' => ['resource' => 'publications'], 'icon' => 'publications', 'permission' => Permission::ManageContent],
                 ['key' => 'newsroom', 'route' => 'admin.resources', 'params' => ['resource' => 'news'], 'icon' => 'newsroom', 'permission' => Permission::ManageContent],
                 ['key' => 'projects', 'route' => 'admin.resources', 'params' => ['resource' => 'projects'], 'icon' => 'publications', 'permission' => Permission::ManageContent, 'label' => __('admin.resource_projects')],
-                ['key' => 'events', 'route' => 'extranet.calendar', 'icon' => 'events', 'permission' => Permission::ManageMeetings],
+                // Day 3: the back office's own events list, which Delegate registrations used to stand in for.
+                ['key' => 'events', 'route' => 'admin.meetings', 'icon' => 'events', 'permission' => Permission::ManageMeetings],
                 ['key' => 'media', 'route' => 'admin.media', 'icon' => 'media', 'permission' => Permission::ManageContent],
+                // Day 3: docs. The member area's folders, managed.
+                ['key' => 'documents', 'route' => 'admin.documents', 'icon' => 'folder', 'permission' => Permission::ManageContent, 'label' => __('d3_docs.nav_documents')],
                 ['key' => 'navigation', 'route' => 'admin.menus', 'icon' => 'navigation', 'permission' => Permission::ManageContent],
+                // Day 3 (taxo): categories, publication types, sectors, tags.
+                ['key' => 'taxonomies', 'route' => 'admin.taxonomies', 'icon' => 'tag', 'permission' => Permission::ManageSettings, 'label' => __('d3_taxo.nav')],
                 ['key' => 'announcements', 'route' => 'admin.announcements', 'icon' => 'bell', 'permission' => Permission::ManageContent],
                 ['key' => 'social', 'route' => 'admin.social', 'icon' => 'newsroom', 'permission' => Permission::ManageContent, 'label' => __('fb.nav_social'),
                     'badge' => fn () => \App\Support\RoleDashboard::socialDrafts()],
@@ -81,17 +92,24 @@ final class ShellNavigation
                 ['key' => 'committees', 'route' => 'admin.resources', 'params' => ['resource' => 'committees'], 'icon' => 'committees', 'permission' => null],
                 ['key' => 'indicators', 'route' => 'admin.resources', 'params' => ['resource' => 'indicators'], 'icon' => 'indicators', 'permission' => null],
                 ['key' => 'instruments', 'route' => 'admin.resources', 'params' => ['resource' => 'instruments'], 'icon' => 'instruments', 'permission' => null],
-                ['key' => 'submissions', 'route' => 'admin.submissions', 'icon' => 'submissions', 'permission' => Permission::ValidateSubmission,
+                ['key' => 'submissions', 'route' => 'admin.submissions', 'also' => ['submissions'], 'icon' => 'submissions', 'permission' => Permission::ValidateSubmission,
                     'badge' => fn () => \App\Support\RoleDashboard::submissionsWaiting()],
                 ['key' => 'contributions', 'route' => 'admin.contributions', 'icon' => 'instruments', 'permission' => Permission::ValidateSubmission],
-                ['key' => 'reports', 'route' => 'admin.reports', 'icon' => 'reports', 'permission' => Permission::ExportReports],
+                ['key' => 'reports', 'route' => 'admin.reports', 'icon' => 'reports', 'permission' => null,
+                    'can' => fn () => Gate::allows('viewAny', \App\Models\Report::class)],
+                ['key' => 'completeness', 'route' => 'completeness', 'icon' => 'completeness', 'permission' => Permission::ViewPublishedIndicators, 'label' => __('extranet.nav_completeness')],
+                ['key' => 'data', 'route' => 'admin.data', 'icon' => 'indicators', 'permission' => null, 'label' => __('admin.section_data')],
+                // Day 3: the member state records are regulatory data, not people.
+                ['key' => 'confirmations', 'route' => 'admin.confirmations', 'icon' => 'confirmations', 'permission' => Permission::ManageContent],
             ],
             'people' => [
                 ['key' => 'users', 'route' => 'admin.users', 'icon' => 'users', 'permission' => Permission::ManageUsers],
                 ['key' => 'roles', 'route' => 'admin.roles', 'icon' => 'settings', 'permission' => Permission::AssignRoles],
-                ['key' => 'delegates', 'route' => 'admin.meetings', 'icon' => 'delegates', 'permission' => Permission::ManageMeetings],
-                ['key' => 'confirmations', 'route' => 'admin.confirmations', 'icon' => 'confirmations', 'permission' => Permission::ManageContent],
+                ['key' => 'delegates', 'route' => 'admin.registrations', 'icon' => 'delegates', 'permission' => Permission::ManageMeetings],
                 ['key' => 'authority-changes', 'route' => 'admin.authority-changes', 'icon' => 'authorities', 'permission' => Permission::ManageContent],
+                ['key' => 'directory', 'route' => 'directory', 'icon' => 'users', 'permission' => null, 'label' => __('extranet.nav_directory'),
+                    'can' => fn () => Gate::allows('enter-member-area'),
+                    'when' => fn () => \App\Models\AuthorityContact::listed()->exists()],
             ],
             'platform' => [
                 ['key' => 'settings', 'route' => 'admin.settings', 'icon' => 'settings', 'permission' => Permission::ManageSettings],
@@ -119,8 +137,13 @@ final class ShellNavigation
                 ['key' => 'dashboard', 'route' => 'extranet.dashboard', 'icon' => 'dashboard', 'permission' => null],
                 ['key' => 'submissions', 'route' => 'submissions', 'icon' => 'submissions', 'permission' => Permission::SubmitCountryReturn],
                 ['key' => 'folders', 'route' => 'extranet.folders', 'icon' => 'folder', 'permission' => Permission::OpenMemberDocuments],
-                ['key' => 'contributions', 'route' => 'contributions', 'icon' => 'instruments', 'permission' => Permission::SubmitCountryReturn],
-                ['key' => 'authority', 'route' => 'authority', 'icon' => 'authorities', 'permission' => Permission::SubmitCountryReturn],
+                // The member area and a country is what these two pages ask
+                // for (ContributionController, AuthorityProfileController), so
+                // a committee member with one reads them too.
+                ['key' => 'contributions', 'route' => 'contributions', 'icon' => 'instruments', 'permission' => null,
+                    'can' => fn () => Gate::allows('read-own-country-record')],
+                ['key' => 'authority', 'route' => 'authority', 'icon' => 'authorities', 'permission' => null,
+                    'can' => fn () => Gate::allows('read-own-country-record')],
                 ['key' => 'announcements', 'route' => 'announcements', 'icon' => 'newsroom', 'permission' => null],
             ],
             'committees' => [],
@@ -135,6 +158,8 @@ final class ShellNavigation
                 ['key' => 'completeness', 'route' => 'completeness', 'icon' => 'completeness', 'permission' => Permission::ViewPublishedIndicators],
                 ['key' => 'comparator', 'route' => 'comparator', 'icon' => 'comparator', 'permission' => null],
                 ['key' => 'calendar', 'route' => 'extranet.calendar', 'icon' => 'calendar', 'permission' => null],
+                ['key' => 'reports', 'route' => 'admin.reports', 'icon' => 'reports', 'permission' => null, 'label' => __('admin.nav_reports'),
+                    'can' => fn () => Gate::allows('viewAny', \App\Models\Report::class)],
             ],
             'account' => [
                 ['key' => 'notifications', 'route' => 'notifications', 'icon' => 'bell', 'permission' => null],
@@ -193,11 +218,20 @@ final class ShellNavigation
                     continue;
                 }
 
-                if (isset($definition['when']) && ! ($definition['when'])()) {
+                // A row whose page decides access by something other than one
+                // permission carries that rule, so the row and the page agree.
+                if (isset($definition['can']) && ! ($definition['can'])()) {
                     continue;
                 }
 
                 $params = array_merge(['locale' => $locale], $definition['params'] ?? []);
+
+                // A row kept out of the menu ('when') still shows while it is
+                // the page being read, so the reader sees where they are.
+                if (isset($definition['when']) && ! ($definition['when'])() && ! self::isCurrent($definition, $params)) {
+                    continue;
+                }
+
                 $url = route($definition['route'], $params + ($definition['query'] ?? []));
 
                 $items[] = [
@@ -238,7 +272,12 @@ final class ShellNavigation
     {
         $request = request();
 
-        if (! $request->routeIs($definition['route']) && ! $request->routeIs($definition['route'].'.*')) {
+        $routes = array_merge([$definition['route']], $definition['also'] ?? []);
+        $matches = false;
+        foreach ($routes as $route) {
+            $matches = $matches || $request->routeIs($route) || $request->routeIs($route.'.*');
+        }
+        if (! $matches) {
             return false;
         }
 

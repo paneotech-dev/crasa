@@ -7,4 +7,7 @@
 :root {
   --a-green: #0F8757;
   --a-green-deep: #0B5F3E;
+  /* CRASA blue (tokens.css): primary buttons and the current sidebar item.
+     White on it 13.94:1, it on white 13.94:1. */
+  --a-blue: var(--c-crasa-blue);
 }

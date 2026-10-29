@@ -29,6 +29,8 @@ return [
     'filter_all_type' => 'Todos os tipos',
     'filter_visibility' => 'Visibilidade',
     'filter_all_visibility' => 'Publicadas e ocultas',
+    'filter_state' => 'Situação',
+    'filter_all_state' => 'Em curso e concluídos',
     'visibility_public' => 'Publicada',
     'visibility_hidden' => 'Oculta',
     'status_review' => 'Em revisão',

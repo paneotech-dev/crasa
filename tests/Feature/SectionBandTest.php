@@ -115,7 +115,7 @@ class SectionBandTest extends TestCase
         // The events hero sets its counts as u-figures since 29 October
         // 2026 (the old c-band__counts band is gone). A zero is still shown.
         $html = $this->get('/en/events')->assertOk()->getContent();
-        $this->assertStringContainsString('<dl class="u-figures">', $html);
+        $this->assertMatchesRegularExpression('~<dl class="u-figures[ "]~', $html);
         foreach ($counts as $count) {
             $this->assertMatchesRegularExpression('~<dd>'.preg_quote($count['value'], '~').'</dd>~', $html);
         }

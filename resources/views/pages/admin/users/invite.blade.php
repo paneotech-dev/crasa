@@ -33,7 +33,7 @@
             <select class="a-input" id="country_id" name="country_id">
         <option value="">{{ __('admin.secretariat_no_country') }}</option>
         @foreach ($countries as $country)
-            <option value="{{ $country->id }}">{{ $country->name }}</option>
+            <option value="{{ $country->id }}">{{ $country->displayName() }}</option>
         @endforeach
             </select>
         </div>
