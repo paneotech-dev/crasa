@@ -6,7 +6,7 @@ return [
 
     'map_label' => 'Les quatorze États membres de la CRASA, sur une carte de l\'Afrique australe. Chacun renvoie à sa fiche.',
     'map_label_shaded' => 'Les quatorze États membres de la CRASA, ombrés selon :dataset. Chaque État affiche son chiffre sur la carte et renvoie à sa fiche. Le tableau ci-dessous reprend les mêmes chiffres.',
-    'map_caption' => 'Chaque État membre renvoie à sa fiche. Les Comores et Maurice figurent à part : à l\'échelle de la région, ils ne seraient que des points, et omettre un membre d\'une carte de l\'adhésion serait pire qu\'un encart.',
+    'map_caption' => 'Chaque État membre renvoie à sa fiche. Les Comores et Maurice sont marqués d\'un point à leur emplacement et repris à plus grande échelle à côté de la carte.',
 
     'map_shade_by' => 'Ombrer la carte selon',
     'map_option_none' => 'Adhésion seule',
@@ -67,7 +67,7 @@ return [
     'legend_member_body' => 'Quatorze États membres souverains, chacun sélectionnable au clic ou au clavier et relié au répertoire.',
     'legend_member_shaded' => 'Quatorze États membres souverains, ombrés selon l\'indicateur retenu. Chaque État indique sa valeur en toutes lettres autant que par une teinte.',
     'legend_context_title' => 'État membre de la SADC sans régulateur de la CRASA.',
-    'legend_context_body' => 'La SADC compte 16 États membres, la CRASA 14 régulateurs membres. Madagascar et les Seychelles figurent à titre de contexte géographique et ne sont pas sélectionnables.',
+    'legend_context_body' => 'La SADC compte 16 États membres, la CRASA 14 régulateurs membres. Madagascar et les Seychelles sont tracés en contour, à titre de contexte géographique, et ne sont pas sélectionnables.',
     'region_heading' => 'La région',
     'region_note' => 'Choisissez un État membre',
     'directory_heading' => 'Répertoire',

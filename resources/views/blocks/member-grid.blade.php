@@ -19,7 +19,10 @@
         @if ($heading)
             <h2 class="b__heading">{{ $heading->value }}</h2>
         @endif
-        @if ($intro)
+        {{-- The summary prints the intro once, as the lead beside the map.
+             Printing it here as well put the same sentence on the
+             homepage twice. --}}
+        @if ($intro && ! $block->setting('summary', false))
             <p class="b__intro">{{ $intro->value }}</p>
         @endif
 

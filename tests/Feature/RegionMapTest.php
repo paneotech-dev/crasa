@@ -83,7 +83,7 @@ class RegionMapTest extends TestCase
             $css
         );
         $this->assertMatchesRegularExpression(
-            '~\.c-map-region__context \{[^}]*fill: var\(--c-sand\)~s',
+            '~\.c-map-region__context \{[^}]*fill: none~s',
             $css
         );
     }
@@ -105,9 +105,12 @@ class RegionMapTest extends TestCase
             );
         }
 
-        // They are context: flat, in sand, and not in the member green.
+        // They are context: outline only, never a link, never a label.
         $css = file_get_contents(public_path('css/blocks.css'));
         $this->assertStringContainsString('.c-map-region__context', $css);
+        $this->assertDoesNotMatchRegularExpression('~<a[^>]*data-iso="(mg|sc)"~', $html);
+        $this->assertStringNotContainsString('/en/members/mg"', $html);
+        $this->assertStringNotContainsString('/en/members/sc"', $html);
     }
 
     public function test_the_map_is_a_navigation_surface_and_not_a_picture(): void

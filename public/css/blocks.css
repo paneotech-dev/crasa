@@ -1414,14 +1414,13 @@
    than floating. Deliberately flat: they are context, not content. */
 /* Stroke .9, the same weight the member shapes carry, so context reads as
    quieter by colour rather than by line. */
-.c-map-region__context { fill: var(--c-sand); stroke: var(--c-border); stroke-width: .9; stroke-linejoin: round; }
+.c-map-region__context { fill: none; stroke: var(--c-border); stroke-width: .9; stroke-linejoin: round; }
 
 /* Seychelles is 115 islands totalling 450 square kilometres, which at this
    projection is three pixels across. Its label sat in open ocean with
    nothing under it, which reads as a stray word rather than a place. The
    marker is what a cartographer does for a settlement too small to draw. */
-.c-map-region__marker { fill: var(--c-sand); stroke: var(--c-border); stroke-width: 1.2; }
-.c-map-region__context-label { fill: var(--c-slate); font-family: var(--f-admin); font-size: 12px; }
+.c-map-region__marker { fill: none; stroke: var(--c-border); stroke-width: 1.2; }
 
 /* Members in the green that means "in force" everywhere else on the
    platform. The map is not inventing a colour meaning; it is using the one
@@ -1511,6 +1510,28 @@
    as a different value. The shape thickens its outline instead. */
 .c-map-region--shaded .c-map-region__member:hover path,
 .c-map-region--shaded .c-map-region__member:focus-visible path { stroke-width: 3; }
+/* Comoros and Mauritius as dots: solid, so a few pixels still read as a
+   place, with the same hover as the shapes and a ring as the touch target. */
+.c-map-region__dot { fill: var(--c-green-dark); stroke: var(--c-green-dark); stroke-width: 1.5; transition: fill 150ms var(--ease-in); }
+.c-map-region__hit { fill: transparent; }
+.c-map-region--plain .c-map-region__member--dot:hover .c-map-region__dot,
+.c-map-region--plain .c-map-region__member--dot:focus-visible .c-map-region__dot { fill: var(--c-green-step-2); stroke-width: 3; }
+/* The label sits in open water, not on a band colour, so it keeps dark ink
+   in both modes. Same code and name swap as the shapes at 768. */
+.c-map-region__dot-label {
+  fill: var(--c-green-dark);
+  font-family: var(--f-admin);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+.c-map-region__dot-value { fill: var(--c-charcoal); }
+.c-map-region__dot-name { display: none; }
+@media (min-width: 768px) {
+  .c-map-region__dot-name { display: block; }
+  .c-map-region__dot-code { display: none; }
+}
+
 
 /* MISSING_FILL = repeating-linear-gradient(135deg,#E5E0D5 0 4px,#CFC8B8 4px 8px) */
 .c-map-region__hatch-ground { fill: var(--c-sand); }
@@ -1550,6 +1571,10 @@
 .c-map-region__stage:has([data-iso="za"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="za"],
 .c-map-region__stage:has([data-iso="zm"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="zm"],
 .c-map-region__stage:has([data-iso="zw"]:is(:hover,:focus-visible)) .c-map-region__card[data-for="zw"] { display: flex; }
+.c-map-region--shaded .c-map-region__member[data-band="0"] .c-map-region__dot { fill: var(--c-green-light); }
+.c-map-region--shaded .c-map-region__member[data-band="1"] .c-map-region__dot { fill: var(--c-green-step-1); }
+.c-map-region--shaded .c-map-region__member[data-band="2"] .c-map-region__dot { fill: var(--c-green-step-2); }
+.c-map-region--shaded .c-map-region__member[data-band="none"] .c-map-region__dot { fill: url(#c-map-hatch); }
 .c-map-region__stage:has([data-iso="ao"]:is(:hover,:focus-visible)) .c-map-region__prompt,
 .c-map-region__stage:has([data-iso="bw"]:is(:hover,:focus-visible)) .c-map-region__prompt,
 .c-map-region__stage:has([data-iso="cd"]:is(:hover,:focus-visible)) .c-map-region__prompt,
@@ -2303,7 +2328,7 @@
 }
 .c-map-region__swatch--member { background: var(--c-green-light); border: 1.5px solid var(--c-green-dark); }
 .c-map-region__swatch--member[data-band="2"] { background: var(--c-green-step-2); }
-.c-map-region__swatch--context { background: var(--c-sand); border: 1.5px solid var(--c-border); }
+.c-map-region__swatch--context { background: transparent; border: 1.5px solid var(--c-border); }
 
 
 /* Screen 08's members layout -------------------------------------------- */

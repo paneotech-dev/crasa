@@ -298,7 +298,7 @@ class MapIntegrityTest extends TestCase
 
         foreach ($paths[0] as $path) {
             $this->assertMatchesRegularExpression(
-                '/\bfill="#[0-9A-Fa-f]{6}"/',
+                '/\bfill="(#[0-9A-Fa-f]{6}|none)"/',
                 $path,
                 'A path in the map has no fill attribute, so it renders black '
                 .'if the stylesheet does not arrive.',
@@ -306,9 +306,11 @@ class MapIntegrityTest extends TestCase
         }
 
         $this->assertSame(12, substr_count($svg[0], 'fill="#E8F4EC"'), 'The twelve mainland members.');
-        // Two context outlines plus the Seychelles marker, which is the
-        // same colour because it stands for the same thing.
-        $this->assertSame(3, substr_count($svg[0], 'fill="#E5E0D5"'), 'Madagascar, Seychelles and its marker.');
+        // Madagascar, Seychelles and its marker are outline only since
+        // 29 October 2026: no fill, so nothing about them reads as a member.
+        $this->assertSame(0, substr_count($svg[0], 'fill="#E5E0D5"'), 'A non-member is filled.');
+        $this->assertSame(2, preg_match_all('/<path class="c-map-region__context"[^>]*fill="none"/', $svg[0]), 'Madagascar and Seychelles in outline.');
+        $this->assertSame(1, preg_match_all('/<circle class="c-map-region__marker"[^>]*fill="none"/', $svg[0]), 'The Seychelles ring in outline.');
         $this->assertSame(0, substr_count($svg[0], 'fill="#F8F6F1"'), 'The continent is back.');
     }
 
@@ -339,28 +341,40 @@ class MapIntegrityTest extends TestCase
         );
     }
 
-    public function test_the_context_states_are_named_in_full_and_fit_the_box(): void
+    public function test_the_context_states_carry_no_label(): void
     {
-        $html = $this->map();
+        // Not members, so not named on the map (29 October 2026): a label
+        // beside an outline read as a fifteenth and sixteenth member. The
+        // legend says what the outlines are.
+        preg_match('#<svg[^>]*class="c-map-region__svg".*?</svg>#s', $this->map(), $svg);
 
-        $this->assertStringContainsString('>Seychelles<', $html);
-        $this->assertStringContainsString('>Madagascar<', $html);
+        $this->assertStringNotContainsString('>Seychelles<', $svg[0]);
+        $this->assertStringNotContainsString('>Madagascar<', $svg[0]);
+        $this->assertStringNotContainsString('c-map-region__context-label', $svg[0]);
+    }
 
-        // "Seychelles" was never truncated in the markup. It was clipped by
-        // the right edge: the label is centred, and at 16px -- the size the
-        // wider box needed -- it reached x=827 in an 820 box and rendered
-        // as "Seychelle". At 12px it is 61.5px wide, so a centre at 783
-        // reaches 814 and leaves six pixels.
+    public function test_comoros_and_mauritius_are_labelled_dots_inside_the_box(): void
+    {
+        preg_match('#<svg[^>]*class="c-map-region__svg".*?</svg>#s', $this->map(), $svg);
         $map = config('region-map');
 
-        foreach ($map['context'] as $context) {
-            $halfWidth = mb_strlen($context['name']) * 6.2 / 2;
+        foreach (['km' => 'Comoros', 'mu' => 'Mauritius'] as $iso => $name) {
+            [$x, $y] = $map['members'][$iso]['dot'];
+            $this->assertGreaterThan($map['min_x'], $x);
+            $this->assertLessThan($map['min_x'] + $map['width'], $x);
+            $this->assertGreaterThan($map['min_y'], $y);
+            $this->assertLessThan($map['min_y'] + $map['height'], $y);
 
-            $this->assertLessThanOrEqual(
-                $map['min_x'] + $map['width'],
-                $context['lx'] + $halfWidth,
-                "The {$context['name']} label runs off the right of the box.",
+            $this->assertMatchesRegularExpression(
+                '~<a\s+class="c-map-region__member c-map-region__member--dot"\s+href="[^"]*/en/members/'.$iso.'"\s+data-iso="'.$iso.'".*?<circle class="c-map-region__dot"[^>]*cx="'.$x.'"[^>]*cy="'.$y.'".*?>'.$name.'</text>.*?</a>~s',
+                $svg[0],
+                $name.' is not a labelled, linked dot on the map.',
             );
+
+            // A label ending at the right edge must not run off it.
+            [$lx, , $anchor] = $map['members'][$iso]['dot_label'];
+            $right = $anchor === 'end' ? $lx : $lx + mb_strlen($name) * 8.2 / ($anchor === 'middle' ? 2 : 1);
+            $this->assertLessThanOrEqual($map['min_x'] + $map['width'], $right, $name.' label runs off the box.');
         }
     }
 
@@ -496,7 +510,7 @@ class MapIntegrityTest extends TestCase
         $html = $this->map();
 
         $this->assertMatchesRegularExpression(
-            '/<circle class="c-map-region__marker"[^>]*cx="782"[^>]*cy="157"/',
+            '/<circle class="c-map-region__marker"[^>]*cx="782"[^>]*cy="157"[^>]*fill="none"/',
             $html,
         );
 

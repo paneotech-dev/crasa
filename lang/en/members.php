@@ -6,7 +6,7 @@ return [
 
     'map_label' => 'The fourteen CRASA member states, drawn on a map of Southern Africa. Each is a link to its entry.',
     'map_label_shaded' => 'The fourteen CRASA member states, shaded by :dataset. Each state states its figure on the map and links to its entry. The table below carries the same figures.',
-    'map_caption' => 'Every member state links to its entry. Comoros and Mauritius are shown separately: at region scale they would be specks, and a member omitted from a membership map is a worse outcome than an inset.',
+    'map_caption' => 'Every member state links to its entry. Comoros and Mauritius are marked as dots where they lie and shown again at a larger scale beside the map.',
 
     'map_shade_by' => 'Shade the map by',
     'map_option_none' => 'Membership only',
@@ -67,7 +67,7 @@ return [
     'legend_member_body' => 'Fourteen sovereign member states, each selectable by click or keyboard and cross-linked to the directory.',
     'legend_member_shaded' => 'Fourteen sovereign member states, shaded by the selected indicator. Every state states its value as text as well as a shade.',
     'legend_context_title' => 'SADC member without a CRASA regulator.',
-    'legend_context_body' => 'SADC has 16 member states, CRASA has 14 member regulators. Madagascar and Seychelles are shown for geographic context only and are not selectable.',
+    'legend_context_body' => 'SADC has 16 member states, CRASA has 14 member regulators. Madagascar and Seychelles are drawn in outline for geographic context only and are not selectable.',
     'region_heading' => 'The region',
     'region_note' => 'Select a member state',
     'directory_heading' => 'Directory',
