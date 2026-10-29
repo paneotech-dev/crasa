@@ -78,9 +78,11 @@ enum BlockType: string
             // "background:var(--c-navy);color:var(--c-cream)" — screen 02 line 93.
             self::Hero => null,
             // "background:var(--c-navy-mid);color:var(--c-cream);border-top:1px solid #2C3A55" — line 186.
-            self::KeyFigures => 'navy-mid',
+            // 29 October 2026, light theme: the figures band and the
+            // comparison sit on light grounds; no dark band below the hero.
+            self::KeyFigures => 'white',
             // "background:var(--c-navy);color:var(--c-cream);padding:var(--s-9) 0" — line 272.
-            self::FeaturedComparison => 'navy',
+            self::FeaturedComparison => 'cream',
             // "background:var(--c-white);border-top:1px solid var(--c-sand);border-bottom:1px solid var(--c-sand)" — line 535.
             self::SocialFeed => 'white',
             // "background:var(--c-sand);padding:var(--s-9) 0" — line 604.

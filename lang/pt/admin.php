@@ -148,6 +148,8 @@ return [
     'field_body' => 'Texto',
     'field_cta_label' => 'Texto do botão',
     'field_item_label' => 'Legenda do valor :n',
+    'field_item_heading' => 'Enunciado do valor :n',
+    'field_item_body' => 'Texto do enunciado do valor :n',
     'save_page' => 'Guardar a página',
     'save_block' => 'Guardar o bloco',
     'workflow' => 'Estado',

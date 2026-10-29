@@ -60,6 +60,16 @@
                                         <label class="a-label" for="{{ $locale }}-item-{{ $index }}">{{ __('admin.field_item_label', ['n' => $index + 1]) }}</label>
                                         <input class="a-input" type="text" id="{{ $locale }}-item-{{ $index }}" name="{{ $locale }}[item_{{ $index }}_label]" value="{{ $value($locale, 'item_'.$index.'_label') }}">
                                     </div>
+                                    {{-- The line of work the figure supports, on the homepage's
+                                         "What we do" band (29 October 2026). --}}
+                                    <div class="a-field">
+                                        <label class="a-label" for="{{ $locale }}-item-{{ $index }}-heading">{{ __('admin.field_item_heading', ['n' => $index + 1]) }}</label>
+                                        <input class="a-input" type="text" id="{{ $locale }}-item-{{ $index }}-heading" name="{{ $locale }}[item_{{ $index }}_heading]" value="{{ $value($locale, 'item_'.$index.'_heading') }}">
+                                    </div>
+                                    <div class="a-field">
+                                        <label class="a-label" for="{{ $locale }}-item-{{ $index }}-body">{{ __('admin.field_item_body', ['n' => $index + 1]) }}</label>
+                                        <textarea class="a-input" id="{{ $locale }}-item-{{ $index }}-body" name="{{ $locale }}[item_{{ $index }}_body]" rows="3" maxlength="4000">{{ $value($locale, 'item_'.$index.'_body') }}</textarea>
+                                    </div>
                                 @endforeach
                             @endif
                         </div>

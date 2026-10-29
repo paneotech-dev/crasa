@@ -53,6 +53,10 @@
     // so the order the shapes are written in is entirely ours to choose.
     $ordered = $view->countries->keys()->all();
     $mainland = array_values(array_filter($ordered, fn ($iso) => ($map['members'][$iso]['d'] ?? null) !== null));
+    // Comoros and Mauritius: too small to draw as shapes, so each is a dot
+    // at its position with its name beside it. A member like the twelve:
+    // same link, same label rule, same choropleth band.
+    $dots = array_values(array_filter($ordered, fn ($iso) => ($map['members'][$iso]['d'] ?? null) === null && ($map['members'][$iso]['dot'] ?? null) !== null));
     /*
      * The member states that get their own enlarged panel.
      *
@@ -167,19 +171,18 @@
                 </pattern>
             </defs>
 
-            {{-- The two SADC states that are not CRASA members. A step
-                 forward from the ocean around them and a step back from
-                 the fourteen: named, but never clickable. --}}
+            {{-- Madagascar and Seychelles are SADC states but not CRASA
+                 members. Outline only: no fill, no label, no link, so
+                 nothing about them reads as a member (29 October 2026). --}}
             @foreach ($map['context'] as $context)
                 <path class="c-map-region__context" d="{{ $context['d'] }}" aria-hidden="true"
-                      fill="#E5E0D5" stroke="#908977" stroke-width="0.9" stroke-linejoin="round"></path>
+                      fill="none" stroke="#908977" stroke-width="0.9" stroke-linejoin="round"></path>
                 @if (($context['marker'] ?? null) !== null)
-                    {{-- An archipelago too small to draw at this scale. The
-                         label had nothing under it and read as a stray
-                         word. --}}
+                    {{-- An archipelago too small to draw at this scale: a
+                         ring where it is, in the same outline. --}}
                     <circle class="c-map-region__marker" aria-hidden="true"
                             cx="{{ $context['marker'][0] }}" cy="{{ $context['marker'][1] }}" r="6"
-                            fill="#E5E0D5" stroke="#908977" stroke-width="1.2"></circle>
+                            fill="none" stroke="#908977" stroke-width="1.2"></circle>
                 @endif
             @endforeach
 
@@ -202,6 +205,38 @@
                          RegionMap.dc.html. The choropleth bands are applied
                          over this from the stylesheet. --}}
                     <path d="{{ $shape['d'] }}" fill="#E8F4EC" stroke="#0E5536" stroke-width="0.9" stroke-linejoin="round"></path>
+                </a>
+            @endforeach
+
+            {{-- The island members as dots. After the mainland twelve in
+                 the tab order, alphabetical between themselves, like the
+                 inset chips. The larger transparent ring is the touch
+                 target; the visible dot is what a reader sees. The label is
+                 inside the link, so pointing at the name works too. --}}
+            @foreach ($dots as $iso)
+                @php
+                    $entry = $view->entry($iso);
+                    $country = $entry->country;
+                    $shape = $map['members'][$iso];
+                    [$lx, $ly, $anchor] = $shape['dot_label'] + [2 => 'middle'];
+                @endphp
+                <a
+                    class="c-map-region__member c-map-region__member--dot"
+                    href="{{ route('members.show', ['locale' => $locale, 'iso' => $iso]) }}"
+                    data-iso="{{ $iso }}"
+                    data-band="{{ $entry->bandAttribute() }}"
+                    aria-label="{{ $view->isShaded()
+                        ? __('members.map_region_shaded', ['country' => $country->name, 'value' => $entry->display])
+                        : __('members.map_region', ['country' => $country->name, 'authority' => $country->authority?->name ?: $country->name]) }}"
+                >
+                    <circle class="c-map-region__hit" cx="{{ $shape['dot'][0] }}" cy="{{ $shape['dot'][1] }}" r="18" fill="transparent"></circle>
+                    <circle class="c-map-region__dot" cx="{{ $shape['dot'][0] }}" cy="{{ $shape['dot'][1] }}" r="7"
+                            fill="#0E5536" stroke="#0E5536" stroke-width="1.5"></circle>
+                    <text class="c-map-region__dot-label c-map-region__dot-code" x="{{ $lx }}" y="{{ $ly }}" text-anchor="{{ $anchor }}" aria-hidden="true">{{ strtoupper($iso) }}</text>
+                    <text class="c-map-region__dot-label c-map-region__dot-name" x="{{ $lx }}" y="{{ $ly }}" text-anchor="{{ $anchor }}" aria-hidden="true">{{ $country->name }}</text>
+                    @if ($view->isShaded())
+                        <text class="c-map-region__value c-map-region__dot-value" x="{{ $lx }}" y="{{ $ly + 15 }}" text-anchor="{{ $anchor }}" aria-hidden="true">{{ $entry->display }}</text>
+                    @endif
                 </a>
             @endforeach
 
@@ -259,11 +294,6 @@
                     text-anchor="middle"
                     aria-hidden="true"
                 >{{ $view->entry($iso)->display }}</text>
-            @endforeach
-
-            @foreach ($map['context'] as $context)
-                <text class="c-map-region__context-label" x="{{ $context['lx'] }}" y="{{ $context['ly'] }}"
-                      text-anchor="middle" aria-hidden="true">{{ $context['name'] }}</text>
             @endforeach
         </svg>
 

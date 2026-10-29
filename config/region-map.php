@@ -60,6 +60,11 @@ return [
         'km' => [
             'd' => null,
             'label' => null,
+            // Too small to draw at region scale, so a dot at the
+            // archipelago's position (Natural Earth centroid in the same
+            // Mercator fit) with its label above it, in open water.
+            'dot' => [614, 265],
+            'dot_label' => [614, 250, 'middle'],
             'inset' => 'M97.5,61.5L100.5,70.5L100.5,77L99.5,79L96.5,78L91,72.5L81.5,67.5L86,67L89,67.5L91.5,67L93.5,64L93.5,62.5L96,61ZM54.5,76L59,80L46.5,78.5L45,75L44.5,72L49,73ZM34,50L33,51L27.5,47.5L24,46.5L19.5,40.5L21,20L22.5,17.5L24,16.5L26.5,16L29.5,18.5L29,32L33,40.5L36,47.5Z',
         ],
         'cd' => [
@@ -85,6 +90,10 @@ return [
         'mu' => [
             'd' => null,
             'label' => null,
+            // Mauritius sits 8px inside the right edge of the box, so its
+            // label runs left of the dot, towards Madagascar.
+            'dot' => [811, 389],
+            'dot_label' => [800, 393, 'end'],
             'inset' => 'M71,76.5L56.5,80L40,78.5L34,72L33,69.5L38,67L37.5,58.5L40.5,45L44,39.5L52,35L55.5,24L62.5,17L71.5,16L80.5,29.5L87,43.5L86,57L79.5,62.5L77.5,70.5Z',
         ],
         'mz' => [

@@ -474,6 +474,42 @@
 .b[data-ground="navy"] .b-figure--link:hover, .b[data-ground="navy"] .b-figure--link:focus-visible { border-top-color: var(--c-green); }
 .b[data-ground="navy"] .b-figure--link:hover .b-figure__value, .b[data-ground="navy"] .b-figure--link:focus-visible .b-figure__value { color: var(--c-green); }
 
+/* "What we do", 29 October 2026: four lines of work, each statement first
+   and its figure underneath as support. Four columns on a desktop, two on a
+   tablet, one on a phone. Each tile is a three-row subgrid, so statements,
+   texts and figures line up across a row whatever their length. */
+.b-figures__grid--statements {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-6) var(--s-5);
+  align-items: stretch;
+}
+@media (max-width: 1000px) { .b-figures__grid--statements { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .b-figures__grid--statements { grid-template-columns: minmax(0, 1fr); gap: var(--s-5); } }
+.b-figure--statement {
+  display: grid; grid-template-rows: auto 1fr auto; gap: var(--s-2);
+  border-top: 2px solid var(--c-green); padding-top: var(--s-4);
+}
+@supports (grid-template-rows: subgrid) {
+  .b-figure--statement { grid-row: span 3; grid-template-rows: subgrid; }
+}
+.b-figure__statement {
+  font-family: var(--f-head); font-size: 21px; line-height: 1.25; font-weight: 600;
+  color: var(--c-green-dark); margin: 0;
+}
+.b-figure__body { font-size: var(--t-small-size); line-height: 1.6; color: var(--c-charcoal); margin: 0; max-width: 42ch; }
+.b-figure__support {
+  display: flex; align-items: baseline; gap: var(--s-2); flex-wrap: wrap;
+  margin: var(--s-2) 0 0; padding-top: var(--s-3); border-top: 1px solid var(--c-sand);
+  color: var(--c-charcoal); text-decoration: none;
+}
+.b-figure__support .b-figure__value { font-size: 30px; color: var(--c-charcoal); }
+.b-figure__support .b-figure__label { margin-top: 0; }
+.b-figure__support--link .b-figure__label { color: var(--c-green-dark); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.b-figure__support--link:hover .b-figure__value,
+.b-figure__support--link:focus-visible .b-figure__value { color: var(--c-green-dark); }
+.b-figure__support--link:hover .b-figure__label { text-decoration-thickness: 2px; }
+.b-figure__support--link:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 4px; }
+
 /* Pillars -------------------------------------------------------------- */
 /* align-items:start is the rule. A pillar with two sentences is shorter than
    a pillar with five, and the layout absorbs that rather than padding both
@@ -686,6 +722,27 @@
 .b-compare__table th, .b-compare__table td { padding: 11px var(--s-4); text-align: left; border-bottom: 1px solid var(--c-sand); }
 .b-compare__table thead th { background: var(--c-navy); color: var(--c-cream); font-size: 12px; font-weight: 600; }
 .b-compare__table td.is-numeric { text-align: right; font-family: var(--f-admin); font-variant-numeric: tabular-nums; }
+
+/* The homepage comparison, 29 October 2026: a short table read across. The
+   value sits next to its member state, left aligned, and the year has its
+   own narrow column. No stretched spreadsheet with the figure at the far
+   right of the page. */
+.b-compare { max-width: 980px; }
+.b-compare__result { min-width: 0; }
+/* The no-script path reloads at #compare; the sticky header must not cover it. */
+.b:has(> .b__inner > .b-compare) { scroll-margin-top: var(--s-10); }
+.b-compare .b-compare__table { width: auto; min-width: min(100%, 560px); font-size: 16px; }
+.b-compare .b-compare__table thead th { background: var(--c-green-light); color: var(--c-charcoal); font-size: 13px; border-bottom: 2px solid var(--c-green); }
+.b-compare .b-compare__table th[scope="row"] { font-weight: 600; min-width: 12ch; }
+.b-compare__value { font-family: var(--f-admin); font-variant-numeric: tabular-nums; font-weight: 600; color: var(--c-charcoal); min-width: 14ch; }
+.b-compare__value[data-missing] { font-weight: 400; font-style: italic; color: var(--c-slate); }
+.b-compare__value .c-pill { margin-inline-start: var(--s-2); vertical-align: 1px; }
+.b-compare__year { font-family: var(--f-admin); font-variant-numeric: tabular-nums; color: var(--c-slate); white-space: nowrap; }
+.b-compare__status { margin: 0 0 var(--s-3); }
+.b-compare__apply[hidden] { display: none; }
+.b-compare__open { margin: var(--s-4) 0 0; }
+[data-cmp-target][aria-busy="true"] { opacity: .6; transition: opacity 150ms var(--ease-in); }
+@media (prefers-reduced-motion: reduce) { [data-cmp-target][aria-busy="true"] { transition: none; } }
 
 /* Status pills --------------------------------------------------------- */
 /* Fixed meanings. Green validated and in force, amber draft and pending,
@@ -1414,14 +1471,13 @@
    than floating. Deliberately flat: they are context, not content. */
 /* Stroke .9, the same weight the member shapes carry, so context reads as
    quieter by colour rather than by line. */
-.c-map-region__context { fill: var(--c-sand); stroke: var(--c-border); stroke-width: .9; stroke-linejoin: round; }
+.c-map-region__context { fill: none; stroke: var(--c-border); stroke-width: .9; stroke-linejoin: round; }
 
 /* Seychelles is 115 islands totalling 450 square kilometres, which at this
    projection is three pixels across. Its label sat in open ocean with
    nothing under it, which reads as a stray word rather than a place. The
    marker is what a cartographer does for a settlement too small to draw. */
-.c-map-region__marker { fill: var(--c-sand); stroke: var(--c-border); stroke-width: 1.2; }
-.c-map-region__context-label { fill: var(--c-slate); font-family: var(--f-admin); font-size: 12px; }
+.c-map-region__marker { fill: none; stroke: var(--c-border); stroke-width: 1.2; }
 
 /* Members in the green that means "in force" everywhere else on the
    platform. The map is not inventing a colour meaning; it is using the one
@@ -1454,6 +1510,28 @@
   stroke-width: 2;
 }
 .c-map-region__member:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
+
+/* Comoros and Mauritius as dots: solid, so a few pixels still read as a
+   place, with the same hover as the shapes and a ring as the touch target. */
+.c-map-region__dot { fill: var(--c-green-dark); stroke: var(--c-green-dark); stroke-width: 1.5; transition: fill 150ms var(--ease-in); }
+.c-map-region__hit { fill: transparent; }
+.c-map-region--plain .c-map-region__member--dot:hover .c-map-region__dot,
+.c-map-region--plain .c-map-region__member--dot:focus-visible .c-map-region__dot { fill: var(--c-green-step-2); stroke-width: 3; }
+/* The label sits in open water, not on a band colour, so it keeps dark ink
+   in both modes. Same code and name swap as the shapes at 768. */
+.c-map-region__dot-label {
+  fill: var(--c-green-dark);
+  font-family: var(--f-admin);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+.c-map-region__dot-value { fill: var(--c-charcoal); }
+.c-map-region__dot-name { display: none; }
+@media (min-width: 768px) {
+  .c-map-region__dot-name { display: block; }
+  .c-map-region__dot-code { display: none; }
+}
 
 /* The name label. Hidden below 768, where it will not fit; the code is
    hidden above it. Both carry the same position, band and anchor, so
@@ -1494,6 +1572,10 @@
 .c-map-region--shaded .c-map-region__member[data-band="2"] path { fill: var(--c-green-step-2); }
 .c-map-region--shaded .c-map-region__member[data-band="3"] path { fill: var(--c-green-dark); }
 .c-map-region--shaded .c-map-region__member[data-band="none"] path { fill: url(#c-map-hatch); }
+.c-map-region--shaded .c-map-region__member[data-band="0"] .c-map-region__dot { fill: var(--c-green-light); }
+.c-map-region--shaded .c-map-region__member[data-band="1"] .c-map-region__dot { fill: var(--c-green-step-1); }
+.c-map-region--shaded .c-map-region__member[data-band="2"] .c-map-region__dot { fill: var(--c-green-step-2); }
+.c-map-region--shaded .c-map-region__member[data-band="none"] .c-map-region__dot { fill: url(#c-map-hatch); }
 
 /* The two darker steps take light ink. The screen switches at band 2:
    inkFor: (v && v.band >= 2) ? "#FFFFFF" : "#0F1B2D". */
@@ -2303,7 +2385,7 @@
 }
 .c-map-region__swatch--member { background: var(--c-green-light); border: 1.5px solid var(--c-green-dark); }
 .c-map-region__swatch--member[data-band="2"] { background: var(--c-green-step-2); }
-.c-map-region__swatch--context { background: var(--c-sand); border: 1.5px solid var(--c-border); }
+.c-map-region__swatch--context { background: transparent; border: 1.5px solid var(--c-border); }
 
 
 /* Screen 08's members layout -------------------------------------------- */
@@ -2492,6 +2574,30 @@
 .b-social__link:hover,
 .b-social__link:focus-visible { background: var(--c-green-light); border-color: var(--c-green-dark); }
 .c-social-mark { flex: none; display: block; }
+
+/* CRASA on social media: the channels with their handles, on the homepage
+   and at the foot of the newsroom. Light ground, dark text; the only
+   colour is each network's own mark. */
+.c-socials__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); max-width: 960px; }
+.c-socials__list, .c-socials__list > li, .c-socials__timeline { min-width: 0; }
+.c-socials__list .b-social__link { display: flex; width: 100%; min-width: 0; min-height: 56px; color: var(--c-charcoal); }
+.c-socials__list .c-social-mark { width: 24px; height: 24px; }
+.c-socials__text { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
+.c-socials__network { font-weight: 600; }
+.c-socials__handle { font-weight: 400; font-size: var(--t-small-size); color: var(--c-slate); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.c-socials--timeline { display: grid; gap: var(--s-6); align-items: start; }
+.c-socials--timeline .c-socials__list { grid-template-columns: 1fr; max-width: 420px; }
+@media (min-width: 900px) {
+  .c-socials--timeline { grid-template-columns: minmax(240px, 420px) minmax(0, 500px); }
+}
+.c-socials__timeline { min-width: 0; }
+.c-socials__frame { width: 100%; max-width: 500px; }
+.c-socials__frame[data-loaded] { min-height: 560px; background: var(--c-white); border: 1px solid var(--c-sand); border-radius: var(--r-xs); }
+.c-socials__frame iframe { display: block; max-width: 100%; border: 0; }
+.c-socials__fallback { margin: var(--s-3) 0 0; font-size: var(--t-small-size); }
+.n-social { background: var(--c-white); border-top: 1px solid var(--c-sand); }
+.n-social__heading { margin: 0 0 var(--s-3); }
+.n-social__intro { margin: 0 0 var(--s-5); max-width: 62ch; color: var(--c-charcoal); }
 
 /* The footer's circular treatment. */
 .c-footer__social { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-4); }

@@ -148,6 +148,8 @@ return [
     'field_body' => 'Body',
     'field_cta_label' => 'Button label',
     'field_item_label' => 'Figure :n label',
+    'field_item_heading' => 'Figure :n statement',
+    'field_item_body' => 'Figure :n statement text',
     'save_page' => 'Save the page',
     'save_block' => 'Save the block',
     'workflow' => 'Status',

@@ -6,7 +6,7 @@ return [
 
     'map_label' => 'Os catorze Estados membros da CRASA, num mapa da África Austral. Cada um remete para a sua ficha.',
     'map_label_shaded' => 'Os catorze Estados membros da CRASA, sombreados por :dataset. Cada Estado indica o seu valor no mapa e remete para a sua ficha. A tabela abaixo apresenta os mesmos valores.',
-    'map_caption' => 'Cada Estado membro remete para a sua ficha. As Comores e a Maurícia aparecem à parte: à escala da região seriam apenas pontos, e omitir um membro de um mapa de adesão seria pior do que um destaque.',
+    'map_caption' => 'Cada Estado membro remete para a sua ficha. As Comores e a Maurícia estão assinaladas com um ponto no seu lugar e repetidas a maior escala ao lado do mapa.',
 
     'map_shade_by' => 'Sombrear o mapa por',
     'map_option_none' => 'Apenas adesão',
@@ -67,7 +67,7 @@ return [
     'legend_member_body' => 'Catorze Estados membros soberanos, cada um selecionável por clique ou teclado e ligado ao diretório.',
     'legend_member_shaded' => 'Catorze Estados membros soberanos, sombreados pelo indicador selecionado. Cada Estado apresenta o seu valor por extenso além da tonalidade.',
     'legend_context_title' => 'Estado membro da SADC sem regulador da CRASA.',
-    'legend_context_body' => 'A SADC tem 16 Estados membros, a CRASA tem 14 reguladores membros. Madagáscar e as Seicheles são mostrados apenas como contexto geográfico e não são selecionáveis.',
+    'legend_context_body' => 'A SADC tem 16 Estados membros, a CRASA tem 14 reguladores membros. Madagáscar e as Seicheles são desenhados apenas em contorno, como contexto geográfico, e não são selecionáveis.',
     'region_heading' => 'A região',
     'region_note' => 'Selecione um Estado membro',
     'directory_heading' => 'Diretório',
