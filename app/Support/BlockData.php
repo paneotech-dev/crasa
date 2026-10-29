@@ -113,7 +113,7 @@ final class BlockData
      *
      * @return array{rows: Collection<int, array<string, mixed>>, indicator: Indicator|null, ...}
      */
-    public static function comparison(PageBlock $block): array
+    public static function comparison(?PageBlock $block): array
     {
         $request = request();
 
@@ -131,7 +131,7 @@ final class BlockData
             ->get();
 
         $indicator = $choices->firstWhere('slug', $request->query('cmp_indicator'))
-            ?? $choices->firstWhere('id', $block->setting('indicator_id'))
+            ?? $choices->firstWhere('id', $block?->setting('indicator_id'))
             // Failing both, the indicator with the widest reporting.
             ?? $choices->sortByDesc('values_count')->first();
 
@@ -140,7 +140,7 @@ final class BlockData
         }
 
         $states = Country::orderBy('name')->get();
-        $pinned = collect($block->setting('country_ids', []))->filter();
+        $pinned = collect($block?->setting('country_ids', []) ?? [])->filter();
 
         // Two member states. Whatever the reader asked for, then whatever
         // the block pins, then the two that have filed the highest figures
@@ -192,7 +192,7 @@ final class BlockData
             'comparator_url' => route('comparator', [
                 'locale' => app()->getLocale(),
                 'mode' => 'compare',
-                'category' => $indicator->category,
+                'indicator' => $indicator->slug,
                 'countries' => $chosen->pluck('iso_code')->implode(','),
             ]),
             /*
@@ -211,6 +211,8 @@ final class BlockData
                     'iso' => $country->iso_code,
                     'value' => $cell->isReported() ? $cell->display() : null,
                     'reported' => $cell->isReported(),
+                    'numeric' => $cell->isReported() && $value?->value_numeric !== null ? (float) $value->value_numeric : null,
+                    'source' => $cell->source(),
                     'unit' => $indicator->unitLabel(),
                     'period' => $value?->period,
                     'confidence' => $value?->confidence ?? 'reported',

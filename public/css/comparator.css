@@ -165,3 +165,4 @@
   .c-hcmp__console { grid-template-columns: minmax(0, 1fr); }
   .c-hcmp__form { grid-template-columns: 1fr; }
 }
+.c-hcmp__apply[hidden], [data-cmp-copy][hidden] { display: none; }

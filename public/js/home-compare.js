@@ -19,10 +19,14 @@
 
   function setUp(block) {
     var form = block.querySelector('form');
+    // Two shapes: the page block swaps one target; the home console
+    // (partials/home/comparator) swaps a table slot and a chart slot so the
+    // form between them keeps its focus.
     var target = block.querySelector('[data-cmp-target]');
+    var slots = block.querySelectorAll('[data-cmp-slot]');
     var status = block.querySelector('[role="status"]');
     var endpoint = block.getAttribute('data-fragment');
-    if (!form || !target || !endpoint) return;
+    if (!form || (!target && !slots.length) || !endpoint) return;
 
     var pending = null;
 
@@ -51,9 +55,12 @@
       if (pending) pending.abort && pending.abort();
       pending = window.AbortController ? new AbortController() : null;
 
-      target.setAttribute('aria-busy', 'true');
+      busy(true);
 
-      fetch(endpoint + '?' + params.toString(), {
+      var url = new URL(endpoint, window.location.href);
+      params.forEach(function (value, key) { url.searchParams.set(key, value); });
+
+      fetch(url.toString(), {
         headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'text/html' },
         credentials: 'same-origin',
         signal: pending ? pending.signal : undefined
@@ -67,9 +74,17 @@
           var result = doc.querySelector('[data-cmp-result]');
           if (!result) throw new Error('no result');
 
-          target.innerHTML = '';
-          target.appendChild(document.importNode(result, true));
-          target.removeAttribute('aria-busy');
+          if (target) {
+            target.innerHTML = '';
+            target.appendChild(document.importNode(result, true));
+          }
+          Array.prototype.forEach.call(slots, function (slot) {
+            var part = result.querySelector('[data-cmp-part="' + slot.getAttribute('data-cmp-slot') + '"]');
+            if (!part) throw new Error('no part');
+            slot.innerHTML = '';
+            slot.appendChild(document.importNode(part, true));
+          });
+          busy(false);
 
           // The selectors follow what the table shows.
           setValue('cmp_indicator', result.getAttribute('data-indicator'));
@@ -88,9 +103,14 @@
         })
         .catch(function (error) {
           if (error && error.name === 'AbortError') return;
-          target.removeAttribute('aria-busy');
+          busy(false);
           form.submit();
         });
+    }
+
+    function busy(on) {
+      var regions = target ? [target] : Array.prototype.slice.call(slots);
+      regions.forEach(function (r) { on ? r.setAttribute('aria-busy', 'true') : r.removeAttribute('aria-busy'); });
     }
 
     function setValue(name, value) {
