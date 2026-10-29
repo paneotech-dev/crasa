@@ -29,6 +29,29 @@
         <span class="a-side__wordmark">{{ $brand }}</span>
     </a>
 
+    {{-- The area switcher (UX-03): an administrator inside the member area
+         had no way back. Only the areas this account may enter. --}}
+    @if ($user)
+        @php
+            $locale = app()->getLocale();
+            $inMember = ($area ?? null) === 'member' || ! $user->can('enter-back-office');
+            $areas = array_values(array_filter([
+                $user->can('enter-back-office') ? ['key' => 'admin', 'label' => __('office.area_admin'), 'url' => route('admin.dashboard', ['locale' => $locale]), 'current' => ! $inMember] : null,
+                $user->can('viewAny', \App\Models\Folder::class) ? ['key' => 'member', 'label' => __('office.area_member'), 'url' => route('extranet.dashboard', ['locale' => $locale]), 'current' => $inMember] : null,
+                ['key' => 'public', 'label' => __('office.area_public'), 'url' => route('home', ['locale' => $locale]), 'current' => false],
+            ]));
+        @endphp
+        <ul class="a-side__areas" role="list" aria-label="{{ __('office.area_switcher') }}">
+            @foreach ($areas as $switch)
+                <li>
+                    <a @class(['a-side__area', 'is-current' => $switch['current']])
+                       href="{{ $switch['url'] }}" data-area="{{ $switch['key'] }}"
+                       @if ($switch['current']) aria-current="true" @endif>{{ $switch['label'] }}</a>
+                </li>
+            @endforeach
+        </ul>
+    @endif
+
     <div class="a-side__scroll">
         @foreach ($groups as $group)
             <div class="a-side__group">

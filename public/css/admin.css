@@ -1842,6 +1842,24 @@ body[data-surface="admin"] .a-side__mark { color: var(--c-cream); }
 body[data-surface="admin"] .a-side__mark:hover { color: var(--c-white); }
 .a-side__wordmark { font-family: var(--f-admin); font-size: 15px; font-weight: 600; line-height: 1.25; }
 
+/* The area switcher, under the mark: Administration, Member area, Public
+   site, as many as the account may enter. Pills on the sidebar ground. */
+.a-side__areas {
+  list-style: none; margin: 0; padding: var(--s-3) var(--s-5);
+  display: flex; flex-wrap: wrap; gap: var(--s-2);
+  border-bottom: 1px solid var(--c-navy-line);
+  flex: none;
+}
+body[data-surface="admin"] .a-side__area {
+  display: inline-flex; align-items: center; min-height: 28px; padding: 0 var(--s-3);
+  border: 1px solid var(--c-navy-line); border-radius: var(--r-sm);
+  font-family: var(--f-admin); font-size: 12.5px; font-weight: 600;
+  color: var(--c-cream); text-decoration: none;
+}
+body[data-surface="admin"] .a-side__area:hover { background: var(--c-navy-mid); color: var(--c-white); }
+body[data-surface="admin"] .a-side__area.is-current { background: var(--c-navy-mid); border-color: var(--c-green); color: var(--c-white); }
+.a-side__area:focus-visible { outline: 2px solid var(--c-amber); outline-offset: 2px; }
+
 /* The list scrolls; the mark and the signed-in reader do not. */
 .a-side__scroll { flex: 1 1 auto; overflow-y: auto; padding-bottom: var(--s-5); }
 

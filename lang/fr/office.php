@@ -38,4 +38,8 @@ return [
     'directory_none_body' => 'Personne n\'a encore choisi d\'être inscrit. Chaque personne n\'est inscrite qu\'avec son consentement, par le représentant de son autorité.',
     'directory_list_me' => 'M\'inscrire',
     'register_include_repealed' => 'Inclure les textes abrogés',
+    'area_switcher' => 'Changer d\'espace',
+    'area_admin' => 'Administration',
+    'area_member' => 'Espace membres',
+    'area_public' => 'Site public',
 ];

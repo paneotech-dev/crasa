@@ -38,4 +38,8 @@ return [
     'directory_none_body' => 'Ainda ninguém escolheu ser listado. Cada pessoa só é listada com o seu consentimento, pelo representante da sua autoridade.',
     'directory_list_me' => 'Listar-me',
     'register_include_repealed' => 'Incluir os revogados',
+    'area_switcher' => 'Mudar de área',
+    'area_admin' => 'Administração',
+    'area_member' => 'Área de membros',
+    'area_public' => 'Sítio público',
 ];
