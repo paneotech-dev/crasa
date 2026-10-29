@@ -37,4 +37,5 @@ return [
     'directory_none_title' => 'Les personnes apparaissent ici lorsqu\'elles choisissent d\'être inscrites',
     'directory_none_body' => 'Personne n\'a encore choisi d\'être inscrit. Chaque personne n\'est inscrite qu\'avec son consentement, par le représentant de son autorité.',
     'directory_list_me' => 'M\'inscrire',
+    'register_include_repealed' => 'Inclure les textes abrogés',
 ];

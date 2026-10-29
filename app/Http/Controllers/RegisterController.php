@@ -28,10 +28,14 @@ class RegisterController extends Controller
     {
         $sector = $request->query('sector');
         $country = $request->query('country');
+        // In force by default; repealed instruments on request (UX-13).
+        $includeRepealed = $request->boolean('repealed');
 
         return view('pages.extranet.register.index', [
+            'includeRepealed' => $includeRepealed,
             'instruments' => Instrument::published()
                 ->with(['translations', 'country', 'sector'])
+                ->unless($includeRepealed, fn ($q) => $q->where('status', '!=', \App\Enums\InstrumentStatus::Repealed->value))
                 ->when($sector, fn ($q, $slug) => $q->whereHas('sector', fn ($s) => $s->where('slug', $slug)))
                 ->when($country, fn ($q, $iso) => $q->whereHas('country', fn ($c) => $c->where('iso_code', $iso)))
                 ->orderBy('country_id')

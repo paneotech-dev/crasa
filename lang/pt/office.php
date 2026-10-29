@@ -37,4 +37,5 @@ return [
     'directory_none_title' => 'As pessoas aparecem aqui quando escolhem ser listadas',
     'directory_none_body' => 'Ainda ninguém escolheu ser listado. Cada pessoa só é listada com o seu consentimento, pelo representante da sua autoridade.',
     'directory_list_me' => 'Listar-me',
+    'register_include_repealed' => 'Incluir os revogados',
 ];
