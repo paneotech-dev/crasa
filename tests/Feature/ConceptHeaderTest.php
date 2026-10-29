@@ -167,7 +167,7 @@ class ConceptHeaderTest extends TestCase
             $this->assertStringContainsString('class="k-foot"', $html, $path);
         }
 
-        $footer = $this->between($this->page(), '<footer class="k-foot">', '</footer>');
+        $footer = $this->between($this->page(), '<footer class="k-foot"', '</footer>');
         $this->assertStringContainsString('data-network=', $footer);
         $this->assertStringContainsString('mailto:', $footer);
         $this->assertStringContainsString('Accessibility', $footer);

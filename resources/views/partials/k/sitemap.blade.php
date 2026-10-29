@@ -15,7 +15,7 @@
     $columns = \App\Support\Navigation::footer();
     $workspace = \App\Support\Workspace::for(auth()->user());
 @endphp
-<nav class="k-smap" aria-label="{{ __('chome.sitemap') }}">
+<nav class="k-smap" data-surface-tone="dark" aria-label="{{ __('chome.sitemap') }}">
     <div class="k-wrap" style="--k-cols: {{ count($columns) + 1 }}">
         @foreach ($columns as $column)
             <div>

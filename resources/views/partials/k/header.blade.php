@@ -28,7 +28,7 @@
 @endphp
 
 <header class="k-header" id="top" data-header data-k-header>
-    <div class="k-ubar">
+    <div class="k-ubar" data-surface-tone="dark">
         <div class="k-wrap">
             <span class="k-hide-sm">{{ __('chome.agency') }}</span>
             <div class="k-ubar__r">
@@ -143,7 +143,7 @@
 
 <div class="k-scrim" data-k-drawer-close hidden></div>
 <aside class="k-drawer" id="k-drawer" aria-label="{{ __('nav.menu') }}" data-k-drawer hidden>
-    <div class="k-d-head">
+    <div class="k-d-head" data-surface-tone="dark">
         <b>{{ __('nav.menu') }}</b>
         <button class="k-iconbtn" type="button" aria-label="{{ __('nav.close_menu') }}" data-k-drawer-close>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>

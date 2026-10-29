@@ -249,7 +249,8 @@
   var DELAY = 7000;
   var index = 0;
   var timer = null;
-  var userPaused = reduce || document.documentElement.classList.contains('a11y-no-motion');
+  var root = document.documentElement;
+  var userPaused = reduce || root.classList.contains('a11y-no-motion') || root.classList.contains('a11y-pause');
   var hovering = false;
   var focusInside = false;
 
@@ -312,6 +313,11 @@
   }
   pause.addEventListener('click', function () { setPaused(!userPaused); });
   if (userPaused) setPaused(true);
+  // The display options toolbar's "pause animations" stops the slideshow.
+  document.addEventListener('crasa:a11y-pause', function (event) {
+    var on = !event.detail || event.detail.paused !== false;
+    setPaused(on ? true : (reduce ? true : false));
+  });
 
   hero.addEventListener('mouseenter', function () { hovering = true; schedule(); });
   hero.addEventListener('mouseleave', function () { hovering = false; schedule(); });

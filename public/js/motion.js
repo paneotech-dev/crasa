@@ -11,7 +11,8 @@
   'use strict';
 
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var paused = document.documentElement.classList.contains('a11y-no-motion');
+  var root = document.documentElement;
+  var paused = root.classList.contains('a11y-no-motion') || root.classList.contains('a11y-pause');
   var reveals = Array.prototype.slice.call(document.querySelectorAll('.u-reveal'));
   var counters = Array.prototype.slice.call(document.querySelectorAll('[data-count]'));
 
@@ -21,6 +22,16 @@
   }
 
   document.documentElement.classList.add('k-motion');
+
+  // The display options toolbar's "pause animations": everything shows
+  // at once and no number counts.
+  var stopped = false;
+  document.addEventListener('crasa:a11y-pause', function (event) {
+    if (event.detail && event.detail.paused === false) return;
+    stopped = true;
+    reveals.forEach(function (el) { el.classList.add('is-in'); el.style.transitionDelay = '0ms'; });
+    counters.forEach(function (el) { el.textContent = el.getAttribute('data-final') || el.textContent; });
+  });
 
   Array.prototype.forEach.call(document.querySelectorAll('[data-stagger]'), function (parent) {
     var kids = Array.prototype.filter.call(parent.children, function (c) { return c.classList.contains('u-reveal'); });
@@ -54,12 +65,15 @@
     if (isNaN(target)) return;
     var from = parseInt(el.getAttribute('data-from') || '0', 10);
     var text = el.textContent;
+    el.setAttribute('data-final', text);
+    if (stopped || root.classList.contains('a11y-pause')) return;
     var start = null;
     var duration = 400;
     function step(t) {
       if (start === null) start = t;
       var p = Math.min((t - start) / duration, 1);
       var eased = 1 - Math.pow(1 - p, 3);
+      if (stopped) { el.textContent = text; return; }
       el.textContent = format(Math.round(from + (target - from) * eased), text);
       if (p < 1) requestAnimationFrame(step);
     }

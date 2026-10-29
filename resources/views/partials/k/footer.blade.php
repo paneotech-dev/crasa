@@ -12,7 +12,7 @@
         : (Route::has('accessibility') ? route('accessibility', ['locale' => app()->getLocale()]) : null);
     $accounts = \App\Support\SocialAccounts::all();
 @endphp
-<footer class="k-foot">
+<footer class="k-foot" data-surface-tone="dark">
     <div class="k-wrap">
         <div class="k-ft">
             <div class="k-ft__id">
