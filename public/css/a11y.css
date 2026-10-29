@@ -1,0 +1,201 @@
+/* CRASA: display options and the translation notice.
+ *
+ * Three reader choices, each a class on <html> set before first paint:
+ *   a11y-text-smaller | a11y-text-larger | a11y-text-largest
+ *   a11y-contrast
+ *   a11y-underline
+ * Reads tokens.css only. High contrast works by giving the same tokens
+ * other values, so no component needs a rule of its own.
+ */
+
+/* The control ------------------------------------------------------------ */
+
+/* Without script nothing could run the panel, so it is not drawn. */
+html:not(.has-js) .c-a11y { display: none; }
+
+.c-a11y { position: relative; flex: none; }
+.c-a11y__toggle[aria-expanded="true"] { border-color: var(--c-navy); background: var(--c-green-light); }
+
+.c-a11y__panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + var(--s-2));
+  z-index: 60;
+  width: 300px;
+  max-width: calc(100vw - (var(--s-4) * 2));
+  background: var(--c-white);
+  color: var(--c-charcoal);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  box-shadow: var(--e-2);
+  padding: var(--s-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  font-family: var(--f-body);
+}
+.c-a11y__panel[hidden] { display: none; }
+/* Where the button sits near the left of the row (the header wraps at some
+   widths), the panel opens rightwards so it stays on screen. a11y.js sets
+   the modifier after measuring. */
+.c-a11y__panel--start { right: auto; left: 0; }
+
+.c-a11y__head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
+.c-a11y__title { margin: 0; font-weight: 600; font-size: 16px; color: var(--c-navy); }
+.c-a11y__label { margin: 0 0 var(--s-2); font-size: 14px; font-weight: 600; color: var(--c-charcoal); }
+
+.c-a11y__close {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--r-sm);
+  color: var(--c-charcoal);
+  cursor: pointer;
+  margin: calc(var(--s-3) * -1) calc(var(--s-3) * -1) calc(var(--s-3) * -1) 0;
+}
+.c-a11y__close:hover { background: var(--c-green-light); }
+
+.c-a11y__row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-2); }
+
+.c-a11y__option,
+.c-a11y__switch,
+.c-a11y__reset {
+  min-height: 44px;
+  padding: var(--s-2) var(--s-3);
+  font-family: var(--f-body);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: left;
+  color: var(--c-navy);
+  background: var(--c-white);
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+.c-a11y__option:hover,
+.c-a11y__switch:hover,
+.c-a11y__reset:hover { border-color: var(--c-navy); }
+
+/* The four sizes show their own scale, so the choice is visible before it
+   is made. */
+.c-a11y__option--smaller { font-size: 13px; }
+.c-a11y__option--normal { font-size: 15px; }
+.c-a11y__option--larger { font-size: 17px; }
+.c-a11y__option--largest { font-size: 19px; }
+
+.c-a11y__option[aria-pressed="true"] {
+  background: var(--c-green-dark);
+  border-color: var(--c-green-dark);
+  color: var(--c-white);
+}
+
+.c-a11y__toggles { display: flex; flex-direction: column; gap: var(--s-2); }
+
+/* A pressed toggle carries a tick as well as the colour, so the state is
+   not carried by colour alone. */
+.c-a11y__switch { display: flex; align-items: center; gap: var(--s-3); }
+.c-a11y__switch::before {
+  content: "";
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-xs);
+  background: var(--c-white) center / 14px no-repeat;
+}
+.c-a11y__switch[aria-pressed="true"] { border-color: var(--c-green-dark); background: var(--c-green-light); }
+.c-a11y__switch[aria-pressed="true"]::before {
+  border-color: var(--c-green-dark);
+  background-color: var(--c-green-dark);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E");
+}
+
+.c-a11y__reset {
+  align-self: flex-start;
+  border-color: transparent;
+  padding-inline: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 400;
+  color: var(--c-green-dark);
+  background: transparent;
+}
+.c-a11y__reset:hover { border-color: transparent; color: var(--c-navy); }
+
+/* Below 768 the header hides its utilities and moves them into the drawer.
+   The display options stay on the first row beside the menu button, so a
+   reader who needs larger text does not have to find it inside a menu. */
+@media (max-width: 767.98px) {
+  .has-js .c-header__utilities:has(.c-a11y) { display: flex; margin-left: auto; }
+  .has-js .c-header__utilities:has(.c-a11y) > :not(.c-a11y) { display: none; }
+  .has-js .c-header__utilities:has(.c-a11y) ~ .c-header__toggle { margin-left: 0; }
+  .has-js .c-header__inner:has(.c-a11y) { flex-wrap: nowrap; }
+  .has-js .c-header__inner:has(.c-a11y) .c-header__identity { flex: 0 1 auto; min-width: 0; }
+  .c-a11y__panel { position: fixed; top: auto; right: var(--s-4); margin-top: var(--s-2); }
+}
+
+/* Text size --------------------------------------------------------------- */
+
+/* The stylesheets set type in pixels, so scaling the root font size alone
+   would move almost nothing. The page regions are zoomed instead: text and
+   the boxes around it grow together and the layout reflows inside the
+   viewport, as it does under browser zoom. Media queries still answer to
+   the real width, so a phone keeps its one-column layout. The header is
+   left at its size: it already wraps and collapses to fit, and a zoomed
+   header crushes the identity on a phone. */
+html.a11y-text-smaller { --a11y-zoom: .9; font-size: 90%; }
+html.a11y-text-larger { --a11y-zoom: 1.15; font-size: 115%; }
+html.a11y-text-largest { --a11y-zoom: 1.3; font-size: 130%; }
+
+html.a11y-text-smaller body > :is(main, .c-footer),
+html.a11y-text-larger body > :is(main, .c-footer),
+html.a11y-text-largest body > :is(main, .c-footer) {
+  zoom: var(--a11y-zoom);
+}
+
+/* Underlined links -------------------------------------------------------- */
+
+/* Links drawn as buttons or controls keep their own shape. */
+html.a11y-underline a:not(.c-btn):not(.c-iconbutton):not(.c-skip):not(.c-extranet):not(.c-lang__option) {
+  text-decoration-line: underline !important;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* High contrast ----------------------------------------------------------- */
+
+/* Black on white, white on black and one strong green. The tokens play two
+   parts on this platform: the light ones are grounds on light pages and
+   text on navy bands, the dark ones the reverse. So every light token
+   becomes white, every dark one black, and both parts stay legible:
+   #000 on #FFF is 21:1, #006B3B on #FFF is 6.9:1, white on #006B3B the
+   same. Rules and control borders become black. */
+html.a11y-contrast {
+  --c-white:#FFFFFF; --c-cream:#FFFFFF; --c-sand:#FFFFFF; --c-hatch:#FFFFFF;
+  --c-green-light:#FFFFFF; --c-green-mid:#FFFFFF; --c-amber-light:#FFFFFF; --c-amber-mid:#FFFFFF;
+  --c-red-light:#FFFFFF; --c-red-mid:#FFFFFF; --c-purple-light:#FFFFFF; --c-grey-light:#FFFFFF;
+  --c-navy-edge:#FFFFFF; --c-navy-soft:#FFFFFF; --c-navy-line:#FFFFFF;
+  --c-charcoal:#000000; --c-slate:#000000; --c-disabled:#000000;
+  --c-navy:#000000; --c-navy-mid:#000000; --c-navy-deep:#000000;
+  --c-amber-dark:#000000; --c-red-dark:#000000; --c-purple-dark:#000000;
+  --c-border:#000000; --c-line:#000000;
+  --c-green:#006B3B; --c-green-dark:#006B3B;
+  --c-amber:#000000; --c-red:#B00020;
+  --e-1:none; --e-2:0 0 0 2px #000000; --e-3:0 0 0 2px #000000;
+}
+html.a11y-contrast body { background: #FFFFFF; color: #000000; }
+html.a11y-contrast main a:not(.c-btn),
+html.a11y-contrast .c-footer a { text-decoration-line: underline; }
+
+/* Focus becomes black, with a white halo so it shows on black and green
+   fills as well as on white. */
+html.a11y-contrast :focus-visible {
+  outline: 3px solid #000000 !important;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #FFFFFF;
+}

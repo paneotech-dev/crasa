@@ -89,6 +89,7 @@
                 </svg>
             </a>
 
+            @include('partials.a11y-toolbar')
             @include('partials.language-switcher', ['variant' => 'header'])
 
             {{-- Signed out, this is the way in. Signed in, the padlock is
