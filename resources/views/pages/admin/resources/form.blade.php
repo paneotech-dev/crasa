@@ -43,7 +43,9 @@
         : route('admin.resources.update', ['locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $record->getKey()]) }}">
         @csrf
         @unless ($isNew) @method('PUT') @endunless
-        @php($lockedForReview = ! $isNew && \App\Support\Approvals::isLocked($record))
+        @php
+            $lockedForReview = ! $isNew && \App\Support\Approvals::isLocked($record);
+        @endphp
         {{-- In review: read only until approved or returned (evening pass). --}}
         <fieldset class="aw-lockset" @disabled($lockedForReview)>
 
