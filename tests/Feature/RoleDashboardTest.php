@@ -117,4 +117,19 @@ class RoleDashboardTest extends TestCase
             }
         }
     }
+
+    public function test_after_the_roles_merge_the_moderator_and_auditor_open_their_own_blocks(): void
+    {
+        foreach (['moderator' => 'inbox', 'auditor' => 'audit'] as $role => $block) {
+            if (\App\Enums\Role::tryFrom($role) === null) {
+                $this->markTestSkipped('This build has no '.$role.' role yet.');
+            }
+
+            $user = User::factory()->create(['role' => $role, 'country_id' => null]);
+
+            $html = $this->actingAs($user)->get('/en/admin')->assertOk()->getContent();
+            $this->assertStringContainsString('data-role="'.$role.'"', $html);
+            $this->assertStringContainsString('data-block="'.$block.'"', $html);
+        }
+    }
 }
