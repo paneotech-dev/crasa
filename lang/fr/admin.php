@@ -148,6 +148,8 @@ return [
     'field_body' => 'Texte',
     'field_cta_label' => 'Libellé du bouton',
     'field_item_label' => 'Libellé du chiffre :n',
+    'field_item_heading' => 'Énoncé du chiffre :n',
+    'field_item_body' => "Texte de l'énoncé du chiffre :n",
     'save_page' => 'Enregistrer la page',
     'save_block' => 'Enregistrer le bloc',
     'workflow' => 'Statut',

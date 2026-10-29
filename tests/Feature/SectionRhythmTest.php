@@ -56,8 +56,14 @@ class SectionRhythmTest extends TestCase
         // did not exist and it was the only thing keeping the publications
         // and the newsroom from fusing. The band is built now and the
         // newsroom has its cream back.
+        //
+        // 29 October 2026, light theme: the key figures and the featured
+        // comparison moved to light grounds. The comparison is cream, and
+        // the run rule turns it white after the cream pillars. The
+        // statement band is hidden on the live homepage by migration; in
+        // the seeded page it is still there and still navy.
         $this->assertSame(
-            ['navy-mid', 'cream', 'navy', 'cream', 'navy', 'cream', 'sand', 'white'],
+            ['white', 'cream', 'white', 'cream', 'navy', 'cream', 'sand', 'white'],
             $this->grounds('/en'),
         );
     }
@@ -115,19 +121,12 @@ class SectionRhythmTest extends TestCase
         $this->assertContains('white', $grounds);
     }
 
-    public function test_the_page_reaches_navy_between_the_hero_and_the_footer(): void
+    public function test_the_figures_and_the_comparison_sit_on_light_grounds(): void
     {
-        // The failure the positional cycle produced. A page whose only dark
-        // is the hero has no rhythm below the fold.
-        $grounds = $this->grounds('/en');
-
-        $darks = array_filter($grounds, fn ($g) => str_starts_with($g, 'navy'));
-
-        $this->assertGreaterThanOrEqual(
-            2,
-            count($darks),
-            'The homepage returns to navy twice on screen 02, at lines 186 and 272.',
-        );
+        // 29 October 2026: the room found the homepage too dark. The band
+        // under the hero and the comparison are light now, and stay light.
+        $this->assertSame('white', BlockType::KeyFigures->ground());
+        $this->assertNotContains(BlockType::FeaturedComparison->ground(), ['navy', 'navy-mid']);
     }
 
     public function test_every_block_type_resolves_to_a_ground_the_stylesheet_defines(): void

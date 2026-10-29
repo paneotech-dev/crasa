@@ -6,6 +6,8 @@
     $summary = $item->translate('summary') ?? $item->translate('body');
     $url = route('newsroom.show', ['locale' => app()->getLocale(), 'slug' => $item->slug]);
     $featured ??= false;
+    // h2 on the newsroom; h3 where the card sits under a section heading.
+    $titleTag = ($headingLevel ?? 2) === 3 ? 'h3' : 'h2';
 @endphp
 
 <article @class(['b-card', 'n-card', 'n-card--featured' => $featured])>
@@ -21,9 +23,9 @@
     <div class="n-card__body">
         @include('pages.newsroom._meta', ['item' => $item])
         @if ($title)
-            <h2 class="n-card__title" @if ($title->isFallback()) lang="{{ $title->locale }}" @endif>
+            <{{ $titleTag }} class="n-card__title" @if ($title->isFallback()) lang="{{ $title->locale }}" @endif>
                 <a href="{{ $url }}">{{ $title->value }}</a>
-            </h2>
+            </{{ $titleTag }}>
         @endif
         @if ($summary)
             <p class="n-card__summary" @if ($summary->isFallback()) lang="{{ $summary->locale }}" @endif>{{ \App\Support\NewsFormat::excerpt($summary->value) }}</p>

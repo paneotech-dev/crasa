@@ -267,7 +267,7 @@ class HomepageTest extends TestCase
 
         // And the figures immediately below it still lead somewhere.
         $this->assertMatchesRegularExpression(
-            '~data-ground="navy-mid".*?href="http://localhost/en/members"~s',
+            '~data-ground="white".*?class="b-figure[^"]*"\s+href="http://localhost/en/members"~s',
             $html
         );
     }
