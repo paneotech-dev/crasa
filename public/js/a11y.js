@@ -11,6 +11,20 @@
   'use strict';
 
   var KEY = 'crasa-a11y';
+  var NOTICE_KEY = 'crasa-translation-notice';
+
+  // The translation notice closes by itself (it is a <details>); this only
+  // remembers that it was closed, and hands focus to the content after it.
+  var notice = document.querySelector('[data-translation-notice] details');
+  if (notice) {
+    notice.addEventListener('toggle', function () {
+      if (notice.open) return;
+      try { window.localStorage.setItem(NOTICE_KEY, 'closed'); } catch (e) { /* Shown again next page. */ }
+      var main = document.getElementById('content');
+      if (main && (document.activeElement === document.body || notice.contains(document.activeElement))) main.focus();
+    });
+  }
+
   var SIZES = ['smaller', 'normal', 'larger', 'largest'];
   var root = document.documentElement;
   var widget = document.querySelector('[data-a11y]');

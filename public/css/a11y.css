@@ -139,6 +139,54 @@ html:not(.has-js) .c-a11y { display: none; }
   .c-a11y__panel { position: fixed; top: auto; right: var(--s-4); margin-top: var(--s-2); }
 }
 
+/* Translation notice ---------------------------------------------------- */
+
+/* In the flow at the top of the content, never over it. Closed, the whole
+   element goes: the summary is the close control, not a heading to reopen. */
+.c-translation { padding-block: var(--s-4); }
+html.translation-notice-closed .c-translation,
+.c-translation:has(.c-translation__box:not([open])) { display: none; }
+
+.c-translation__box {
+  position: relative;
+  max-width: 80ch;
+  padding: var(--s-3) calc(44px + var(--s-3)) var(--s-3) var(--s-4);
+  background: var(--c-green-light);
+  border: 1px solid var(--c-green-mid);
+  border-left: 4px solid var(--c-green-dark);
+  border-radius: var(--r-sm);
+  font-size: var(--t-small-size);
+  line-height: var(--t-small-line);
+  color: var(--c-charcoal);
+}
+.c-translation__title { margin: 0; font-weight: 600; color: var(--c-green-dark); }
+.c-translation__body { margin: 2px 0 0; }
+
+.c-translation__close {
+  position: absolute;
+  top: var(--s-1);
+  right: var(--s-1);
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-sm);
+  color: var(--c-charcoal);
+  cursor: pointer;
+  list-style: none;
+}
+.c-translation__close::-webkit-details-marker { display: none; }
+.c-translation__close::marker { content: ""; }
+.c-translation__close:hover { background: var(--c-white); }
+
+/* The automatic translation line on an article. */
+.c-machine-note {
+  margin: 0 0 var(--s-4);
+  font-size: var(--t-small-size);
+  line-height: var(--t-small-line);
+  color: var(--c-slate);
+}
+
 /* Text size --------------------------------------------------------------- */
 
 /* The stylesheets set type in pixels, so scaling the root font size alone
