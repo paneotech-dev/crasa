@@ -263,7 +263,9 @@ final class HomeData
                 : $m->starts_on?->format('j'),
             'year' => $m->starts_on?->format('Y'),
             'iso' => $m->starts_on?->toDateString(),
-            'place' => collect([$m->location, $m->venue_country])->filter()->unique()->implode(', '),
+            'place' => $m->venue_country && ! str_contains((string) $m->location, (string) $m->venue_country)
+                ? collect([$m->location, $m->venue_country])->filter()->implode(', ')
+                : (string) $m->location,
             'past' => $past,
             'url' => route('events.show', ['locale' => app()->getLocale(), 'meeting' => $m->slug]),
         ];
