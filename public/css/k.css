@@ -245,7 +245,7 @@ html:not(.has-js) .k-share { display: none; }
 @media (max-width: 1000px) { .k-smap .k-wrap { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 620px) { .k-smap .k-wrap { grid-template-columns: 1fr 1fr; padding-block: 36px 24px; } .k-smap a { padding: 10px 0; } }
 .k-foot { background: var(--k-deep); color: var(--k-on-deep); padding-bottom: env(safe-area-inset-bottom, 0px); }
-.k-foot .k-wrap { padding-top: 36px; border-top: 1px solid rgba(227, 238, 232, .18); }
+.k-foot .k-wrap { padding-top: 8px; }
 .k-ft { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr) minmax(0, .8fr); gap: 32px; padding-bottom: 32px; border-bottom: 1px solid rgba(227, 238, 232, .18); }
 .k-ft__id { display: flex; flex-direction: column; gap: 14px; }
 .k-ft__brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }

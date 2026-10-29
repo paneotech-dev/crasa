@@ -458,7 +458,7 @@
                     <a class="k-sbtn u-reveal" href="{{ $url }}" target="_blank" rel="noopener" data-network="{{ $network }}"
                        aria-label="{{ __('blocks.social_account', ['network' => \App\Support\SocialAccounts::label($network)]) }}">
                         <span class="k-sbtn__si"><x-social-mark :network="$network" /></span>
-                        <span><b>{{ \App\Support\SocialAccounts::label($network) }}</b><small>{{ \Illuminate\Support\Str::limit(\App\Support\SocialAccounts::handle($network, $url), 22) }}</small></span>
+                        <span><b>{{ \App\Support\SocialAccounts::label($network) }}</b>@php $handle = \App\Support\SocialAccounts::handle($network, $url); @endphp<small>{{ str_starts_with($handle, '@') || mb_strlen($handle) <= 22 ? $handle : __('site.acronym') }}</small></span>
                         <svg class="k-sbtn__ar" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
                     </a>
                 @endforeach
