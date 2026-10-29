@@ -500,11 +500,15 @@ Route::prefix('{locale}')
                  * navigation is not the access control.
                  */
                 Route::get('pages', [PageAdminController::class, 'index'])->name('pages');
+                // New page (F9). Before pages/{page}, so "new" is not read as a page.
+                Route::get('pages/new', [\App\Http\Controllers\Admin\NewPageController::class, 'create'])->name('pages.create');
+                Route::post('pages', [\App\Http\Controllers\Admin\NewPageController::class, 'store'])->name('pages.store');
                 Route::get('pages/{page}', [PageAdminController::class, 'edit'])->name('pages.edit');
                 Route::put('pages/{page}', [PageAdminController::class, 'update'])->name('pages.update');
                 Route::put('pages/{page}/status', [PageAdminController::class, 'updateStatus'])->name('pages.status');
                 Route::put('pages/{page}/client-review', [PageAdminController::class, 'clientReview'])->name('pages.client-review');
                 Route::get('pages/{page}/preview', [PageAdminController::class, 'preview'])->name('pages.preview');
+                Route::delete('pages/{page}', [PageAdminController::class, 'destroy'])->name('pages.destroy');
 
                 Route::get('pages/{page}/blocks/add', [PageBlockController::class, 'create'])->name('pages.blocks.create');
                 Route::post('pages/{page}/blocks', [PageBlockController::class, 'store'])->name('pages.blocks.store');
@@ -670,6 +674,14 @@ Route::prefix('{locale}')
                 Route::put('users/{user}/role', [UserAdminController::class, 'assignRole'])->name('users.role');
                 Route::put('users/{user}/suspend', [UserAdminController::class, 'suspend'])->name('users.suspend');
                 Route::put('users/{user}/reactivate', [UserAdminController::class, 'reactivate'])->name('users.reactivate');
+                Route::delete('users/{user}', [UserAdminController::class, 'destroy'])->name('users.destroy');
+                // Roles under People (F3).
+                Route::get('roles', [\App\Http\Controllers\Admin\RoleController::class, 'index'])->name('roles');
+                Route::get('roles/new', [\App\Http\Controllers\Admin\RoleController::class, 'create'])->name('roles.create');
+                Route::post('roles', [\App\Http\Controllers\Admin\RoleController::class, 'store'])->name('roles.store');
+                Route::get('roles/{role}', [\App\Http\Controllers\Admin\RoleController::class, 'edit'])->name('roles.edit');
+                Route::put('roles/{role}', [\App\Http\Controllers\Admin\RoleController::class, 'update'])->name('roles.update');
+                Route::delete('roles/{role}', [\App\Http\Controllers\Admin\RoleController::class, 'destroy'])->name('roles.destroy');
                 /*
                  * Reviewing what the member states contributed, RP-06. The
                  * same queue as the data returns, because it is the same
@@ -702,6 +714,7 @@ Route::prefix('{locale}')
                 Route::put('announcements/{announcement}', [AnnouncementAdminController::class, 'update'])->name('announcements.update');
                 Route::put('announcements/{announcement}/publish', [AnnouncementAdminController::class, 'publish'])->name('announcements.publish');
                 Route::put('announcements/{announcement}/unpublish', [AnnouncementAdminController::class, 'unpublish'])->name('announcements.unpublish');
+                Route::delete('announcements/{announcement}', [AnnouncementAdminController::class, 'destroy'])->name('announcements.destroy');
 
                 /*
                  * Social posts: CRASA's own posts on X, Facebook and
@@ -717,6 +730,18 @@ Route::prefix('{locale}')
                 Route::delete('social-posts/{post}', [SocialPostAdminController::class, 'destroy'])->whereNumber('post')->name('social.destroy');
 
                 Route::get('audit', [AuditLogController::class, 'index'])->name('audit');
+
+                /*
+                 * Moderated publishing (F2): the awaiting approval inbox,
+                 * one item's decision, sending an item, the rules page.
+                 */
+                Route::get('approvals', [\App\Http\Controllers\Admin\ApprovalController::class, 'index'])->name('approvals');
+                Route::get('approvals/rules', [\App\Http\Controllers\Admin\ApprovalController::class, 'rules'])->name('approvals.rules');
+                Route::put('approvals/rules', [\App\Http\Controllers\Admin\ApprovalController::class, 'updateRules'])->name('approvals.rules.update');
+                Route::post('approvals/send/{type}/{id}', [\App\Http\Controllers\Admin\ApprovalController::class, 'submit'])->whereNumber('id')->name('approvals.submit');
+                Route::get('approvals/{approval}', [\App\Http\Controllers\Admin\ApprovalController::class, 'show'])->whereNumber('approval')->name('approvals.show');
+                Route::put('approvals/{approval}/approve', [\App\Http\Controllers\Admin\ApprovalController::class, 'approve'])->whereNumber('approval')->name('approvals.approve');
+                Route::put('approvals/{approval}/return', [\App\Http\Controllers\Admin\ApprovalController::class, 'returnItem'])->whereNumber('approval')->name('approvals.return');
             });
         });
 

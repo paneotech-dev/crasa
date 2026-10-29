@@ -18,6 +18,8 @@ enum Role: string
     case MemberStateRep = 'member_state_rep';
     case CommitteeMember = 'committee_member';
     case Viewer = 'viewer';
+    case Moderator = 'moderator';
+    case Auditor = 'auditor';
 
     public function label(): string
     {

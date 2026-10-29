@@ -71,6 +71,16 @@ class UserFactory extends Factory
         ]);
     }
 
+    public function moderator(): static
+    {
+        return $this->state(fn () => ['role' => Role::Moderator, 'country_id' => null]);
+    }
+
+    public function auditor(): static
+    {
+        return $this->state(fn () => ['role' => Role::Auditor, 'country_id' => null]);
+    }
+
     public function viewer(): static
     {
         return $this->state(fn () => ['role' => Role::Viewer]);

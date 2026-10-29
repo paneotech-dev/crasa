@@ -36,6 +36,8 @@
         </div>
     @endif
 
+    @include('pages.admin.approvals._panel', ['record' => $record])
+
     <form method="POST" action="{{ $isNew
         ? route('admin.resources.store', ['locale' => app()->getLocale(), 'resource' => $definition->key])
         : route('admin.resources.update', ['locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $record->getKey()]) }}">
@@ -179,13 +181,15 @@
 
     @if (! $isNew && $definition->deletable)
         @can('delete', $record)
-            <section class="a-panel">
+            <section class="a-panel" id="delete">
                 <div class="a-panel__head">
                     <h2>{{ __('admin.delete_title') }}</h2>
                 </div>
 
                 <form class="a-form" method="POST"
-                      action="{{ route('admin.resources.destroy', ['locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $record->getKey()]) }}">
+                      action="{{ route('admin.resources.destroy', ['locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $record->getKey()]) }}"
+                      data-confirm="{{ $definition->softDeletes() ? __('fa.delete_recoverable_confirm', ['name' => $definition->titleFor($record)]) : __('fa.delete_permanent_confirm', ['name' => $definition->titleFor($record)]) }}"
+                      data-confirm-title="{{ __('fa.confirm_title') }}" data-confirm-action="{{ __('fa.delete') }}">
                     @csrf
                     @method('DELETE')
 

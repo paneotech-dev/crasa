@@ -38,6 +38,8 @@ return [
     'trigger_thread_comment' => 'Um comentario num fio em que participo',
     'trigger_thread_comment_note' => 'Respostas num fio de discussao onde ja escreveu.',
     'trigger_announcement' => 'Um aviso do Secretariado',
+    'trigger_approval' => 'Moderação de conteúdos',
+    'trigger_admin_activity' => 'Ação de outro administrador',
     'trigger_announcement_note' => 'Avisos aos membros, por vezes limitados a um setor ou a um comite.',
     'filed' => "':file' foi entregue em :committee.",
     'meeting_moved' => "':title' passa a ser a :date.",

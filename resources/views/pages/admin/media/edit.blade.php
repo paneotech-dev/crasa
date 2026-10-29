@@ -181,7 +181,7 @@
             @can('delete', $asset)
                 <form class="a-form a-split__side" method="POST"
                       action="{{ route('admin.media.destroy', ['locale' => app()->getLocale(), 'asset' => $asset->id]) }}"
-                      onsubmit="return confirm('{{ __('admin.media_delete_confirm', ['name' => $asset->original_name]) }}')">
+                      data-confirm="{{ __('admin.media_delete_confirm', ['name' => $asset->original_name]) }}" data-confirm-title="{{ __('fa.confirm_title') }}">
                     @csrf
                     @method('DELETE')
                     <p class="a-hint">{{ $usage === [] ? __('admin.media_delete_hint') : __('admin.media_delete_blocked', ['n' => count($usage)]) }}</p>

@@ -70,7 +70,7 @@
                                 <td>
                                     <form method="POST"
                                           action="{{ route('admin.committees.seats.destroy', ['locale' => app()->getLocale(), 'committee' => $committee->slug, 'country' => $country->iso_code]) }}"
-                                          onsubmit="return confirm('{{ __('admin.seats_remove_confirm', ['country' => $country->name, 'committee' => $committee->name]) }}')">
+                                          data-confirm="{{ __('admin.seats_remove_confirm', ['country' => $country->name, 'committee' => $committee->name]) }}" data-confirm-title="{{ __('fa.confirm_title') }}">
                                         @csrf @method('DELETE')
                                         <button class="a-btn a-btn--danger a-btn--small" type="submit">{{ __('admin.seats_remove') }}</button>
                                     </form>

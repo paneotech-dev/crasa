@@ -76,7 +76,8 @@
                                 @if ($index === 0)
                                     <th scope="row">
                                         @if (! empty($data['url']))
-                                            <a href="{{ $data['url'] }}">{{ $data['cells'][$column['key']] ?? '' }}</a>
+                                            @php $cellText = trim(strip_tags((string) ($data['cells'][$column['key']] ?? ''))); @endphp
+                                            <a href="{{ $data['url'] }}">@if ($cellText !== ''){{ $data['cells'][$column['key']] }}@else{{ $data['title'] ?? __('fa.row_untitled', ['id' => $record->getKey()]) }}@endif</a>
                                         @else
                                             {{ $data['cells'][$column['key']] ?? '' }}
                                         @endif
@@ -90,7 +91,15 @@
                             <td>
                                 <span class="a-table__actions">
                                     @foreach ($data['actions'] ?? [] as $action)
-                                        <a href="{{ $action['url'] }}">{{ $action['label'] }}</a>
+                                        @if (($action['method'] ?? 'GET') === 'DELETE')
+                                            <form class="aw-inline-form" method="POST" action="{{ $action['url'] }}"
+                                                  data-confirm="{{ $action['confirm'] ?? '' }}" data-confirm-title="{{ $action['confirmTitle'] ?? __('fa.confirm_title') }}" data-confirm-action="{{ $action['label'] }}">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="a-linkbutton a-linkbutton--danger">{{ $action['label'] }}@isset($action['sr'])<span class="c-sr"> {{ $action['sr'] }}</span>@endisset</button>
+                                            </form>
+                                        @else
+                                            <a href="{{ $action['url'] }}">{{ $action['label'] }}@isset($action['sr'])<span class="c-sr"> {{ $action['sr'] }}</span>@endisset</a>
+                                        @endif
                                     @endforeach
                                 </span>
                             </td>
