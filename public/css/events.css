@@ -21,6 +21,8 @@
 .e-filter__list { list-style: none; margin: 0 0 var(--u-4); padding: 0; display: flex; flex-wrap: wrap; gap: var(--u-2); }
 .e-filter .u-chip[aria-current="true"] .e-badge { box-shadow: 0 0 0 2px #FFFFFF; }
 
+.e-cal-section { scroll-margin-top: 80px; }
+.e-cal-main { min-width: 0; }
 .e-cal-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: var(--u-4); align-items: start; }
 @media (max-width: 1099.98px) { .e-cal-wrap { grid-template-columns: minmax(0, 1fr); } }
 

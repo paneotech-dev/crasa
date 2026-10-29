@@ -97,7 +97,7 @@ class ImagePlacementTest extends TestCase
         return [
             'about' => ['/en/about', 'institutional-delegates-boardroom-01'],
             'committees' => ['/en/committees', 'institutional-delegates-boardroom-01'],
-            'events' => ['/en/events', 'institutional-delegates-boardroom-01'],
+            // Events opens on its calendar since Day 2; its hero carries no band photograph.
             'comparator' => ['/en/comparator', 'data-team-reviewing-charts-01'],
         ];
     }
