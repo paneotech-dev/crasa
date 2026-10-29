@@ -201,19 +201,26 @@ class ContactFormTest extends TestCase
 
     /* Privacy ---------------------------------------------------------------- */
 
-    public function test_the_map_is_not_loaded_until_the_reader_asks(): void
+    /**
+     * The map is drawn on load (C15, 29 October 2026) over a saved image of
+     * the same area, so a failed tile server still leaves a map; "Show the
+     * map" is only the no-script fallback.
+     */
+    public function test_the_map_is_drawn_on_load_with_a_static_fallback(): void
     {
         $html = $this->get('/en/contact')->getContent();
 
-        // No tile request in the delivered markup.
-        $this->assertStringNotContainsString('tile.openstreetmap.org/', str_replace('data-tiles="https://tile.openstreetmap.org/{z}/{x}/{y}.png"', '', $html));
-        $this->assertStringContainsString('data-map-load', $html);
-        $this->assertStringContainsString('Show the map', $html);
+        $this->assertStringContainsString('data-contact-map', $html);
+        $this->assertStringContainsString('/js/contact-map.js', $html);
+        $this->assertStringContainsString('images/contact/contact-map.webp', $html);
+        $this->assertFileExists(public_path('images/contact/contact-map.webp'));
+        $this->assertMatchesRegularExpression('~<noscript>\s*<p class="cp-map__noscript"><a [^>]*data-map-load[^>]*>Show the map</a>~', $html);
+        $this->assertStringContainsString('Open in Google Maps', $html);
     }
 
     public function test_leaflet_is_served_from_this_platform_not_a_cdn(): void
     {
-        $js = file_get_contents(public_path('js/map.js'));
+        $js = file_get_contents(public_path('js/contact-map.js'));
 
         $this->assertStringContainsString('/js/vendor/leaflet.js', $js);
         $this->assertStringNotContainsString('unpkg.com', $js);

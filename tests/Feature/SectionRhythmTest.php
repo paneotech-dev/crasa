@@ -116,9 +116,16 @@ class SectionRhythmTest extends TestCase
         }
         $grounds = $this->grounds('/en/about');
 
+        // Since the UI system (29 October 2026) About alternates white with
+        // the green and blue tints rather than cream.
         $this->assertGreaterThan(3, count($grounds));
-        $this->assertContains('cream', $grounds);
+        $this->assertContains('tint-green', $grounds);
         $this->assertContains('white', $grounds);
+        foreach ($grounds as $i => $ground) {
+            if ($i > 0) {
+                $this->assertNotSame($grounds[$i - 1], $ground, "About repeats {$ground} at position {$i}.");
+            }
+        }
     }
 
     public function test_the_figures_and_the_comparison_sit_on_light_grounds(): void

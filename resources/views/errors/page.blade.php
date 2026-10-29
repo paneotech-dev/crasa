@@ -1,8 +1,8 @@
 {{--
-    The error pages (403, 404, 419), in the reader's language and inside the
-    site's own header and footer, with a way back. Until 14 October 2026
-    these were Laravel's defaults: English only, no menu, no link home, and
-    the member account met one in front of the regulators.
+    The error pages (403, 404, 419, 429), in the reader's language and inside
+    the site's own header and footer, with a way back (UI system, 29 October
+    2026): a short hero with the explanation and a search form, the main
+    sections as cards, and a call-to-action band.
 
     The language comes from the address (bootstrap/app.php sets it before
     this renders), because an unmatched address never reaches SetLocale.
@@ -11,21 +11,20 @@
 
 @section('title', __('errors.'.$code.'_title'))
 
-@section('content')
-    <x-section-band
-        :eyebrow="__('errors.eyebrow', ['code' => $code])"
-        :title="__('errors.'.$code.'_title')"
-        :lead="__('errors.'.$code.'_body')"
-    />
+@php
+    $locale = app()->getLocale();
+    $back = url()->previous();
+    $back = $back && $back !== url()->current() && str_starts_with($back, url('/')) ? $back : null;
+@endphp
 
-    <div class="c-section">
-        <div class="c-page c-page--reading">
-            <p>
-                <a class="c-btn c-btn--primary" href="{{ url('/'.app()->getLocale()) }}">{{ __('errors.home') }}</a>
-                @if (($back = url()->previous()) && $back !== url()->current() && str_starts_with($back, url('/')))
-                    <a class="c-btn c-btn--secondary" href="{{ $back }}">{{ __('errors.back') }}</a>
-                @endif
-            </p>
-        </div>
-    </div>
+@section('content')
+    @include('partials.cpages.styles')
+    @include('errors._body', ['code' => $code, 'locale' => $locale, 'back' => $back])
+
+    @include('partials.cpages.cta', [
+        'ctaTitle' => __('cpages_c.error_cta_title'),
+        'ctaText' => __('cpages_c.error_cta_text'),
+        'ctaPrimary' => [__('errors.home'), url('/'.$locale)],
+        'ctaSecondary' => [__('cpages_c.search_cta_secondary'), url('/'.$locale.'/contact')],
+    ])
 @endsection

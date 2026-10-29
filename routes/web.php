@@ -110,6 +110,7 @@ Route::prefix('{locale}')
 
         Route::get('about', [PageController::class, 'show'])->defaults('slug', 'about')->name('about');
         Route::get('committees', [PageController::class, 'show'])->defaults('slug', 'committees')->name('committees');
+        Route::get('committees/{committee}', [\App\Http\Controllers\CommitteePageController::class, 'show'])->name('committees.show');
         Route::get('members', [PageController::class, 'show'])->defaults('slug', 'members')->name('members');
 
         /*

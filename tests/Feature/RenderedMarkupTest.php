@@ -197,7 +197,7 @@ class RenderedMarkupTest extends TestCase
             $this->assertStringNotContainsString($bad, $html, 'A project page served '.$bad.'.');
         }
 
-        $start = strpos($html, 'c-prose');
+        $start = strpos($html, 'cp-proj-body');
         $this->assertNotFalse($start, 'The project body did not render at all.');
         $prose = substr($html, $start, (strpos($html, '</div>', $start) ?: $start) - $start + 6);
 
@@ -231,6 +231,9 @@ class RenderedMarkupTest extends TestCase
             'pages/search/index.blade.php',
             // A column the admin table builds itself from escaped parts.
             'components/admin/resource-table.blade.php',
+            // The short hero prints actions and an aside that the calling
+            // template builds from escaped parts; no stored value reaches it raw.
+            'partials/cpages/hero.blade.php',
         ];
 
         $offenders = [];

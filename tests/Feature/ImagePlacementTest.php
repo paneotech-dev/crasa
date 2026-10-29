@@ -106,7 +106,8 @@ class ImagePlacementTest extends TestCase
         // over it rather than reading a description before every title.
         $html = $this->get('/en/about')->assertOk()->getContent();
 
-        $this->assertMatchesRegularExpression('/c-band__media"\s+aria-hidden="true"/', $html);
+        // The UI system's framed hero photograph (C16, 29 October 2026).
+        $this->assertMatchesRegularExpression('/u-hero__photo"\s+aria-hidden="true"/', $html);
         $this->assertMatchesRegularExpression(
             '#<img[^>]*institutional-delegates-boardroom-01[^>]*alt=""#',
             $html,

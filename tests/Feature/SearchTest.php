@@ -372,12 +372,16 @@ class SearchTest extends TestCase
             ->assertJsonStructure(['suggestions']);
     }
 
-    public function test_the_results_reuse_the_document_row_rather_than_a_new_pattern(): void
+    public function test_the_results_are_cards_grouped_by_kind_with_the_query_marked(): void
     {
         $html = $this->get('/en/search?q=roaming')->getContent();
 
-        $this->assertStringContainsString('b-rows', $html);
-        $this->assertStringContainsString('b-row__title', $html);
+        // UI system (29 October 2026): cards grouped by kind replace the
+        // document rows; the facet chips stay.
+        $this->assertStringContainsString('cp-search__group', $html);
+        $this->assertStringContainsString('class="u-card cp-result"', $html);
+        $this->assertMatchesRegularExpression('~<a href="[^"]+">[^<]*<mark>roaming</mark>~i', $html);
+        $this->assertStringContainsString('aria-live="polite"', $html);
         $this->assertStringContainsString('c-chip', $html);
     }
 

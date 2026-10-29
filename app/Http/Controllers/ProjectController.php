@@ -44,8 +44,28 @@ class ProjectController extends Controller
             404
         );
 
+        $project->load(['translations', 'sector', 'documents']);
+
+        // Related by sector, the one link the records hold (29 October 2026).
+        $publications = $project->sector_id === null ? collect() : \App\Models\Publication::query()
+            ->where(\App\Support\PublishedCounts::listedScope())
+            ->where('sector_id', $project->sector_id)
+            ->with(['translations', 'documents'])
+            ->orderByDesc('published_on')
+            ->limit(3)
+            ->get();
+
+        $news = $project->sector_id === null ? collect() : \App\Models\NewsItem::published()
+            ->where('sector_id', $project->sector_id)
+            ->with('translations')
+            ->orderByDesc('published_at')
+            ->limit(3)
+            ->get();
+
         return view('pages.projects.show', [
-            'project' => $project->load(['translations', 'sector', 'documents']),
+            'project' => $project,
+            'publications' => $publications,
+            'news' => $news,
             'related' => Project::published()
                 ->whereKeyNot($project->getKey())
                 ->with('translations')

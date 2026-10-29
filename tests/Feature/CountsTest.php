@@ -115,10 +115,11 @@ class CountsTest extends TestCase
     {
         $html = $this->get('/en/members/bw')->assertOk()->getContent();
 
-        $this->assertStringContainsString('c-tiles', $html);
+        // The four counts sit in the page hero since the UI system (29 October 2026).
+        $this->assertStringContainsString('class="u-figures"', $html);
         $this->assertGreaterThanOrEqual(
             4,
-            substr_count($html, 'c-tile"'),
+            substr_count($html, 'class="u-figure"'),
             'The member profile carries fewer counts than it did as a card.'
         );
     }
@@ -138,7 +139,7 @@ class CountsTest extends TestCase
         $html = $this->get('/en/members/'.$empty->iso_code)->assertOk()->getContent();
 
         $this->assertMatchesRegularExpression(
-            '~c-tile.*?<dd>\s*0\s*</dd>~s',
+            '~u-figure.*?<dd>\s*0\s*</dd>~s',
             $html,
             'A member state with nothing filed shows no zero, which turns a fact about '
             .'the data into a gap in the interface.'
@@ -216,7 +217,7 @@ class CountsTest extends TestCase
         // everything, which is the failure mode of a filter that silently
         // does not apply.
         $empty = $this->get('/en/publications?language=zz')->assertOk()->getContent();
-        $this->assertSame(0, substr_count($empty, 'class="b-row"'));
+        $this->assertSame(0, substr_count($empty, 'class="u-card cp-doc-card"'));
     }
 
     public function test_the_sector_facet_narrows_the_library(): void
@@ -232,8 +233,8 @@ class CountsTest extends TestCase
         $filtered = $this->get('/en/publications?sector='.$sector->slug)->assertOk()->getContent();
 
         $this->assertNotSame(
-            substr_count($all, 'class="b-row"'),
-            substr_count($filtered, 'class="b-row"'),
+            substr_count($all, 'class="u-card cp-doc-card"'),
+            substr_count($filtered, 'class="u-card cp-doc-card"'),
             'Filtering by sector returned the same number of rows as no filter.'
         );
     }

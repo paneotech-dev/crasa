@@ -56,8 +56,10 @@ class SectionBandTest extends TestCase
         foreach (self::SECTIONS as $url) {
             $html = $this->get($url)->assertOk()->getContent();
 
-            $this->assertStringContainsString('class="c-band"', $html, $url.' has no section band.');
-            $this->assertStringContainsString('c-band__title', $html, $url.' has a band with no title.');
+            // The section band or, since the UI system (29 October 2026), the
+            // short hero that replaces it on the rebuilt pages.
+            $this->assertMatchesRegularExpression('~class="(c-band|u-hero[ "])~', $html, $url.' has no section band.');
+            $this->assertMatchesRegularExpression('~c-band__title|class="u-h1"~', $html, $url.' has a band with no title.');
         }
     }
 
@@ -68,8 +70,8 @@ class SectionBandTest extends TestCase
     public function test_the_band_states_how_much_is_in_the_section(): void
     {
         foreach (['/en/publications', '/en/newsroom', '/en/events', '/en/members', '/en/committees', '/en/about', '/en/search'] as $url) {
-            $this->assertStringContainsString(
-                'c-band__counts',
+            $this->assertMatchesRegularExpression(
+                '~c-band__counts|class="u-figures[ "]~',
                 $this->get($url)->assertOk()->getContent(),
                 $url.' opens with a band that says nothing about how much is in it.'
             );
@@ -117,7 +119,8 @@ class SectionBandTest extends TestCase
     public function test_counts_link_to_what_they_count(): void
     {
         $html = $this->get('/en/members')->assertOk()->getContent();
-        $band = substr($html, strpos($html, 'c-band__counts'), 1400);
+        $at = strpos($html, 'c-band__counts');
+        $band = substr($html, $at !== false ? $at : (int) strpos($html, 'class="u-figures'), 1400);
 
         $this->assertStringContainsString('/en/committees', $band);
         $this->assertStringContainsString('/en/comparator', $band);

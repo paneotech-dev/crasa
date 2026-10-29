@@ -124,4 +124,31 @@ class ProjectsPageTest extends TestCase
             $this->get("/{$locale}/projects")->assertOk()->assertSee($heading);
         }
     }
+
+    /**
+     * S8 (29 October 2026): a hero with the current and completed counts,
+     * cards with a status pill in words and the partners as chips, and a
+     * project page with a facts panel. A field the record does not hold is
+     * left out rather than shown as a dash.
+     */
+    public function test_cards_and_the_project_page_show_what_the_record_holds(): void
+    {
+        $roadmap = $this->project('roadmap', 'current', 'IMT 2020 deployment roadmap');
+        $roadmap->update(['partner' => 'ITU, GSMA']);
+        $this->project('reform', 'past', 'SADC postal sector reform');
+
+        $html = $this->get('/en/projects')->assertOk()->getContent();
+        $this->assertStringContainsString('class="u-figures"', $html);
+        $this->assertStringContainsString(__('cpages_a.figure_completed'), $html);
+        $this->assertStringContainsString('<li>ITU</li>', $html);
+        $this->assertStringContainsString(__('cpages_a.status_current'), $html);
+        $this->assertStringContainsString(__('cpages_a.status_completed'), $html);
+        $this->assertStringContainsString('u-cta', $html);
+
+        $page = $this->get('/en/projects/reform')->assertOk()->getContent();
+        $this->assertStringContainsString(__('cpages_a.facts'), $page);
+        $this->assertStringNotContainsString('<dt>'.__('cpages_a.partners').'</dt>', $page);
+        $this->assertStringNotContainsString('<dt>'.__('cpages_a.period').'</dt>', $page);
+        $this->assertStringNotContainsString('<dd>-</dd>', $page);
+    }
 }

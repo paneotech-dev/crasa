@@ -110,8 +110,10 @@ class PublicPagesTest extends TestCase
         // once in the list beside it -- so this counts the list.
         $html = $this->get('/en/members')->getContent();
 
-        $this->assertSame(14, substr_count($html, 'b-directory__row'));
-        $this->assertSame(14, substr_count($html, 'b-directory__link'));
+        // The directory is a grid of cards since C14 (29 October 2026), each
+        // opening its member state.
+        $this->assertSame(14, substr_count($html, 'class="u-card cp-member"'));
+        $this->assertSame(14, preg_match_all('~<h3 class="u-card__title">\s*<a href="[^"]*/en/members/[a-z]{2}"~', $html));
     }
 
     public function test_the_placeholder_report_lists_every_flagged_block(): void
