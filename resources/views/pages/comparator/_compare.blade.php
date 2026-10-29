@@ -98,6 +98,8 @@
         @endforeach
     </div>
 
+    <x-indicator-note :indicators="$comparison->indicators" />
+
     <div class="c-cmp__foot">
         <span><strong>{{ __('comparator.foot_source') }}</strong> {{ __('comparator.foot_source_mixed') }}</span>
         @if ($comparison->latestUpdate())

@@ -1850,6 +1850,9 @@
 .c-completeness__gap { font-size: 12.5px; color: var(--c-red-dark); font-style: normal; }
 .c-completeness__total { font-weight: 700; }
 .c-source { font-size: 12.5px; line-height: 1.5; color: var(--c-slate); margin: var(--s-2) 0 0; }
+/* An indicator's reading note (values above 100 per 100 inhabitants).
+   Shared by the comparator, the member page and the home comparator. */
+.c-indicator-note { font-size: var(--t-small-size); line-height: 1.5; color: var(--c-charcoal); margin: var(--s-3) 0; padding-left: var(--s-3); border-left: 2px solid var(--c-green); }
 
 /* The homepage comparison's own selectors. Two member states and one
    indicator: the section demonstrates RP-10 by being it, not by describing

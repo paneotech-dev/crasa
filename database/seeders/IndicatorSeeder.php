@@ -68,6 +68,7 @@ class IndicatorSeeder extends Seeder
                 'unit' => 'subscriptions_per_100',
                 'data_type' => 'numeric',
                 'source' => self::ITU_HANDBOOK.', p.43 (ITU Core List A2)',
+                'may_exceed_hundred' => true,
             ],
             [
                 'slug' => 'fixed-broadband-subscriptions',
@@ -88,6 +89,7 @@ class IndicatorSeeder extends Seeder
                 'unit' => 'subscriptions_per_100',
                 'data_type' => 'numeric',
                 'source' => self::ITU_HANDBOOK.', p.48 (ITU Core List A4)',
+                'may_exceed_hundred' => true,
             ],
             [
                 'slug' => 'international-bandwidth-per-inhabitant',
@@ -213,6 +215,7 @@ class IndicatorSeeder extends Seeder
                     'source_url' => str_contains($spec['source'], 'UPU') ? self::UPU_URL : self::ITU_URL,
                     'display_order' => $order,
                     'is_active' => true,
+                    'may_exceed_hundred' => $spec['may_exceed_hundred'] ?? false,
                 ]
             );
         }

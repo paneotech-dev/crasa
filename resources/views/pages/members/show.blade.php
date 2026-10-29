@@ -181,6 +181,7 @@
                         </tbody>
                     </table>
                 </div>
+                <x-indicator-note :indicators="$figures->pluck('indicator')" />
                 <p class="c-note">
                     <a href="{{ route('comparator', ['locale' => app()->getLocale(), 'countries' => $country->iso_code]) }}">{{ __('members.detail_compare', ['country' => $country->name]) }}</a>
                 </p>

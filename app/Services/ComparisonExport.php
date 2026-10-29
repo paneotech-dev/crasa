@@ -157,6 +157,17 @@ final class ComparisonExport
      */
     public function svg(Comparison $comparison): string
     {
+        return $comparison->mode === Comparison::BROWSE
+            ? $this->browseSvg($comparison)
+            : $this->compareSvg($comparison);
+    }
+
+    /**
+     * Compare mode: up to four member states as columns, the category's
+     * indicators as rows.
+     */
+    private function compareSvg(Comparison $comparison): string
+    {
         $cells = $comparison->cells();
         $countries = $comparison->countries;
         $indicators = $comparison->indicators;
@@ -168,62 +179,38 @@ final class ComparisonExport
         $rowHeight = 64;
         $top = 208;
 
-        /*
-         * Every reported figure's source, numbered once each. The footer says
-         * each figure carries its source; until 17 September 2026 the table
-         * carried only the period, so the sentence was not true. A footnote
-         * number beside the period, and the list under the table, keep a
-         * long source from being cut to fit a column.
-         */
-        $sources = [];
-        foreach ($indicators as $indicator) {
-            foreach ($countries as $country) {
-                $source = ($cells[$indicator->id][$country->id] ?? null)?->source();
-                if ($source !== null && ! in_array($source, $sources, true)) {
-                    $sources[] = $source;
-                }
-            }
-        }
+        $sources = $this->sources($comparison);
+        $notes = $this->notes($comparison);
 
         $sourcesHeight = $sources === [] ? 0 : 40 + (count($sources) * 20);
-        $height = $top + ($indicators->count() * $rowHeight) + $sourcesHeight + 150;
+        $notesHeight = count($notes) * 20;
+        $height = $top + ($indicators->count() * $rowHeight) + $notesHeight + $sourcesHeight + 150;
 
-        $e = fn (?string $s) => htmlspecialchars((string) $s, ENT_QUOTES | ENT_XML1, 'UTF-8');
-        $parts = [];
+        $e = $this->escaper();
+        $parts = $this->masthead($width, $height);
 
-        $parts[] = '<rect width="'.$width.'" height="'.$height.'" fill="#FFFFFF"/>';
-
-        // Masthead. Navy band, the mark, the wordmark.
-        $parts[] = '<rect x="0" y="0" width="'.$width.'" height="96" fill="#0F1B2D"/>';
-        $parts[] = $this->mark(40, 26);
-        $parts[] = '<text x="104" y="46" font-family="Georgia,serif" font-size="24" font-weight="600" fill="#FFFFFF">'.$e(__('site.acronym')).'</text>';
-        $parts[] = '<text x="104" y="70" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="#E5E0D5">'.$e(__('site.full_name')).'</text>';
-
-        $title = $comparison->mode === Comparison::BROWSE
-            ? (string) $comparison->indicator?->name
-            : __('comparator.category_'.$comparison->category);
-
-        $parts[] = '<text x="40" y="146" font-family="Georgia,serif" font-size="28" font-weight="600" fill="#0F1B2D">'.$e($title).'</text>';
-        $parts[] = '<text x="40" y="172" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="#5C6B7E">'
+        $parts[] = '<text x="40" y="146" font-family="Georgia,serif" font-size="28" font-weight="600" fill="'.self::INK.'">'
+            .$e(__('comparator.category_'.$comparison->category)).'</text>';
+        $parts[] = '<text x="40" y="172" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="'.self::MUTED.'">'
             .$e($countries->pluck('name')->implode(', ')).'</text>';
 
         // Column headings.
-        $parts[] = '<line x1="40" y1="'.($top - 26).'" x2="'.($width - 40).'" y2="'.($top - 26).'" stroke="#E5E0D5" stroke-width="1"/>';
+        $parts[] = '<line x1="40" y1="'.($top - 26).'" x2="'.($width - 40).'" y2="'.($top - 26).'" stroke="'.self::RULE.'" stroke-width="1"/>';
 
         foreach ($countries->values() as $i => $country) {
             $x = $labelWidth + ($i * $columnWidth) + 12;
-            $parts[] = '<text x="'.$x.'" y="'.($top - 38).'" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#0F1B2D">'
+            $parts[] = '<text x="'.$x.'" y="'.($top - 38).'" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="'.self::INK.'">'
                 .$e(strtoupper($country->iso_code)).'</text>';
-            $parts[] = '<text x="'.($x + 34).'" y="'.($top - 38).'" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="#1F2937">'
+            $parts[] = '<text x="'.($x + 34).'" y="'.($top - 38).'" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="'.self::INK.'">'
                 .$e(Str::limit($country->name, 18)).'</text>';
         }
 
         foreach ($indicators->values() as $r => $indicator) {
             $y = $top + ($r * $rowHeight);
 
-            $parts[] = '<text x="40" y="'.($y + 6).'" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#1F2937">'
+            $parts[] = '<text x="40" y="'.($y + 6).'" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="'.self::INK.'">'
                 .$e(Str::limit($indicator->name, 46)).'</text>';
-            $parts[] = '<text x="40" y="'.($y + 26).'" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#5C6B7E">'
+            $parts[] = '<text x="40" y="'.($y + 26).'" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="'.self::MUTED.'">'
                 .$e((string) $indicator->unitLabel()).'</text>';
 
             foreach ($countries->values() as $i => $country) {
@@ -234,41 +221,246 @@ final class ComparisonExport
                 }
 
                 $x = $labelWidth + ($i * $columnWidth) + 12;
-
-                // Not reported reads as words in slate italic, never as a
-                // gap and never as a zero.
-                $parts[] = $cell->isReported()
-                    ? '<text x="'.$x.'" y="'.($y + 6).'" font-family="Helvetica,Arial,sans-serif" font-size="19" font-weight="600" fill="#0F1B2D">'.$e($cell->display()).'</text>'
-                    : '<text x="'.$x.'" y="'.($y + 6).'" font-family="Helvetica,Arial,sans-serif" font-size="15" font-style="italic" fill="#5C6B7E">'.$e($cell->display()).'</text>';
+                $parts[] = $this->value($cell, $x, $y + 6, 'start');
 
                 $note = $cell->source() !== null ? array_search($cell->source(), $sources, true) + 1 : null;
                 $meta = trim(($cell->period() ?? '').($note !== null ? '  ['.$note.']' : ''));
 
                 if ($meta !== '') {
-                    $parts[] = '<text x="'.$x.'" y="'.($y + 26).'" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5C6B7E">'.$e($meta).'</text>';
+                    $parts[] = '<text x="'.$x.'" y="'.($y + 26).'" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="'.self::MUTED.'">'.$e($meta).'</text>';
                 }
             }
 
-            $parts[] = '<line x1="40" y1="'.($y + 38).'" x2="'.($width - 40).'" y2="'.($y + 38).'" stroke="#E5E0D5" stroke-width="1"/>';
+            $parts[] = '<line x1="40" y1="'.($y + 38).'" x2="'.($width - 40).'" y2="'.($y + 38).'" stroke="'.self::RULE.'" stroke-width="1"/>';
         }
 
-        if ($sources !== []) {
-            $sy = $top + ($indicators->count() * $rowHeight) + 20;
-            $parts[] = '<text x="40" y="'.$sy.'" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="700" fill="#1F2937">'
-                .$e(__('comparator.csv_source')).'</text>';
+        $after = $top + ($indicators->count() * $rowHeight) + 20;
+        $parts = array_merge($parts, $this->noteLines($notes, $after), $this->sourceList($sources, $after + $notesHeight));
 
-            foreach ($sources as $n => $source) {
-                $parts[] = '<text x="40" y="'.($sy + 20 + ($n * 20)).'" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5C6B7E">'
-                    .$e('['.($n + 1).'] '.Str::limit($source, 170)).'</text>';
+        return $this->document($comparison, $parts, $width, $height);
+    }
+
+    /**
+     * Browse mode: one indicator down all fourteen member states.
+     *
+     * A row per member state, not a column: fourteen columns at a print
+     * width left each figure fifty pixels and the names ran into each
+     * other, so the exported page could not be read.
+     */
+    private function browseSvg(Comparison $comparison): string
+    {
+        $cells = $comparison->cells();
+        $indicator = $comparison->indicator;
+        $row = $indicator ? ($cells[$indicator->id] ?? []) : [];
+        $countries = $comparison->countries->filter(fn ($country) => isset($row[$country->id]))->values();
+
+        $width = 1240;
+        $rowHeight = 34;
+        $top = 236;
+
+        $sources = $this->sources($comparison);
+        $notes = $this->notes($comparison);
+
+        $sourcesHeight = $sources === [] ? 0 : 40 + (count($sources) * 20);
+        $notesHeight = count($notes) * 20;
+        $tableHeight = $countries->count() * $rowHeight;
+        $height = $top + $tableHeight + $notesHeight + $sourcesHeight + 150;
+
+        // Column positions: member state, value (right aligned), period,
+        // source note, provenance.
+        $xState = 40;
+        $xValue = 640;
+        $xPeriod = 690;
+        $xNote = 790;
+        $xProvenance = 880;
+
+        $e = $this->escaper();
+        $parts = $this->masthead($width, $height);
+
+        $parts[] = '<text x="40" y="146" font-family="Georgia,serif" font-size="28" font-weight="600" fill="'.self::INK.'">'
+            .$e(Str::limit((string) $indicator?->name, 80)).'</text>';
+        $parts[] = '<text x="40" y="172" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="'.self::MUTED.'">'
+            .$e(trim(Str::ucfirst((string) $indicator?->unitLabel()).'. '.__('comparator.export_browse_scope'), '. ')).'</text>';
+
+        $head = $top - 30;
+        $heading = fn (int $x, string $label, string $anchor = 'start') => '<text x="'.$x.'" y="'.$head.'" text-anchor="'.$anchor.'" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="700" fill="'.self::INK.'">'.$e($label).'</text>';
+
+        $parts[] = $heading($xState, __('comparator.col_state'));
+        $parts[] = $heading($xValue, __('comparator.col_value'), 'end');
+        $parts[] = $heading($xPeriod, __('comparator.csv_period'));
+        $parts[] = $heading($xNote, __('comparator.csv_source'));
+        $parts[] = $heading($xProvenance, __('comparator.col_provenance'));
+        $parts[] = '<line x1="40" y1="'.($head + 10).'" x2="'.($width - 40).'" y2="'.($head + 10).'" stroke="'.self::INK.'" stroke-width="1"/>';
+
+        foreach ($countries as $r => $country) {
+            $cell = $row[$country->id];
+            $y = $top + ($r * $rowHeight);
+
+            $parts[] = '<text x="'.$xState.'" y="'.$y.'" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="'.self::INK.'">'
+                .$e(strtoupper($country->iso_code)).'</text>';
+            $parts[] = '<text x="'.($xState + 36).'" y="'.$y.'" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="'.self::INK.'">'
+                .$e($country->name).'</text>';
+            $parts[] = $this->value($cell, $xValue, $y, 'end', 16);
+
+            if ($cell->period() !== null) {
+                $parts[] = '<text x="'.$xPeriod.'" y="'.$y.'" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="'.self::MUTED.'">'.$e($cell->period()).'</text>';
+            }
+
+            if ($cell->source() !== null) {
+                $parts[] = '<text x="'.$xNote.'" y="'.$y.'" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="'.self::MUTED.'">'
+                    .$e('['.(array_search($cell->source(), $sources, true) + 1).']').'</text>';
+            }
+
+            $parts[] = '<text x="'.$xProvenance.'" y="'.$y.'" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="'.self::MUTED.'">'
+                .$e(__('comparator.provenance_'.$cell->provenance())).'</text>';
+            $parts[] = '<line x1="40" y1="'.($y + 12).'" x2="'.($width - 40).'" y2="'.($y + 12).'" stroke="'.self::RULE.'" stroke-width="1"/>';
+        }
+
+        $after = $top + $tableHeight + 10;
+        $parts = array_merge($parts, $this->noteLines($notes, $after), $this->sourceList($sources, $after + $notesHeight));
+
+        return $this->document($comparison, $parts, $width, $height);
+    }
+
+    /*
+     * Document colours. The export is a file, not a page, so it cannot read
+     * the token layer; these are the light theme's ink, muted text, rule and
+     * link green.
+     */
+    private const INK = '#25384A';
+
+    private const MUTED = '#55687A';
+
+    private const RULE = '#D9E3EC';
+
+    private const GREEN = '#0F8757';
+
+    private const LINK = '#0C7A4E';
+
+    /** @return \Closure(?string): string */
+    private function escaper(): \Closure
+    {
+        return fn (?string $s) => htmlspecialchars((string) $s, ENT_QUOTES | ENT_XML1, 'UTF-8');
+    }
+
+    /**
+     * White ground, the mark, the wordmark and a green rule under them.
+     *
+     * @return list<string>
+     */
+    private function masthead(int $width, int $height): array
+    {
+        $e = $this->escaper();
+
+        return [
+            '<rect width="'.$width.'" height="'.$height.'" fill="#FFFFFF"/>',
+            $this->mark(40, 26),
+            '<text x="104" y="46" font-family="Georgia,serif" font-size="24" font-weight="600" fill="'.self::INK.'">'.$e(__('site.acronym')).'</text>',
+            '<text x="104" y="70" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="'.self::MUTED.'">'.$e(__('site.full_name')).'</text>',
+            '<rect x="40" y="94" width="'.($width - 80).'" height="3" fill="'.self::GREEN.'"/>',
+        ];
+    }
+
+    /** One figure: words in muted italic when not reported, never a gap. */
+    private function value(ComparisonCell $cell, int $x, int $y, string $anchor, int $size = 19): string
+    {
+        $e = $this->escaper();
+
+        return $cell->isReported()
+            ? '<text x="'.$x.'" y="'.$y.'" text-anchor="'.$anchor.'" font-family="Helvetica,Arial,sans-serif" font-size="'.$size.'" font-weight="600" fill="'.self::INK.'">'.$e($cell->display()).'</text>'
+            : '<text x="'.$x.'" y="'.$y.'" text-anchor="'.$anchor.'" font-family="Helvetica,Arial,sans-serif" font-size="'.($size - 4).'" font-style="italic" fill="'.self::MUTED.'">'.$e($cell->display()).'</text>';
+    }
+
+    /**
+     * Every reported figure's source, numbered once each. The footer says
+     * each figure carries its source; a footnote number beside the figure,
+     * and the list under the table, keep a long source from being cut to
+     * fit a column.
+     *
+     * @return list<string>
+     */
+    private function sources(Comparison $comparison): array
+    {
+        $cells = $comparison->cells();
+        $sources = [];
+
+        foreach ($comparison->indicators as $indicator) {
+            foreach ($comparison->countries as $country) {
+                $source = ($cells[$indicator->id][$country->id] ?? null)?->source();
+                if ($source !== null && ! in_array($source, $sources, true)) {
+                    $sources[] = $source;
+                }
             }
         }
 
+        return $sources;
+    }
+
+    /**
+     * Reading notes the indicators carry, such as subscriptions per 100
+     * inhabitants running above 100. The same sentence as on screen.
+     *
+     * @return list<string>
+     */
+    private function notes(Comparison $comparison): array
+    {
+        return $comparison->indicators
+            ->filter(fn ($indicator) => $indicator->canExceedHundred())
+            ->isEmpty() ? [] : [__('comparator.note_above_100')];
+    }
+
+    /**
+     * @param  list<string>  $notes
+     * @return list<string>
+     */
+    private function noteLines(array $notes, int $y): array
+    {
+        $e = $this->escaper();
+        $lines = [];
+
+        foreach ($notes as $n => $note) {
+            $lines[] = '<text x="40" y="'.($y + 10 + ($n * 20)).'" font-family="Helvetica,Arial,sans-serif" font-size="12" font-style="italic" fill="'.self::INK.'">'.$e($note).'</text>';
+        }
+
+        return $lines;
+    }
+
+    /**
+     * @param  list<string>  $sources
+     * @return list<string>
+     */
+    private function sourceList(array $sources, int $y): array
+    {
+        if ($sources === []) {
+            return [];
+        }
+
+        $e = $this->escaper();
+        $lines = ['<text x="40" y="'.($y + 20).'" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="700" fill="'.self::INK.'">'
+            .$e(__('comparator.csv_source')).'</text>'];
+
+        foreach ($sources as $n => $source) {
+            $lines[] = '<text x="40" y="'.($y + 40 + ($n * 20)).'" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="'.self::MUTED.'">'
+                .$e('['.($n + 1).'] '.Str::limit($source, 170)).'</text>';
+        }
+
+        return $lines;
+    }
+
+    /**
+     * The footer (date and permalink) and the SVG wrapper.
+     *
+     * @param  list<string>  $parts
+     */
+    private function document(Comparison $comparison, array $parts, int $width, int $height): string
+    {
+        $e = $this->escaper();
         $footY = $height - 96;
 
-        $parts[] = '<line x1="40" y1="'.$footY.'" x2="'.($width - 40).'" y2="'.$footY.'" stroke="#E5E0D5" stroke-width="1"/>';
-        $parts[] = '<text x="40" y="'.($footY + 22).'" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#5C6B7E">'
+        $parts[] = '<line x1="40" y1="'.$footY.'" x2="'.($width - 40).'" y2="'.$footY.'" stroke="'.self::RULE.'" stroke-width="1"/>';
+        $parts[] = '<text x="40" y="'.($footY + 22).'" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="'.self::MUTED.'">'
             .$e(__('comparator.export_source', ['date' => now()->isoFormat('D MMMM YYYY')])).'</text>';
-        $parts[] = '<text x="40" y="'.($footY + 42).'" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#0E5536">'
+        $parts[] = '<text x="40" y="'.($footY + 42).'" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="'.self::LINK.'">'
             .$e($comparison->permalink()).'</text>';
 
         return '<?xml version="1.0" encoding="UTF-8"?>'

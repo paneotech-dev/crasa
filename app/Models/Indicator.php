@@ -29,12 +29,12 @@ class Indicator extends Model
     protected $fillable = [
         'category', 'slug', 'name', 'definition', 'unit', 'data_type',
         'periodicity', 'sector_id', 'source_standard', 'source_url',
-        'display_order', 'is_active',
+        'display_order', 'is_active', 'may_exceed_hundred',
     ];
 
     protected function casts(): array
     {
-        return ['is_active' => 'boolean'];
+        return ['is_active' => 'boolean', 'may_exceed_hundred' => 'boolean'];
     }
 
     public function getRouteKeyName(): string
@@ -55,6 +55,16 @@ class Indicator extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
+    }
+
+    /**
+     * Whether figures above 100 are normal for this indicator, so the
+     * reading note "values above 100 are normal" goes with it wherever it
+     * is shown: comparator, comparison table, home comparator block.
+     */
+    public function canExceedHundred(): bool
+    {
+        return (bool) $this->may_exceed_hundred;
     }
 
     public function categoryLabel(): string
