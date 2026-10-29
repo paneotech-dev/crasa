@@ -49,6 +49,7 @@ use App\Http\Controllers\LocaleRedirectController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\NewsroomController;
 use App\Http\Controllers\NotificationCentreController;
+use App\Http\Controllers\HomeComparisonController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PublicationController;
@@ -73,6 +74,8 @@ Route::prefix('{locale}')
     ->middleware(SetLocale::class)
     ->group(function () {
         Route::get('/', [PageController::class, 'home'])->name('home');
+        // The homepage comparison's table alone, for the block's script.
+        Route::get('home/comparison', HomeComparisonController::class)->name('home.comparison');
 
         /*
          * Where a suspended account lands. Ruling 3. The real page arrives

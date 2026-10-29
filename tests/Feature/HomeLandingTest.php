@@ -1,0 +1,221 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Enums\BlockType;
+use App\Models\Country;
+use App\Models\Indicator;
+use App\Models\IndicatorValue;
+use App\Models\Page;
+use App\Models\PageBlock;
+use Database\Seeders\CountrySeeder;
+use Database\Seeders\HomepageSeeder;
+use Database\Seeders\NewsroomSeeder;
+use Database\Seeders\SectorSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
+
+/**
+ * The landing page, 29 October 2026: one comparison block that answers in
+ * place and still works without a script, the "What we do" band as four
+ * lines of work with their figures, and the newsroom's own cards.
+ */
+class HomeLandingTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private const MIGRATION = '2026_10_29_021000_home_one_comparison_and_statements_in_figures.php';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(SectorSeeder::class);
+        $this->seed(CountrySeeder::class);
+        $this->seed(HomepageSeeder::class);
+
+        $first = Indicator::factory()->create(['slug' => 'mobile-subs', 'name' => 'Mobile-cellular subscriptions', 'data_type' => 'numeric']);
+        $second = Indicator::factory()->create(['slug' => 'fixed-subs', 'name' => 'Fixed-telephone subscriptions', 'data_type' => 'numeric']);
+
+        foreach (Country::all() as $index => $country) {
+            foreach ([$first, $second] as $indicator) {
+                IndicatorValue::factory()->create([
+                    'indicator_id' => $indicator->id,
+                    'country_id' => $country->id,
+                    'period' => '2024',
+                    'value_numeric' => ($index + 1) * 7,
+                ]);
+            }
+        }
+    }
+
+    private function migration(): object
+    {
+        return require database_path('migrations/'.self::MIGRATION);
+    }
+
+    /* The comparison fragment ------------------------------------------------ */
+
+    public function test_the_fragment_returns_the_table_alone_for_the_asked_selection(): void
+    {
+        $response = $this->get('/en/home/comparison?cmp_indicator=fixed-subs&cmp_a=na&cmp_b=zw')->assertOk();
+        $html = $response->getContent();
+
+        // A fragment, not a page.
+        $this->assertStringNotContainsString('<html', $html);
+        $this->assertStringNotContainsString('<header', $html);
+        $this->assertStringContainsString('data-cmp-result', $html);
+
+        // The selection the server resolved travels with it, so the
+        // selectors and the announcement follow the table.
+        $this->assertStringContainsString('data-indicator="fixed-subs"', $html);
+        $this->assertStringContainsString('data-a="na"', $html);
+        $this->assertStringContainsString('data-b="zw"', $html);
+        $this->assertStringContainsString('data-status="Fixed-telephone subscriptions, Namibia and Zimbabwe."', $html);
+
+        // Value next to the country, the year in its own column.
+        $this->assertMatchesRegularExpression('~Namibia</a>\s*</th>\s*<td class="b-compare__value"~', $html);
+        $this->assertMatchesRegularExpression('~<td class="b-compare__year">2024</td>~', $html);
+
+        $response->assertHeader('X-Robots-Tag', 'noindex');
+    }
+
+    public function test_the_fragment_answers_in_the_readers_language(): void
+    {
+        $html = $this->get('/fr/home/comparison?cmp_a=na&cmp_b=zw')->assertOk()->getContent();
+
+        $this->assertStringContainsString(__('blocks.member_state', [], 'fr'), $html);
+        $this->assertStringContainsString('/fr/', $html);
+    }
+
+    public function test_the_fragment_resolves_bad_or_repeated_parameters_to_two_real_states(): void
+    {
+        $html = $this->get('/en/home/comparison?cmp_indicator=not-real&cmp_a=xx&cmp_b=xx')->assertOk()->getContent();
+        preg_match('~data-a="([a-z]*)"~', $html, $a);
+        preg_match('~data-b="([a-z]*)"~', $html, $b);
+
+        $this->assertNotSame('', $a[1]);
+        $this->assertNotSame('', $b[1]);
+        $this->assertNotSame($a[1], $b[1]);
+
+        // The same state twice is one state and a fallback, never a
+        // table of two identical rows.
+        $html = $this->get('/en/home/comparison?cmp_a=na&cmp_b=na')->assertOk()->getContent();
+        $this->assertStringContainsString('data-a="na"', $html);
+        $this->assertStringNotContainsString('data-b="na"', $html);
+    }
+
+    public function test_the_fragment_is_not_found_when_the_homepage_has_no_comparison(): void
+    {
+        PageBlock::where('block_type', BlockType::FeaturedComparison->value)->update(['is_visible' => false]);
+
+        $this->get('/en/home/comparison')->assertNotFound();
+    }
+
+    /* Without a script --------------------------------------------------------- */
+
+    public function test_without_a_script_the_form_reloads_the_homepage_at_the_block(): void
+    {
+        $html = $this->get('/en?cmp_indicator=fixed-subs&cmp_a=na&cmp_b=zw')->assertOk()->getContent();
+
+        $section = substr($html, strpos($html, 'data-home-compare'));
+        $section = substr($section, 0, strpos($section, '</section>'));
+
+        // A plain GET form, back to this page, at this block.
+        $this->assertMatchesRegularExpression('~<form class="b-compare__controls" method="get" action="http://localhost/en#compare">~', $section);
+        $this->assertMatchesRegularExpression('~<button[^>]*type="submit"[^>]*data-cmp-submit~', $section);
+
+        // The page renders what the query asked for, selectors included.
+        $this->assertMatchesRegularExpression('~<option value="fixed-subs"\s+selected~', $section);
+        $this->assertMatchesRegularExpression('~id="cmp-a".*?<option value="na"\s+selected~s', $section);
+        $this->assertMatchesRegularExpression('~id="cmp-b".*?<option value="zw"\s+selected~s', $section);
+        $this->assertStringContainsString('Fixed-telephone subscriptions, Namibia and Zimbabwe.', $section);
+
+        // The script is told where the fragment lives, and the status line
+        // that announces a change is a live region outside the swap.
+        $this->assertStringContainsString('data-fragment="http://localhost/en/home/comparison"', $section);
+        $this->assertMatchesRegularExpression('~id="home-comparison-status" role="status" aria-live="polite"~', $section);
+        $this->assertStringContainsString('js/home-compare.js', $html);
+    }
+
+    public function test_the_page_and_the_fragment_render_the_same_table(): void
+    {
+        $page = $this->get('/en?cmp_indicator=fixed-subs&cmp_a=na&cmp_b=zw')->getContent();
+        $fragment = $this->get('/en/home/comparison?cmp_indicator=fixed-subs&cmp_a=na&cmp_b=zw')->getContent();
+
+        $table = fn (string $html) => preg_replace('~\s+~', ' ', substr($html, strpos($html, '<table class="b-compare__table">'), strpos($html, '</table>') - strpos($html, '<table class="b-compare__table">')));
+
+        $this->assertSame($table($fragment), $table($page));
+    }
+
+    /* The content migration --------------------------------------------------- */
+
+    public function test_the_migration_leaves_one_comparison_and_puts_the_lines_of_work_in_the_figures_band(): void
+    {
+        $this->migration()->up();
+
+        $home = Page::where('slug', 'home')->firstOrFail();
+        $visible = $home->blocks()->where('is_visible', true)->pluck('block_type')->map(fn ($t) => $t instanceof BlockType ? $t->value : $t)->all();
+
+        $this->assertNotContains('statement_band', $visible);
+        $this->assertNotContains('pillars', $visible);
+        $this->assertContains('featured_comparison', $visible);
+
+        $html = $this->get('/en')->assertOk()->getContent();
+
+        $this->assertSame(1, substr_count($html, 'data-home-compare'));
+        $this->assertStringNotContainsString('b-statement', $html);
+        $this->assertStringContainsString('b-figures__grid--statements', $html);
+
+        // Each line of work leads, its figure supports it, and the member
+        // regulators figure opens the members page.
+        $pillars = PageBlock::where('page_id', $home->id)->where('block_type', 'pillars')->firstOrFail();
+        foreach (range(0, 3) as $i) {
+            $this->assertStringContainsString(e($pillars->translate('item_'.$i.'_heading', 'en')->value), $html);
+        }
+        $this->assertMatchesRegularExpression('~<a class="b-figure__support b-figure__support--link"\s+href="http://localhost/en/members"\s*>\s*<span class="b-figure__value">14</span>~', $html);
+
+        foreach (['fr', 'pt'] as $locale) {
+            $translated = $this->get('/'.$locale)->assertOk()->getContent();
+            $this->assertStringContainsString(e($pillars->translate('item_0_heading', $locale)->value), $translated);
+        }
+    }
+
+    public function test_the_migration_is_idempotent_and_reversible(): void
+    {
+        $figures = PageBlock::where('block_type', 'key_figures')->firstOrFail();
+        $count = fn () => DB::table('translations')->where('translatable_type', PageBlock::class)->where('translatable_id', $figures->id)->count();
+        $before = $count();
+
+        $this->migration()->up();
+        $after = $count();
+        $this->migration()->up();
+
+        $this->assertSame($after, $count());
+        $this->assertGreaterThan($before, $after);
+
+        $this->migration()->down();
+
+        $this->assertSame($before, $count());
+        $this->assertTrue(PageBlock::where('block_type', 'statement_band')->firstOrFail()->is_visible);
+        $this->assertTrue(PageBlock::where('block_type', 'pillars')->firstOrFail()->is_visible);
+    }
+
+    /* Latest updates ------------------------------------------------------------ */
+
+    public function test_latest_updates_use_the_newsroom_card(): void
+    {
+        $this->seed(NewsroomSeeder::class);
+
+        $html = $this->get('/en')->assertOk()->getContent();
+        $start = strpos($html, 'class="n-grid"');
+        $this->assertNotFalse($start, 'The newsroom strip does not use the newsroom grid.');
+
+        $strip = substr($html, $start, strpos($html, '</section>', $start) - $start);
+
+        $this->assertSame(3, substr_count($strip, 'class="b-card n-card"'));
+        $this->assertSame(3, substr_count($strip, 'class="n-card__media"'));
+        // Under the section's h2, the card titles are h3.
+        $this->assertSame(3, substr_count($strip, '<h3 class="n-card__title"'));
+    }
+}

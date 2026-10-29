@@ -92,7 +92,7 @@ final class BlockData
      *
      * @return array{rows: Collection<int, array<string, mixed>>, indicator: Indicator|null, ...}
      */
-    private static function comparison(PageBlock $block): array
+    public static function comparison(PageBlock $block): array
     {
         $request = request();
 
@@ -245,6 +245,9 @@ final class BlockData
             ->limit((int) $block->setting('limit', 3))
             ->get()
             ->map(fn (NewsItem $n) => [
+                // The record itself, for the newsroom's own card partial
+                // (29 October 2026). The keys below stay for other callers.
+                'model' => $n,
                 'kicker' => __($n->category->labelKey()),
                 'title' => $n->translated('title', $n->slug),
                 'summary' => $n->translated('summary', ''),
