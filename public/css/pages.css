@@ -19,7 +19,7 @@
 .cp-cta { margin-top: 0; }
 .cp-section-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: var(--u-3); margin-bottom: var(--u-4); }
 .cp-section-head .u-h2 { margin: 0; }
-.cp-prose { font: 400 var(--u-t-16)/var(--u-line-height) var(--u-sans); color: var(--u-ink); }
+.cp-prose { font: 400 var(--u-t-16)/var(--u-line-height) var(--u-sans); color: var(--u-ink); max-width: 72ch; }
 .cp-prose p { margin: 0 0 var(--u-3); }
 .cp-prose > :last-child { margin-bottom: 0; }
 .cp-icon { width: 20px; height: 20px; flex: none; }
