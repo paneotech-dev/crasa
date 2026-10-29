@@ -61,7 +61,7 @@ class NewsroomTest extends TestCase
 
     public function test_the_category_filter_narrows_the_listing(): void
     {
-        $html = $this->get('/en/newsroom?category=tender')->getContent();
+        $html = NewsroomLayoutTest::listing($this->get('/en/newsroom?category=tender')->getContent());
 
         $this->assertStringContainsString('Tender notice', $html);
         $this->assertStringNotContainsString('ninth meeting', $html);
@@ -77,7 +77,7 @@ class NewsroomTest extends TestCase
 
     public function test_the_tag_filter_narrows_the_listing(): void
     {
-        $html = $this->get('/en/newsroom?tag=roaming')->getContent();
+        $html = NewsroomLayoutTest::listing($this->get('/en/newsroom?tag=roaming')->getContent());
 
         $this->assertStringContainsString('roaming guidelines', $html);
         $this->assertStringNotContainsString('ninth meeting', $html);
