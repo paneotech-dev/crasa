@@ -1,9 +1,13 @@
 /* CRASA: display options and the translation notice.
  *
- * Three reader choices, each a class on <html> set before first paint:
+ * Six reader choices, each a class on <html> set before the page is drawn:
  *   a11y-text-smaller | a11y-text-larger | a11y-text-largest
+ *   a11y-spacing    wider line and paragraph spacing (WCAG 1.4.12 values)
+ *   a11y-dyslexia   reading spacing: wider letters and words, left aligned,
+ *                   no italics, no justified text, shorter lines
  *   a11y-contrast
  *   a11y-underline
+ *   a11y-pause      animations, transitions and auto-advance stopped
  * Reads tokens.css only. High contrast works by giving the same tokens
  * other values, so no component needs a rule of its own.
  */
@@ -13,16 +17,46 @@
 /* Without script nothing could run the panel, so it is not drawn. */
 html:not(.has-js) .c-a11y { display: none; }
 
-.c-a11y { position: relative; flex: none; }
-.c-a11y__toggle[aria-expanded="true"] { border-color: var(--c-navy); background: var(--c-green-light); }
+/* Self-contained: the toggle carries its own look so it reads the same in
+   whatever bar the header places it. */
+.c-a11y { position: relative; flex: none; font-family: var(--f-body); }
+.c-a11y__toggle {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  padding: 0 var(--s-2);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+.c-a11y__toggle:hover { border-color: currentColor; }
+.c-a11y__toggle[aria-expanded="true"] { border-color: currentColor; }
+.c-a11y__toggle svg { flex: none; }
+/* The name is in the button for every reader; it is drawn on a phone,
+   where the control is a row of its own, and read out everywhere. */
+.c-a11y__text {
+  position: absolute !important;
+  width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
 
 .c-a11y__panel {
   position: absolute;
   right: 0;
   top: calc(100% + var(--s-2));
   z-index: 60;
-  width: 300px;
+  width: 320px;
   max-width: calc(100vw - (var(--s-4) * 2));
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
   background: var(--c-white);
   color: var(--c-charcoal);
   border: 1px solid var(--c-border);
@@ -33,11 +67,11 @@ html:not(.has-js) .c-a11y { display: none; }
   flex-direction: column;
   gap: var(--s-4);
   font-family: var(--f-body);
+  text-align: left;
 }
 .c-a11y__panel[hidden] { display: none; }
-/* Where the button sits near the left of the row (the header wraps at some
-   widths), the panel opens rightwards so it stays on screen. a11y.js sets
-   the modifier after measuring. */
+/* Where the button sits near the left of the row, the panel opens
+   rightwards so it stays on screen. a11y.js sets the modifier. */
 .c-a11y__panel--start { right: auto; left: 0; }
 
 .c-a11y__head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
@@ -95,19 +129,23 @@ html:not(.has-js) .c-a11y { display: none; }
 }
 
 .c-a11y__toggles { display: flex; flex-direction: column; gap: var(--s-2); }
+.c-a11y__toggles .c-a11y__label { margin-bottom: 0; }
 
 /* A pressed toggle carries a tick as well as the colour, so the state is
    not carried by colour alone. */
-.c-a11y__switch { display: flex; align-items: center; gap: var(--s-3); }
+.c-a11y__switch { display: flex; align-items: flex-start; gap: var(--s-3); }
 .c-a11y__switch::before {
   content: "";
   flex: none;
   width: 18px;
   height: 18px;
-  border: 1.5px solid var(--c-border);
+  margin-top: 1px;
+  border: 1.5px solid var(--c-navy);
   border-radius: var(--r-xs);
   background: var(--c-white) center / 14px no-repeat;
 }
+.c-a11y__switch-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.c-a11y__hint { font-size: 13px; font-weight: 400; line-height: 1.4; color: var(--c-slate); }
 .c-a11y__switch[aria-pressed="true"] { border-color: var(--c-green-dark); background: var(--c-green-light); }
 .c-a11y__switch[aria-pressed="true"]::before {
   border-color: var(--c-green-dark);
@@ -127,17 +165,33 @@ html:not(.has-js) .c-a11y { display: none; }
 }
 .c-a11y__reset:hover { border-color: transparent; color: var(--c-navy); }
 
-/* Below 768 the header hides its utilities and moves them into the drawer.
-   The display options stay on the first row beside the menu button, so a
-   reader who needs larger text does not have to find it inside a menu. */
-/* On a phone the header's utility bar is a slim row carrying only this
-   control; languages, accounts and links are in the menu drawer. */
+/* Phones: a slim row of its own. Wherever the header puts the control, it
+   spans the width, shows its name beside the icon at the right edge, and
+   the panel opens as a sheet across the screen under it. Keyed on .c-a11y
+   only, so it holds whatever the header's own classes become. */
 @media (max-width: 767.98px) {
-  .has-js .c-header__bar:has(.c-a11y) { display: block; }
-  .has-js .c-header__bar:has(.c-a11y) .c-header__agency,
-  .has-js .c-header__bar:has(.c-a11y) .c-header__utilities > :not(.c-a11y) { display: none; }
-  .has-js .c-header__bar:has(.c-a11y) .c-header__bar-inner { justify-content: flex-end; padding-block: 2px; }
-  .c-a11y__panel { position: fixed; top: auto; right: var(--s-4); margin-top: var(--s-2); }
+  .c-a11y { display: flex; justify-content: flex-end; width: 100%; }
+  .c-a11y__toggle { min-height: 36px; padding: 2px var(--s-2); font-size: 14px; }
+  .c-a11y__text {
+    position: static !important;
+    width: auto; height: auto; margin: 0;
+    overflow: visible; clip: auto; white-space: nowrap;
+  }
+  /* 36px tall, but the hit area keeps 44px through the padding of the row
+     around it; the button is the full row height when the row is 44px. */
+  .c-a11y__toggle::after { content: ""; position: absolute; inset: -4px 0; }
+  .c-a11y__toggle { position: relative; }
+  .c-a11y__panel {
+    position: fixed;
+    top: auto;
+    left: var(--s-4);
+    right: var(--s-4);
+    width: auto;
+    max-width: none;
+    margin-top: var(--s-2);
+    max-height: calc(100vh - 96px);
+  }
+  .c-a11y__panel--start { left: var(--s-4); }
 }
 
 /* Translation notice ---------------------------------------------------- */
@@ -256,3 +310,64 @@ html.a11y-contrast :focus-visible {
   outline-offset: 2px;
   box-shadow: 0 0 0 5px #FFFFFF;
 }
+
+/* Line spacing -------------------------------------------------------------- */
+
+/* The text spacing values of WCAG 1.4.12: line height 1.5 times the size
+   is the floor already, so this goes to 1.8, with paragraph spacing twice
+   the size. Applied to running text, not to controls, so buttons keep
+   their height. */
+html.a11y-spacing :is(p, li, dd, dt, td, th, blockquote, figcaption, label, .c-prose, .u-prose) {
+  line-height: 1.8 !important;
+}
+html.a11y-spacing :is(p, ul, ol, dl, blockquote) { margin-bottom: 1.5em; }
+html.a11y-spacing :is(h1, h2, h3, h4) { line-height: 1.35 !important; }
+
+/* Reading spacing (dyslexia-friendly) ------------------------------------- */
+
+/* The British Dyslexia Association style guide: letter spacing about 0.12
+   of the size, word spacing 0.16, left aligned, no italics, lines not too
+   long. The site's sans (IBM Plex Sans) is kept: it has distinct letter
+   shapes for b, d, p, q and I, l, 1, and no extra font is downloaded. */
+html.a11y-dyslexia body {
+  letter-spacing: .06em;
+  word-spacing: .16em;
+}
+html.a11y-dyslexia :is(p, li, dd, td, blockquote, figcaption) {
+  letter-spacing: .12em !important;
+  word-spacing: .16em !important;
+  line-height: 1.8 !important;
+  text-align: left !important;
+  hyphens: none;
+}
+html.a11y-dyslexia main :is(p, li, dd, blockquote) { max-width: 70ch; }
+html.a11y-dyslexia :is(em, i, cite, blockquote) { font-style: normal !important; }
+html.a11y-dyslexia :is(em, i) { font-weight: 600; }
+html.a11y-dyslexia :is(h1, h2, h3, h4, h5, h6) { font-family: var(--f-body) !important; letter-spacing: .02em !important; }
+
+/* Pause animations ------------------------------------------------------- */
+
+/* Everything that moves by itself stops: CSS animation and transition,
+   smooth scrolling, and (through the crasa:a11y-pause event and this
+   class) the hero slider and count-up scripts. Content a reveal script
+   would fade in is shown at once. */
+html.a11y-pause { scroll-behavior: auto !important; }
+html.a11y-pause *,
+html.a11y-pause *::before,
+html.a11y-pause *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+html.a11y-pause :is([data-reveal], .is-reveal, .k-reveal, .u-reveal) { opacity: 1 !important; transform: none !important; }
+html.a11y-pause .u-card:hover,
+html.a11y-pause .u-card:focus-within { transform: none !important; }
+
+/* Reduced motion asked for by the device is honoured without the toggle;
+   base.css carries the global rule, this covers the panel itself. */
+@media (prefers-reduced-motion: reduce) {
+  .c-a11y__toggle, .c-a11y__panel { transition: none !important; }
+}
+
+/* The toolbar in high contrast keeps a visible edge on its own controls. */
+html.a11y-contrast .c-a11y__hint { color: #000000; }
