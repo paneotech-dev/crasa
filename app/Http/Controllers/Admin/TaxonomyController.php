@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\Permission;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
-use App\Models\Concerns\Auditable;
 use App\Models\Sector;
 use App\Models\Translation;
 use App\Support\BadgeColours;
@@ -243,8 +242,8 @@ class TaxonomyController extends Controller
         }
 
         // Names live in the translations table, which the model's own
-        // audit does not see; Tag has no audit of its own at all.
-        if ($changed !== [] || ! in_array(Auditable::class, class_uses_recursive($term), true)) {
+        // audit (Auditable, on all four kinds) does not see.
+        if ($changed !== []) {
             AuditLog::record($term->wasRecentlyCreated ? AuditLog::CREATED : AuditLog::UPDATED, $term, [
                 'translations' => $changed,
                 'slug' => $term->slug,
