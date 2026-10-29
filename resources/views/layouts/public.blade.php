@@ -54,6 +54,7 @@
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/chrome.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/blocks.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/theme-light.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/ui.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/a11y.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/print.css') }}" media="print">
     @stack('styles')
