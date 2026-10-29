@@ -32,7 +32,13 @@ class Meeting extends Model
         'committee_id', 'title', 'slug', 'kind', 'category', 'starts_on', 'ends_on', 'date_unknown',
         'location', 'venue', 'venue_country', 'agenda', 'summary', 'clearance',
         'registration_url', 'external_id', 'synced_at', 'is_sample',
+        'committee_code', 'organiser', 'source', 'news_item_id', 'status', 'status_note',
+        'starts_at', 'ends_at', 'timezone', 'online_url',
+        'registration_opens_on', 'registration_closes_on', 'capacity',
     ];
+
+    /** Statuses an event can carry on the public page. */
+    public const STATUSES = ['scheduled', 'postponed', 'cancelled'];
 
     protected function casts(): array
     {
@@ -43,6 +49,10 @@ class Meeting extends Model
             'clearance' => Clearance::class,
             'synced_at' => 'datetime',
             'is_sample' => 'boolean',
+            'registration_opens_on' => 'date',
+            'registration_closes_on' => 'date',
+            'imported_original' => 'array',
+            'capacity' => 'integer',
         ];
     }
 
@@ -54,6 +64,71 @@ class Meeting extends Model
     public function committee(): BelongsTo
     {
         return $this->belongsTo(Committee::class);
+    }
+
+    /** The newsroom item that reports this meeting, where there is one. */
+    public function newsItem(): BelongsTo
+    {
+        return $this->belongsTo(NewsItem::class);
+    }
+
+    /** The body that meets, with its colour and letter on the calendar. */
+    public function group(): \App\Support\EventGroup
+    {
+        return \App\Support\EventGroup::for($this);
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->status === 'cancelled';
+    }
+
+    public function isPostponed(): bool
+    {
+        return $this->status === 'postponed';
+    }
+
+    public function isOnline(): bool
+    {
+        return $this->online_url !== null && $this->online_url !== ''
+            || strcasecmp((string) $this->location, 'Online') === 0;
+    }
+
+    /** The last day of the meeting, or its only day. */
+    public function lastDay(): ?\Carbon\CarbonInterface
+    {
+        return $this->ends_on ?: $this->starts_on;
+    }
+
+    /**
+     * Whether a delegate can still file an arrival and a departure: a dated
+     * meeting that has not started, is not cancelled, and is inside its
+     * registration window where one is set.
+     */
+    public function registrationIsOpen(): bool
+    {
+        if ($this->date_unknown || ! $this->starts_on || $this->isCancelled()) {
+            return false;
+        }
+
+        $today = \App\Support\LocalTime::today();
+
+        if ($this->starts_on->toDateString() <= $today) {
+            return false;
+        }
+
+        if ($this->registration_opens_on && $this->registration_opens_on->toDateString() > $today) {
+            return false;
+        }
+
+        return ! ($this->registration_closes_on && $this->registration_closes_on->toDateString() < $today);
+    }
+
+    /** Whether this meeting has ended, in the Secretariat's day. */
+    public function hasEnded(): bool
+    {
+        return ! $this->date_unknown && $this->lastDay() !== null
+            && $this->lastDay()->toDateString() < \App\Support\LocalTime::today();
     }
 
     public function documents(): HasMany
