@@ -41,18 +41,14 @@
             </p>
         @endif
         <p class="e-card__pills">
-            @if ($meeting->isCancelled())
-                <span class="u-pill e-pill--cancelled"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>{{ __('e.status_cancelled') }}</span>
-            @elseif ($meeting->isPostponed())
-                <span class="u-pill u-pill--notice"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>{{ __('e.status_postponed') }}</span>
-            @endif
+            @include('pages.events._status', ['meeting' => $meeting, 'quiet' => true])
             @if ($meeting->clearance === \App\Enums\Clearance::Public && $isPast)
             @elseif ($meeting->clearance === \App\Enums\Clearance::Public)
                 <span class="u-pill u-pill--muted"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>{{ __('e.visibility_public') }}</span>
             @else
                 <span class="u-pill"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>{{ __('e.visibility_members') }}</span>
             @endif
-            @if ($isPast && ($label ?? false))
+            @if ($isPast && ($label ?? false) && $meeting->displayStatus() === 'scheduled')
                 <span class="u-pill u-pill--muted">{{ __('events.past') }}</span>
             @endif
         </p>

@@ -88,6 +88,48 @@ class Meeting extends Model
         return $this->status === 'postponed';
     }
 
+    /**
+     * The status a reader sees, worked out when it is shown rather than
+     * stored: cancelled and postponed as recorded, otherwise held once the
+     * last day has passed and scheduled before that. Nothing has to run on
+     * the day after a meeting for it to stop reading "Scheduled".
+     */
+    public function displayStatus(): string
+    {
+        return match (true) {
+            $this->isCancelled() => 'cancelled',
+            $this->isPostponed() => 'postponed',
+            $this->hasEnded() => 'held',
+            default => 'scheduled',
+        };
+    }
+
+    /**
+     * The day by which the Secretariat answers a filing: the meeting's
+     * first day, or for a meeting already running with its form still open,
+     * the form's closing day (never a day already gone).
+     */
+    public function registrationReplyBy(): ?\Carbon\CarbonInterface
+    {
+        if (! $this->starts_on) {
+            return null;
+        }
+
+        if ($this->starts_on->toDateString() > \App\Support\LocalTime::today()) {
+            return $this->starts_on;
+        }
+
+        return $this->registration_closes_on ?? $this->lastDay();
+    }
+
+    /** The display status in the reader's language. */
+    public function displayStatusLabel(): string
+    {
+        $status = $this->displayStatus();
+
+        return $status === 'held' ? __('d3_people.status_held') : __('e.status_'.$status);
+    }
+
     public function isOnline(): bool
     {
         return $this->online_url !== null && $this->online_url !== ''
@@ -102,8 +144,9 @@ class Meeting extends Model
 
     /**
      * Whether a delegate can still file an arrival and a departure: a dated
-     * meeting that has not started, is not cancelled, and is inside its
-     * registration window where one is set.
+     * meeting that has not started (or has a closing date that has not
+     * passed), is not cancelled, and is inside its registration window
+     * where one is set.
      */
     public function registrationIsOpen(): bool
     {
@@ -113,7 +156,12 @@ class Meeting extends Model
 
         $today = \App\Support\LocalTime::today();
 
-        if ($this->starts_on->toDateString() <= $today) {
+        // A meeting closes its form when it starts, unless the Secretariat
+        // set a closing date: then the form stays open to that date, and
+        // never past the meeting's last day (Day 3: a workshop whose
+        // delegates register in the room).
+        if ($this->starts_on->toDateString() <= $today
+            && ! ($this->registration_closes_on && $this->lastDay()->toDateString() >= $today)) {
             return false;
         }
 

@@ -54,7 +54,12 @@ class DelegateListController extends Controller
 
         $row = DelegateRegistration::where('meeting_id', $meeting->id)->findOrFail($registration);
         $status = $request->validate(['status' => ['required', 'in:filed,confirmed,declined']])['status'];
+        $was = $row->status ?: 'filed';
         $row->update(['status' => $status]);
+
+        if ($status === 'confirmed' && $was !== 'confirmed') {
+            event(new \App\Events\RegistrationConfirmed($row));
+        }
 
         return redirect()
             ->route('admin.delegates', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug])

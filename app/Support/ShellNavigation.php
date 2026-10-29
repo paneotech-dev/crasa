@@ -66,7 +66,8 @@ final class ShellNavigation
                 ['key' => 'publications', 'route' => 'admin.resources', 'params' => ['resource' => 'publications'], 'icon' => 'publications', 'permission' => Permission::ManageContent],
                 ['key' => 'newsroom', 'route' => 'admin.resources', 'params' => ['resource' => 'news'], 'icon' => 'newsroom', 'permission' => Permission::ManageContent],
                 ['key' => 'projects', 'route' => 'admin.resources', 'params' => ['resource' => 'projects'], 'icon' => 'publications', 'permission' => Permission::ManageContent, 'label' => __('admin.resource_projects')],
-                ['key' => 'events', 'route' => 'extranet.calendar', 'icon' => 'events', 'permission' => Permission::ManageMeetings],
+                // Day 3: the back office's own events list, which Delegate registrations used to stand in for.
+                ['key' => 'events', 'route' => 'admin.meetings', 'icon' => 'events', 'permission' => Permission::ManageMeetings],
                 ['key' => 'media', 'route' => 'admin.media', 'icon' => 'media', 'permission' => Permission::ManageContent],
                 ['key' => 'navigation', 'route' => 'admin.menus', 'icon' => 'navigation', 'permission' => Permission::ManageContent],
                 ['key' => 'announcements', 'route' => 'admin.announcements', 'icon' => 'bell', 'permission' => Permission::ManageContent],
@@ -85,12 +86,13 @@ final class ShellNavigation
                     'badge' => fn () => \App\Support\RoleDashboard::submissionsWaiting()],
                 ['key' => 'contributions', 'route' => 'admin.contributions', 'icon' => 'instruments', 'permission' => Permission::ValidateSubmission],
                 ['key' => 'reports', 'route' => 'admin.reports', 'icon' => 'reports', 'permission' => Permission::ExportReports],
+                // Day 3: the member state records are regulatory data, not people.
+                ['key' => 'confirmations', 'route' => 'admin.confirmations', 'icon' => 'confirmations', 'permission' => Permission::ManageContent],
             ],
             'people' => [
                 ['key' => 'users', 'route' => 'admin.users', 'icon' => 'users', 'permission' => Permission::ManageUsers],
                 ['key' => 'roles', 'route' => 'admin.roles', 'icon' => 'settings', 'permission' => Permission::AssignRoles],
-                ['key' => 'delegates', 'route' => 'admin.meetings', 'icon' => 'delegates', 'permission' => Permission::ManageMeetings],
-                ['key' => 'confirmations', 'route' => 'admin.confirmations', 'icon' => 'confirmations', 'permission' => Permission::ManageContent],
+                ['key' => 'delegates', 'route' => 'admin.registrations', 'icon' => 'delegates', 'permission' => Permission::ManageMeetings],
                 ['key' => 'authority-changes', 'route' => 'admin.authority-changes', 'icon' => 'authorities', 'permission' => Permission::ManageContent],
             ],
             'platform' => [

@@ -5,6 +5,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/events.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/d3-people-public.css') }}">
 @endpush
 @push('scripts')
     <script src="{{ \App\Support\Assets::url('js/events.js') }}" defer></script>
@@ -28,7 +29,7 @@
                 <p class="u-eyebrow">{{ __('events.band_eyebrow') }}</p>
                 <h1 class="u-h1" id="events-title">{{ __('e.hero_title') }}</h1>
                 <p class="u-lead">{{ __('e.hero_lead') }}</p>
-                <dl class="u-figures">
+                <dl class="u-figures d3p-figures">
                     <div class="u-figure"><dt>{{ trans_choice('events.count_upcoming', $counts['upcoming']) }}</dt><dd>{{ $counts['upcoming'] }}</dd></div>
                     <div class="u-figure"><dt>{{ trans_choice('events.count_past', $counts['past']) }}</dt><dd>{{ $counts['past'] }}</dd></div>
                     <div class="u-figure"><dt>{{ __('e.figure_bodies') }}</dt><dd>{{ count($groups) }}</dd></div>
@@ -105,7 +106,7 @@
                                                     @php($g = $m->group())
                                                     <a data-preview="e-pv-{{ $m->id }}" class="e-chip @if ($m->isCancelled()) e-chip--cancelled @endif @unless ($m->starts_on->isSameDay($d) || $d->isMonday() || $d->day === 1) e-chip--cont @endunless" data-group="{{ $g->code }}" style="--e-c: {{ $g->colour }}" href="{{ route('events.show', ['locale' => $locale, 'meeting' => $m->slug]) }}">
                                                         <span class="e-chip__code" aria-hidden="true">{{ $g->code }}</span>
-                                                        <span class="e-chip__text"><span class="c-sr">{{ $d->locale($locale)->isoFormat('D MMMM') }}, {{ $g->label() }}: </span>{{ $m->title }}@if ($m->isCancelled())<span class="c-sr"> ({{ __('e.status_cancelled') }})</span>@endif</span>
+                                                        <span class="e-chip__text"><span class="c-sr">{{ $d->locale($locale)->isoFormat('D MMMM') }}, {{ $g->label() }}: </span>{{ $m->title }}@if ($m->displayStatus() !== 'scheduled')<span class="c-sr"> ({{ $m->displayStatusLabel() }})</span>@endif</span>
                                                     </a>
                                                 @endforeach
                                             </td>
@@ -134,7 +135,7 @@
                                             <span>{{ $m->isOnline() && strcasecmp((string) $m->location, 'Online') === 0 ? __('e.online') : $m->location }}</span>
                                         </p>
                                     @endif
-                                    @if ($m->isCancelled())<p class="e-pv__line"><span class="u-pill e-pill--cancelled">{{ __('e.status_cancelled') }}</span></p>@endif
+                                    @if ($m->displayStatus() !== 'scheduled')<p class="e-pv__line">@include('pages.events._status', ['meeting' => $m, 'quiet' => true])</p>@endif
                                     @include('pages.events._add-to-calendar', ['meeting' => $m, 'compact' => true, 'idPrefix' => 'pv-'])
                                     <p class="e-pv__actions"><a class="u-btn u-btn--primary" href="{{ route('events.show', ['locale' => $locale, 'meeting' => $m->slug]) }}">{{ __('evening.preview_open') }}<span class="c-sr">: {{ $m->title }}</span></a></p>
                                 </template>
@@ -162,7 +163,7 @@
                                         <span class="u-date e-date" aria-hidden="true"><span class="u-date__day">{{ $m->starts_on->isoFormat('D') }}</span><span class="u-date__month">{{ $m->starts_on->copy()->locale($locale)->isoFormat('MMM') }}</span></span>
                                         <div>
                                             <a class="e-list__title" href="{{ route('events.show', ['locale' => $locale, 'meeting' => $m->slug]) }}">{{ $m->title }}</a>
-                                            <p class="e-list__meta">@include('pages.events._badge', ['group' => $g]) <time datetime="{{ $m->starts_on->toDateString() }}">{{ $m->dateRange() }}</time>@if ($m->location)<span>{{ $m->location }}</span>@endif @if ($m->isCancelled())<span class="u-pill e-pill--cancelled">{{ __('e.status_cancelled') }}</span>@elseif ($m->isPostponed())<span class="u-pill u-pill--notice">{{ __('e.status_postponed') }}</span>@endif</p>
+                                            <p class="e-list__meta">@include('pages.events._badge', ['group' => $g]) <time datetime="{{ $m->starts_on->toDateString() }}">{{ $m->dateRange() }}</time>@if ($m->location)<span>{{ $m->location }}</span>@endif @include('pages.events._status', ['meeting' => $m, 'quiet' => true])</p>
                                         </div>
                                     </li>
                                 @endforeach

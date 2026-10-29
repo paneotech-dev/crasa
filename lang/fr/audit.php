@@ -25,6 +25,7 @@ return [
     'action_suspended' => 'Suspension d\'un compte',
     'action_invitation_accepted' => "Acceptation d'une invitation",
     'action_reactivated' => 'Réactivation d\'un compte',
+    'action_registration_resent' => 'Renvoi à un délégué de la copie de son inscription',
     'subject_page' => 'une page',
     'subject_pageblock' => 'un bloc',
     'subject_publication' => 'une publication',

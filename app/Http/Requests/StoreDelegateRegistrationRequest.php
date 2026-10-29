@@ -31,7 +31,7 @@ class StoreDelegateRegistrationRequest extends FormRequest
     }
 
     /**
-     * A meeting that has started takes no more filings.
+     * A meeting whose form is closed takes no more filings (Meeting::registrationIsOpen).
      *
      * Here rather than in the controller. A form request validates during
      * resolution, so a controller-level check runs after the rules and a
@@ -44,7 +44,7 @@ class StoreDelegateRegistrationRequest extends FormRequest
         $meeting = $this->route('meeting');
 
         abort_if(
-            $meeting instanceof Meeting && $meeting->starts_on->isPast(),
+            $meeting instanceof Meeting && ! $meeting->registrationIsOpen(),
             410,
             __('delegates.closed')
         );
@@ -60,6 +60,8 @@ class StoreDelegateRegistrationRequest extends FormRequest
             // no account has no other way to say so, and the roster is
             // sorted by it.
             'country_id' => ['nullable', 'integer', 'exists:countries,id'],
+            // The regulator the delegate attends for, where they name one.
+            'authority_id' => ['nullable', 'integer', 'exists:authorities,id'],
 
             'arrival_point' => ['nullable', 'string', 'max:120'],
             'arrival_on' => ['required', 'date'],
@@ -94,6 +96,7 @@ class StoreDelegateRegistrationRequest extends FormRequest
             'delegate_email' => __('delegates.col_email'),
             'delegate_role' => __('delegates.col_role'),
             'country_id' => __('delegates.col_country'),
+            'authority_id' => __('d3_people.authority'),
             'arrival_point' => __('delegates.col_arrival_point'),
             'arrival_on' => __('delegates.col_arrival_on'),
             'arrival_at' => __('delegates.col_arrival_at'),
