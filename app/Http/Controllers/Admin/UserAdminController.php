@@ -29,6 +29,8 @@ class UserAdminController extends Controller
 
         $users = User::query()
             ->with(['country', 'authority'])
+            ->when(\Illuminate\Support\Facades\Schema::hasColumn('users', 'anonymised_at'), fn ($q) => $q->whereNull('anonymised_at'))
+            ->with('customRole')
             ->when($request->string('role')->value(), fn ($q, $v) => $q->where('role', $v))
             ->when($request->string('status')->value(), fn ($q, $v) => $q->where('status', $v))
             ->when($request->boolean('unenrolled'), fn ($q) => $q
@@ -41,6 +43,7 @@ class UserAdminController extends Controller
         return view('pages.admin.users.index', [
             'users' => $users,
             'roles' => Role::cases(),
+            'roleOptions' => \App\Models\RoleDefinition::orderByDesc('is_built_in')->orderBy('id')->get(),
             'statuses' => UserStatus::cases(),
             // Screen 13's matrix, from the same source the policies read.
             'permissions' => Permission::cases(),
@@ -87,19 +90,47 @@ class UserAdminController extends Controller
     {
         $this->authorize('assignRole', $user);
 
+        $keys = \App\Models\RoleDefinition::pluck('key')->all() ?: array_column(Role::cases(), 'value');
         $data = $request->validate([
-            'role' => ['required', 'in:'.implode(',', array_column(Role::cases(), 'value'))],
+            'role' => ['required', 'in:'.implode(',', $keys)],
         ]);
 
-        $from = $user->role->value;
-        $user->update(['role' => Role::from($data['role'])]);
+        $definition = \App\Models\RoleDefinition::where('key', $data['role'])->first();
+        $builtIn = Role::tryFrom($data['role']);
+        $from = $user->customRole?->key ?? $user->role->value;
+        $fromLabel = $user->roleLabel();
+
+        if ($from === $data['role']) {
+            return back();
+        }
+
+        // AP-12: at least two active administrators remain.
+        if ($user->role === Role::Administrator && $user->custom_role_id === null && $builtIn !== Role::Administrator
+            && $this->activeAdministrators() <= 2) {
+            return back()->withErrors(['role' => __('fa.two_admins')]);
+        }
+
+        $user->update($builtIn !== null
+            ? ['role' => $builtIn, 'custom_role_id' => null]
+            : ['role' => Role::from($definition->base_role), 'custom_role_id' => $definition->id]);
+        $user->unsetRelation('customRole');
 
         AuditLog::record(AuditLog::ROLE_CHANGED, $user, [
             'from' => $from,
             'to' => $data['role'],
         ], $request->user());
 
+        \App\Support\AdminAlerts::send($request->user(), 'role_changed', [
+            'subject' => $user->name, 'from' => $fromLabel, 'to' => $user->roleLabel(),
+        ], route('admin.users', ['locale' => app()->getLocale()]));
+
         return back()->with('status', __('admin.role_changed'));
+    }
+
+    private function activeAdministrators(): int
+    {
+        return User::query()->withoutGlobalScopes()->where('role', Role::Administrator->value)
+            ->whereNull('custom_role_id')->where('status', UserStatus::Active->value)->count();
     }
 
     public function suspend(Request $request, User $user)
@@ -107,9 +138,15 @@ class UserAdminController extends Controller
         $this->authorize('update', $user);
         abort_if($request->user()->is($user), 403, 'An administrator does not suspend their own account.');
 
+        if ($user->isAdministrator() && $user->status === UserStatus::Active && $this->activeAdministrators() <= 2) {
+            return back()->withErrors(['user' => __('fa.two_admins')]);
+        }
+
         $user->update(['status' => UserStatus::Suspended]);
 
         AuditLog::record(AuditLog::SUSPENDED, $user, null, $request->user());
+        \App\Support\AdminAlerts::send($request->user(), 'suspended', ['subject' => $user->name],
+            route('admin.users', ['locale' => app()->getLocale()]));
 
         return back()->with('status', __('admin.suspended'));
     }
@@ -121,6 +158,8 @@ class UserAdminController extends Controller
         $user->update(['status' => UserStatus::Active]);
 
         AuditLog::record(AuditLog::REACTIVATED, $user, null, $request->user());
+        \App\Support\AdminAlerts::send($request->user(), 'reactivated', ['subject' => $user->name],
+            route('admin.users', ['locale' => app()->getLocale()]));
 
         return back()->with('status', __('admin.reactivated'));
     }

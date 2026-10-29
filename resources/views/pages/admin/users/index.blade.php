@@ -4,10 +4,16 @@
 @section('note', __('admin.users_note'))
 
 @section('actions')
+    @can(\App\Enums\Permission::AssignRoles->value)
+        <a class="a-btn a-btn--secondary" href="{{ route('admin.roles', ['locale' => app()->getLocale()]) }}">{{ __('fa.roles_title') }}</a>
+    @endcan
     <a class="a-btn a-btn--primary" href="{{ route('admin.users.form', ['locale' => app()->getLocale()]) }}">{{ __('admin.invite') }}</a>
 @endsection
 
 @section('content')
+    @if ($errors->any())
+        <div class="a-notice a-notice--error" role="alert">@foreach ($errors->all() as $e)<p>{{ $e }}</p>@endforeach</div>
+    @endif
     @if ($unenrolledCount > 0)
         <div class="a-notice a-notice--pending" role="status">
             <strong>{{ trans_choice('admin.unenrolled_title', $unenrolledCount, ['count' => $unenrolledCount]) }}</strong>
@@ -43,8 +49,8 @@
                         @method('PUT')
                         <label class="c-sr" for="role-{{ $account->id }}">{{ __('admin.change_role_for', ['name' => $account->name]) }}</label>
                         <select class="a-select" id="role-{{ $account->id }}" name="role" @disabled(auth()->id() === $account->id)>
-                    @foreach ($roles as $role)
-                        <option value="{{ $role->value }}" @selected($account->role === $role)>{{ $role->label() }}</option>
+                    @foreach ($roleOptions as $option)
+                        <option value="{{ $option->key }}" @selected(($account->customRole?->key ?? $account->role->value) === $option->key)>{{ $option->label() }}</option>
                     @endforeach
                         </select>
                         <button type="submit" class="a-btn a-btn--secondary" @disabled(auth()->id() === $account->id)>{{ __('admin.apply') }}</button>

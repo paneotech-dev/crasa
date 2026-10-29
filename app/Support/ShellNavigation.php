@@ -84,6 +84,7 @@ final class ShellNavigation
             ],
             'people' => [
                 ['key' => 'users', 'route' => 'admin.users', 'icon' => 'users', 'permission' => Permission::ManageUsers],
+                ['key' => 'roles', 'route' => 'admin.roles', 'icon' => 'settings', 'permission' => Permission::AssignRoles],
                 ['key' => 'delegates', 'route' => 'admin.meetings', 'icon' => 'delegates', 'permission' => Permission::ManageMeetings],
                 ['key' => 'confirmations', 'route' => 'admin.confirmations', 'icon' => 'confirmations', 'permission' => Permission::ManageContent],
                 ['key' => 'authority-changes', 'route' => 'admin.authority-changes', 'icon' => 'authorities', 'permission' => Permission::ManageContent],

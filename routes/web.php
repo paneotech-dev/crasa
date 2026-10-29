@@ -665,6 +665,13 @@ Route::prefix('{locale}')
                 Route::put('users/{user}/role', [UserAdminController::class, 'assignRole'])->name('users.role');
                 Route::put('users/{user}/suspend', [UserAdminController::class, 'suspend'])->name('users.suspend');
                 Route::put('users/{user}/reactivate', [UserAdminController::class, 'reactivate'])->name('users.reactivate');
+                // Roles under People (F3).
+                Route::get('roles', [\App\Http\Controllers\Admin\RoleController::class, 'index'])->name('roles');
+                Route::get('roles/new', [\App\Http\Controllers\Admin\RoleController::class, 'create'])->name('roles.create');
+                Route::post('roles', [\App\Http\Controllers\Admin\RoleController::class, 'store'])->name('roles.store');
+                Route::get('roles/{role}', [\App\Http\Controllers\Admin\RoleController::class, 'edit'])->name('roles.edit');
+                Route::put('roles/{role}', [\App\Http\Controllers\Admin\RoleController::class, 'update'])->name('roles.update');
+                Route::delete('roles/{role}', [\App\Http\Controllers\Admin\RoleController::class, 'destroy'])->name('roles.destroy');
                 /*
                  * Reviewing what the member states contributed, RP-06. The
                  * same queue as the data returns, because it is the same
