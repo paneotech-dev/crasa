@@ -66,6 +66,7 @@ final class ShellNavigation
                 ['key' => 'media', 'route' => 'admin.media', 'icon' => 'media', 'permission' => Permission::ManageContent],
                 ['key' => 'navigation', 'route' => 'admin.menus', 'icon' => 'navigation', 'permission' => Permission::ManageContent],
                 ['key' => 'announcements', 'route' => 'admin.announcements', 'icon' => 'bell', 'permission' => Permission::ManageContent],
+                ['key' => 'social', 'route' => 'admin.social', 'icon' => 'newsroom', 'permission' => Permission::ManageContent, 'label' => __('fb.nav_social')],
                 ['key' => 'translations', 'route' => 'admin.translations', 'icon' => 'translations', 'permission' => Permission::EditTranslations],
                 ['key' => 'legal', 'route' => 'admin.pages', 'query' => ['template' => 'legal'], 'icon' => 'legal', 'permission' => Permission::ManageContent],
             ],

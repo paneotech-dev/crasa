@@ -1,0 +1,65 @@
+/* Social posts: "Latest from CRASA" on home and the newsroom feed.
+ * Built on ui.css (u-card, u-section). Classes prefixed s-.
+ */
+
+.s-latest__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 24px; }
+.s-latest__head .u-h2, .s-latest__head .u-h3 { margin: 0; }
+.s-latest__head .u-lead { margin: 0; color: #3F5264; }
+.s-latest__head--slim { margin-bottom: 16px; }
+.s-latest.u-section:has(.s-latest__head--slim) { padding-block: 40px; }
+
+/* Posts: one row of three on home, a grid in the newsroom. */
+.s-posts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start; }
+.s-posts .u-card { height: auto; }
+.s-posts .u-card:hover, .s-posts .u-card:focus-within { transform: none; }
+
+.s-post__head { display: flex; align-items: center; gap: 8px; padding: 16px 16px 8px; font: 600 14px/1.4 var(--u-sans, 'IBM Plex Sans', system-ui, sans-serif); color: #25384A; }
+.s-post__head .c-social-mark { flex: none; }
+.s-post__date { margin-left: auto; font-weight: 400; color: #3F5264; }
+.s-post__body { padding: 0 16px; min-height: 120px; }
+
+/* X: the blockquote is readable text until the widget draws the post. */
+.s-post__x { position: relative; min-height: 160px; background: #F4F8F6; border-radius: 12px; }
+.s-post__x .twitter-tweet { position: relative; margin: 0 !important; }
+.s-post__x blockquote.twitter-tweet { position: relative; z-index: 1; margin: 0; padding: 12px 16px; border-left: 3px solid #7A90C8; background: #F4F8F6; border-radius: 6px; font: 400 16px/1.5 var(--u-sans, 'IBM Plex Sans', system-ui, sans-serif); color: #25384A; }
+.s-post__x blockquote.twitter-tweet a { color: #2F4F8F; }
+.s-post__x iframe { max-width: 100% !important; }
+
+/* Facebook and LinkedIn frames on a pale ground with the caption behind. */
+.s-post__frame { position: relative; height: var(--s-frame-h, 520px); background: #F4F8F6; border: 1px solid #D9E3EC; border-radius: 6px; overflow: hidden; }
+.s-post__frame iframe { position: relative; display: block; width: 100%; height: 100%; border: 0; }
+.s-post__behind { position: absolute; inset: 0; margin: 0; padding: 16px; font: 400 16px/1.5 var(--u-sans, 'IBM Plex Sans', system-ui, sans-serif); color: #25384A; overflow: hidden; }
+.s-post__caption { margin: 0; padding: 16px; background: #F4F8F6; border-radius: 6px; font: 400 16px/1.5 var(--u-sans, 'IBM Plex Sans', system-ui, sans-serif); color: #25384A; }
+
+.s-post__open { margin: 0; padding: 12px 16px 16px; }
+.s-post__open a { display: inline-flex; align-items: center; min-height: 44px; font: 600 16px/1.3 var(--u-sans, 'IBM Plex Sans', system-ui, sans-serif); color: #0B5F3E; text-decoration: underline; text-underline-offset: 3px; }
+.s-post__open a:hover { color: #0F8757; }
+.s-post__open a:focus-visible, .s-channel__link:focus-visible { outline: 2px solid #2F4F8F; outline-offset: 2px; border-radius: 2px; }
+
+/* Channel cards: one slim row. */
+.s-channels { list-style: none; margin: 24px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.s-latest .s-channels { margin-top: 0; }
+.s-channel { flex-direction: row !important; align-items: center; gap: 12px; padding: 12px 16px; height: auto !important; }
+.s-channel .c-social-mark { width: 28px; height: 28px; flex: none; }
+.s-channel__text { display: flex; flex-direction: column; min-width: 0; }
+.s-channel__link { font: 600 16px/1.3 var(--u-sans, 'IBM Plex Sans', system-ui, sans-serif); color: #0B5F3E; text-decoration: none; min-height: 24px; }
+.s-channel__link::after { content: ""; position: absolute; inset: 0; }
+.s-channel__link:hover { text-decoration: underline; }
+.s-channel__handle { font: 400 14px/1.4 var(--u-sans, 'IBM Plex Sans', system-ui, sans-serif); color: #3F5264; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (max-width: 1000px) {
+  .s-posts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .s-posts--row > :nth-child(3) { display: none; }
+}
+@media (max-width: 720px) {
+  .s-posts, .s-channels { grid-template-columns: minmax(0, 1fr); }
+  /* Home on a phone: the three posts stay one row, swiped sideways. */
+  .s-posts--row { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 86%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; overscroll-behavior-x: contain; }
+  .s-posts--row > * { scroll-snap-align: start; }
+  .s-posts--row > :nth-child(3) { display: flex; }
+  .s-channels { gap: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .s-channel { transition: none; }
+}
+.c-socials__posts { margin-top: 32px; }

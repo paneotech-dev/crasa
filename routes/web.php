@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ResourceController;
 use App\Http\Controllers\Admin\SampleDataController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\SocialPostAdminController;
 use App\Http\Controllers\Admin\SubmissionReviewController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserAdminController;
@@ -697,6 +698,19 @@ Route::prefix('{locale}')
                 Route::put('announcements/{announcement}', [AnnouncementAdminController::class, 'update'])->name('announcements.update');
                 Route::put('announcements/{announcement}/publish', [AnnouncementAdminController::class, 'publish'])->name('announcements.publish');
                 Route::put('announcements/{announcement}/unpublish', [AnnouncementAdminController::class, 'unpublish'])->name('announcements.unpublish');
+
+                /*
+                 * Social posts: CRASA's own posts on X, Facebook and
+                 * LinkedIn, shown on the home page and in the newsroom.
+                 */
+                Route::get('social-posts', [SocialPostAdminController::class, 'index'])->name('social');
+                Route::get('social-posts/new', [SocialPostAdminController::class, 'create'])->name('social.create');
+                Route::post('social-posts', [SocialPostAdminController::class, 'store'])->name('social.store');
+                Route::get('social-posts/{post}', [SocialPostAdminController::class, 'edit'])->whereNumber('post')->name('social.edit');
+                Route::put('social-posts/{post}', [SocialPostAdminController::class, 'update'])->whereNumber('post')->name('social.update');
+                Route::put('social-posts/{post}/publish', [SocialPostAdminController::class, 'publish'])->whereNumber('post')->name('social.publish');
+                Route::put('social-posts/{post}/unpublish', [SocialPostAdminController::class, 'unpublish'])->whereNumber('post')->name('social.unpublish');
+                Route::delete('social-posts/{post}', [SocialPostAdminController::class, 'destroy'])->whereNumber('post')->name('social.destroy');
 
                 Route::get('audit', [AuditLogController::class, 'index'])->name('audit');
             });

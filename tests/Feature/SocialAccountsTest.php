@@ -191,15 +191,9 @@ class SocialAccountsTest extends TestCase
         }
     }
 
-    public function test_the_newsroom_ends_with_the_channels_and_a_lazy_facebook_timeline(): void
+    public function test_the_newsroom_ends_with_the_channels_and_no_empty_facebook_frame(): void
     {
-        $texts = [
-            'en' => ['CRASA on social media', "Read CRASA's posts on Facebook"],
-            'fr' => ['La CRASA sur les réseaux sociaux', 'Lire les publications de la CRASA sur Facebook'],
-            'pt' => ['A CRASA nas redes sociais', 'Ler as publicações da CRASA no Facebook'],
-        ];
-
-        foreach ($texts as $locale => [$heading, $link]) {
+        foreach (['en' => 'CRASA on social media', 'fr' => 'La CRASA sur les réseaux sociaux', 'pt' => 'A CRASA nas redes sociais'] as $locale => $heading) {
             $html = $this->get("/{$locale}/newsroom")->assertOk()->getContent();
 
             $this->assertStringContainsString($heading, $html);
@@ -207,20 +201,22 @@ class SocialAccountsTest extends TestCase
                 $this->assertStringContainsString('href="'.e(SiteSetting::get('social_'.$network)).'"', $html);
             }
 
-            // The frame is not in the markup: a script adds it near the
-            // viewport. The plain link is there without the script.
-            $this->assertMatchesRegularExpression('/data-fb-timeline\s+data-src="https:\/\/www\.facebook\.com\/plugins\/page\.php\?href=/', $html);
-            $this->assertStringNotContainsString('<iframe', $html);
-            $this->assertStringContainsString(e($link), $html);
-            $this->assertStringContainsString('js/social-timeline.js', $html);
+            // Facebook's page plugin sent a signed-out reader to its login
+            // page and drew an empty frame. It is gone.
+            $this->assertStringNotContainsString('data-fb-timeline', $html);
+            $this->assertStringNotContainsString('plugins/page.php', $html);
+            $this->assertStringNotContainsString('js/social-timeline.js', $html);
         }
     }
 
-    public function test_the_policy_frames_facebook_and_nothing_else(): void
+    public function test_the_policy_frames_the_three_embed_hosts_and_nothing_else(): void
     {
         $policy = $this->get('/en/newsroom')->headers->get('Content-Security-Policy');
 
-        $this->assertStringContainsString('frame-src https://www.facebook.com;', $policy);
+        $this->assertMatchesRegularExpression('/frame-src [^;]*https:\/\/www\.facebook\.com/', $policy);
+        $this->assertMatchesRegularExpression('/frame-src [^;]*https:\/\/www\.linkedin\.com/', $policy);
+        $this->assertMatchesRegularExpression('/frame-src [^;]*https:\/\/platform\.twitter\.com/', $policy);
+        $this->assertMatchesRegularExpression('/script-src [^;]*https:\/\/platform\.twitter\.com/', $policy);
         $this->assertStringContainsString("frame-ancestors 'none'", $policy);
         $this->assertSame(1, substr_count($policy, 'frame-src'));
     }
