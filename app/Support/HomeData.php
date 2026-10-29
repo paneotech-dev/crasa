@@ -266,6 +266,9 @@ final class HomeData
                 ? collect([$m->location, $m->venue_country])->filter()->implode(', ')
                 : (string) $m->location,
             'past' => $past,
+            // Day 3: held, cancelled or postponed, computed from the dates and status.
+            // The status only: this array is cached across languages.
+            'status' => $m->displayStatus(),
             'url' => route('events.show', ['locale' => app()->getLocale(), 'meeting' => $m->slug]),
         ];
     }

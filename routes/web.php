@@ -184,6 +184,10 @@ Route::prefix('{locale}')
         Route::post('events/{meeting}/register', [DelegateRegistrationController::class, 'store'])
             ->middleware(['throttle:registration', VerifyTurnstile::class])
             ->name('events.register.store');
+        // Day 3: people (public)
+        // After sending: what was filed and what happens next.
+        Route::get('events/{meeting}/register/done', [DelegateRegistrationController::class, 'done'])->name('events.register.done');
+        // end Day 3: people (public)
 
         Route::get('privacy', [PageController::class, 'show'])->defaults('slug', 'privacy')->name('privacy');
         Route::get('terms', [PageController::class, 'show'])->defaults('slug', 'terms')->name('terms');
@@ -704,6 +708,18 @@ Route::prefix('{locale}')
                 Route::put('users/{user}/suspend', [UserAdminController::class, 'suspend'])->name('users.suspend');
                 Route::put('users/{user}/reactivate', [UserAdminController::class, 'reactivate'])->name('users.reactivate');
                 Route::delete('users/{user}', [UserAdminController::class, 'destroy'])->name('users.destroy');
+                // Day 3: people (back office)
+                // One account and its audit trail, and editing it.
+                Route::get('users/{user}', [UserAdminController::class, 'show'])->whereNumber('user')->name('users.show');
+                Route::get('users/{user}/edit', [UserAdminController::class, 'edit'])->whereNumber('user')->name('users.edit');
+                Route::put('users/{user}', [UserAdminController::class, 'update'])->whereNumber('user')->name('users.update');
+                // Every delegate registration, grouped by event.
+                Route::get('registrations', [\App\Http\Controllers\Admin\RegistrationAdminController::class, 'index'])->name('registrations');
+                Route::get('registrations/export.csv', [\App\Http\Controllers\Admin\RegistrationAdminController::class, 'csv'])->name('registrations.csv');
+                Route::get('registrations/export.xlsx', [\App\Http\Controllers\Admin\RegistrationAdminController::class, 'xlsx'])->name('registrations.xlsx');
+                Route::put('registrations/{registration}/status', [\App\Http\Controllers\Admin\RegistrationAdminController::class, 'decide'])->whereNumber('registration')->name('registrations.decide');
+                Route::post('registrations/{registration}/resend', [\App\Http\Controllers\Admin\RegistrationAdminController::class, 'resend'])->whereNumber('registration')->name('registrations.resend');
+                // end Day 3: people (back office)
                 // Roles under People (F3).
                 Route::get('roles', [\App\Http\Controllers\Admin\RoleController::class, 'index'])->name('roles');
                 Route::get('roles/new', [\App\Http\Controllers\Admin\RoleController::class, 'create'])->name('roles.create');

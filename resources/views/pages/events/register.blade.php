@@ -18,6 +18,10 @@
                  departure, the Event Management Platform manages the rest,
                  and that division is a separate commercial agreement.
                  Logged in docs/OPEN_ITEMS.md. --}}
+            @if ($existing)
+                <div class="c-notice" role="status"><div><div class="c-notice__body">{{ __('d3_people.reg_editing', ['status' => __('d3_people.reg_'.($existing->status ?: 'filed'))]) }}</div></div></div>
+            @endif
+            <p class="c-small">{{ __('d3_people.reg_form_next', ['date' => $meeting->registrationReplyBy()->copy()->locale(app()->getLocale())->isoFormat('D MMMM YYYY')]) }}</p>
             <form class="c-form" method="POST" action="{{ route('events.register.store', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug]) }}">
                 @csrf
 
@@ -74,6 +78,16 @@
                             <p class="c-field__hint" id="country-hint">{{ __('delegates.country_hint') }}</p>
                         </div>
                     @endif
+
+                    <div class="c-field">
+                        <label class="c-label" for="authority_id">{{ __('d3_people.authority') }}</label>
+                        <select class="c-select" id="authority_id" name="authority_id">
+                            <option value="">{{ __('d3_people.no_authority') }}</option>
+                            @foreach ($authorities as $authority)
+                                <option value="{{ $authority->id }}" @selected((int) old('authority_id', $existing?->authority_id ?? auth()->user()?->authority_id) === $authority->id)>{{ $authority->acronym }}@if ($authority->country), {{ $authority->country->name }}@endif</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </fieldset>
 
                 <fieldset>
@@ -125,6 +139,9 @@
                                value="{{ old('departure_reference', $existing?->departure_reference) }}">
                     </div>
                 </fieldset>
+
+                {{-- Further attendance fieldsets (held, pending the commercial
+                     addendum) go here, between the journey and the remarks. --}}
 
                 <div class="c-field">
                     <label class="c-label" for="notes">{{ __('delegates.col_notes') }}</label>

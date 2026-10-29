@@ -1,0 +1,20 @@
+/* The event page's registration block and the member-area registration
+   prompts (Day 3). */
+.d3p-reg__h { font: 600 var(--u-t-16, 16px)/1.4 var(--u-sans); margin: var(--u-3, 12px) 0 var(--u-1, 4px); }
+.d3p-reg__list { margin: 0 0 var(--u-2, 8px); padding-left: 1.2em; }
+.d3p-reg__list li { margin-bottom: var(--u-1, 4px); }
+.mc-card__actions { margin: var(--u-2, 8px) 0 0; }
+
+/* The member dashboard's next-meeting card. */
+.d3p-next { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-3); margin-bottom: var(--s-5); }
+.d3p-next__title { margin: 0 0 var(--s-1); font-size: 17px; }
+.d3p-next__meta { margin: 0; }
+.d3p-done { margin-bottom: var(--s-5); }
+
+/* The events page's three figures: one row of three at every width, figure
+   over label, the label wrapping under its own figure. At 390 the flex row
+   left the third figure alone on a second line. */
+.d3p-figures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--u-3, 12px) var(--u-4, 16px); max-width: 520px; }
+.d3p-figures .u-figure { min-width: 0; }
+.d3p-figures .u-figure dt { overflow-wrap: anywhere; hyphens: auto; }
+@media (max-width: 420px) { .d3p-figures .u-figure dd { font-size: 30px; } }

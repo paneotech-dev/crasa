@@ -176,7 +176,8 @@ class EventsDay2Test extends TestCase
         $this->assertStringContainsString('Only upcoming', $html);
         $this->assertStringContainsString('Last spring', $html);
         $this->assertStringContainsString('Last winter', $html);
-        $this->assertStringContainsString('>Past<', $html);
+        // Day 3: a meeting that has ended reads Held (computed), not Past.
+        $this->assertStringContainsString('>Held<', $html);
     }
 
     /* Back office ------------------------------------------------------------- */

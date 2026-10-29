@@ -1,0 +1,36 @@
+/*
+ * Users and delegate registrations (Day 3). Loaded by the screens that use
+ * it; everything else comes from admin.css.
+ */
+
+/* A row's actions sit on one line and wrap as a group at 390. */
+.d3p-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); }
+.d3p-actions form { margin: 0; }
+
+/* Delete before suspend: shown, not usable, with its reason beside it.
+   aria-disabled rather than disabled so the button keeps focus and a
+   screen reader reads the reason through aria-describedby. */
+.a-btn[aria-disabled="true"],
+.a-btn[aria-disabled="true"]:hover {
+  color: var(--c-disabled);
+  background: var(--a-surface);
+  border-color: var(--a-rule);
+  cursor: not-allowed;
+}
+.d3p-why, .d3p-you { font-size: 13px; color: var(--a-ink-quiet); }
+.d3p-you { font-weight: 600; color: var(--a-ink); }
+
+/* An account's details: label above value, two columns from 768. */
+.d3p-facts { margin: 0; display: grid; gap: var(--s-4); }
+.d3p-facts dt { font-size: 13px; font-weight: 600; color: var(--a-ink-quiet); }
+.d3p-facts dd { margin: 2px 0 0; overflow-wrap: anywhere; }
+@media (min-width: 768px) { .d3p-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Delegate registrations, one card per event. */
+.d3p-event__links { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.d3p-mail { margin-bottom: var(--s-4); }
+.d3p-body { padding: 0 var(--s-5) var(--s-4); }
+.d3p-body .a-hint { margin: 0 0 var(--s-3); }
+.a-card__meta .a-pill { margin-left: var(--s-2); }
+.d3p-panel { margin-bottom: var(--s-5); }
+.d3p-form .a-panel .a-field + .a-field { margin-top: var(--s-4); }

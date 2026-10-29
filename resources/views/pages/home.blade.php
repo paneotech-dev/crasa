@@ -375,7 +375,7 @@
                     <a class="k-ev" href="{{ $e['url'] }}">
                         <span class="k-ev__d" aria-hidden="true"><span>{{ $e['month'] }}</span><b>{{ $e['day'] }}</b><small>{{ $e['year'] }}</small></span>
                         <span class="k-ev__i">
-                            <span class="k-pill @if ($e['past']) k-pill--grey @endif">{{ $e['past'] ? __('chome.events_past') : __('chome.events_upcoming') }}</span>
+                            <span class="k-pill @if ($e['past'] || ($e['status'] ?? 'scheduled') !== 'scheduled') k-pill--grey @endif">{{ ($e['status'] ?? 'scheduled') !== 'scheduled' ? ($e['status'] === 'held' ? __('d3_people.status_held') : __('e.status_'.$e['status'])) : ($e['past'] ? __('chome.events_past') : __('chome.events_upcoming')) }}</span>
                             <b>{{ $e['title'] }}</b>
                             <small><time datetime="{{ $e['iso'] }}">{{ $e['day'] }} {{ $e['month'] }} {{ $e['year'] }}</time>@if ($e['place']) · {{ $e['place'] }}@endif</small>
                         </span>

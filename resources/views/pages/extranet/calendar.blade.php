@@ -10,6 +10,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/member-calendar.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/d3-people-public.css') }}">
 @endpush
 
 @section('content')
@@ -93,7 +94,7 @@
                             <a class="e-cal__meeting mc-chip" data-kind="{{ $meeting->kind }}" data-group="{{ $g->code }}" style="--e-c: {{ $g->colour }}"
                                href="{{ route('events.show', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug]) }}">
                                 <span class="mc-chip__top"><span class="mc-badge" aria-hidden="true">{{ $g->code }}</span><span class="e-cal__kind">{{ __('extranet.kind_'.$meeting->kind) }}</span></span>
-                                <span class="mc-chip__title"><span class="c-sr">{{ $g->label() }}: </span>{{ $meeting->title }}</span>
+                                <span class="mc-chip__title"><span class="c-sr">{{ $g->label() }}: </span>{{ $meeting->title }}@if ($meeting->displayStatus() !== 'scheduled')<span class="c-sr"> ({{ $meeting->displayStatusLabel() }})</span>@endif</span>
                             </a>
                         @endforeach
                     </div>
@@ -165,7 +166,11 @@
                                     @endunless
                                     @if ($meeting->location)<span>{{ $meeting->location }}</span>@endif
                                     <span class="u-pill {{ $meeting->clearance === \App\Enums\Clearance::Public ? 'u-pill--muted' : '' }}">{{ $meeting->clearance->label() }}</span>
+                                    @include('pages.events._status', ['meeting' => $meeting, 'quiet' => true])
                                 </p>
+                                @if ($key === 'upcoming' && $meeting->registrationIsOpen())
+                                    <p class="mc-card__actions"><a class="u-btn u-btn--primary" href="{{ route('events.register', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug]) }}">{{ __('d3_people.register_attendance') }}<span class="c-sr">: {{ $meeting->title }}</span></a></p>
+                                @endif
                             </div>
                         </li>
                     @endforeach

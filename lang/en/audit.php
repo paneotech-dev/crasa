@@ -25,6 +25,7 @@ return [
     'action_suspended' => 'Suspended an account',
     'action_invitation_accepted' => "Accepted an invitation",
     'action_reactivated' => 'Reactivated an account',
+    'action_registration_resent' => 'Resent a delegate their registration copy',
     'subject_page' => 'a page',
     'subject_pageblock' => 'a block',
     'subject_publication' => 'a publication',

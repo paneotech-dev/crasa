@@ -49,6 +49,9 @@
         </div>
     @endif
 
+    {{-- Day 3: the next meeting open for registration. --}}
+    @include('partials.extranet.next-meeting-card', ['user' => auth()->user()])
+
     {{-- The role's own blocks first (F4). --}}
     @include('partials.role-dashboard')
 
