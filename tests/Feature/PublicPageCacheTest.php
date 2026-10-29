@@ -37,7 +37,7 @@ class PublicPageCacheTest extends TestCase
         foreach (['en', 'fr', 'pt'] as $locale) {
             $response = $this->get("/{$locale}")->assertOk();
 
-            $this->assertSame('max-age=600, public', $this->cacheControl($response), $locale);
+            $this->assertSame('max-age=0, public, s-maxage=600', $this->cacheControl($response), $locale);
         }
     }
 
@@ -103,7 +103,7 @@ class PublicPageCacheTest extends TestCase
 
     public function test_the_header_values_are_the_documented_ones(): void
     {
-        $this->assertSame('public, max-age=600', PublicPageCache::PUBLIC);
+        $this->assertSame('public, max-age=0, s-maxage=600', PublicPageCache::PUBLIC);
         $this->assertSame('private, no-store', PublicPageCache::PRIVATE);
     }
 }

@@ -22,9 +22,11 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  *     registration), because a cached token belongs to someone else's
  *     session and the form would fail for every later visitor
  *
- * Such a page is sent as "public, max-age=600" WITHOUT the session and
- * XSRF cookies Laravel sets on every response: a cached response that sets
- * a cookie would hand one visitor's session to the next. Laravel still
+ * Such a page is sent as "public, max-age=0, s-maxage=600": the edge keeps
+ * it ten minutes and a browser revalidates every time, so a reader who signs
+ * in never sees a signed-out copy from their own cache. It goes WITHOUT the
+ * session and XSRF cookies Laravel sets on every response: a cached
+ * response that sets a cookie would hand one visitor's session to the next. Laravel still
  * starts its session for the request; the cookie naming it is simply not
  * sent, so the visitor arrives at their next page without one, exactly as
  * they arrived at this one.
@@ -35,7 +37,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class PublicPageCache
 {
-    public const PUBLIC = 'public, max-age=600';
+    public const PUBLIC = 'public, max-age=0, s-maxage=600';
 
     public const PRIVATE = 'private, no-store';
 
