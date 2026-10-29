@@ -172,6 +172,9 @@ html:not(.has-js) .c-a11y { display: none; }
 @media (max-width: 767.98px) {
   .c-a11y { display: flex; justify-content: flex-end; width: 100%; }
   .c-a11y__toggle { min-height: 36px; padding: 2px var(--s-2); font-size: 14px; }
+  /* A header may size the button as an icon square; on a phone it carries
+     its name, so it takes the width it needs (higher weight on purpose). */
+  .c-a11y > button.c-a11y__toggle[data-a11y-toggle] { width: auto; min-width: 44px; }
   .c-a11y__text {
     position: static !important;
     width: auto; height: auto; margin: 0;
