@@ -9,13 +9,16 @@
     The bars grow once when drawn (CSS, 400ms, off under reduced motion).
 --}}
 @php
+    // Two geometries: 640 wide for desktop, 360 for phones, so the text
+    // stays at a readable size instead of shrinking with the viewBox.
+    $vw = ($narrow ?? false) ? 360 : 640;
     $rowH = 40;
-    $labelW = 170;
-    $barW = 330;
+    $labelW = ($narrow ?? false) ? 104 : 170;
+    $barW = ($narrow ?? false) ? 150 : 330;
     $height = max(1, count($bars)) * $rowH + 8;
-    $uid = $id ?? 'cmp-chart-'.substr(md5($title.count($bars)), 0, 6);
+    $uid = ($id ?? 'cmp-chart-'.substr(md5($title.count($bars)), 0, 6)).(($narrow ?? false) ? '-n' : '');
 @endphp
-<svg class="c-cmp-chart" viewBox="0 0 640 {{ $height }}" width="100%" role="img"
+<svg class="c-cmp-chart {{ ($narrow ?? false) ? 'c-cmp-chart--narrow' : 'c-cmp-chart--wide' }}" viewBox="0 0 {{ $vw }} {{ $height }}" width="100%" role="img"
      aria-labelledby="{{ $uid }}-t {{ $uid }}-d" focusable="false" preserveAspectRatio="xMinYMin meet">
     <title id="{{ $uid }}-t">{{ $title }}</title>
     <desc id="{{ $uid }}-d">{{ $summary }}</desc>
@@ -34,7 +37,7 @@
             $w = min($w, $barW);
         @endphp
         <g class="c-cmp-chart__row" style="--i: {{ $i }}">
-            <text class="c-cmp-chart__name" x="{{ $labelW - 12 }}" y="{{ $y + 20 }}" text-anchor="end">{{ \Illuminate\Support\Str::limit($bar['name'], 20) }}</text>
+            <text class="c-cmp-chart__name" x="{{ $labelW - 12 }}" y="{{ $y + 20 }}" text-anchor="end">{{ \Illuminate\Support\Str::limit($bar['name'], ($narrow ?? false) ? 12 : 20) }}</text>
             @if ($reported)
                 <rect class="c-cmp-chart__bar" x="{{ $labelW }}" y="{{ $y + 4 }}" width="{{ $w }}" height="22" rx="3" fill="{{ $i === 0 && ($highlightFirst ?? false) ? '#0B5F3E' : '#0F8757' }}"></rect>
                 <text class="c-cmp-chart__value" x="{{ $labelW + $w + 8 }}" y="{{ $y + 20 }}">{{ $bar['display'] }}@if ($bar['period'])<tspan class="c-cmp-chart__year" dx="6">{{ $bar['period'] }}</tspan>@endif</text>

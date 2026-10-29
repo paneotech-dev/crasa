@@ -42,6 +42,15 @@
                     'id' => 'cmp-chart',
                     'highlightFirst' => $isBrowse,
                 ])
+                @include('pages.comparator._chart', [
+                    'bars' => $bars,
+                    'max' => $comparison->scaleMax(),
+                    'title' => $indicator->name,
+                    'summary' => $summary,
+                    'id' => 'cmp-chart',
+                    'highlightFirst' => $isBrowse,
+                    'narrow' => true,
+                ])
             </div>
         </figure>
 

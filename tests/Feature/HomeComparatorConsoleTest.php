@@ -53,7 +53,8 @@ class HomeComparatorConsoleTest extends TestCase
         $this->assertStringContainsString('data-a="za"', $html);
         $this->assertStringContainsString('data-b="mu"', $html);
         $this->assertStringContainsString('South Africa 172.4 (2025); Mauritius 118.5 (2025)', $html);
-        $this->assertStringContainsString('class="c-cmp-chart"', $html);
+        $this->assertStringContainsString('class="c-cmp-chart c-cmp-chart--wide"', $html);
+        $this->assertStringContainsString('class="c-cmp-chart c-cmp-chart--narrow"', $html);
         $this->assertStringContainsString('indicator=mobile-cellular-subscriptions&amp;countries=za%2Cmu', $html);
         $this->assertStringContainsString(__('comparator.note_above_100'), $html);
 

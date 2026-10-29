@@ -59,6 +59,14 @@
                     'summary' => $summary,
                     'id' => 'hcmp-chart',
                 ])
+                @include('pages.comparator._chart', [
+                    'bars' => $rows->map(fn ($r) => ['name' => $r['country'], 'iso' => $r['iso'], 'value' => $r['numeric'], 'display' => $r['value'] ?? __('comparator.not_reported'), 'period' => $r['period']])->values()->all(),
+                    'max' => $max,
+                    'title' => $indicator->name,
+                    'summary' => $summary,
+                    'id' => 'hcmp-chart',
+                    'narrow' => true,
+                ])
             </div>
             @if ($plain)<p class="c-hcmp__plain">{{ $plain[1] }}</p>@endif
             <x-indicator-note :indicators="$indicator" class="c-hcmp__note" />

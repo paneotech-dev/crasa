@@ -54,7 +54,12 @@
 .c-cmp__chart { margin: 0; padding: 16px 16px 8px; }
 .c-cmp__chart-cap { margin: 0 0 8px; font: 600 14px/1.4 var(--u-sans); color: var(--u-blue-ink, #2F4F8F); }
 .c-cmp__chart-frame { overflow-x: auto; }
-.c-cmp-chart { display: block; min-width: 600px; font-family: var(--u-sans); }
+.c-cmp-chart { display: block; overflow: visible; font-family: var(--u-sans); }
+.c-cmp-chart--narrow { display: none; }
+@media (max-width: 599.98px) {
+  .c-cmp-chart--wide { display: none; }
+  .c-cmp-chart--narrow { display: block; }
+}
 .c-cmp-chart__name { font-size: 14px; fill: var(--u-ink, #25384A); font-weight: 600; }
 .c-cmp-chart__value { font-size: 14px; fill: var(--u-ink, #25384A); font-weight: 700; }
 .c-cmp-chart__year { font-weight: 400; fill: var(--u-muted, #3F5264); }
@@ -156,7 +161,6 @@
 .c-hcmp__table td { vertical-align: middle; }
 .c-hcmp__summary { margin: 12px 0 0; font-size: 16px; color: var(--u-ink, #25384A); }
 .c-hcmp__chart { margin: 0; padding: 20px; background: #FFFFFF; }
-.c-hcmp__chart .c-cmp-chart { min-width: 420px; }
 .c-hcmp__plain, .c-hcmp__source, .c-hcmp__note { margin: 12px 0 0; font-size: 14px; color: var(--u-muted, #3F5264); }
 .c-hcmp__open { margin: 16px 0 0; }
 [data-home-compare] [data-cmp-slot][aria-busy="true"] { opacity: .6; transition: opacity 150ms; }
@@ -178,5 +182,5 @@
   .c-cmp__console--browse .c-cmp__sector[data-sector="postal"] .c-cmp__picks { grid-template-columns: 1fr 1fr; }
   .c-cmp__console--browse .c-cmp__view--browse { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
   .c-cmp__console--browse .c-cmp__words--row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
-  .c-cmp__console--browse .c-cmp-chart { min-width: 0; }
 }
+.c-hcmp__left, .c-hcmp__right { min-width: 0; }
