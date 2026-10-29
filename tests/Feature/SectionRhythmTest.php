@@ -61,9 +61,9 @@ class SectionRhythmTest extends TestCase
         // comparison moved to light grounds. The comparison is cream, and
         // the run rule turns it white after the cream pillars. The
         // statement band is hidden on the live homepage by migration; in
-        // the seeded page it is still there and still navy.
+        // the seeded page it is still there, on white like every band.
         $this->assertSame(
-            ['white', 'cream', 'white', 'cream', 'navy', 'cream', 'sand', 'white'],
+            ['white', 'cream', 'white', 'cream', 'white', 'cream', 'sand', 'white'],
             $this->grounds('/en'),
         );
     }
