@@ -2,7 +2,7 @@
     CRASA's own channels: the network's mark, the handle and the link.
 
     Used twice. With $timeline (the newsroom) CRASA's published social
-    posts follow the channels; partials.newsroom.social-feed is the full
+    posts follow the channels; partials.newsroom.social is the full
     replacement for that section.
 
     Every URL comes from site settings through SocialAccounts. The handle is

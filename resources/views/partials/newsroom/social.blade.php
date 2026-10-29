@@ -1,7 +1,7 @@
 {{--
     Newsroom: every published social post, newest first, then CRASA's
     three channels. Placed at the bottom of the newsroom with
-    @includeIf('partials.newsroom.social-feed').
+    @includeIf('partials.newsroom.social').
 --}}
 @php
     $socialPosts = \Illuminate\Support\Facades\Schema::hasTable('social_posts')

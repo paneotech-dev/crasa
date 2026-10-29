@@ -161,7 +161,7 @@ class SocialPostsTest extends TestCase
 
     public function test_the_newsroom_feed_partial_lists_posts_newest_first_with_the_channels(): void
     {
-        $html = view('partials.newsroom.social-feed')->render();
+        $html = view('partials.newsroom.social')->render();
         $urls = SocialPost::live()->pluck('url')->map(fn ($u) => e($u))->all();
 
         $positions = array_map(fn ($u) => strpos($html, $u), $urls);
