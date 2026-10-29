@@ -32,7 +32,7 @@
                     <p class="u-lead e-home__lead">{{ __('e.home_lead') }}</p>
                 </div>
                 <a class="u-btn u-btn--secondary" href="{{ route('events', ['locale' => app()->getLocale()]) }}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>{{ __('e.home_all') }}</a>
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>{{ __('e.home_all') }}</a>
             </div>
             <ul class="u-cols-3 e-cards" role="list">
                 @foreach ($homeUpcoming as $meeting)

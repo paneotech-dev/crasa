@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ConfirmationController;
 use App\Http\Controllers\Admin\ContributionReviewController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DelegateListController;
+use App\Http\Controllers\Admin\EventAdminController;
 use App\Http\Controllers\Admin\DismissController;
 use App\Http\Controllers\Admin\HelpController;
 use App\Http\Controllers\Admin\InstrumentVersionController;
@@ -652,6 +653,20 @@ Route::prefix('{locale}')
                 Route::get('meetings', [MeetingListController::class, 'index'])->name('meetings');
                 Route::get('meetings/{meeting}/delegates', [DelegateListController::class, 'index'])->name('delegates');
                 Route::get('meetings/{meeting}/delegates.csv', [DelegateListController::class, 'csv'])->name('delegates.csv');
+                /*
+                 * Events, E4: the form in four steps and a summary, cancel
+                 * or postpone, delete with a confirmation, and confirming or
+                 * declining a delegate. Nothing here books travel or rooms.
+                 */
+                Route::get('meetings/new', [EventAdminController::class, 'create'])->name('meetings.create');
+                Route::post('meetings', [EventAdminController::class, 'store'])->name('meetings.store');
+                Route::get('meetings/{meeting}/edit', [EventAdminController::class, 'edit'])->name('meetings.edit');
+                Route::put('meetings/{meeting}', [EventAdminController::class, 'update'])->name('meetings.update');
+                Route::put('meetings/{meeting}/status', [EventAdminController::class, 'status'])->name('meetings.status');
+                Route::get('meetings/{meeting}/delete', [EventAdminController::class, 'confirmDelete'])->name('meetings.delete');
+                Route::delete('meetings/{meeting}', [EventAdminController::class, 'destroy'])->name('meetings.destroy');
+                Route::put('meetings/{meeting}/delegates/{registration}', [DelegateListController::class, 'decide'])
+                    ->whereNumber('registration')->name('delegates.decide');
 
                 Route::get('reports', [ReportController::class, 'index'])->name('reports');
                 Route::post('reports', [ReportController::class, 'store'])->name('reports.store');

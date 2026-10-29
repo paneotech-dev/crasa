@@ -4,7 +4,7 @@
 @section('note', $meeting->title)
 
 @section('crumbs')
-    <li><a href="{{ route('extranet.calendar', ['locale' => app()->getLocale()]) }}">{{ __('extranet.calendar') }}</a></li>
+    <li><a href="{{ route('admin.meetings', ['locale' => app()->getLocale()]) }}">{{ __('e.admin_title') }}</a></li>
     <li aria-current="page">{{ $meeting->title }}</li>
 @endsection
 
@@ -14,7 +14,14 @@
     <a class="a-btn a-btn--primary" href="{{ route('admin.delegates.csv', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug]) }}">{{ __('delegates.export') }}</a>
 @endsection
 
+@push('styles')
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/events.css') }}">
+@endpush
+
 @section('content')
+    @if (session('status'))
+        <div class="a-notice a-notice--success" role="status">{{ session('status') }}</div>
+    @endif
     <div class="a-notice a-notice--pending" role="note">{{ __('delegates.boundary_note') }}</div>
 
     <section class="a-resource">
@@ -48,6 +55,7 @@
                             @endforeach
                             <th scope="col">{{ __('delegates.col_arrival_reference') }}</th>
                             <th scope="col">{{ __('delegates.col_notes') }}</th>
+                            <th scope="col">{{ __('e.delegate_status') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -73,6 +81,21 @@
                                 </td>
                                 <td data-quiet>{{ $row->arrival_reference }}</td>
                                 <td data-quiet>{{ $row->notes }}</td>
+                                <td>
+                                    @php($st = $row->status ?: 'filed')
+                                    <span class="a-pill" data-status="{{ ['filed' => 'pending', 'confirmed' => 'validated', 'declined' => 'rejected'][$st] ?? 'pending' }}">{{ __('e.delegate_'.$st) }}</span>
+                                    <span class="e-delegate-actions">
+                                        @foreach (['confirmed' => 'confirm', 'declined' => 'decline'] as $to => $verb)
+                                            @continue($st === $to)
+                                            <form method="POST" action="{{ route('admin.delegates.decide', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug, 'registration' => $row->id]) }}">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="status" value="{{ $to }}">
+                                                <button type="submit" class="a-btn {{ $to === 'confirmed' ? 'a-btn--primary' : 'a-btn--secondary' }} a-btn--small">{{ __('e.delegate_'.$verb) }}<span class="c-sr"> {{ $row->delegate_name }}</span></button>
+                                            </form>
+                                        @endforeach
+                                    </span>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

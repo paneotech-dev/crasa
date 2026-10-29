@@ -86,10 +86,12 @@ class EventsAndDelegatesTest extends TestCase
     }
 
     /**
-     * No route creates, edits, schedules or deletes an event on this
-     * platform. That is the boundary rather than an omission.
+     * Since Day 2 (E4) the back office creates, edits, cancels and deletes
+     * events. Every write on an event is under /admin and needs the
+     * meetings permission; the one public write is a delegate filing their
+     * own arrival. Travel, rooms and transport are still not built.
      */
-    public function test_no_route_manages_an_event(): void
+    public function test_only_the_back_office_manages_an_event(): void
     {
         $offenders = [];
 
@@ -102,13 +104,17 @@ class EventsAndDelegatesTest extends TestCase
 
             $writes = array_intersect($route->methods(), ['POST', 'PUT', 'PATCH', 'DELETE']);
 
-            // The one write is a delegate filing their own arrival.
-            if ($writes !== [] && ! str_contains($uri, 'register')) {
+            if ($writes !== [] && ! str_contains($uri, 'register') && ! str_contains($uri, '/admin/')) {
                 $offenders[] = implode('|', $writes).' '.$uri;
             }
         }
 
-        $this->assertSame([], $offenders, 'These routes manage an event: '.implode(', ', $offenders));
+        $this->assertSame([], $offenders, 'These public routes write to an event: '.implode(', ', $offenders));
+
+        $viewer = User::factory()->viewer()->create();
+        $this->actingAs($viewer)->post('/en/admin/meetings', ['title' => 'x'])->assertForbidden();
+        $this->actingAs($viewer)->delete('/en/admin/meetings/agm-15')->assertForbidden();
+        $this->assertDatabaseHas('meetings', ['slug' => 'agm-15']);
     }
 
     /* Delegate registration: what is built ----------------------------------- */

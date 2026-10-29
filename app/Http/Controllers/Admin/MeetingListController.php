@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Gate;
  * knowing a meeting's slug. This is the way in: upcoming first, because a
  * roster matters before the meeting rather than after it.
  *
- * Reading only. Nothing here creates or edits a meeting: the website
- * displays and the Event Management Platform manages.
+ * The events list in the back office (E4): New event, and per row Edit,
+ * View on the site, Delegates and Delete with a confirmation.
  */
 class MeetingListController extends Controller
 {
@@ -24,9 +24,9 @@ class MeetingListController extends Controller
     {
         Gate::authorize(Permission::ManageMeetings->value);
 
-        return view('pages.admin.delegates.meetings', [
+        return view('pages.admin.events.index', [
             'upcoming' => Meeting::upcoming()->withCount('delegateRegistrations')->with('committee')->get(),
-            'past' => Meeting::past()->withCount('delegateRegistrations')->with('committee')->limit(20)->get(),
+            'past' => Meeting::past()->withCount('delegateRegistrations')->with('committee')->get(),
         ]);
     }
 }

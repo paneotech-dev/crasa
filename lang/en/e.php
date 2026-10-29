@@ -197,5 +197,11 @@ return [
     'col_dates' => 'Dates',
     'col_status' => 'Status',
     'col_actions' => 'Actions',
+    'errors_count' => '{1}One field needs attention.|[2,*]:count fields need attention.',
+    'error_ends_on' => 'The last day must be the first day or later.',
+    'error_closes_on' => 'Registration must close on or after the day it opens.',
+    'error_ends_at' => 'Give an end time as well as a start time.',
+    'error_ends_at_order' => 'The end time must be after the start time on a one-day meeting.',
+    'summary_empty' => 'Not given',
     'delegates_count' => '{0}No delegates|{1}1 delegate|[2,*]:count delegates',
 ];

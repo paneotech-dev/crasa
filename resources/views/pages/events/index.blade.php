@@ -77,11 +77,11 @@
                 <div class="e-cal-main">
                     <div class="e-monthnav">
                         <a class="u-btn u-btn--secondary e-monthnav__btn" href="{{ route('events', $base + $query(['month' => $month->subMonth()->format('Y-m')])) }}#cal-title" rel="prev">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span class="c-sr">{{ __('e.previous_month') }}: </span><span class="e-monthnav__short">{{ $month->subMonth()->locale($locale)->isoFormat('MMM') }}</span></a>
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span class="c-sr">{{ __('e.previous_month') }}: </span><span class="e-monthnav__short">{{ $month->subMonth()->locale($locale)->isoFormat('MMM') }}</span></a>
                         <p class="e-monthnav__title" id="cal-month" aria-live="polite">{{ ucfirst($month->locale($locale)->isoFormat('MMMM YYYY')) }}</p>
                         <a class="u-btn u-btn--ghost" href="{{ route('events', $base + $query(['month' => $todayMonth])) }}#cal-title" @if ($month->format('Y-m') === $todayMonth) aria-current="date" @endif>{{ __('e.today') }}</a>
                         <a class="u-btn u-btn--secondary e-monthnav__btn" href="{{ route('events', $base + $query(['month' => $month->addMonth()->format('Y-m')])) }}#cal-title" rel="next">
-                            <span class="e-monthnav__short">{{ $month->addMonth()->locale($locale)->isoFormat('MMM') }}</span><span class="c-sr"> : {{ __('e.next_month') }}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+                            <span class="e-monthnav__short">{{ $month->addMonth()->locale($locale)->isoFormat('MMM') }}</span><span class="c-sr"> : {{ __('e.next_month') }}</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
                     </div>
 
                     {{-- Month view: a real table. Arrow keys move between the event links (events.js). --}}
