@@ -162,7 +162,9 @@ final class Resource
         // translatable field is its mandate, a paragraph, and the typed
         // delete confirmation asks for the title (Day 3).
         if (filled($record->getAttribute('name')) && ! in_array('name', $this->translatable, true)) {
-            return (string) $record->getAttribute('name');
+            // In the interface language where the name is translated; the
+            // typed delete confirmation is checked in the same language.
+            return method_exists($record, 'displayName') ? $record->displayName() : (string) $record->getAttribute('name');
         }
 
         if ($this->translatable !== [] && method_exists($record, 'translate')) {

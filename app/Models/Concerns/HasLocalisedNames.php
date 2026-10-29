@@ -185,7 +185,10 @@ trait HasLocalisedNames
         }
 
         $request = app()->bound('request') ? request() : null;
-        if (! self::$localiseInBackOffice && $request?->route()?->getName() !== null && str_starts_with((string) $request->route()->getName(), 'admin.')) {
+        // A page preview in the back office shows the public page, so it
+        // gets the public names.
+        $routeName = (string) $request?->route()?->getName();
+        if (! self::$localiseInBackOffice && str_starts_with($routeName, 'admin.') && ! str_ends_with($routeName, '.preview')) {
             return $value;
         }
 

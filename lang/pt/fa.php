@@ -162,7 +162,7 @@ return [
     'page_new' => 'Nova página',
     'page_new_note' => 'Uma página Standard, guardada como rascunho. Vai para o site quando um moderador a aprovar.',
     'page_template' => 'Modelo',
-    'page_template_standard' => 'Standard',
+    'page_template_standard' => 'Padrão',
     'page_template_help' => 'Um título e blocos de texto. Acrescente e ordene os blocos depois de guardar, no editor de blocos.',
     'page_titles' => 'Título',
     'page_title_in' => 'Título em :language',

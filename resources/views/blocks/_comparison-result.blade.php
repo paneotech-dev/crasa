@@ -46,7 +46,7 @@
                         <td class="b-compare__value" @unless ($row['reported']) data-missing @endunless>
                             {{ $row['value'] ?? __('blocks.not_reported') }}
                             @if ($row['reported'] && $row['confidence'] !== 'reported')
-                                <span class="c-pill c-pill--pending">{{ $row['confidence'] }}</span>
+                                <span class="c-pill c-pill--pending">{{ \Illuminate\Support\Facades\Lang::has('comparator.provenance_'.$row['confidence']) ? __('comparator.provenance_'.$row['confidence']) : $row['confidence'] }}</span>
                             @endif
                         </td>
                         <td class="b-compare__year">{{ $row['period'] }}</td>

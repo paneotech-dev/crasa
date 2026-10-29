@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('title', $meeting->title)
-@section('description', \Illuminate\Support\Str::limit(strip_tags((string) ($meeting->summary ?: $meeting->dateRange().'. '.$meeting->location)), 155))
+@section('description', \Illuminate\Support\Str::limit(strip_tags((string) ($meeting->summary ?: $meeting->dateRange().'. '.$meeting->displayLocation())), 155))
 
 @push('styles')
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/events.css') }}">
@@ -151,7 +151,7 @@
                         <div><dt>{{ __('d3_people.status') }}</dt><dd>{{ $meeting->displayStatusLabel() }}</dd></div>
                         <div><dt>{{ __('e.time_zone') }}</dt><dd>{{ $meeting->timezone ?: \App\Support\LocalTime::zone() }}</dd></div>
                         @if ($meeting->location || $online)
-                            <div><dt>{{ __('e.where') }}</dt><dd>{{ collect([$meeting->venue, $meeting->location])->filter()->implode(', ') }}</dd></div>
+                            <div><dt>{{ __('e.where') }}</dt><dd>{{ collect([$meeting->venue, $meeting->displayLocation()])->filter()->implode(', ') }}</dd></div>
                         @endif
                         @if ($meeting->organiser)
                             <div><dt>{{ __('e.organiser') }}</dt><dd>{{ $meeting->organiser }}</dd></div>

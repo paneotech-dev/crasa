@@ -81,7 +81,7 @@ class Sector extends Model
         $locale = app()->getLocale();
         $route = app()->bound('request') ? (string) request()->route()?->getName() : '';
 
-        if ($locale === Locales::FALLBACK || (str_starts_with($route, 'admin.') && ! self::$localiseInBackOffice)) {
+        if ($locale === Locales::FALLBACK || (str_starts_with($route, 'admin.') && ! str_ends_with($route, '.preview') && ! self::$localiseInBackOffice)) {
             return $value;
         }
 
