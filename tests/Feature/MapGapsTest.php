@@ -203,6 +203,28 @@ class MapGapsTest extends TestCase
         $this->assertStringContainsString('https://example.test/en/members?indicator=reach', $svg);
     }
 
+    /**
+     * Brief D1, 29 October 2026: the exported map carries the islands as
+     * the page does. Comoros and Mauritius as dots where they lie,
+     * Madagascar and Seychelles named in outline as non-members, and the
+     * Seychelles card beside the smallest members.
+     */
+    public function test_the_exported_map_carries_the_islands_and_the_non_members(): void
+    {
+        $view = MapView::resolve(Country::with('authority')->get(), null);
+        $svg = app(MapExport::class)->svg($view, 'https://example.test/en/members');
+        $map = config('region-map');
+
+        foreach (['km', 'mu'] as $iso) {
+            $this->assertStringContainsString('<circle cx="'.$map['members'][$iso]['dot'][0].'" cy="'.$map['members'][$iso]['dot'][1].'" r="7"', $svg);
+        }
+
+        $this->assertStringContainsString('>Madagascar</text>', $svg);
+        $this->assertStringContainsString('>Seychelles</text>', $svg);
+        $this->assertStringContainsString('SADC member state, not a CRASA member', $svg);
+        $this->assertStringNotContainsString('fill="#E5E0D5" stroke="#908977"', $svg, 'A non-member is filled.');
+    }
+
     public function test_an_unknown_export_format_is_not_a_route(): void
     {
         $this->get('/en/members/export.svg')->assertNotFound();
