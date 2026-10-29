@@ -121,8 +121,10 @@ class DarkGroundControlsTest extends TestCase
 
             $this->assertNotEmpty($selects[0], "No comparison select found in {$locale} to check.");
 
+            // .c-select (blocks) or .u-select (the UI system since the
+            // Concept 3 home): either component styles the select and its options.
             foreach ($selects[0] as $select) {
-                $this->assertStringContainsString('c-select', $select, "A comparison select in {$locale} does not carry .c-select.");
+                $this->assertMatchesRegularExpression('/class="[^"]*\\b[cu]-select\\b/', $select, "A comparison select in {$locale} carries no select component.");
             }
         }
     }

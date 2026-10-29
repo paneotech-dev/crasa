@@ -259,6 +259,11 @@ class RenderedMarkupTest extends TestCase
                     // and prints through it.
                     || (str_starts_with($expression, '$renderer->render(')
                         && str_contains($contents, '$renderer = app(\\App\\Services\\ContentRenderer::class)'))
+                    // An icon the template writes itself: a variable or array
+                    // element defined in this same file as a literal SVG string
+                    // ($arrow = '<svg ...', 'icon' => '<path ...', or a literal
+                    // '<path ...' in the list a loop reads it from).
+                    || $this->isLiteralSvg($expression, $contents)
                     || str_starts_with($expression, '__(');
 
                 if (! $safe) {
@@ -288,5 +293,22 @@ class RenderedMarkupTest extends TestCase
 
         $this->assertSame($before, $meeting->fresh()->agenda);
         $this->assertNotEmpty(Storage::disk('local')->files('content-audit'));
+    }
+
+    private function isLiteralSvg(string $expression, string $contents): bool
+    {
+        if (! preg_match('/^\$([A-Za-z_]+)(?:\[\'([a-z_]+)\'\])?$/', $expression, $m)) {
+            return false;
+        }
+
+        $name = $m[1];
+        $key = $m[2] ?? null;
+
+        if ($key !== null) {
+            return (bool) preg_match("/'".preg_quote($key, '/')."'\\s*=>\\s*'<(svg|path|rect|circle)/", $contents);
+        }
+
+        return (bool) preg_match('/\\$'.preg_quote($name, '/').'\\s*=\\s*\'<svg/', $contents)
+            || (bool) preg_match('/as\\s*\\[[^\\]]*\\$'.preg_quote($name, '/').'\\]\\)/', $contents) && str_contains($contents, "'<path d=");
     }
 }

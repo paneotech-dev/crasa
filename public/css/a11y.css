@@ -145,6 +145,7 @@ html:not(.has-js) .c-a11y { display: none; }
   background: var(--c-white) center / 14px no-repeat;
 }
 .c-a11y__switch-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.c-a11y__switch-name { font-weight: 600; color: var(--c-charcoal); }
 .c-a11y__hint { font-size: 13px; font-weight: 400; line-height: 1.4; color: var(--c-slate); }
 .c-a11y__switch[aria-pressed="true"] { border-color: var(--c-green-dark); background: var(--c-green-light); }
 .c-a11y__switch[aria-pressed="true"]::before {

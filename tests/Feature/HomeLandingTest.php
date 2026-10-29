@@ -116,34 +116,40 @@ class HomeLandingTest extends TestCase
 
     public function test_without_a_script_the_form_reloads_the_homepage_at_the_block(): void
     {
+        // Since the Concept 3 home (29 October 2026) the comparison is the
+        // console partial (partials/home/comparator): the same GET form idea,
+        // back to this page at #home-compare.
         $html = $this->get('/en?cmp_indicator=fixed-subs&cmp_a=na&cmp_b=zw')->assertOk()->getContent();
 
         $section = substr($html, strpos($html, 'data-home-compare'));
         $section = substr($section, 0, strpos($section, '</section>'));
 
-        // A plain GET form, back to this page, at this block.
-        $this->assertMatchesRegularExpression('~<form class="b-compare__controls" method="get" action="http://localhost/en#compare">~', $section);
+        $this->assertMatchesRegularExpression('~<form class="c-hcmp__form" method="get" action="http://localhost/en#home-compare">~', $section);
         $this->assertMatchesRegularExpression('~<button[^>]*type="submit"[^>]*data-cmp-submit~', $section);
 
         // The page renders what the query asked for, selectors included.
-        $this->assertMatchesRegularExpression('~<option value="fixed-subs"\s+selected~', $section);
-        $this->assertMatchesRegularExpression('~id="cmp-a".*?<option value="na"\s+selected~s', $section);
-        $this->assertMatchesRegularExpression('~id="cmp-b".*?<option value="zw"\s+selected~s', $section);
-        $this->assertStringContainsString('Fixed-telephone subscriptions, Namibia and Zimbabwe.', $section);
+        $this->assertMatchesRegularExpression('~id="hcmp-indicator".*?<option value="fixed-subs"\s+selected~s', $section);
+        $this->assertMatchesRegularExpression('~id="hcmp-a".*?<option value="na"\s+selected~s', $section);
+        $this->assertMatchesRegularExpression('~id="hcmp-b".*?<option value="zw"\s+selected~s', $section);
 
-        // The script is told where the fragment lives, and the status line
-        // that announces a change is a live region outside the swap.
-        $this->assertStringContainsString('data-fragment="http://localhost/en/home/comparison"', $section);
-        $this->assertMatchesRegularExpression('~id="home-comparison-status" role="status" aria-live="polite"~', $section);
+        // The script is told where the fragment lives, and a change is
+        // announced in a live region outside the swapped parts.
+        $this->assertStringContainsString('data-fragment="http://localhost/en/home/comparison?view=console"', $section);
+        $this->assertMatchesRegularExpression('~role="status" aria-live="polite" data-hcmp-status~', $section);
         $this->assertStringContainsString('js/home-compare.js', $html);
     }
 
     public function test_the_page_and_the_fragment_render_the_same_table(): void
     {
         $page = $this->get('/en?cmp_indicator=fixed-subs&cmp_a=na&cmp_b=zw')->getContent();
-        $fragment = $this->get('/en/home/comparison?cmp_indicator=fixed-subs&cmp_a=na&cmp_b=zw')->getContent();
+        $fragment = $this->get('/en/home/comparison?view=console&cmp_indicator=fixed-subs&cmp_a=na&cmp_b=zw')->getContent();
 
-        $table = fn (string $html) => preg_replace('~\s+~', ' ', substr($html, strpos($html, '<table class="b-compare__table">'), strpos($html, '</table>') - strpos($html, '<table class="b-compare__table">')));
+        $table = function (string $html) {
+            $start = strpos($html, '<table class="u-table">');
+            $this->assertNotFalse($start, 'No comparison table.');
+
+            return preg_replace('~\s+~', ' ', substr($html, $start, strpos($html, '</table>', $start) - $start));
+        };
 
         $this->assertSame($table($fragment), $table($page));
     }

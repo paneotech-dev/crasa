@@ -47,25 +47,25 @@ class SectionRhythmTest extends TestCase
 
     public function test_the_homepage_carries_the_grounds_screen_02_draws(): void
     {
-        // Screen 02: hero navy (line 93), key figures navy-mid (186),
-        // pillars on the cream page ground (227), featured comparison navy
-        // (272), publications cream (332), the statement band navy (376),
-        // newsroom cream (399), members sand (604), social feed white (535).
-        //
-        // The newsroom stood on white for one day, while the statement band
-        // did not exist and it was the only thing keeping the publications
-        // and the newsroom from fusing. The band is built now and the
-        // newsroom has its cream back.
-        //
-        // 29 October 2026, light theme: the key figures and the featured
-        // comparison moved to light grounds. The comparison is cream, and
-        // the run rule turns it white after the cream pillars. The
-        // statement band is hidden on the live homepage by migration; in
-        // the seeded page it is still there, on white like every band.
-        $this->assertSame(
-            ['white', 'cream', 'white', 'cream', 'white', 'cream', 'sand', 'white'],
-            $this->grounds('/en'),
-        );
+        // Since 29 October 2026 the home page is the Concept 3 composition
+        // (pages/home.blade.php): its sections set their own grounds in
+        // k.css, alternating white, the green tint and the blue tint, so it
+        // no longer uses data-ground. What holds the rhythm is the order of
+        // the sections, checked here; the composed inner pages below keep
+        // the data-ground rule.
+        $html = $this->get('/en')->assertOk()->getContent();
+        preg_match_all('~<section class="([^"]+)"~', $html, $m);
+        $order = array_map(fn ($c) => explode(' ', $c)[0], $m[1]);
+
+        $expected = ['k-hero', 'k-glance', 'k-sec', 'k-sec'];
+        $at = 0;
+        foreach ($order as $section) {
+            if ($at < count($expected) && $section === $expected[$at]) {
+                $at++;
+            }
+        }
+        $this->assertSame(count($expected), $at, 'The home page sections are out of the Concept 3 order: '.implode(', ', $order));
+        $this->assertSame([], $this->grounds('/en'), 'The Concept 3 home sets its grounds in k.css, not with data-ground.');
     }
 
     /**
@@ -78,7 +78,6 @@ class SectionRhythmTest extends TestCase
     public static function composedPages(): array
     {
         return [
-            'homepage' => ['/en'],
             'about' => ['/en/about'],
             'committees' => ['/en/committees'],
         ];

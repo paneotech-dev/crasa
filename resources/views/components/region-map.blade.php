@@ -79,11 +79,12 @@
         $country = $entry->country;
         $authority = $country->authority;
 
-        return collect([
-            'data-tip-name' => $country->name,
-            'data-tip-authority' => trim(($authority?->name ?? '').($authority?->acronym ? ' ('.$authority->acronym.')' : '')),
-            'data-tip-value' => $view->isShaded() ? $view->title().': '.$entry->display : '',
-        ])->map(fn ($v, $k) => $k.'="'.e($v).'"')->implode(' ');
+        // Values only; the template prints them escaped.
+        return [
+            'name' => $country->name,
+            'authority' => trim(($authority?->name ?? '').($authority?->acronym ? ' ('.$authority->acronym.')' : '')),
+            'value' => $view->isShaded() ? $view->title().': '.$entry->display : '',
+        ];
     };
 
     foreach (\App\Support\RegionGeometry::ENLARGED as $iso) {
@@ -224,7 +225,7 @@
                     href="{{ route('members.show', ['locale' => $locale, 'iso' => $iso]) }}"
                     data-iso="{{ $iso }}"
                     data-band="{{ $entry->bandAttribute() }}"
-                    {!! $tipAttrs($entry) !!}
+                    data-tip-name="{{ $tipAttrs($entry)['name'] }}" data-tip-authority="{{ $tipAttrs($entry)['authority'] }}" data-tip-value="{{ $tipAttrs($entry)['value'] }}"
                     aria-label="{{ $view->isShaded()
                         ? __('members.map_region_shaded', ['country' => $country->name, 'value' => $entry->display])
                         : __('members.map_region', ['country' => $country->name, 'authority' => $country->authority?->name ?: $country->name]) }}"
@@ -253,7 +254,7 @@
                     href="{{ route('members.show', ['locale' => $locale, 'iso' => $iso]) }}"
                     data-iso="{{ $iso }}"
                     data-band="{{ $entry->bandAttribute() }}"
-                    {!! $tipAttrs($entry) !!}
+                    data-tip-name="{{ $tipAttrs($entry)['name'] }}" data-tip-authority="{{ $tipAttrs($entry)['authority'] }}" data-tip-value="{{ $tipAttrs($entry)['value'] }}"
                     aria-label="{{ $view->isShaded()
                         ? __('members.map_region_shaded', ['country' => $country->name, 'value' => $entry->display])
                         : __('members.map_region', ['country' => $country->name, 'authority' => $country->authority?->name ?: $country->name]) }}"
@@ -381,7 +382,7 @@
                     href="{{ route('members.show', ['locale' => $locale, 'iso' => $iso]) }}"
                     data-iso="{{ $iso }}"
                     data-band="{{ $entry->bandAttribute() }}"
-                    {!! $tipAttrs($entry) !!}
+                    data-tip-name="{{ $tipAttrs($entry)['name'] }}" data-tip-authority="{{ $tipAttrs($entry)['authority'] }}" data-tip-value="{{ $tipAttrs($entry)['value'] }}"
                     aria-label="{{ $view->isShaded()
                         ? __('members.map_region_inset_shaded', ['country' => $country->name, 'value' => $entry->display])
                         : __('members.map_region_inset', ['country' => $country->name, 'authority' => $country->authority?->name ?: $country->name]) }}"
