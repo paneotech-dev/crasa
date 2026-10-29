@@ -86,8 +86,11 @@
 
             <form method="POST" action="{{ route('logout', ['locale' => app()->getLocale()]) }}">
                 @csrf
-                <button type="submit" class="a-side__out" aria-label="{{ __('admin.sign_out') }}">
+                {{-- The word beside the icon (UX-15): an icon alone was not
+                     read as the way out. --}}
+                <button type="submit" class="a-side__out">
                     <x-shell-icon name="sign-out" />
+                    <span>{{ __('admin.sign_out') }}</span>
                 </button>
             </form>
         </div>

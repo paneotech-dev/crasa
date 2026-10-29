@@ -45,4 +45,5 @@ return [
     'tr_state_missing' => 'missing',
     'tr_state_machine' => 'machine translated',
     'tr_state_reviewed' => 'reviewed',
+    'role_guide' => 'Guide for your role (opens in a new tab)',
 ];

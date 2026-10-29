@@ -45,4 +45,5 @@ return [
     'tr_state_missing' => 'manquante',
     'tr_state_machine' => 'traduction automatique',
     'tr_state_reviewed' => 'relue',
+    'role_guide' => 'Guide de votre rôle (s\'ouvre dans un nouvel onglet)',
 ];

@@ -87,12 +87,20 @@
             @endif
         </a>
 
-        {{-- The help pages are the back office's; the extranet gets a 403. --}}
-        @can('enter-back-office')
-            <a class="a-top__icon" href="{{ route('admin.help', ['locale' => $locale]) }}" aria-label="{{ __('help.title') }}">
+        {{-- Help opens the guide for this account's role, on the workshop
+             site, in a new tab (UX-17). Every role has a section. --}}
+        @if ($user && config('crasa.role_guide_url'))
+            @php
+                $guideAnchor = [
+                    'administrator' => 'admin', 'editor' => 'editor', 'member_state_rep' => 'member',
+                    'committee_member' => 'committee', 'viewer' => 'everyone',
+                ][$user->role->value] ?? 'everyone';
+            @endphp
+            <a class="a-top__icon" href="{{ config('crasa.role_guide_url') }}#{{ $guideAnchor }}"
+               target="_blank" rel="noopener" aria-label="{{ __('office.role_guide') }}">
                 <x-shell-icon name="help" :size="19" />
             </a>
-        @endcan
+        @endif
 
         {{-- The initials open the account. A menu with two items that are
              both one click away already is a menu that adds a click. --}}

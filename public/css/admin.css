@@ -1914,7 +1914,12 @@ body[data-surface="admin"] .a-side__area.is-current { background: var(--c-navy-m
 /* The label and its icon together: currentColor on the svg means one
    declaration moves both. */
 body[data-surface="admin"] .a-side__link { color: color-mix(in srgb, var(--c-cream) 85%, var(--c-navy)); }
-body[data-surface="admin"] .a-side__link:hover { background: var(--c-navy-mid); color: var(--c-cream); }
+/* Hover, focus, pressed and current are four different looks (UX-04):
+   hover lifts the ground and underlines the label, focus is the amber
+   ring, pressed is the deepest ground, current carries the green bar. */
+body[data-surface="admin"] .a-side__link:hover { background: var(--c-navy-line); color: var(--c-cream); }
+body[data-surface="admin"] .a-side__link:hover span { text-decoration: underline; text-underline-offset: 3px; }
+body[data-surface="admin"] .a-side__link:active { background: var(--c-navy-deep); color: var(--c-white); }
 body[data-surface="admin"] .a-side__link.is-current {
   background: var(--c-navy-mid);
   border-left-color: var(--c-green);
@@ -1953,12 +1958,14 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
 .a-side__role { font-family: var(--f-admin); font-size: 12px; color: var(--c-sand); }
 .a-side__out {
   flex: none;
-  width: 36px; height: 36px;
-  display: grid; place-items: center;
-  background: transparent; border: 0; padding: 0;
+  min-height: 36px;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent; border: 0; padding: 0 var(--s-2);
+  font-family: var(--f-admin); font-size: 12.5px; font-weight: 600; white-space: nowrap;
   color: var(--c-sand); cursor: pointer;
   border-radius: var(--r-sm);
 }
+.a-side__out:focus-visible { outline: 2px solid var(--c-amber); outline-offset: 2px; }
 .a-side__out:hover { background: var(--c-navy-mid); color: var(--c-white); }
 
 /* The top bar --------------------------------------------------------- */
@@ -2003,6 +2010,7 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
 
 .a-top__burger {
   display: none;
+  flex: none;
   width: 40px; height: 40px;
   place-items: center;
   background: transparent; border: 1.5px solid var(--c-border);
@@ -2023,7 +2031,11 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
      against white, under the 3:1 SC 1.4.11 asks of an input. */
   border: 1.5px solid var(--c-border); border-radius: var(--r-sm);
 }
-.a-top__field::placeholder { color: var(--a-ink-quiet); }
+/* UX-18: the placeholder at full strength. Firefox draws placeholders at
+   54% opacity by default, which took slate on white (5.6:1) under 4.5:1;
+   the list search had no rule at all and fell to the browser's grey. */
+.a-top__field::placeholder,
+.a-search__field::placeholder { color: var(--a-ink-quiet); opacity: 1; }
 .a-top__spacer { flex: 1 1 auto; }
 
 .a-top__utilities { margin-left: auto; display: flex; align-items: center; gap: var(--s-3); }
@@ -2060,15 +2072,15 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
 
 /* Mail switched off: a small notice for administrators, not an alarm. */
 .a-top__mailoff {
-  display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap;
-  max-width: 420px; margin: 0; padding: 4px 10px;
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  flex: none; margin: 0; padding: 4px 10px;
   border: 1.5px solid var(--c-amber-mid); border-radius: var(--r-pill);
   background: var(--c-amber-light); color: var(--c-amber-dark);
   font-family: var(--f-admin); font-size: 12.5px; font-weight: 600; line-height: 1.3;
 }
 .a-top__mailoff svg { flex: none; }
 .a-top__mailoff-more { font-weight: 400; }
-@media (max-width: 1279.98px) {
+@media (max-width: 1199.98px) {
   .a-top__mailoff-more {
     position: absolute; width: 1px; height: 1px; overflow: hidden;
     clip: rect(0 0 0 0); white-space: nowrap;

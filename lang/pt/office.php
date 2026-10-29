@@ -45,4 +45,5 @@ return [
     'tr_state_missing' => 'em falta',
     'tr_state_machine' => 'tradução automática',
     'tr_state_reviewed' => 'revista',
+    'role_guide' => 'Guia da sua função (abre num novo separador)',
 ];

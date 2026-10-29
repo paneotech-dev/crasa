@@ -62,4 +62,18 @@ class AreaSwitcherTest extends TestCase
         $this->assertContains('admin', $this->areas($html));
         $this->assertContains('public', $this->areas($html));
     }
+
+    /** UX-15, UX-17: Sign out is a word, and help opens the guide for the role. */
+    public function test_sign_out_is_labelled_and_help_opens_the_role_guide(): void
+    {
+        $rep = User::factory()->memberStateRep(Country::where('iso_code', 'bw')->sole())->create();
+        $html = $this->actingAs($rep)->get('/en/extranet/calendar')->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression('/class="a-side__out">.*?<span>Sign out<\/span>/s', $html);
+        $this->assertStringContainsString('href="'.config('crasa.role_guide_url').'#member"', $html);
+        $this->assertMatchesRegularExpression('/#member"\s*target="_blank" rel="noopener"/', $html);
+
+        $admin = User::factory()->administrator()->create();
+        $this->assertStringContainsString(config('crasa.role_guide_url').'#admin', $this->actingAs($admin)->get('/en/admin')->getContent());
+    }
 }
