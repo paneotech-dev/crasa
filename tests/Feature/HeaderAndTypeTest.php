@@ -23,20 +23,20 @@ class HeaderAndTypeTest extends TestCase
         $this->seed(PublicPagesSeeder::class);
     }
 
-    public function test_search_is_an_icon_and_not_a_field(): void
+    public function test_search_is_a_labelled_field_in_the_header(): void
     {
-        // Screen 02 line 77 draws a 40px square button carrying the search
-        // glyph and nothing else. An open field in the header was proposed
-        // and is rejected: the screen does not draw one, and a field there
-        // competes with the nine primary links for the same row.
+        // Day 2, Concept 3: the identity row carries a search field, as the
+        // room asked. It is a GET form to the search page, labelled for
+        // screen readers, with a submit button that has a name.
         $html = $this->get('/en/about')->assertOk()->getContent();
 
         preg_match('#<header.*?</header>#s', $html, $header);
         $this->assertNotEmpty($header);
 
-        $this->assertStringNotContainsString('type="search"', $header[0], 'The header carries a search field.');
-        $this->assertStringNotContainsString('<input', $header[0], 'The header carries an input.');
-        $this->assertMatchesRegularExpression('/c-iconbutton[^>]*aria-label="Search"/', $header[0]);
+        $this->assertMatchesRegularExpression('#<form class="c-header__search" role="search" action="[^"]*/en/search" method="get">#', $header[0]);
+        $this->assertStringContainsString('<label class="c-sr" for="site-search">Search</label>', $header[0]);
+        $this->assertMatchesRegularExpression('#<input id="site-search" type="search" name="q"#', $header[0]);
+        $this->assertMatchesRegularExpression('#<button type="submit" aria-label="Search">#', $header[0]);
     }
 
     public function test_the_language_switcher_is_one_bordered_group(): void
