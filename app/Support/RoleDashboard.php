@@ -264,7 +264,7 @@ final class RoleDashboard
             $rows = \App\Support\AdminAlerts::recentFor($user, 5)->map(fn ($n) => [
                 'label' => $n['title'],
                 'url' => $n['url'],
-                'meta' => $n['at']?->isoFormat('D MMMM YYYY HH:mm'),
+                'meta' => $n['at']?->displayed()->isoFormat('D MMMM YYYY HH:mm'),
                 'comment' => null,
             ])->values()->all();
         } catch (Throwable) {
@@ -383,7 +383,7 @@ final class RoleDashboard
             ? AuditLog::with('user')->latest('created_at')->limit(8)->get()->map(fn (AuditLog $a) => [
                 'label' => Str::headline((string) $a->action).($a->auditable_type ? ': '.class_basename($a->auditable_type) : ''),
                 'url' => null,
-                'meta' => trim(($a->user->name ?? __('fb.dash_system')).', '.$a->created_at?->isoFormat('D MMMM YYYY HH:mm')),
+                'meta' => trim(($a->user->name ?? __('fb.dash_system')).', '.$a->created_at?->displayed()->isoFormat('D MMMM YYYY HH:mm')),
                 'comment' => null,
             ])->all()
             : [];
