@@ -110,13 +110,15 @@
 
             <div class="cp-legal__body">
                 @foreach ($prose as $paragraph)
-                    <p class="cp-legal__intro" @if ($paragraph['lang']) lang="{{ $paragraph['lang'] }}" @endif>{!! $render($paragraph['text'], $paragraph['block']) !!}</p>
+                    @php($rendered = $render($paragraph['text'], $paragraph['block']))
+                    <p class="cp-legal__intro" @if ($paragraph['lang']) lang="{{ $paragraph['lang'] }}" @endif>{!! $rendered !!}</p>
                 @endforeach
                 @foreach ($sections as $section)
                     <section class="cp-legal__section {{ $section['text'] === '' ? 'cp-legal__section--group' : '' }}" id="{{ $section['id'] }}" aria-labelledby="{{ $section['id'] }}-h" @if ($section['lang']) lang="{{ $section['lang'] }}" @endif>
                         <h2 class="cp-legal__heading" id="{{ $section['id'] }}-h">{{ $section['heading'] }}</h2>
                         @if ($section['text'] !== '')
-                            <div class="cp-prose">{!! $render($section['text'], $section['block']) !!}</div>
+                            @php($rendered = $render($section['text'], $section['block']))
+                            <div class="cp-prose">{!! $rendered !!}</div>
                         @endif
                     </section>
                 @endforeach

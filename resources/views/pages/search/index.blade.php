@@ -26,12 +26,7 @@
     $groups = $query !== '' && ! $results->isEmpty() ? collect($results->hits)->groupBy('type') : collect();
     $order = ['instrument', 'publication', 'news', 'member'];
     $groups = $groups->sortBy(fn ($hits, $type) => ($i = array_search($type, $order, true)) === false ? 99 : $i);
-    $icons = [
-        'instrument' => '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/>',
-        'publication' => '<path d="M2 4h7a3 3 0 0 1 3 3v14a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v14a2 2 0 0 1 2-2h8z"/>',
-        'news' => '<path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9h4"/><path d="M10 6h8M10 10h8M10 14h5"/>',
-        'member' => '<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>',
-    ];
+    $icons = ['instrument' => 'file', 'publication' => 'book', 'news' => 'news', 'member' => 'globe'];
 @endphp
 
 @section('content')
@@ -47,7 +42,7 @@
                    data-search-input
                    data-suggest-url="{{ route('search.suggest', ['locale' => $locale]) }}">
             <button type="submit" class="u-btn u-btn--primary">
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                <svg class="cp-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">@include('partials.cpages.icon', ['name' => 'search'])</svg>
                 {{ __('search.submit') }}
             </button>
             <ul class="c-suggest__list" id="search-suggestions" role="listbox"
@@ -97,7 +92,7 @@
                             ] as [$route, $label, $line, $icon])
                                 <li class="u-card cp-linkcard">
                                     <div class="u-card__body">
-                                        <span class="cp-icon-badge"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">{!! $icons[$icon] !!}</svg></span>
+                                        <span class="cp-icon-badge"><svg class="cp-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">@include('partials.cpages.icon', ['name' => $icons[$icon]])</svg></span>
                                         <h3 class="u-card__title"><a href="{{ route($route, ['locale' => $locale]) }}">{{ $label }}</a></h3>
                                         <p class="u-card__text">{{ $line }}</p>
                                     </div>
@@ -112,7 +107,7 @@
                         @foreach ($groups as $type => $hits)
                             <section class="cp-search__group" aria-labelledby="group-{{ $type }}">
                                 <h2 class="cp-search__group-title" id="group-{{ $type }}">
-                                    <span class="cp-icon-badge"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">{!! $icons[$type] ?? $icons['publication'] !!}</svg></span>
+                                    <span class="cp-icon-badge"><svg class="cp-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">@include('partials.cpages.icon', ['name' => $icons[$type] ?? 'book'])</svg></span>
                                     {{ __('cpages_c.group_'.$type) }}
                                     <span class="u-pill u-pill--muted">{{ count($hits) }}</span>
                                 </h2>

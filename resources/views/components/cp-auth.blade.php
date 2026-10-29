@@ -23,7 +23,7 @@
                     <ul class="cp-auth__list" role="list">
                         @foreach (['returns', 'committees', 'calendar', 'library'] as $item)
                             <li>
-                                <svg class="cp-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                                <svg class="cp-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">@include('partials.cpages.icon', ['name' => 'check'])</svg>
                                 <span>{{ __('cpages_c.auth_side_'.$item) }}</span>
                             </li>
                         @endforeach
