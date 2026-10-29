@@ -19,6 +19,12 @@
  *   control border #7B8794: white 3.66, tints 3.26 (SC 1.4.11)
  *   logo blue #7A90C8 on white 3.16: decorative accents only, never text
  *   icon blue #6A80BC: tints 3.44 (SC 1.4.11)
+ * CRASA blue --c-crasa-blue #052D53 (tokens.css, the crasa.org button
+ * navy), the secondary colour, measured the same day:
+ *   white on it 13.94, footer text #E3EEE8 11.72, footer label #D4DDF2 10.24
+ *   it on white 13.94, on tint-green 12.40, on tint-blue 12.42
+ *   green #0F8757 against it 3.07 (button edge, chart series)
+ * Full list: docs/accessibility/contrast-crasa-blue.md.
  * Flat colours only: no gradients, no overlays on photographs.
  */
 
@@ -296,3 +302,9 @@ html:not(.has-js) .c-header__navrow { display: block; }
 }
 
 :root .c-cmp__masthead-media { display: none; }
+
+/* ---- CRASA blue: the call-to-action panel in its dark tone ------------ */
+/* The navy tone of the call-to-action block closes a page, like the
+   sitemap band and the footer (k.css), so it takes the CRASA blue. Its
+   green button reads 3.07:1 against the blue and carries white at 4.54. */
+.b-cta__panel[data-tone="navy"] { --focus-ring: var(--c-white); --u-focus: var(--c-white); background: var(--c-crasa-blue); }

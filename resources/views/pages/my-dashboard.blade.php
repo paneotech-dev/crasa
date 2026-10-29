@@ -18,8 +18,10 @@
 @section('content')
     <section class="u-hero" aria-labelledby="my-dash-title">
         <div class="u-container">
-            <p class="u-eyebrow">{{ $user->name }}, {{ $user->roleLabel() }}</p>
             <h1 class="u-h1" id="my-dash-title">{{ $dash['heading'] }}</h1>
+            {{-- Day 3 (8c): the greeting is a plain line under the heading,
+                 not an eyebrow above it. --}}
+            <p class="u-text my-dash__who">{{ $user->name }}, {{ $user->roleLabel() }}</p>
             <p class="u-lead">{{ $dash['intro'] }}</p>
         </div>
     </section>

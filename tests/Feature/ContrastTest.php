@@ -135,6 +135,17 @@ class ContrastTest extends TestCase
             'postal card label on sand' => ['--c-navy', '--c-sand'],
             'quiet note on sand' => ['--c-charcoal', '--c-sand'],
             'link on a dark ground' => ['--c-green-light', '--c-navy-mid'],
+
+            // Day 3: the CRASA blue (--c-crasa-blue, the crasa.org button
+            // navy). docs/accessibility/contrast-crasa-blue.md.
+            'primary button on the crasa blue' => ['--c-white', '--c-crasa-blue'],
+            'current sidebar item in the crasa blue' => ['--c-crasa-blue', '--c-white'],
+            'crasa blue on the admin page ground' => ['--c-crasa-blue', '--c-admin-bg'],
+            'crasa blue on a green tint' => ['--c-crasa-blue', '--c-green-light'],
+            'footer text on the crasa blue' => ['--c-cream', '--c-crasa-blue'],
+            'footer link on the crasa blue' => ['--c-green-light', '--c-crasa-blue'],
+            'band text on the crasa blue' => ['--c-sand', '--c-crasa-blue'],
+            'button hover on navy' => ['--c-white', '--c-navy'],
         ];
     }
 
@@ -175,6 +186,10 @@ class ContrastTest extends TestCase
             'dark primary fill on ground' => ['--d-green', '--d-bg'],
             'dark primary hover fill on surface' => ['--c-green-step-1', '--d-surface'],
             'light primary fill on white' => ['--c-green-dark', '--c-white'],
+            'crasa blue fill on white' => ['--c-crasa-blue', '--c-white'],
+            'crasa blue fill on sand track' => ['--c-crasa-blue', '--c-sand'],
+            'focus ring on the crasa blue' => ['--c-white', '--c-crasa-blue'],
+            'green series against the crasa blue series' => ['--c-green', '--c-crasa-blue'],
         ];
     }
 

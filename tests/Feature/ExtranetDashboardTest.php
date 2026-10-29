@@ -63,8 +63,13 @@ class ExtranetDashboardTest extends TestCase
         $this->actingAs($user)
             ->get('/en/extranet/dashboard')
             ->assertOk()
+            // Day 3 (8c): the cards carry CRASA's headings, My return,
+            // Meetings, From the Secretariat and My folders.
+            ->assertSee('My return')
+            ->assertSee('Meetings')
             ->assertSee('Your next meeting')
-            ->assertSee('Recently filed in your committees')
+            ->assertSee('My folders')
+            ->assertSee('Latest files')
             ->assertSee('Notifications')
             ->assertSee('Returns due')
             ->assertSee('From the Secretariat');
