@@ -18,4 +18,7 @@ return [
     'project_countries' => 'Países',
     'project_lead_committee' => 'Comité responsável',
     'project_milestones' => 'Etapas',
+    // Events: chip preview.
+    'preview_open' => 'Abrir a página do evento',
+    'preview_close' => 'Fechar a pré-visualização',
 ];

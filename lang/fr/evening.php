@@ -18,4 +18,7 @@ return [
     'project_countries' => 'Pays',
     'project_lead_committee' => 'Comité chef de file',
     'project_milestones' => 'Étapes',
+    // Events: chip preview.
+    'preview_open' => 'Ouvrir la page de l\'événement',
+    'preview_close' => 'Fermer l\'aperçu',
 ];

@@ -140,3 +140,38 @@
     });
   });
 })();
+
+/* Chip preview on the month calendar (evening pass): a native <dialog>
+ * with the event's title, dates, place, committee, Add to my calendar and
+ * Open. Focus moves to the title, Escape closes (native), focus returns to
+ * the chip. A modified click (new tab) and no script keep the plain link. */
+(function () {
+  'use strict';
+  var dialog = document.querySelector('[data-preview-dialog]');
+  if (!dialog || typeof dialog.showModal !== 'function') { return; }
+  var body = dialog.querySelector('[data-preview-body]');
+  var opener = null;
+
+  document.querySelectorAll('a[data-preview]').forEach(function (chip) {
+    chip.addEventListener('click', function (ev) {
+      if (ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) { return; }
+      var tpl = document.getElementById(chip.getAttribute('data-preview'));
+      if (!tpl || !tpl.content) { return; }
+      ev.preventDefault();
+      body.textContent = '';
+      body.appendChild(tpl.content.cloneNode(true));
+      opener = chip;
+      dialog.showModal();
+      var title = body.querySelector('#e-pv-title');
+      if (title) { title.focus(); }
+    });
+  });
+
+  dialog.querySelector('[data-preview-close]').addEventListener('click', function () { dialog.close(); });
+  // A click on the backdrop (the dialog box itself, outside the inner panel) closes.
+  dialog.addEventListener('click', function (ev) { if (ev.target === dialog) { dialog.close(); } });
+  dialog.addEventListener('close', function () {
+    body.textContent = '';
+    if (opener) { opener.focus(); opener = null; }
+  });
+})();

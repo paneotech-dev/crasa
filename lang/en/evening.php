@@ -19,4 +19,7 @@ return [
     'project_countries' => 'Countries',
     'project_lead_committee' => 'Lead committee',
     'project_milestones' => 'Milestones',
+    // Events: chip preview.
+    'preview_open' => 'Open the event page',
+    'preview_close' => 'Close the preview',
 ];
