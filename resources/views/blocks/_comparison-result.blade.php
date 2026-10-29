@@ -62,6 +62,8 @@
         <p class="c-source">{{ $indicator->source_standard }}</p>
     @endif
 
+    <x-indicator-note :indicators="$indicator" />
+
     {{-- The homepage is an entry point to the comparator, not a picture of
          it: the link opens it on exactly these member states and this
          indicator. --}}

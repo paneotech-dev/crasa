@@ -239,6 +239,34 @@ trait HasTranslations
             ->all();
     }
 
+    /**
+     * True when any of these fields is shown to the reader in a language
+     * whose text is still a machine draft: the field is resolved as a page
+     * would resolve it (requested language, then English) and the flag is
+     * read on the row that supplies the text.
+     *
+     * @param  list<string>  $fields
+     */
+    public function showsMachineDraft(array $fields, ?string $locale = null): bool
+    {
+        foreach ($fields as $field) {
+            $resolved = $this->translate($field, $locale);
+
+            if ($resolved === null) {
+                continue;
+            }
+
+            $row = $this->loadedTranslations()
+                ->first(fn (Translation $t) => $t->field === $field && $t->locale === $resolved->locale);
+
+            if ($row?->is_machine_draft) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function isTranslatedInto(string $locale): bool
     {
         return in_array($locale, $this->translatedLocales(), true);

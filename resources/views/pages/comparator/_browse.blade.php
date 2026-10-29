@@ -153,6 +153,8 @@
         </div>
     </div>
 
+    <x-indicator-note :indicators="$indicator" />
+
     <div class="c-cmp__foot">
         <span><strong>{{ __('comparator.foot_source') }}</strong> {{ $indicator->source_standard ?: __('comparator.foot_source_unknown') }}</span>
         @if ($comparison->latestUpdate())

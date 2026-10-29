@@ -81,4 +81,6 @@ return [
     'blurb_universal_access' => 'Network coverage and the reach of the postal network.',
     'open_with_these' => 'Open these in the comparator',
     'count_categories' => '{0}Categories|{1}Category|[2,*]Categories',
+    'note_above_100' => 'Values above 100 are normal for subscriptions per 100 inhabitants: one person can hold more than one subscription.',
+    'export_browse_scope' => 'The fourteen CRASA member states',
 ];

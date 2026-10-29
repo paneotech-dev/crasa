@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Turnstile;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,14 +38,22 @@ class SecurityHeaders
          * through, which is the attack that matters for an administration
          * interface.
          */
-        $policy = implode('; ', [
+        // Turnstile, when it is on, loads a script and draws its check in a
+        // frame, both from Cloudflare's challenge host.
+        $turnstile = Turnstile::enabled() ? ' '.Turnstile::HOST : '';
+
+        $policy = implode('; ', array_filter([
             "default-src 'self'",
             // Cloudflare injects its Web Analytics beacon in front of the
             // site; without these two hosts the browser logs a CSP error on
             // every page.
-            "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com",
+            "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com".$turnstile,
+            $turnstile !== '' ? "frame-src 'self'".$turnstile : null,
             "style-src 'self' 'unsafe-inline'",
-            "img-src 'self' data:",
+            // The contact map's tile server, and only that host. Without it
+            // the browser refused every tile and the map showed a pin on
+            // an empty grey square.
+            trim("img-src 'self' data: ".$this->tileHost()),
             "font-src 'self'",
             "connect-src 'self' https://cloudflareinsights.com",
             "form-action 'self'",
@@ -56,7 +65,7 @@ class SecurityHeaders
             "base-uri 'self'",
             "object-src 'none'",
             'upgrade-insecure-requests',
-        ]);
+        ]));
 
         $headers = [
             'Content-Security-Policy' => $policy,
@@ -101,5 +110,19 @@ class SecurityHeaders
         }
 
         return $response;
+    }
+
+    /** The scheme and host of the configured map tile server, or nothing. */
+    private function tileHost(): string
+    {
+        $url = (string) config('crasa.map.tile_url');
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+        $host = parse_url($url, PHP_URL_HOST);
+
+        if (! in_array($scheme, ['https', 'http'], true) || ! is_string($host) || ! preg_match('/^[a-z0-9.-]+$/i', $host)) {
+            return '';
+        }
+
+        return $scheme.'://'.$host;
     }
 }

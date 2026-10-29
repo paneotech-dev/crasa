@@ -81,4 +81,6 @@ return [
     'blurb_universal_access' => 'Couverture des réseaux et étendue du réseau postal.',
     'open_with_these' => 'Ouvrir dans le comparateur',
     'count_categories' => '{0}Catégories|{1}Catégorie|[2,*]Catégories',
+    'note_above_100' => 'Les valeurs supérieures à 100 sont normales pour les abonnements pour 100 habitants : une même personne peut détenir plusieurs abonnements.',
+    'export_browse_scope' => 'Les quatorze États membres de la CRASA',
 ];

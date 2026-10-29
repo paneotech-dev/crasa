@@ -44,6 +44,7 @@
                     <label for="remember">{{ __('auth.remember') }}</label>
                 </div>
 
+                @include('partials.turnstile')
                 <button type="submit" class="c-btn c-btn--primary">{{ __('auth.sign_in') }}</button>
 
                 <p class="c-form__note">

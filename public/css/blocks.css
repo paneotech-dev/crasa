@@ -532,6 +532,29 @@
 .b-richtext__body > * + * { margin-top: var(--s-4); }
 .b-richtext[data-alignment="center"] .b-richtext__body { margin-inline: auto; }
 
+/* Rich text laid out as headed sections side by side, or as a grid of
+   people (the About page, 29 October 2026). Two balanced columns on a wide
+   screen, so the four short Focus, Vision, Mission sections sit beside the
+   long History rather than above it. */
+.b-richtext[data-layout="columns"] .b-richtext__body,
+.b-richtext[data-layout="people"] .b-richtext__body { max-width: none; }
+.b-richtext__intro { max-width: 66ch; margin: 0; }
+.b-sections { columns: 1; column-gap: var(--s-7); }
+.b-sections__item { break-inside: avoid; padding-top: var(--s-3); border-top: 1px solid var(--c-sand); margin: 0 0 var(--s-5); }
+.b-sections__item > p { margin: var(--s-2) 0 0; }
+.b-sections__heading { font-family: var(--f-head); font-size: var(--t-h3-size); line-height: var(--t-h3-line); font-weight: 600; color: var(--c-green-dark); margin: 0; }
+.b-people__intro { columns: 1; column-gap: var(--s-7); }
+.b-people__intro > p { margin: 0 0 var(--s-3); break-inside: avoid; }
+@media (min-width: 900px) {
+  .b-sections, .b-people__intro { columns: 2; }
+}
+.b-people { list-style: none; margin: var(--s-5) 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); gap: var(--s-4); }
+.b-person { display: flex; flex-direction: column; gap: var(--s-1); min-width: 0; padding: var(--s-4); background: var(--c-white); border: 1px solid var(--c-sand); border-radius: var(--r-sm); }
+.b-person__photo { display: flex; align-items: center; justify-content: center; width: 72px; height: 72px; margin-bottom: var(--s-2); background: var(--c-green-light); color: var(--c-green-dark); border-radius: var(--r-xs); }
+.b-person__name { font-weight: 600; color: var(--c-charcoal); line-height: 1.35; }
+.b-person__title { font-size: var(--t-small-size); line-height: 1.45; color: var(--c-slate); }
+.b__also-anchor { display: block; height: 0; }
+
 /* Card lists: publications, documents, news ---------------------------- */
 /* One grid serves all three. align-items:start again, and the track minimum
    is generous enough that a long title does not force a two-character line
@@ -1328,14 +1351,15 @@
    draws one committee's workspace behind authentication. Logged in
    docs/OPEN_ITEMS.md.
 
-   Heights follow content, as they do on the member cards: a committee with
-   a four-line mandate is taller than one with a sentence, and padding both
-   to a common height is the tell CLAUDE.md forbids. */
+   Six committees, so three per row in two rows on a wide screen, two per
+   row on a tablet, one on a phone. The cards in a row share its height
+   (requested by CRASA, 29 October 2026) and the tally sits on the foot of
+   each, so the rules line up across the row. */
 .b-committees {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--s-4);
-  align-items: start;
+  align-items: stretch;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -1350,6 +1374,9 @@
   flex-direction: column;
   gap: var(--s-2);
 }
+@media (min-width: 640px) { .b-committees { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 992px) { .b-committees { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.b-committee > .b-committee__tally, .b-committee > .b-committee__dormant { margin-top: auto; }
 .b-committees__note { font-size: 13.5px; line-height: 1.6; color: var(--c-slate); margin: var(--s-4) 0 0; max-width: 62ch; }
 .b-committee__name { font-family: var(--f-head); font-size: 17px; font-weight: 600; line-height: 1.3; color: var(--c-navy); }
 .b-committee__meta { font-family: var(--f-admin); font-size: 12px; font-weight: 600; color: var(--c-green-dark); }
@@ -1396,6 +1423,13 @@
 .c-event__title a { color: var(--c-navy); text-decoration: none; }
 .c-event__title a:hover, .c-event__title a:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
 .c-event__where { font-size: 13.5px; color: var(--c-slate); margin: var(--s-1) 0 0; }
+/* "Add to my calendar" on event cards and pages: two plain actions. */
+.c-addcal { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-4); margin: var(--s-4) 0 0; font-size: 14px; }
+.c-addcal__label { font-weight: 600; color: var(--c-charcoal); }
+.c-addcal__action { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--s-3); border: 1px solid var(--c-border); border-radius: var(--r-sm); color: var(--c-green-dark); background: var(--c-white); text-decoration: none; font-weight: 600; }
+.c-addcal__action:hover, .c-addcal__action:focus-visible { border-color: var(--c-green-dark); text-decoration: underline; text-underline-offset: 3px; }
+.c-addcal--compact { margin-top: var(--s-2); font-size: 13.5px; }
+.c-addcal--compact .c-addcal__action { min-height: 36px; padding: 0 var(--s-2); }
 
 /* The region map ------------------------------------------------------- */
 /* The members page's one bold moment. Everything else on that page stays
@@ -1932,6 +1966,9 @@
 .c-completeness__gap { font-size: 12.5px; color: var(--c-red-dark); font-style: normal; }
 .c-completeness__total { font-weight: 700; }
 .c-source { font-size: 12.5px; line-height: 1.5; color: var(--c-slate); margin: var(--s-2) 0 0; }
+/* An indicator's reading note (values above 100 per 100 inhabitants).
+   Shared by the comparator, the member page and the home comparator. */
+.c-indicator-note { font-size: var(--t-small-size); line-height: 1.5; color: var(--c-charcoal); margin: var(--s-3) 0; padding-left: var(--s-3); border-left: 2px solid var(--c-green); }
 
 /* The homepage comparison's own selectors. Two member states and one
    indicator: the section demonstrates RP-10 by being it, not by describing

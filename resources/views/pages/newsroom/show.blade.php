@@ -27,6 +27,7 @@
             @endif
 
             @include('pages.newsroom._meta', ['item' => $item])
+            @if ($item->showsMachineDraft(['title', 'summary', 'body']))<p class="c-machine-note">{{ __('a11y.machine_draft') }}</p>@endif
 
             @if ($title?->isFallback())
                 <x-fallback-notice />

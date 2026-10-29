@@ -26,18 +26,51 @@ class CalendarFeed
     /** @param Collection<int, Meeting> $meetings */
     public function ics(Collection $meetings): string
     {
-        $lines = [
+        return $this->calendar(__('extranet.calendar'), $meetings->flatMap(fn (Meeting $meeting) => $this->event($meeting))->all());
+    }
+
+    /**
+     * One public event, for "Add to my calendar" on the events pages.
+     *
+     * The description is the committee and the event's own page rather
+     * than the agenda: a public agenda can carry markup and placeholder
+     * text, and the page is where the current version of it lives.
+     */
+    public function single(Meeting $meeting, string $url): string
+    {
+        return $this->calendar($meeting->title, $this->event($meeting, $url));
+    }
+
+    /**
+     * The same event as a Google Calendar template link. Same dates as the
+     * file, the end exclusive, so the two never disagree.
+     */
+    public function googleUrl(Meeting $meeting, string $url): string
+    {
+        [$start, $end] = $this->dates($meeting);
+
+        return 'https://calendar.google.com/calendar/render?'.http_build_query([
+            'action' => 'TEMPLATE',
+            'text' => $meeting->title,
+            'dates' => $start->format('Ymd').'/'.$end->format('Ymd'),
+            'details' => $this->publicDetails($meeting, $url),
+            'location' => (string) $meeting->location,
+        ], '', '&', PHP_QUERY_RFC3986);
+    }
+
+    /**
+     * @param  array<int, string>  $events
+     */
+    private function calendar(string $name, array $events): string
+    {
+        $lines = array_merge([
             'BEGIN:VCALENDAR',
             'VERSION:2.0',
             'PRODID:-//CRASA//Digital Anchor Ecosystem//EN',
             'CALSCALE:GREGORIAN',
             'METHOD:PUBLISH',
-            'X-WR-CALNAME:'.$this->escape(__('extranet.calendar')),
-        ];
-
-        foreach ($meetings as $meeting) {
-            $lines = array_merge($lines, $this->event($meeting));
-        }
+            'X-WR-CALNAME:'.$this->escape($name),
+        ], $events);
 
         $lines[] = 'END:VCALENDAR';
 
@@ -46,13 +79,25 @@ class CalendarFeed
         return implode("\r\n", $lines)."\r\n";
     }
 
-    /** @return array<int, string> */
-    private function event(Meeting $meeting): array
+    /** @return array{0: \Carbon\CarbonInterface, 1: \Carbon\CarbonInterface} */
+    private function dates(Meeting $meeting): array
     {
         $start = $meeting->starts_on;
+
         // DTEND is exclusive for an all-day event, so a one-day meeting ends
         // the following day. Getting this wrong shows a meeting a day short.
-        $end = ($meeting->ends_on ?: $start)->copy()->addDay();
+        return [$start, ($meeting->ends_on ?: $start)->copy()->addDay()];
+    }
+
+    private function publicDetails(Meeting $meeting, string $url): string
+    {
+        return collect([$meeting->committee?->name, $url])->filter()->implode("\n");
+    }
+
+    /** @return array<int, string> */
+    private function event(Meeting $meeting, ?string $url = null): array
+    {
+        [$start, $end] = $this->dates($meeting);
 
         $lines = [
             'BEGIN:VEVENT',
@@ -67,10 +112,13 @@ class CalendarFeed
             $lines[] = 'LOCATION:'.$this->escape($meeting->location);
         }
 
-        $description = collect([
-            $meeting->committee?->name,
-            $meeting->agenda,
-        ])->filter()->implode("\n");
+        $description = $url !== null
+            ? $this->publicDetails($meeting, $url)
+            : collect([$meeting->committee?->name, $meeting->agenda])->filter()->implode("\n");
+
+        if ($url !== null) {
+            $lines[] = 'URL:'.$url;
+        }
 
         if ($description !== '') {
             $lines[] = 'DESCRIPTION:'.$this->escape($description);

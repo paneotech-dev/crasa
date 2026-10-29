@@ -7,10 +7,11 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
 /**
- * No CAPTCHA. CLAUDE.md and WCAG 2.1 AA both point away from it: a puzzle a
- * screen reader user cannot solve is an accessibility failure, and on a
- * regulatory platform it excludes the exact people who need to make contact.
- * A honeypot and a rate limit do the same job without that cost.
+ * No puzzle CAPTCHA. CLAUDE.md and WCAG 2.1 AA both point away from it: a
+ * puzzle a screen reader user cannot solve is an accessibility failure, and
+ * on a regulatory platform it excludes the exact people who need to make
+ * contact. A honeypot and a rate limit do the job, with Cloudflare
+ * Turnstile in front of the route when its keys are set (VerifyTurnstile).
  */
 class StoreEnquiryRequest extends FormRequest
 {
