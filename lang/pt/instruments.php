@@ -6,7 +6,7 @@ return [
     'type_licence_framework' => 'Quadro de licenciamento',
     'type_guideline' => 'Diretriz',
     'type_directive' => 'Diretiva',
-    'type_policy' => 'Politica',
+    'type_policy' => 'Política',
 
     'status_in_force' => 'Em vigor',
     'status_amended' => 'Alterado',
