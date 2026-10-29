@@ -151,4 +151,18 @@ class PublicationHygieneTest extends TestCase
         // A value that is not an option is ignored, not passed to the query.
         $this->actingAs($this->admin)->get('/en/admin/data/news?category=nonsense')->assertOk()->assertSee('20 Oct 2026');
     }
+
+    /** UX-14: the visibility tick says what it does, required is a word, the error sits by its field. */
+    public function test_the_publication_form_labels_visibility_and_marks_required_in_words(): void
+    {
+        $html = $this->actingAs($this->admin)->get('/en/admin/data/publications/new')->assertOk()->getContent();
+        $this->assertStringContainsString('Visible on the public site', $html);
+        $this->assertStringContainsString('listed in the public library', $html);
+        $this->assertMatchesRegularExpression('/<span class="a-required">Required<\/span>/', $html);
+
+        $this->actingAs($this->admin)->from('/en/admin/data/publications/new')
+            ->post('/en/admin/data/publications', $this->form())->assertRedirect('/en/admin/data/publications/new');
+        $after = $this->actingAs($this->admin)->get('/en/admin/data/publications/new')->getContent();
+        $this->assertMatchesRegularExpression('/id="f-is_public".*?<p class="c-field__error" id="e-is_public">/s', $after);
+    }
 }
