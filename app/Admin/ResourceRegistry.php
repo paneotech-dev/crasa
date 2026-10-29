@@ -33,7 +33,9 @@ use InvalidArgumentException;
  * user account attached to it, and the person who did it finds out when a
  * page 500s. So since Day 3 a reference row can be deleted only while
  * nothing points at it, and the refusal names what does (see references).
- * Sectors stay fixed.
+ * Sectors are added and deleted under Content > Taxonomies (administrators,
+ * SectorPolicy), which writes their three names and checks what points at
+ * them; here a sector's name is corrected, and the list links there.
  *
  * Content -- instruments, publications, news -- soft deletes and has a
  * restore path, because taking something off the site and destroying it are
@@ -150,6 +152,8 @@ final class ResourceRegistry
                 rules: ['name' => ['required', 'string', 'max:80']],
                 searchable: ['name', 'slug'],
                 orderBy: 'name',
+                // Added and deleted under Content > Taxonomies, which writes
+                // the slug, icon and three names this form does not carry.
                 creatable: false,
                 deletable: false,
                 isReferenceData: true,
