@@ -15,8 +15,9 @@
 
     {{-- A short hero: what the tool does and three figures. The console
          starts right under it and opens on a result (S4, 29 October). --}}
-    <section class="u-hero c-cmp__hero">
+    <section class="u-hero c-cmp__hero c-cmp__masthead">
         <div class="u-container">
+            <div class="c-cmp__hero-wrap">
             <div class="c-cmp__hero-grid">
             <div>
             <p class="u-eyebrow">{{ __('d.eyebrow') }}</p>
@@ -29,6 +30,14 @@
                 <div class="u-figure"><dt>{{ __('d.figure_validated') }}</dt><dd>{{ $validatedCount }}</dd></div>
             </dl>
             </div>
+            </div>
+            {{-- Three colleagues comparing a printed chart against a tablet:
+                 a framed photograph, not a background (S9). --}}
+            <figure class="c-cmp__photo">
+                <div class="c-cmp__photo-frame">
+                    <x-responsive-image name="data" decorative sizes="(min-width: 1100px) 400px, 100vw" loading="eager" class="c-img--cover" />
+                </div>
+            </figure>
         </div>
     </section>
 

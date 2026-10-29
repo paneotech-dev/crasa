@@ -97,17 +97,19 @@ class AffordanceFixesTest extends TestCase
      * regulator works. One that looks like a heading and does nothing is
      * the affordance failure in its plainest form.
      */
-    public function test_the_comparator_sorts_by_value(): void
+    /**
+     * Day 2 (D2): browse mode is a ranking of all fourteen, highest first,
+     * in the table and the chart alike. The sort links are gone; the order
+     * is the view, and its URL is the view's URL.
+     */
+    public function test_the_comparator_ranks_by_value(): void
     {
-        $ascending = $this->values($this->get('/en/comparator?mode=browse&sort=value&dir=asc')->assertOk()->getContent());
-        $descending = $this->values($this->get('/en/comparator?mode=browse&sort=value&dir=desc')->assertOk()->getContent());
+        $ranked = $this->values($this->get('/en/comparator?mode=browse')->assertOk()->getContent());
 
-        $this->assertNotEmpty($ascending);
-        $this->assertSame(array_reverse($ascending), $descending);
-
-        $sortedCopy = $ascending;
-        sort($sortedCopy);
-        $this->assertSame($sortedCopy, $ascending, 'Ascending did not actually ascend.');
+        $this->assertNotEmpty($ranked);
+        $sorted = $ranked;
+        rsort($sorted);
+        $this->assertSame($sorted, $ranked, 'The ranking does not descend.');
     }
 
     /**
@@ -138,13 +140,11 @@ class AffordanceFixesTest extends TestCase
         }
     }
 
-    public function test_the_sorted_view_has_its_own_url_and_needs_no_script(): void
+    public function test_the_ranking_needs_no_script(): void
     {
         $html = $this->get('/en/comparator?mode=browse')->assertOk()->getContent();
 
-        // Links, not buttons: the order is shareable.
-        $this->assertMatchesRegularExpression('~<a class="c-sort" href="[^"]*sort=value[^"]*"~', $html);
-        $this->assertStringContainsString('aria-sort=', $html);
+        $this->assertStringContainsString('<th scope="col">'.__('d.col_rank').'</th>', $html);
     }
 
     public function test_the_completeness_grid_sorts_by_how_much_each_state_has_filed(): void
@@ -168,7 +168,7 @@ class AffordanceFixesTest extends TestCase
     {
         $html = $this->get('/en/comparator?mode=browse')->assertOk()->getContent();
 
-        preg_match('~<th scope="col">([^<]*Provenance[^<]*)</th>~i', $html, $match);
+        preg_match('~<th scope="col">([^<]*Status[^<]*)</th>~i', $html, $match);
         $this->assertNotEmpty($match, 'The provenance column is missing or has become a control.');
     }
 
@@ -211,7 +211,7 @@ class AffordanceFixesTest extends TestCase
     /** @return array<int, float> */
     private function values(string $html): array
     {
-        preg_match_all('~class="c-cmp__num" >([\d,.]+)~', $html, $matches);
+        preg_match_all('~class="c-cmp__num"[^>]*>([\d,.]+)~', $html, $matches);
 
         return array_map(fn ($v) => (float) str_replace(',', '', $v), $matches[1]);
     }
