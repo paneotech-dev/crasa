@@ -2792,3 +2792,86 @@ body[data-surface="admin"] .a-search:focus-within { outline: 2px solid var(--a-f
 body[data-surface="admin"] .a-top__field:focus-visible { outline: 2px solid var(--a-focus); outline-offset: 2px; }
 body[data-surface="admin"] :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible { outline-width: 2px; outline-style: solid; outline-color: var(--a-focus); }
 body[data-surface="admin"] .a-search input:focus-visible { outline: 0; }
+
+/* Day 3: notify ---------------------------------------------------------- */
+
+/* The bell list: a details disclosure in the top bar. The panel sits under
+   the bell at desktop width and spans the screen, inside the 16px gutter,
+   on a phone. Tokens only, so the dark surface set applies as it is. */
+.a-bell { position: relative; }
+.a-bell > summary { list-style: none; cursor: pointer; }
+.a-bell > summary::-webkit-details-marker { display: none; }
+.a-bell > summary:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
+.a-bell[open] > summary { background: var(--a-head-ground); color: var(--a-ink-strong); }
+.a-bell__panel {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 60;
+  width: 380px; max-height: min(70vh, 560px); overflow-y: auto;
+  background: var(--a-surface); color: var(--a-ink);
+  border: 1px solid var(--a-rule); border-radius: var(--r-md); box-shadow: var(--e-3);
+  font-family: var(--f-admin);
+}
+@media (max-width: 599.98px) {
+  .a-bell__panel { position: fixed; top: 64px; left: var(--s-4); right: var(--s-4); width: auto; }
+}
+.a-bell__head, .a-bell__foot {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+}
+.a-bell__head { border-bottom: 1px solid var(--a-rule); }
+.a-bell__foot { border-top: 1px solid var(--a-rule); font-size: 13.5px; }
+.a-bell__foot a { color: var(--a-link); font-weight: 600; }
+.a-bell__foot form { margin: 0; }
+.a-bell__title { font-family: var(--f-admin); font-size: 15px; font-weight: 700; margin: 0; }
+.a-bell__count { font-size: 13px; color: var(--a-ink-quiet); }
+
+/* The latest notices, also placed on dashboards. */
+.n-latest { list-style: none; margin: 0; padding: 0; }
+.n-latest__item { padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--a-rule); display: grid; gap: 4px; }
+.n-latest__item:last-child { border-bottom: 0; }
+.n-latest__item.is-unread { border-inline-start: 3px solid var(--c-green-dark); padding-inline-start: calc(var(--s-4) - 3px); }
+.n-latest__link { color: var(--a-ink); font-size: 14px; line-height: 1.4; text-decoration: none; overflow-wrap: anywhere; }
+.n-latest__item.is-unread .n-latest__link { font-weight: 600; }
+.n-latest__link:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+.n-latest__link:focus-visible, .n-latest__read:focus-visible, .a-bell__foot a:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
+.n-latest__meta { font-size: 12.5px; color: var(--a-ink-quiet); }
+.n-latest__state { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+.n-latest__state form { margin: 0; }
+.n-latest__read {
+  font: inherit; font-size: 13px; font-weight: 600; color: var(--a-link);
+  background: none; border: 0; padding: 4px 0; cursor: pointer;
+}
+.n-latest__read:hover { text-decoration: underline; text-underline-offset: 2px; }
+.n-latest__empty { margin: 0; padding: var(--s-4); font-size: 13.5px; line-height: 1.55; color: var(--a-ink-quiet); }
+
+/* The notifications page: one row per notice with its own Mark as read. */
+.n-rowform { margin: 0; flex: none; }
+.n-filters { margin-bottom: var(--s-4); align-items: flex-end; }
+.n-rows .a-row { padding-inline-end: var(--s-4); }
+.n-rows .a-row__who { display: block; margin-top: 2px; }
+/* On a phone the line takes the full width and the time, state and button
+   wrap beneath it, rather than squeezing the line to one letter a row. */
+@media (max-width: 767.98px) {
+  .n-rows .a-row { flex-wrap: wrap; row-gap: var(--s-2); padding-inline-start: var(--s-4); }
+  .n-rows .a-row.is-unread { padding-inline-start: calc(var(--s-4) - 3px); }
+  .n-rows .a-row__grow { flex: 1 1 100%; }
+  .n-rows .a-row__time { width: auto; }
+}
+
+/* The top bar keeps the bell and the help icon whole at phone width. With
+   both icons and the language pills there is no room at 390 for the
+   administrators' mail-off badge, which the dashboard also states in its
+   attention block, so the badge stays from 480px up. */
+.a-bell, .a-top__utilities > .a-top__icon { flex: none; }
+@media (max-width: 479.98px) {
+  .a-top__mailoff { display: none; }
+}
+
+/* The help page per screen. */
+.s-help h2 { font-family: var(--f-head); font-size: 19px; font-weight: 600; margin: var(--s-5) 0 var(--s-2); }
+.s-help h2:first-child, .s-help .a-hint + h2 { margin-top: 0; }
+.s-help__purpose { font-size: 15px; line-height: 1.6; margin: 0 0 var(--s-5); max-width: 68ch; }
+.s-help__actions { margin: 0; padding-left: 1.4em; font-size: 15px; line-height: 1.6; max-width: 68ch; }
+.s-help__actions li + li { margin-top: var(--s-2); }
+.s-help__links { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); margin-top: var(--s-5); }
+.s-help__more { color: var(--a-link); font-weight: 600; font-size: 14px; }
+/* end Day 3: notify */

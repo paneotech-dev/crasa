@@ -200,24 +200,30 @@ class Meeting extends Model
      */
     protected static function booted(): void
     {
-        static::updating(function (Meeting $meeting): void {
-            if ($meeting->committee_id === null || $meeting->getOriginal('synced_at') === null) {
+        /*
+         * Client brief item 7: a meeting moved or cancelled reaches that
+         * committee's members and the people registered for it, through the
+         * one notifier (App\Support\Notifier). An edit in the back office
+         * counts as well as the sync; the first sync of a meeting still does
+         * not, for the reason above.
+         */
+        static::updated(function (Meeting $meeting): void {
+            if ($meeting->wasChanged('synced_at') && $meeting->getOriginal('synced_at') === null) {
                 return;
             }
 
-            if (! $meeting->isDirty(['starts_on', 'ends_on', 'venue', 'location'])) {
+            $cancelled = $meeting->wasChanged('status') && $meeting->status === 'cancelled';
+            $moved = $meeting->wasChanged(['starts_on', 'ends_on', 'starts_at', 'ends_at', 'venue', 'location', 'online_url'])
+                || ($meeting->wasChanged('status') && $meeting->status === 'postponed');
+
+            if (! $cancelled && ! $moved) {
                 return;
             }
 
-            app(\App\Services\NotifiesMembers::class)->fire(
-                \App\Enums\NotificationTrigger::MeetingChanged,
-                __('notifications.meeting_moved', [
-                    'title' => $meeting->title,
-                    'date' => $meeting->starts_on?->isoFormat('D MMMM YYYY') ?? '',
-                ]),
-                route('extranet.calendar', ['locale' => 'en']),
-                committee: $meeting->committee,
-                payload: ['meeting_id' => $meeting->id],
+            \App\Support\Notifier::meetingChanged(
+                $meeting,
+                $cancelled ? 'cancelled' : 'changed',
+                (string) $meeting->updated_at?->timestamp,
             );
         });
     }

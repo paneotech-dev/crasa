@@ -49,11 +49,12 @@ class NotifiesMembers
             ->reject(fn (User $user) => $except !== null && $user->is($except))
             ->filter(fn (User $user) => $this->subscribed($user, $trigger));
 
-        foreach ($audience as $user) {
-            $user->notify(new RegulatoryActivity($trigger, $title, $url, $payload));
-        }
-
-        return $audience->count();
+        // Through the one notifier, so a person is never told twice.
+        return \App\Support\Notifier::send(
+            $audience,
+            new RegulatoryActivity($trigger, $title, $url, $payload),
+            \App\Support\Notifier::categoryOfTrigger($trigger),
+        );
     }
 
     /**

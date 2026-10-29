@@ -49,6 +49,8 @@ return [
     'trigger_approval' => 'Moderation of content',
     'trigger_admin_activity' => 'Another administrator acted',
     'trigger_announcement_note' => 'Notices to the membership, sometimes narrowed to one sector or one committee.',
+    'trigger_registration_confirmed' => 'A registration for a meeting is confirmed',
+    'trigger_registration_confirmed_note' => 'Your own registration, or one from your member state, accepted by the Secretariat.',
     'filed' => "':file' was filed into :committee.",
     'meeting_moved' => "':title' is now :date.",
 

@@ -612,11 +612,22 @@ final class Approvals
     /** @param Collection<int, User|null> $recipients */
     private static function notify(Collection $recipients, string $event, Approval $approval, ?Model $model, User $actor): void
     {
-        $url = route('admin.approvals.show', ['locale' => app()->getLocale(), 'approval' => $approval->id]);
-
-        foreach ($recipients->filter() as $user) {
-            $user->notify(new ApprovalActivity($event, self::title($model, $user->preferred_locale ?? 'en'), $url, $actor->name, $approval->comment));
-        }
+        // Through the one notifier: only people who may open the request
+        // are told, each in their own language, and never twice.
+        Notifier::send(
+            $recipients,
+            fn (User $user) => new ApprovalActivity(
+                $event,
+                self::title($model, $user->preferred_locale ?? 'en'),
+                route('admin.approvals.show', ['locale' => Locales::isSupported($user->preferred_locale) ? $user->preferred_locale : Locales::FALLBACK, 'approval' => $approval->id]),
+                $actor->name,
+                $approval->comment,
+            ),
+            $event === 'approval_submitted' ? 'approval_request' : 'decision',
+            'approval:'.$approval->id.':'.$event,
+            fn (User $user) => \Illuminate\Support\Facades\Gate::forUser($user)->allows('enter-back-office')
+                && \Illuminate\Support\Facades\Gate::forUser($user)->allows('view', $approval),
+        );
     }
 
     private static function ready(): bool

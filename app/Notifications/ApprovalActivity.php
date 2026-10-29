@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Concerns\InApp;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -12,7 +13,7 @@ use Illuminate\Notifications\Notification;
  */
 class ApprovalActivity extends Notification
 {
-    use Queueable;
+    use InApp, Queueable;
 
     public function __construct(
         public readonly string $event,
@@ -22,23 +23,25 @@ class ApprovalActivity extends Notification
         public readonly ?string $comment = null,
     ) {}
 
-    /** @return list<string> */
-    public function via(object $notifiable): array
+    protected function defaultCategory(): string
     {
-        return ['database'];
+        return $this->event === 'approval_submitted' ? 'approval_request' : 'decision';
     }
 
     /** @return array<string, mixed> */
     public function toArray(object $notifiable): array
     {
         $locale = $notifiable->preferred_locale ?? 'en';
+        $params = ['subject' => $this->subject, 'actor' => $this->actor];
 
-        return [
+        return $this->withInApp([
             'type' => 'approval',
             'event' => $this->event,
-            'title' => __('fa.notify_'.$this->event, ['subject' => $this->subject, 'actor' => $this->actor], $locale),
+            'title' => __('fa.notify_'.$this->event, $params, $locale),
+            'title_key' => 'fa.notify_'.$this->event,
+            'params' => $params,
             'comment' => $this->comment,
             'url' => $this->url,
-        ];
+        ]);
     }
 }

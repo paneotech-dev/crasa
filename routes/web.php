@@ -459,6 +459,14 @@ Route::prefix('{locale}')
             Route::put('notifications/preferences', [NotificationCentreController::class, 'preferences'])->name('notifications.preferences');
             Route::get('notifications/{notification}', [NotificationCentreController::class, 'open'])->name('notifications.open');
 
+            // Day 3: notify
+            // Mark one notice read from the bell list or the page; the help
+            // page per screen, keyed by route name (lang/*/screenhelp_*.php).
+            Route::post('notifications/{notification}/read', [NotificationCentreController::class, 'markRead'])->name('notifications.read');
+            Route::get('help/{screen}', [\App\Http\Controllers\ScreenHelpController::class, 'show'])
+                ->where('screen', '[A-Za-z0-9._-]+')->name('screen-help');
+            // end Day 3: notify
+
             Route::get('submissions', [SubmissionController::class, 'index'])->name('submissions');
             Route::post('submissions', [SubmissionController::class, 'store'])->name('submissions.store');
             /*

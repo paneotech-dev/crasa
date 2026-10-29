@@ -55,6 +55,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Day 3: notify. Events from other parts of the platform reach the
+        // bell through the one notifier (App\Support\NotifyListeners).
+        \App\Support\NotifyListeners::register();
+
         /*
          * A stored instant shown in the Secretariat's zone. Storage stays
          * UTC; this is display only (App\Support\LocalTime).

@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\NotificationTrigger;
 use App\Models\AuditLog;
 use App\Models\Committee;
 use App\Models\Document;
 use App\Models\Folder;
 use App\Models\Meeting;
 use App\Services\CalendarFeed;
-use App\Services\NotifiesMembers;
 use App\Support\CountryDashboard;
 use App\Support\ExtranetNavigation;
 use App\Support\LocalTime;
+use App\Support\Notifier;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -137,22 +136,13 @@ class ExtranetController extends Controller
          * on the model, because a document created by the legacy import or
          * by a seeder is not something to wake fourteen regulators about.
          *
-         * The audience is the seats on that committee, worked out at send
-         * time from the pivot rather than from a stored subscription list.
+         * Client brief item 7: everyone who may see the folder is told,
+         * except the uploader, worked out at send time from clearance,
+         * country and seat. The DocumentAdded event, where another part of
+         * the platform fires it for the same document, is the same notice:
+         * the notifier writes it once.
          */
-        if ($folder->committee !== null) {
-            app(NotifiesMembers::class)->fire(
-                NotificationTrigger::CommitteeDocument,
-                __('notifications.filed', [
-                    'file' => $document->original_filename,
-                    'committee' => $folder->committee->name,
-                ]),
-                route('extranet.folder', ['locale' => app()->getLocale(), 'folder' => $folder->id]),
-                committee: $folder->committee,
-                except: $request->user(),
-                payload: ['document_id' => $document->id],
-            );
-        }
+        Notifier::documentAdded($document, $folder, $request->user());
 
         AuditLog::create([
             'user_id' => $request->user()->id,
