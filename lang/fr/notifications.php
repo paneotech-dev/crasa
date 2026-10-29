@@ -18,7 +18,7 @@ return [
     'preferences_saved' => 'Vos preferences de notification sont enregistrees.',
     'save_preferences' => 'Enregistrer les preferences',
     'by_email' => 'Par courriel',
-    'email_note' => 'La decision sur votre propre declaration est envoyee immediatement. Le reste attend le resume, car un courriel par evenement est un canal que l-on cesse d-ouvrir.',
+    'email_note' => 'L\'envoi d\'e-mails est désactivé pendant l\'atelier : chaque avis reste ici. Une fois l\'envoi activé, la décision sur votre propre déclaration est envoyée immédiatement et le reste attend le récapitulatif choisi ci-dessous.',
     'digest_label' => 'Envoyer le resume',
     'digest_daily' => 'Une fois par jour',
     'digest_weekly' => 'Une fois par semaine',

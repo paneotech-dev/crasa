@@ -70,8 +70,8 @@
                                     <span class="a-table__sub">{{ __('admin.confirm_no_authority') }}</span>
                                 @endif
                             </td>
-                            <td>{{ $authority?->sectors->pluck('name')->implode(', ') ?: '—' }}</td>
-                            <td>{{ $country->committees->count() ?: '—' }}</td>
+                            <td>{{ $authority?->sectors->pluck('name')->implode(', ') ?: '–' }}</td>
+                            <td>{{ $country->committees->count() ?: '–' }}</td>
                             <td>
                                 @if ($authority?->isConfirmed())
                                     <span class="a-pill" data-status="validated">{{ __('admin.confirm_confirmed') }}</span>

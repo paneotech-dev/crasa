@@ -18,7 +18,7 @@ return [
     'preferences_saved' => 'As suas preferencias de notificacao foram guardadas.',
     'save_preferences' => 'Guardar preferencias',
     'by_email' => 'Por email',
-    'email_note' => 'A decisao sobre a sua propria declaracao e enviada de imediato. O resto aguarda o resumo, porque um email por evento e um canal que as pessoas deixam de abrir.',
+    'email_note' => 'O envio de e-mails está desativado durante o seminário: cada aviso fica aqui. Quando o envio estiver ativo, a decisão sobre a sua própria declaração é enviada de imediato e o resto aguarda o resumo escolhido abaixo.',
     'digest_label' => 'Enviar o resumo',
     'digest_daily' => 'Uma vez por dia',
     'digest_weekly' => 'Uma vez por semana',

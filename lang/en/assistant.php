@@ -18,7 +18,7 @@
 
 return [
     'title' => 'Regulatory assistant',
-    'label' => 'Proposed extension — not part of the current platform',
+    'label' => 'Proposed extension, not part of the current platform',
     'framing' => 'Ask what any member state has done on any topic, in your own language, and get the clause with its source.',
 
     'card_action' => 'See what it would do',

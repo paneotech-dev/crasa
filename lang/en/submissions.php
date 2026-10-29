@@ -9,7 +9,7 @@
 
 return [
     'title' => 'Data submission',
-    'index_note' => 'Your country returns, by period. RP-09.',
+    'index_note' => 'Your country returns, by period.',
     'table_note' => 'One return per member state per period.',
     'open_title' => 'Open a return',
     'open_note' => 'One per period. Opening an existing period takes you to it rather than starting a second one.',

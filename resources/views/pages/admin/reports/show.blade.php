@@ -29,7 +29,7 @@
             <h2>{{ $report->title }}</h2>
             <p class="r-brief__subtitle">{{ $compiled['subtitle'] }}</p>
             <p class="r-brief__meta">
-                {{ __('reports.cover_generated', ['date' => now()->isoFormat('D MMMM YYYY')]) }} —
+                {{ __('reports.cover_generated', ['date' => now()->isoFormat('D MMMM YYYY')]) }}
                 {{ __('reports.cover_reported', ['reported' => $compiled['reported'], 'total' => $compiled['total']]) }}
             </p>
         </header>

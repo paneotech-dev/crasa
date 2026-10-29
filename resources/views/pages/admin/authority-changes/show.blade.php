@@ -19,7 +19,7 @@
 @section('content')
     <section class="a-card a-card--flush">
         <div class="a-card__head">
-            <h2>{{ __('authority.proposed_by', ['name' => $change->proposer?->name ?? '—']) }}</h2>
+            <h2>{{ __('authority.proposed_by', ['name' => $change->proposer?->name ?? '–']) }}</h2>
             <span class="a-card__meta">{{ $change->submitted_at?->displayed()->isoFormat('D MMMM YYYY') }}</span>
         </div>
 
@@ -36,19 +36,19 @@
                     @foreach (['name', 'acronym', 'website', 'established_year'] as $field)
                         <tr>
                             <th scope="row">{{ __('authority.field_'.($field === 'established_year' ? 'established' : $field)) }}</th>
-                            <td>{{ $current[$field] ?? '—' }}</td>
-                            <td>{{ $change->payload[$field] ?? '—' }}</td>
+                            <td>{{ $current[$field] ?? '–' }}</td>
+                            <td>{{ $change->payload[$field] ?? '–' }}</td>
                         </tr>
                     @endforeach
                     <tr>
                         <th scope="row">{{ __('authority.mandate') }}</th>
-                        <td>{{ collect($current['sectors'] ?? [])->map(fn ($id) => $sectors[$id]?->name)->filter()->implode(', ') ?: '—' }}</td>
-                        <td>{{ collect($change->payload['sectors'] ?? [])->map(fn ($id) => $sectors[$id]?->name)->filter()->implode(', ') ?: '—' }}</td>
+                        <td>{{ collect($current['sectors'] ?? [])->map(fn ($id) => $sectors[$id]?->name)->filter()->implode(', ') ?: '–' }}</td>
+                        <td>{{ collect($change->payload['sectors'] ?? [])->map(fn ($id) => $sectors[$id]?->name)->filter()->implode(', ') ?: '–' }}</td>
                     </tr>
                     <tr>
                         <th scope="row">{{ __('authority.seats') }}</th>
-                        <td>{{ collect($current['committees'] ?? [])->map(fn ($id) => $committees[$id]?->name)->filter()->implode(', ') ?: '—' }}</td>
-                        <td>{{ collect($change->payload['committees'] ?? [])->map(fn ($id) => $committees[$id]?->name)->filter()->implode(', ') ?: '—' }}</td>
+                        <td>{{ collect($current['committees'] ?? [])->map(fn ($id) => $committees[$id]?->name)->filter()->implode(', ') ?: '–' }}</td>
+                        <td>{{ collect($change->payload['committees'] ?? [])->map(fn ($id) => $committees[$id]?->name)->filter()->implode(', ') ?: '–' }}</td>
                     </tr>
                 </tbody>
             </table>
