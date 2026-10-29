@@ -111,6 +111,19 @@
 .cp-members-map, .cp-members-dir { scroll-margin-top: 80px; }
 .cp-member { min-height: 100%; }
 .cp-members-map__frame { min-width: 0; }
+/* C14: the two map controls in one compact row above the full-width map. */
+@media (min-width: 768px) {
+  .cp-members-map .c-map-region__control { display: inline-flex; flex-wrap: nowrap; vertical-align: bottom; margin-right: var(--u-5); }
+  .cp-members-map .c-map-region__field { flex: 0 1 300px; }
+  .cp-members-map .c-map-region__select { width: 300px; max-width: 100%; }
+}
+/* Legend and export buttons share one row on desktop. */
+@media (min-width: 992px) {
+  .cp-members-map .c-map-region__exports { float: right; margin: var(--u-3) 0 0 var(--u-5); display: flex; gap: var(--u-2); }
+  .cp-members-map .c-map-region__legend { overflow: hidden; }
+  .cp-members-map .c-map-region__caption { clear: both; }
+}
+.cp-members-map .c-map-region__control-label { font-family: var(--u-sans); font-size: var(--u-t-14); }
 .cp-members-grid { list-style: none; margin: 0; padding: 0; }
 .cp-member__top { display: flex; align-items: center; justify-content: space-between; gap: var(--u-3); }
 .cp-member__mark { flex: none; display: grid; place-items: center; width: 96px; height: 48px; padding: 4px; border: 1px solid var(--u-line); border-radius: var(--u-radius-sm); background: var(--u-white); overflow: hidden; }
