@@ -42,6 +42,17 @@
                     @endforeach
                 </div>
                 <span class="k-sep k-hide-sm" aria-hidden="true"></span>
+                {{-- The three channels in the utility bar on desktop (C11); on
+                     phones they are in the drawer. --}}
+                @if ($social !== [])
+                    <ul class="k-ubar__soc k-hide-sm" role="list">
+                        @foreach ($social as $network => $url)
+                            <li><a href="{{ $url }}" rel="noopener" target="_blank" data-network="{{ $network }}"
+                                   aria-label="{{ __('blocks.social_account', ['network' => \App\Support\SocialAccounts::label($network)]) }}"><x-social-mark :network="$network" tone="white" /></a></li>
+                        @endforeach
+                    </ul>
+                    <span class="k-sep k-hide-sm" aria-hidden="true"></span>
+                @endif
                 @includeIf('partials.a11y-toolbar')
                 <a class="k-hide-sm" href="{{ $backOfficeUrl }}">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>{{ __('nav.back_office') }}
