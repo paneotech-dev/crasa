@@ -35,7 +35,7 @@
             <div><dt>{{ __('contributions.field_status') }}</dt><dd>{{ __($instrument->status->labelKey()) }}</dd></div>
             <div><dt>{{ __('contributions.field_reference') }}</dt><dd>{{ $instrument->reference_number }}</dd></div>
             <div><dt>{{ __('contributions.contributed_by') }}</dt><dd>{{ $instrument->contributor?->name ?? '—' }}</dd></div>
-            <div><dt>{{ __('contributions.col_submitted') }}</dt><dd>{{ $instrument->submitted_at?->isoFormat('D MMMM YYYY') ?? '—' }}</dd></div>
+            <div><dt>{{ __('contributions.col_submitted') }}</dt><dd>{{ $instrument->submitted_at?->displayed()->isoFormat('D MMMM YYYY') ?? '—' }}</dd></div>
         </dl>
 
         @if ($summary)
@@ -106,7 +106,7 @@
                     <li>
                         <span class="a-history__n">{{ $version->version_number }}</span>
                         <span class="a-history__what">{{ $version->change_summary }}</span>
-                        <span class="a-history__who">{{ $version->created_at?->isoFormat('D MMMM YYYY, HH:mm') }}</span>
+                        <span class="a-history__who">{{ $version->created_at?->displayed()->isoFormat('D MMMM YYYY, HH:mm') }}</span>
                     </li>
                 @endforeach
             </ul>

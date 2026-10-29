@@ -78,7 +78,7 @@
                                     <span class="a-table__sub">
                                         {{ __('admin.confirm_by', [
                                             'name' => $authority->confirmed_by_name,
-                                            'date' => $authority->confirmed_at->isoFormat('D MMM YYYY'),
+                                            'date' => $authority->confirmed_at->displayed()->isoFormat('D MMM YYYY'),
                                         ]) }}
                                     </span>
                                 @else

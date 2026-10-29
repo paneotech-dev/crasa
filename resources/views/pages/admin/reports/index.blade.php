@@ -95,7 +95,7 @@
                 'period' => $r->period ?? __('reports.latest_period'),
                 'exported' => $r->exported_at?->isoFormat('D MMM YYYY') ?? __('reports.not_exported'),
                 'author' => $r->author?->name ?? '',
-                'created' => $r->created_at->isoFormat('D MMM YYYY'),
+                'created' => $r->created_at->displayed()->isoFormat('D MMM YYYY'),
             ],
             'actions' => [
                 ['label' => __('reports.view'), 'url' => route('admin.reports.show', ['locale' => app()->getLocale(), 'report' => $r->id])],

@@ -43,7 +43,7 @@
                                 </th>
                                 <td>{{ $instrument->sector?->name }}</td>
                                 <td><span class="a-pill" data-status="{{ $instrument->contribution_state?->value }}">{{ __($instrument->contribution_state->labelKey()) }}</span></td>
-                                <td>{{ $instrument->updated_at?->isoFormat('D MMMM YYYY') }}</td>
+                                <td>{{ $instrument->updated_at?->displayed()->isoFormat('D MMMM YYYY') }}</td>
                             </tr>
                         @endforeach
                     </tbody>

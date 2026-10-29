@@ -32,7 +32,7 @@
                             @endif
                         </span>
                         <span class="a-row__time">
-                            <time datetime="{{ $announcement->published_at?->toDateString() }}">{{ $announcement->published_at?->isoFormat('D MMMM YYYY') }}</time>
+                            <time datetime="{{ $announcement->published_at?->toDateString() }}">{{ $announcement->published_at?->displayed()->isoFormat('D MMMM YYYY') }}</time>
                         </span>
                     </li>
                 @endforeach

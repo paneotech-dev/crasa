@@ -31,8 +31,24 @@
         $start = $month->startOfMonth();
         // Monday-first, which is how a regional meeting calendar is read.
         $lead = ($start->dayOfWeekIso - 1);
-        $byDay = $inMonth->groupBy(fn ($m) => (int) $m->starts_on->format('j'));
+        // A meeting sits on every day it runs within this month, not only
+        // on its first day.
+        $byDay = [];
+        foreach ($inMonth as $m) {
+            $from = $m->starts_on->toDateString() < $start->toDateString() ? 1 : (int) $m->starts_on->format('j');
+            $endsOn = $m->ends_on ?? $m->starts_on;
+            $to = $endsOn->toDateString() > $start->endOfMonth()->toDateString() ? $month->daysInMonth : (int) $endsOn->format('j');
+            for ($d = $from; $d <= $to; $d++) {
+                $byDay[$d][] = $m;
+            }
+        }
     @endphp
+
+    @if ($movedFrom)
+        <p class="a-alert" role="status">
+            {{ __('office.calendar_moved', ['empty' => $movedFrom->isoFormat('MMMM YYYY'), 'month' => $month->isoFormat('MMMM YYYY')]) }}
+        </p>
+    @endif
 
     <section class="a-resource">
         <div class="a-resource__head">
@@ -64,8 +80,8 @@
                     <div class="e-cal__cell e-cal__cell--outside" aria-hidden="true"></div>
                 @endfor
                 @for ($day = 1; $day <= $month->daysInMonth; $day++)
-                    @php $onDay = $byDay->get($day, collect()); @endphp
-                    <div @class(['e-cal__cell', 'is-today' => $month->copy()->setDay($day)->isToday()])>
+                    @php $onDay = $byDay[$day] ?? []; @endphp
+                    <div @class(['e-cal__cell', 'is-today' => $month->setDay($day)->toDateString() === $today])>
                         <span class="e-cal__daynum">{{ $day }}</span>
                         @foreach ($onDay as $meeting)
                             {{-- Type is carried by colour AND by the label
@@ -100,6 +116,9 @@
     </section>
 
     @foreach (['upcoming' => $upcoming, 'past' => $past] as $key => $meetings)
+        {{-- The month above already says there is nothing; a second
+             "nothing scheduled" straight under it said it twice. --}}
+        @continue($meetings->isEmpty() && $inMonth->isEmpty())
         <section class="a-resource">
             <div class="a-resource__head">
                 <h2 class="a-resource__title">{{ __('extranet.'.$key) }}</h2>

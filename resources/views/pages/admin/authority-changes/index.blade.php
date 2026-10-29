@@ -34,7 +34,7 @@
                             <a href="{{ route('admin.authority-changes.show', ['locale' => app()->getLocale(), 'change' => $change->id]) }}">{{ $change->country->name }}</a>
                             <span class="a-row__who">{{ $change->payload['name'] ?? '' }}</span>
                         </span>
-                        <span class="a-row__time">{{ $change->submitted_at?->isoFormat('D MMMM YYYY') }}</span>
+                        <span class="a-row__time">{{ $change->submitted_at?->displayed()->isoFormat('D MMMM YYYY') }}</span>
                     </li>
                 @endforeach
             </ul>
@@ -52,7 +52,7 @@
                     <li class="a-row">
                         <span class="a-row__grow">{{ $change->country->name }}</span>
                         <span class="a-pill" data-status="{{ $change->status === 'approved' ? 'validated' : 'returned' }}">{{ __('authority.status_'.$change->status) }}</span>
-                        <span class="a-row__time">{{ $change->reviewed_at?->isoFormat('D MMMM YYYY') }}</span>
+                        <span class="a-row__time">{{ $change->reviewed_at?->displayed()->isoFormat('D MMMM YYYY') }}</span>
                     </li>
                 @endforeach
             </ul>

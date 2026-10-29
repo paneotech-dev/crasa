@@ -46,7 +46,7 @@
                                 </th>
                                 <td>{{ $instrument->country?->name }}</td>
                                 <td>{{ $instrument->sector?->name }}</td>
-                                <td>{{ $instrument->submitted_at?->isoFormat('D MMMM YYYY') }}</td>
+                                <td>{{ $instrument->submitted_at?->displayed()->isoFormat('D MMMM YYYY') }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -79,7 +79,7 @@
                                 </th>
                                 <td>{{ $instrument->country?->name }}</td>
                                 <td><span class="a-pill" data-status="{{ $instrument->contribution_state?->value }}">{{ __($instrument->contribution_state->labelKey()) }}</span></td>
-                                <td>{{ $instrument->reviewed_at?->isoFormat('D MMMM YYYY') }}</td>
+                                <td>{{ $instrument->reviewed_at?->displayed()->isoFormat('D MMMM YYYY') }}</td>
                             </tr>
                         @endforeach
                     </tbody>

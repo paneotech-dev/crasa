@@ -19,7 +19,7 @@
     @if ($open)
         <div class="a-band" role="note">
             <strong>{{ __('authority.open_title') }}</strong>
-            {{ __('authority.open_body', ['date' => $open->submitted_at?->isoFormat('D MMMM YYYY')]) }}
+            {{ __('authority.open_body', ['date' => $open->submitted_at?->displayed()->isoFormat('D MMMM YYYY')]) }}
         </div>
     @elseif ($lastDecision?->status === 'returned')
         {{-- What the Secretariat said, before the form rather than after
@@ -33,7 +33,7 @@
         <div class="a-band" role="note">
             {{ __('authority.confirmed_note', [
                 'name' => $authority->confirmed_by_name,
-                'date' => $authority->confirmed_at?->isoFormat('D MMMM YYYY'),
+                'date' => $authority->confirmed_at?->displayed()->isoFormat('D MMMM YYYY'),
             ]) }}
         </div>
     @endif

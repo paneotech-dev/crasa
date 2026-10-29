@@ -43,7 +43,7 @@
                             ? '<span class=\'a-hint\'>' . e(__('admin.review_cleared')) . '</span>'
                             : '')
                 ),
-                'updated' => $p->updated_at?->isoFormat('D MMM YYYY') ?? '',
+                'updated' => $p->updated_at?->displayed()->isoFormat('D MMM YYYY') ?? '',
             ],
             'actions' => [
                 ['label' => __('admin.edit'), 'url' => route('admin.pages.edit', ['locale' => app()->getLocale(), 'page' => $p->slug])],

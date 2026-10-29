@@ -64,7 +64,7 @@
         <tbody>
             @foreach ($entries as $entry)
                 <tr>
-            <td class="c-num">{{ $entry->created_at?->format('Y-m-d H:i') }}</td>
+            <td class="c-num">{{ $entry->created_at?->displayed()->format('Y-m-d H:i') }}</td>
             <td>{{ $entry->user?->name ?? __('admin.no_actor') }}</td>
             <td>{{ $entry->action }}</td>
             <td>{{ $entry->auditable_type ? class_basename($entry->auditable_type).' #'.$entry->auditable_id : '—' }}</td>

@@ -118,7 +118,7 @@
             <div class="a-rows">
                 @foreach ($submission->events as $event)
                     <div class="a-row">
-                        <span class="a-row__time">{{ $event->created_at?->isoFormat('D MMM, HH:mm') }}</span>
+                        <span class="a-row__time">{{ $event->created_at?->displayed()->isoFormat('D MMM, HH:mm') }}</span>
                         <span class="a-row__grow">
                             {{ __('submissions.event_'.$event->to_status) }}
                             @if ($event->note)<span class="a-crow__where" style="display:block">{{ $event->note }}</span>@endif

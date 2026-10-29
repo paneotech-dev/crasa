@@ -68,7 +68,7 @@
                                 {{ __('extranet.dash_returned_row', ['period' => $submission->period]) }}
                             </a>
                             @if ($submission->reviewed_at)
-                                <span class="e-dash__meta">{{ $submission->reviewed_at->isoFormat('D MMMM YYYY') }}</span>
+                                <span class="e-dash__meta">{{ $submission->reviewed_at->displayed()->isoFormat('D MMMM YYYY') }}</span>
                             @endif
                             @if ($submission->review_note)
                                 <span class="e-dash__meta">{{ \Illuminate\Support\Str::limit($submission->review_note, 160) }}</span>
@@ -166,7 +166,7 @@
                                      member state. --}}
                                 @php($audience = collect([$announcement->sector?->name, $announcement->committee?->name])->filter())
                                 <span class="e-dash__meta">
-                                    {{ collect([$announcement->published_at?->isoFormat('D MMMM YYYY')])->filter()->merge($audience)->implode(', ') }}
+                                    {{ collect([$announcement->published_at?->displayed()->isoFormat('D MMMM YYYY')])->filter()->merge($audience)->implode(', ') }}
                                 </span>
                             </span>
                         </li>
@@ -259,7 +259,7 @@
                             <span class="e-dash__main">
                                 <a class="e-dash__title" href="{{ route('documents.show', ['locale' => app()->getLocale(), 'document' => $document->id]) }}">{{ $document->original_filename }}</a>
                                 <span class="e-dash__meta">
-                                    {{ $document->created_at?->isoFormat('D MMMM YYYY') }}, {{ $document->readableSize() }}
+                                    {{ $document->created_at?->displayed()->isoFormat('D MMMM YYYY') }}, {{ $document->readableSize() }}
                                 </span>
                             </span>
                             {{-- Clearance carried as a label, never as

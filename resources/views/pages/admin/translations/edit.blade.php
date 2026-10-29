@@ -83,7 +83,7 @@
                             <div class="a-tgrid__meta">
                                 <span class="a-tpill" data-state="{{ $state }}">{{ __('admin.tstate_'.$state) }}</span>
                                 @if ($translation?->updated_at)
-                                    <span>{{ $translation->updated_at->isoFormat('D MMM YYYY') }}</span>
+                                    <span>{{ $translation->updated_at->displayed()->isoFormat('D MMM YYYY') }}</span>
                                 @endif
                             </div>
 

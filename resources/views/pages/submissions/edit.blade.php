@@ -57,7 +57,7 @@
                         </div>
                         <div class="s-comment__who">
                             {{ $comment->author?->name ?? __('admin.system') }}<br>
-                            {{ $comment->created_at->isoFormat('D MMMM YYYY, HH:mm') }}
+                            {{ $comment->created_at->displayed()->isoFormat('D MMMM YYYY, HH:mm') }}
                         </div>
                     </div>
                 @endforeach
@@ -199,7 +199,7 @@
                     <div class="a-rows">
                         @foreach ($submission->events as $event)
                             <div class="a-row">
-                                <span class="a-row__time">{{ $event->created_at?->isoFormat('D MMM, HH:mm') }}</span>
+                                <span class="a-row__time">{{ $event->created_at?->displayed()->isoFormat('D MMM, HH:mm') }}</span>
                                 <span class="a-row__grow">{{ __('submissions.event_'.$event->to_status) }}</span>
                                 <span class="a-row__who">{{ $event->actor?->name ?? __('admin.system') }}</span>
                             </div>

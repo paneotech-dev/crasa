@@ -55,7 +55,7 @@
                                 <th scope="row">{{ __('admin.page_history_version', ['n' => $version->version_number]) }}</th>
                                 <td>{{ $version->change_summary }}</td>
                                 <td>{{ $version->author?->name ?? __('admin.system') }}</td>
-                                <td>{{ $version->created_at?->isoFormat('D MMM YYYY, HH:mm') }}</td>
+                                <td>{{ $version->created_at?->displayed()->isoFormat('D MMM YYYY, HH:mm') }}</td>
                                 <td>
                                     {{-- Against the one before it, which is
                                          what somebody opening a history

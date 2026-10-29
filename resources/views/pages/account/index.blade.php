@@ -16,7 +16,7 @@
                 <div><dt>{{ __('account.role') }}</dt><dd>{{ $user->role->label() }}</dd></div>
                 <div><dt>{{ __('account.status') }}</dt><dd>{{ $user->status->label() }}</dd></div>
                 @if ($user->country)<div><dt>{{ __('contact.field_country') }}</dt><dd>{{ $user->country->name }}</dd></div>@endif
-                @if ($user->last_login_at)<div><dt>{{ __('account.last_login') }}</dt><dd>{{ $user->last_login_at->translatedFormat('j F Y, H:i') }}</dd></div>@endif
+                @if ($user->last_login_at)<div><dt>{{ __('account.last_login') }}</dt><dd>{{ $user->last_login_at->displayed()->translatedFormat('j F Y, H:i') }}</dd></div>@endif
             </dl>
 
             <h2>{{ __('account.details') }}</h2>

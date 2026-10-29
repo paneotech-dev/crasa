@@ -158,7 +158,7 @@
                         @foreach ($draftPages as $page)
                             <li>
                                 <a href="{{ route('admin.pages.edit', ['locale' => app()->getLocale(), 'page' => $page->slug]) }}">{{ $page->translate('title')?->value ?? $page->slug }}</a>
-                                <span class="a-results__meta">{{ $page->updated_at?->isoFormat('D MMM YYYY') }}</span>
+                                <span class="a-results__meta">{{ $page->updated_at?->displayed()->isoFormat('D MMM YYYY') }}</span>
                             </li>
                         @endforeach
                     </ul>
@@ -311,7 +311,7 @@
                     '<span class=\'a-pill\' data-status=\'' . ($p->is_public ? 'published' : 'draft') . '\'>'
                     . e($p->is_public ? __('admin.status_published') : __('admin.status_draft')) . '</span>'
                 ),
-                'updated' => $p->updated_at?->isoFormat('D MMM YYYY') ?? '',
+                'updated' => $p->updated_at?->displayed()->isoFormat('D MMM YYYY') ?? '',
             ],
             'actions' => [
                 ['label' => __('admin.view'), 'url' => route('publications.show', ['locale' => app()->getLocale(), 'slug' => $p->slug])],

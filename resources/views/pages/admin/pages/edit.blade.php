@@ -209,7 +209,7 @@
             @else
                 <p class="a-hint">{{ __('admin.client_review_cleared_by', [
                     'name' => $page->clientReviewer?->name ?? __('admin.page_history_system'),
-                    'date' => $page->client_reviewed_at?->isoFormat('D MMMM YYYY') ?? '',
+                    'date' => $page->client_reviewed_at?->displayed()->isoFormat('D MMMM YYYY') ?? '',
                 ]) }}</p>
             @endif
 
@@ -245,7 +245,7 @@
                         <span class="a-history__n">{{ __('admin.page_history_version', ['n' => $version->version_number]) }}</span>
                         <span class="a-history__what">{{ $version->change_summary }}</span>
                         <span class="a-history__who">
-                            {{ $version->created_at?->isoFormat('D MMM YYYY, HH:mm') }}
+                            {{ $version->created_at?->displayed()->isoFormat('D MMM YYYY, HH:mm') }}
                             {{ $version->author
                                 ? __('admin.page_history_by', ['name' => $version->author->name])
                                 : __('admin.page_history_system') }}

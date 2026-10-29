@@ -12,6 +12,7 @@ use App\Services\CalendarFeed;
 use App\Services\NotifiesMembers;
 use App\Support\CountryDashboard;
 use App\Support\ExtranetNavigation;
+use App\Support\LocalTime;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -246,7 +247,7 @@ class ExtranetController extends Controller
     {
         Gate::authorize('viewAny', Meeting::class);
 
-        $month = $this->monthFrom($request->query('month'));
+        $asked = $this->monthFrom($request->query('month'));
         $committee = $request->string('committee')->value() ?: null;
 
         $visible = fn ($query) => $query
@@ -256,17 +257,50 @@ class ExtranetController extends Controller
             ->filter(fn (Meeting $m) => Gate::allows('view', $m))
             ->values();
 
+        $today = LocalTime::today();
+        $month = $asked ?? LocalTime::now()->startOfMonth();
+        $inMonth = $visible($this->inMonth($month));
+
+        // Opened with no month asked for, on a month with nothing in it: open
+        // on the next month that has a meeting instead (PE-T05, PE-T06).
+        $movedFrom = null;
+        if ($asked === null && $inMonth->isEmpty()) {
+            $next = $visible(Meeting::dated()
+                ->whereDate('starts_on', '>', $month->endOfMonth()->toDateString())
+                ->orderBy('starts_on'))->first();
+
+            if ($next) {
+                $movedFrom = $month;
+                $month = CarbonImmutable::parse($next->starts_on->toDateString())->startOfMonth();
+                $inMonth = $visible($this->inMonth($month));
+            }
+        }
+
         return view('pages.extranet.calendar', [
             'month' => $month,
+            'today' => $today,
+            'movedFrom' => $movedFrom,
             'committeeFilter' => $committee,
             'committees' => Committee::where('is_active', true)->orderBy('name')->get(),
-            // A meeting with no stated date has no day to sit on.
-            'inMonth' => $visible(Meeting::dated()
-                ->whereBetween('starts_on', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
-                ->orderBy('starts_on')),
+            'inMonth' => $inMonth,
             'upcoming' => $visible(Meeting::upcoming()),
             'past' => $visible(Meeting::past()->limit(20)),
         ]);
+    }
+
+    /**
+     * Dated meetings that touch a month: those that start in it, and those
+     * that started before it and are still running in it.
+     */
+    private function inMonth(CarbonImmutable $month)
+    {
+        $first = $month->startOfMonth()->toDateString();
+        $last = $month->endOfMonth()->toDateString();
+
+        return Meeting::dated()
+            ->whereDate('starts_on', '<=', $last)
+            ->whereRaw('COALESCE(ends_on, starts_on) >= ?', [$first])
+            ->orderBy('starts_on');
     }
 
     /**
@@ -282,11 +316,9 @@ class ExtranetController extends Controller
     {
         Gate::authorize('viewAny', Meeting::class);
 
-        $month = $this->monthFrom($request->query('month'));
+        $month = $this->monthFrom($request->query('month')) ?? LocalTime::now()->startOfMonth();
 
-        $meetings = Meeting::dated()
-            ->whereBetween('starts_on', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
-            ->orderBy('starts_on')
+        $meetings = $this->inMonth($month)
             ->get()
             ->filter(fn (Meeting $m) => Gate::allows('view', $m))
             ->values();
@@ -310,19 +342,23 @@ class ExtranetController extends Controller
      * nine years out with no indication anything had gone wrong. The
      * exception handler alone did not catch that, because nothing threw.
      *
-     * Anything that is not a real year and a month between 01 and 12 falls
-     * back to this month. A mistyped link should still open a calendar.
+     * Anything that is not a real year and a month between 01 and 12 is
+     * treated as no month asked for, and the calendar opens as it would by
+     * default. A mistyped link should still open a calendar.
      */
-    private function monthFrom(?string $value): CarbonImmutable
+    private function monthFrom(?string $value): ?CarbonImmutable
     {
         if (! is_string($value) || ! preg_match('/^(\d{4})-(0[1-9]|1[0-2])$/', $value)) {
-            return CarbonImmutable::now()->startOfMonth();
+            return null;
         }
 
+        // "!" resets the fields the format does not name. Without it the day
+        // came from today, so on the 29th, 30th or 31st "2027-02" rolled
+        // over into March.
         try {
-            return CarbonImmutable::createFromFormat('Y-m', $value)->startOfMonth();
+            return CarbonImmutable::createFromFormat('!Y-m', $value, LocalTime::zone())->startOfMonth();
         } catch (\Throwable) {
-            return CarbonImmutable::now()->startOfMonth();
+            return null;
         }
     }
 }

@@ -25,7 +25,7 @@
             <strong>{{ __('admin.confirm_confirmed') }}</strong>
             {{ __('admin.confirm_by', [
                 'name' => $authority->confirmed_by_name,
-                'date' => $authority->confirmed_at->isoFormat('D MMMM YYYY'),
+                'date' => $authority->confirmed_at->displayed()->isoFormat('D MMMM YYYY'),
             ]) }}
         </div>
     @endif
