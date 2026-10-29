@@ -42,7 +42,14 @@
 .cp-about-sadc { margin-top: var(--u-5); padding-top: var(--u-4); border-top: 1px solid var(--u-line); }
 .cp-about-facts .u-h3 { margin-bottom: var(--u-3); }
 .cp-about-pillar .u-card__title { font-size: var(--u-t-22); }
-.cp-about-history { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: var(--u-6); align-items: start; }
+.cp-about-history { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--u-4); }
+/* Desktop: the four dates run across the page on one rule. */
+@media (min-width: 992px) {
+  .cp-about-timeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--u-4); padding: var(--u-5) 0 0; }
+  .cp-about-timeline::before { left: 0; right: 0; top: 11px; bottom: auto; width: auto; height: 2px; }
+  .cp-about-timeline > li { padding: 0; }
+  .cp-about-timeline > li::before { left: 0; top: calc(-1 * var(--u-5) + 4px); }
+}
 .cp-about-timeline .u-text { margin: 0; }
 .cp-about-timeline > li { padding-bottom: var(--u-5); }
 .cp-about-timeline > li:last-child { padding-bottom: 0; }
@@ -53,7 +60,7 @@
 .cp-about-people .u-person__name, .cp-about-people .u-person__role { display: block; }
 .cp-about-more { margin-top: var(--u-3); }
 @media (max-width: 991.98px) {
-  .cp-about-history, .cp-about-people { grid-template-columns: minmax(0, 1fr); gap: var(--u-4); }
+  .cp-about-people { grid-template-columns: minmax(0, 1fr); gap: var(--u-4); }
 }
 
 /* ---- Contact ------------------------------------------------------------ */
@@ -210,13 +217,12 @@
 .cp-proj-facts-wide .u-facts { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 .cp-proj-docs { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--u-2); }
 .cp-proj-docs a { overflow-wrap: anywhere; }
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .cp-proj-grid--wide .cp-proj-card { flex-direction: row; }
   .cp-proj-grid--wide .cp-proj-card .u-card__media { flex: 0 0 38%; aspect-ratio: auto; min-height: 100%; }
   .cp-proj-grid--wide .cp-proj-card .u-card__body { padding-bottom: 88px; }
   .cp-proj-grid--wide .cp-proj-card .u-card__actions { position: absolute; left: 38%; bottom: 0; }
 }
-@media (min-width: 640px) and (max-width: 767.98px) { .cp-proj-grid--wide { grid-template-columns: minmax(0, 1fr); } }
 .cp-proj-related-note { margin: calc(-1 * var(--u-2)) 0 var(--u-4); }
 
 /* ---- Publications -------------------------------------------------------- */
