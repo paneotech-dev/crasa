@@ -94,7 +94,7 @@
                             <label class="a-label" for="approve-comment">{{ __('fa.show_approve_comment') }}</label>
                             <textarea class="a-input" id="approve-comment" name="comment" rows="2"></textarea>
                         </div>
-                        <button type="submit" class="a-btn a-btn--primary" data-approve>{{ __('fa.show_approve') }}</button>
+                        <button type="submit" class="a-btn a-btn--primary" data-approve>{{ __('fa.show_approve') }}<span class="c-sr">: {{ $title }}</span></button>
                     </form>
                 </section>
                 <section class="a-panel aw-decide" aria-labelledby="aw-return-h">
@@ -107,7 +107,7 @@
                             <span class="a-hint" id="return-help">{{ __('fa.show_return_help') }}</span>
                             @error('comment')<span class="aw-error" id="return-error">{{ $message }}</span>@enderror
                         </div>
-                        <button type="submit" class="a-btn a-btn--secondary" data-return>{{ __('fa.show_return') }}</button>
+                        <button type="submit" class="a-btn a-btn--secondary" data-return>{{ __('fa.show_return') }}<span class="c-sr">: {{ $title }}</span></button>
                     </form>
                 </section>
             @elseif ($approval->isOpen() && $ownItem)

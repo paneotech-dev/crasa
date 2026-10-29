@@ -132,9 +132,10 @@ class PageEditingTest extends TestCase
         $this->assertFalse($policy->update($representative, $this->page));
         $this->assertFalse($policy->publish($representative, $this->page));
 
-        // And delete is a third permission again, which the matrix does
-        // separate: an editor edits and publishes but does not delete.
-        $this->assertFalse($policy->delete($this->editor, $this->page));
+        // Day 2 (F1, test plan PM-05): a page is soft deleted and
+        // restorable, so the editor may delete it, as for news.
+        $this->assertTrue($policy->delete($this->editor, $this->page));
+        $this->assertFalse($policy->delete($representative, $this->page));
         $this->assertTrue($policy->delete($this->administrator, $this->page));
     }
 

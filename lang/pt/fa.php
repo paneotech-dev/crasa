@@ -195,4 +195,6 @@ return [
     'user_delete_suspend_first' => 'Suspenda primeiro a conta. Só uma conta suspensa pode ser apagada.',
     'user_deleted' => 'A conta de :name foi apagada. O registo de auditoria mostra-a como "Antigo utilizador".',
     'former_user' => 'Antigo utilizador',
+    'row_untitled' => 'Registo n.º :id',
+    'count_waiting' => 'em espera',
 ];

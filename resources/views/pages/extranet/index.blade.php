@@ -1,6 +1,6 @@
 @extends('layouts.extranet')
 
-@section('title', __('extranet.title'))
+@section('title', __('extranet.folders'))
 @section('note', __('extranet.note'))
 
 @section('content')

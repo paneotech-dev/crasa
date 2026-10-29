@@ -195,4 +195,6 @@ return [
     'user_delete_suspend_first' => 'Suspendez d\'abord le compte. Seul un compte suspendu peut être supprimé.',
     'user_deleted' => 'Le compte de :name est supprimé. Le journal d\'audit l\'affiche comme « Ancien utilisateur ».',
     'former_user' => 'Ancien utilisateur',
+    'row_untitled' => 'Fiche n° :id',
+    'count_waiting' => 'en attente',
 ];

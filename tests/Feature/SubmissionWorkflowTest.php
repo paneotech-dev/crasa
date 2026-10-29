@@ -389,6 +389,11 @@ class SubmissionWorkflowTest extends TestCase
             // were the framework's English reset mail.
             'AccountInvitation',
             'PasswordResetLink',
+            // Day 2 (F2, F10): moderation of content and administrators
+            // told of account, role and publishing actions. Back-office
+            // workflow, not meetings, journeys or rooms.
+            'ApprovalActivity',
+            'AdminActivity',
         ];
 
         $classes = array_map(

@@ -212,4 +212,6 @@ return [
     'user_delete_suspend_first' => 'Suspend the account first. Only a suspended account can be deleted.',
     'user_deleted' => 'The account of :name is deleted. The audit log shows it as "Former user".',
     'former_user' => 'Former user',
+    'row_untitled' => 'Record #:id',
+    'count_waiting' => 'waiting',
 ];

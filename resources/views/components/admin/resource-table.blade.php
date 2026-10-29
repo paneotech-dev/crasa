@@ -76,7 +76,8 @@
                                 @if ($index === 0)
                                     <th scope="row">
                                         @if (! empty($data['url']))
-                                            <a href="{{ $data['url'] }}">{{ $data['cells'][$column['key']] ?? '' }}</a>
+                                            @php $cellText = trim(strip_tags((string) ($data['cells'][$column['key']] ?? ''))); @endphp
+                                            <a href="{{ $data['url'] }}">@if ($cellText !== ''){{ $data['cells'][$column['key']] }}@else{{ $data['title'] ?? __('fa.row_untitled', ['id' => $record->getKey()]) }}@endif</a>
                                         @else
                                             {{ $data['cells'][$column['key']] ?? '' }}
                                         @endif

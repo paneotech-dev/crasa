@@ -71,7 +71,7 @@
                                     @foreach ($cells[$col] ?? [] as $permission)
                                         @php $id = 'g-'.str_replace('.', '-', $permission->value); $val = old('grant.'.$permission->value, $grid[$permission->value] ?? 'denied'); @endphp
                                         <div class="aw-cell">
-                                            <label for="{{ $id }}">{{ $permission->label() }}</label>
+                                            <label for="{{ $id }}"><span class="c-sr">{{ $role->exists ? $role->label() : __('fa.roles_new') }}: </span>{{ $permission->label() }}</label>
                                             <select class="a-input" id="{{ $id }}" name="grant[{{ $permission->value }}]">
                                                 @foreach (['granted', 'conditional', 'denied'] as $g)
                                                     <option value="{{ $g }}" @selected($val === $g)>{{ __('fa.grant_'.$g) }}</option>

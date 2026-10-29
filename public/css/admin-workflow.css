@@ -55,3 +55,6 @@
 .a-form.aw-wide { max-width: none; }
 .aw-wide .a-panel > .a-field, .aw-wide .a-panel > .a-hint { max-width: 640px; }
 .aw-grid th[scope="row"] { min-width: 9rem; }
+
+/* A Tab stop inside a date field's segments shows the ring (g row 19). */
+.a-input[type="date"]:focus-within { outline: 2px solid var(--focus-ring, #2F4F8F); outline-offset: 2px; }

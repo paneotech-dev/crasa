@@ -15,7 +15,7 @@
         <section class="a-card" aria-labelledby="aw-waiting">
             <div class="a-card__head">
                 <h2 id="aw-waiting">{{ __('fa.inbox_waiting') }}</h2>
-                <span class="aw-count" data-awaiting-count>{{ $awaiting->count() }}</span>
+                <span class="aw-count"><span data-awaiting-count>{{ $awaiting->count() }}</span><span class="c-sr"> {{ __('fa.count_waiting') }}</span></span>
             </div>
             @if ($awaiting->isEmpty())
                 <div class="a-empty">
@@ -42,7 +42,7 @@
                                 <td>{{ $row->submitter?->name ?? __('admin.no_actor') }}</td>
                                 <td class="c-num">{{ $row->submitted_at?->displayed()->isoFormat('D MMM YYYY, HH:mm') }}</td>
                                 <td>
-                                    <a class="a-btn a-btn--small {{ $own ? 'a-btn--secondary' : 'a-btn--primary' }}" href="{{ route('admin.approvals.show', ['locale' => $locale, 'approval' => $row->id]) }}">{{ __('fa.review') }}</a>
+                                    <a class="a-btn a-btn--small {{ $own ? 'a-btn--secondary' : 'a-btn--primary' }}" href="{{ route('admin.approvals.show', ['locale' => $locale, 'approval' => $row->id]) }}">{{ __('fa.review') }}<span class="c-sr"> {{ \App\Support\Approvals::title($row->approvable) }}</span></a>
                                     @if ($own)<span class="a-hint">{{ __('fa.own_item') }}</span>@endif
                                 </td>
                             </tr>
