@@ -208,7 +208,7 @@
             @foreach ($glanceItems as $item)
                 @php $n = preg_replace('/\D/', '', $item['value']); $tag = $item['url'] ? 'a' : 'div'; @endphp
                 <{{ $tag }} class="k-fig u-reveal" @if ($item['url']) href="{{ $item['url'] }}" @endif>
-                    <span class="k-fig__n" @if ($n !== '' && $n === $item['value']) data-count="{{ $n }}" @if ((int) $n > 1900) data-from="1960" @endif @endif>{{ $item['value'] }}</span>
+                    <span class="k-fig__n" @if ($n !== '' && $n === $item['value'] && (int) $n < 1900) data-count="{{ $n }}" @endif>{{ $item['value'] }}</span>
                     <span class="k-fig__t">{{ $item['label'] }}</span>
                 </{{ $tag }}>
             @endforeach

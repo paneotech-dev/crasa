@@ -20,7 +20,7 @@ return [
         'about_overview' => 'Who we are',
         'about_overview_d' => 'A Specialised Agency of SADC since 1997',
         'about_vmh' => 'Vision, mission and history',
-        'about_vmh_d' => 'Why CRASA exists and how it began',
+        'about_vmh_d' => 'Vision, mission and history',
         'about_governance' => 'Governance',
         'about_governance_d' => 'Annual General Meeting and Executive Committee',
         'about_exco' => 'Executive Committee',

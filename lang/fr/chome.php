@@ -13,7 +13,7 @@ return [
         'about_overview' => 'Qui nous sommes',
         'about_overview_d' => 'Agence spécialisée de la SADC depuis 1997',
         'about_vmh' => 'Vision, mission et histoire',
-        'about_vmh_d' => 'Pourquoi la CRASA existe et comment elle a commencé',
+        'about_vmh_d' => 'Vision, mission et histoire',
         'about_governance' => 'Gouvernance',
         'about_governance_d' => 'Assemblée générale annuelle et Comité exécutif',
         'about_exco' => 'Comité exécutif',
