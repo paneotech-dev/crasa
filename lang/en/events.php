@@ -24,4 +24,9 @@ return [
     'band_eyebrow' => 'Meetings and events',
     'band_heading' => 'The meetings the harmonisation work runs on',
     'agenda_to_be_confirmed' => 'Agenda to be confirmed.',
+    'add_to_calendar' => 'Add to my calendar',
+    'calendar_ics' => 'Download .ics file',
+    'calendar_for' => 'for :event',
+    'calendar_google' => 'Google Calendar',
+    'new_tab' => '(opens in a new tab)',
 ];

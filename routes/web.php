@@ -167,6 +167,7 @@ Route::prefix('{locale}')
          */
         Route::get('events', [EventsController::class, 'index'])->name('events');
         Route::get('events/{meeting}', [EventsController::class, 'show'])->name('events.show');
+        Route::get('events/{meeting}/calendar.ics', [EventsController::class, 'ics'])->name('events.ics');
         Route::get('events/{meeting}/register', [DelegateRegistrationController::class, 'create'])->name('events.register');
         // Throttled: a public form that writes a row, on a page anyone can
         // reach. Loose enough that a delegate who mistypes a date three

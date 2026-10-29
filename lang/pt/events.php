@@ -24,4 +24,9 @@ return [
     'band_eyebrow' => 'Reuniões e eventos',
     'band_heading' => 'As reuniões em que assenta o trabalho de harmonização',
     'agenda_to_be_confirmed' => 'Agenda a confirmar.',
+    'add_to_calendar' => 'Adicionar à minha agenda',
+    'calendar_ics' => 'Descarregar ficheiro .ics',
+    'calendar_for' => 'para :event',
+    'calendar_google' => 'Google Calendar',
+    'new_tab' => '(abre num novo separador)',
 ];
