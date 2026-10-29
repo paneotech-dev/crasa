@@ -124,6 +124,44 @@ class Meeting extends Model
         return ! ($this->registration_closes_on && $this->registration_closes_on->toDateString() < $today);
     }
 
+    /** "10 to 12 November 2026", "30 September to 3 October 2024", or one day. */
+    public function dateRange(): string
+    {
+        if ($this->date_unknown || ! $this->starts_on) {
+            return __('events.date_not_stated');
+        }
+
+        $start = $this->starts_on->copy()->locale(app()->getLocale());
+        $end = $this->lastDay()->copy()->locale(app()->getLocale());
+
+        if ($start->isSameDay($end)) {
+            return $start->isoFormat('D MMMM YYYY');
+        }
+
+        $from = match (true) {
+            $start->isSameMonth($end) => $start->isoFormat('D'),
+            $start->isSameYear($end) => $start->isoFormat('D MMMM'),
+            default => $start->isoFormat('D MMMM YYYY'),
+        };
+
+        return __('e.range', ['from' => $from, 'to' => $end->isoFormat('D MMMM YYYY')]);
+    }
+
+    /** "09:00 to 17:00 CAT", or null when no time is recorded. */
+    public function timeRange(): ?string
+    {
+        if (! $this->starts_at) {
+            return null;
+        }
+
+        $zone = $this->timezone ?: \App\Support\LocalTime::zone();
+        $abbr = \Carbon\CarbonImmutable::parse($this->starts_on?->toDateString() ?? 'today', $zone)->format('T');
+        $from = substr((string) $this->starts_at, 0, 5);
+        $to = $this->ends_at ? substr((string) $this->ends_at, 0, 5) : null;
+
+        return ($to ? __('e.range', ['from' => $from, 'to' => $to]) : $from).' '.$abbr;
+    }
+
     /** Whether this meeting has ended, in the Secretariat's day. */
     public function hasEnded(): bool
     {
@@ -131,7 +169,7 @@ class Meeting extends Model
             && $this->lastDay()->toDateString() < \App\Support\LocalTime::today();
     }
 
-    public function documents(): HasMany
+    public function documents(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {
         return $this->morphMany(Document::class, 'documentable');
     }

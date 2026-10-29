@@ -59,6 +59,26 @@ class CalendarFeed
     }
 
     /**
+     * The same event for Outlook on the web (personal and work accounts
+     * both open this compose link). All-day, end exclusive, like the file.
+     */
+    public function outlookUrl(Meeting $meeting, string $url): string
+    {
+        [$start, $end] = $this->dates($meeting);
+
+        return 'https://outlook.live.com/calendar/0/deeplink/compose?'.http_build_query([
+            'path' => '/calendar/action/compose',
+            'rru' => 'addevent',
+            'allday' => 'true',
+            'subject' => $meeting->title,
+            'startdt' => $start->format('Y-m-d'),
+            'enddt' => $end->format('Y-m-d'),
+            'body' => $this->publicDetails($meeting, $url),
+            'location' => (string) $meeting->location,
+        ], '', '&', PHP_QUERY_RFC3986);
+    }
+
+    /**
      * @param  array<int, string>  $events
      */
     private function calendar(string $name, array $events): string
