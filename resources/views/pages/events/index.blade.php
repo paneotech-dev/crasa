@@ -135,7 +135,7 @@
                                         </p>
                                     @endif
                                     @if ($m->isCancelled())<p class="e-pv__line"><span class="u-pill e-pill--cancelled">{{ __('e.status_cancelled') }}</span></p>@endif
-                                    @include('pages.events._add-to-calendar', ['meeting' => $m, 'link' => true])
+                                    @include('pages.events._add-to-calendar', ['meeting' => $m, 'compact' => true, 'idPrefix' => 'pv-'])
                                     <p class="e-pv__actions"><a class="u-btn u-btn--primary" href="{{ route('events.show', ['locale' => $locale, 'meeting' => $m->slug]) }}">{{ __('evening.preview_open') }}<span class="c-sr">: {{ $m->title }}</span></a></p>
                                 </template>
                             @endforeach

@@ -23,7 +23,7 @@
     $hasEmbed = ($network === 'x' && filled($post->embed_html)) || filled($post->embed_url);
 @endphp
 <article class="u-card s-post" data-network="{{ $network }}">
-    <p class="s-post__head s-post__caption-line">
+    <p class="s-post__head">
         @if ($posted)
             <span>{{ __('d3_polish.posted_caption', ['network' => $label, 'date' => $postedDate]) }}</span>
         @else

@@ -41,7 +41,10 @@
         <div>
             <h2 class="k-smap__h">{{ __('chome.sm_services') }}</h2>
             <a href="{{ $workspace['url'] ?? $nav(config('navigation.extranet_path')) }}">{{ $workspace['label'] ?? __('nav.extranet') }}</a>
-            <a href="{{ route('directory', ['locale' => app()->getLocale()]) }}">{{ __('d3_polish.member_directory') }}</a>
+            {{-- A guest is sent to sign in; a signed-in reader sees the link only where the directory opens to them. --}}
+            @if (! auth()->check() || \Illuminate\Support\Facades\Gate::allows('enter-member-area'))
+                <a href="{{ route('directory', ['locale' => app()->getLocale()]) }}">{{ __('d3_polish.member_directory') }}</a>
+            @endif
             <a href="{{ $nav('contact') }}">{{ __('d3_polish.contact') }}</a>
         </div>
     </div>
