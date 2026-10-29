@@ -174,8 +174,9 @@ class LoginController extends Controller
         }
 
         return match (true) {
-            // Every role with a back office lands on its dashboard there:
-            // moderators and auditors hold no ManageContent but do enter.
+            // Day 2: moderators, auditors and roles made on the roles
+            // screen enter the back office without editing content, so the
+            // door is asked, not one permission.
             \Illuminate\Support\Facades\Gate::forUser($user)->allows('enter-back-office') => route('admin.dashboard', ['locale' => $locale]),
             $user->hasPermission(Permission::ReachCommitteeWorkspace) => route('extranet.dashboard', ['locale' => $locale]),
             // A viewer has no workspace. Their own dashboard: the latest
