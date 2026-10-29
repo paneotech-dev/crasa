@@ -76,8 +76,9 @@ class HeaderDropdownTest extends TestCase
             $this->assertStringContainsString($child, $header);
         }
 
-        // About is a page as well as a heading, so the group offers it.
-        $this->assertStringContainsString(__('nav.overview', ['section' => 'About']), $header);
+        // No "All of" row: the group's page is reached from its own link
+        // and its filters, not from an extra entry in the drop-down.
+        $this->assertStringNotContainsString(__('nav.overview', ['section' => 'About']), $header);
     }
 
     /**
@@ -146,9 +147,9 @@ class HeaderDropdownTest extends TestCase
     {
         $header = $this->header();
 
-        // In the markup, not built by script. Nine children and one
-        // overview row per group.
-        $this->assertSame(12, substr_count($header, 'class="c-nav__child"'));
+        // In the markup, not built by script. Nine children, and no
+        // overview row.
+        $this->assertSame(9, substr_count($header, 'class="c-nav__child"'));
 
         $css = file_get_contents(public_path('css/chrome.css'));
         $this->assertStringContainsString('html.has-js .c-nav__menu {', $css);

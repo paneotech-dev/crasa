@@ -6,7 +6,8 @@
     Each control carries a 44px minimum target and the endonym as its
     accessible name.
 
-    $variant: 'header' on a light surface, 'drawer' on navy.
+    $variant: 'header' on a light surface, 'bar' in the header's utility
+    bar (each language by its own name), 'drawer' in the phone menu.
 --}}
 @php
     $variant ??= 'header';
@@ -26,7 +27,7 @@
             hreflang="{{ $code }}"
             @if ($code === $current) aria-current="true" @endif
         >
-            {{ $language['short'] }}
+            {{ $variant === 'bar' ? $language['native'] : $language['short'] }}
             <span class="c-sr">
                 @if ($code === $current)
                     {{ $language['native'] }}

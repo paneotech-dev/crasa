@@ -18,6 +18,7 @@
     'fetchpriority' => null,
     'class' => '',
     'width' => 1200,
+    'fetchpriority' => null,
 ])
 @php
     $asset = \App\Support\MediaReference::resolve($reference);

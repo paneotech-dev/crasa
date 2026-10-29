@@ -17,4 +17,6 @@ return [
     // the requested language is missing. See docs/DATA_MODEL.md, section 5.
     'fallback_title' => 'This page is not yet available in :language',
     'fallback_body' => 'The interface is in :language. The text below is shown in English, its original language.',
+    'agency' => 'A Specialised Agency of SADC',
+    'mission' => 'Harmonising ICT and postal regulation across Southern Africa',
 ];

@@ -31,9 +31,9 @@
          icons and reads this instead. --}}
     <link rel="manifest" href="{{ route('manifest', ['locale' => app()->getLocale()]) }}">
     <link rel="apple-touch-icon" href="{{ asset('img/app/apple-touch-icon.png') }}">
-    <meta name="theme-color" content="#0F1B2D">
+    <meta name="theme-color" content="#FFFFFF">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="{{ __('site.acronym') }}">
 
     {{-- Every alternate language of this page, so a reader arriving from a
@@ -52,6 +52,7 @@
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/base.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/chrome.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/blocks.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/theme-light.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/print.css') }}" media="print">
     @stack('styles')
 </head>

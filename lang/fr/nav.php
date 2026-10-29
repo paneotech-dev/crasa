@@ -14,6 +14,7 @@ return [
     'committees' => 'Comités',
     'members' => 'Membres',
     'publications' => 'Publications',
+    'projects' => 'Projets',
     'newsroom' => 'Actualités',
     'events' => 'Événements',
     'comparator' => 'Comparateur',
@@ -24,4 +25,5 @@ return [
     'account' => 'Votre compte',
 
     'overview' => 'Tout : :section',
+    'search_placeholder' => 'Rechercher publications, actualités, membres',
 ];
