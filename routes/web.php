@@ -474,6 +474,10 @@ Route::prefix('{locale}')
             Route::get('submissions/{submission}/export.csv', [SubmissionImportController::class, 'exportCsv'])->name('submissions.export.csv');
             Route::get('submissions/{submission}/export.json', [SubmissionImportController::class, 'exportJson'])->name('submissions.export.json');
 
+            // Every signed-in reader's own dashboard (F4). A viewer has no
+            // back office and no member area; this is theirs.
+            Route::get('my-dashboard', [\App\Http\Controllers\MyDashboardController::class, 'show'])->name('my-dashboard');
+
             Route::get('account', [AccountController::class, 'show'])->name('account');
             Route::put('account', [AccountController::class, 'update'])->name('account.update');
             Route::put('account/password', [AccountController::class, 'updatePassword'])->name('account.password');

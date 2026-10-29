@@ -174,12 +174,13 @@ class LoginController extends Controller
         }
 
         return match (true) {
-            $user->hasPermission(Permission::ManageContent) => route('admin.dashboard', ['locale' => $locale]),
+            // Every role with a back office lands on its dashboard there:
+            // moderators and auditors hold no ManageContent but do enter.
+            \Illuminate\Support\Facades\Gate::forUser($user)->allows('enter-back-office') => route('admin.dashboard', ['locale' => $locale]),
             $user->hasPermission(Permission::ReachCommitteeWorkspace) => route('extranet.dashboard', ['locale' => $locale]),
-            // A viewer has no workspace. The public site, signed in, is
-            // the whole of what they have, and the account page is one
-            // click from the header.
-            default => route('home', ['locale' => $locale]),
+            // A viewer has no workspace. Their own dashboard: the latest
+            // published items and the comparator (F4).
+            default => route('my-dashboard', ['locale' => $locale]),
         };
     }
 

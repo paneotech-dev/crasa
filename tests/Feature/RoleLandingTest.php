@@ -231,11 +231,13 @@ class RoleLandingTest extends TestCase
 
     /* Viewer ------------------------------------------------------------- */
 
-    public function test_a_viewer_lands_on_the_public_site_signed_in(): void
+    public function test_a_viewer_lands_on_their_own_dashboard_signed_in(): void
     {
         $viewer = User::factory()->viewer()->create();
 
-        $this->signIn($viewer)->assertRedirect('/en');
+        // F4 (29 October 2026): a viewer lands on their own dashboard, the
+        // latest published items and the comparator, not the home page.
+        $this->signIn($viewer)->assertRedirect('/en/my-dashboard');
 
         $html = $this->actingAs($viewer)->get('/en')->assertOk()->getContent();
 

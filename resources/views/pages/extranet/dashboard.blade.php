@@ -53,6 +53,9 @@
          committee members only. See the partial. --}}
     @include('partials.assistant-proposal')
 
+    {{-- The role's own blocks (F4). --}}
+    @include('partials.role-dashboard')
+
     @if ($isCountryView)
         {{-- Returned first. It is the only item on this page that is
              blocked on the reader, and a returned submission that scrolls
