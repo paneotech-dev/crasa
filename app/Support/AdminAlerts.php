@@ -55,4 +55,23 @@ final class AdminAlerts
 
         return $sent;
     }
+
+    /**
+     * The latest administrator notices for one reader, for a dashboard
+     * block. Each row: title, url, read (bool), at (Carbon).
+     *
+     * @return \Illuminate\Support\Collection<int, array{title: string, url: ?string, read: bool, at: \Illuminate\Support\Carbon}>
+     */
+    public static function recentFor(User $user, int $limit = 5): \Illuminate\Support\Collection
+    {
+        return $user->notifications()
+            ->where('type', AdminActivity::class)
+            ->latest()->limit($limit)->get()
+            ->map(fn ($n) => [
+                'title' => (string) ($n->data['title'] ?? ''),
+                'url' => $n->data['url'] ?? null,
+                'read' => $n->read_at !== null,
+                'at' => $n->created_at,
+            ]);
+    }
 }
