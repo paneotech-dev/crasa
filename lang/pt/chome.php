@@ -13,7 +13,7 @@ return [
         'about_overview' => 'Quem somos',
         'about_overview_d' => 'Agência Especializada da SADC desde 1997',
         'about_vmh' => 'Visão, missão e história',
-        'about_vmh_d' => 'Porque existe a CRASA e como começou',
+        'about_vmh_d' => 'Visão, missão e história',
         'about_governance' => 'Governação',
         'about_governance_d' => 'Assembleia Geral Anual e Comité Executivo',
         'about_exco' => 'Comité Executivo',
@@ -103,7 +103,7 @@ return [
     'hero_slide' => 'Diapositivo :index de :total: :name',
     'hero_live' => 'Diapositivo :index de :total: :name',
     'hero_choose' => 'Escolher um diapositivo',
-    'hero_cta_library' => 'Explorar a biblioteca',
+    'hero_cta_library' => 'Abrir a biblioteca',
     'hero_cta_comparator' => 'Abrir o comparador',
     'fig_members' => 'Reguladores membros',
     'fig_committees' => 'Comités',
@@ -114,7 +114,7 @@ return [
     'quick_members' => 'Reguladores membros',
 
     'glance_label' => 'Números-chave',
-    'glance_title' => 'A CRASA em resumo',
+    'glance_title' => 'A CRASA em números',
 
     'mission_label' => 'A nossa missão',
     'mission_heading' => 'A nossa missão e áreas de trabalho',

@@ -8,7 +8,7 @@ return [
     'committee_card_open' => 'Abrir :name',
     'committees_cta_title' => 'Acompanhar o trabalho dos comités',
     'committees_cta_text' => 'Os seus documentos estão na biblioteca regulamentar e as reuniões no calendário de eventos.',
-    'browse_library' => 'Explorar a biblioteca',
+    'browse_library' => 'Abrir a biblioteca',
     'see_events' => 'Ver os eventos',
     'next_meeting' => 'Próxima reunião',
     'no_next_meeting' => 'Ainda não há reunião marcada. As datas aparecem aqui assim que o Secretariado as publicar.',

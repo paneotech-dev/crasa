@@ -20,7 +20,7 @@ return [
         'about_overview' => 'Who we are',
         'about_overview_d' => 'A Specialised Agency of SADC since 1997',
         'about_vmh' => 'Vision, mission and history',
-        'about_vmh_d' => 'Why CRASA exists and how it began',
+        'about_vmh_d' => 'Vision, mission and history',
         'about_governance' => 'Governance',
         'about_governance_d' => 'Annual General Meeting and Executive Committee',
         'about_exco' => 'Executive Committee',
@@ -114,7 +114,7 @@ return [
     'hero_slide' => 'Slide :index of :total: :name',
     'hero_live' => 'Slide :index of :total: :name',
     'hero_choose' => 'Choose a slide',
-    'hero_cta_library' => 'Explore the library',
+    'hero_cta_library' => 'Open the library',
     'hero_cta_comparator' => 'Open the comparator',
     'fig_members' => 'Member regulators',
     'fig_committees' => 'Committees',
@@ -125,7 +125,7 @@ return [
     'quick_members' => 'Member regulators',
 
     'glance_label' => 'Key figures',
-    'glance_title' => 'CRASA at a glance',
+    'glance_title' => 'CRASA in figures',
 
     'mission_label' => 'Our mission',
     'mission_heading' => 'Our mission and areas of work',

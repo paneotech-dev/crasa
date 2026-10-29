@@ -208,7 +208,7 @@
             @foreach ($glanceItems as $item)
                 @php $n = preg_replace('/\D/', '', $item['value']); $tag = $item['url'] ? 'a' : 'div'; @endphp
                 <{{ $tag }} class="k-fig u-reveal" @if ($item['url']) href="{{ $item['url'] }}" @endif>
-                    <span class="k-fig__n" @if ($n !== '' && $n === $item['value']) data-count="{{ $n }}" @if ((int) $n > 1900) data-from="1960" @endif @endif>{{ $item['value'] }}</span>
+                    <span class="k-fig__n" @if ($n !== '' && $n === $item['value'] && (int) $n < 1900) data-count="{{ $n }}" @endif>{{ $item['value'] }}</span>
                     <span class="k-fig__t">{{ $item['label'] }}</span>
                 </{{ $tag }}>
             @endforeach
@@ -383,9 +383,9 @@
                 @endforeach
                 <div class="k-ann">
                     <h4>{{ __('chome.related') }}</h4>
-                    <a href="{{ $nav('publications?type[]=communique') }}">{{ __('chome.m.pubs_communiques') }} <span aria-hidden="true">→</span></a>
-                    <a href="{{ $nav('events') }}">{{ __('chome.m.events_all') }} <span aria-hidden="true">→</span></a>
-                    <a href="{{ $nav('newsroom#social') }}">{{ __('chome.m.news_social') }} <span aria-hidden="true">→</span></a>
+                    <a href="{{ $nav('publications?type[]=communique') }}">{{ __('chome.m.pubs_communiques') }}</a>
+                    <a href="{{ $nav('events') }}">{{ __('chome.m.events_all') }}</a>
+                    <a href="{{ $nav('newsroom#social') }}">{{ __('chome.m.news_social') }}</a>
                 </div>
             </aside>
         </div>
