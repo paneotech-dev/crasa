@@ -8,7 +8,12 @@
     points.
 --}}
 @extends('layouts.shell', [
-    'groups' => \App\Support\ShellNavigation::administration(),
+    // The navigation follows the reader, as layouts.workspace does: a member
+    // state representative on the submission pages gets the member area's
+    // menu, not the back office's filtered down to nothing.
+    'groups' => \App\Support\Workspace::isBackOffice(auth()->user())
+        ? \App\Support\ShellNavigation::administration()
+        : \App\Support\ShellNavigation::extranet(),
     // The submission pages use this layout for member-state representatives
     // too, who cannot enter the back office: their wordmark is the extranet's.
     'brand' => \App\Support\Workspace::isBackOffice(auth()->user())
