@@ -57,7 +57,7 @@
                 </ul>
 
                 <div class="e-ev-actions">
-                    @include('pages.events._add-to-calendar', ['meeting' => $meeting])
+                    @include('pages.events._add-to-calendar', ['meeting' => $meeting, 'anchor' => true])
                     <div class="e-share" role="group" aria-labelledby="share-label">
                         <span class="e-addcal__label" id="share-label">{{ __('e.share') }}</span>
                         <button type="button" class="e-addcal__action" data-copy-link="{{ $url }}" data-copied="{{ __('e.copied') }}" aria-controls="share-status">

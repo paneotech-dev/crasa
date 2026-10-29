@@ -45,7 +45,7 @@
                             @if ($next->location)<p class="e-next__meta">{{ $next->location }}</p>@endif
                         </div>
                     </div>
-                    @include('pages.events._add-to-calendar', ['meeting' => $next])
+                    @include('pages.events._add-to-calendar', ['meeting' => $next, 'link' => true])
                 </aside>
             @endif
         </div>
@@ -135,7 +135,7 @@
                                         </p>
                                     @endif
                                     @if ($m->isCancelled())<p class="e-pv__line"><span class="u-pill e-pill--cancelled">{{ __('e.status_cancelled') }}</span></p>@endif
-                                    @include('pages.events._add-to-calendar', ['meeting' => $m, 'compact' => true, 'idPrefix' => 'pv-'])
+                                    @include('pages.events._add-to-calendar', ['meeting' => $m, 'link' => true])
                                     <p class="e-pv__actions"><a class="u-btn u-btn--primary" href="{{ route('events.show', ['locale' => $locale, 'meeting' => $m->slug]) }}">{{ __('evening.preview_open') }}<span class="c-sr">: {{ $m->title }}</span></a></p>
                                 </template>
                             @endforeach
@@ -244,7 +244,6 @@
         <div class="u-container u-cta__inner">
             <div>
                 <h2 class="u-cta__title" id="events-cta">{{ __('e.cta_title') }}</h2>
-                <p class="u-cta__text">{{ __('e.cta_text') }}</p>
             </div>
             <div class="u-actions">
                 {{-- The member calendar answers the enter-member-area gate; a guest is sent to sign in, a signed-in account without it is refused, so it does not see the link. --}}

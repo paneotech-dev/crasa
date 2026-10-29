@@ -47,7 +47,6 @@
             @foreach ($links as [$path, $label, $line, $icon])
                 <li class="u-card cp-linkcard">
                     <div class="u-card__body">
-                        <span class="cp-icon-badge"><svg class="cp-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">@include('partials.cpages.icon', ['name' => $icon])</svg></span>
                         <h3 class="u-card__title"><a href="{{ url('/'.$locale.'/'.$path) }}">{{ $label }}</a></h3>
                         <p class="u-card__text">{{ $line }}</p>
                     </div>

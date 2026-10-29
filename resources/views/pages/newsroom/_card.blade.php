@@ -1,6 +1,6 @@
 {{-- One newsroom card: a 16:10 frame, the title, the excerpt and one line of
-     metadata. An item without its own photograph gets the placeholder of its
-     type, never a photograph borrowed from another item. --}}
+     metadata. An item without its own photograph gets the CRASA mark on white,
+     never a labelled frame and never a photograph borrowed from another item. --}}
 @php
     $title = $item->translate('title');
     $summary = $item->translate('summary') ?? $item->translate('body');
@@ -19,8 +19,7 @@
                  @if ($photo['width'] && $photo['height']) width="{{ $photo['width'] }}" height="{{ $photo['height'] }}" @endif
                  alt="" loading="{{ $featured ? 'eager' : 'lazy' }}" @if ($featured) fetchpriority="high" @endif decoding="async">
         @else
-            <img src="{{ \App\Support\NewsFormat::placeholder($item->category->value) }}"
-                 alt="" loading="lazy" decoding="async">
+            @include('partials.k.placeholder')
         @endif
     </div>
     <div class="n-card__body">

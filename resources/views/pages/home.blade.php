@@ -70,6 +70,7 @@
         }
     }
     $count = count($slides);
+    $tiles = \App\Support\HomeData::tiles();
 
     /* ---- Blocks bound to sections ---- */
     $glance = $blocks->get('key_figures');
@@ -171,19 +172,18 @@
             </div>
         </div>
 
-        @if ($count > 1)
-            {{-- The concept's Featured list, under the composition: each
-                 item names a slide and doubles as its indicator, with the
-                 progress bar of the 7 second advance. --}}
-            <div class="k-featured" role="group" aria-label="{{ __('chome.featured') }}">
-                @foreach ($slides as $i => $s)
-                    <button type="button" class="k-fitem" data-k-dot="{{ $i }}" aria-current="{{ $i === 0 ? 'true' : 'false' }}">
-                        <i aria-hidden="true"></i>
-                        <span class="k-lbl">{{ $s['name'] }}</span>
-                        <b>{{ $s['headline']->value }}</b>
-                    </button>
+        {{-- Three tiles under the composition, each a concrete fact read
+             from the data: the library's guidelines, the comparator's reach
+             and the next public meeting. --}}
+        @if ($tiles !== [])
+            <ul class="k-featured" role="list" aria-label="{{ __('d3_polish.tiles_label') }}">
+                @foreach ($tiles as $tile)
+                    <li><a class="k-fitem" href="{{ $tile['url'] }}">
+                        <span class="k-lbl">{{ $tile['label'] }}</span>
+                        <b>{{ $tile['value'] }}</b>
+                    </a></li>
                 @endforeach
-            </div>
+            </ul>
         @endif
     </div>
 </section>
@@ -201,7 +201,6 @@
 <section class="k-glance" aria-labelledby="k-glance-h">
     <div class="k-wrap">
         <div>
-            <span class="k-lbl">{{ __('chome.glance_label') }}</span>
             <h2 id="k-glance-h">{{ __('chome.glance_title') }}</h2>
         </div>
         <div class="k-figs" data-stagger>
@@ -221,16 +220,15 @@
 @if ($pillars)
 @php
     $work = [
-        ['icon' => '<path d="M12 3v18M5 7h14M5 7l-3 7a3.5 3.5 0 0 0 6 0L5 7ZM19 7l-3 7a3.5 3.5 0 0 0 6 0l-3-7ZM8 21h8"/>', 'url' => $nav('publications?type[]=guideline'), 'figure' => $figures['guidelines']],
-        ['icon' => '<path d="M12 10v11M9 21h6M12 10l-4 11M12 10l4 11"/><path d="M8.5 6.5a5 5 0 0 1 7 0M6 4a8.5 8.5 0 0 1 12 0"/>', 'url' => $nav('comparator'), 'figure' => $figures['indicators']],
-        ['icon' => '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="m3 8 9 6 9-6"/>', 'url' => $nav('publications?sector=postal'), 'figure' => $figures['postal']],
-        ['icon' => '<path d="M12 3 4 6v6c0 4.5 3.4 8.2 8 9 4.6-.8 8-4.5 8-9V6l-8-3Z"/><path d="m8.5 12 2.5 2.5 4.5-5"/>', 'url' => $nav('committees'), 'figure' => $figures['committees']],
+        ['url' => $nav('publications?type[]=guideline'), 'figure' => $figures['guidelines']],
+        ['url' => $nav('comparator'), 'figure' => $figures['indicators']],
+        ['url' => $nav('publications?sector=postal'), 'figure' => $figures['postal']],
+        ['url' => $nav('committees'), 'figure' => $figures['committees']],
     ];
 @endphp
 <section class="k-sec" id="what-we-do" aria-labelledby="k-work-h">
     <div class="k-wrap k-mission">
         <div class="k-stmt u-reveal">
-            <span class="k-lbl">{{ __('chome.mission_label') }}</span>
             <p class="k-stmt__big">{{ __('chome.footer_blurb') }}</p>
             <div class="k-stmt__ctas">
                 <a class="k-btn k-btn--green" href="{{ $nav('members') }}">{{ __('chome.our_members') }}</a>
@@ -251,7 +249,6 @@
                     @if ($h = $t($pillars, 'item_'.$i.'_heading'))
                         <article class="k-act u-reveal">
                             <span class="k-act__top">
-                                <span class="k-act__ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $w['icon'] !!}</svg></span>
                                 <span class="k-act__fig"><b data-count="{{ $w['figure'] }}">{{ $w['figure'] }}</b> {{ __('chome.work_fig_'.$i) }}</span>
                             </span>
                             <h3><a href="{{ $w['url'] }}">{{ $h }}</a></h3>
@@ -288,34 +285,27 @@
                         @endif
                     </div>
                     <div class="k-pcard__pt">
-                        <span class="k-lbl">{{ collect([$p['type'], $p['sector']])->filter()->implode(' · ') }}</span>
+                        <span class="k-lbl">{{ collect([$p['type'], $p['sector']])->filter()->implode(', ') }}</span>
                         <h3><a href="{{ $p['url'] }}">{{ $p['title'] }}</a></h3>
                         @if ($p['year'])<span class="k-pcard__ed">{{ __('chome.edition', ['year' => $p['year']]) }}</span>@endif
-                        <div class="k-pcard__pf">
-                            <span class="k-pcard__chips">
-                                @if ($p['format'])<span class="k-chip">{{ $p['format'] }}@if ($p['size']), {{ $p['size'] }}@endif</span>@endif
-                                @if ($p['locale'])<span class="k-chip">{{ $p['locale'] }}</span>@endif
-                            </span>
-                            @if ($p['download'])
-                                <a class="k-pcard__dl" href="{{ $p['download'] }}" @if ($p['external']) rel="noopener" @endif>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
-                                    {{ $p['external'] ? __('chome.open_link') : __('chome.download') }}<span class="c-sr">: {{ $p['title'] }}</span>
-                                </a>
-                            @endif
-                        </div>
+                        @php $facts = collect([$p['format'], $p['size'], $p['locale']])->filter()->implode(', '); @endphp
+                        @if ($facts !== '')<p class="k-pcard__facts">{{ $facts }}</p>@endif
+                        @if ($p['download'])
+                            <p class="k-pcard__pf">
+                                <a class="k-pcard__dl" href="{{ $p['download'] }}" @if ($p['external']) rel="noopener" @endif>{{ $p['external'] ? __('chome.open_link') : __('d3_polish.download_with', ['facts' => collect([$p['format'], $p['size']])->filter()->implode(', ')]) }}<span class="c-sr">: {{ $p['title'] }}</span></a>
+                            </p>
+                        @endif
                     </div>
                 </article>
             @endforeach
             <div class="k-types u-reveal">
                 <h3>{{ __('chome.browse_type') }}</h3>
-                @foreach ([['annual_report', 'pubs_annual', '<path d="M4 4h16v16H4zM8 9h8M8 13h8M8 17h5"/>'], ['guideline', 'pubs_guidelines', '<path d="M12 3v18M5 7h14M5 7l-3 7a3.5 3.5 0 0 0 6 0L5 7ZM19 7l-3 7a3.5 3.5 0 0 0 6 0l-3-7Z"/>'], ['study', 'pubs_studies', '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'], ['communique', 'pubs_communiques', '<path d="M3 11v2a1 1 0 0 0 1 1h3l5 4V6L7 10H4a1 1 0 0 0-1 1ZM16 9a4 4 0 0 1 0 6"/>']] as [$type, $key, $icon])
+                @foreach ([['annual_report', 'pubs_annual'], ['guideline', 'pubs_guidelines'], ['study', 'pubs_studies'], ['communique', 'pubs_communiques']] as [$type, $key])
                     <a class="k-ty" href="{{ $nav('publications?type[]='.$type) }}">
-                        <span class="k-ty__i"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $icon !!}</svg></span>
                         <span><b>{{ __('chome.m.'.$key) }}</b><small>{{ __('chome.m.'.$key.'_d') }}</small></span>
                         {!! $arrowSm !!}
                     </a>
                 @endforeach
-                <p class="k-types__n">{{ __('chome.pubs_note') }}</p>
             </div>
         </div>
     </div>
@@ -339,11 +329,11 @@
                             <img src="{{ $lead['image']['src'] }}" @if ($lead['image']['srcset']) srcset="{{ $lead['image']['srcset'] }}" sizes="(max-width: 720px) 100vw, 420px" @endif
                                  @if ($lead['image']['width']) width="{{ $lead['image']['width'] }}" height="{{ $lead['image']['height'] }}" @endif alt="" loading="lazy" decoding="async">
                         @else
-                            @include('partials.k.placeholder', ['label' => $lead['type']])
+                            @include('partials.k.placeholder')
                         @endif
                     </div>
                     <div class="k-lead__tx">
-                        <span class="k-meta"><span class="k-pill">{{ $lead['type'] }}</span>@if ($lead['date'])<time datetime="{{ $lead['iso'] }}">{{ $lead['date'] }}</time>@endif</span>
+                        <span class="k-meta">@if ($lead['date'])<time datetime="{{ $lead['iso'] }}">{{ $lead['date'] }}</time>@endif</span>
                         <h3><a href="{{ $lead['url'] }}">{{ $lead['title'] }}</a></h3>
                         @if ($lead['summary'])<p>{{ $lead['summary'] }}</p>@endif
                         <span class="k-rd" aria-hidden="true">{{ __('chome.read_more') }} {!! $arrowSm !!}</span>
@@ -357,11 +347,11 @@
                                     @if ($n['image'])
                                         <img src="{{ $n['image']['src'] }}" @if ($n['image']['width']) width="{{ $n['image']['width'] }}" height="{{ $n['image']['height'] }}" @endif alt="" loading="lazy" decoding="async">
                                     @else
-                                        @include('partials.k.placeholder', ['label' => $n['type'], 'small' => true])
+                                        @include('partials.k.placeholder', ['small' => true])
                                     @endif
                                 </div>
                                 <div>
-                                    <span class="k-meta"><span class="k-pill">{{ $n['type'] }}</span>@if ($n['date'])<time datetime="{{ $n['iso'] }}">{{ $n['date'] }}</time>@endif</span>
+                                    <span class="k-meta">@if ($n['date'])<time datetime="{{ $n['iso'] }}">{{ $n['date'] }}</time>@endif</span>
                                     <h3><a href="{{ $n['url'] }}">{{ $n['title'] }}</a></h3>
                                 </div>
                             </article>
@@ -377,7 +367,7 @@
                         <span class="k-ev__i">
                             <span class="k-pill @if ($e['past']) k-pill--grey @endif">{{ $e['past'] ? __('chome.events_past') : __('chome.events_upcoming') }}</span>
                             <b>{{ $e['title'] }}</b>
-                            <small><time datetime="{{ $e['iso'] }}">{{ $e['day'] }} {{ $e['month'] }} {{ $e['year'] }}</time>@if ($e['place']) · {{ $e['place'] }}@endif</small>
+                            <small><time datetime="{{ $e['iso'] }}">{{ $e['day'] }} {{ $e['month'] }} {{ $e['year'] }}</time>@if ($e['place']), {{ $e['place'] }}@endif</small>
                         </span>
                     </a>
                 @endforeach
@@ -409,12 +399,9 @@
 <section class="k-sec k-memsec" id="members" aria-labelledby="k-mem-h">
     <div class="k-wrap">
         <div class="k-sh u-reveal">
-            <div><span class="k-lbl">{{ __('chome.members_label') }}</span><h2 id="k-mem-h">{{ $t($membersBlock, 'heading') ?? __('chome.members_heading') }}</h2></div>
+            <div><h2 id="k-mem-h">{{ $t($membersBlock, 'heading') ?? __('chome.members_heading') }}</h2></div>
             <a class="k-all" href="{{ $nav('members') }}">{{ __('chome.members_directory') }} {!! $arrow !!}</a>
         </div>
-        @if ($intro = $t($membersBlock, 'intro'))
-            <p class="k-mem__intro">{{ $intro }}</p>
-        @endif
         <div class="k-mx">
             <div class="k-mapbox">
                 <x-region-map :countries="$countries" static />
@@ -451,7 +438,6 @@
         <div class="k-wrap k-follow__row">
             <div>
                 <h2 id="k-fol-h" class="k-follow__h">{{ $t($socialBlock, 'heading') ?? __('chome.social_heading') }}</h2>
-                <p>{{ __('chome.social_intro') }}</p>
             </div>
             <div class="k-sbtns" data-stagger>
                 @foreach ($accounts as $network => $url)

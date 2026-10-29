@@ -91,7 +91,6 @@
                     <li class="u-card cp-com-card" id="committee-{{ $committee->slug }}">
                         <div class="u-card__body">
                             <div class="cp-com-card__top">
-                                <span class="cp-icon-badge">@include('partials.cpages.committee-icon', ['slug' => $committee->slug])</span>
                                 <span class="u-card__label">{{ $sectorName }}</span>
                             </div>
                             <h3 class="u-card__title"><a href="{{ route('committees.show', ['locale' => $locale, 'committee' => $committee->slug]) }}">{{ $committee->name }}</a></h3>

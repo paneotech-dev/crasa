@@ -42,7 +42,7 @@ return [
     'social_error_post' => 'Este endereço é um perfil ou uma página. Abra a própria publicação e cole o seu endereço.',
     'preview' => 'Pré-visualização',
 
-    'latest_heading' => 'Novidades da CRASA',
+    'latest_heading' => 'A CRASA nas redes sociais',
     'latest_intro' => 'O que o Secretariado publicou no X, LinkedIn e Facebook.',
     'feed_heading' => 'A CRASA nas redes sociais',
     'feed_intro' => 'Publicações do Secretariado, as mais recentes primeiro.',

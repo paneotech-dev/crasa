@@ -117,7 +117,6 @@
                     @foreach ($pillars as $i => $pillar)
                         <article class="u-card cp-about-pillar">
                             <div class="u-card__body">
-                                <span class="cp-icon-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">@include('partials.cpages.icon', ['name' => ['target', 'eye', 'flag'][$i] ?? 'target'])</svg></span>
                                 <h3 class="u-card__title">{{ $pillar['heading'] }}</h3>
                                 @foreach ($pillar['paragraphs'] as $paragraph)
                                     <p class="u-card__text">{!! $renderer->render($paragraph, 'block:'.$vmh['block']->id) !!}</p>
@@ -134,7 +133,6 @@
         <div class="u-container cp-about-history">
             <div>
                 <h2 class="u-h2" id="history-title">{{ __('cpages.about_history') }}</h2>
-                <p class="u-lead">{{ __('cpages.about_history_lead') }}</p>
                 @if ($sadc === null)
                     <p><a class="u-btn u-btn--secondary" href="https://www.sadc.int">SADC</a></p>
                 @endif
@@ -167,7 +165,6 @@
                             @foreach ($governanceParts['sections'] as $i => $section)
                                 <article class="u-card">
                                     <div class="u-card__body">
-                                        <span class="cp-icon-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">@include('partials.cpages.icon', ['name' => ['building', 'people', 'grid', 'check'][$i % 4]])</svg></span>
                                         <h3 class="u-card__title cp-gov__title">{{ $section['heading'] }}</h3>
                                         @foreach ($section['paragraphs'] as $paragraph)
                                             <p class="u-card__text">{!! $renderer->render($paragraph, 'block:'.$governance['block']->id) !!}</p>

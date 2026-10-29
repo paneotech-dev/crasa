@@ -92,7 +92,6 @@
                             ] as [$route, $label, $line, $icon])
                                 <li class="u-card cp-linkcard">
                                     <div class="u-card__body">
-                                        <span class="cp-icon-badge"><svg class="cp-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">@include('partials.cpages.icon', ['name' => $icons[$icon]])</svg></span>
                                         <h3 class="u-card__title"><a href="{{ route($route, ['locale' => $locale]) }}">{{ $label }}</a></h3>
                                         <p class="u-card__text">{{ $line }}</p>
                                     </div>
@@ -107,7 +106,6 @@
                         @foreach ($groups as $type => $hits)
                             <section class="cp-search__group" aria-labelledby="group-{{ $type }}">
                                 <h2 class="cp-search__group-title" id="group-{{ $type }}">
-                                    <span class="cp-icon-badge"><svg class="cp-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">@include('partials.cpages.icon', ['name' => $icons[$type] ?? 'book'])</svg></span>
                                     {{ __('cpages_c.group_'.$type) }}
                                     <span class="u-pill u-pill--muted">{{ count($hits) }}</span>
                                 </h2>

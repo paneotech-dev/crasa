@@ -61,7 +61,7 @@
                 @if ($project->hero_image_path)
                     <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($project->hero_image_path) }}" alt="" loading="eager" fetchpriority="high" decoding="async" width="800" height="600">
                 @else
-                    <span class="cp-placeholder"><x-sector-icon :sector="$project->sector?->slug" /><span>{{ $project->sector?->name ?? __('projects.title') }}</span></span>
+                    <span class="cp-placeholder" aria-hidden="true"><img src="{{ asset('img/crasa-logo.svg') }}" alt="" width="56" height="56"></span>
                 @endif
             </figure>
         </div>
@@ -188,7 +188,7 @@
                             @if ($photo)
                                 <img src="{{ $photo['src'] }}" @if (! empty($photo['srcset'])) srcset="{{ $photo['srcset'] }}" sizes="(max-width: 640px) 100vw, 380px" @endif alt="" loading="lazy" decoding="async" @if (! empty($photo['width'])) width="{{ $photo['width'] }}" height="{{ $photo['height'] }}" @endif>
                             @else
-                                <span class="cp-placeholder"><x-sector-icon :sector="$project->sector?->slug" /><span>{{ __('nav.newsroom') }}</span></span>
+                                <span class="cp-placeholder" aria-hidden="true"><img src="{{ asset('img/crasa-logo.svg') }}" alt="" width="56" height="56"></span>
                             @endif
                         </figure>
                         <div class="u-card__body">

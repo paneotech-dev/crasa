@@ -19,10 +19,8 @@
         @if ($image)
             <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($image) }}" alt="" loading="lazy" decoding="async" width="480" height="300">
         @else
-            <span class="cp-placeholder">
-                <x-sector-icon :sector="$sectorSlug" />
-                <span>{{ $project->sector?->name ?? __('projects.title') }}</span>
-            </span>
+            {{-- No photograph: the CRASA mark on white, never a labelled frame. --}}
+            <span class="cp-placeholder" aria-hidden="true"><img src="{{ asset('img/crasa-logo.svg') }}" alt="" width="56" height="56"></span>
         @endif
     </figure>
     <div class="u-card__body">

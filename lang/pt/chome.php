@@ -85,7 +85,7 @@ return [
     'sm_members' => 'Membros e comités',
     'sm_publications' => 'Publicações e recursos',
     'sm_news' => 'Notícias e eventos',
-    'sm_services' => 'Serviços',
+    'sm_services' => 'Membros',
     'contact' => 'Contacto',
     'follow' => 'Siga-nos',
     'footer_blurb' => 'Agência Especializada da SADC, criada em 1997, que harmoniza o ambiente regulamentar postal e das TIC na região da SADC.',
@@ -118,7 +118,7 @@ return [
 
     'mission_label' => 'A nossa missão',
     'mission_heading' => 'A nossa missão e áreas de trabalho',
-    'what_we_do' => 'O que fazemos',
+    'what_we_do' => 'O nosso trabalho',
     'work_more_0' => 'Diretrizes',
     'work_more_1' => 'A cobertura no comparador',
     'work_more_2' => 'Diretrizes postais',
@@ -146,7 +146,7 @@ return [
     'edition' => 'Edição :year',
 
     'members_label' => 'Membros e cooperação regional',
-    'members_heading' => 'Catorze autoridades nacionais',
+    'members_heading' => 'Reguladores membros',
     'members_directory' => 'Diretório de membros',
 
     'social_heading' => 'Siga a CRASA',
