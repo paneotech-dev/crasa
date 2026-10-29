@@ -226,6 +226,10 @@ class ComparatorTest extends TestCase
 
         $css = file_get_contents(public_path('css/comparator.css'));
         $this->assertStringContainsString('@media (max-width: 719.98px)', $css);
+        // A long unbroken source ("Telecommunications/ICT,") must wrap inside the card at 320 px:
+        // the value track may shrink below its longest word.
+        $this->assertStringContainsString('grid-template-columns: 7.5em minmax(0, 1fr)', $css);
+        $this->assertStringContainsString('overflow-wrap: anywhere', $css);
     }
 
     /* Exports ----------------------------------------------------------------- */
