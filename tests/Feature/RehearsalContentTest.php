@@ -46,7 +46,7 @@ class RehearsalContentTest extends TestCase
 
         $folder = Folder::withoutGlobalScopes()->where('slug', 'za')->sole();
         $this->get('/en/extranet/folders')->assertOk()->assertSee('South Africa');
-        $this->get('/en/extranet/folders/'.$folder->getRouteKey())->assertOk()->assertSee('sample-validated-returns');
+        $this->get('/en/extranet/folders/'.$folder->getRouteKey())->assertOk()->assertSee('ICASA validated annual returns.pdf')->assertDontSee('sample-validated-returns');
 
         $this->get('/en/announcements')->assertOk()->assertSee('Annual returns window open');
         $this->get('/fr/announcements')->assertOk()->assertSee('déclarations annuelles', false);
@@ -78,18 +78,21 @@ class RehearsalContentTest extends TestCase
     public function test_each_folder_holds_papers_for_what_it_is_for(): void
     {
         $za = Folder::withoutGlobalScopes()->where('slug', 'za')->sole();
-        $returns = Document::withoutGlobalScopes()->where('folder_id', $za->id)->where('original_filename', 'sample-validated-returns.pdf')->sole();
+        $returns = Document::withoutGlobalScopes()->where('folder_id', $za->id)->where('file_path', 'like', '%/sample-validated-returns.pdf')->sole();
+        // The path keeps the seeder's slug; the reader sees a real name (29 October 2026).
+        $this->assertSame('ICASA validated annual returns.pdf', $returns->original_filename);
         $pdf = Storage::disk('local')->get($returns->file_path);
         // The figures as filed, from the sample returns.
         $this->assertStringContainsString('168.9', $pdf);
         $this->assertStringContainsString('ICASA annual report', $pdf);
 
         $committee = Folder::withoutGlobalScopes()->whereNotNull('committee_id')->first();
-        $this->assertSame(['sample-committee-agenda.pdf', 'sample-committee-working-paper.pdf'],
+        $name = $committee->committee->rawName();
+        $this->assertSame([$name.' session agenda '.now()->year.'.pdf', $name.' working paper '.now()->year.'.pdf'],
             Document::withoutGlobalScopes()->where('folder_id', $committee->id)->orderBy('original_filename')->pluck('original_filename')->all());
 
         $secretariat = Folder::withoutGlobalScopes()->where('slug', 'secretariat-papers')->sole();
-        $this->assertSame(2, Document::withoutGlobalScopes()->where('folder_id', $secretariat->id)->where('original_filename', 'like', 'sample-secretariat-note-%')->count());
+        $this->assertSame(2, Document::withoutGlobalScopes()->where('folder_id', $secretariat->id)->where('original_filename', 'like', 'Secretariat note on the %')->count());
     }
 
     public function test_strip_samples_removes_all_of_it(): void

@@ -7,6 +7,7 @@ use App\Enums\InstrumentStatus;
 use App\Enums\Role;
 use App\Enums\SubmissionStatus;
 use App\Models\Announcement;
+use App\Models\Authority;
 use App\Models\Committee;
 use App\Models\Country;
 use App\Models\Document;
@@ -22,6 +23,7 @@ use App\Models\Submission;
 use App\Models\SubmissionEvent;
 use App\Models\SubmissionFieldComment;
 use App\Models\User;
+use App\Support\Documents\DemonstrationFileNames;
 use App\Support\SampleDocumentPdf;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
@@ -594,7 +596,8 @@ class DemonstrationSeeder extends Seeder
                         'documentable_id' => $folder->id,
                         'country_id' => $folder->country_id,
                         'committee_id' => $folder->committee_id,
-                        'original_filename' => $slug.'.pdf',
+                        // The path keeps the slug; the reader sees a real name.
+                        'original_filename' => $this->paperName($folder, $slug),
                         'mime_type' => 'application/pdf',
                         'size_bytes' => Storage::disk('local')->size($path),
                         'thumbnail_path' => null,
@@ -641,6 +644,18 @@ class DemonstrationSeeder extends Seeder
                 $announcement->setTranslation('body', $locale, $notice[$locale][1]);
             }
         }
+    }
+
+    /** The name a reader sees for a sample paper (App\Support\Documents\DemonstrationFileNames). */
+    private function paperName(Folder $folder, string $slug): string
+    {
+        return DemonstrationFileNames::for(
+            $slug,
+            $folder->country_id ? Authority::where('country_id', $folder->country_id)->orderBy('id')->value('acronym') : null,
+            $folder->country_id ? Country::find($folder->country_id)?->rawName() : null,
+            $folder->committee_id ? Committee::find($folder->committee_id)?->rawName() : null,
+            (int) now()->year,
+        ) ?? $slug.'.pdf';
     }
 
     /**

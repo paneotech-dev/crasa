@@ -9,6 +9,13 @@ return [
     'enquiry_recipient' => env('CRASA_ENQUIRY_RECIPIENT', 'crasa@crasa.org'),
 
     /*
+     * The folder on the private disk where files uploaded into the member
+     * area's folders are stored. A preview that shares the live files sets
+     * its own so that it never writes beside them.
+     */
+    'documents_dir' => env('CRASA_DOCUMENTS_DIR', 'extranet'),
+
+    /*
      * Two-factor for administrators. On by default; false only for a
      * demonstration (see App\Enums\Role::requiresTwoFactor).
      */

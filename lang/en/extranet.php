@@ -21,7 +21,7 @@ return [
     'child_count' => '{0} Empty|{1} 1 folder|[2,*] :count folders',
     'file_count' => '{0} No files|{1} 1 file|[2,*] :count files',
     'upload_label' => 'Add a file',
-    'upload_hint' => 'PDF, Word, Excel, CSV or plain text. Up to 25 MB. Archives are not accepted: a zip is a way past a file-type check, and a folder whose contents nobody can list is not a document store.',
+    'upload_hint' => 'PDF, Word, Excel, CSV or text, up to 25 MB. Archives are not accepted.',
     'upload_action' => 'Upload the file',
     'uploaded' => ':name has been added to this folder.',
     'no_files_title' => 'This folder is empty',

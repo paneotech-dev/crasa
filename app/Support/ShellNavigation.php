@@ -75,6 +75,8 @@ final class ShellNavigation
                 // Day 3: the back office's own events list, which Delegate registrations used to stand in for.
                 ['key' => 'events', 'route' => 'admin.meetings', 'icon' => 'events', 'permission' => Permission::ManageMeetings],
                 ['key' => 'media', 'route' => 'admin.media', 'icon' => 'media', 'permission' => Permission::ManageContent],
+                // Day 3: docs. The member area's folders, managed.
+                ['key' => 'documents', 'route' => 'admin.documents', 'icon' => 'folder', 'permission' => Permission::ManageContent, 'label' => __('d3_docs.nav_documents')],
                 ['key' => 'navigation', 'route' => 'admin.menus', 'icon' => 'navigation', 'permission' => Permission::ManageContent],
                 // Day 3 (taxo): categories, publication types, sectors, tags.
                 ['key' => 'taxonomies', 'route' => 'admin.taxonomies', 'icon' => 'tag', 'permission' => Permission::ManageSettings, 'label' => __('d3_taxo.nav')],

@@ -21,7 +21,7 @@ return [
     'child_count' => '{0} Vazia|{1} 1 pasta|[2,*] :count pastas',
     'file_count' => '{0} Sem ficheiros|{1} 1 ficheiro|[2,*] :count ficheiros',
     'upload_label' => 'Acrescentar um ficheiro',
-    'upload_hint' => 'PDF, Word, Excel, CSV ou texto simples. Até 25 MB. Os arquivos comprimidos não são aceites: um zip é uma forma de contornar a verificação de tipo, e uma pasta cujo conteúdo ninguém consegue listar não é um repositório de documentos.',
+    'upload_hint' => 'PDF, Word, Excel, CSV ou texto, até 25 MB. Os arquivos comprimidos não são aceites.',
     'upload_action' => 'Carregar o ficheiro',
     'uploaded' => ':name foi acrescentado a esta pasta.',
     'no_files_title' => 'Esta pasta está vazia',

@@ -381,6 +381,43 @@ Route::prefix('{locale}')
             // regulator cannot put in their own calendar is one they miss.
             Route::get('extranet/calendar.ics', [ExtranetController::class, 'calendarExport'])->middleware('can:enter-member-area')->name('extranet.calendar.ics');
 
+            // Day 3: docs
+            /*
+             * Document management: folders (create, rename, describe, move,
+             * access, delete when empty), files (rename, move, replace with a
+             * new version, validate, the recycle bin), earlier versions and
+             * share links. Every action re-checks the folder and document
+             * policies; another member state's file answers 404.
+             */
+            Route::middleware('can:enter-member-area')->group(function () {
+                Route::get('extranet/documents/folders/new', [\App\Http\Controllers\FolderManagementController::class, 'create'])->name('extranet.folders.create');
+                Route::post('extranet/documents/folders', [\App\Http\Controllers\FolderManagementController::class, 'store'])->name('extranet.folders.store');
+                Route::get('extranet/documents/folders/{folder}/edit', [\App\Http\Controllers\FolderManagementController::class, 'edit'])->whereNumber('folder')->name('extranet.folders.edit');
+                Route::put('extranet/documents/folders/{folder}', [\App\Http\Controllers\FolderManagementController::class, 'update'])->whereNumber('folder')->name('extranet.folders.update');
+                Route::delete('extranet/documents/folders/{folder}', [\App\Http\Controllers\FolderManagementController::class, 'destroy'])->whereNumber('folder')->name('extranet.folders.destroy');
+                Route::get('extranet/documents/bin', [\App\Http\Controllers\FolderDocumentController::class, 'bin'])->name('extranet.documents.bin');
+                Route::put('extranet/documents/{document}/restore', [\App\Http\Controllers\FolderDocumentController::class, 'restore'])->whereNumber('document')->name('extranet.documents.restore');
+                Route::get('extranet/documents/{document}', [\App\Http\Controllers\FolderDocumentController::class, 'show'])->whereNumber('document')->name('extranet.document');
+                Route::put('extranet/documents/{document}/name', [\App\Http\Controllers\FolderDocumentController::class, 'rename'])->whereNumber('document')->name('extranet.document.rename');
+                Route::put('extranet/documents/{document}/folder', [\App\Http\Controllers\FolderDocumentController::class, 'move'])->whereNumber('document')->name('extranet.document.move');
+                Route::post('extranet/documents/{document}/versions', [\App\Http\Controllers\FolderDocumentController::class, 'replace'])->whereNumber('document')->name('extranet.document.replace');
+                Route::put('extranet/documents/{document}/validate', [\App\Http\Controllers\FolderDocumentController::class, 'validateFile'])->whereNumber('document')->name('extranet.document.validate');
+                Route::delete('extranet/documents/{document}', [\App\Http\Controllers\FolderDocumentController::class, 'destroy'])->whereNumber('document')->name('extranet.document.destroy');
+                Route::get('extranet/versions/{version}', [\App\Http\Controllers\FolderDocumentController::class, 'version'])->whereNumber('version')->name('extranet.version');
+                Route::get('extranet/shared/{token}', [\App\Http\Controllers\FolderDocumentController::class, 'shared'])->name('extranet.shared');
+            });
+            Route::middleware('can:enter-back-office')->group(function () {
+                Route::get('admin/documents', [\App\Http\Controllers\FolderManagementController::class, 'index'])->name('admin.documents');
+                Route::get('admin/documents/folders/new', [\App\Http\Controllers\FolderManagementController::class, 'create'])->name('admin.documents.create');
+                Route::post('admin/documents/folders', [\App\Http\Controllers\FolderManagementController::class, 'store'])->name('admin.documents.store');
+                Route::get('admin/documents/folders/{folder}/edit', [\App\Http\Controllers\FolderManagementController::class, 'edit'])->whereNumber('folder')->name('admin.documents.edit');
+                Route::put('admin/documents/folders/{folder}', [\App\Http\Controllers\FolderManagementController::class, 'update'])->whereNumber('folder')->name('admin.documents.update');
+                Route::delete('admin/documents/folders/{folder}', [\App\Http\Controllers\FolderManagementController::class, 'destroy'])->whereNumber('folder')->name('admin.documents.destroy');
+                Route::get('admin/documents/bin', [\App\Http\Controllers\FolderDocumentController::class, 'bin'])->name('admin.documents.bin');
+                Route::put('admin/documents/files/{document}/restore', [\App\Http\Controllers\FolderDocumentController::class, 'restore'])->whereNumber('document')->name('admin.documents.restore');
+            });
+            // end Day 3: docs
+
             /*
              * Contributing a national instrument, RP-03 and RP-06.
              *
