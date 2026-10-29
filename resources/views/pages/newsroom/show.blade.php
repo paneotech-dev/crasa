@@ -36,7 +36,7 @@
                 @if ($item->hero_image_path)
                     @php $photo = \App\Support\ResizedImage::attributes($item->hero_image_path, 'hero'); @endphp
                     <img src="{{ $photo['src'] }}"
-                         @if ($photo['srcset']) srcset="{{ $photo['srcset'] }}" sizes="(max-width: 900px) 100vw, 860px" @endif
+                         @if ($photo['srcset']) srcset="{{ $photo['srcset'] }}" sizes="(max-width: 1200px) 100vw, 1200px" @endif
                          @if ($photo['width'] && $photo['height']) width="{{ $photo['width'] }}" height="{{ $photo['height'] }}" @endif
                          alt="" loading="eager" fetchpriority="high" decoding="async">
                 @else
