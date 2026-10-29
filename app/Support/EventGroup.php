@@ -56,7 +56,7 @@ final class EventGroup
     /** The name in the reader's language where the lang file has one. */
     public function label(): string
     {
-        $key = 'events_e.group_'.strtolower($this->code);
+        $key = 'e.group_'.strtolower($this->code);
 
         return __($key) !== $key ? __($key) : $this->name;
     }
