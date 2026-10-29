@@ -511,3 +511,64 @@ html:not(.k-motion) .k-home .u-reveal { opacity: 1; transform: none; }
 .k-ubar__soc a:hover { background: rgba(255, 255, 255, .12); }
 .k-ubar__soc a:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
 .k-ubar__soc svg { width: 16px; height: 16px; }
+
+/* ==== Day 3 polish (item 8f). Kept together; colour tokens untouched. ==== */
+/* Cards keep their radius and their 1px border; no shadow, no lift on hover.
+   Colour transitions stay. #content:not(.a-main) is the public page body
+   only (the signed-in shell's main carries .a-main). */
+#content:not(.a-main) .u-card,
+#content:not(.a-main) .u-card:hover,
+#content:not(.a-main) .u-card:focus-within,
+#content:not(.a-main) .c-secretariat,
+.k-act, .k-act:hover, .k-pcard, .k-pcard:hover, .k-lead, .k-lead:hover, .k-mini, .k-mini:hover,
+.k-dcard, .k-dcard:hover, .k-sbtn:hover, .k-feat:hover, .k-quick a:hover { box-shadow: none; transform: none; }
+.k-act, .k-pcard, .k-lead, .k-mini, .k-dcard, .k-sbtn, .k-feat, .k-quick a { transition: border-color .15s, background-color .15s, color .15s; }
+#content:not(.a-main) .u-card { transition: border-color var(--u-fast), background-color var(--u-fast); }
+.k-pcard__cv img { box-shadow: none; border: 1px solid var(--k-line); }
+.k-pcard:hover .k-pcard__cv img, .k-lead:hover .k-lead__ph > img { transform: none; }
+
+/* The counters band: no rule between the figures. */
+.k-fig { border-left: 0; padding-left: 0; border-radius: 0; }
+
+/* Work cards and "Browse by type": the number and the title carry them. */
+.k-act__top { justify-content: flex-start; }
+.k-act__fig { text-align: left; }
+.k-ty { grid-template-columns: minmax(0, 1fr) auto; }
+
+/* Guideline cards: one grey line of facts, then a text link. */
+.k-pcard__facts { margin: 0; font-size: 14px; color: var(--k-muted); }
+.k-pcard__pf { margin: auto 0 0; display: block; }
+.k-pcard__dl, .k-pcard__dl:hover { display: inline-flex; align-items: center; min-height: 44px; padding: 0; border-radius: 0; background: none; color: var(--k-deep); font-weight: 600; font-size: 15px; text-decoration: underline; text-underline-offset: 3px; white-space: normal; }
+.k-pcard__dl:hover { color: var(--k-green); }
+.k-pcard__dl:focus-visible { outline: 2px solid var(--k-blue-ink); outline-offset: 2px; }
+
+/* Library cards: the language as text in the grey line, a text download link. */
+#content:not(.a-main) .cp-lang { padding: 0; font-size: inherit; }
+#content:not(.a-main) .cp-doc-card__dl { display: inline-flex; align-items: center; min-height: 44px; color: var(--k-deep); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+#content:not(.a-main) .cp-doc-card__dl:hover { color: var(--k-green); }
+
+/* Hero tiles: three links reading a fact each. */
+.k-featured { list-style: none; margin: 0; padding: 0; }
+.k-featured > li { display: flex; min-width: 0; border-left: 1px solid var(--k-line-soft); }
+.k-featured > li:first-child { border-left: 0; }
+.k-featured .k-fitem { flex: 1; border-left: 0; text-decoration: none; cursor: pointer; }
+.k-featured .k-fitem::before { content: none; }
+.k-featured .k-fitem:hover b { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 900px) { .k-featured .k-fitem .k-lbl { display: block; } }
+
+/* An item without a photograph: the CRASA mark on white, no label. */
+.k-ph, #content:not(.a-main) .cp-news-ph, #content:not(.a-main) .cp-placeholder { background: var(--k-white); border: 0; }
+#content:not(.a-main) .cp-placeholder img { width: 56px; height: 56px; object-fit: contain; }
+#content:not(.a-main) .u-card__media:has(.cp-news-ph), #content:not(.a-main) .u-card__media:has(.cp-placeholder),
+#content:not(.a-main) .n-card__media:has(.k-ph) { background: var(--k-white); border-bottom: 1px solid var(--k-line-soft); }
+.n-card__media { position: relative; }
+
+/* Meeting cards: one "Add to calendar" link to the event page. */
+.e-addcal__link { display: inline-flex; align-items: center; min-height: 44px; color: var(--k-deep); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.e-addcal__link:hover { color: var(--k-green); }
+.e-addcal__link:focus-visible { outline: 2px solid var(--k-blue-ink); outline-offset: 2px; }
+.e-next .e-addcal__link { margin-top: 8px; }
+
+/* Social cards: one caption above the embed. */
+p.s-post__head { margin: 0; font-weight: 600; }
+/* ==== end Day 3 polish ==== */

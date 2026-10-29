@@ -142,7 +142,6 @@
     <section class="u-section u-section--blue">
         <div class="u-container">
             <h2 class="u-h2">{{ __('cpages_a.related_publications') }}</h2>
-            <p class="u-text u-muted cp-proj-related-note">{{ __('cpages_a.same_sector', ['sector' => $project->sector->name]) }}</p>
             <ul class="u-cols-3 cp-doc-grid" role="list">
                 @foreach ($publications as $publication)
                     @php
@@ -176,7 +175,6 @@
     <section class="u-section">
         <div class="u-container">
             <h2 class="u-h2">{{ __('cpages_a.related_news') }}</h2>
-            <p class="u-text u-muted cp-proj-related-note">{{ __('cpages_a.same_sector', ['sector' => $project->sector->name]) }}</p>
             <ul class="u-cols-3 cp-doc-grid" role="list">
                 @foreach ($news as $item)
                     @php

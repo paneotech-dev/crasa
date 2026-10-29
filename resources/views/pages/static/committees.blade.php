@@ -61,7 +61,6 @@
         <div class="cp-com-head">
             <div>
                 @if ($gridBlock?->translate('heading'))<h2 class="u-h2">{{ $gridBlock->translate('heading')->value }}</h2>@endif
-                @if ($gridBlock?->translate('intro'))<p class="u-text u-muted cp-com-intro">{{ $gridBlock->translate('intro')->value }}</p>@endif
             </div>
             @if ($introBlock?->translate('body'))
                 {{-- The page's own introduction, beside the grid heading

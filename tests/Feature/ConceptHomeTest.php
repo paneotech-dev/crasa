@@ -138,8 +138,10 @@ class ConceptHomeTest extends TestCase
         $section = substr($section, 0, strpos($section, '</section>'));
 
         $intro = \App\Models\PageBlock::where('block_type', 'member_grid')->whereHas('page', fn ($q) => $q->where('slug', 'home'))->firstOrFail()->translate('intro', 'en')?->value;
+        // Item 8f: no explanatory sentence under the heading; the map and
+        // the fourteen cards say it.
         if ($intro) {
-            $this->assertSame(1, substr_count($html, e($intro)));
+            $this->assertSame(0, substr_count($html, e($intro)));
         }
         $this->assertSame(14, substr_count($section, 'class="k-dcard u-reveal"'));
         $dir = substr($section, strpos($section, 'class="k-dir"'));
