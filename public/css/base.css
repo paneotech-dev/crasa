@@ -35,9 +35,25 @@ p { margin: 0 0 var(--s-4); max-width: 66ch; }
 a { color: var(--c-green-dark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
 a:hover { color: var(--c-navy); }
 
-/* Focus is a 3px amber ring at 2px offset, on every interactive element.
-   Nothing in this platform removes it. */
-:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }
+/* Focus: a 2px ring at 2px offset on every interactive element, with a
+   2px white band filling the offset, so the ring shows on any ground.
+   Logo blue #7A90C8 is 3.16:1 on white but 2.81:1 on the green and blue
+   tints and 2.44:1 on deep green, so the ring is blue ink #2F4F8F (7.97:1
+   on white, 7.09:1 or more on every tint); on deep green and green fills
+   the white band carries it (7.72:1 and 4.54:1). Nothing in this
+   platform removes it. */
+:root { --focus-ring: var(--u-focus, #2F4F8F); --focus-halo: #FFFFFF; }
+/* ui.css draws the same ring on a, button, input, select, textarea,
+   summary and [tabindex]; this rule covers everything else and adds the
+   white band, so there is one ring, not two. */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--focus-halo);
+}
+/* The main region takes focus from the skip link; the ring there would
+   outline the whole page. */
+main:focus:not(:focus-visible), main[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 
 table { border-collapse: collapse; }
 
@@ -121,7 +137,7 @@ table { border-collapse: collapse; }
   border: 1px solid var(--c-border);
   border-radius: var(--r-xs);
 }
-.c-select:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 1px; }
+.c-select:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; box-shadow: 0 0 0 2px var(--focus-halo); }
 .c-select:disabled { color: var(--c-disabled); background: var(--c-cream); cursor: not-allowed; }
 
 /*
@@ -189,12 +205,19 @@ table { border-collapse: collapse; }
    transitions stay, so every state change remains visible. */
 
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
   *, *::before, *::after {
     animation-duration: .01ms !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
   }
+  /* Movement goes; colour and opacity changes stay, so a state change is
+     still seen. Transforms (lift, slide, rise) finish at once. */
+  *, *::before, *::after { transition-property: color, background-color, border-color, opacity, outline-color !important; }
   .c-skip, .c-drawer { transition: none !important; }
+  /* Content a reveal script would fade in is shown as it is. */
+  [data-reveal], .is-reveal, .k-reveal { opacity: 1 !important; transform: none !important; }
 }
 
 /* Print ---------------------------------------------------------------- */
@@ -221,4 +244,4 @@ table { border-collapse: collapse; }
   border: 0; border-radius: var(--r-sm); background: transparent; color: inherit; cursor: pointer;
 }
 .c-pw__toggle:hover { background: rgba(0, 0, 0, .06); }
-.c-pw__toggle:focus-visible { outline: 3px solid var(--c-amber); outline-offset: 1px; }
+.c-pw__toggle:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; box-shadow: 0 0 0 2px var(--focus-halo); }
