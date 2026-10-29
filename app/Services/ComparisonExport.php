@@ -129,6 +129,42 @@ final class ComparisonExport
         return "\u{FEFF}".$csv;
     }
 
+    /**
+     * The same rows as the CSV, as an Excel workbook. Values that are
+     * figures are written as numbers so a reader can sort and sum them;
+     * "Not reported" stays words.
+     */
+    public function xlsx(Comparison $comparison): string
+    {
+        $rows = [[
+            __('comparator.csv_indicator'), __('comparator.csv_unit'), __('comparator.csv_country'),
+            __('comparator.csv_code'), __('comparator.csv_value'), __('comparator.csv_period'),
+            __('comparator.csv_provenance'), __('comparator.csv_source'),
+        ]];
+
+        $cells = $comparison->indicator !== null ? $comparison->ranked()->all() : collect($comparison->cells())->flatten()->all();
+
+        foreach ($cells as $cell) {
+            $numeric = $cell->isReported() && $cell->value->value_numeric !== null;
+            $rows[] = [
+                $cell->indicator->name,
+                (string) $cell->indicator->unitLabel(),
+                $cell->country->name,
+                strtoupper($cell->country->iso_code),
+                $numeric ? (float) $cell->value->value_numeric : $cell->display(),
+                (string) ($cell->period() ?? ''),
+                __('comparator.provenance_'.$cell->provenance()),
+                (string) ($cell->source() ?? ''),
+            ];
+        }
+
+        $rows[] = [];
+        $rows[] = [__('comparator.csv_permalink'), $comparison->permalink()];
+        $rows[] = [__('comparator.csv_generated'), now()->toDayDateTimeString()];
+
+        return \App\Support\SimpleXlsx::build($rows, 'CRASA comparison');
+    }
+
     public function png(Comparison $comparison): string
     {
         return $this->rasterise($comparison, 'png');
@@ -143,7 +179,7 @@ final class ComparisonExport
     {
         $subject = $comparison->mode === Comparison::BROWSE
             ? ($comparison->indicator?->slug ?? 'comparison')
-            : ($comparison->category.'-'.$comparison->countries->pluck('iso_code')->implode('-'));
+            : ($comparison->indicator?->slug.'-'.$comparison->countries->pluck('iso_code')->implode('-'));
 
         return 'crasa-'.Str::slug($subject).'-'.now()->format('Y-m-d').'.'.$extension;
     }

@@ -69,11 +69,19 @@ class ComparatorTest extends TestCase
         }
     }
 
-    public function test_it_shows_its_empty_state_before_anything_is_chosen(): void
+    /** S4, 29 October 2026: the comparator opens on a result, not on an empty panel. */
+    public function test_it_opens_on_a_result_and_keeps_an_empty_state_for_an_explicit_empty_choice(): void
     {
-        $this->get('/en/comparator')
+        $html = $this->get('/en/comparator')->assertOk()
+            ->assertSee(__('comparator.preset_pair'))
+            ->assertSee(__('comparator.mode_browse'))
+            ->getContent();
+        $this->assertStringContainsString('c-cmp-chart', $html);
+        $this->assertMatchesRegularExpression('/c-cmp__chip"[^>]*aria-label="Remove Botswana"[^>]*aria-current="true"/s', $html);
+
+        $this->get('/en/comparator?mode=compare&countries=')
             ->assertOk()
-            ->assertSee(__('comparator.empty_title'))
+            ->assertSee(__('d.empty_title'))
             ->assertSee(__('comparator.preset_pair'));
     }
 
@@ -212,9 +220,9 @@ class ComparatorTest extends TestCase
     {
         $html = $this->get($this->url())->assertOk()->getContent();
 
-        $this->assertStringContainsString('c-cmp__wide', $html);
-        $this->assertStringContainsString('c-cmp__narrow', $html);
-        $this->assertStringContainsString('c-cmp__card', $html);
+        // One table; below 720px CSS turns each row into a labelled card.
+        $this->assertStringContainsString('c-cmp__datatable', $html);
+        $this->assertStringContainsString('data-label="'.__('d.col_source').'"', $html);
 
         $css = file_get_contents(public_path('css/comparator.css'));
         $this->assertStringContainsString('@media (max-width: 719.98px)', $css);
@@ -361,9 +369,9 @@ class ComparatorTest extends TestCase
         @$dom->loadHTML($html);
         $xpath = new \DOMXPath($dom);
 
-        $unselected = $xpath->query('//a[contains(@class,"c-cmp__state")][not(@aria-current)]');
+        $unselected = $xpath->query('//a[contains(@class,"c-cmp__chip")][not(contains(@class,"c-cmp__chip--all"))][not(@aria-current)]');
         $this->assertSame(11, $unselected->length);
-        $this->assertSame(0, $xpath->query('//a[contains(@class,"c-cmp__state")][@data-at-limit]')->length, 'A fourth state is offered.');
+        $this->assertSame(0, $xpath->query('//*[contains(@class,"c-cmp__chip")][@aria-disabled="true"]')->length, 'A fourth state is offered.');
 
         foreach ($unselected as $link) {
             $query = [];
@@ -380,8 +388,9 @@ class ComparatorTest extends TestCase
         @$dom->loadHTML($html);
         $xpath = new \DOMXPath($dom);
 
-        $this->assertSame(10, $xpath->query('//a[contains(@class,"c-cmp__state")][@data-at-limit][@aria-disabled="true"]')->length);
-        $this->assertSame(4, $xpath->query('//a[contains(@class,"c-cmp__state")][@aria-current="true"][not(@data-at-limit)]')->length);
+        // At the limit the others are not links at all, and say why.
+        $this->assertSame(10, $xpath->query('//span[contains(@class,"c-cmp__chip")][@aria-disabled="true"]')->length);
+        $this->assertSame(4, $xpath->query('//a[contains(@class,"c-cmp__chip")][@aria-current="true"]')->length);
     }
 
     /**
@@ -461,7 +470,7 @@ class ComparatorTest extends TestCase
             app()->setLocale($locale);
             $note = __('comparator.note_above_100');
             $this->get("/{$locale}/comparator?mode=browse&indicator={$mobile->slug}")->assertOk()->assertSee($note);
-            $this->get("/{$locale}/comparator?mode=compare&category={$mobile->category}&countries=mu,bw")->assertOk()->assertSee($note);
+            $this->get("/{$locale}/comparator?mode=compare&indicator={$mobile->slug}&countries=mu,bw")->assertOk()->assertSee($note);
             $this->get("/{$locale}/members/mu")->assertOk()->assertSee($note);
         }
 
