@@ -347,6 +347,7 @@ Route::prefix('{locale}')
             Route::get('extranet/folders/{folder}', [ExtranetController::class, 'folder'])->name('extranet.folder');
             Route::post('extranet/folders/{folder}/upload', [ExtranetController::class, 'upload'])->name('extranet.upload');
             Route::get('extranet/committees/{committee}', [ExtranetController::class, 'committee'])->name('extranet.committee');
+            Route::get('extranet/search', [ExtranetController::class, 'search'])->name('extranet.search');
             Route::get('extranet/calendar', [ExtranetController::class, 'calendar'])->name('extranet.calendar');
             // Screen 12 draws an export beside the month grid. A meeting a
             // regulator cannot put in their own calendar is one they miss.

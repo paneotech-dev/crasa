@@ -3,7 +3,7 @@
 return [
     'sign_in' => 'Se connecter',
     'sign_out' => 'Se déconnecter',
-    'intro' => "Une seule connexion donne accès à l'extranet et à l'espace des membres. L'accès est accordé par le Secrétariat sur instruction de votre autorité.",
+    'intro' => "Une seule connexion donne accès à l'espace membres et à l'espace des membres. L'accès est accordé par le Secrétariat sur instruction de votre autorité.",
     'email' => 'Adresse électronique',
     'password' => 'Mot de passe',
     'remember' => 'Rester connecté sur cet appareil',

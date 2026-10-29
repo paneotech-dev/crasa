@@ -30,17 +30,25 @@
         {{-- Back-office roles search the administration. Every other role
              searches the public site: the administration search refuses
              them, and a box that leads to a refusal is worse than none
-             (presentation of 14 October 2026). --}}
+             (presentation of 14 October 2026).
+
+             In the member area the box searches the member area, for every
+             role that may enter it, and says so (INC-11): an administrator
+             inside the member area was offered "Search the administration". --}}
         @php
-            $adminSearch = $user?->can('enter-back-office') ?? false;
-            $searchRoute = $adminSearch ? 'admin.search' : 'search';
+            $inMemberArea = ($area ?? null) === 'member' || ! ($user?->can('enter-back-office') ?? false);
+            $memberSearch = $inMemberArea && ($user?->can('viewAny', \App\Models\Folder::class) ?? false);
+            $adminSearch = ! $inMemberArea && ($user?->can('enter-back-office') ?? false);
+            $searchRoute = $memberSearch ? 'extranet.search' : ($adminSearch ? 'admin.search' : 'search');
+            $searchLabel = $memberSearch ? __('office.member_search_label') : ($adminSearch ? __('admin.search_everything') : __('search.label'));
+            $searchPlaceholder = $memberSearch ? __('office.member_search_label').'…' : ($adminSearch ? __('admin.search_placeholder') : __('search.label').'…');
         @endphp
         <form class="a-top__search" method="GET" action="{{ route($searchRoute, ['locale' => $locale]) }}" role="search">
-            <label class="c-sr" for="admin-search">{{ $adminSearch ? __('admin.search_everything') : __('search.label') }}</label>
+            <label class="c-sr" for="admin-search">{{ $searchLabel }}</label>
             <x-shell-icon name="search" :size="17" class="a-top__searchicon" />
             <input class="a-top__field" type="search" id="admin-search" name="q"
                    value="{{ request()->routeIs($searchRoute) ? request('q') : '' }}"
-                   placeholder="{{ $adminSearch ? __('admin.search_placeholder') : __('search.label').'…' }}">
+                   placeholder="{{ $searchPlaceholder }}">
         </form>
     @else
         <span class="a-top__spacer"></span>

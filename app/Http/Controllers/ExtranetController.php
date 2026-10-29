@@ -243,6 +243,34 @@ class ExtranetController extends Controller
      * chair can send. An unparseable month falls back to this one rather
      * than erroring, because a mistyped link should still open a calendar.
      */
+    /**
+     * The member area's own search (INC-11, UX-02): meetings, folders and
+     * files, each one checked against the same policy as the page that
+     * shows it, so a result is never something the reader could not open.
+     * Another member state's folders are already out of the query, by the
+     * global scope.
+     */
+    public function search(Request $request): View
+    {
+        Gate::authorize('viewAny', Folder::class);
+
+        $term = trim((string) $request->query('q', ''));
+        $like = '%'.addcslashes($term, '%_\\').'%';
+        $found = mb_strlen($term) >= 2;
+
+        return view('pages.extranet.search', [
+            'term' => $term,
+            'meetings' => $found ? Meeting::where(fn ($q) => $q->where('title', 'like', $like)->orWhere('location', 'like', $like))
+                ->orderByDesc('starts_on')->limit(25)->get()
+                ->filter(fn (Meeting $m) => Gate::allows('view', $m))->values() : collect(),
+            'folders' => $found ? Folder::where('name', 'like', $like)->orderBy('name')->limit(25)->get()
+                ->filter(fn (Folder $f) => Gate::allows('view', $f))->values() : collect(),
+            'documents' => $found ? Document::whereNotNull('folder_id')->where('original_filename', 'like', $like)
+                ->latest()->limit(25)->get()
+                ->filter(fn (Document $d) => Gate::allows('view', $d))->values() : collect(),
+        ]);
+    }
+
     public function calendar(Request $request): View
     {
         Gate::authorize('viewAny', Meeting::class);

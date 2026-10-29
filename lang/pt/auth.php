@@ -3,7 +3,7 @@
 return [
     'sign_in' => 'Iniciar sessão',
     'sign_out' => 'Terminar sessão',
-    'intro' => 'Um único início de sessão dá acesso à extranet e ao espaço dos membros. O acesso é concedido pelo Secretariado por instrução da sua autoridade.',
+    'intro' => 'Um único início de sessão dá acesso à área de membros e ao espaço dos membros. O acesso é concedido pelo Secretariado por instrução da sua autoridade.',
     'email' => 'Endereço de correio eletrónico',
     'password' => 'Palavra-passe',
     'remember' => 'Manter a sessão iniciada neste dispositivo',

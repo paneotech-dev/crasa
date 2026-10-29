@@ -18,7 +18,7 @@ return [
     'events' => 'Eventos',
     'comparator' => 'Comparador',
     'contact' => 'Contacto',
-    'extranet' => 'Extranet',
+    'extranet' => 'Área de membros',
 
     'back_office' => 'Administração',
     'account' => 'A sua conta',

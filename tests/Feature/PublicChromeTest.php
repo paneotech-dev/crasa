@@ -23,7 +23,7 @@ class PublicChromeTest extends TestCase
 
         $response->assertSee("Communications Regulators' Association of Southern Africa");
         $response->assertSee('aria-label="Primary"', false);
-        $response->assertSee('Extranet');
+        $response->assertSee('Member area');
         $response->assertSee('href="'.url('/en/extranet').'"', false);
     }
 

@@ -49,7 +49,7 @@ class ExtranetNavigationTest extends TestCase
         $html = $this->actingAs($user)->get('/en/extranet/folders')->assertOk()->getContent();
 
         $this->assertStringContainsString('class="a-side"', $html);
-        $this->assertStringContainsString('aria-label="Extranet"', $html);
+        $this->assertStringContainsString('aria-label="Member area"', $html);
 
         /*
          * Its own navigation, not the administration's. Asserted on the
