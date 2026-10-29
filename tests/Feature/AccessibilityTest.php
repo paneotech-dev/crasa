@@ -160,10 +160,14 @@ class AccessibilityTest extends TestCase
             $this->assertStringNotContainsString('outline: 0', $css, $sheet);
         }
 
-        $this->assertStringContainsString(
-            ':focus-visible { outline: 3px solid var(--c-amber); outline-offset: 2px; }',
-            file_get_contents(public_path('css/base.css'))
-        );
+        // Day 2: a 2px blue-ink ring at 2px offset with a 2px white band,
+        // replacing the 3px amber ring (logo blue #7A90C8 is 2.81:1 on the
+        // tints, so the ring is #2F4F8F, the same as ui.css).
+        $base = file_get_contents(public_path('css/base.css'));
+        $this->assertStringContainsString('outline: 2px solid var(--focus-ring);', $base);
+        $this->assertStringContainsString('outline-offset: 2px;', $base);
+        $this->assertStringContainsString('box-shadow: 0 0 0 2px var(--focus-halo);', $base);
+        $this->assertStringContainsString('--focus-ring: var(--u-focus, var(--c-blue-ink, var(--c-navy)));', $base);
     }
 
     public function test_reduced_motion_is_honoured(): void

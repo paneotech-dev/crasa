@@ -42,7 +42,7 @@ a:hover { color: var(--c-navy); }
    on white, 7.09:1 or more on every tint); on deep green and green fills
    the white band carries it (7.72:1 and 4.54:1). Nothing in this
    platform removes it. */
-:root { --focus-ring: var(--u-focus, #2F4F8F); --focus-halo: #FFFFFF; }
+:root { --focus-ring: var(--u-focus, var(--c-blue-ink, var(--c-navy))); --focus-halo: var(--c-white); }
 /* ui.css draws the same ring on a, button, input, select, textarea,
    summary and [tabindex]; this rule covers everything else and adds the
    white band, so there is one ring, not two. */
@@ -51,9 +51,6 @@ a:hover { color: var(--c-navy); }
   outline-offset: 2px;
   box-shadow: 0 0 0 2px var(--focus-halo);
 }
-/* The main region takes focus from the skip link; the ring there would
-   outline the whole page. */
-main:focus:not(:focus-visible), main[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 
 table { border-collapse: collapse; }
 
