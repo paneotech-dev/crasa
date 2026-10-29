@@ -43,7 +43,7 @@
      exports, no inset chips. The homepage summary uses it -- a summary that
      hands a reader a dataset selector is asking them to do the work the
      members page exists for. --}}
-@props(['countries', 'selection' => null, 'view' => null, 'static' => false])
+@props(['countries', 'selection' => null, 'view' => null, 'static' => false, 'insets' => true])
 @php
     $map = config('region-map');
     $view = $view ?? \App\Support\MapView::resolve($countries, $selection ?? request()->query('indicator'));
@@ -72,6 +72,20 @@
      */
     $enlarged = [];
 
+    // What the hover and focus tooltip says about a member state. Read by
+    // region-map.js from data attributes, so the tooltip needs no second
+    // copy of the data and the map still works with no script at all.
+    $tipAttrs = function ($entry) use ($view) {
+        $country = $entry->country;
+        $authority = $country->authority;
+
+        return collect([
+            'data-tip-name' => $country->name,
+            'data-tip-authority' => trim(($authority?->name ?? '').($authority?->acronym ? ' ('.$authority->acronym.')' : '')),
+            'data-tip-value' => $view->isShaded() ? $view->title().': '.$entry->display : '',
+        ])->map(fn ($v, $k) => $k.'="'.e($v).'"')->implode(' ');
+    };
+
     foreach (\App\Support\RegionGeometry::ENLARGED as $iso) {
         if (! isset($map['members'][$iso]) || ! in_array($iso, $ordered, true)) {
             continue;
@@ -96,7 +110,7 @@
     $enlarged = collect($enlarged)->sortBy(fn ($shape, $iso) => $view->entry($iso)->country->name)->all();
 @endphp
 
-<figure @class([
+<figure data-region-map data-tip-open="{{ __('members.map_tip_open') }}" @class([
     'c-map-region',
     'c-map-region--shaded' => $view->isShaded(),
     'c-map-region--plain' => ! $view->isShaded(),
@@ -172,18 +186,31 @@
             </defs>
 
             {{-- Madagascar and Seychelles are SADC states but not CRASA
-                 members. Outline only: no fill, no label, no link, so
-                 nothing about them reads as a member (29 October 2026). --}}
+                 members. Outline only, never filled and never a link, so
+                 nothing about them reads as a member. Named in muted ink
+                 and focusable, with a tooltip saying exactly what they
+                 are: a reader who sees an unnamed island in the middle of
+                 the region asks what it is, and the map should answer. --}}
             @foreach ($map['context'] as $context)
-                <path class="c-map-region__context" d="{{ $context['d'] }}" aria-hidden="true"
-                      fill="none" stroke="#908977" stroke-width="0.9" stroke-linejoin="round"></path>
-                @if (($context['marker'] ?? null) !== null)
-                    {{-- An archipelago too small to draw at this scale: a
-                         ring where it is, in the same outline. --}}
-                    <circle class="c-map-region__marker" aria-hidden="true"
-                            cx="{{ $context['marker'][0] }}" cy="{{ $context['marker'][1] }}" r="6"
-                            fill="none" stroke="#908977" stroke-width="1.2"></circle>
-                @endif
+                @php $contextName = __('members.country_'.strtolower($context['code'])); @endphp
+                <g class="c-map-region__nonmember" tabindex="0" role="img"
+                   data-tip-name="{{ $contextName }}"
+                   data-tip-note="{{ __('members.map_not_member') }}"
+                   aria-label="{{ $contextName }}: {{ __('members.map_not_member') }}">
+                    <path class="c-map-region__context" d="{{ $context['d'] }}"
+                          fill="none" stroke="#7B8794" stroke-width="0.9" stroke-linejoin="round"></path>
+                    @if (($context['marker'] ?? null) !== null)
+                        {{-- An archipelago too small to draw at this scale:
+                             a ring where it is, in the same outline. The
+                             wider transparent ring is the pointer target. --}}
+                        <circle class="c-map-region__hit" cx="{{ $context['marker'][0] }}" cy="{{ $context['marker'][1] }}" r="16" fill="transparent"></circle>
+                        <circle class="c-map-region__marker" data-pulse
+                                cx="{{ $context['marker'][0] }}" cy="{{ $context['marker'][1] }}" r="6"
+                                fill="none" stroke="#7B8794" stroke-width="1.2"></circle>
+                    @endif
+                    <text class="c-map-region__context-label" x="{{ $context['lx'] }}" y="{{ $context['ly'] }}"
+                          text-anchor="middle" aria-hidden="true">{{ $contextName }}</text>
+                </g>
             @endforeach
 
             @foreach ($mainland as $iso)
@@ -197,6 +224,7 @@
                     href="{{ route('members.show', ['locale' => $locale, 'iso' => $iso]) }}"
                     data-iso="{{ $iso }}"
                     data-band="{{ $entry->bandAttribute() }}"
+                    {!! $tipAttrs($entry) !!}
                     aria-label="{{ $view->isShaded()
                         ? __('members.map_region_shaded', ['country' => $country->name, 'value' => $entry->display])
                         : __('members.map_region', ['country' => $country->name, 'authority' => $country->authority?->name ?: $country->name]) }}"
@@ -225,12 +253,13 @@
                     href="{{ route('members.show', ['locale' => $locale, 'iso' => $iso]) }}"
                     data-iso="{{ $iso }}"
                     data-band="{{ $entry->bandAttribute() }}"
+                    {!! $tipAttrs($entry) !!}
                     aria-label="{{ $view->isShaded()
                         ? __('members.map_region_shaded', ['country' => $country->name, 'value' => $entry->display])
                         : __('members.map_region', ['country' => $country->name, 'authority' => $country->authority?->name ?: $country->name]) }}"
                 >
                     <circle class="c-map-region__hit" cx="{{ $shape['dot'][0] }}" cy="{{ $shape['dot'][1] }}" r="18" fill="transparent"></circle>
-                    <circle class="c-map-region__dot" cx="{{ $shape['dot'][0] }}" cy="{{ $shape['dot'][1] }}" r="7"
+                    <circle class="c-map-region__dot" data-pulse cx="{{ $shape['dot'][0] }}" cy="{{ $shape['dot'][1] }}" r="7"
                             fill="#0E5536" stroke="#0E5536" stroke-width="1.5"></circle>
                     <text class="c-map-region__dot-label c-map-region__dot-code" x="{{ $lx }}" y="{{ $ly }}" text-anchor="{{ $anchor }}" aria-hidden="true">{{ strtoupper($iso) }}</text>
                     <text class="c-map-region__dot-label c-map-region__dot-name" x="{{ $lx }}" y="{{ $ly }}" text-anchor="{{ $anchor }}" aria-hidden="true">{{ $country->name }}</text>
@@ -297,6 +326,11 @@
             @endforeach
         </svg>
 
+        {{-- The tooltip. Filled and placed by region-map.js on hover and
+             focus; hidden from assistive technology because each shape's
+             accessible name already says all of it. --}}
+        <div class="c-map-region__tip" hidden aria-hidden="true"></div>
+
         {{-- The detail panel. Hovering or focusing a member state reveals
              its regulator, acronym and mandated sectors here, in CSS, with
              no script: the stage matches :has([data-iso="bw"]:is(:hover,
@@ -337,7 +371,7 @@
              map is a worse outcome than an inset. --}}
         @endunless
 
-        @unless ($static)
+        @if ($insets)
         <div class="c-map-region__insets">
             <h3 class="c-map-region__insets-heading">{{ __('members.map_enlarged') }}</h3>
             @foreach ($enlarged as $iso => $shape)
@@ -347,6 +381,7 @@
                     href="{{ route('members.show', ['locale' => $locale, 'iso' => $iso]) }}"
                     data-iso="{{ $iso }}"
                     data-band="{{ $entry->bandAttribute() }}"
+                    {!! $tipAttrs($entry) !!}
                     aria-label="{{ $view->isShaded()
                         ? __('members.map_region_inset_shaded', ['country' => $country->name, 'value' => $entry->display])
                         : __('members.map_region_inset', ['country' => $country->name, 'authority' => $country->authority?->name ?: $country->name]) }}"
@@ -366,8 +401,34 @@
                     </span>
                 </a>
             @endforeach
+            {{-- Seychelles, the smallest SADC state, beside the members it
+                 is smaller than. Not a member, so a card rather than a
+                 link, outlined rather than filled, and saying so. The
+                 shape is the Natural Earth outline the map draws, framed
+                 larger: crude at this resolution, and honest, rather than a
+                 coastline drawn by hand. --}}
+            @foreach ($map['context'] as $context)
+                @continue(($context['marker'] ?? null) === null)
+                @php $contextName = __('members.country_'.strtolower($context['code'])); @endphp
+                <div class="c-map-region__inset c-map-region__inset--nonmember" tabindex="0"
+                     data-tip-name="{{ $contextName }}"
+                     data-tip-note="{{ __('members.map_not_member') }}">
+                    <svg viewBox="{{ \App\Support\RegionGeometry::viewBoxFor($context['d'], 1.5) }}" width="66" height="53"
+                         aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
+                        <path d="{{ $context['d'] }}" fill="none" stroke="#7B8794" stroke-width="0.25" stroke-linejoin="round"></path>
+                    </svg>
+                    <span class="c-map-region__inset-text">
+                        <span class="c-map-region__inset-code">{{ $context['code'] }}</span>
+                        <span class="c-map-region__inset-detail">{{ $contextName }}</span>
+                        <span class="c-map-region__inset-note">{{ __('members.map_not_member') }}</span>
+                    </span>
+                </div>
+            @endforeach
         </div>
+        @endif
     </div>
+
+    @unless ($static)
 
     {{-- The map as a briefing document, matching the comparator's exports.
          A choropleth that has to be screenshotted to reach a plenary paper
@@ -486,7 +547,11 @@
 </figure>
 
 @once
+    @push('styles')
+        <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/map.css') }}">
+    @endpush
     @push('scripts')
         <script src="{{ \App\Support\Assets::url('js/filters.js') }}" defer></script>
+        <script src="{{ \App\Support\Assets::url('js/region-map.js') }}" defer></script>
     @endpush
 @endonce

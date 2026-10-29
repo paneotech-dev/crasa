@@ -31,6 +31,9 @@ final class Comparison
     /** Screen 03: "compare up to four member states". */
     public const MAX_COUNTRIES = 4;
 
+    /** What the comparator opens on when the URL names no member state. */
+    public const DEFAULT_COUNTRIES = ['bw', 'mz'];
+
     /**
      * @param  Collection<int, Country>  $countries
      * @param  Collection<int, Indicator>  $indicators
@@ -94,21 +97,27 @@ final class Comparison
             );
         }
 
-        $category = (string) ($query['category'] ?? '');
-        $categories = Indicator::query()->distinct()->pluck('category')->all();
+        /*
+         * Day 2 (29 October 2026): compare mode is one indicator across up
+         * to four member states, chosen in three steps, and it opens on a
+         * result rather than on an empty panel. With no indicator named,
+         * the first indicator of a named category (the older URLs), then
+         * the first indicator overall. With no countries key at all,
+         * Botswana and Mozambique; an explicit empty list is still empty.
+         */
+        $active = Indicator::query()->where('is_active', true)->orderBy('display_order');
+        $indicator = Indicator::query()->where('is_active', true)->where('slug', (string) ($query['indicator'] ?? ''))->first()
+            ?? (clone $active)->where('category', (string) ($query['category'] ?? ''))->first()
+            ?? (clone $active)->first();
 
-        if (! in_array($category, $categories, true)) {
-            $category = $categories[0] ?? null;
+        if (! array_key_exists('countries', $query)) {
+            $countries = Country::query()->whereIn('iso_code', self::DEFAULT_COUNTRIES)->orderBy('name')->get();
         }
 
-        $indicators = $category === null
-            ? collect()
-            : Indicator::query()
-                ->where('category', $category)
-                ->orderBy('display_order')
-                ->get();
+        $category = $indicator?->category;
+        $indicators = collect($indicator ? [$indicator] : []);
 
-        return new self(self::COMPARE, $countries, $indicators, $category, null);
+        return new self(self::COMPARE, $countries, $indicators, $category, $indicator);
     }
 
     /** The canonical query string. What a regulator pastes into an email. */
@@ -118,7 +127,7 @@ final class Comparison
             ? ['mode' => self::BROWSE, 'indicator' => $this->indicator?->slug]
             : [
                 'mode' => self::COMPARE,
-                'category' => $this->category,
+                'indicator' => $this->indicator?->slug,
                 'countries' => $this->countries->pluck('iso_code')->implode(','),
             ];
     }
@@ -186,6 +195,73 @@ final class Comparison
         }
 
         return $cells;
+    }
+
+    /**
+     * The cells of the one indicator in reading order: in compare mode the
+     * chosen member states by name, in browse mode a ranking from the
+     * highest figure down, with "Not reported" always last because it is
+     * not a low value.
+     *
+     * @return Collection<int, ComparisonCell>
+     */
+    public function ranked(): Collection
+    {
+        $row = collect($this->cells()[$this->indicator?->id] ?? []);
+
+        if ($this->mode !== self::BROWSE) {
+            return $row->values();
+        }
+
+        return $row->sort(function (ComparisonCell $a, ComparisonCell $b) {
+            $av = $a->isReported() && $a->value->value_numeric !== null;
+            $bv = $b->isReported() && $b->value->value_numeric !== null;
+
+            if ($av !== $bv) {
+                return $av ? -1 : 1;
+            }
+
+            return $av
+                ? ((float) $b->value->value_numeric <=> (float) $a->value->value_numeric)
+                : strcmp($a->country->name, $b->country->name);
+        })->values();
+    }
+
+    /** The highest reported figure, the scale of the bar chart. */
+    public function scaleMax(): float
+    {
+        $max = $this->ranked()
+            ->filter(fn (ComparisonCell $c) => $c->isReported() && $c->value->value_numeric !== null)
+            ->map(fn (ComparisonCell $c) => (float) $c->value->value_numeric)
+            ->max();
+
+        return $max && $max > 0 ? (float) $max : 1.0;
+    }
+
+    /**
+     * The chart in one or two sentences, for the status region and for the
+     * chart's text alternative.
+     */
+    public function summary(): string
+    {
+        if ($this->indicator === null || $this->countries->isEmpty()) {
+            return __('d.summary_empty');
+        }
+
+        $cells = $this->ranked();
+        $reported = $cells->filter(fn (ComparisonCell $c) => $c->isReported() && $c->value->value_numeric !== null);
+
+        $parts = $cells->take($this->mode === self::BROWSE ? 3 : self::MAX_COUNTRIES)
+            ->map(fn (ComparisonCell $c) => $c->isReported()
+                ? __('d.summary_part', ['state' => $c->country->name, 'value' => $c->display(), 'period' => $c->period()])
+                : __('d.summary_missing', ['state' => $c->country->name]))
+            ->implode('; ');
+
+        $lead = $this->mode === self::BROWSE
+            ? __('d.summary_browse', ['indicator' => $this->indicator->name, 'reported' => $reported->count(), 'total' => $cells->count()])
+            : __('d.summary_compare', ['indicator' => $this->indicator->name]);
+
+        return $lead.' '.$parts.'.';
     }
 
     /** How many of the cells actually carry a figure. */

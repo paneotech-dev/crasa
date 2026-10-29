@@ -129,6 +129,42 @@ final class ComparisonExport
         return "\u{FEFF}".$csv;
     }
 
+    /**
+     * The same rows as the CSV, as an Excel workbook. Values that are
+     * figures are written as numbers so a reader can sort and sum them;
+     * "Not reported" stays words.
+     */
+    public function xlsx(Comparison $comparison): string
+    {
+        $rows = [[
+            __('comparator.csv_indicator'), __('comparator.csv_unit'), __('comparator.csv_country'),
+            __('comparator.csv_code'), __('comparator.csv_value'), __('comparator.csv_period'),
+            __('comparator.csv_provenance'), __('comparator.csv_source'),
+        ]];
+
+        $cells = $comparison->indicator !== null ? $comparison->ranked()->all() : collect($comparison->cells())->flatten()->all();
+
+        foreach ($cells as $cell) {
+            $numeric = $cell->isReported() && $cell->value->value_numeric !== null;
+            $rows[] = [
+                $cell->indicator->name,
+                (string) $cell->indicator->unitLabel(),
+                $cell->country->name,
+                strtoupper($cell->country->iso_code),
+                $numeric ? (float) $cell->value->value_numeric : $cell->display(),
+                (string) ($cell->period() ?? ''),
+                __('comparator.provenance_'.$cell->provenance()),
+                (string) ($cell->source() ?? ''),
+            ];
+        }
+
+        $rows[] = [];
+        $rows[] = [__('comparator.csv_permalink'), $comparison->permalink()];
+        $rows[] = [__('comparator.csv_generated'), now()->toDayDateTimeString()];
+
+        return \App\Support\SimpleXlsx::build($rows, 'CRASA comparison');
+    }
+
     public function png(Comparison $comparison): string
     {
         return $this->rasterise($comparison, 'png');
@@ -143,7 +179,7 @@ final class ComparisonExport
     {
         $subject = $comparison->mode === Comparison::BROWSE
             ? ($comparison->indicator?->slug ?? 'comparison')
-            : ($comparison->category.'-'.$comparison->countries->pluck('iso_code')->implode('-'));
+            : ($comparison->indicator?->slug.'-'.$comparison->countries->pluck('iso_code')->implode('-'));
 
         return 'crasa-'.Str::slug($subject).'-'.now()->format('Y-m-d').'.'.$extension;
     }
@@ -157,7 +193,10 @@ final class ComparisonExport
      */
     public function svg(Comparison $comparison): string
     {
-        return $comparison->mode === Comparison::BROWSE
+        // Day 2: both modes are one indicator, drawn as ranked bars with
+        // the table beside them. The category matrix stays for any caller
+        // that builds a comparison without an indicator.
+        return $comparison->indicator !== null
             ? $this->browseSvg($comparison)
             : $this->compareSvg($comparison);
     }
@@ -252,7 +291,8 @@ final class ComparisonExport
         $cells = $comparison->cells();
         $indicator = $comparison->indicator;
         $row = $indicator ? ($cells[$indicator->id] ?? []) : [];
-        $countries = $comparison->countries->filter(fn ($country) => isset($row[$country->id]))->values();
+        $countries = $comparison->ranked()->map(fn ($cell) => $cell->country)->values();
+        $scale = $comparison->scaleMax();
 
         $width = 1240;
         $rowHeight = 34;
@@ -280,7 +320,7 @@ final class ComparisonExport
         $parts[] = '<text x="40" y="146" font-family="Georgia,serif" font-size="28" font-weight="600" fill="'.self::INK.'">'
             .$e(Str::limit((string) $indicator?->name, 80)).'</text>';
         $parts[] = '<text x="40" y="172" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="'.self::MUTED.'">'
-            .$e(trim(Str::ucfirst((string) $indicator?->unitLabel()).'. '.__('comparator.export_browse_scope'), '. ')).'</text>';
+            .$e(trim(Str::ucfirst((string) $indicator?->unitLabel()).'. '.($comparison->mode === Comparison::BROWSE ? __('comparator.export_browse_scope') : $comparison->countries->pluck('name')->implode(', ')), '. ')).'</text>';
 
         $head = $top - 30;
         $heading = fn (int $x, string $label, string $anchor = 'start') => '<text x="'.$x.'" y="'.$head.'" text-anchor="'.$anchor.'" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="700" fill="'.self::INK.'">'.$e($label).'</text>';
@@ -301,6 +341,13 @@ final class ComparisonExport
             $parts[] = '<text x="'.($xState + 36).'" y="'.$y.'" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="'.self::INK.'">'
                 .$e($country->name).'</text>';
             $parts[] = $this->value($cell, $xValue, $y, 'end', 16);
+
+            if ($cell->isReported() && $cell->value->value_numeric !== null) {
+                $w = max(3, round(((float) $cell->value->value_numeric / $scale) * 290, 1));
+                $parts[] = '<rect x="250" y="'.($y - 14).'" width="'.$w.'" height="18" rx="2" fill="'.self::GREEN.'"/>';
+            } else {
+                $parts[] = '<rect x="250" y="'.($y - 14).'" width="30" height="18" rx="2" fill="#EEF2FA" stroke="#7B8794" stroke-dasharray="3 2"/>';
+            }
 
             if ($cell->period() !== null) {
                 $parts[] = '<text x="'.$xPeriod.'" y="'.$y.'" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="'.self::MUTED.'">'.$e($cell->period()).'</text>';

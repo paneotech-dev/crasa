@@ -326,8 +326,10 @@ class MapIntegrityTest extends TestCase
         // Lesotho, Eswatini and Malawi to Comoros and Mauritius: the first
         // two are too small to aim at, and all three are too narrow to
         // carry their own name once the map started labelling by name.
+        // Six since 29 October 2026: Seychelles, the smallest SADC state,
+        // joins as an outlined non-member card (brief D1).
         $this->assertSame(
-            5,
+            6,
             preg_match_all('/<svg[^>]*width="66"[^>]*height="53"/', $html),
             'An inset does not carry the size the screen draws.',
         );
@@ -341,16 +343,19 @@ class MapIntegrityTest extends TestCase
         );
     }
 
-    public function test_the_context_states_carry_no_label(): void
+    public function test_the_context_states_are_named_as_non_members(): void
     {
-        // Not members, so not named on the map (29 October 2026): a label
-        // beside an outline read as a fifteenth and sixteenth member. The
-        // legend says what the outlines are.
+        // Brief D1, 29 October 2026: Madagascar and Seychelles are named in
+        // muted ink and say what they are, focusable but never a link. The
+        // label class is muted, not the members' green.
         preg_match('#<svg[^>]*class="c-map-region__svg".*?</svg>#s', $this->map(), $svg);
 
-        $this->assertStringNotContainsString('>Seychelles<', $svg[0]);
-        $this->assertStringNotContainsString('>Madagascar<', $svg[0]);
-        $this->assertStringNotContainsString('c-map-region__context-label', $svg[0]);
+        $this->assertStringContainsString('>Seychelles</text>', $svg[0]);
+        $this->assertStringContainsString('>Madagascar</text>', $svg[0]);
+        $this->assertSame(2, substr_count($svg[0], 'class="c-map-region__context-label"'));
+        $this->assertSame(2, preg_match_all('~<g class="c-map-region__nonmember" tabindex="0" role="img"~', $svg[0]));
+        $this->assertStringContainsString('SADC member state, not a CRASA member', $svg[0]);
+        $this->assertDoesNotMatchRegularExpression('~href="[^"]*/members/(mg|sc)"~', $svg[0]);
     }
 
     public function test_comoros_and_mauritius_are_labelled_dots_inside_the_box(): void
@@ -605,10 +610,13 @@ class MapIntegrityTest extends TestCase
             'c-map-region__control',
             'c-map-region__detail',
             'c-map-region__legend',
-            'c-map-region__insets',
             'c-map-region__exports',
         ] as $chrome) {
             $this->assertStringNotContainsString($chrome, $html, "The homepage map still renders {$chrome}.");
         }
+
+        // The inset cards are the exception since 29 October 2026 (brief
+        // D1): the smallest states are shown larger under the home map too.
+        $this->assertStringContainsString('c-map-region__insets', $html);
     }
 }

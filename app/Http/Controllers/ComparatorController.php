@@ -73,6 +73,17 @@ class ComparatorController extends Controller
         );
     }
 
+    /** The same rows as the CSV, as an Excel workbook (D2). */
+    public function xlsx(Request $request): Response
+    {
+        $comparison = Comparison::fromQuery($request->query());
+
+        return response($this->export->xlsx($comparison), 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="'.$this->export->filename($comparison, 'xlsx').'"',
+        ]);
+    }
+
     /**
      * BUILD_SPEC 6.3: a branded PNG and PDF carrying source, date and
      * permalink.
