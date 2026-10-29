@@ -1,6 +1,8 @@
 {{--
-    Links out to CRASA's own accounts. Not an embedded widget: a third-party
-    feed script would load tracking on every visitor of a regulatory site.
+    CRASA on social media, the short version: each channel's mark, handle
+    and link. Not an embedded widget: a third-party feed on the homepage
+    would load another site's code for every visitor. The newsroom has the
+    fuller section with the Facebook timeline.
 --}}
 @php
     /*
@@ -33,20 +35,10 @@
                 'body' => __('blocks.social_empty_body'),
             ])
         @else
-            <div class="b-social">
-                @foreach ($available as $network)
-                    {{-- The accessible name says whose account it is and
-                         where it goes. "LinkedIn" alone tells a screen
-                         reader the network and not that this is CRASA's.
-                         The mark is decorative; the name carries it. --}}
-                    <a class="b-social__link" href="{{ $urls[$network] }}"
-                       target="_blank" rel="noopener"
-                       aria-label="{{ __('blocks.social_account', ['network' => \App\Support\SocialAccounts::label($network)]) }}">
-                        <x-social-mark :network="$network" />
-                        <span>{{ \App\Support\SocialAccounts::label($network) }}</span>
-                    </a>
-                @endforeach
-            </div>
+            {{-- The channels only: no embedded feed on the homepage, so
+                 it loads nothing from another site. The newsroom carries
+                 the Facebook timeline. --}}
+            @include('partials.social-channels', ['urls' => $urls, 'networks' => $available->all()])
         @endif
     </div>
 </section>

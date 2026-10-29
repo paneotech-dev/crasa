@@ -133,6 +133,16 @@
             </div>
         </div>
     </div>
+
+    {{-- CRASA on social media. The three channels, and the Facebook page
+         timeline, which loads only when the reader scrolls near it. --}}
+    <section class="c-section n-social" id="social" aria-labelledby="news-social-heading">
+        <div class="c-page">
+            <h2 class="n-social__heading" id="news-social-heading">{{ __('social.heading') }}</h2>
+            <p class="n-social__intro">{{ __('social.intro') }}</p>
+            @include('partials.social-channels', ['timeline' => true])
+        </div>
+    </section>
 @endsection
 
 @push('scripts')

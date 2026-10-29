@@ -37,6 +37,39 @@ final class SocialAccounts
         return $out;
     }
 
+    /**
+     * The handle a reader would search for, read off the configured URL so
+     * it can never disagree with the link: "@CRASA_ORG" for X, the page
+     * name for Facebook, the company slug for LinkedIn.
+     */
+    public static function handle(string $network, string $url): string
+    {
+        $segments = array_values(array_filter(explode('/', (string) parse_url($url, PHP_URL_PATH))));
+
+        return match (true) {
+            $segments === [] => (string) parse_url($url, PHP_URL_HOST),
+            $network === 'x' => '@'.$segments[0],
+            // facebook.com/people/<name>/<id>/ and linkedin.com/company/<slug>/
+            in_array($segments[0], ['people', 'pages', 'company', 'in'], true) && isset($segments[1]) => $segments[1],
+            default => $segments[0],
+        };
+    }
+
+    /**
+     * The address Facebook's page plugin accepts. The plugin renders
+     * nothing for a /people/<name>/<id>/ URL, which is the form the
+     * CRASA page has, but it does render the same page addressed by its
+     * numeric id. Any other form is passed through unchanged.
+     */
+    public static function facebookPluginHref(string $url): string
+    {
+        if (preg_match('~facebook\.com/people/[^/]+/(\d+)~', $url, $m)) {
+            return 'https://www.facebook.com/'.$m[1];
+        }
+
+        return $url;
+    }
+
     /** The network's own name, for the accessible name of a link. */
     public static function label(string $network): string
     {

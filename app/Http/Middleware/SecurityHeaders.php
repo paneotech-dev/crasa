@@ -48,6 +48,10 @@ class SecurityHeaders
             "font-src 'self'",
             "connect-src 'self' https://cloudflareinsights.com",
             "form-action 'self'",
+            // The newsroom shows CRASA's Facebook page timeline in Facebook's
+            // own page plugin frame. That frame is the only thing this site
+            // embeds from another origin, and nothing else may be framed.
+            "frame-src https://www.facebook.com",
             "frame-ancestors 'none'",
             "base-uri 'self'",
             "object-src 'none'",

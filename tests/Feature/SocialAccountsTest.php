@@ -158,4 +158,70 @@ class SocialAccountsTest extends TestCase
             $this->assertStringContainsString($row, $register);
         }
     }
+
+    /* CRASA on social media (29 October 2026) ----------------------------- */
+
+    public function test_the_handle_is_read_off_the_configured_url(): void
+    {
+        $this->assertSame('@CRASA_ORG', SocialAccounts::handle('x', 'https://x.com/CRASA_ORG'));
+        $this->assertSame('CRASA', SocialAccounts::handle('facebook', 'https://www.facebook.com/people/CRASA/100064573337016/'));
+        $this->assertSame('crasa-secretariat', SocialAccounts::handle('linkedin', 'https://www.linkedin.com/company/crasa-secretariat/'));
+    }
+
+    public function test_the_timeline_addresses_the_page_by_the_id_in_its_url(): void
+    {
+        // The page plugin renders nothing for the /people/ form.
+        $this->assertSame('https://www.facebook.com/100064573337016', SocialAccounts::facebookPluginHref('https://www.facebook.com/people/CRASA/100064573337016/'));
+        $this->assertSame('https://www.facebook.com/crasa', SocialAccounts::facebookPluginHref('https://www.facebook.com/crasa'));
+    }
+
+    public function test_the_homepage_names_the_section_and_shows_each_channel_with_its_handle_and_no_embed(): void
+    {
+        foreach (['en' => 'CRASA on social media', 'fr' => 'La CRASA sur les réseaux sociaux', 'pt' => 'A CRASA nas redes sociais'] as $locale => $heading) {
+            $html = $this->get("/{$locale}")->assertOk()->getContent();
+
+            $this->assertStringContainsString($heading, $html);
+            // The footer keeps its own "Follow us" label; the section does not.
+            $this->assertStringNotContainsString('class="b__heading">Follow us<', $html);
+            $this->assertStringContainsString('@CRASA_ORG', $html);
+            $this->assertStringContainsString('c-socials__handle', $html);
+            // The homepage loads nothing from Facebook.
+            $this->assertStringNotContainsString('data-fb-timeline', $html);
+            $this->assertStringNotContainsString('facebook.com/plugins', $html);
+        }
+    }
+
+    public function test_the_newsroom_ends_with_the_channels_and_a_lazy_facebook_timeline(): void
+    {
+        $texts = [
+            'en' => ['CRASA on social media', "Read CRASA's posts on Facebook"],
+            'fr' => ['La CRASA sur les réseaux sociaux', 'Lire les publications de la CRASA sur Facebook'],
+            'pt' => ['A CRASA nas redes sociais', 'Ler as publicações da CRASA no Facebook'],
+        ];
+
+        foreach ($texts as $locale => [$heading, $link]) {
+            $html = $this->get("/{$locale}/newsroom")->assertOk()->getContent();
+
+            $this->assertStringContainsString($heading, $html);
+            foreach (['x', 'facebook', 'linkedin'] as $network) {
+                $this->assertStringContainsString('href="'.e(SiteSetting::get('social_'.$network)).'"', $html);
+            }
+
+            // The frame is not in the markup: a script adds it near the
+            // viewport. The plain link is there without the script.
+            $this->assertMatchesRegularExpression('/data-fb-timeline\s+data-src="https:\/\/www\.facebook\.com\/plugins\/page\.php\?href=/', $html);
+            $this->assertStringNotContainsString('<iframe', $html);
+            $this->assertStringContainsString(e($link), $html);
+            $this->assertStringContainsString('js/social-timeline.js', $html);
+        }
+    }
+
+    public function test_the_policy_frames_facebook_and_nothing_else(): void
+    {
+        $policy = $this->get('/en/newsroom')->headers->get('Content-Security-Policy');
+
+        $this->assertStringContainsString('frame-src https://www.facebook.com;', $policy);
+        $this->assertStringContainsString("frame-ancestors 'none'", $policy);
+        $this->assertSame(1, substr_count($policy, 'frame-src'));
+    }
 }
