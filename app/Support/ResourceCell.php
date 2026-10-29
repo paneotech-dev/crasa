@@ -111,6 +111,13 @@ final class ResourceCell
             return new HtmlString('<span class="a-pill" data-status="'.e((string) $value).'">'.e($statusLabel).'</span>');
         }
 
+        // A stored code with a label in the resource's own language file
+        // (an indicator's category, unit or periodicity) reads as the label.
+        $key = $definition->key.'.'.$column.'_'.$value;
+        if (is_string($value) && preg_match('/^[a-z0-9_]+$/', $value) && \Illuminate\Support\Facades\Lang::has($key)) {
+            return __($key);
+        }
+
         return (string) $value;
     }
 }

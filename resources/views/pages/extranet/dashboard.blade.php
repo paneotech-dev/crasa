@@ -143,7 +143,7 @@
                         <div class="mh-meeting__body">
                             <p class="mh-meeting__title">{{ $next_meeting->title }}</p>
                             <p class="mh-meta">
-                                {{ collect([$next_meeting->starts_on->copy()->locale($locale)->isoFormat('D MMMM YYYY'), $next_meeting->committee?->name, $next_meeting->location])->filter()->implode(', ') }}
+                                {{ collect([$next_meeting->starts_on->copy()->locale($locale)->isoFormat('D MMMM YYYY'), $next_meeting->committee?->name, $next_meeting->displayLocation()])->filter()->implode(', ') }}
                             </p>
                         </div>
                     </div>

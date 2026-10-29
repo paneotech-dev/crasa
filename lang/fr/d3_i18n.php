@@ -57,4 +57,33 @@ return [
     // Les filtres du journal d'audit.
     'audit_a_record' => 'un enregistrement',
     'audit_record' => ':subject n° :id',
+
+    // Un libellé et sa valeur sur une ligne.
+    'label_value' => ':label : :value',
+
+    // Choix du formulaire de réglages des blocs.
+    'block_option_start' => 'À gauche',
+    'block_option_center' => 'Centré',
+    'block_option_prose' => 'Texte continu',
+    'block_option_columns' => 'Colonnes',
+    'block_option_people' => 'Personnes',
+    'block_option_bar' => 'Diagramme en barres',
+    'block_option_line' => 'Graphique linéaire',
+    'block_option_table' => 'Tableau',
+    'block_option_navy' => 'Bleu marine',
+    'block_option_green' => 'Vert',
+    'block_option_cream' => 'Crème',
+    'block_option_facebook' => 'Facebook',
+    'block_option_linkedin' => 'LinkedIn',
+    'block_option_youtube' => 'YouTube',
+    'block_option_x' => 'X',
+    'block_option_members' => 'Membres',
+    'block_option_about' => 'À propos de la CRASA',
+    'block_option_committees' => 'Comités',
+    'block_option_publications' => 'Publications',
+    'block_option_comparator' => 'Comparateur',
+    'block_option_newsroom' => 'Actualités',
+    'block_option_events' => 'Événements',
+    'block_option_completeness' => 'Complétude des déclarations',
+    'block_option_contact' => 'Contact',
 ];

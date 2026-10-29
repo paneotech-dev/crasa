@@ -65,7 +65,7 @@
                     <label for="colour-{{ $colour }}">
                         <input type="radio" id="colour-{{ $colour }}" name="colour" value="{{ $colour }}" required
                                @checked(old('colour', $term->colour ?? 'navy') === $colour)>
-                        <span class="tx-badge" style="{{ \App\Support\BadgeColours::style($colour) }}">{{ $names['en'] ?: __('d3_taxo.colour_'.$colour) }}</span>
+                        <span class="tx-badge" style="{{ \App\Support\BadgeColours::style($colour) }}">{{ ($names[app()->getLocale()] ?? '') ?: ($names['en'] ?: __('d3_taxo.colour_'.$colour)) }}</span>
                         <span>{{ __('d3_taxo.colour_'.$colour) }}, {{ __('d3_taxo.contrast', ['ratio' => number_format(\App\Support\BadgeColours::contrast($colour), 1)]) }}</span>
                     </label>
                 @endforeach

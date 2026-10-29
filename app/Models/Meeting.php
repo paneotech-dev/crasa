@@ -312,4 +312,10 @@ class Meeting extends Model
     {
         return $query->where('clearance', Clearance::Public);
     }
+
+    /** The place as a reader sees it: "Online" is said in the reader's language. */
+    public function displayLocation(): ?string
+    {
+        return strcasecmp((string) $this->location, 'Online') === 0 ? __('e.online') : $this->location;
+    }
 }

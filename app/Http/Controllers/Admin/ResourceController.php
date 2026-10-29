@@ -609,7 +609,8 @@ class ResourceController extends Controller
                 ->orderBy($related->getAttribute('name') !== null || in_array('name', $related->getFillable(), true) ? 'name' : $related->getKeyName())
                 ->get()
                 ->mapWithKeys(fn (Model $row) => [
-                    $row->getKey() => $row->getAttribute('name')
+                    $row->getKey() => (method_exists($row, 'displayName') ? $row->displayName() : null)
+                        ?? $row->getAttribute('name')
                         ?? $row->getAttribute('title')
                         ?? $row->getAttribute('slug')
                         ?? ('#'.$row->getKey()),

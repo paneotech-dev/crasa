@@ -81,7 +81,7 @@
                                 <span class="a-row__time">{{ $meeting->starts_on->isoFormat('D MMM') }}</span>
                                 <span class="a-row__grow">
                                     {{ $meeting->title }}
-                                    @if ($meeting->location)<span class="a-crow__where" style="display:block">{{ $meeting->location }}</span>@endif
+                                    @if ($meeting->location)<span class="a-crow__where" style="display:block">{{ $meeting->displayLocation() }}</span>@endif
                                 </span>
                             </div>
                         @endforeach

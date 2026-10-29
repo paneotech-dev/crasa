@@ -74,4 +74,6 @@ return [
     'subject_submission' => 'une déclaration de données',
     'subject_submissionfieldcomment' => 'un commentaire sur une déclaration de données',
     'subject_submissionvalue' => 'une valeur dans une déclaration de données',
+    'subject_featureinterest' => 'un intérêt signalé pour une fonction',
+    'subject_documentversion' => 'une version d’un document',
 ];

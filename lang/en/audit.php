@@ -74,4 +74,6 @@ return [
     'subject_submission' => 'a data return',
     'subject_submissionfieldcomment' => 'a comment on a data return',
     'subject_submissionvalue' => 'a figure in a data return',
+    'subject_featureinterest' => 'a note of interest in a feature',
+    'subject_documentversion' => 'a version of a document',
 ];

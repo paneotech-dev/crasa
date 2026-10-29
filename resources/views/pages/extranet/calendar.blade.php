@@ -164,7 +164,7 @@
                                     @unless ($meeting->date_unknown)
                                         <time datetime="{{ $meeting->starts_on->toDateString() }}">{{ $meeting->dateRange() }}</time>
                                     @endunless
-                                    @if ($meeting->location)<span>{{ $meeting->location }}</span>@endif
+                                    @if ($meeting->location)<span>{{ $meeting->displayLocation() }}</span>@endif
                                     <span class="u-pill {{ $meeting->clearance === \App\Enums\Clearance::Public ? 'u-pill--muted' : '' }}">{{ $meeting->clearance->label() }}</span>
                                     @include('pages.events._status', ['meeting' => $meeting, 'quiet' => true])
                                 </p>

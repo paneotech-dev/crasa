@@ -57,4 +57,33 @@ return [
     // The audit trail filters.
     'audit_a_record' => 'a record',
     'audit_record' => ':subject #:id',
+
+    // A label and its value on one line.
+    'label_value' => ':label: :value',
+
+    // Choices in the block settings form.
+    'block_option_start' => 'Left',
+    'block_option_center' => 'Centred',
+    'block_option_prose' => 'Running text',
+    'block_option_columns' => 'Columns',
+    'block_option_people' => 'People',
+    'block_option_bar' => 'Bar chart',
+    'block_option_line' => 'Line chart',
+    'block_option_table' => 'Table',
+    'block_option_navy' => 'Navy',
+    'block_option_green' => 'Green',
+    'block_option_cream' => 'Cream',
+    'block_option_facebook' => 'Facebook',
+    'block_option_linkedin' => 'LinkedIn',
+    'block_option_youtube' => 'YouTube',
+    'block_option_x' => 'X',
+    'block_option_members' => 'Members',
+    'block_option_about' => 'About CRASA',
+    'block_option_committees' => 'Committees',
+    'block_option_publications' => 'Publications',
+    'block_option_comparator' => 'Comparator',
+    'block_option_newsroom' => 'Newsroom',
+    'block_option_events' => 'Events',
+    'block_option_completeness' => 'Reporting completeness',
+    'block_option_contact' => 'Contact',
 ];

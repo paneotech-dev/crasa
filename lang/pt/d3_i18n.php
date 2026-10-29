@@ -57,4 +57,33 @@ return [
     // Os filtros do registo de auditoria.
     'audit_a_record' => 'um registo',
     'audit_record' => ':subject n.º :id',
+
+    // Um rótulo e o seu valor numa linha.
+    'label_value' => ':label: :value',
+
+    // Opções do formulário de definições dos blocos.
+    'block_option_start' => 'À esquerda',
+    'block_option_center' => 'Centrado',
+    'block_option_prose' => 'Texto corrido',
+    'block_option_columns' => 'Colunas',
+    'block_option_people' => 'Pessoas',
+    'block_option_bar' => 'Gráfico de barras',
+    'block_option_line' => 'Gráfico de linhas',
+    'block_option_table' => 'Tabela',
+    'block_option_navy' => 'Azul-marinho',
+    'block_option_green' => 'Verde',
+    'block_option_cream' => 'Creme',
+    'block_option_facebook' => 'Facebook',
+    'block_option_linkedin' => 'LinkedIn',
+    'block_option_youtube' => 'YouTube',
+    'block_option_x' => 'X',
+    'block_option_members' => 'Membros',
+    'block_option_about' => 'Sobre a CRASA',
+    'block_option_committees' => 'Comités',
+    'block_option_publications' => 'Publicações',
+    'block_option_comparator' => 'Comparador',
+    'block_option_newsroom' => 'Notícias',
+    'block_option_events' => 'Eventos',
+    'block_option_completeness' => 'Completude das declarações',
+    'block_option_contact' => 'Contacto',
 ];

@@ -29,7 +29,7 @@
             <h2 class="d3p-next__title" id="d3p-next-title">{{ __('d3_people.next_title') }}</h2>
             <p class="d3p-next__meta">
                 <a href="{{ route('events.show', ['locale' => app()->getLocale(), 'meeting' => $nextMeeting->slug]) }}">{{ $nextMeeting->title }}</a>,
-                <time datetime="{{ $nextMeeting->starts_on->toDateString() }}">{{ $nextMeeting->dateRange() }}</time>@if ($nextMeeting->location), {{ $nextMeeting->location }}@endif
+                <time datetime="{{ $nextMeeting->starts_on->toDateString() }}">{{ $nextMeeting->dateRange() }}</time>@if ($nextMeeting->location), {{ $nextMeeting->displayLocation() }}@endif
             </p>
             @if ($nextMine)
                 <p class="a-hint">{{ __('d3_people.reg_yours', ['status' => __('d3_people.reg_'.($nextMine->status ?: 'filed'))]) }}</p>
