@@ -52,7 +52,7 @@ return [
 
     // Delegate registrations
     'reg_note' => 'Every arrival and departure filed on an event page, by event.',
-    'reg_chain' => 'A delegate files on the event page. The filing arrives here as Filed and the delegate receives a copy by email. The Secretariat confirms or declines it, and the delegate is told. The export is the list that goes to the event organisers.',
+    'reg_chain' => 'A delegate files on the event page. The filing arrives here as Filed, and the delegate sees it in the platform (and receives a copy by e-mail once e-mail is switched on). The Secretariat confirms or declines it, and the delegate is told. The export is the list that goes to the event organisers.',
     'mail_off_note' => 'Outbound mail is switched off on this platform. Resending queues the delegate\'s copy, but it is not delivered until mail is switched on.',
     'resend' => 'Resend copy',
     'resend_off_short' => 'Mail is switched off: the copy is queued and not delivered until mail is switched on.',
@@ -63,7 +63,7 @@ return [
     'export_xlsx' => 'Export Excel',
     'all_events' => 'All events',
     'all_statuses' => 'All statuses',
-    'reg_count' => '{0} No registrations|{1} One registration|[2,*] :count registrations',
+    'reg_count' => '{0} No filings yet|{1} One registration|[2,*] :count registrations',
     'reg_counts' => 'Filed: :filed. Confirmed: :confirmed. Declined: :declined.',
     'reg_caption' => 'Delegate registrations for :event',
     'reg_empty_title' => 'No registrations match',

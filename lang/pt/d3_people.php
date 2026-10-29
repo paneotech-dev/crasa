@@ -51,7 +51,7 @@ return [
 
     // Inscrições de delegados
     'reg_note' => 'Cada chegada e partida indicadas na página de uma reunião, por reunião.',
-    'reg_chain' => 'Um delegado preenche o formulário na página da reunião. A inscrição chega aqui com o estado Submetida e o delegado recebe uma cópia por correio eletrónico. O Secretariado confirma-a ou recusa-a, e o delegado é informado. A exportação é a lista enviada aos organizadores da reunião.',
+    'reg_chain' => 'Um delegado preenche o formulário na página da reunião. A inscrição chega aqui com o estado Submetida; o delegado vê-a na plataforma (e recebe uma cópia por correio eletrónico quando o envio estiver ativo). O Secretariado confirma-a ou recusa-a, e o delegado é informado. A exportação é a lista enviada aos organizadores da reunião.',
     'mail_off_note' => 'O envio de correio eletrónico está desativado nesta plataforma. Reenviar coloca a cópia do delegado em fila de espera, mas não é entregue enquanto o envio estiver desativado.',
     'resend' => 'Reenviar cópia',
     'resend_off_short' => 'O envio de correio eletrónico está desativado: a cópia fica em fila de espera e não é entregue enquanto estiver desativado.',
@@ -62,7 +62,7 @@ return [
     'export_xlsx' => 'Exportar Excel',
     'all_events' => 'Todas as reuniões',
     'all_statuses' => 'Todos os estados',
-    'reg_count' => '{0} Nenhuma inscrição|{1} Uma inscrição|[2,*] :count inscrições',
+    'reg_count' => '{0} Ainda nenhuma inscrição|{1} Uma inscrição|[2,*] :count inscrições',
     'reg_counts' => 'Submetidas: :filed. Confirmadas: :confirmed. Recusadas: :declined.',
     'reg_caption' => 'Inscrições de delegados para :event',
     'reg_empty_title' => 'Nenhuma inscrição corresponde',

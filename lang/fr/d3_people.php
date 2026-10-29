@@ -51,7 +51,7 @@ return [
 
     // Inscriptions des délégués
     'reg_note' => 'Chaque arrivée et chaque départ indiqués sur une page de réunion, par réunion.',
-    'reg_chain' => 'Un délégué remplit le formulaire sur la page de la réunion. L\'inscription arrive ici avec le statut Déposée et le délégué en reçoit une copie par courriel. Le Secrétariat la confirme ou la refuse, et le délégué en est informé. L\'export est la liste transmise aux organisateurs de la réunion.',
+    'reg_chain' => 'Un délégué remplit le formulaire sur la page de la réunion. L\'inscription arrive ici avec le statut Déposée ; le délégué la retrouve dans la plateforme (et en reçoit une copie par courriel lorsque l\'envoi est activé). Le Secrétariat la confirme ou la refuse, et le délégué en est informé. L\'export est la liste transmise aux organisateurs de la réunion.',
     'mail_off_note' => 'L\'envoi de courriels est désactivé sur cette plateforme. Le renvoi met la copie du délégué en file d\'attente, mais elle n\'est pas remise tant que l\'envoi reste désactivé.',
     'resend' => 'Renvoyer la copie',
     'resend_off_short' => 'L\'envoi de courriels est désactivé : la copie est mise en file d\'attente et n\'est pas remise tant qu\'il reste désactivé.',
@@ -62,7 +62,7 @@ return [
     'export_xlsx' => 'Exporter en Excel',
     'all_events' => 'Toutes les réunions',
     'all_statuses' => 'Tous les statuts',
-    'reg_count' => '{0} Aucune inscription|{1} Une inscription|[2,*] :count inscriptions',
+    'reg_count' => '{0} Aucune inscription pour l\'instant|{1} Une inscription|[2,*] :count inscriptions',
     'reg_counts' => 'Déposées : :filed. Confirmées : :confirmed. Refusées : :declined.',
     'reg_caption' => 'Inscriptions des délégués pour :event',
     'reg_empty_title' => 'Aucune inscription ne correspond',

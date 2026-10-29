@@ -56,7 +56,10 @@ class RegistrationAdminController extends Controller
             ->where(fn ($q) => $q->whereIn('id', $registrations->keys())
                 ->when(! $filter['status'], fn ($q) => $q->orWhere(fn ($open) => $open
                     ->where('date_unknown', false)->whereNotNull('starts_on')
-                    ->where('starts_on', '>', \App\Support\LocalTime::today())
+                    // Still to start, or under way with its form open until
+                    // an explicit closing date (the Lilongwe workshop).
+                    ->where(fn ($when) => $when->where('starts_on', '>', \App\Support\LocalTime::today())
+                        ->orWhereDate('registration_closes_on', '>=', \App\Support\LocalTime::today()))
                     ->where('status', '!=', 'cancelled'))))
             ->get()
             ->sortBy([
