@@ -236,6 +236,13 @@
                 <a class="k-btn k-btn--green" href="{{ $nav('members') }}">{{ __('chome.our_members') }}</a>
                 <a class="k-btn k-btn--ghost" href="{{ $nav('about') }}">{{ __('nav.about') }}</a>
             </div>
+            <div class="k-quick">
+                <h3>{{ __('chome.quick_access') }}</h3>
+                <a href="{{ $nav('publications') }}">{{ __('chome.quick_library') }} {!! $arrowSm !!}</a>
+                <a href="{{ $nav('comparator') }}">{{ __('chome.quick_comparator') }} {!! $arrowSm !!}</a>
+                <a href="{{ $nav('members') }}">{{ __('chome.quick_members') }} {!! $arrowSm !!}</a>
+                <a href="{{ $nav('events') }}">{{ __('chome.m.events_upcoming') }} {!! $arrowSm !!}</a>
+            </div>
         </div>
         <div>
             <div class="k-sh"><h2 id="k-work-h">{{ $t($pillars, 'heading') ?? __('chome.what_we_do') }}</h2></div>
@@ -375,10 +382,10 @@
                     </a>
                 @endforeach
                 <div class="k-ann">
-                    <h4>{{ __('chome.quick_access') }}</h4>
+                    <h4>{{ __('chome.related') }}</h4>
                     <a href="{{ $nav('publications?type[]=communique') }}">{{ __('chome.m.pubs_communiques') }} <span aria-hidden="true">→</span></a>
-                    <a href="{{ $nav('comparator') }}">{{ __('chome.quick_comparator') }} <span aria-hidden="true">→</span></a>
-                    <a href="{{ $nav('members') }}">{{ __('chome.quick_members') }} <span aria-hidden="true">→</span></a>
+                    <a href="{{ $nav('events#past') }}">{{ __('chome.m.events_past') }} <span aria-hidden="true">→</span></a>
+                    <a href="{{ $nav('newsroom#social') }}">{{ __('chome.m.news_social') }} <span aria-hidden="true">→</span></a>
                 </div>
             </aside>
         </div>
