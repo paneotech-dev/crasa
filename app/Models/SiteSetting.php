@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\RequestMemo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
@@ -20,14 +21,26 @@ class SiteSetting extends Model
         // The public surfaces read these on every request. Forget the cache
         // whenever one changes, rather than making every reader wait for a
         // query that answers the same thing all day.
-        static::saved(fn () => Cache::forget('site-settings'));
-        static::deleted(fn () => Cache::forget('site-settings'));
+        static::saved(fn () => self::forgetCached());
+        static::deleted(fn () => self::forgetCached());
     }
 
     /** @return array<string, string|null> */
     public static function all_values(): array
     {
-        return Cache::rememberForever('site-settings', fn () => static::query()->pluck('value', 'key')->all());
+        // Kept for the request as well: the header, footer and blocks ask a
+        // dozen times per page, and each ask was a round trip to the cache
+        // table.
+        return RequestMemo::remember('site-settings', fn () => Cache::rememberForever(
+            'site-settings',
+            fn () => static::query()->pluck('value', 'key')->all(),
+        ));
+    }
+
+    private static function forgetCached(): void
+    {
+        Cache::forget('site-settings');
+        RequestMemo::forget('site-settings');
     }
 
     public static function get(string $key, ?string $default = null): ?string
