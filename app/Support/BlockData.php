@@ -31,6 +31,27 @@ final class BlockData
     /** @return array<string, mixed> */
     public static function for(PageBlock $block): array
     {
+        /*
+         * The lists every visitor sees alike are kept for ten minutes as
+         * plain arrays. The blocks that hand their template models (the
+         * member grid, the comparison, documents, committees) are built per
+         * request from eager-loaded queries instead.
+         */
+        if (in_array($block->type(), [BlockType::NewsroomStrip, BlockType::FeaturedPublications, BlockType::EventsStrip], true)) {
+            $items = PublicCache::remember(
+                'block:'.$block->id.':'.$block->updated_at?->getTimestamp(),
+                fn () => collect(self::compute($block)['items'])->all(),
+            );
+
+            return ['items' => collect($items)];
+        }
+
+        return self::compute($block);
+    }
+
+    /** @return array<string, mixed> */
+    private static function compute(PageBlock $block): array
+    {
         return match ($block->type()) {
             BlockType::FeaturedPublications => ['items' => self::publications($block)],
             BlockType::NewsroomStrip => ['items' => self::news($block)],
@@ -99,6 +120,10 @@ final class BlockData
         // Only indicators a member state has actually filed a figure for. An
         // indicator offering two blank cells demonstrates nothing.
         $choices = Indicator::active()
+            // Counted in the same query: the fallback below ranks every
+            // indicator by how widely it is reported, which was one count
+            // query per indicator.
+            ->withCount('values')
             ->whereHas('values', fn ($q) => $q->whereNotNull('value_numeric'))
             ->orderBy('category')
             ->orderBy('display_order')
@@ -108,7 +133,7 @@ final class BlockData
         $indicator = $choices->firstWhere('slug', $request->query('cmp_indicator'))
             ?? $choices->firstWhere('id', $block->setting('indicator_id'))
             // Failing both, the indicator with the widest reporting.
-            ?? $choices->sortByDesc(fn (Indicator $i) => $i->values()->count())->first();
+            ?? $choices->sortByDesc('values_count')->first();
 
         if ($indicator === null) {
             return ['rows' => collect(), 'indicator' => null, 'choices' => $choices, 'states' => collect(), 'selected' => []];
@@ -249,7 +274,8 @@ final class BlockData
                 'title' => $n->translated('title', $n->slug),
                 'summary' => $n->translated('summary', ''),
                 'image_slot' => $n->fallbackImageSlot(),
-                'hero' => $n->hero_image_path,
+                // The card-sized WebP rendition, not the original upload.
+                'hero' => ResizedImage::cardPath($n->hero_image_path),
                 'sector' => $n->sector?->name,
                 // For the designed panel a sector uses when the library has
                 // no photograph for it. Broadcasting has none at all.

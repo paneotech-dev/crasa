@@ -7,6 +7,7 @@ use App\Models\Concerns\Auditable;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\MarksSampleData;
 use App\Support\Locales;
+use App\Support\RequestMemo;
 use Database\Factories\PageBlockFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -112,6 +113,14 @@ class PageBlock extends Model
      * @return array<string, list<string>>
      */
     public static function unwrittenAnchors(): array
+    {
+        // Asked once per menu link that carries an anchor; the answer does
+        // not change within a request.
+        return RequestMemo::remember('unwritten-anchors', fn () => self::findUnwrittenAnchors());
+    }
+
+    /** @return array<string, list<string>> */
+    private static function findUnwrittenAnchors(): array
     {
         $out = [];
         foreach (self::query()->whereNotNull('anchor')->where('is_visible', true)->where('block_type', BlockType::RichText->value)->with(['translations', 'page'])->get() as $block) {

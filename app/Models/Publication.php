@@ -141,6 +141,8 @@ class Publication extends Model
 
     public function primaryDocument(): ?Document
     {
-        return $this->documents->first() ?? $this->documents()->first();
+        // An empty list, eager-loaded or loaded here, is an answer, not a
+        // reason to ask the database a second time.
+        return $this->documents->first();
     }
 }

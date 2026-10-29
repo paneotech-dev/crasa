@@ -193,7 +193,7 @@ final class Navigation
     /** @return Collection<int, MenuItem> */
     private static function roots(string $menu)
     {
-        if (! Schema::hasTable('menu_items')) {
+        if (! RequestMemo::remember('menu-table', fn () => Schema::hasTable('menu_items'))) {
             return collect();
         }
 

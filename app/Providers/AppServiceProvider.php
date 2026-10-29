@@ -8,6 +8,7 @@ use App\Auth\PlatformIdentityProvider;
 use App\Search\DatabaseSearchDriver;
 use App\Search\SearchDriver;
 use App\Support\DeliveryCheck;
+use App\Support\PublicCache;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -78,6 +79,22 @@ class AppServiceProvider extends ServiceProvider
          * be pointed at it.
          */
         Paginator::defaultView('pagination::default');
+
+        /*
+         * The public figures cache forgets everything when a record it is
+         * built from is saved or deleted, so an editor sees a change on the
+         * homepage at once rather than ten minutes later.
+         */
+        foreach ([
+            \App\Models\Authority::class, \App\Models\Committee::class, \App\Models\Country::class,
+            \App\Models\Document::class, \App\Models\Indicator::class, \App\Models\IndicatorValue::class, \App\Models\MediaAsset::class,
+            \App\Models\Meeting::class, \App\Models\NewsItem::class, \App\Models\Page::class,
+            \App\Models\PageBlock::class, \App\Models\Publication::class, \App\Models\Sector::class,
+            \App\Models\Translation::class,
+        ] as $model) {
+            $model::saved(fn () => PublicCache::flush());
+            $model::deleted(fn () => PublicCache::flush());
+        }
         Paginator::defaultSimpleView('pagination::simple-default');
 
         /*

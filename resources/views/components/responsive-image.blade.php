@@ -31,6 +31,7 @@
     'decorative' => false,
     'sizes' => '100vw',
     'loading' => 'lazy',
+    'fetchpriority' => null,
     'class' => '',
 ])
 @php
@@ -51,6 +52,7 @@
             src="{{ $image['src'] }}"
             alt="{{ $decorative ? '' : $alt }}"
             loading="{{ $loading }}"
+            @if ($fetchpriority) fetchpriority="{{ $fetchpriority }}" @endif
             decoding="async"
             @class(['c-img', $class])
         >

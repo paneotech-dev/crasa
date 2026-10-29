@@ -15,6 +15,7 @@
     'reference',
     'sizes' => '100vw',
     'loading' => 'lazy',
+    'fetchpriority' => null,
     'class' => '',
     'width' => 1200,
 ])
@@ -36,6 +37,7 @@
             @if ($asset->width) width="{{ $asset->width }}" @endif
             @if ($asset->height) height="{{ $asset->height }}" @endif
             loading="{{ $loading }}"
+            @if ($fetchpriority) fetchpriority="{{ $fetchpriority }}" @endif
             decoding="async"
             @class(['c-img', $class])
         >
