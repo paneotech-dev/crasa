@@ -229,6 +229,14 @@ class ExtranetController extends Controller
             'isCountryView' => $user->country_id !== null,
             'notifications' => $user->notifications()->limit(5)->get(),
             'clearance' => ExtranetNavigation::clearance($user),
+            // Day 3 (8c): the home page's own cards.
+            'greeting' => \App\Support\MemberHome::greeting($user),
+            'myReturn' => \App\Support\MemberHome::myReturn($user),
+            'myFolders' => \App\Support\MemberHome::folders($user),
+            'notices' => \App\Support\MemberHome::latestNotices($user),
+            'quickActions' => \App\Support\MemberHome::quickActions($user),
+            'roleBlocks' => collect(\App\Support\RoleDashboard::for($user)['blocks'])->keyBy('key'),
+            'roleKey' => \App\Support\RoleDashboard::roleKey($user),
         ]);
     }
 

@@ -1,63 +1,112 @@
-@extends('layouts.admin')
+@extends('layouts.workspace')
+
+{{--
+    Data submission, redrawn on Day 3 (8c). The period picker filters the
+    returns; a member state representative starts a return from the same
+    card. The returns are a table from 760px wide and one card per return
+    on a phone (member-home.css). The country scope on Submission decides
+    which returns are listed: a member state sees its own.
+--}}
 
 @section('title', __('submissions.title'))
 @section('note', __('submissions.index_note'))
 
+@push('styles')
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/member-home.css') }}">
+@endpush
+
 @section('content')
-    @if ($canOpen)
-        <section class="a-panel">
-            <div class="a-panel__head">
-                <h2>{{ __('submissions.open_title') }}</h2>
-                <span class="a-panel__meta">{{ __('submissions.open_note') }}</span>
-            </div>
-            <form class="a-form" method="POST" action="{{ route('submissions.store', ['locale' => app()->getLocale()]) }}">
-                @csrf
+@php $locale = app()->getLocale(); @endphp
+<div class="mh mh-main">
+    <section class="mh-card" aria-labelledby="mh-period-h">
+        <div class="mh-card__head">
+            <h2 class="mh-card__title" id="mh-period-h">{{ __('d3_look.period_card') }}</h2>
+        </div>
+        <div class="mh-picker-row">
+            <form class="mh-picker" method="GET" action="{{ route('submissions', ['locale' => $locale]) }}">
                 <div class="a-field">
-                    <label class="a-label" for="period">{{ __('submissions.period') }}</label>
-                    <select class="a-select" id="period" name="period">
-                        @foreach ($periods as $period)
-                            <option value="{{ $period }}">{{ $period }}</option>
+                    <label class="a-label" for="filter-period">{{ __('d3_look.show_for') }}</label>
+                    <select class="a-select" id="filter-period" name="period">
+                        <option value="">{{ __('d3_look.all_periods') }}</option>
+                        @foreach ($knownPeriods as $p)
+                            <option value="{{ $p }}" @selected($period === $p)>{{ $p }}</option>
                         @endforeach
                     </select>
-                    <span class="a-hint">{{ __('submissions.period_hint') }}</span>
                 </div>
-                <div class="a-form__actions">
-                    <button type="submit" class="a-btn a-btn--primary">{{ __('submissions.open_action') }}</button>
-                </div>
+                <button type="submit" class="a-btn a-btn--secondary">{{ __('d3_look.show') }}</button>
             </form>
-        </section>
-    @endif
 
-    <x-admin.resource-table
-        :title="__('submissions.title')"
-        :note="__('submissions.table_note')"
-        :columns="[
-            ['key' => 'period', 'label' => __('submissions.period')],
-            ['key' => 'country', 'label' => __('admin.field_country')],
-            ['key' => 'progress', 'label' => __('submissions.col_progress')],
-            ['key' => 'status', 'label' => __('admin.col_status')],
-            ['key' => 'updated', 'label' => __('admin.col_updated'), 'quiet' => true],
-        ]"
-        :rows="$submissions"
-        :emptyTitle="__('submissions.empty_title')"
-        :emptyBody="__('submissions.empty_body')"
-        :row="fn ($s) => [
-            'url' => route('submissions.edit', ['locale' => app()->getLocale(), 'submission' => $s->id]),
-            'cells' => [
-                'period' => $s->period,
-                // The flag is decorative and the name carries the
-                // meaning, exactly as everywhere else it appears.
-                'country' => $s->country
-                    ? new \Illuminate\Support\HtmlString(view('components.flag', ['iso' => $s->country->iso_code])->render().' '.e($s->country->name))
-                    : '',
-                'progress' => $s->values->filter->isComplete()->count().' / '.\App\Models\Indicator::active()->count(),
-                'status' => new \Illuminate\Support\HtmlString(
-                    '<span class=\'a-pill\' data-status=\'' . e($s->status->value) . '\'>' . e(__($s->status->labelKey())) . '</span>'
-                ),
-                'updated' => $s->updated_at?->displayed()->isoFormat('D MMM YYYY') ?? '',
-            ],
-            'actions' => [
-                ['label' => __('admin.edit'), 'url' => route('submissions.edit', ['locale' => app()->getLocale(), 'submission' => $s->id])],
-            ],
-        ]" />
+            @if ($canOpen)
+                <form class="mh-picker" method="POST" action="{{ route('submissions.store', ['locale' => $locale]) }}">
+                    @csrf
+                    <div class="a-field">
+                        <label class="a-label" for="period">{{ __('submissions.open_title') }}</label>
+                        <select class="a-select" id="period" name="period" aria-describedby="period-hint">
+                            @foreach ($periods as $p)
+                                <option value="{{ $p }}">{{ $p }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <button type="submit" class="a-btn a-btn--primary">{{ __('submissions.open_action') }}</button>
+                    <span class="mh-meta" id="period-hint">{{ __('submissions.period_hint') }}</span>
+                </form>
+            @endif
+        </div>
+    </section>
+
+    <section class="mh-card" aria-labelledby="mh-returns-h">
+        <div class="mh-card__head">
+            <h2 class="mh-card__title" id="mh-returns-h">{{ $period ? __('d3_look.returns_for', ['period' => $period]) : __('d3_look.returns') }}</h2>
+            <span class="mh-meta">{{ __('submissions.table_note') }}</span>
+        </div>
+
+        @if ($submissions->isEmpty())
+            <div class="a-empty">
+                <p class="a-empty__title">{{ __('submissions.empty_title') }}</p>
+                <p class="a-empty__body">{{ __('submissions.empty_body') }}</p>
+            </div>
+        @else
+            <table class="mh-returns">
+                <caption class="c-sr">{{ __('submissions.title') }}</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">{{ __('submissions.period') }}</th>
+                        <th scope="col">{{ __('admin.field_country') }}</th>
+                        <th scope="col">{{ __('submissions.col_progress') }}</th>
+                        <th scope="col">{{ __('admin.col_status') }}</th>
+                        <th scope="col">{{ __('admin.col_updated') }}</th>
+                        <th scope="col"><span class="c-sr">{{ __('d3_look.open_link') }}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($submissions as $s)
+                        @php
+                            $filled = $s->values->filter->isComplete()->count();
+                            $pct = $indicatorCount > 0 ? (int) round($filled / $indicatorCount * 100) : 0;
+                        @endphp
+                        <tr>
+                            <td class="mh-returns__lead" data-label="">{{ __('extranet.dash_return_for', ['period' => $s->period]) }}</td>
+                            <td data-label="{{ __('admin.field_country') }}">
+                                <span>@if ($s->country)<x-flag :iso="$s->country->iso_code" /> {{ $s->country->name }}@endif</span>
+                            </td>
+                            <td data-label="{{ __('submissions.col_progress') }}">
+                                <span>
+                                    <span class="mh-bar" aria-hidden="true"><span class="mh-bar__fill" style="width: {{ $pct }}%"></span></span>
+                                    {{ $filled }} / {{ $indicatorCount }}
+                                </span>
+                            </td>
+                            <td data-label="{{ __('admin.col_status') }}"><span class="a-pill" data-status="{{ $s->status->value }}">{{ __($s->status->labelKey()) }}</span></td>
+                            <td data-label="{{ __('admin.col_updated') }}"><span>{{ $s->updated_at?->displayed()->isoFormat('D MMM YYYY') ?? '' }}</span></td>
+                            <td data-label="">
+                                <a href="{{ route('submissions.edit', ['locale' => $locale, 'submission' => $s->id]) }}">{{ __('d3_look.open_link') }}<span class="c-sr">: {{ __('extranet.dash_return_for', ['period' => $s->period]) }}{{ $s->country ? ', '.$s->country->name : '' }}</span></a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            {{ $submissions->links() }}
+        @endif
+    </section>
+</div>
 @endsection

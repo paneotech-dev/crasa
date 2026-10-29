@@ -30,13 +30,25 @@ class SubmissionController extends Controller
     {
         Gate::authorize('viewAny', Submission::class);
 
+        // Day 3 (8c): the period picker. Every period that has a return,
+        // and every open one, newest first; an unknown period shows none.
+        $known = Submission::query()->distinct()->pluck('period')
+            ->merge($this->periods())->unique()->sortDesc()->values();
+        $period = $request->string('period')->value();
+        $period = $known->contains($period) ? $period : null;
+
         return view('pages.submissions.index', [
             'submissions' => Submission::query()
                 ->with(['country', 'author', 'values'])
+                ->when($period, fn ($q) => $q->where('period', $period))
                 ->orderByDesc('period')
                 ->orderBy('country_id')
-                ->paginate(25),
+                ->paginate(25)
+                ->withQueryString(),
             'periods' => $this->periods(),
+            'knownPeriods' => $known,
+            'period' => $period,
+            'indicatorCount' => \App\Models\Indicator::active()->count(),
             'canOpen' => Gate::allows('create', Submission::class),
         ]);
     }
