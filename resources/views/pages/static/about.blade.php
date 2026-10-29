@@ -77,7 +77,7 @@
     ])
 
     @if ($who)
-        <section class="u-section cp-about-who" id="who-we-are" aria-labelledby="who-we-are-title">
+        <section class="u-section cp-about-who" data-ground="white" id="who-we-are" aria-labelledby="who-we-are-title">
             <div class="u-container u-main-side">
                 <div class="cp-about-who__text">
                     <h2 class="u-h2" id="who-we-are-title">{{ $who['heading'] }}</h2>
@@ -110,7 +110,7 @@
     @endif
 
     @if ($pillars !== [])
-        <section class="u-section u-section--tint" id="vision-mission-history" aria-labelledby="pillars-title">
+        <section class="u-section u-section--tint" data-ground="tint-green" id="vision-mission-history" aria-labelledby="pillars-title">
             <div class="u-container">
                 <h2 class="u-h2" id="pillars-title">{{ __('cpages.about_pillars') }}</h2>
                 <div class="u-cols-3 cp-about-pillars" @if ($vmh['lang']) lang="{{ $vmh['lang'] }}" @endif>
@@ -130,7 +130,7 @@
         </section>
     @endif
 
-    <section class="u-section" id="history" aria-labelledby="history-title">
+    <section class="u-section {{ $pillars === [] ? 'u-section--tint' : '' }}" data-ground="{{ $pillars === [] ? 'tint-green' : 'white' }}" id="history" aria-labelledby="history-title">
         <div class="u-container cp-about-history">
             <div>
                 <h2 class="u-h2" id="history-title">{{ __('cpages.about_history') }}</h2>
@@ -152,7 +152,7 @@
     </section>
 
     @if ($governance)
-        <section class="u-section u-section--blue" id="governance" aria-labelledby="governance-title">
+        <section class="u-section u-section--blue" data-ground="tint-blue" id="governance" aria-labelledby="governance-title">
             <span id="structure" class="cp-anchor"></span>
             <div class="u-container">
                 <div class="cp-section-head">
@@ -186,7 +186,7 @@
 
     @foreach ([['executive-committee', $executive, $executiveParts, 'about_people_exec'], ['secretariat', $secretariat, $secretariatParts, 'about_people_sec']] as [$anchor, $part, $parts, $peopleLabel])
         @continue($part === null)
-        <section class="u-section {{ $anchor === 'secretariat' ? 'u-section--pale' : '' }}" id="{{ $anchor }}" aria-labelledby="{{ $anchor }}-title">
+        <section class="u-section {{ $anchor === 'secretariat' ? 'u-section--pale' : '' }}" data-ground="{{ $anchor === 'secretariat' ? 'pale' : 'white' }}" id="{{ $anchor }}" aria-labelledby="{{ $anchor }}-title">
             <div class="u-container cp-about-people" @if ($part['lang']) lang="{{ $part['lang'] }}" @endif>
                 <div class="cp-about-people__text">
                     <h2 class="u-h2" id="{{ $anchor }}-title">{{ $part['heading'] }}</h2>
@@ -228,7 +228,7 @@
     @foreach (['partnerships', 'strategic-priorities'] as $anchor)
         @php $extra = $text($anchor); @endphp
         @if ($extra && $extra['body'])
-            <section class="u-section" id="{{ $anchor }}">
+            <section class="u-section {{ $anchor === 'strategic-priorities' ? 'u-section--tint' : '' }}" data-ground="{{ $anchor === 'strategic-priorities' ? 'tint-green' : 'white' }}" id="{{ $anchor }}">
                 <div class="u-container u-cols-2">
                     <h2 class="u-h2">{{ $extra['heading'] }}</h2>
                     <div class="cp-prose" @if ($extra['lang']) lang="{{ $extra['lang'] }}" @endif>{!! $renderer->render($extra['body'], 'block:'.$extra['block']->id) !!}</div>
