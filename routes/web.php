@@ -667,6 +667,12 @@ Route::prefix('{locale}')
                 Route::put('committees/{committee}/seats/{country}', [CommitteeSeatController::class, 'update'])->name('committees.seats.update');
                 Route::delete('committees/{committee}/seats/{country}', [CommitteeSeatController::class, 'destroy'])->name('committees.seats.destroy');
 
+                // Day 3: crud
+                Route::post('committees/{committee}/members', [\App\Http\Controllers\Admin\CommitteeMemberController::class, 'store'])->name('committees.members.store');
+                Route::put('committees/{committee}/members/{user}', [\App\Http\Controllers\Admin\CommitteeMemberController::class, 'update'])->whereNumber('user')->name('committees.members.update');
+                Route::delete('committees/{committee}/members/{user}', [\App\Http\Controllers\Admin\CommitteeMemberController::class, 'destroy'])->whereNumber('user')->name('committees.members.destroy');
+                // end Day 3: crud
+
                 Route::get('meetings', [MeetingListController::class, 'index'])->name('meetings');
                 Route::get('meetings/{meeting}/delegates', [DelegateListController::class, 'index'])->name('delegates');
                 Route::get('meetings/{meeting}/delegates.csv', [DelegateListController::class, 'csv'])->name('delegates.csv');

@@ -396,6 +396,10 @@ return [
     'field_definition' => 'Definition',
     'field_unit' => 'Unit',
     'field_periodicity' => 'Reported',
+    // Day 3: crud
+    'field_confirmation' => 'Confirmation',
+    'field_display_order' => 'Order in the comparator',
+    'field_may_exceed_hundred' => 'Values above 100 are normal for this indicator',
     'field_source_standard' => 'Source standard',
     'field_source_url' => 'Source',
     'field_is_active' => 'In use',

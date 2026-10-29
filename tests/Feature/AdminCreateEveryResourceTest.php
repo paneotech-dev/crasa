@@ -143,6 +143,8 @@ class AdminCreateEveryResourceTest extends TestCase
             in_array('date', $rules, true) => now()->toDateString(),
             in_array('boolean', $rules, true) => 1,
             $field === 'period' => '1999',
+            // Day 3: member states are creatable; the code is two letters.
+            $field === 'iso_code' => 'qa',
             default => '[QA] '.Str::limit($field, 10, ''),
         };
     }
