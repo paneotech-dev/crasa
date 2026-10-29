@@ -1,30 +1,44 @@
-{{-- Projects. WS-12's no-content-loss clause: the legacy site carries
-     these behind a top-level menu item and WS-03's IA lists neither. --}}
+{{-- Projects (S8, UI system, 29 October 2026). One collection in two
+     states: a project that finishes keeps its URL and its documents. --}}
 @extends('layouts.public')
+@include('partials.cpages.styles')
 
 @section('title', __('projects.title'))
 @section('description', __('projects.meta_description'))
 
-@section('content')
-    <x-section-band
-        :eyebrow="__('projects.band_eyebrow')"
-        :title="__('projects.band_heading')"
-        :lead="__('projects.lead')"
-    />
+@php
+    $locale = app()->getLocale();
+    // The same photograph twice on one page reads as a page that ran out of
+    // pictures: a repeat falls back to the sector panel.
+    $seen = [];
+@endphp
 
-    <div class="c-section">
-        <div class="c-page">
-            {{-- Two states, not two collections. The links filter one list
-                 rather than sending a reader to a second page, so a project
-                 that finishes keeps its URL. --}}
-            <nav class="c-filters__options" aria-label="{{ __('projects.title') }}">
-                <a class="c-chip" @if ($state === null) aria-current="page" @endif
-                   href="{{ route('projects', ['locale' => app()->getLocale()]) }}">{{ __('projects.all') }}</a>
-                <a class="c-chip" @if ($state === 'current') aria-current="page" @endif
-                   href="{{ route('projects', ['locale' => app()->getLocale(), 'state' => 'current']) }}">{{ __('projects.current') }} ({{ $currentCount }})</a>
-                <a class="c-chip" @if ($state === 'past') aria-current="page" @endif
-                   href="{{ route('projects', ['locale' => app()->getLocale(), 'state' => 'past']) }}">{{ __('projects.past') }} ({{ $pastCount }})</a>
-            </nav>
+@section('content')
+    @include('partials.cpages.hero', [
+        'eyebrow' => __('projects.band_eyebrow'),
+        'title' => __('projects.band_heading'),
+        'lead' => __('projects.lead'),
+        'figures' => [
+            ['value' => $currentCount, 'label' => __('cpages_a.figure_current')],
+            ['value' => $pastCount, 'label' => __('cpages_a.figure_completed')],
+        ],
+        'heroAside' => ($partnerNames = \App\Models\Project::published()->whereNotNull('partner')->pluck('partner')
+                ->flatMap(fn ($p) => array_map('trim', explode(',', $p)))->filter()->unique()->values())->isNotEmpty()
+            ? view('pages.projects._hero-aside', ['partners' => $partnerNames])->render()
+            : null,
+    ])
+
+    <section class="u-section">
+        <div class="u-container">
+            <div class="cp-section-head">
+                <h2 class="u-h2">{{ $state === 'current' ? __('cpages_a.figure_current') : ($state === 'past' ? __('cpages_a.figure_completed') : __('projects.all')) }}</h2>
+                {{-- Links, so the toggle works without script and each state has an address. --}}
+                <nav class="cp-chips" aria-label="{{ __('cpages_a.filter_label') }}">
+                    <a class="u-chip" @if ($state === null) aria-current="page" @endif href="{{ route('projects', ['locale' => $locale]) }}">{{ __('cpages_a.tab_all') }}</a>
+                    <a class="u-chip" @if ($state === 'current') aria-current="page" @endif href="{{ route('projects', ['locale' => $locale, 'state' => 'current']) }}">{{ __('cpages_a.tab_current') }} ({{ $currentCount }})</a>
+                    <a class="u-chip" @if ($state === 'past') aria-current="page" @endif href="{{ route('projects', ['locale' => $locale, 'state' => 'past']) }}">{{ __('cpages_a.tab_past') }} ({{ $pastCount }})</a>
+                </nav>
+            </div>
 
             @if ($projects->isEmpty())
                 @include('blocks._empty', [
@@ -32,38 +46,25 @@
                     'body' => __('projects.none_body'),
                 ])
             @else
-                {{-- The newsroom's card, because a project listing is the
-                     same shape of thing and a second card design would be a
-                     second card design. --}}
-                <div class="b-cards">
+                {{-- Two or four projects sit two to a row as wide cards, so no row is
+                     left two thirds empty. --}}
+                <ul class="{{ in_array($projects->count(), [1, 2, 4], true) ? 'u-cols-2 cp-proj-grid--wide' : 'u-cols-3' }} cp-proj-grid" role="list">
                     @foreach ($projects as $project)
-                        @php($title = $project->translate('title'))
-                        @php($summary = $project->translate('summary'))
-                        <article class="b-card">
-                            @if ($project->hero_image_path)
-                                <div class="b-card__media">
-                                    <img class="c-img c-img--cover" alt="" loading="lazy" decoding="async"
-                                         src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($project->hero_image_path) }}">
-                                </div>
-                            @endif
-                            <div class="b-card__body">
-                                <div class="b-card__kicker">{{ $project->isCurrent() ? __('projects.state_current') : __('projects.state_past') }}</div>
-                                @if ($title)
-                                    <h2 class="b-card__title" @if ($title->isFallback()) lang="{{ $title->locale }}" @endif>
-                                        <a href="{{ route('projects.show', ['locale' => app()->getLocale(), 'project' => $project->slug]) }}">{{ $title->value }}</a>
-                                    </h2>
-                                @endif
-                                @if ($summary)
-                                    <p class="b-card__summary">{{ \Illuminate\Support\Str::limit($summary->value, 180) }}</p>
-                                @endif
-                                @if ($project->sector)
-                                    <div class="b-card__meta"><span>{{ $project->sector->name }}</span></div>
-                                @endif
-                            </div>
-                        </article>
+                        @php
+                            $image = $project->hero_image_path && ! in_array($project->hero_image_path, $seen, true) ? $project->hero_image_path : null;
+                            if ($image) { $seen[] = $image; }
+                        @endphp
+                        @include('pages.projects._card', ['project' => $project, 'image' => $image])
                     @endforeach
-                </div>
+                </ul>
             @endif
         </div>
-    </div>
+    </section>
+
+    @include('partials.cpages.cta', [
+        'ctaTitle' => __('cpages_a.projects_cta_title'),
+        'ctaText' => __('cpages_a.projects_cta_text'),
+        'ctaPrimary' => [__('cpages_a.browse_library'), route('publications', ['locale' => $locale])],
+        'ctaSecondary' => [__('cpages_a.news_cta'), route('newsroom', ['locale' => $locale])],
+    ])
 @endsection

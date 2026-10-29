@@ -64,4 +64,8 @@ return [
     'all_projects' => 'All projects',
     'project_cta_title' => 'More from CRASA projects',
     'project_cta_text' => 'Every project and its documents in one place.',
+    'period_range' => ':start to :end',
+    'same_sector' => 'From the same sector: :sector.',
+    'partners_heading' => 'Working with',
+    'partners_note' => 'Partners named on the projects listed below.',
 ];

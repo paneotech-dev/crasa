@@ -63,4 +63,8 @@ return [
     'all_projects' => 'Todos os projetos',
     'project_cta_title' => 'Mais projetos da CRASA',
     'project_cta_text' => 'Todos os projetos e os seus documentos num só lugar.',
+    'period_range' => 'De :start a :end',
+    'same_sector' => 'Do mesmo setor: :sector.',
+    'partners_heading' => 'Em parceria com',
+    'partners_note' => 'Parceiros indicados nos projetos abaixo.',
 ];

@@ -197,7 +197,7 @@ class RenderedMarkupTest extends TestCase
             $this->assertStringNotContainsString($bad, $html, 'A project page served '.$bad.'.');
         }
 
-        $start = strpos($html, 'c-prose');
+        $start = strpos($html, 'cp-proj-body');
         $this->assertNotFalse($start, 'The project body did not render at all.');
         $prose = substr($html, $start, (strpos($html, '</div>', $start) ?: $start) - $start + 6);
 
