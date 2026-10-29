@@ -91,9 +91,11 @@
 .cp-map.cp-map .leaflet-bar a { width: 44px; height: 44px; line-height: 44px; }
 @media (max-width: 991.98px) {
   .cp-contact__grid { grid-template-columns: minmax(0, 1fr); }
+  .cp-contact__cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 639.98px) {
   .cp-form__row { grid-template-columns: minmax(0, 1fr); }
+  .cp-contact__cards { grid-template-columns: minmax(0, 1fr); }
   .cp-contact__form { padding: var(--u-4); }
   .cp-map { height: 320px; }
 }
@@ -205,6 +207,7 @@
 .cp-proj-body h1, .cp-proj-body h2, .cp-proj-body h3 { font: 600 var(--u-t-18)/1.35 var(--u-sans); color: var(--u-ink); margin: var(--u-4) 0 var(--u-2); text-transform: none; }
 .cp-proj-body h1:first-child { margin-top: 0; }
 @media (min-width: 992px) { .cp-proj-body--cols { column-count: 2; column-gap: var(--u-5); } .cp-proj-body--cols p { break-inside: avoid; } }
+.cp-proj-facts-wide .u-facts { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 .cp-proj-docs { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--u-2); }
 .cp-proj-docs a { overflow-wrap: anywhere; }
 @media (min-width: 768px) {
