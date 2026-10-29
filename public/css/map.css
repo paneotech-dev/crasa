@@ -118,7 +118,11 @@
 /* Phones: the map full width of the screen's content column, cards under. */
 @media (max-width: 640px) {
   .c-map-region__svg { border-left: 0; border-right: 0; }
-  .c-map-region__inset { flex: 1 1 calc(50% - var(--s-3)); }
+  .c-map-region__inset,
+  .c-map-region--static .c-map-region__inset { flex: 1 1 calc(50% - var(--s-3)); gap: var(--s-2); padding: 6px 8px; }
+  .c-map-region__inset svg { width: 40px; height: 34px; }
+  .c-map-region__inset-detail { white-space: normal; overflow: visible; }
+  .c-map-region .c-map-region__inset--nonmember { flex-basis: 100%; }
   .c-map-region__tip { max-width: 220px; font-size: 13.5px; }
 }
 /* blocks.css gives inset paths a 1.5 unit rule; the Seychelles frame is a
