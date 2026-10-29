@@ -24,7 +24,6 @@
                     @foreach ($sectorLinks as $sector)
                         <li>
                             <a class="cp-pub-browse__link" href="{{ route('publications', ['locale' => $loc, 'sector' => [$sector->slug]]) }}">
-                                <x-sector-icon :sector="$sector->slug" />
                                 <span>{{ $sector->name }}</span>
                                 <span class="cp-pub-browse__count">{{ trans_choice('cpages_b.documents_word', $counts['sector'][$sector->slug], ['count' => $counts['sector'][$sector->slug]]) }}</span>
                             </a>

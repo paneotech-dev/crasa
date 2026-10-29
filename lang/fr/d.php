@@ -55,7 +55,7 @@ return [
     'summary_label' => 'En mots',
     'open_full' => 'Ouvrir dans le comparateur',
     'home_heading' => 'Comparer les États membres',
-    'home_intro' => 'Choisissez un indicateur et deux États membres. Le tableau et le graphique changent à chaque choix.',
+    'home_intro' => 'Choisissez un indicateur et deux États membres.',
     'home_indicator' => 'Indicateur',
     'home_state_a' => 'Premier État membre',
     'home_state_b' => 'Second État membre',

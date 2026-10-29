@@ -46,7 +46,7 @@
                             @if ($next->location)<p class="e-next__meta">{{ $next->location }}</p>@endif
                         </div>
                     </div>
-                    @include('pages.events._add-to-calendar', ['meeting' => $next])
+                    @include('pages.events._add-to-calendar', ['meeting' => $next, 'link' => true])
                 </aside>
             @endif
         </div>
@@ -245,7 +245,6 @@
         <div class="u-container u-cta__inner">
             <div>
                 <h2 class="u-cta__title" id="events-cta">{{ __('e.cta_title') }}</h2>
-                <p class="u-cta__text">{{ __('e.cta_text') }}</p>
             </div>
             <div class="u-actions">
                 {{-- The member calendar answers the enter-member-area gate; a guest is sent to sign in, a signed-in account without it is refused, so it does not see the link. --}}
