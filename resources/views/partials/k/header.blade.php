@@ -200,7 +200,7 @@
         @if ($social !== [])
             <ul class="k-d-social" role="list">
                 @foreach ($social as $network => $url)
-                    <li><a href="{{ $url }}" rel="noopener" data-network="{{ $network }}"
+                    <li><a href="{{ $url }}" rel="noopener" target="_blank" data-network="{{ $network }}"
                            aria-label="{{ __('blocks.social_account', ['network' => \App\Support\SocialAccounts::label($network)]) }}"><x-social-mark :network="$network" /></a></li>
                 @endforeach
             </ul>
