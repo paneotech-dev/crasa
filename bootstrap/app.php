@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureAccountActive;
 use App\Http\Middleware\EnsureTwoFactorEnrolled;
+use App\Http\Middleware\PublicPageCache;
 use App\Http\Middleware\SecurityHeaders;
 use App\Support\Locales;
 use Illuminate\Foundation\Application;
@@ -40,6 +41,13 @@ return Application::configure(basePath: dirname(__DIR__))
                     : Locales::FALLBACK,
             ]);
         });
+
+        // Outermost in the web group, so it sees the cookies the session
+        // and CSRF middleware add and can decide whether the page may be
+        // kept by Cloudflare. See PublicPageCache.
+        $middleware->web(prepend: [
+            PublicPageCache::class,
+        ]);
 
         $middleware->web(append: [
             // First, so every response carries them including the ones the
