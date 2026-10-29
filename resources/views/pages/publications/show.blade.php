@@ -61,7 +61,7 @@
         </div>
     </section>
 
-    <section class="u-section cp-doc-page">
+    <section class="u-section">
         <div class="u-container">
 
             <div class="u-main-side">
@@ -189,7 +189,7 @@
                     @if ($document)
                         {{-- "Available in", screen 07: a missing language is
                              stated rather than left to be inferred. --}}
-                        <div class="u-panel cp-doc-langs">
+                        <div class="u-panel">
                             <h2 class="u-h3">{{ __('publications.available_in') }}</h2>
                             <ul class="cp-doc-langs__list" role="list">
                                 @foreach (\App\Support\Locales::SUPPORTED as $code)
@@ -208,7 +208,7 @@
                             </ul>
                         </div>
 
-                        <div class="u-panel u-panel--tint cp-doc-cite">
+                        <div class="u-panel u-panel--tint">
                             <h2 class="u-h3">{{ __('publications.cite') }}</h2>
                             <p class="cp-doc-cite__ref">{{ __('publications.cite_reference', [
                                 'author' => __('site.acronym'),

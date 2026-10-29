@@ -64,9 +64,17 @@ class HeaderAndTypeTest extends TestCase
 
         $this->assertStringContainsString('max-width: var(--w-reading)', $css);
 
+        // The About page is set from pages.css since 29 October 2026: its
+        // running text is in .cp-prose, held to a measure in ch there.
+        $this->assertMatchesRegularExpression(
+            '/\.cp-prose \{[^}]*max-width: \d+ch/',
+            file_get_contents(public_path('css/pages.css')),
+            'cp-prose sets no reading width.',
+        );
+
         foreach (['/en/about'] as $path) {
             $this->assertMatchesRegularExpression(
-                '/(b__inner--reading|c-page--reading)/',
+                '/(b__inner--reading|c-page--reading|class="cp-prose)/',
                 $this->get($path)->getContent(),
                 "{$path} sets no reading width.",
             );

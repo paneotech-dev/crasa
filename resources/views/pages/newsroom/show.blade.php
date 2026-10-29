@@ -29,7 +29,7 @@
     <section class="u-hero cp-hero cp-article-hero">
         <div class="u-container">
             <div class="u-hero__grid">
-                <div class="cp-article-hero__text">
+                <div>
                     <p class="cp-news-card__line cp-article-hero__line">
                         <span class="u-pill">{{ $typeLabel }}</span>
                         <span class="cp-news-card__date">{{ $dateText }}</span>
@@ -61,7 +61,7 @@
         </div>
     </section>
 
-    <section class="u-section cp-article">
+    <section class="u-section">
         <div class="u-container">
             <div class="u-main-side">
                 <article class="cp-article__main">

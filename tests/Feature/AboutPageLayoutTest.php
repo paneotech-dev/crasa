@@ -92,7 +92,11 @@ class AboutPageLayoutTest extends TestCase
             $this->assertStringContainsString('id="sadc"', $html);
             $this->assertStringContainsString($heading, $html);
             $this->assertStringContainsString('href="https://www.sadc.int"', $html);
-            $this->assertStringContainsString(e(__('footer.blurb', [], $locale)), $html);
+            // The SADC section opens with the agency sentence. It comes from
+            // the rich-text block, which keeps apostrophes as typed; the new
+            // footer has its own wording (chome.footer_blurb), so the escaped
+            // copy this used to find there is no longer on the page.
+            $this->assertStringContainsString('<p>'.__('footer.blurb', [], $locale).'</p>', $html);
             $this->assertLessThan(strpos($html, 'id="sadc"'), strpos($html, 'id="who-we-are"'));
         }
     }

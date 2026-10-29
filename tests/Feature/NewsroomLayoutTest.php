@@ -45,8 +45,25 @@ class NewsroomLayoutTest extends TestCase
         return $made;
     }
 
+    /**
+     * Only the listing counts: the header's mega menu carries a featured
+     * news card of its own, so a count over the whole page would see the
+     * newest item twice.
+     */
+    public static function listing(string $html): string
+    {
+        $start = strpos($html, 'id="news-results"');
+        if ($start === false) {
+            return '';
+        }
+        $end = strpos($html, '</section>', $start);
+
+        return substr($html, $start, $end === false ? null : $end - $start);
+    }
+
     private function slugsIn(string $html): array
     {
+        $html = self::listing($html);
         preg_match_all('#/en/newsroom/(item-\d\d)"#', $html, $m);
 
         return array_values(array_unique($m[1]));

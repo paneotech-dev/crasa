@@ -53,7 +53,7 @@
                 </div>
             </nav>
 
-            <div class="g-statement__body">
+            <div>
                 @foreach ($order as $key)
                     @php $section = $s['sections'][$key]; @endphp
                     <section class="g-statement__section" id="{{ $key }}" aria-labelledby="{{ $key }}-title" tabindex="-1">

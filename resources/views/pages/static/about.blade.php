@@ -113,7 +113,7 @@
         <section class="u-section u-section--tint" data-ground="tint-green" id="vision-mission-history" aria-labelledby="pillars-title">
             <div class="u-container">
                 <h2 class="u-h2" id="pillars-title">{{ __('cpages.about_pillars') }}</h2>
-                <div class="u-cols-3 cp-about-pillars" @if ($vmh['lang']) lang="{{ $vmh['lang'] }}" @endif>
+                <div class="u-cols-3" @if ($vmh['lang']) lang="{{ $vmh['lang'] }}" @endif>
                     @foreach ($pillars as $i => $pillar)
                         <article class="u-card cp-about-pillar">
                             <div class="u-card__body">
@@ -188,7 +188,7 @@
         @continue($part === null)
         <section class="u-section {{ $anchor === 'secretariat' ? 'u-section--pale' : '' }}" data-ground="{{ $anchor === 'secretariat' ? 'pale' : 'white' }}" id="{{ $anchor }}" aria-labelledby="{{ $anchor }}-title">
             <div class="u-container cp-about-people" @if ($part['lang']) lang="{{ $part['lang'] }}" @endif>
-                <div class="cp-about-people__text">
+                <div>
                     <h2 class="u-h2" id="{{ $anchor }}-title">{{ $part['heading'] }}</h2>
                     @if ($parts['people'] === [] && $part['body'])
                         <div class="cp-prose">{!! $renderer->render($part['body'], 'block:'.$part['block']->id) !!}</div>

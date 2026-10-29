@@ -22,7 +22,7 @@
 @endphp
 
 @section('content')
-    <section class="u-hero e-ev-hero" aria-labelledby="ev-title">
+    <section class="u-hero" aria-labelledby="ev-title">
         <div class="u-container u-hero__grid">
             <div>
                 <p class="u-eyebrow e-ev-eyebrow">@include('pages.events._badge', ['group' => $g])<span>{{ $g->label() }}</span></p>

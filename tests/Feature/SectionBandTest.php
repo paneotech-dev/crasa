@@ -112,7 +112,13 @@ class SectionBandTest extends TestCase
             $this->assertIsString($count['value']);
         }
 
-        $this->get('/en/events')->assertOk()->assertSee('c-band__counts', false);
+        // The events hero sets its counts as u-figures since 29 October
+        // 2026 (the old c-band__counts band is gone). A zero is still shown.
+        $html = $this->get('/en/events')->assertOk()->getContent();
+        $this->assertStringContainsString('<dl class="u-figures">', $html);
+        foreach ($counts as $count) {
+            $this->assertMatchesRegularExpression('~<dd>'.preg_quote($count['value'], '~').'</dd>~', $html);
+        }
     }
 
     /** A count a reader cannot follow is a fact about the site, not a way in. */

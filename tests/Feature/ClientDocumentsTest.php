@@ -72,11 +72,16 @@ class ClientDocumentsTest extends TestCase
     {
         // The note tells CRASA that half the stack row is satisfied as
         // written. That has to stay true.
+        // The contact page loads its own map script (29 October 2026),
+        // which brings in the Leaflet this platform serves.
         $this->assertFileExists(public_path('js/vendor/leaflet.js'));
         $this->assertStringContainsString(
-            'js/map.js',
+            'js/contact-map.js',
             file_get_contents(resource_path('views/pages/contact.blade.php'))
         );
+        $script = file_get_contents(public_path('js/contact-map.js'));
+        $this->assertStringContainsString('/js/vendor/leaflet.js', $script);
+        $this->assertStringContainsString('L.map(', $script);
     }
 
     public function test_it_is_written_for_a_regulator_rather_than_a_developer(): void

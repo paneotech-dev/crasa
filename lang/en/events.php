@@ -13,6 +13,7 @@ return [
     'past' => 'Past',
     // The legacy site gave no date; the stored one is the day it was read.
     'date_not_stated' => 'Date not stated',
+    'none_past' => 'No past meetings are listed yet.',
     'none_upcoming_title' => 'Nothing scheduled publicly',
     'none_upcoming_body' => 'Meetings appear here once the Secretariat publishes them. Committee meetings are listed in the member area for the member states that sit on them.',
     'agenda' => 'Agenda',

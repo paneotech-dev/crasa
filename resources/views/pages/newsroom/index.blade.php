@@ -144,7 +144,19 @@
 
     {{-- Posts from CRASA's channels: the feed partial is supplied separately.
          The empty Facebook page box that stood here is gone (C13). --}}
-    @includeIf('partials.newsroom.social')
+    {{-- The footer links to #social here, so the section is always present:
+         the feed partial carries id="social" itself; until it exists the
+         channel cards stand in under the same id. --}}
+    @if (view()->exists('partials.newsroom.social'))
+        @include('partials.newsroom.social')
+    @else
+        <section class="u-section u-section--pale" id="social" aria-labelledby="news-social-heading">
+            <div class="u-container">
+                <h2 class="u-h2" id="news-social-heading">{{ __('social.heading') }}</h2>
+                @include('partials.social-channels')
+            </div>
+        </section>
+    @endif
 
     @include('partials.cpages.cta', [
         'ctaTitle' => __('cpages_b.cta_news_title'),

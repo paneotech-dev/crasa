@@ -68,7 +68,7 @@
                 <ul class="e-filter__list">
                     <li><a class="u-chip" data-filter="" href="{{ route('events', $base + $query(['committee' => null])) }}#cal-title" @if (! $committee) aria-current="true" @endif>{{ __('e.filter_all') }}</a></li>
                     @foreach ($groups as $g)
-                        <li><a class="u-chip e-chip-filter" data-filter="{{ $g->code }}" href="{{ route('events', $base + $query(['committee' => $g->code])) }}#cal-title" @if ($committee === $g->code) aria-current="true" @endif>@include('pages.events._badge', ['group' => $g]){{ $g->code === 'CRASA' ? __('e.filter_crasa') : $g->code }}</a></li>
+                        <li><a class="u-chip" data-filter="{{ $g->code }}" href="{{ route('events', $base + $query(['committee' => $g->code])) }}#cal-title" @if ($committee === $g->code) aria-current="true" @endif>@include('pages.events._badge', ['group' => $g]){{ $g->code === 'CRASA' ? __('e.filter_crasa') : $g->code }}</a></li>
                     @endforeach
                 </ul>
             </nav>
@@ -171,7 +171,16 @@
         </div>
     </section>
 
-    @if ($pastByYear->isNotEmpty())
+    {{-- The footer links to #past, so the section stays when nothing is
+         listed yet and says so. --}}
+    @if ($pastByYear->isEmpty())
+        <section class="u-section" id="past" aria-labelledby="past-title">
+            <div class="u-container">
+                <h2 class="u-h2" id="past-title">{{ __('events.past') }}</h2>
+                <p>{{ __('events.none_past') }}</p>
+            </div>
+        </section>
+    @else
         <section class="u-section" id="past" aria-labelledby="past-title" data-past>
             <div class="u-container">
                 <div class="e-past-head">
