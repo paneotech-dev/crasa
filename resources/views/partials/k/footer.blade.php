@@ -42,7 +42,7 @@
                 @if ($accounts !== [])
                     <div class="k-fsoc">
                         @foreach ($accounts as $network => $url)
-                            <a href="{{ $url }}" data-network="{{ $network }}" rel="noopener"
+                            <a href="{{ $url }}" data-network="{{ $network }}" rel="noopener" target="_blank"
                                aria-label="{{ __('blocks.social_account', ['network' => \App\Support\SocialAccounts::label($network)]) }}">
                                 <x-social-mark :network="$network" tone="white" />
                             </a>
