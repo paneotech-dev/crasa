@@ -182,8 +182,8 @@ class PublicationsLibraryTest extends TestCase
 
         $html = $this->get('/en/publications')->getContent();
 
-        $this->assertStringContainsString('c-filetype', $html);
-        $this->assertStringNotContainsString('<img class="c-img" src="" ', $html);
+        $this->assertStringContainsString('class="cp-placeholder"', $html);
+        $this->assertStringNotContainsString('src="" ', $html);
     }
 
     /* Download counts --------------------------------------------------------- */

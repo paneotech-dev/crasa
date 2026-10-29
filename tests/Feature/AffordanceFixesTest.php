@@ -85,7 +85,7 @@ class AffordanceFixesTest extends TestCase
     {
         $html = $this->get('/en/publications')->assertOk()->getContent();
 
-        preg_match('~<div class="b-row__title">\s*<a[^>]*>\s*([^<]+)~', $html, $match);
+        preg_match('~<h2 class="u-card__title">\s*<a[^>]*>\s*([^<]+)~', $html, $match);
         $this->assertNotEmpty($match, 'A publication row has no titled link.');
         $this->assertNotEmpty(trim($match[1]));
     }

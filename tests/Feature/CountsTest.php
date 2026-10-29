@@ -216,7 +216,7 @@ class CountsTest extends TestCase
         // everything, which is the failure mode of a filter that silently
         // does not apply.
         $empty = $this->get('/en/publications?language=zz')->assertOk()->getContent();
-        $this->assertSame(0, substr_count($empty, 'class="b-row"'));
+        $this->assertSame(0, substr_count($empty, 'class="u-card cp-doc-card"'));
     }
 
     public function test_the_sector_facet_narrows_the_library(): void
@@ -232,8 +232,8 @@ class CountsTest extends TestCase
         $filtered = $this->get('/en/publications?sector='.$sector->slug)->assertOk()->getContent();
 
         $this->assertNotSame(
-            substr_count($all, 'class="b-row"'),
-            substr_count($filtered, 'class="b-row"'),
+            substr_count($all, 'class="u-card cp-doc-card"'),
+            substr_count($filtered, 'class="u-card cp-doc-card"'),
             'Filtering by sector returned the same number of rows as no filter.'
         );
     }

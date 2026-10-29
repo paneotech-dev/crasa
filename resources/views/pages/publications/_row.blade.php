@@ -2,51 +2,48 @@
     $title = $publication->translate('title');
     $document = $publication->primaryDocument();
     $superseded = $publication->supersededBy->isNotEmpty();
+    $headingTag = $headingTag ?? 'h2';
 @endphp
 
-{{-- The whole row opens the publication; the download button is a second
-     destination raised above the stretched hit area. Only the title carries
-     the link, so a screen reader hears one link named after the document
-     rather than the whole row's text read out as a link. --}}
-<div class="b-row">
-    <div class="b-row__thumb">
+{{-- A document card (UI system): thumbnail in a 4:3 frame, type label,
+     title, metadata, Download. The whole card opens the publication through
+     its title link; Download sits above the stretched hit area. --}}
+<article class="u-card cp-doc-card">
+    <div class="u-card__media u-card__media--doc cp-doc-card__media">
         @if ($document?->thumbnail_path)
-            <img class="c-img" src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($document->thumbnail_path) }}"
-                 alt="" loading="lazy" decoding="async" width="80">
+            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($document->thumbnail_path) }}"
+                 alt="" loading="lazy" decoding="async" width="300" height="225">
         @else
-            {{-- No thumbnail is a normal state, not an error. The file-type
-                 mark stands in for it. --}}
-            <span class="c-filetype" aria-hidden="true">{{ $document ? strtoupper(pathinfo($document->original_filename, PATHINFO_EXTENSION)) : '—' }}</span>
+            <span class="cp-placeholder" aria-hidden="true">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>
+                {{ __($publication->publication_type->labelKey()) }}
+            </span>
         @endif
     </div>
-
-    <div class="b-row__main">
-        <div class="b-row__title">
+    <div class="u-card__body">
+        <span class="u-card__label">{{ __($publication->publication_type->labelKey()) }}@if ($publication->sector), {{ $publication->sector->name }}@endif</span>
+        <{{ $headingTag }} class="u-card__title">
             <a href="{{ route('publications.show', ['locale' => app()->getLocale(), 'slug' => $publication->slug]) }}"
-               @if ($title?->isFallback()) lang="{{ $title->locale }}" @endif>
-                {{ $title?->value ?? $publication->slug }}
-            </a>
-        </div>
-        <div class="b-row__meta">
-            <span>{{ __($publication->publication_type->labelKey()) }}</span>
-            @if ($publication->country)<span>{{ $publication->country->name }}</span>@endif
-            @if ($publication->sector)<span>{{ $publication->sector->name }}</span>@endif
+               @if ($title?->isFallback()) lang="{{ $title->locale }}" @endif>{{ $title?->value ?? $publication->slug }}</a>
+        </{{ $headingTag }}>
+        <div class="u-card__meta">
             <span>{{ $publication->published_on?->format('Y') ?? __('office.date_not_recorded') }}</span>
+            @if ($publication->country)<span>{{ $publication->country->name }}</span>@endif
             @if ($document)
                 <span>{{ $document->readableSize() }}</span>
-                <span class="c-lang-badge">{{ strtoupper($document->locale) }}</span>
+                <span class="u-pill u-pill--muted cp-lang">{{ strtoupper($document->locale) }}</span>
+            @endif
+            @if ($superseded)
+                <span class="u-pill u-pill--muted">{{ __('publications.superseded') }}</span>
             @endif
         </div>
     </div>
-
-    <div class="b-row__actions">
-        @if ($superseded)
-            <span class="c-pill c-pill--archived">{{ __('publications.superseded') }}</span>
-        @endif
-        @if ($document)
-            <a class="c-btn c-btn--secondary" href="{{ route('documents.download', ['locale' => app()->getLocale(), 'document' => $document->id]) }}">
-                {{ __('blocks.download') }}
+    @if ($document)
+        <div class="u-card__actions">
+            <a class="u-btn u-btn--secondary cp-doc-card__dl" href="{{ route('documents.download', ['locale' => app()->getLocale(), 'document' => $document->id]) }}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+                {{ __('blocks.download') }}<span class="c-sr">: {{ $title?->value ?? $publication->slug }}</span>
             </a>
-        @endif
-    </div>
-</div>
+        </div>
+    @endif
+</article>
