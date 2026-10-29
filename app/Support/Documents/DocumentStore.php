@@ -7,9 +7,12 @@ use App\Models\AuditLog;
 use App\Models\Document;
 use App\Models\DocumentVersion;
 use App\Models\Folder;
+use App\Models\Scopes\CountryScope;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -137,6 +140,27 @@ final class DocumentStore
     public static function record(string $action, Document|Folder $subject, Folder $folder, array $extra = [], ?User $user = null): void
     {
         AuditLog::record($action, $subject, ['folder_id' => $folder->id, 'folder' => $folder->name] + $extra, $user);
+    }
+
+    /**
+     * The recycle bin as the signed-in reader may see it: folder files
+     * deleted and not yet purged, in a folder the reader may upload into
+     * (which is who may restore). The bin page lists these and the folders
+     * screen counts them, so the count never includes a file the reader
+     * would not find in the bin.
+     *
+     * @return Collection<int, Document>
+     */
+    public static function binned(): Collection
+    {
+        return Document::onlyTrashed()
+            ->whereNotNull('folder_id')
+            ->with(['deleter', 'folder' => fn ($q) => $q->withoutGlobalScope(CountryScope::class)])
+            ->orderByDesc('deleted_at')
+            ->limit(500)
+            ->get()
+            ->filter(fn (Document $d) => $d->folder !== null && Gate::allows('upload', $d->folder))
+            ->values();
     }
 
     /** @return array{0: string, 1: ?string} the stored path and the PDF text */

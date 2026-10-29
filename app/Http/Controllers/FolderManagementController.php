@@ -42,7 +42,8 @@ class FolderManagementController extends Controller
 
         return view('pages.documents.admin-index', [
             'rows' => $this->flatten($all),
-            'binCount' => Document::onlyTrashed()->whereNotNull('folder_id')->count(),
+            // Only what the reader would find in the bin.
+            'binCount' => DocumentStore::binned()->count(),
         ]);
     }
 
