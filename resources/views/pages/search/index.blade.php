@@ -26,7 +26,7 @@
     $groups = $query !== '' && ! $results->isEmpty() ? collect($results->hits)->groupBy('type') : collect();
     $order = ['instrument', 'publication', 'news', 'member'];
     $groups = $groups->sortBy(fn ($hits, $type) => ($i = array_search($type, $order, true)) === false ? 99 : $i);
-    $icons = ['instrument' => 'file', 'publication' => 'book', 'news' => 'news', 'member' => 'globe'];
+    $icons = ['instrument' => 'file', 'publication' => 'book', 'news' => 'news', 'member' => 'globe', 'chart' => 'chart'];
 @endphp
 
 @section('content')
@@ -88,7 +88,7 @@
                                 ['publications', __('nav.publications'), __('cpages_c.browse_publications'), 'publication'],
                                 ['newsroom', __('nav.newsroom'), __('cpages_c.browse_newsroom'), 'news'],
                                 ['members', __('nav.members'), __('cpages_c.browse_members'), 'member'],
-                                ['comparator', __('nav.comparator'), __('cpages_c.browse_comparator'), 'instrument'],
+                                ['comparator', __('nav.comparator'), __('cpages_c.browse_comparator'), 'chart'],
                             ] as [$route, $label, $line, $icon])
                                 <li class="u-card cp-linkcard">
                                     <div class="u-card__body">
