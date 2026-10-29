@@ -220,7 +220,9 @@ final class ImageLibrary
         $groups = [
             ['media' => '(max-width: 480px)', 'widths' => [480]],
             ['media' => '(max-width: 960px)', 'widths' => [960]],
-            ['media' => null, 'widths' => [1440, 1920]],
+            // Capped at 1440: no hero is drawn wider than the 1600 the
+            // layout allows, and the 1920 file is half as heavy again.
+            ['media' => null, 'widths' => [1440]],
         ];
 
         $sources = [];

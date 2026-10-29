@@ -49,11 +49,17 @@ final class MediaReference
     }
 
     /** Every generated width, so the browser picks. Never the original. */
-    public static function srcset(MediaAsset $asset): string
+    public static function srcset(MediaAsset $asset, int $max = 1600): string
     {
         $parts = [];
 
         foreach (($asset->renditions ?? []) as $width => $rendition) {
+            // No page draws a photograph wider than 1600; a wider rendition
+            // only costs a high-density screen bytes it cannot show.
+            if ((int) $width > $max && $parts !== []) {
+                continue;
+            }
+
             $parts[] = Storage::disk($asset->disk)->url($rendition['path']).' '.$width.'w';
         }
 

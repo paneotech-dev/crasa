@@ -11,8 +11,11 @@
 <article @class(['b-card', 'n-card', 'n-card--featured' => $featured])>
     <div class="n-card__media">
         @if ($item->hero_image_path)
-            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($item->hero_image_path) }}"
-                 alt="" loading="{{ $featured ? 'eager' : 'lazy' }}" decoding="async">
+            @php $photo = \App\Support\ResizedImage::attributes($item->hero_image_path, 'card'); @endphp
+            <img src="{{ $photo['src'] }}"
+                 @if ($photo['srcset']) srcset="{{ $photo['srcset'] }}" sizes="{{ $featured ? '(max-width: 760px) 100vw, 50vw' : '(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw' }}" @endif
+                 @if ($photo['width'] && $photo['height']) width="{{ $photo['width'] }}" height="{{ $photo['height'] }}" @endif
+                 alt="" loading="{{ $featured ? 'eager' : 'lazy' }}" @if ($featured) fetchpriority="high" @endif decoding="async">
         @else
             <img src="{{ \App\Support\NewsFormat::placeholder($item->category->value) }}"
                  alt="" loading="lazy" decoding="async">
