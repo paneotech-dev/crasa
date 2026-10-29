@@ -34,4 +34,7 @@ return [
     'status_review' => 'Em revisão',
     'no_date_cite' => 's.d.',
     'publication_external_open' => 'Ler no local onde está publicada',
+    'directory_none_title' => 'As pessoas aparecem aqui quando escolhem ser listadas',
+    'directory_none_body' => 'Ainda ninguém escolheu ser listado. Cada pessoa só é listada com o seu consentimento, pelo representante da sua autoridade.',
+    'directory_list_me' => 'Listar-me',
 ];

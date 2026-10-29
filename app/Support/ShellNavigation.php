@@ -119,7 +119,11 @@ final class ShellNavigation
             'region' => [
                 ['key' => 'register', 'route' => 'register', 'icon' => 'instruments', 'permission' => null],
                 ['key' => 'indicators', 'route' => 'indicators.reference', 'icon' => 'indicators', 'permission' => null],
-                ['key' => 'directory', 'route' => 'directory', 'icon' => 'users', 'permission' => null],
+                // Out of the menu while nobody has chosen to be listed: an
+                // empty directory on the workshop screen read as broken
+                // (INC-07, UX-11). The page stays, and says how to be listed.
+                ['key' => 'directory', 'route' => 'directory', 'icon' => 'users', 'permission' => null,
+                    'when' => fn () => \App\Models\AuthorityContact::listed()->exists()],
                 ['key' => 'completeness', 'route' => 'completeness', 'icon' => 'completeness', 'permission' => Permission::ViewPublishedIndicators],
                 ['key' => 'comparator', 'route' => 'comparator', 'icon' => 'comparator', 'permission' => null],
                 ['key' => 'calendar', 'route' => 'extranet.calendar', 'icon' => 'calendar', 'permission' => null],
@@ -178,6 +182,10 @@ final class ShellNavigation
                 }
 
                 if ($definition['permission'] !== null && Gate::denies($definition['permission']->value)) {
+                    continue;
+                }
+
+                if (isset($definition['when']) && ! ($definition['when'])()) {
                     continue;
                 }
 

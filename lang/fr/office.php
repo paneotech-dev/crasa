@@ -34,4 +34,7 @@ return [
     'status_review' => 'En relecture',
     'no_date_cite' => 's.d.',
     'publication_external_open' => 'La lire là où elle est publiée',
+    'directory_none_title' => 'Les personnes apparaissent ici lorsqu\'elles choisissent d\'être inscrites',
+    'directory_none_body' => 'Personne n\'a encore choisi d\'être inscrit. Chaque personne n\'est inscrite qu\'avec son consentement, par le représentant de son autorité.',
+    'directory_list_me' => 'M\'inscrire',
 ];

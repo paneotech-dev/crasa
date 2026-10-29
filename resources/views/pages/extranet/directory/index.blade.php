@@ -48,7 +48,17 @@
     </form>
 
     <section class="a-card a-card--flush">
-        @if ($contacts->isEmpty())
+        @if ($contacts->isEmpty() && ! $anyListed)
+            {{-- Nobody listed yet: say how a person gets here, rather than
+                 "Nobody matches" for a search nobody made (INC-07). --}}
+            <div class="a-empty">
+                <div class="a-empty__title">{{ __('office.directory_none_title') }}</div>
+                <div class="a-empty__body">{{ __('office.directory_none_body') }}</div>
+                @if (auth()->user()->country_id !== null)
+                    <p><a class="a-btn a-btn--primary" href="#list-me">{{ __('office.directory_list_me') }}</a></p>
+                @endif
+            </div>
+        @elseif ($contacts->isEmpty())
             <div class="a-empty">
                 <div class="a-empty__title">{{ __('directory.empty_title') }}</div>
                 <div class="a-empty__body">{{ __('directory.empty_body') }}</div>
@@ -124,7 +134,7 @@
                 </form>
             @endforeach
 
-            <form class="a-form" method="POST" action="{{ route('directory.store', ['locale' => app()->getLocale()]) }}">
+            <form class="a-form" id="list-me" method="POST" action="{{ route('directory.store', ['locale' => app()->getLocale()]) }}">
                 @csrf
 
                 <fieldset class="a-fieldset">

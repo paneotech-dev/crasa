@@ -97,6 +97,10 @@ class PublicationHygieneTest extends TestCase
         $this->assertSame(['2019'], collect($response->viewData('years'))->all());
 
         $this->get('/en/publications/'.$undated->slug)->assertOk()->assertSee('Date not recorded');
+        $this->get('/fr/publications/'.$undated->slug)->assertOk()->assertSee('Date non enregistrée');
+        $this->get('/pt/publications/'.$undated->slug)->assertOk()->assertSee('Data não registada');
+        $this->get('/en/publications?year[]=2019')->assertOk()->assertDontSee('Undated guideline');
+        $this->get('/en/search?q=Undated')->assertOk();
 
         $this->actingAs($this->admin)->get('/en/admin/data/publications')->assertOk()->assertSee('Date not recorded');
     }

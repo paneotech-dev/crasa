@@ -34,4 +34,7 @@ return [
     'status_review' => 'In review',
     'no_date_cite' => 'n.d.',
     'publication_external_open' => 'Read it where it is published',
+    'directory_none_title' => 'People appear here when they choose to be listed',
+    'directory_none_body' => 'Nobody has chosen to be listed yet. Each person is listed only with their own consent, by the representative of their authority.',
+    'directory_list_me' => 'List me',
 ];
