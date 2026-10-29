@@ -22,4 +22,10 @@ return [
     // Events: chip preview.
     'preview_open' => 'Open the event page',
     'preview_close' => 'Close the preview',
+    // Concept 3 areas, in the sitemap band.
+    'areas_heading' => 'Areas of work',
+    'area_frameworks' => 'Harmonised frameworks',
+    'area_spectrum' => 'Spectrum and infrastructure',
+    'area_postal' => 'Postal and logistics reform',
+    'area_capacity' => 'Capacity and consumer protection',
 ];
