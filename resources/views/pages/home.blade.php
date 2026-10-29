@@ -383,9 +383,9 @@
                 @endforeach
                 <div class="k-ann">
                     <h4>{{ __('chome.related') }}</h4>
-                    <a href="{{ $nav('publications?type[]=communique') }}">{{ __('chome.m.pubs_communiques') }} <span aria-hidden="true">→</span></a>
-                    <a href="{{ $nav('events') }}">{{ __('chome.m.events_all') }} <span aria-hidden="true">→</span></a>
-                    <a href="{{ $nav('newsroom#social') }}">{{ __('chome.m.news_social') }} <span aria-hidden="true">→</span></a>
+                    <a href="{{ $nav('publications?type[]=communique') }}">{{ __('chome.m.pubs_communiques') }}</a>
+                    <a href="{{ $nav('events') }}">{{ __('chome.m.events_all') }}</a>
+                    <a href="{{ $nav('newsroom#social') }}">{{ __('chome.m.news_social') }}</a>
                 </div>
             </aside>
         </div>

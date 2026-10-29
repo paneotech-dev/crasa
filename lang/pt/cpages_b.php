@@ -18,7 +18,7 @@ return [
     'cta_contact' => 'Contactar o Secretariado',
     'cta_document_title' => 'Mais da biblioteca regulamentar',
     'cta_document_text' => 'Directrizes, quadros-modelo e estudos adoptados na região, cada um descarregável nesta plataforma.',
-    'cta_library' => 'Explorar a biblioteca',
+    'cta_library' => 'Abrir a biblioteca',
     'latest' => 'Mais recente',
     'read_more' => 'Ler mais',
     'read_more_named' => 'Ler mais: :title',

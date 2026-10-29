@@ -114,7 +114,7 @@ return [
     'hero_slide' => 'Slide :index of :total: :name',
     'hero_live' => 'Slide :index of :total: :name',
     'hero_choose' => 'Choose a slide',
-    'hero_cta_library' => 'Explore the library',
+    'hero_cta_library' => 'Open the library',
     'hero_cta_comparator' => 'Open the comparator',
     'fig_members' => 'Member regulators',
     'fig_committees' => 'Committees',
@@ -125,7 +125,7 @@ return [
     'quick_members' => 'Member regulators',
 
     'glance_label' => 'Key figures',
-    'glance_title' => 'CRASA at a glance',
+    'glance_title' => 'CRASA in figures',
 
     'mission_label' => 'Our mission',
     'mission_heading' => 'Our mission and areas of work',

@@ -43,7 +43,7 @@ class ConceptHomeTest extends TestCase
         $this->assertSame(1, substr_count($html, '<h1'));
         $this->assertStringContainsString('class="k-hero__figs"', $html);
         $this->assertMatchesRegularExpression('/<dd data-count="\d+">\d+<\/dd>/', $html);
-        $this->assertStringContainsString('Explore the library', $html);
+        $this->assertStringContainsString('Open the library', $html);
         $this->assertStringContainsString('Open the comparator', $html);
     }
 

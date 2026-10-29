@@ -103,7 +103,7 @@ return [
     'hero_slide' => 'Diapositivo :index de :total: :name',
     'hero_live' => 'Diapositivo :index de :total: :name',
     'hero_choose' => 'Escolher um diapositivo',
-    'hero_cta_library' => 'Explorar a biblioteca',
+    'hero_cta_library' => 'Abrir a biblioteca',
     'hero_cta_comparator' => 'Abrir o comparador',
     'fig_members' => 'Reguladores membros',
     'fig_committees' => 'Comités',
@@ -114,7 +114,7 @@ return [
     'quick_members' => 'Reguladores membros',
 
     'glance_label' => 'Números-chave',
-    'glance_title' => 'A CRASA em resumo',
+    'glance_title' => 'A CRASA em números',
 
     'mission_label' => 'A nossa missão',
     'mission_heading' => 'A nossa missão e áreas de trabalho',
