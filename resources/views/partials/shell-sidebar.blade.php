@@ -81,7 +81,7 @@
             <span class="a-side__avatar" aria-hidden="true">{{ \App\Support\Initials::of($user->name ?? '') }}</span>
             <span class="a-side__metext">
                 <a class="a-side__name" href="{{ route('account', ['locale' => app()->getLocale()]) }}">{{ $user->name }}</a>
-                <span class="a-side__role">{{ $user->role->label() }}</span>
+                <span class="a-side__role" title="{{ $user->role->label() }}">{{ $user->role->label() }}</span>
             </span>
 
             <form method="POST" action="{{ route('logout', ['locale' => app()->getLocale()]) }}">

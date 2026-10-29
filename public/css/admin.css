@@ -1653,6 +1653,9 @@ a.e-dash__title:hover { text-decoration: underline; text-underline-offset: 3px; 
 .e-cal__nav { display: flex; gap: var(--s-2); margin-left: auto; }
 
 .e-cal { padding: 0 var(--s-4) var(--s-4); }
+
+/* The member area search: result lists inset like the calendar. */
+.e-search .a-results { padding: 0 var(--s-5) var(--s-3); }
 .e-cal__weekdays, .e-cal__grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
 .e-cal__weekdays {
   font-family: var(--f-admin); font-size: 11px; font-weight: 700;
@@ -1955,7 +1958,11 @@ body[data-surface="admin"] .a-side__link.is-current {
 }
 body[data-surface="admin"] .a-side__name { color: var(--c-cream); }
 body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-decoration: underline; text-underline-offset: 3px; }
-.a-side__role { font-family: var(--f-admin); font-size: 12px; color: var(--c-sand); }
+.a-side__role {
+  font-family: var(--f-admin); font-size: 12px; color: var(--c-sand);
+  /* One line beside the Sign out label, like the name above it. */
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 .a-side__out {
   flex: none;
   min-height: 36px;

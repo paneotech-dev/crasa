@@ -24,7 +24,7 @@
         <p class="a-pagehead__note" role="status">{{ trans_choice('office.member_search_count', $total, ['count' => $total, 'term' => $term]) }}</p>
 
         @if ($meetings->isNotEmpty())
-            <section class="a-resource">
+            <section class="a-resource e-search">
                 <div class="a-resource__head"><h2 class="a-resource__title">{{ __('extranet.calendar') }}</h2></div>
                 <ul class="a-results">
                     @foreach ($meetings as $meeting)
@@ -38,7 +38,7 @@
         @endif
 
         @if ($folders->isNotEmpty())
-            <section class="a-resource">
+            <section class="a-resource e-search">
                 <div class="a-resource__head"><h2 class="a-resource__title">{{ __('office.member_search_folders') }}</h2></div>
                 <ul class="a-results">
                     @foreach ($folders as $folder)
@@ -49,7 +49,7 @@
         @endif
 
         @if ($documents->isNotEmpty())
-            <section class="a-resource">
+            <section class="a-resource e-search">
                 <div class="a-resource__head"><h2 class="a-resource__title">{{ __('office.member_search_files') }}</h2></div>
                 <ul class="a-results">
                     @foreach ($documents as $document)
