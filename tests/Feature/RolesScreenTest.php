@@ -59,7 +59,8 @@ class RolesScreenTest extends TestCase
         Notification::fake();
         $this->actingAs($this->admin)->get('/en/admin/roles/new?copy=editor')->assertOk()->assertSee('Copy of Editor');
 
-        $grant = ['content.read' => 'granted', 'content.approve' => 'granted', 'content.view_published' => 'granted'];
+        // Evening pass: approval is granted per content type.
+        $grant = ['content.read' => 'granted', 'content.approve_news' => 'granted', 'content.view_published' => 'granted'];
         $this->actingAs($this->admin)->post('/en/admin/roles', [
             'name_en' => 'Reviewer', 'name_fr' => 'Relecteur', 'name_pt' => 'Revisor', 'base_role' => 'viewer', 'grant' => $grant,
         ])->assertRedirect('/en/admin/roles/reviewer');
@@ -73,6 +74,8 @@ class RolesScreenTest extends TestCase
         $user->refresh();
         $this->assertSame($role->id, $user->custom_role_id);
         $this->assertTrue($user->hasPermission(Permission::ApproveContent));
+        $this->assertTrue($user->hasPermission(Permission::ApproveNews));
+        $this->assertFalse($user->hasPermission(Permission::ApprovePublications));
         $this->assertFalse($user->hasPermission(Permission::ManageContent));
         $this->assertSame('Reviewer', $user->roleLabel());
 

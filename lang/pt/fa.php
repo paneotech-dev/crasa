@@ -10,10 +10,12 @@ return [
     'type_news' => 'Notícia',
     'type_events' => 'Evento',
     'type_pages' => 'Página',
+    'type_social' => 'Publicação nas redes sociais',
     'types_publications' => 'Publicações',
     'types_news' => 'Notícias',
     'types_events' => 'Eventos e reuniões',
     'types_pages' => 'Páginas',
+    'types_social' => 'Publicações nas redes sociais',
 
     'panel_title' => 'Aprovação',
     'panel_state' => 'Estado',
@@ -88,6 +90,7 @@ return [
     'notify_approval_submitted' => ':actor enviou ":subject" para aprovação',
     'notify_approval_approved' => ':actor aprovou ":subject"; está publicado',
     'notify_approval_returned' => ':actor devolveu ":subject" com um comentário',
+    'notify_approval_withdrawn' => ':actor retirou ":subject" da revisão; voltou a ser um rascunho',
 
     'rules_title' => 'Regras de aprovação',
     'rules_note' => 'Por tipo de conteúdo: se um moderador tem de aprovar antes de ir para o site público.',

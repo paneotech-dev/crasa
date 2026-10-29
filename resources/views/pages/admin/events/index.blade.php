@@ -77,7 +77,7 @@
                                 <td class="a-table__num"><a href="{{ route('admin.delegates', ['locale' => $locale, 'meeting' => $meeting->slug]) }}">{{ number_format($meeting->delegate_registrations_count) }}<span class="c-sr"> {{ __('e.admin_delegates') }}, {{ $meeting->title }}</span></a></td>
                                 <td>
                                     <span class="e-admin-actions">
-                                        @can('update', $meeting)
+                                        @can('edit', $meeting)
                                             <a class="a-btn a-btn--secondary a-btn--small" href="{{ route('admin.meetings.edit', ['locale' => $locale, 'meeting' => $meeting->slug]) }}">{{ __('e.admin_edit') }}<span class="c-sr"> {{ $meeting->title }}</span></a>
                                         @endcan
                                         {{-- The public page answers the meeting policy's view rule; link it only for a reader it will answer. --}}

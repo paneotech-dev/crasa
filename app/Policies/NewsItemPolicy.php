@@ -24,9 +24,16 @@ class NewsItemPolicy
         return $user->hasPermission(Permission::ManageContent);
     }
 
-    public function update(User $user, NewsItem $newsItem): bool
+    /** Open the editor. An item In review opens read only. */
+    public function edit(User $user, NewsItem $newsItem): bool
     {
         return $user->hasPermission(Permission::ManageContent);
+    }
+
+    /** Save a change. Refused while the item is In review (locked until approved or returned). */
+    public function update(User $user, NewsItem $newsItem): bool
+    {
+        return $user->hasPermission(Permission::ManageContent) && ! \App\Support\Approvals::isLocked($newsItem);
     }
 
     public function sendForApproval(User $user, NewsItem $newsItem): bool

@@ -28,8 +28,12 @@
 
         @if ($aState === 'in_review')
             <p>{{ __('fa.panel_waiting', ['name' => $aLatest?->submitter?->name ?? __('fa.former_item'), 'date' => $aLatest?->submitted_at?->displayed()->isoFormat('D MMMM YYYY, HH:mm')]) }}</p>
-            @if ($aUser->hasPermission(\App\Enums\Permission::ApproveContent) || $aLatest?->submitted_by === $aUser->id)
+            <p class="a-notice a-notice--pending" data-approval-locked>{{ __('evening.locked_notice') }}</p>
+            @can('view', $aLatest)
                 <a class="a-btn a-btn--secondary" href="{{ route('admin.approvals.show', ['locale' => $aLocale, 'approval' => $aLatest->id]) }}">{{ __('fa.panel_open_decision') }}</a>
+            @endcan
+            @if (\App\Support\Approvals::mayWithdraw($aUser, $aLatest))
+                @include('pages.admin.approvals._withdraw', ['approval' => $aLatest, 'title' => \App\Support\Approvals::title($record)])
             @endif
         @elseif ($aState === 'published')
             <p>{{ __('fa.panel_published_help') }}</p>

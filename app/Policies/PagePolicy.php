@@ -31,9 +31,16 @@ class PagePolicy
         return $user->hasPermission(Permission::ManageContent);
     }
 
-    public function update(User $user, Page $page): bool
+    /** Open the editor. An item In review opens read only. */
+    public function edit(User $user, Page $page): bool
     {
         return $user->hasPermission(Permission::ManageContent);
+    }
+
+    /** Save a change. Refused while the item is In review (locked until approved or returned). */
+    public function update(User $user, Page $page): bool
+    {
+        return $user->hasPermission(Permission::ManageContent) && ! \App\Support\Approvals::isLocked($page);
     }
 
     /** Moving a page onto or off the public site. */

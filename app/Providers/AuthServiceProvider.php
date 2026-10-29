@@ -73,6 +73,8 @@ class AuthServiceProvider extends ServiceProvider
         Tag::class => TagPolicy::class,
         Page::class => PagePolicy::class,
         PageBlock::class => PageBlockPolicy::class,
+        \App\Models\Approval::class => \App\Policies\ApprovalPolicy::class,
+        \App\Models\SocialPost::class => \App\Policies\SocialPostPolicy::class,
         Sector::class => SectorPolicy::class,
         Submission::class => SubmissionPolicy::class,
         User::class => UserPolicy::class,

@@ -23,7 +23,16 @@ enum Permission: string
     // editing them, approving someone else's submission, and publishing
     // directly where a type's rule asks for an approval.
     case ReadContent = 'content.read';
+    // Evening pass: "approve" is held per content type. ApproveContent is
+    // no longer granted on its own: it answers "may this account approve
+    // anything at all" (the inbox, the sidebar item, the back-office door)
+    // and is true when any of the five type permissions below is held.
     case ApproveContent = 'content.approve';
+    case ApprovePublications = 'content.approve_publications';
+    case ApproveNews = 'content.approve_news';
+    case ApproveEvents = 'content.approve_events';
+    case ApprovePages = 'content.approve_pages';
+    case ApproveSocial = 'content.approve_social';
     case PublishWithoutApproval = 'content.publish_without_approval';
 
     // Regulatory data
@@ -46,6 +55,28 @@ enum Permission: string
     case AssignRoles = 'users.assign_roles';
     case ReadAuditLog = 'audit.read';
     case ManageSettings = 'settings.manage';
+
+    /**
+     * The approve permission for one moderated content type, by the key
+     * App\Support\Approvals::TYPES uses.
+     */
+    public static function approveFor(string $type): ?self
+    {
+        return match ($type) {
+            'publications' => self::ApprovePublications,
+            'news' => self::ApproveNews,
+            'events' => self::ApproveEvents,
+            'pages' => self::ApprovePages,
+            'social' => self::ApproveSocial,
+            default => null,
+        };
+    }
+
+    /** @return list<self> */
+    public static function approveTypes(): array
+    {
+        return [self::ApprovePublications, self::ApproveNews, self::ApproveEvents, self::ApprovePages, self::ApproveSocial];
+    }
 
     /**
      * What an administrator reads on screen 13. The code stays the stored
@@ -82,6 +113,11 @@ enum Permission: string
             self::ManageContent,
             self::PublishContent,
             self::ApproveContent,
+            self::ApprovePublications,
+            self::ApproveNews,
+            self::ApproveEvents,
+            self::ApprovePages,
+            self::ApproveSocial,
             self::PublishWithoutApproval,
             self::DeleteContent,
             self::EditHomepage,

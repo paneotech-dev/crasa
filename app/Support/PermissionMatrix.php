@@ -46,6 +46,11 @@ final class PermissionMatrix
             Permission::EditHomepage->value => [$a => self::Y, $e => self::Y, $r => self::N, $c => self::N, $v => self::N, $m => self::N, $au => self::N],
             Permission::ReadContent->value => [$a => self::Y, $e => self::Y, $r => self::N, $c => self::N, $v => self::N, $m => self::Y, $au => self::Y],
             Permission::ApproveContent->value => [$a => self::Y, $e => self::N, $r => self::N, $c => self::N, $v => self::N, $m => self::Y, $au => self::N],
+            Permission::ApprovePublications->value => [$a => self::Y, $e => self::N, $r => self::N, $c => self::N, $v => self::N, $m => self::Y, $au => self::N],
+            Permission::ApproveNews->value => [$a => self::Y, $e => self::N, $r => self::N, $c => self::N, $v => self::N, $m => self::Y, $au => self::N],
+            Permission::ApproveEvents->value => [$a => self::Y, $e => self::N, $r => self::N, $c => self::N, $v => self::N, $m => self::Y, $au => self::N],
+            Permission::ApprovePages->value => [$a => self::Y, $e => self::N, $r => self::N, $c => self::N, $v => self::N, $m => self::Y, $au => self::N],
+            Permission::ApproveSocial->value => [$a => self::Y, $e => self::N, $r => self::N, $c => self::N, $v => self::N, $m => self::Y, $au => self::N],
             Permission::PublishWithoutApproval->value => [$a => self::Y, $e => self::N, $r => self::N, $c => self::N, $v => self::N, $m => self::N, $au => self::N],
             Permission::DeleteContent->value => [$a => self::Y, $e => self::N, $r => self::N, $c => self::N, $v => self::N, $m => self::N, $au => self::N],
 

@@ -116,6 +116,9 @@
                 <p class="a-notice">{{ __('fa.show_decided', ['state' => __('fa.state_'.$st), 'name' => $approval->decider?->name ?? '', 'date' => $approval->decided_at?->displayed()->isoFormat('D MMMM YYYY, HH:mm')]) }}</p>
                 @if ($approval->comment)<blockquote class="aw-quote">{{ $approval->comment }}</blockquote>@endif
             @endif
+            @if ($mayWithdraw ?? false)
+                @include('pages.admin.approvals._withdraw', ['approval' => $approval, 'title' => $title])
+            @endif
 
             <section class="a-panel" aria-labelledby="aw-history">
                 <div class="a-panel__head"><h2 id="aw-history">{{ __('fa.show_history') }}</h2></div>

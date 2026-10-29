@@ -67,7 +67,9 @@ class SocialPostAdminController extends Controller
 
     public function update(Request $request, SocialPost $post): RedirectResponse
     {
-        Gate::authorize(Permission::ManageContent->value);
+        \App\Support\Approvals::refuseIfLocked($post);
+
+        Gate::authorize('update', $post);
 
         $data = $this->validated($request, $post);
         $changes = [
@@ -86,11 +88,17 @@ class SocialPostAdminController extends Controller
         return back()->with('status', $this->savedMessage($post));
     }
 
-    public function publish(SocialPost $post): RedirectResponse
+    /**
+     * Publishing directly. Where the rule for social posts is "one
+     * approval" (the default) only an administrator may; an editor sends the
+     * post for approval from the panel instead.
+     */
+    public function publish(Request $request, SocialPost $post): RedirectResponse
     {
-        Gate::authorize(Permission::PublishContent->value);
+        Gate::authorize('publish', $post);
 
         $post->update(['status' => 'published', 'published_at' => now()]);
+        \App\Support\Approvals::recordDirectPublish($post, $request->user());
 
         return back()->with('status', __('fb.social_published'));
     }
