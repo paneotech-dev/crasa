@@ -79,25 +79,42 @@
             @endforeach
         </div>
 
-        <a class="a-top__icon" href="{{ route('notifications', ['locale' => $locale]) }}"
-           aria-label="{{ trans_choice('admin.notifications_count', $unread, ['count' => $unread]) }}">
-            <x-shell-icon name="bell" :size="19" />
-            @if ($unread > 0)
-                <span class="a-top__badge" aria-hidden="true">{{ $unread > 9 ? '9+' : $unread }}</span>
-            @endif
-        </a>
+        {{-- Day 3, notify. The bell opens the latest notices as a
+             disclosure: a details element, so it opens with no script, and
+             every entry is a link to its item. The count is in the label
+             as well as on the badge. --}}
+        @if ($user)
+            <details class="a-bell" data-bell>
+                <summary class="a-top__icon" aria-label="{{ trans_choice('d3_notify.bell_label', $unread, ['count' => $unread]) }}">
+                    <x-shell-icon name="bell" :size="19" />
+                    @if ($unread > 0)
+                        <span class="a-top__badge" aria-hidden="true">{{ $unread > 9 ? '9+' : $unread }}</span>
+                    @endif
+                </summary>
+                <div class="a-bell__panel">
+                    <div class="a-bell__head">
+                        <h2 class="a-bell__title">{{ __('d3_notify.bell_heading') }}</h2>
+                        <span class="a-bell__count">{{ trans_choice('notifications.unread_count', $unread, ['count' => $unread]) }}</span>
+                    </div>
+                    @include('partials.notifications.latest', ['limit' => 8])
+                    <div class="a-bell__foot">
+                        <a href="{{ route('notifications', ['locale' => $locale]) }}">{{ __('d3_notify.view_all') }}</a>
+                        @if ($unread > 0)
+                            <form method="POST" action="{{ route('notifications.read-all', ['locale' => $locale]) }}">
+                                @csrf
+                                <button class="n-latest__read" type="submit">{{ __('notifications.mark_all_read') }}</button>
+                            </form>
+                        @endif
+                    </div>
+                </div>
+            </details>
+        @endif
 
-        {{-- Help opens the guide for this account's role, on the workshop
-             site, in a new tab (UX-17). Every role has a section. --}}
-        @if ($user && config('crasa.role_guide_url'))
-            @php
-                $guideAnchor = [
-                    'administrator' => 'admin', 'editor' => 'editor', 'member_state_rep' => 'member',
-                    'committee_member' => 'committee', 'viewer' => 'everyone',
-                ][$user->role->value] ?? 'everyone';
-            @endphp
-            <a class="a-top__icon" href="{{ config('crasa.role_guide_url') }}#{{ $guideAnchor }}"
-               target="_blank" rel="noopener" aria-label="{{ __('office.role_guide') }}">
+        {{-- Help opens the help page for this screen, keyed by its route
+             name; that page links on to the training guide for the role. --}}
+        @if ($user && Route::has('screen-help') && request()->route()?->getName())
+            <a class="a-top__icon" href="{{ route('screen-help', ['locale' => $locale, 'screen' => request()->route()->getName(), 'from' => request()->getRequestUri()]) }}"
+               aria-label="{{ __('d3_notify.help_icon') }}">
                 <x-shell-icon name="help" :size="19" />
             </a>
         @endif
@@ -112,3 +129,7 @@
         @endif
     </div>
 </header>
+
+@push('scripts')
+    <script src="{{ \App\Support\Assets::url('js/bell.js') }}" defer></script>
+@endpush

@@ -3,8 +3,8 @@
 namespace App\Notifications;
 
 use App\Models\Announcement;
+use App\Notifications\Concerns\InApp;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 /**
@@ -19,46 +19,24 @@ use Illuminate\Notifications\Notification;
  */
 class AnnouncementPublished extends Notification
 {
-    use Queueable;
+    use InApp, Queueable;
 
     public function __construct(public readonly Announcement $announcement) {}
 
-    /** @return list<string> */
-    public function via(object $notifiable): array
+    protected function defaultCategory(): string
     {
-        // The database channel always, so the notice survives a mail
-        // failure and can be read in the platform. Mail only where the
-        // account has asked for announcements.
-        $channels = ['database'];
-
-        if (in_array('announcements', $notifiable->notification_preferences ?? [], true)) {
-            $channels[] = 'mail';
-        }
-
-        return $channels;
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        $locale = $notifiable->preferred_locale ?? 'en';
-
-        return (new MailMessage)
-            ->subject(__('announcements.notify_subject', [], $locale))
-            ->line($this->announcement->translated('title', '', $locale))
-            ->action(__('announcements.notify_action', [], $locale), route('announcements.show', [
-                'locale' => $locale,
-                'announcement' => $this->announcement->slug,
-            ]));
+        return 'announcement';
     }
 
     /** @return array<string, mixed> */
     public function toArray(object $notifiable): array
     {
-        return [
+        return $this->withInApp([
             'type' => 'announcement',
             'announcement_id' => $this->announcement->id,
             'slug' => $this->announcement->slug,
-            'title' => $this->announcement->translated('title'),
-        ];
+            'title' => $this->announcement->translated('title', '', $notifiable->preferred_locale ?? 'en'),
+            'url' => route('announcements.show', ['locale' => $notifiable->preferred_locale ?? 'en', 'announcement' => $this->announcement->slug]),
+        ]);
     }
 }

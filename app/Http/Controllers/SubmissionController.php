@@ -145,10 +145,16 @@ class SubmissionController extends Controller
 
     private function notifySecretariat(Submission $submission): void
     {
-        User::query()
-            ->whereIn('role', ['administrator', 'editor'])
-            ->where('status', 'active')
-            ->get()
-            ->each(fn ($user) => $user->notify(new SubmissionStateChanged($submission)));
+        // Everyone who validates returns and may open this one in the
+        // review screen: the request is theirs to act on.
+        \App\Support\Notifier::send(
+            \App\Support\Notifier::activeUsers(),
+            new SubmissionStateChanged($submission),
+            'approval_request',
+            'submission:'.$submission->id.':submitted:'.$submission->updated_at?->timestamp,
+            fn (User $user) => $user->hasPermission(\App\Enums\Permission::ValidateSubmission)
+                && \Illuminate\Support\Facades\Gate::forUser($user)->allows('enter-back-office')
+                && \Illuminate\Support\Facades\Gate::forUser($user)->allows('view', $submission),
+        );
     }
 }

@@ -2,13 +2,14 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Concerns\InApp;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
 /** Another administrator acted on an account, a role or a publication (F10). */
 class AdminActivity extends Notification
 {
-    use Queueable;
+    use InApp, Queueable;
 
     public function __construct(
         public readonly string $event,
@@ -16,15 +17,14 @@ class AdminActivity extends Notification
         public readonly string $url,
     ) {}
 
-    /** @return list<string> */
-    public function via(object $notifiable): array
+    protected function defaultCategory(): string
     {
-        return ['database'];
+        return 'other';
     }
 
     /** @return array<string, mixed> */
     public function toArray(object $notifiable): array
     {
-        return ['type' => 'admin_activity', 'event' => $this->event, 'title' => $this->line, 'url' => $this->url];
+        return $this->withInApp(['type' => 'admin_activity', 'event' => $this->event, 'title' => $this->line, 'url' => $this->url]);
     }
 }

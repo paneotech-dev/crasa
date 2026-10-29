@@ -41,6 +41,8 @@ return [
     'trigger_approval' => 'Modération des contenus',
     'trigger_admin_activity' => 'Action d\'un autre administrateur',
     'trigger_announcement_note' => 'Avis aux membres, parfois limites a un secteur ou a un comite.',
+    'trigger_registration_confirmed' => 'Une inscription à une réunion est confirmée',
+    'trigger_registration_confirmed_note' => 'Votre inscription, ou celle d\'une personne de votre État membre, acceptée par le Secrétariat.',
     'filed' => "':file' a ete depose dans :committee.",
     'meeting_moved' => "':title' a lieu desormais le :date.",
 

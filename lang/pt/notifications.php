@@ -41,6 +41,8 @@ return [
     'trigger_approval' => 'Moderação de conteúdos',
     'trigger_admin_activity' => 'Ação de outro administrador',
     'trigger_announcement_note' => 'Avisos aos membros, por vezes limitados a um setor ou a um comite.',
+    'trigger_registration_confirmed' => 'Uma inscrição numa reunião é confirmada',
+    'trigger_registration_confirmed_note' => 'A sua inscrição, ou uma do seu Estado-membro, aceite pelo Secretariado.',
     'filed' => "':file' foi entregue em :committee.",
     'meeting_moved' => "':title' passa a ser a :date.",
 

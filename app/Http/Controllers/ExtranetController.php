@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\NotificationTrigger;
 use App\Models\AuditLog;
 use App\Models\Committee;
 use App\Models\Document;
 use App\Models\Folder;
 use App\Models\Meeting;
 use App\Services\CalendarFeed;
-use App\Services\NotifiesMembers;
 use App\Support\CountryDashboard;
 use App\Support\Documents\DocumentStore;
 use App\Support\Documents\FolderAccess;
 use App\Support\Documents\PdfText;
 use App\Support\ExtranetNavigation;
 use App\Support\LocalTime;
+use App\Support\Notifier;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -154,23 +153,11 @@ class ExtranetController extends Controller
             $added[] = $document->original_filename;
 
             /*
-             * RP-05: a document added to my committee. Fired here rather than
-             * on the model, because a document created by the legacy import or
-             * by a seeder is not something to wake fourteen regulators about.
+             * Everyone who may see the folder is told, except the uploader
+             * (client brief item 7). DocumentStore::add also fires
+             * DocumentAdded; the notifier writes one notice per document.
              */
-            if ($folder->committee !== null) {
-                app(NotifiesMembers::class)->fire(
-                    NotificationTrigger::CommitteeDocument,
-                    __('notifications.filed', [
-                        'file' => $document->original_filename,
-                        'committee' => $folder->committee->name,
-                    ]),
-                    route('extranet.folder', ['locale' => app()->getLocale(), 'folder' => $folder->id]),
-                    committee: $folder->committee,
-                    except: $request->user(),
-                    payload: ['document_id' => $document->id],
-                );
-            }
+            Notifier::documentAdded($document, $folder, $request->user());
         }
 
         return back()->with('status', count($added) === 1

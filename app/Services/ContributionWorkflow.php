@@ -116,7 +116,7 @@ final class ContributionWorkflow
         $contributor = $instrument->contributor;
 
         if ($contributor !== null && ! $contributor->is($actor)) {
-            $contributor->notify(new RegulatoryActivity(
+            \App\Support\Notifier::send([$contributor], new RegulatoryActivity(
                 NotificationTrigger::SubmissionDecision,
                 __('contributions.notify_'.$target->value, [
                     'title' => $instrument->translated('title', $instrument->reference_number ?? $instrument->slug),
@@ -126,7 +126,7 @@ final class ContributionWorkflow
                     'instrument' => $instrument->slug,
                 ]),
                 ['instrument_id' => $instrument->id]
-            ));
+            ), 'decision', null, fn (User $user) => $user->country_id !== null && $user->country_id === $instrument->country_id);
         }
 
         if ($target !== ContributionState::Validated) {

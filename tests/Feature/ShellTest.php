@@ -112,9 +112,9 @@ class ShellTest extends TestCase
             $this->assertStringContainsString('>'.$short.'</span>', $html);
         }
 
-        // The bell, the help icon, the initials. Help opens the role guide
-        // in a new tab since 29 October 2026 (UX-17).
-        $this->assertStringContainsString(e(__('office.role_guide')), $html);
+        // The bell, the help icon, the initials. Help opens the help page
+        // for this screen since Day 3 (client brief item 7).
+        $this->assertStringContainsString(e(__('d3_notify.help_icon')), $html);
         $this->assertStringContainsString('a-top__avatar', $html);
 
         /*
