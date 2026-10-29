@@ -24,4 +24,9 @@ return [
     'auth_side_access' => 'Les comptes sont ouverts par le Secrétariat à la demande d\'une autorité membre.',
     'auth_side_contact' => 'Demander un accès au Secrétariat',
     'auth_reset_help' => 'Le lien ne sert qu\'une fois et expire au bout d\'une heure. Vérifiez vos courriers indésirables s\'il n\'arrive pas.',
+    'browse_events' => 'Réunions de l\'AGA, des comités et des équipes spéciales.',
+    'browse_about' => 'L\'association, sa gouvernance et le Secrétariat à Gaborone.',
+    'error_links_title' => 'Les principales rubriques',
+    'error_cta_title' => 'Vous cherchez toujours quelque chose ?',
+    'error_cta_text' => 'Le Secrétariat à Gaborone peut vous orienter vers le bon document ou la bonne page.',
 ];

@@ -24,4 +24,9 @@ return [
     'auth_side_access' => 'Accounts are opened by the Secretariat on the instruction of a member authority.',
     'auth_side_contact' => 'Ask the Secretariat for access',
     'auth_reset_help' => 'The link works once and expires after an hour. Check your spam folder if it does not arrive.',
+    'browse_events' => 'Meetings of the AGM, the committees and the task teams.',
+    'browse_about' => 'The association, its governance and the Secretariat in Gaborone.',
+    'error_links_title' => 'The main sections',
+    'error_cta_title' => 'Still looking for something?',
+    'error_cta_text' => 'The Secretariat in Gaborone can point you to the right document or page.',
 ];

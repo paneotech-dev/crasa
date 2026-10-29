@@ -24,4 +24,9 @@ return [
     'auth_side_access' => 'As contas são abertas pelo Secretariado a pedido de uma autoridade membro.',
     'auth_side_contact' => 'Pedir acesso ao Secretariado',
     'auth_reset_help' => 'A ligação funciona uma vez e expira ao fim de uma hora. Verifique a pasta de spam se não chegar.',
+    'browse_events' => 'Reuniões da AGA, dos comités e das equipas de trabalho.',
+    'browse_about' => 'A associação, a sua governação e o Secretariado em Gaborone.',
+    'error_links_title' => 'As principais secções',
+    'error_cta_title' => 'Ainda à procura de algo?',
+    'error_cta_text' => 'O Secretariado em Gaborone pode indicar-lhe o documento ou a página certa.',
 ];
