@@ -85,6 +85,9 @@ class DisplayOptionsTest extends TestCase
         $this->assertStringContainsString('html.a11y-pause', $css);
         $this->assertStringContainsString('html.a11y-dyslexia', $css);
         $this->assertStringContainsString('html.a11y-spacing', $css);
+        // High contrast reaches the UI system tokens as well.
+        $this->assertStringContainsString('--u-muted:#000000', $css);
+        $this->assertStringContainsString('--u-tint-green:#FFFFFF', $css);
     }
 
     public function test_the_skip_link_leads_to_the_main_region(): void

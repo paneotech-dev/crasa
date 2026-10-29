@@ -299,6 +299,16 @@ html.a11y-contrast {
   --c-amber:#000000; --c-red:#B00020;
   --e-1:none; --e-2:0 0 0 2px #000000; --e-3:0 0 0 2px #000000;
 }
+/* The UI system tokens (ui.css) follow the same rule, so every page built
+   from u- components goes black, white and one green as well. */
+html.a11y-contrast {
+  --u-tint-green:#FFFFFF; --u-pale:#FFFFFF; --u-tint-blue:#FFFFFF; --u-white:#FFFFFF;
+  --u-ink:#000000; --u-muted:#000000; --u-blue-ink:#000000; --u-blue:#000000;
+  --u-line:#000000; --u-focus:#000000;
+  --u-shadow:none; --u-shadow-lift:0 0 0 2px #000000;
+  --c-link:#006B3B; --c-blue-ink:#000000; --c-blue:#000000; --c-blue-icon:#000000; --c-tint-blue:#FFFFFF;
+  --focus-ring:#000000;
+}
 html.a11y-contrast body { background: #FFFFFF; color: #000000; }
 html.a11y-contrast main a:not(.c-btn),
 html.a11y-contrast .c-footer a { text-decoration-line: underline; }
