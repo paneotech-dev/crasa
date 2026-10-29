@@ -16,6 +16,7 @@
 @endsection
 
 @section('content')
+    @include('pages.admin.approvals._panel', ['record' => $page])
 
     {{-- Workflow. The buttons are only what this account may actually do:
          the controller re-checks both the transition and the permission,

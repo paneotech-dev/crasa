@@ -29,7 +29,7 @@ class User extends Authenticatable implements HasLocalePreference
     use Auditable, HasFactory, MarksSampleData, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'country_id', 'authority_id', 'role',
+        'name', 'email', 'password', 'country_id', 'authority_id', 'role', 'custom_role_id',
         'status', 'theme', 'dismissed_hints', 'preferred_locale', 'notification_preferences',
         'digest_frequency', 'digest_sent_at', 'last_seen_at',
         'is_sample',
@@ -246,7 +246,24 @@ class User extends Authenticatable implements HasLocalePreference
 
     public function grantFor(Permission $permission): Grant
     {
+        // A role made on the roles screen replaces the built-in grid; the
+        // built-in role still sets country scope and two-factor.
+        if ($this->custom_role_id !== null && ($key = $this->customRole?->key) !== null) {
+            return PermissionMatrix::grantForKey($key, $permission);
+        }
+
         return PermissionMatrix::grant($this->role, $permission);
+    }
+
+    public function customRole(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\RoleDefinition::class, 'custom_role_id');
+    }
+
+    /** The role as readers see it: the custom role's name where there is one. */
+    public function roleLabel(): string
+    {
+        return $this->customRole?->label() ?? $this->role->label();
     }
 
     /**

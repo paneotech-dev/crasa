@@ -124,7 +124,10 @@ class PageEditingTest extends TestCase
         $representative = User::factory()->memberStateRep()->create();
 
         $this->assertTrue($policy->update($this->editor, $this->page));
-        $this->assertTrue($policy->publish($this->editor, $this->page));
+        // Day 2 (F2): pages need a moderator's approval by default, so an
+        // editor edits but does not publish; the administrator still may.
+        $this->assertFalse($policy->publish($this->editor, $this->page));
+        $this->assertTrue($policy->publish($this->administrator, $this->page));
 
         $this->assertFalse($policy->update($representative, $this->page));
         $this->assertFalse($policy->publish($representative, $this->page));

@@ -36,6 +36,8 @@
         </div>
     @endif
 
+    @include('pages.admin.approvals._panel', ['record' => $record])
+
     <form method="POST" action="{{ $isNew
         ? route('admin.resources.store', ['locale' => app()->getLocale(), 'resource' => $definition->key])
         : route('admin.resources.update', ['locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $record->getKey()]) }}">

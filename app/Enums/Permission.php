@@ -19,6 +19,12 @@ enum Permission: string
     case PublishContent = 'content.publish';
     case EditHomepage = 'content.edit_homepage';
     case DeleteContent = 'content.delete';
+    // Day 2: moderated publishing. Reading the back office lists without
+    // editing them, approving someone else's submission, and publishing
+    // directly where a type's rule asks for an approval.
+    case ReadContent = 'content.read';
+    case ApproveContent = 'content.approve';
+    case PublishWithoutApproval = 'content.publish_without_approval';
 
     // Regulatory data
     case ViewPublishedIndicators = 'data.view_published';
@@ -75,6 +81,8 @@ enum Permission: string
         return [
             self::ManageContent,
             self::PublishContent,
+            self::ApproveContent,
+            self::PublishWithoutApproval,
             self::DeleteContent,
             self::EditHomepage,
             self::EditTranslations,

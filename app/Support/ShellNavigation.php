@@ -57,6 +57,9 @@ final class ShellNavigation
             'overview' => [
                 ['key' => 'dashboard', 'route' => 'admin.dashboard', 'icon' => 'dashboard', 'permission' => null],
                 ['key' => 'audit', 'route' => 'admin.audit', 'icon' => 'audit', 'permission' => Permission::ReadAuditLog],
+                // F2. 'badge' is the count the sidebar shows beside the label.
+                ['key' => 'approvals', 'route' => 'admin.approvals', 'icon' => 'confirmations', 'permission' => Permission::ApproveContent,
+                    'badge' => fn () => \App\Support\Approvals::awaitingCountFor(auth()->user())],
             ],
             'content' => [
                 ['key' => 'pages', 'route' => 'admin.pages', 'icon' => 'pages', 'permission' => Permission::ManageContent],
@@ -193,6 +196,7 @@ final class ShellNavigation
                 $url = route($definition['route'], $params + ($definition['query'] ?? []));
 
                 $items[] = [
+                    'badge' => isset($definition['badge']) ? ($definition['badge'])() : null,
                     'key' => $definition['key'],
                     'label' => $definition['label'] ?? __($namespace.'.nav_'.$definition['key']),
                     'url' => $url,

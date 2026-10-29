@@ -130,6 +130,8 @@ class AuthServiceProvider extends ServiceProvider
          */
         Gate::define('enter-back-office', fn (User $user) => $user->hasAnyPermission([
             Permission::ManageContent,
+            Permission::ReadContent,
+            Permission::ApproveContent,
             Permission::ManageUsers,
             Permission::ReadAuditLog,
             Permission::ValidateSubmission,

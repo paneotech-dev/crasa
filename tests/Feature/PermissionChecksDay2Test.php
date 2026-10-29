@@ -125,7 +125,9 @@ class PermissionChecksDay2Test extends TestCase
         $item = NewsItem::sole();
 
         $this->actingAs($editor)->put("/en/admin/data/news/{$item->id}", [
-            'category' => 'press_release', 'status' => 'published', 'published_at' => '2026-10-28',
+            // Day 2 (F2): an editor keeps it a draft; publishing goes
+            // through a moderator (ApprovalWorkflowTest).
+            'category' => 'press_release', 'status' => 'draft', 'published_at' => '2026-10-28',
             'en' => ['title' => 'Workshop news item, edited', 'summary' => 'A summary.', 'body' => 'A body.'],
         ])->assertRedirect()->assertSessionHasNoErrors();
         $this->assertSame('press_release', $item->fresh()->category->value);

@@ -699,6 +699,18 @@ Route::prefix('{locale}')
                 Route::put('announcements/{announcement}/unpublish', [AnnouncementAdminController::class, 'unpublish'])->name('announcements.unpublish');
 
                 Route::get('audit', [AuditLogController::class, 'index'])->name('audit');
+
+                /*
+                 * Moderated publishing (F2): the awaiting approval inbox,
+                 * one item's decision, sending an item, the rules page.
+                 */
+                Route::get('approvals', [\App\Http\Controllers\Admin\ApprovalController::class, 'index'])->name('approvals');
+                Route::get('approvals/rules', [\App\Http\Controllers\Admin\ApprovalController::class, 'rules'])->name('approvals.rules');
+                Route::put('approvals/rules', [\App\Http\Controllers\Admin\ApprovalController::class, 'updateRules'])->name('approvals.rules.update');
+                Route::post('approvals/send/{type}/{id}', [\App\Http\Controllers\Admin\ApprovalController::class, 'submit'])->whereNumber('id')->name('approvals.submit');
+                Route::get('approvals/{approval}', [\App\Http\Controllers\Admin\ApprovalController::class, 'show'])->whereNumber('approval')->name('approvals.show');
+                Route::put('approvals/{approval}/approve', [\App\Http\Controllers\Admin\ApprovalController::class, 'approve'])->whereNumber('approval')->name('approvals.approve');
+                Route::put('approvals/{approval}/return', [\App\Http\Controllers\Admin\ApprovalController::class, 'returnItem'])->whereNumber('approval')->name('approvals.return');
             });
         });
 

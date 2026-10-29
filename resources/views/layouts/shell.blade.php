@@ -40,6 +40,7 @@
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/grid.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/base.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/admin-workflow.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/print.css') }}" media="print">
     @stack('styles')
 </head>

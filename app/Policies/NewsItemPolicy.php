@@ -11,12 +11,12 @@ class NewsItemPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission(Permission::ManageContent);
+        return $user->hasAnyPermission([Permission::ManageContent, Permission::ReadContent, Permission::ApproveContent]);
     }
 
     public function view(User $user, NewsItem $newsItem): bool
     {
-        return $user->hasPermission(Permission::ManageContent);
+        return $user->hasAnyPermission([Permission::ManageContent, Permission::ReadContent, Permission::ApproveContent]);
     }
 
     public function create(User $user): bool
@@ -29,9 +29,14 @@ class NewsItemPolicy
         return $user->hasPermission(Permission::ManageContent);
     }
 
+    public function sendForApproval(User $user, NewsItem $newsItem): bool
+    {
+        return $user->hasPermission(Permission::ManageContent);
+    }
+
     public function publish(User $user, NewsItem $newsItem): bool
     {
-        return $user->hasPermission(Permission::PublishContent);
+        return \App\Support\Approvals::mayPublishDirectly($user, $newsItem);
     }
 
     /*

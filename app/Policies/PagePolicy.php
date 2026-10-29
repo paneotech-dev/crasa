@@ -18,12 +18,12 @@ class PagePolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission(Permission::ManageContent);
+        return $user->hasAnyPermission([Permission::ManageContent, Permission::ReadContent, Permission::ApproveContent]);
     }
 
     public function view(User $user, Page $page): bool
     {
-        return $user->hasPermission(Permission::ManageContent);
+        return $user->hasAnyPermission([Permission::ManageContent, Permission::ReadContent, Permission::ApproveContent]);
     }
 
     public function create(User $user): bool
@@ -37,9 +37,14 @@ class PagePolicy
     }
 
     /** Moving a page onto or off the public site. */
+    public function sendForApproval(User $user, Page $page): bool
+    {
+        return $user->hasPermission(Permission::ManageContent);
+    }
+
     public function publish(User $user, Page $page): bool
     {
-        return $user->hasPermission(Permission::PublishContent);
+        return \App\Support\Approvals::mayPublishDirectly($user, $page);
     }
 
     /**

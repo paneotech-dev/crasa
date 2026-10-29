@@ -142,8 +142,13 @@ class ResourceController extends Controller
 
         $record = new $definition->model;
         $record->fill($this->attributes($definition, $data));
+        $wentLive = $this->guardPublishing($record);
         $this->assignSlug($definition, $record, $data);
         $record->save();
+
+        if ($wentLive) {
+            \App\Support\Approvals::recordDirectPublish($record, $request->user());
+        }
 
         $this->writeTranslations($definition, $record, $data, $request->user()->id);
 
@@ -177,7 +182,12 @@ class ResourceController extends Controller
         $data = $request->validate($this->rules($definition, $record, $request));
 
         $record->fill($this->attributes($definition, $data));
+        $wentLive = $this->guardPublishing($record);
         $record->save();
+
+        if ($wentLive) {
+            \App\Support\Approvals::recordDirectPublish($record, $request->user());
+        }
 
         $this->writeTranslations($definition, $record, $data, $request->user()->id);
 
@@ -308,6 +318,37 @@ class ResourceController extends Controller
         }
 
         return $out;
+    }
+
+    /**
+     * F2. The generic editor saved news status and publication visibility
+     * without asking the publish policy (ROLES_AND_WORKFLOW finding 2).
+     * Making a moderated item public here now needs the publish ability,
+     * which the approval rules decide; everyone else is told to send it for
+     * approval. Returns whether this save puts the item live.
+     */
+    private function guardPublishing(Model $record): bool
+    {
+        if (\App\Support\Approvals::typeOf($record) === null) {
+            return false;
+        }
+
+        $wasPublic = $record->exists && \App\Support\Approvals::isPublic(
+            (clone $record)->setRawAttributes($record->getRawOriginal())
+        );
+        $willBePublic = \App\Support\Approvals::isPublic($record);
+
+        if ($wasPublic || ! $willBePublic) {
+            return false;
+        }
+
+        if (Gate::denies('publish', $record)) {
+            $field = $record instanceof \App\Models\Publication ? 'is_public' : 'status';
+
+            throw ValidationException::withMessages([$field => __('fa.publish_needs_approval')]);
+        }
+
+        return true;
     }
 
     private function definition(string $resource): Resource

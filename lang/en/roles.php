@@ -11,4 +11,6 @@ return [
     'member_state_rep' => 'Member State Representative',
     'committee_member' => 'Committee Member',
     'viewer' => 'Viewer',
+    'moderator' => 'Moderator',
+    'auditor' => 'Auditor',
 ];
