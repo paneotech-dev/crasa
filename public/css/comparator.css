@@ -116,7 +116,7 @@
   .c-cmp__datatable, .c-cmp__datatable tbody, .c-cmp__datatable tr { display: block; width: 100%; }
   .c-cmp__datatable tr { border: 1px solid var(--u-line, #D9E3EC); border-radius: 12px; margin-bottom: 12px; padding: 8px 0; background: #FFFFFF; }
   .c-cmp__datatable tbody tr:nth-child(even) td, .c-cmp__datatable tbody tr:nth-child(even) th { background: transparent; }
-  .c-cmp__datatable th[scope="row"], .c-cmp__datatable td { display: grid; grid-template-columns: 7.5em 1fr; gap: 8px; border: 0; padding: 4px 16px; text-align: left; max-width: none; }
+  .c-cmp__datatable th[scope="row"], .c-cmp__datatable td { display: grid; grid-template-columns: 7.5em minmax(0, 1fr); gap: 8px; border: 0; padding: 4px 16px; text-align: left; max-width: none; overflow-wrap: anywhere; }
   .c-cmp__datatable td::before, .c-cmp__datatable th[scope="row"]::before { content: attr(data-label); font-weight: 600; font-size: 14px; color: var(--u-muted, #3F5264); font-style: normal; }
   .c-cmp__datatable td:empty { display: none; }
 }
