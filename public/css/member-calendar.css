@@ -75,3 +75,6 @@
 @media print {
   .mc-filter, .mc-month__nav, .mc-export { display: none !important; }
 }
+/* The back-office link colour must not reach the chips (axe, 4.5:1). */
+.mc-filter .u-chip { color: var(--u-ink); }
+.mc-filter .u-chip[aria-current="true"] { background: var(--u-green-deep, #0B5F3E); border-color: var(--u-green-deep, #0B5F3E); color: #FFFFFF; }

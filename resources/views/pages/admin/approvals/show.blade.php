@@ -30,7 +30,7 @@
                 @endforeach
                 @php $body = $approval->snapshot['translations']['body.'.$locale] ?? $approval->snapshot['translations']['summary.'.$locale] ?? $approval->snapshot['translations']['body.en'] ?? $approval->snapshot['translations']['summary.en'] ?? null; @endphp
                 @if ($body)
-                    <div class="aw-body">{!! nl2br(e(\Illuminate\Support\Str::limit(strip_tags($body), 1500))) !!}</div>
+                    <div class="aw-body" role="region" aria-label="{{ __('fa.show_preview') }}" tabindex="0">{!! nl2br(e(\Illuminate\Support\Str::limit(strip_tags($body), 1500))) !!}</div>
                 @endif
                 <p>
                     @if ($item instanceof \App\Models\Page)
@@ -57,7 +57,7 @@
                     @if ($history->where('state', 'approved')->where('id', '<', $approval->id)->isEmpty())
                         <p class="a-hint">{{ __('fa.show_first') }}</p>
                     @endif
-                    <div class="a-tablewrap">
+                    <div class="a-tablewrap" role="region" aria-labelledby="aw-changes" tabindex="0">
                         <table class="a-table aw-table aw-diff">
                             <caption class="c-sr">{{ __('fa.show_changes') }}</caption>
                             <thead><tr>
