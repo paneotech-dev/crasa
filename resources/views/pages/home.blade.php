@@ -417,7 +417,7 @@
         @endif
         <div class="k-mx">
             <div class="k-mapbox">
-                <x-region-map :countries="$countries" />
+                <x-region-map :countries="$countries" static />
             </div>
             <ul class="k-dir" role="list" data-stagger>
                 @foreach ($countries as $country)
