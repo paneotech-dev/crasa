@@ -219,6 +219,11 @@ class ResourceController extends Controller
             ]);
         }
 
+        // Day 3: refused while anything still points at it, naming what.
+        if (($refusal = $definition->refusalFor($record)) !== null) {
+            throw ValidationException::withMessages(['record' => $refusal]);
+        }
+
         /*
          * A model with no soft deletes is destroyed for good, so the
          * confirmation has to have been typed rather than clicked past.
@@ -408,6 +413,12 @@ class ResourceController extends Controller
             foreach ($definition->translatable as $field) {
                 $rules[$locale.'.'.$field] = ['nullable', 'string', 'max:20000'];
             }
+
+            if ($locale !== Locales::FALLBACK) {
+                foreach ($definition->localised as $field) {
+                    $rules['localised.'.$locale.'.'.$field] = ['nullable', 'string', 'max:2000'];
+                }
+            }
         }
 
         $rules['confirm'] = ['nullable', 'string', 'max:255'];
@@ -457,9 +468,11 @@ class ResourceController extends Controller
             return;
         }
 
-        $base = Str::slug(
-            $data[Locales::FALLBACK][$definition->translatable[0] ?? ''] ?? $data['name'] ?? $data['reference_number'] ?? 'record'
-        ) ?: 'record';
+        // A name first where the model has one: a committee's first
+        // translatable field is its mandate, a paragraph rather than a name.
+        $base = Str::limit(Str::slug(
+            $data['name'] ?? $data[Locales::FALLBACK][$definition->translatable[0] ?? ''] ?? $data['reference_number'] ?? 'record'
+        ), 70, '') ?: 'record';
 
         $slug = $base;
         $suffix = 2;
@@ -491,6 +504,36 @@ class ResourceController extends Controller
     private function writeTranslations(Resource $definition, Model $record, array $data, int $by): void
     {
         $changed = [];
+
+        /*
+         * Day 3. French and Portuguese for an English column (a member
+         * state's name, an indicator's definition). Kept beside the other
+         * translations and audited with them.
+         */
+        if ($definition->localised !== [] && method_exists($record, 'setLocalisedName')) {
+            foreach (Locales::SUPPORTED as $locale) {
+                if ($locale === Locales::FALLBACK) {
+                    continue;
+                }
+
+                foreach ($definition->localised as $field) {
+                    // Not posted is not cleared: a save from elsewhere that
+                    // carries only the columns leaves these alone.
+                    if (! \Illuminate\Support\Arr::has($data, 'localised.'.$locale.'.'.$field)) {
+                        continue;
+                    }
+
+                    $before = $record->storedLocalisedName($field, $locale);
+                    $after = $data['localised'][$locale][$field] ?? null;
+
+                    $record->setLocalisedName($field, $locale, $after, $by);
+
+                    if (trim((string) $before) !== trim((string) $record->storedLocalisedName($field, $locale))) {
+                        $changed[] = $field.'.'.$locale;
+                    }
+                }
+            }
+        }
 
         foreach (Locales::SUPPORTED as $locale) {
             foreach ($definition->translatable as $field) {

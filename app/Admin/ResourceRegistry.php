@@ -27,11 +27,13 @@ use InvalidArgumentException;
  * Every model the back office administers, and how.
  *
  * Two groups, and the difference matters. Reference data -- member states,
- * authorities, sectors, committees, the indicator taxonomy -- is editable
- * and never deletable from the interface. Deleting the row for Namibia does
- * not remove Namibia from SADC. It orphans every instrument, indicator
- * value, publication and user account attached to it, and the person who
- * did it finds out when a page 500s.
+ * authorities, sectors, committees, the indicator taxonomy -- is what other
+ * records point at. Deleting the row for Namibia does not remove Namibia
+ * from SADC. It orphans every instrument, indicator value, publication and
+ * user account attached to it, and the person who did it finds out when a
+ * page 500s. So since Day 3 a reference row can be deleted only while
+ * nothing points at it, and the refusal names what does (see references).
+ * Sectors stay fixed.
  *
  * Content -- instruments, publications, news -- soft deletes and has a
  * restore path, because taking something off the site and destroying it are
@@ -54,20 +56,43 @@ final class ResourceRegistry
                 fields: [
                     Field::text('name', required: true),
                     Field::text('iso_code', required: true),
-                    Field::text('official_languages'),
+                    // NOT NULL: the platform languages it is served in, as
+                    // codes ("en", "pt", "en,fr").
+                    Field::text('official_languages', required: true),
                     Field::date('joined_at'),
                 ],
                 rules: [
                     'name' => ['required', 'string', 'max:120'],
                     'iso_code' => ['required', 'string', 'size:2'],
-                    'official_languages' => ['nullable', 'string', 'max:120'],
+                    'official_languages' => ['required', 'string', 'max:120'],
                     'joined_at' => ['nullable', 'date'],
+                ],
+                // Day 3: the ISO code is the member state's address on the
+                // site and the key of its lang file line, so it is two
+                // lower-case letters and nobody else's.
+                rulesUsing: fn (?Model $record, Request $request) => [
+                    'iso_code' => [
+                        'required', 'string', 'size:2', 'regex:/^[a-z]{2}$/',
+                        Rule::unique('countries', 'iso_code')->ignore($record?->exists ? $record->getKey() : null),
+                    ],
                 ],
                 searchable: ['name', 'iso_code'],
                 orderBy: 'name',
-                creatable: false,
-                deletable: false,
                 isReferenceData: true,
+                localised: ['name'],
+                references: fn (Model $country) => self::count([
+                    'authorities' => ['authorities', 'country_id'],
+                    'instruments' => ['instruments', 'country_id'],
+                    'indicator_values' => ['indicator_values', 'country_id'],
+                    'submissions' => ['submissions', 'country_id'],
+                    'committee_seats' => ['committee_country', 'country_id'],
+                    'users' => ['users', 'country_id'],
+                    'folders' => ['folders', 'country_id'],
+                    'documents' => ['documents', 'country_id'],
+                    'publications' => ['publications', 'country_id'],
+                    'delegate_registrations' => ['delegate_registrations', 'country_id'],
+                    'enquiries' => ['enquiries', 'country_id'],
+                ], $country->getKey()),
             ),
 
             'authorities' => new Resource(
@@ -82,6 +107,15 @@ final class ResourceRegistry
                     Field::belongsTo('country_id', 'country', required: true),
                     Field::url('website'),
                     Field::number('established_year'),
+                    // Confirming is its own action on the confirmation
+                    // screen, which records who vouched and when. The form
+                    // shows the result and never writes it.
+                    Field::readOnly('confirmation', fn (?Model $record) => ! $record?->exists ? '' : ($record instanceof Authority && $record->isConfirmed()
+                        ? __('d3_crud.confirmed_by', [
+                            'name' => $record->confirmed_by_name ?? $record->confirmedBy?->name ?? '',
+                            'date' => $record->confirmed_at->isoFormat('D MMMM YYYY'),
+                        ])
+                        : __('d3_crud.not_confirmed'))),
                 ],
                 rules: [
                     'name' => ['required', 'string', 'max:200'],
@@ -93,8 +127,19 @@ final class ResourceRegistry
                 searchable: ['name', 'acronym'],
                 with: ['country'],
                 orderBy: 'name',
-                deletable: false,
                 isReferenceData: true,
+                localised: ['name'],
+                references: fn (Model $authority) => self::count([
+                    'chaired_committees' => ['committees', 'chair_authority_id'],
+                    'users' => ['users', 'authority_id'],
+                    'contacts' => ['authority_contacts', 'authority_id'],
+                    'proposed_changes' => ['authority_changes', 'authority_id'],
+                ], $authority->getKey()) + [
+                    'documents' => \Illuminate\Support\Facades\DB::table('documents')
+                        ->where('documentable_type', $authority->getMorphClass())
+                        ->where('documentable_id', $authority->getKey())
+                        ->count(),
+                ],
             ),
 
             'sectors' => new Resource(
@@ -128,8 +173,18 @@ final class ResourceRegistry
                 searchable: ['name', 'slug'],
                 with: ['sector'],
                 orderBy: 'name',
-                deletable: false,
                 isReferenceData: true,
+                localised: ['name'],
+                references: fn (Model $committee) => self::count([
+                    'meetings' => ['meetings', 'committee_id'],
+                    'folders' => ['folders', 'committee_id'],
+                    'documents' => ['documents', 'committee_id'],
+                    'publications' => ['publications', 'committee_id'],
+                    'announcements' => ['announcements', 'committee_id'],
+                    'projects' => ['projects', 'lead_committee_id'],
+                    'committee_seats' => ['committee_country', 'committee_id'],
+                    'people_seats' => ['committee_user', 'committee_id'],
+                ], $committee->getKey()),
             ),
 
             'indicators' => new Resource(
@@ -150,6 +205,10 @@ final class ResourceRegistry
                     Field::belongsTo('sector_id', 'sector'),
                     Field::text('source_standard', required: true),
                     Field::url('source_url'),
+                    // What the comparator sorts by and the reading note it
+                    // carries for figures above 100.
+                    Field::number('display_order', required: true),
+                    Field::boolean('may_exceed_hundred'),
                     Field::boolean('is_active'),
                 ],
                 rules: [
@@ -164,13 +223,22 @@ final class ResourceRegistry
                     // defend in a ministerial brief.
                     'source_standard' => ['required', 'string', 'max:200'],
                     'source_url' => ['nullable', 'url', 'max:255'],
+                    'display_order' => ['required', 'integer', 'min:0', 'max:65535'],
+                    'may_exceed_hundred' => ['nullable', 'boolean'],
                     'is_active' => ['nullable', 'boolean'],
                 ],
                 searchable: ['name', 'slug'],
                 with: ['sector'],
                 orderBy: 'display_order',
-                deletable: false,
                 isReferenceData: true,
+                localised: ['name', 'definition'],
+                // A figure a member state reported is not removed by
+                // removing the question it answered.
+                references: fn (Model $indicator) => self::count([
+                    'indicator_values' => ['indicator_values', 'indicator_id'],
+                    'submission_values' => ['submission_values', 'indicator_id'],
+                    'submission_comments' => ['submission_field_comments', 'indicator_id'],
+                ], $indicator->getKey()),
             ),
 
             /* Content -------------------------------------------------------- */
@@ -203,6 +271,12 @@ final class ResourceRegistry
                 searchable: ['reference_number', 'slug'],
                 with: ['country', 'sector'],
                 orderBy: 'reference_number',
+                // An instrument others name as the one that replaced them
+                // keeps its place in their lineage until they are changed.
+                references: fn (Model $instrument) => [
+                    'superseded_instruments' => Instrument::query()->withoutGlobalScopes()
+                        ->where('superseded_by_id', $instrument->getKey())->count(),
+                ],
             ),
 
             'publications' => new Resource(
@@ -483,6 +557,21 @@ final class ResourceRegistry
                 creatable: false,
             ),
         ];
+    }
+
+    /**
+     * Rows in each table whose column holds this id, keyed as given.
+     * Counted on the table, under no global scope, because the database
+     * cascade that would follow a delete sees every row.
+     *
+     * @param  array<string, array{0: string, 1: string}>  $tables
+     * @return array<string, int>
+     */
+    private static function count(array $tables, int|string $id): array
+    {
+        return collect($tables)
+            ->map(fn (array $t) => \Illuminate\Support\Facades\DB::table($t[0])->where($t[1], $id)->count())
+            ->all();
     }
 
     public static function find(string $key): Resource

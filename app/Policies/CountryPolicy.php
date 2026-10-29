@@ -24,9 +24,10 @@ class CountryPolicy
         return $user->hasPermission(Permission::ViewPublishedContent);
     }
 
+    /** Day 3: an administrator adds a member state, as SADC admits one. */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasPermission(Permission::ManageSettings);
     }
 
     public function update(User $user, Country $country): bool
@@ -34,8 +35,13 @@ class CountryPolicy
         return $user->hasPermission(Permission::ManageSettings);
     }
 
+    /**
+     * Day 3: and removes one nothing points at, which in practice is one
+     * added by mistake. The resource refuses the rest by name.
+     */
     public function delete(User $user, Country $country): bool
     {
-        return false;
+        return $user->hasPermission(Permission::ManageSettings)
+            && $user->hasPermission(Permission::DeleteContent);
     }
 }

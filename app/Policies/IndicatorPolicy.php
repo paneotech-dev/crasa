@@ -35,8 +35,13 @@ class IndicatorPolicy
         return $user->hasPermission(Permission::ManageSettings);
     }
 
+    /**
+     * Day 3: an indicator nobody has reported against. One with figures is
+     * refused by the resource, naming the count.
+     */
     public function delete(User $user, Indicator $indicator): bool
     {
-        return false;
+        return $user->hasPermission(Permission::ManageSettings)
+            && $user->hasPermission(Permission::DeleteContent);
     }
 }

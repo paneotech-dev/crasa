@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Auditable;
 use App\Models\Concerns\HasLocalisedNames;
 use Database\Factories\IndicatorFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Indicator extends Model
 {
     /** @use HasFactory<IndicatorFactory> */
-    use HasFactory, HasLocalisedNames;
+    use Auditable, HasFactory, HasLocalisedNames;
 
     /** French and Portuguese names: lang/{fr,pt}/names.php. */
     protected function localisedNames(): array
