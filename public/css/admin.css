@@ -38,16 +38,16 @@ body[data-surface="admin"] {
   --a-rule: var(--u-line, var(--c-line));
   --a-ink: var(--u-ink, var(--c-charcoal));
   --a-ink-quiet: var(--u-muted, var(--c-slate));
-  --a-ink-strong: var(--u-green-deep, var(--c-navy));
-  --a-link: var(--u-green-deep, var(--c-green-dark));
+  --a-ink-strong: var(--a-green-deep, var(--c-navy));
+  --a-link: var(--a-green-deep, var(--c-green-dark));
   --a-current: var(--u-tint-green, var(--c-green-light));
   --a-head-ground: var(--c-white);
   /* The admin button tokens. Variation V-ADMIN-BUTTON, docs/VARIATIONS.md:
      proposed and applied 16 September 2026, pending the client's sign-off.
      Values only from the approved palette. The light theme is unchanged. */
-  --a-btn: var(--u-green, var(--c-green-dark));
+  --a-btn: var(--a-green, var(--c-green-dark));
   --a-btn-ink: var(--c-white);
-  --a-btn-hover: var(--u-green-deep, var(--c-navy));
+  --a-btn-hover: var(--a-green-deep, var(--c-navy));
   --a-btn-hover-ink: var(--c-white);
 
   background: var(--a-ground);
@@ -2685,12 +2685,12 @@ body[data-surface="admin"] {
   --a-side-bg: var(--c-white);
   --a-side-edge: var(--u-line);
   --a-side-ink: var(--u-ink);
-  --a-side-ink-strong: var(--u-green-deep);
+  --a-side-ink-strong: var(--a-green-deep);
   --a-side-label: var(--u-muted);
   --a-side-hover: var(--u-tint-green);
-  --a-side-hover-ink: var(--u-green-deep);
+  --a-side-hover-ink: var(--a-green-deep);
   --a-side-active: var(--c-green-mid);
-  --a-side-current: var(--u-green);
+  --a-side-current: var(--a-green);
   --a-side-current-ink: var(--c-white);
   --a-side-badge: var(--u-blue-ink);
   --a-side-badge-ink: var(--c-white);
