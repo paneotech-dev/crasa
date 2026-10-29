@@ -81,7 +81,8 @@ class DisplayOptionsTest extends TestCase
 
         // The phone row is keyed on the control, not on header classes.
         $css = file_get_contents(public_path('css/a11y.css'));
-        $this->assertStringNotContainsString('.c-header', $css);
+        // Only the fallback for the 28 October header names header classes.
+        $this->assertSame(1, substr_count($css, '.c-header--layered .c-header__bar:has(.c-a11y) { display: block; }'));
         $this->assertStringContainsString('html.a11y-pause', $css);
         $this->assertStringContainsString('html.a11y-dyslexia', $css);
         $this->assertStringContainsString('html.a11y-spacing', $css);

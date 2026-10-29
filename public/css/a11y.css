@@ -417,3 +417,15 @@ html.a11y-contrast .c-a11y__hint { color: #000000; }
 }
 .g-statement__table tbody th { position: static; background: transparent; font-size: 16px; padding: 12px 16px; border-bottom: 1px solid var(--u-line, #D9E3EC); }
 .g-statement__table tbody tr:nth-child(even) th { background: var(--u-pale, #F4F8F6); }
+
+/* Fallback for the header of 28 October only (.c-header--layered), which
+   hides its utility bar on phones: keep the bar as a slim row carrying
+   this control alone. The Concept 3 header places the control itself and
+   does not use this class, so this block does nothing there; delete it
+   once that header is live. */
+@media (max-width: 767.98px) {
+  .has-js .c-header--layered .c-header__bar:has(.c-a11y) { display: block; }
+  .has-js .c-header--layered .c-header__bar:has(.c-a11y) .c-header__agency,
+  .has-js .c-header--layered .c-header__bar:has(.c-a11y) .c-header__utilities > :not(.c-a11y) { display: none; }
+  .has-js .c-header--layered .c-header__bar:has(.c-a11y) .c-header__bar-inner { justify-content: flex-end; padding-block: 2px; }
+}
