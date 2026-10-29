@@ -36,19 +36,19 @@
 
                     <div class="c-field">
                         <label class="c-label" for="delegate_name">{{ __('delegates.col_name') }}</label>
-                        <input class="c-input" type="text" id="delegate_name" name="delegate_name" required
+                        <input class="c-input" type="text" id="delegate_name" name="delegate_name" autocomplete="name" required
                                value="{{ old('delegate_name', $existing?->delegate_name ?? auth()->user()?->name) }}">
                     </div>
 
                     <div class="c-field">
                         <label class="c-label" for="delegate_email">{{ __('delegates.col_email') }}</label>
-                        <input class="c-input" type="email" id="delegate_email" name="delegate_email" required
+                        <input class="c-input" type="email" id="delegate_email" name="delegate_email" autocomplete="email" required
                                value="{{ old('delegate_email', $existing?->delegate_email ?? auth()->user()?->email) }}">
                     </div>
 
                     <div class="c-field">
                         <label class="c-label" for="delegate_role">{{ __('delegates.col_role') }}</label>
-                        <input class="c-input" type="text" id="delegate_role" name="delegate_role"
+                        <input class="c-input" type="text" id="delegate_role" name="delegate_role" autocomplete="organization-title"
                                value="{{ old('delegate_role', $existing?->delegate_role) }}">
                     </div>
 
