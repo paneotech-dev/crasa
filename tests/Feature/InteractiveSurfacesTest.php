@@ -78,16 +78,22 @@ class InteractiveSurfacesTest extends TestCase
 
     public function test_a_directory_row_opens_the_member_it_names(): void
     {
-        // The members page renders screen 08's directory now rather than a
-        // card grid. The rule is unchanged: a row that looks like a way in
-        // has to be one.
+        // The members directory is a grid of u-card cards since 29 October
+        // 2026, each made whole-card clickable by its title link (the
+        // .u-card__title a::after overlay in ui.css). The rule is unchanged:
+        // a card that looks like a way in has to be one.
         $html = $this->get('/en/members')->assertOk()->getContent();
 
+        $this->assertStringContainsString(
+            '.u-card__title a::after { content: ""; position: absolute; inset: 0; }',
+            file_get_contents(public_path('css/ui.css'))
+        );
+
         foreach (Country::pluck('iso_code') as $iso) {
-            $this->assertStringContainsString(
-                'class="b-directory__link" href="http://localhost/en/members/'.$iso.'"',
+            $this->assertMatchesRegularExpression(
+                '~<li class="u-card cp-member" id="member-'.$iso.'">.*?<h3 class="u-card__title">\s*<a href="http://localhost/en/members/'.$iso.'">~s',
                 $html,
-                strtoupper($iso).' has a row that looks like a link and is not one.'
+                strtoupper($iso).' has a card that looks like a link and is not one.'
             );
         }
     }
