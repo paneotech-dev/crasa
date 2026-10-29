@@ -16,4 +16,12 @@ return [
     'search_cta_text' => 'Browse the full library by sector and type, or ask the Secretariat in Gaborone.',
     'search_cta_primary' => 'Browse the library',
     'search_cta_secondary' => 'Contact the Secretariat',
+    'auth_side_title' => 'What the member area holds',
+    'auth_side_returns' => "Your country's data returns and their validation status",
+    'auth_side_committees' => 'Committee folders, working documents and minutes',
+    'auth_side_calendar' => 'The meeting calendar and delegate registration',
+    'auth_side_library' => 'Restricted documents shared with member regulators',
+    'auth_side_access' => 'Accounts are opened by the Secretariat on the instruction of a member authority.',
+    'auth_side_contact' => 'Ask the Secretariat for access',
+    'auth_reset_help' => 'The link works once and expires after an hour. Check your spam folder if it does not arrive.',
 ];

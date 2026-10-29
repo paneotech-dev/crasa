@@ -118,6 +118,7 @@
   .cp-doc-card .u-card__body { padding: var(--u-3); }
   .cp-doc-card .u-card__actions { grid-column: 2; padding: 0 var(--u-3) var(--u-3); }
   .cp-doc-card .cp-placeholder svg { width: 28px; height: 28px; }
+  .cp-doc-card .u-card__media--doc img { object-fit: contain; object-position: 50% 50%; }
 }
 
 /* ---- Newsroom ------------------------------------------------------------ */

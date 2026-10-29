@@ -16,4 +16,12 @@ return [
     'search_cta_text' => 'Parcourez toute la bibliothèque par secteur et par type, ou interrogez le Secrétariat à Gaborone.',
     'search_cta_primary' => 'Parcourir la bibliothèque',
     'search_cta_secondary' => 'Contacter le Secrétariat',
+    'auth_side_title' => 'Ce que contient l\'espace membres',
+    'auth_side_returns' => 'Les données transmises par votre pays et leur état de validation',
+    'auth_side_committees' => 'Les dossiers des comités, documents de travail et procès-verbaux',
+    'auth_side_calendar' => 'Le calendrier des réunions et l\'inscription des délégués',
+    'auth_side_library' => 'Les documents réservés aux régulateurs membres',
+    'auth_side_access' => 'Les comptes sont ouverts par le Secrétariat à la demande d\'une autorité membre.',
+    'auth_side_contact' => 'Demander un accès au Secrétariat',
+    'auth_reset_help' => 'Le lien ne sert qu\'une fois et expire au bout d\'une heure. Vérifiez vos courriers indésirables s\'il n\'arrive pas.',
 ];
