@@ -264,6 +264,8 @@ class RenderedMarkupTest extends TestCase
                     // ($arrow = '<svg ...', 'icon' => '<path ...', or a literal
                     // '<path ...' in the list a loop reads it from).
                     || $this->isLiteralSvg($expression, $contents)
+                    // Escaped first, then only <br> added between lines.
+                    || str_starts_with($expression, 'nl2br(e(')
                     || str_starts_with($expression, '__(');
 
                 if (! $safe) {

@@ -172,4 +172,15 @@ class ConceptHeaderTest extends TestCase
         $this->assertStringContainsString('mailto:', $footer);
         $this->assertStringContainsString('Accessibility', $footer);
     }
+
+    public function test_a_closed_drawer_takes_no_focus(): void
+    {
+        // On 29 October the drawer stayed rendered off screen when closed
+        // (display:flex overrode hidden) and Tab cycled inside it forever.
+        $css = file_get_contents(public_path('css/k.css'));
+        $this->assertStringContainsString('.k-drawer[hidden], .k-scrim[hidden] { display: none; }', $css);
+
+        $js = file_get_contents(public_path('js/chrome.js'));
+        $this->assertStringContainsString('if (drawer.hidden) return;', $js);
+    }
 }

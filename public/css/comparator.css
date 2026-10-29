@@ -112,6 +112,7 @@
   /* The table becomes one card per member state. */
   .c-cmp__tableframe { border: 0; overflow: visible; }
   .c-cmp__datatable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .c-cmp__datatable thead th { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .c-cmp__datatable, .c-cmp__datatable tbody, .c-cmp__datatable tr { display: block; width: 100%; }
   .c-cmp__datatable tr { border: 1px solid var(--u-line, #D9E3EC); border-radius: 12px; margin-bottom: 12px; padding: 8px 0; background: #FFFFFF; }
   .c-cmp__datatable tbody tr:nth-child(even) td, .c-cmp__datatable tbody tr:nth-child(even) th { background: transparent; }
@@ -184,3 +185,6 @@
   .c-cmp__console--browse .c-cmp__words--row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
 }
 .c-hcmp__left, .c-hcmp__right { min-width: 0; }
+
+/* The result table scrolls inside its own frame; the frame never widens its column (1.4.10). */
+.c-cmp__tableframe { position: relative; min-width: 0; max-width: 100%; }

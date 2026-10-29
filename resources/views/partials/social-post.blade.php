@@ -31,7 +31,10 @@
                 @if ($post->caption)
                     <p class="s-post__behind" aria-hidden="true">{{ $post->caption }}</p>
                 @endif
-                {!! $post->embed_html !!}
+                {{-- Cleaned again at render: only the tweet blockquote survives,
+                     whatever the stored value has become since it was saved. --}}
+                @php $rendered = \App\Support\SocialEmbed::cleanXHtml((string) $post->embed_html); @endphp
+                @if ($rendered){!! $rendered !!}@endif
             </div>
             @once
                 @push('scripts')

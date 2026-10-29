@@ -2616,7 +2616,7 @@
    and at the foot of the newsroom. Light ground, dark text; the only
    colour is each network's own mark. */
 .c-socials__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); max-width: 960px; }
-.c-socials__list, .c-socials__list > li, .c-socials__timeline { min-width: 0; }
+.c-socials, .c-socials__list, .c-socials__list > li, .c-socials__timeline { min-width: 0; }
 .c-socials__list .b-social__link { display: flex; width: 100%; min-width: 0; min-height: 56px; color: var(--c-charcoal); }
 .c-socials__list .c-social-mark { width: 24px; height: 24px; }
 .c-socials__text { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }

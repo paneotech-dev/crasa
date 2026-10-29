@@ -458,7 +458,17 @@ final class RoleDashboard
 
     private static function upcoming(User $user): array
     {
-        $rows = Meeting::upcoming()->limit(3)->get()->map(fn (Meeting $m) => self::meetingRow($m))->all();
+        // Only meetings this reader may see, as on the member dashboard below:
+        // another committee's or a restricted meeting is never listed.
+        // A member's dashboard lists their own committees' meetings and the
+        // CRASA-wide ones; the Secretariat (no seats) sees every meeting.
+        $ids = $user->committees()->pluck('committees.id');
+        $rows = Meeting::upcoming()->with('committee')
+            ->when($ids->isNotEmpty() || ! $user->hasPermission(Permission::ManageMeetings),
+                fn ($q) => $q->where(fn ($q) => $q->whereIn('committee_id', $ids)->orWhereNull('committee_id')))
+            ->limit(12)->get()
+            ->filter(fn (Meeting $m) => Gate::forUser($user)->allows('view', $m))
+            ->take(3)->map(fn (Meeting $m) => self::meetingRow($m))->values()->all();
 
         return [
             'key' => 'upcoming',
@@ -471,12 +481,16 @@ final class RoleDashboard
 
     private static function meetingRow(Meeting $m): array
     {
+        // The public page and its .ics answer only for a meeting the public
+        // may see; any other meeting opens in the member calendar.
+        $public = Gate::forUser(null)->allows('view', $m);
+
         return [
             'label' => $m->title,
-            'url' => route('events.show', ['meeting' => $m]),
+            'url' => $public ? route('events.show', ['meeting' => $m]) : (Route::has('extranet.calendar') ? route('extranet.calendar') : null),
             'meta' => trim(implode(', ', array_filter([$m->starts_on?->isoFormat('D MMMM YYYY'), $m->location]))),
             'comment' => null,
-            'ics' => route('events.ics', ['meeting' => $m]),
+            'ics' => $public ? route('events.ics', ['meeting' => $m]) : null,
         ];
     }
 
@@ -534,7 +548,8 @@ final class RoleDashboard
         $ids = $user->committees()->pluck('committees.id');
         $meeting = Meeting::upcoming()
             ->when($ids->isNotEmpty(), fn ($q) => $q->where(fn ($q) => $q->whereIn('committee_id', $ids)->orWhereNull('committee_id')))
-            ->first();
+            ->limit(12)->get()
+            ->first(fn (Meeting $m) => Gate::forUser($user)->allows('view', $m));
 
         return [
             'key' => 'next',

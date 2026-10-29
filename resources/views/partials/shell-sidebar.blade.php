@@ -70,7 +70,7 @@
                         @if ($groupBadge > 0)
                             <span class="a-side__badge" aria-label="{{ trans_choice('fb.side_waiting', $groupBadge, ['count' => $groupBadge]) }}">{{ $groupBadge }}</span>
                         @endif
-                        <svg class="a-side__chev" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <svg class="a-side__chev" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </summary>
 
                     <ul class="a-side__items" role="list" aria-labelledby="side-group-{{ $group['key'] }}">

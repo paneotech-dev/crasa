@@ -155,6 +155,13 @@ class AssetIntegrityTest extends TestCase
                     continue;
                 }
 
+                // The social embeds load each network's own widget script
+                // (S7, F5, 29 October 2026), named in the CSP too. Nothing
+                // else may come from another origin.
+                if ($url === 'https://platform.twitter.com/widgets.js') {
+                    continue;
+                }
+
                 if (! str_starts_with($url, $expected)) {
                     $offenders[] = $page.' -> '.$url;
                 }

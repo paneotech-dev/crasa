@@ -57,6 +57,8 @@
     });
 
     drawer.addEventListener('keydown', function (event) {
+      // Only an open drawer holds the focus.
+      if (drawer.hidden) return;
       if (event.key === 'Escape') {
         event.preventDefault();
         closeDrawer();

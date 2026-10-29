@@ -28,6 +28,7 @@ return [
     'subject_page' => 'uma página',
     'subject_pageblock' => 'um bloco',
     'subject_publication' => 'uma publicação',
+    'subject_socialpost' => 'uma publicação nas redes sociais',
     'subject_newsitem' => 'uma notícia',
     'subject_instrument' => 'um instrumento regulatório',
     'subject_instrumentversion' => 'uma versão de instrumento',

@@ -189,6 +189,8 @@ html:not(.k-nav-js) .k-ni--dd:focus-within .k-mega { opacity: 1; visibility: vis
 .k-scrim.is-on { opacity: 1; }
 .k-drawer { position: fixed; top: 0; left: 0; bottom: 0; width: min(400px, 92%); background: var(--k-white); z-index: 80; transform: translateX(-100%); transition: transform .3s var(--k-ease); display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 .k-drawer.is-on { transform: none; box-shadow: 20px 0 50px rgba(37, 56, 74, .25); }
+/* A closed drawer is not rendered, so none of its links take focus (2.1.2, 2.4.3). */
+.k-drawer[hidden], .k-scrim[hidden] { display: none; }
 html.k-drawer-open { overflow: hidden; }
 .k-d-head { height: 64px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--k-deep); color: var(--k-white); }
 .k-iconbtn { width: 44px; height: 44px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, .35); background: transparent; color: var(--k-white); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
