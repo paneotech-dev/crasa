@@ -18,7 +18,7 @@
 @section('content')
     <section class="u-hero" aria-labelledby="my-dash-title">
         <div class="u-container">
-            <p class="u-eyebrow">{{ $user->name }}, {{ $user->role->label() }}</p>
+            <p class="u-eyebrow">{{ $user->name }}, {{ $user->roleLabel() }}</p>
             <h1 class="u-h1" id="my-dash-title">{{ $dash['heading'] }}</h1>
             <p class="u-lead">{{ $dash['intro'] }}</p>
         </div>

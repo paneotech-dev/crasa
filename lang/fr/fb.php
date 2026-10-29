@@ -143,4 +143,7 @@ return [
     'dash_shortcuts' => 'Raccourcis',
     'dash_waiting' => '{0} rien en attente|{1} :count en attente|[2,*] :count en attente',
     'side_waiting' => '{1} :count en attente|[2,*] :count en attente',
+    'dash_notices' => 'Avis des autres administrateurs',
+    'dash_notices_empty' => 'Rien pour l\'instant. Quand un autre administrateur suspend ou supprime un compte, change un rôle ou publie sans validation, c\'est indiqué ici et dans la cloche.',
+    'dash_open_notifications' => 'Ouvrir les notifications',
 ];

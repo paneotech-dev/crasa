@@ -145,4 +145,7 @@ return [
     'dash_shortcuts' => 'Shortcuts',
     'dash_waiting' => '{0} nothing waiting|{1} :count waiting|[2,*] :count waiting',
     'side_waiting' => '{1} :count waiting|[2,*] :count waiting',
+    'dash_notices' => 'Notices from other administrators',
+    'dash_notices_empty' => 'Nothing yet. When another administrator suspends or deletes an account, changes a role or publishes without approval, it is listed here and in the bell.',
+    'dash_open_notifications' => 'Open notifications',
 ];

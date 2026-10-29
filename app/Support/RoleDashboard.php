@@ -45,7 +45,7 @@ final class RoleDashboard
         $role = self::roleKey($user);
 
         $blocks = match ($role) {
-            'administrator' => [self::attention($user), self::returned($user)],
+            'administrator' => [self::attention($user), self::adminNotices($user), self::returned($user)],
             'moderator' => [self::inbox($user), self::recentlyApproved()],
             'editor' => [self::myDrafts($user), self::returned($user), self::live()],
             'auditor' => [self::auditTrail($user), self::live()],
@@ -250,6 +250,33 @@ final class RoleDashboard
             'empty' => __('fb.dash_attention_empty'),
             'actions' => [],
             'wide' => true,
+        ];
+    }
+
+    /** Other administrators' actions (suspensions, role changes, publishing without approval). */
+    private static function adminNotices(User $user): ?array
+    {
+        if (! class_exists(\App\Support\AdminAlerts::class) || ! method_exists(\App\Support\AdminAlerts::class, 'recentFor')) {
+            return null;
+        }
+
+        try {
+            $rows = \App\Support\AdminAlerts::recentFor($user, 5)->map(fn ($n) => [
+                'label' => $n['title'],
+                'url' => $n['url'],
+                'meta' => $n['at']?->isoFormat('D MMMM YYYY HH:mm'),
+                'comment' => null,
+            ])->values()->all();
+        } catch (Throwable) {
+            $rows = [];
+        }
+
+        return [
+            'key' => 'notices',
+            'title' => __('fb.dash_notices'),
+            'rows' => $rows,
+            'empty' => __('fb.dash_notices_empty'),
+            'actions' => Route::has('notifications') ? [['label' => __('fb.dash_open_notifications'), 'url' => route('notifications')]] : [],
         ];
     }
 

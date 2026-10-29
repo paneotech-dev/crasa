@@ -143,4 +143,7 @@ return [
     'dash_shortcuts' => 'Atalhos',
     'dash_waiting' => '{0} nada em espera|{1} :count em espera|[2,*] :count em espera',
     'side_waiting' => '{1} :count em espera|[2,*] :count em espera',
+    'dash_notices' => 'Avisos de outros administradores',
+    'dash_notices_empty' => 'Ainda nada. Quando outro administrador suspende ou elimina uma conta, muda um papel ou publica sem aprovação, aparece aqui e no sino.',
+    'dash_open_notifications' => 'Abrir as notificações',
 ];
