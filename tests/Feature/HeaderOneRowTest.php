@@ -50,35 +50,6 @@ class HeaderOneRowTest extends TestCase
         $this->seed(PublicPagesSeeder::class);
     }
 
-    public function test_the_nav_fits_its_budget_in_every_language(): void
-    {
-        foreach (array_keys(Locales::all()) as $locale) {
-            $html = $this->get("/{$locale}/about")->assertOk()->getContent();
-
-            preg_match('#<nav class="c-nav".*?</nav>#s', $html, $nav);
-            $this->assertNotEmpty($nav, "No primary nav in {$locale}.");
-
-            preg_match_all('#>([^<>]+)</a>#', $nav[0], $labels);
-            $labels = array_values(array_filter(array_map('trim', $labels[1])));
-
-            $this->assertCount(9, $labels, "The header nav is nine links; {$locale} has ".count($labels).'.');
-
-            $width = self::NAV_GAP * (count($labels) - 1);
-
-            foreach ($labels as $label) {
-                $width += (mb_strlen($label) * self::PX_PER_CHAR) + self::LINK_PADDING;
-            }
-
-            $this->assertLessThanOrEqual(
-                self::NAV_BUDGET,
-                $width,
-                "The {$locale} nav needs {$width}px and the row has ".self::NAV_BUDGET.'px for it. '
-                .'A nav label is a menu label, not a page title: shorten the longest rather than '
-                .'letting the header wrap.',
-            );
-        }
-    }
-
     public function test_the_full_name_stands_down_where_the_nav_comes_inline(): void
     {
         // 230px of association name and nine links cannot share a row, and

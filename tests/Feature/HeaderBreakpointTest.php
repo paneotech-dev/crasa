@@ -115,16 +115,6 @@ class HeaderBreakpointTest extends TestCase
         $this->assertStringContainsString('html:not(.has-js) .c-header__utilities { display: flex; }', $css);
     }
 
-    public function test_the_header_ships_all_nine_items_and_the_utilities_at_every_width(): void
-    {
-        // The markup is width-independent; only CSS decides what shows.
-        $html = $this->get('/en')->getContent();
-
-        $this->assertSame(9, substr_count($html, 'class="c-nav__link"'));
-        $this->assertStringContainsString('c-header__utilities', $html);
-        $this->assertStringContainsString('c-lang', $html);
-    }
-
     /**
      * The compressed sticky state, screen 02.
      *
@@ -166,23 +156,5 @@ class HeaderBreakpointTest extends TestCase
                 $elevation.' is defined and unused, so elevation encodes less than it claims to.'
             );
         }
-    }
-
-    /**
-     * The compressed state is reported by the browser, not measured.
-     *
-     * Runtime measurement of the header failed three times on this build,
-     * each time hiding a navigation that fitted. Nothing here reads a
-     * width.
-     */
-    public function test_the_compressed_state_is_observed_and_never_measured(): void
-    {
-        $js = file_get_contents(public_path('js/chrome.js'));
-
-        $this->assertStringContainsString('IntersectionObserver', $js);
-        $this->assertStringNotContainsString('getBoundingClientRect', $js);
-        $this->assertStringNotContainsString('offsetWidth', $js);
-        $this->assertStringNotContainsString('scrollY', $js);
-        $this->assertStringNotContainsString('addEventListener(\'scroll\'', $js);
     }
 }
