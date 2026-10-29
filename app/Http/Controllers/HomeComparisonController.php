@@ -27,22 +27,25 @@ class HomeComparisonController extends Controller
     public function __invoke(Request $request): Response
     {
         $page = Page::published()->where('slug', 'home')->first();
-        abort_if($page === null, 404);
 
-        $block = PageBlock::query()
+        $block = $page === null ? null : PageBlock::query()
             ->where('page_id', $page->id)
             ->where('block_type', BlockType::FeaturedComparison->value)
             ->where('is_visible', true)
             ->with('translations')
             ->orderBy('position')
             ->first();
-        abort_if($block === null, 404);
+
+        // Day 2 (C8): the home console (partials/home/comparator) asks for
+        // its own result with ?view=console and needs no block on the page.
+        $console = $request->query('view') === 'console';
+        abort_if($block === null && ! $console, 404);
 
         $data = BlockData::comparison($block);
         abort_if($data['rows']->isEmpty(), 404);
 
         return response()
-            ->view('blocks._comparison-result', ['block' => $block] + $data)
+            ->view($console ? 'partials.home._comparator-result' : 'blocks._comparison-result', ['block' => $block] + $data)
             // The fragment is never a page a reader lands on.
             ->header('X-Robots-Tag', 'noindex')
             ->header('Vary', 'X-Requested-With');

@@ -65,7 +65,7 @@ class MapExport
             .'<rect width="8" height="8" fill="#E5E0D5"/><rect width="4" height="8" fill="#CFC8B8"/></pattern></defs>';
 
         // Masthead, as the comparator's exports draw it.
-        $parts[] = '<rect x="0" y="0" width="'.$width.'" height="96" fill="#0F1B2D"/>';
+        $parts[] = '<rect x="0" y="0" width="'.$width.'" height="96" fill="#0B5F3E"/>';
         $parts[] = $this->mark(40, 26);
         $parts[] = '<text x="104" y="46" font-family="Georgia,serif" font-size="24" font-weight="600" fill="#FFFFFF">'.$e(__('site.acronym')).'</text>';
         $parts[] = '<text x="104" y="70" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="#E5E0D5">'.$e(__('site.full_name')).'</text>';
@@ -94,8 +94,14 @@ class MapExport
         // anything looking for "the map" has to be able to tell them apart.
         $parts[] = '<g id="region" transform="translate('.$originX.' '.$originY.') scale('.round($mapScale, 4).')">';
 
+        // Madagascar and Seychelles, SADC states that are not CRASA members:
+        // outline only, as the page draws them, and named further down.
         foreach ($map['context'] as $context) {
-            $parts[] = '<path d="'.$e($context['d']).'" fill="#E5E0D5" stroke="#908977" stroke-width="0.9"/>';
+            $parts[] = '<path d="'.$e($context['d']).'" fill="none" stroke="#7B8794" stroke-width="0.9"/>';
+
+            if (($context['marker'] ?? null) !== null) {
+                $parts[] = '<circle cx="'.$context['marker'][0].'" cy="'.$context['marker'][1].'" r="6" fill="none" stroke="#7B8794" stroke-width="1.2"/>';
+            }
         }
 
         /*
@@ -120,9 +126,33 @@ class MapExport
                 .'" stroke="#0E5536" stroke-width="1" stroke-linejoin="round"/>';
         }
 
+        // Comoros and Mauritius as dots where they lie, as on the page. In
+        // the shapes pass, so no fill lands on a label.
+        foreach ($ordered as $iso) {
+            $shape = $map['members'][$iso] ?? null;
+
+            if (($shape['d'] ?? null) !== null || ($shape['dot'] ?? null) === null) {
+                continue;
+            }
+
+            $parts[] = '<circle cx="'.$shape['dot'][0].'" cy="'.$shape['dot'][1].'" r="7" fill="'
+                .($view->isShaded() ? $this->fill($view, $view->entry($iso)?->bandAttribute()) : '#0B5F3E')
+                .'" stroke="#0E5536" stroke-width="1.5"/>';
+        }
+
         foreach ($ordered as $iso) {
             $shape = $map['members'][$iso] ?? null;
             $entry = $view->entry($iso);
+
+            if (($shape['dot_label'] ?? null) !== null && $entry !== null) {
+                [$lx, $ly, $anchor] = $shape['dot_label'] + [2 => 'middle'];
+                $parts[] = '<text x="'.$lx.'" y="'.$ly.'" text-anchor="'.$anchor.'" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#0B5F3E">'
+                    .$e($entry->country?->name ?: strtoupper($iso)).'</text>';
+                if ($view->isShaded()) {
+                    $parts[] = '<text x="'.$lx.'" y="'.($ly + 15).'" text-anchor="'.$anchor.'" font-family="Helvetica,Arial,sans-serif" font-size="11" font-weight="600" fill="#25384A">'
+                        .$e($entry->display).'</text>';
+                }
+            }
 
             if (($shape['label'] ?? null) === null || $entry === null) {
                 continue;
@@ -154,6 +184,11 @@ class MapExport
             $parts[] = '<text x="'.$shape['label'][0].'" y="'.($shape['label'][1] + 14).'" text-anchor="middle" '
                 .'font-family="Helvetica,Arial,sans-serif" font-size="11" font-weight="600" fill="'.$ink.'">'
                 .$e($entry->display).'</text>';
+        }
+
+        foreach ($map['context'] as $context) {
+            $parts[] = '<text x="'.$context['lx'].'" y="'.$context['ly'].'" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="13" font-style="italic" fill="#3F5264">'
+                .$e(__('members.country_'.strtolower($context['code']))).'</text>';
         }
 
         $parts[] = '</g>';
@@ -192,6 +227,25 @@ class MapExport
 
             $chipX += 150;
         }
+
+        // Seychelles, the smallest SADC state, in outline: not a member.
+        foreach ($map['context'] as $context) {
+            if (($context['marker'] ?? null) === null) {
+                continue;
+            }
+
+            $box = RegionGeometry::viewBoxFor($context['d'], 1.5);
+            $parts[] = '<svg x="'.$chipX.'" y="'.$chipY.'" width="44" height="33" viewBox="'.$e($box).'" preserveAspectRatio="xMidYMid meet">'
+                .'<path d="'.$e($context['d']).'" fill="none" stroke="#7B8794" stroke-width="0.2"/></svg>';
+            $parts[] = '<text x="'.($chipX + 52).'" y="'.($chipY + 15).'" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="700" fill="#3F5264">'
+                .$e($context['code']).'</text>';
+            $parts[] = '<text x="'.($chipX + 52).'" y="'.($chipY + 29).'" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#3F5264">'
+                .$e(__('members.country_'.strtolower($context['code']))).'</text>';
+            $chipX += 150;
+        }
+
+        $parts[] = '<text x="40" y="'.($chipY + 56).'" font-family="Helvetica,Arial,sans-serif" font-size="11" font-style="italic" fill="#3F5264">'
+            .$e(__('members.country_mg').', '.__('members.country_sc').': '.__('members.map_not_member')).'</text>';
 
         $parts[] = '<text x="40" y="'.($chipY - 8).'" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5C6B7E">'
             .$e(__('members.map_enlarged')).'</text>';

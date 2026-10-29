@@ -1,0 +1,130 @@
+/* CRASA: the SADC region map, Day 2 (29 October 2026).
+ *
+ * Loaded by the region-map component itself, after blocks.css, so the
+ * component carries its own look wherever it is placed (members page, home
+ * members band, comparator browse mode). Tonight's light palette: members
+ * pale green with a deep green rule, the two SADC states that are not
+ * CRASA members in outline with muted names, focus and selection in the
+ * logo blue. Flat colours only.
+ *
+ * Contrast: muted #3F5264 on white 8.07; deep green #0B5F3E on #EAF4EF
+ * 6.87; outline #7B8794 on white 3.66 (SC 1.4.11 for a graphic).
+ */
+
+/* The map sits on its own white card, so pale green members read as filled
+   on every ground the page puts behind them, tint bands included. */
+.c-map-region__svg {
+  background: #FFFFFF;
+  border: 1px solid #D9E3EC;
+}
+.c-map-region__stage { position: relative; }
+
+/* With the script running the tooltip replaces the side panel, and the map
+   takes the whole width. Without it the CSS panel stays, as before. */
+.c-map-region.is-enhanced .c-map-region__stage { grid-template-columns: minmax(0, 1fr); }
+.c-map-region.is-enhanced .c-map-region__detail { display: none; }
+
+/* Members: pale green, deep green rule, label in deep green. */
+.c-map-region--plain .c-map-region__member path { fill: #EAF4EF; stroke: #0B5F3E; }
+.c-map-region--plain .c-map-region__member:hover path,
+.c-map-region--plain .c-map-region__member:focus-visible path,
+.c-map-region--plain .c-map-region__member.is-active path { fill: #B9D9C8; stroke: #0B5F3E; stroke-width: 2; }
+.c-map-region--shaded .c-map-region__member.is-active path { stroke: #2F4F8F; stroke-width: 3; }
+.c-map-region__member:focus-visible,
+.c-map-region__nonmember:focus-visible,
+.c-map-region__inset:focus-visible { outline: 2px solid #7A90C8; outline-offset: 2px; }
+.c-map-region__member:focus { outline: none; }
+.c-map-region__member:focus-visible path { stroke: #2F4F8F; stroke-width: 2.5; }
+
+/* The two SADC states that are not CRASA members. */
+.c-map-region__nonmember { cursor: help; }
+.c-map-region__nonmember:focus { outline: none; }
+.c-map-region__context { fill: none; stroke: #7B8794; }
+.c-map-region__nonmember:hover .c-map-region__context,
+.c-map-region__nonmember:focus-visible .c-map-region__context,
+.c-map-region__nonmember.is-active .c-map-region__context { stroke: #2F4F8F; stroke-width: 1.8; }
+.c-map-region__nonmember:focus-visible .c-map-region__marker { stroke: #2F4F8F; stroke-width: 2; }
+.c-map-region__context-label {
+  fill: #3F5264;
+  font-family: var(--f-body);
+  font-size: 13px;
+  font-style: italic;
+  pointer-events: none;
+}
+
+/* The island dots pulse once when the map scrolls into view, so a reader
+   notices that the specks in the ocean are member states. Once only, under
+   400ms per beat, and not at all for a reader who asked for less motion. */
+@keyframes c-map-pulse {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.8); }
+  100% { transform: scale(1); }
+}
+.c-map-region [data-pulse] { transform-box: fill-box; transform-origin: center; }
+.c-map-region.is-revealed [data-pulse] { animation: c-map-pulse 700ms ease-out 1; }
+@media (prefers-reduced-motion: reduce) {
+  .c-map-region.is-revealed [data-pulse] { animation: none; }
+}
+
+/* The tooltip: country, regulator, value when shaded, and Open. */
+.c-map-region__tip {
+  position: absolute;
+  z-index: 5;
+  min-width: 180px;
+  max-width: 260px;
+  padding: 10px 12px;
+  background: #FFFFFF;
+  border: 1px solid #D9E3EC;
+  border-top: 3px solid #7A90C8;
+  box-shadow: 0 6px 16px rgba(11, 95, 62, .12);
+  font-family: var(--f-body);
+  font-size: 14px;
+  line-height: 1.45;
+  color: #25384A;
+  pointer-events: auto;
+}
+.c-map-region__tip[hidden] { display: none; }
+.c-map-region__tip-name { display: block; font-weight: 600; font-size: 16px; color: #0B5F3E; }
+.c-map-region__tip-line { display: block; color: #3F5264; }
+.c-map-region__tip-value { display: block; margin-top: 4px; font-weight: 600; color: #25384A; }
+.c-map-region__tip-open {
+  display: inline-block; margin-top: 6px;
+  font-weight: 600; color: #0C7A4E; text-decoration: underline;
+}
+
+/* Inset cards: one row under the map, wrapping on narrow screens. */
+.c-map-region__insets { margin-top: var(--s-4); gap: var(--s-3); }
+.c-map-region__inset {
+  flex: 1 1 170px; max-width: none;
+  border: 1px solid #D9E3EC; border-radius: 12px; background: #FFFFFF;
+  transition: border-color 150ms, transform 150ms;
+}
+.c-map-region__inset:hover { border-color: #0F8757; }
+.c-map-region__inset path { fill: #EAF4EF; stroke: #0B5F3E; }
+.c-map-region__inset-code { color: #0B5F3E; }
+.c-map-region__inset-detail { color: #25384A; }
+.c-map-region__inset--nonmember { border-style: dashed; border-color: #7B8794; cursor: help; }
+.c-map-region__inset--nonmember path { fill: none; stroke: #7B8794; }
+.c-map-region__inset--nonmember .c-map-region__inset-code,
+.c-map-region__inset--nonmember .c-map-region__inset-detail { color: #3F5264; }
+.c-map-region__inset-note { font-size: 12.5px; line-height: 1.35; color: #3F5264; }
+
+/* The static map (home band, comparator): insets compact, five or six to a
+   row where the space allows. */
+.c-map-region--static .c-map-region__insets-heading { font-size: 13px; }
+.c-map-region--static .c-map-region__inset { flex: 1 1 140px; padding: 6px 8px; }
+.c-map-region--static .c-map-region__inset svg { width: 44px; height: 36px; }
+
+/* Phones: the map full width of the screen's content column, cards under. */
+@media (max-width: 640px) {
+  .c-map-region__svg { border-left: 0; border-right: 0; }
+  .c-map-region__inset,
+  .c-map-region--static .c-map-region__inset { flex: 1 1 calc(50% - var(--s-3)); gap: var(--s-2); padding: 6px 8px; }
+  .c-map-region__inset svg { width: 40px; height: 34px; }
+  .c-map-region__inset-detail { white-space: normal; overflow: visible; }
+  .c-map-region .c-map-region__inset--nonmember { flex-basis: 100%; }
+  .c-map-region__tip { max-width: 220px; font-size: 13.5px; }
+}
+/* blocks.css gives inset paths a 1.5 unit rule; the Seychelles frame is a
+   few units across, so that rule would fill it solid. */
+.c-map-region__inset--nonmember path { stroke-width: .2; }

@@ -1,482 +1,186 @@
-/* The regulatory comparator, RP-10.
- *
- * Every value here is quoted from screen 03
- * (03-regulatory-comparator.dc.html). Loaded only on the comparator page,
- * because nothing else on the site uses it.
+/* CRASA regulatory comparator: the three-step console (Day 2, D2 and S4).
+ * Built on ui.css (u- components) and the light theme tokens. Classes here
+ * are what is specific to the comparator: the steps, the indicator picker,
+ * the flag chips, the bar chart and the result layout.
  */
 
-/* Masthead -------------------------------------------------------------- */
+.c-cmp__hero { padding-block: 32px 24px; }
+.c-cmp__hero .u-h1 { font-size: 40px; }
+.c-cmp__hero-grid { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px 48px; }
+.c-cmp__hero .u-figures { margin: 0; }
+.c-cmp__hero .u-lead { max-width: 60ch; }
+.c-cmp__hero .u-figures { margin-top: 16px; }
 
-/* Screen 03 puts the comparator's title on the navy band, with the
-   demonstration notice beside it rather than under it. */
-.c-cmp__masthead { background: var(--c-navy); color: var(--c-sand); padding-block: var(--s-8); }
+.c-cmp { padding-block: 32px 64px; }
+.c-cmp__console { display: grid; gap: 24px; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); align-items: start; }
+.c-cmp__console > * { min-width: 0; }
+.c-cmp__step--1 { grid-row: 1 / span 2; }
+.c-cmp__step--2, .c-cmp__step--3 { grid-column: 2; }
 
-/* The photograph behind the masthead. Same treatment as .c-band--image:
-   the overlay is not decoration, it is what guarantees the type's contrast
-   over a photograph whose own tones are not fixed. */
-.c-cmp__masthead--image { position: relative; overflow: hidden; }
-.c-cmp__masthead-media { position: absolute; inset: 0; }
-/* picture is display:inline, so it has to be made the block that fills the
-   box or object-fit on the img never engages. */
-.c-cmp__masthead-media picture { display: block; width: 100%; height: 100%; }
-.c-cmp__masthead-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.c-cmp__masthead-scrim { position: absolute; inset: 0; background: rgba(15, 27, 45, .82); }
-.c-cmp__masthead--image .c-cmp__masthead-inner { position: relative; }
+.c-cmp__step { background: #FFFFFF; border: 1px solid var(--u-line, #D9E3EC); border-radius: 12px; padding: 24px; }
+.c-cmp__step--3 { border-color: var(--u-blue, #7A90C8); border-width: 2px; }
+.c-cmp__step-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; }
+.c-cmp__step-title { margin: 0 0 16px; font: 600 22px/1.3 var(--u-sans); color: var(--c-green-dark, #0B5F3E); display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.c-cmp__step-n { display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--u-tint-blue, #EEF2FA); color: var(--u-blue-ink, #2F4F8F); font-size: 14px; font-weight: 600; }
+.c-cmp__step-help { margin: 0 0 16px; color: var(--u-muted, #3F5264); font-size: 16px; }
+.c-cmp__count { margin-left: 8px; font-weight: 600; color: var(--u-blue-ink, #2F4F8F); }
 
-@media print {
-  .c-cmp__masthead-media, .c-cmp__masthead-scrim { display: none !important; }
+/* Step 1: indicators grouped by sector, each with a plain-words line. */
+.c-cmp__sectors { display: grid; gap: 20px; }
+.c-cmp__sector-title { margin: 0 0 8px; font: 600 16px/1.4 var(--u-sans); color: var(--u-ink, #25384A); padding-bottom: 6px; border-bottom: 2px solid var(--u-blue, #7A90C8); }
+.c-cmp__picks { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.c-cmp__pick { display: block; min-height: 44px; padding: 8px 12px; border-radius: 8px; border: 1px solid transparent; text-decoration: none; color: var(--u-ink, #25384A); transition: background-color 150ms, border-color 150ms; }
+.c-cmp__pick:hover { background: var(--u-pale, #F4F8F6); border-color: var(--u-line, #D9E3EC); }
+.c-cmp__pick[aria-current="true"] { background: var(--u-tint-green, #EAF4EF); border-color: var(--c-green, #0F8757); box-shadow: inset 4px 0 0 var(--c-green, #0F8757); }
+.c-cmp__pick-name { display: block; font: 600 16px/1.35 var(--u-sans); color: var(--c-green-dark, #0B5F3E); }
+.c-cmp__pick-line { display: block; font: 400 14px/1.4 var(--u-sans); color: var(--u-muted, #3F5264); }
+
+/* Step 2: flag chips. */
+.c-cmp__chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.c-cmp__chip { min-height: 44px; text-decoration: none; cursor: pointer; transition: background-color 150ms, border-color 150ms, transform 150ms; }
+.c-cmp__chip img, .c-cmp__chip svg { width: 22px; height: auto; border-radius: 2px; flex: none; box-shadow: 0 0 0 1px rgba(37,56,74,.15); }
+.c-cmp__chip:hover { border-color: var(--c-green, #0F8757); }
+.c-cmp__chip[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+.c-cmp__chip-x { font-weight: 700; margin-left: 2px; }
+.c-cmp__chip--all { font-weight: 600; }
+.c-cmp__clear { display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; color: var(--c-link, #0C7A4E); font-weight: 600; }
+
+/* Step 3: result. */
+.c-cmp__result-head { margin-bottom: 16px; }
+.c-cmp__result-title { margin: 0 0 4px; font: 600 28px/1.25 var(--u-display); color: var(--c-green-dark, #0B5F3E); }
+.c-cmp__result-meta { margin: 0; color: var(--u-muted, #3F5264); font-size: 16px; max-width: 80ch; }
+.c-cmp__view { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; margin-bottom: 24px; }
+.c-cmp__view--browse { grid-template-columns: minmax(0, 1fr); }
+.c-cmp__chart { margin: 0; padding: 16px 16px 8px; }
+.c-cmp__chart-cap { margin: 0 0 8px; font: 600 14px/1.4 var(--u-sans); color: var(--u-blue-ink, #2F4F8F); }
+.c-cmp__chart-frame { overflow-x: auto; }
+.c-cmp-chart { display: block; overflow: visible; font-family: var(--u-sans); }
+.c-cmp-chart--narrow { display: none; }
+@media (max-width: 599.98px) {
+  .c-cmp-chart--wide { display: none; }
+  .c-cmp-chart--narrow { display: block; }
 }
+.c-cmp-chart__name { font-size: 14px; fill: var(--u-ink, #25384A); font-weight: 600; }
+.c-cmp-chart__value { font-size: 14px; fill: var(--u-ink, #25384A); font-weight: 700; }
+.c-cmp-chart__year { font-weight: 400; fill: var(--u-muted, #3F5264); }
+.c-cmp-chart__missing { font-size: 14px; fill: var(--u-muted, #3F5264); font-style: italic; }
+.c-cmp-chart__bar { transform-box: fill-box; transform-origin: left center; animation: c-cmp-grow 400ms cubic-bezier(.2,.75,.25,1) both; animation-delay: calc(var(--i, 0) * 30ms); }
+@keyframes c-cmp-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.c-cmp__map { padding: 16px; }
+.c-cmp__map .c-map-region { margin: 0; }
+.c-cmp__words { padding: 20px; display: grid; gap: 12px; }
+.c-cmp__words--row { gap: 16px; margin-bottom: 24px; }
+.c-cmp__words-label { margin: 0; font: 600 14px/1.4 var(--u-sans); color: var(--u-blue-ink, #2F4F8F); }
+.c-cmp__words-text { margin: 0; font-size: 16px; line-height: 1.55; color: var(--u-ink, #25384A); }
+.c-cmp__words .c-indicator-note { margin: 0; font-size: 14px; color: var(--u-muted, #3F5264); }
+.c-cmp__share { display: grid; gap: 8px; }
+.c-cmp__exports { margin: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.c-cmp__exports .u-btn { min-height: 44px; }
+.c-cmp__link { display: flex; gap: 8px; }
+.c-cmp__link-input { flex: 1 1 auto; min-width: 0; font-size: 14px; }
+.c-cmp__share .u-help { margin: 0; }
 
-.c-cmp__masthead-inner {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s-6);
-  align-items: flex-start;
+.c-cmp__tableframe { margin-bottom: 16px; }
+.c-cmp__datatable th[scope="row"] { font-weight: 600; background: transparent; position: static; }
+.c-cmp__datatable tbody tr:nth-child(even) th { background: var(--u-pale, #F4F8F6); }
+.c-cmp__datatable th[scope="row"], .c-cmp__datatable td { font-size: 16px; padding: 12px 16px; border-bottom: 1px solid var(--u-line, #D9E3EC); }
+.c-cmp__num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.c-cmp__datatable tr[data-missing] .c-cmp__num { color: var(--u-muted, #3F5264); font-style: italic; }
+.c-cmp__src { font-size: 14px !important; color: var(--u-muted, #3F5264); max-width: 32ch; }
+.c-cmp__state-link { display: inline-flex; align-items: center; gap: 8px; color: var(--c-link, #0C7A4E); }
+.c-cmp__state-link img { width: 22px; height: auto; }
+.c-cmp__foot { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; font-size: 14px; color: var(--u-muted, #3F5264); }
+.c-cmp__empty { padding: 24px; }
+
+[data-cmp-swap][aria-busy="true"] .c-cmp__step--3 { opacity: .6; transition: opacity 150ms; }
+
+@media (max-width: 1099.98px) {
+  .c-cmp__console { grid-template-columns: minmax(0, 1fr); }
+  .c-cmp__step--1 { grid-row: auto; }
+  .c-cmp__step--2, .c-cmp__step--3 { grid-column: auto; }
+  .c-cmp__sectors { grid-template-columns: 1fr 1fr; }
+  .c-cmp__sector[data-sector="postal"] { grid-column: 1 / -1; }
 }
-
-.c-cmp__intro { flex: 999 1 420px; min-width: 0; }
-
-/* font-size:clamp(31px,5.2vw,52px);line-height:1.08;font-weight:600;
-   letter-spacing:-.02em;margin:0 0 var(--s-4) */
-.c-cmp__masthead h1 {
-  font-family: var(--f-head);
-  font-size: clamp(31px, 5.2vw, 52px);
-  line-height: 1.08;
-  font-weight: 600;
-  letter-spacing: -.02em;
-  margin: 0 0 var(--s-4);
-  color: var(--c-white);
-}
-
-/* font-size:19px;line-height:1.6;color:var(--c-sand);max-width:62ch */
-.c-cmp__lead { margin: 0; font-size: 19px; line-height: 1.6; color: var(--c-sand); max-width: 62ch; }
-
-/* background:rgba(194,113,12,.16);border:1px solid #7A4606;
-   border-left:4px solid var(--c-amber);border-radius:var(--r-sm);
-   padding:var(--s-4)
-
-   The 4px amber edge marks a band that qualifies every figure on the page.
-   It is one of three such edges on the platform and each one stops work. */
-.c-cmp__notice {
-  flex: 1 1 320px;
-  min-width: 0;
-  background: rgba(194, 113, 12, .16);
-  border: 1px solid var(--c-amber-dark);
-  border-left: 4px solid var(--c-amber);
-  border-radius: var(--r-sm);
-  padding: var(--s-4);
-  font-size: 15px;
-  line-height: 1.55;
-  color: var(--c-amber-light);
-}
-
-.c-cmp__notice strong { display: block; margin-bottom: 3px; color: var(--c-white); }
-
-/* Frame ----------------------------------------------------------------- */
-
-.c-cmp { padding-block: var(--s-7); }
-
-.c-cmp__bar {
-  display: flex;
-  align-items: center;
-  gap: var(--s-5);
-  flex-wrap: wrap;
-  margin-bottom: var(--s-6);
-}
-
-/* role="group" aria-label="Mode": display:flex;border:1.5px solid
-   var(--c-navy);border-radius:var(--r-sm);overflow:hidden */
-.c-cmp__modes { display: flex; border: 1.5px solid var(--c-navy); border-radius: var(--r-sm); overflow: hidden; }
-
-.c-cmp__modes a {
-  font-family: var(--f-body);
-  font-size: 15px;
-  font-weight: 600;
-  padding: 10px 16px;
-  color: var(--c-navy);
-  background: transparent;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.c-cmp__modes a[aria-current="true"] { background: var(--c-navy); color: var(--c-white); }
-
-.c-cmp__help { margin: 0; font-size: 15px; color: var(--c-charcoal); max-width: 56ch; }
-.c-cmp__exports { margin-left: auto; display: flex; gap: var(--s-3); flex-wrap: wrap; }
-
-/* display:flex;flex-wrap:wrap;gap:var(--s-6);align-items:flex-start */
-.c-cmp__layout { display: flex; flex-wrap: wrap; gap: var(--s-6); align-items: flex-start; }
-
-/* flex:1 1 280px;max-width:340px */
-.c-cmp__aside { flex: 1 1 280px; max-width: 340px; min-width: 0; display: flex; flex-direction: column; gap: var(--s-5); }
-
-/* flex:999 1 360px */
-.c-cmp__main { flex: 999 1 360px; min-width: 0; display: flex; flex-direction: column; gap: var(--s-6); }
-
-/* background:var(--c-white);border:1px solid var(--c-sand);
-   border-radius:var(--r-md);padding:var(--s-5) */
-.c-cmp__panel {
-  background: var(--c-white);
-  border: 1px solid var(--c-sand);
-  border-radius: var(--r-md);
-  padding: var(--s-5);
-}
-
-.c-cmp__panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3); margin-bottom: var(--s-3); }
-
-/* font-family:var(--f-head);font-size:19px;font-weight:600 */
-.c-cmp__panel h2 { font-family: var(--f-head); font-size: 19px; font-weight: 600; margin: 0 0 var(--s-4); }
-.c-cmp__panel-head h2 { margin: 0; }
-
-.c-cmp__count { font-family: var(--f-admin); font-size: 13px; font-weight: 600; color: var(--c-green-dark); }
-.c-cmp__count[data-full] { color: var(--c-amber-dark); }
-
-.c-cmp__panel-help { margin: 0 0 var(--s-4); font-size: 13.5px; line-height: 1.5; color: var(--c-charcoal); }
-
-/* Member state picker ---------------------------------------------------- */
-
-/* display:flex;flex-direction:column;gap:6px;max-height:430px;overflow:auto */
-.c-cmp__states { display: flex; flex-direction: column; gap: 6px; max-height: 430px; overflow: auto; padding-right: 2px; }
-
-.c-cmp__state {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  border: 1px solid var(--c-sand);
-  border-radius: var(--r-sm);
-  background: var(--c-white);
-  text-decoration: none;
-  color: var(--c-charcoal);
-  min-width: 0;
-}
-
-.c-cmp__state:hover { border-color: var(--c-border); background: var(--c-cream); }
-.c-cmp__state[aria-current="true"] { border-color: var(--c-green-dark); background: var(--c-green-light); }
-
-/* A state that cannot be added because four are already chosen. It stays a
-   link so it can still be read and focused, and says why rather than
-   disappearing. */
-.c-cmp__state[data-at-limit] { opacity: .55; }
-
-/* width:28px;height:28px;border-radius:var(--r-xs);background:var(--c-navy);
-   color:var(--c-cream);font-family:var(--f-admin);font-size:11px;
-   font-weight:700 */
-.c-cmp__code {
-  width: 28px;
-  height: 28px;
-  border-radius: var(--r-xs);
-  background: var(--c-navy);
-  color: var(--c-cream);
-  display: grid;
-  place-items: center;
-  font-family: var(--f-admin);
-  font-size: 11px;
-  font-weight: 700;
-  flex: none;
-}
-
-/* White on --c-green is 4.25:1 at 12px, under AA; green-dark is 8.86:1. */
-.c-cmp__code--on-navy { background: var(--c-green-dark); color: var(--c-white); }
-
-.c-cmp__state-names { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; flex: 1; }
-.c-cmp__state-name { font-size: 14.5px; font-weight: 600; line-height: 1.25; }
-.c-cmp__state-acr { font-size: 12px; color: var(--c-slate); }
-.c-cmp__tick { flex: none; color: var(--c-green-dark); font-weight: 700; }
-
-.c-cmp__clear {
-  display: inline-block;
-  margin-top: var(--s-4);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--c-green-dark);
-  text-underline-offset: 3px;
-}
-
-/* Categories ------------------------------------------------------------- */
-
-.c-cmp__categories { display: flex; flex-direction: column; gap: var(--s-4); }
-
-.c-cmp__category {
-  display: block;
-  font-family: var(--f-head);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--c-navy);
-  text-decoration: none;
-  padding: 7px 10px;
-  border-radius: var(--r-sm);
-  background: var(--c-cream);
-}
-
-.c-cmp__category[aria-current="true"] { background: var(--c-navy); color: var(--c-white); }
-
-.c-cmp__category-blurb { font-size: 12.5px; line-height: 1.5; color: var(--c-slate); margin: 6px 0 8px; }
-.c-cmp__indicators { display: flex; flex-direction: column; gap: 2px; }
-
-.c-cmp__indicator {
-  font-size: 13.5px;
-  line-height: 1.4;
-  padding: 6px 10px;
-  border-radius: var(--r-sm);
-  color: var(--c-charcoal);
-  text-decoration: none;
-}
-
-.c-cmp__indicator:hover { background: var(--c-green-light); color: var(--c-navy); }
-.c-cmp__indicator[aria-current="true"] { background: var(--c-green-dark); color: var(--c-white); font-weight: 600; }
-
-/* Empty state ------------------------------------------------------------ */
-
-/* background:var(--c-white);border:1px dashed #B9B2A2;
-   border-radius:var(--r-md);padding:var(--s-9) var(--s-7);text-align:center
-   The dashed rule takes --c-border, which clears 3:1. */
-.c-cmp__empty {
-  background: var(--c-white);
-  border: 1px dashed var(--c-border);
-  border-radius: var(--r-md);
-  padding: var(--s-9) var(--s-7);
-  text-align: center;
-}
-
-.c-cmp__empty h2 { font-family: var(--f-head); font-size: 28px; font-weight: 600; margin: 0 0 var(--s-4); }
-.c-cmp__empty p { margin: 0 auto; font-size: 17px; line-height: 1.6; color: var(--c-charcoal); max-width: 52ch; }
-.c-cmp__empty-actions { display: flex; gap: var(--s-3); flex-wrap: wrap; justify-content: center; margin-top: var(--s-5); }
-
-/* Results ---------------------------------------------------------------- */
-
-.c-cmp__result {
-  background: var(--c-white);
-  border: 1px solid var(--c-sand);
-  border-radius: var(--r-md);
-  overflow: hidden;
-}
-
-.c-cmp__result-head { padding: var(--s-5); border-bottom: 1px solid var(--c-sand); }
-
-/* Screen 03 sets this in tracked caps. Sentence case here, per the ruling
-   in CLAUDE.md; the size, weight and green are the screen's. */
-.c-cmp__eyebrow { font-size: 13px; font-weight: 600; color: var(--c-green-dark); margin: 0 0 6px; }
-
-/* font-family:var(--f-head);font-size:30px;font-weight:600 */
-.c-cmp__result-head h2 { font-family: var(--f-head); font-size: 30px; font-weight: 600; margin: 0 0 6px; }
-.c-cmp__result-meta { font-size: 14.5px; color: var(--c-charcoal); margin: 0 0 4px; max-width: 70ch; }
-
-/* grid-template-columns:repeat(auto-fit,minmax(430px,1fr)) */
-.c-cmp__split { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr)); }
-.c-cmp__split > :first-child { border-right: 1px solid var(--c-sand); min-width: 0; }
-.c-cmp__regional { padding: var(--s-5); min-width: 0; }
-
-.c-cmp__tablewrap { overflow-x: auto; min-width: 0; }
-
-/* width:100%;border-collapse:collapse;font-size:15.5px */
-.c-cmp__table { width: 100%; border-collapse: collapse; font-size: 15.5px; }
-.c-cmp__table--matrix { min-width: 640px; }
-
-/* background:var(--c-navy);color:var(--c-cream);text-align:left */
-.c-cmp__table thead tr { background: var(--c-navy); color: var(--c-cream); text-align: left; }
-
-/* Screen 03 sets column headers in tracked caps. Sentence case, per the
-   ruling; the size and weight are the screen's. */
-.c-cmp__table th[scope="col"] {
-  padding: 12px var(--s-4);
-  font-size: 13px;
-  font-weight: 600;
-  vertical-align: bottom;
-}
-
-.c-cmp__table th[scope="col"]:first-child { padding-left: var(--s-5); }
-.c-cmp__table tbody tr { border-bottom: 1px solid var(--c-sand); }
-.c-cmp__table tbody tr:last-child { border-bottom: 0; }
-.c-cmp__table td, .c-cmp__table tbody th { padding: 13px var(--s-4); vertical-align: top; }
-.c-cmp__table tbody th { text-align: left; font-weight: 500; padding-left: var(--s-5); }
-.c-cmp__num { text-align: right; font-family: var(--f-admin); font-variant-numeric: tabular-nums; font-weight: 600; }
-
-/* position:sticky;left:0 on the first column, so the indicator name stays
-   readable while the member states scroll. */
-.c-cmp__sticky { position: sticky; left: 0; background: var(--c-white); border-right: 1px solid var(--c-sand); min-width: 230px; }
-.c-cmp__table thead .c-cmp__sticky { background: var(--c-navy); }
-/* The acronym under a member state's name in the navy header. Slate on navy
-   measured 3.18:1 on 16 September 2026; sand is the band's quiet ink. */
-.c-cmp__table thead .c-cmp__state-acr { color: var(--c-sand); }
-
-.c-cmp__state-cell { display: flex; align-items: center; gap: 10px; }
-.c-cmp__indicator-name { display: block; font-size: 16px; line-height: 1.3; }
-.c-cmp__indicator-unit { display: block; font-size: 12.5px; color: var(--c-slate); margin: 3px 0 0; }
-
-.c-cmp__value { display: block; font-family: var(--f-admin); font-size: 19px; font-weight: 600; color: var(--c-navy); font-variant-numeric: tabular-nums; }
-
-/*
- * Not reported. Screen 03: italic slate, never a blank and never a zero.
- * "A blank cell would be indistinguishable from a value of zero."
- */
-[data-missing] { font-style: italic; color: var(--c-slate); font-weight: 400; font-family: var(--f-body); font-size: 15px; }
-.c-cmp__table tbody tr[data-missing] { background: var(--c-cream); }
-
-.c-cmp__remove {
-  margin-left: 6px;
-  width: 24px;
-  height: 24px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--c-navy-edge);
-  border-radius: var(--r-xs);
-  color: var(--c-cream);
-  text-decoration: none;
-  flex: none;
-  font-size: 13px;
-  line-height: 1;
-}
-
-.c-cmp__remove:hover { background: var(--c-navy-mid); color: var(--c-white); }
-
-/* The provenance badge. --r-pill, because it is a status badge. */
-.c-cmp__pill {
-  display: inline-block;
-  margin-top: 6px;
-  border-radius: var(--r-pill);
-  padding: 3px 10px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.c-cmp__pill[data-provenance="validated"] { background: var(--c-green-light); color: var(--c-green-dark); }
-.c-cmp__pill[data-provenance="reported"] { background: var(--c-cream); color: var(--c-charcoal); }
-.c-cmp__pill[data-provenance="sample"] { background: var(--c-amber-light); color: var(--c-amber-dark); }
-.c-cmp__pill[data-provenance="not_reported"] { background: var(--c-sand); color: var(--c-charcoal); }
-
-.c-cmp__source { display: block; font-size: 12.5px; color: var(--c-slate); margin-top: 5px; line-height: 1.45; }
-
-/* Bars ------------------------------------------------------------------- */
-
-.c-cmp__bars { display: flex; flex-direction: column; gap: 9px; }
-.c-cmp__bar-row { display: flex; align-items: center; gap: var(--s-3); }
-
-/* font-family:var(--f-admin);font-size:12px;font-weight:700;width:26px */
-.c-cmp__bar-code { font-family: var(--f-admin); font-size: 12px; font-weight: 700; color: var(--c-charcoal); width: 26px; flex: none; }
-
-/* flex:1;height:20px;background:var(--c-sand);border-radius:2px */
-.c-cmp__bar-track { flex: 1; height: 20px; background: var(--c-sand); border-radius: 2px; overflow: hidden; }
-.c-cmp__bar-fill { display: block; height: 100%; background: var(--c-green-dark); }
-
-/* A member state with no figure gets a hatched track, not an empty one:
-   an empty track is a bar of length zero. */
-.c-cmp__bar-missing {
-  display: block;
-  height: 100%;
-  background: repeating-linear-gradient(135deg, var(--c-sand) 0 4px, var(--c-border) 4px 8px);
-}
-
-.c-cmp__bar-value { font-family: var(--f-admin); font-size: 12.5px; font-weight: 600; color: var(--c-charcoal); width: 92px; text-align: right; flex: none; }
-.c-cmp__note { margin-top: var(--s-3); font-size: 13px; line-height: 1.55; color: var(--c-charcoal); }
-
-/* Foot ------------------------------------------------------------------- */
-
-/* padding:var(--s-4) var(--s-5);border-top:1px solid var(--c-sand);
-   background:var(--c-cream);display:flex;gap:var(--s-5);flex-wrap:wrap */
-/* The indicator's reading note, inside the result's padding. */
-.c-cmp__result > .c-indicator-note { margin: var(--s-4) var(--s-5); }
-.c-cmp__foot {
-  padding: var(--s-4) var(--s-5);
-  border-top: 1px solid var(--c-sand);
-  background: var(--c-cream);
-  display: flex;
-  gap: var(--s-5);
-  flex-wrap: wrap;
-  font-size: 13.5px;
-  color: var(--c-charcoal);
-}
-
-.c-cmp__permalink code { font-family: var(--f-admin); font-size: 12.5px; overflow-wrap: anywhere; }
-
-/* border-left:4px solid var(--c-navy) */
-.c-cmp__explainer {
-  background: var(--c-white);
-  border: 1px solid var(--c-sand);
-  border-left: 4px solid var(--c-navy);
-  border-radius: var(--r-md);
-  padding: var(--s-5);
-  font-size: 15px;
-  line-height: 1.6;
-}
-
-/* The 375px treatment ---------------------------------------------------- */
-
-/*
- * Screen 03: "A four-column comparison cannot be a table on a phone. Below
- * 720px the comparison transposes: one card per indicator, member states
- * stacked inside it as labelled rows."
- *
- * Both renderings are in the document and the media query chooses. Hidden
- * with display:none rather than clipped, so the one that is not shown is
- * also not announced.
- */
-.c-cmp__narrow { display: none; }
 
 @media (max-width: 719.98px) {
-  .c-cmp__wide { display: none; }
-  .c-cmp__narrow { display: flex; flex-direction: column; gap: var(--s-4); padding: var(--s-4); }
-  .c-cmp__split > :first-child { border-right: 0; border-bottom: 1px solid var(--c-sand); }
+  .c-cmp__hero .u-h1 { font-size: 30px; }
+  .c-cmp__step { padding: 16px; }
+  .c-cmp__sectors { grid-template-columns: 1fr; }
+  .c-cmp__sector[data-sector="telecommunications"] .c-cmp__picks,
+  .c-cmp__sector[data-sector="postal"] .c-cmp__picks { grid-template-columns: 1fr; }
+  .c-cmp__link { flex-direction: column; }
+  /* The table becomes one card per member state. */
+  .c-cmp__tableframe { border: 0; overflow: visible; }
+  .c-cmp__datatable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .c-cmp__datatable, .c-cmp__datatable tbody, .c-cmp__datatable tr { display: block; width: 100%; }
+  .c-cmp__datatable tr { border: 1px solid var(--u-line, #D9E3EC); border-radius: 12px; margin-bottom: 12px; padding: 8px 0; background: #FFFFFF; }
+  .c-cmp__datatable tbody tr:nth-child(even) td, .c-cmp__datatable tbody tr:nth-child(even) th { background: transparent; }
+  .c-cmp__datatable th[scope="row"], .c-cmp__datatable td { display: grid; grid-template-columns: 7.5em 1fr; gap: 8px; border: 0; padding: 4px 16px; text-align: left; max-width: none; }
+  .c-cmp__datatable td::before, .c-cmp__datatable th[scope="row"]::before { content: attr(data-label); font-weight: 600; font-size: 14px; color: var(--u-muted, #3F5264); font-style: normal; }
+  .c-cmp__datatable td:empty { display: none; }
 }
 
-/* background:var(--c-white);border:1px solid var(--c-sand);
-   border-radius:var(--r-sm);padding:var(--s-4) */
-.c-cmp__card {
-  background: var(--c-white);
-  border: 1px solid var(--c-sand);
-  border-radius: var(--r-sm);
-  padding: var(--s-4);
+@media (prefers-reduced-motion: reduce) {
+  .c-cmp-chart__bar { animation: none; }
+  .c-cmp__pick, .c-cmp__chip { transition: none; }
 }
 
-.c-cmp__card h3 { font-size: 16px; font-weight: 600; line-height: 1.3; margin: 0; font-family: var(--f-body); }
-
-/* display:flex;justify-content:space-between;align-items:baseline;
-   padding:9px 0;border-top:1px solid var(--c-sand) */
-.c-cmp__card-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--s-4);
-  padding: 9px 0;
-  border-top: 1px solid var(--c-sand);
-}
-
-.c-cmp__card-state { font-size: 14.5px; font-weight: 500; }
-.c-cmp__card-value { font-family: var(--f-admin); font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; }
-.c-cmp__card-source { margin: 0 0 var(--s-2); }
-
-/* The live panel ---------------------------------------------------------- */
-
-/*
- * React mounts beside the server-rendered result, never over it, and the
- * server's copy steps aside only once a live one exists. So the panel is
- * never empty for a frame, and a reader whose JavaScript fails or is slow
- * keeps the figures that arrived with the document.
- */
-/* The React mount renders nothing visible; the server markup is the result. */
-[data-comparator-live] { display: none; }
-[data-comparator-live][aria-busy="true"] { opacity: .6; }
-
-/* Print ------------------------------------------------------------------ */
-
-/*
- * Screen 03: the comparator "reads correctly as a printed page". Print gets
- * the wide table whatever the viewport, loses the controls, and keeps the
- * demonstration notice and the permalink.
- */
 @media print {
-  .c-cmp__aside, .c-cmp__bar, .c-cmp__remove, .c-cmp__clear { display: none !important; }
-  .c-cmp__wide { display: block !important; }
-  .c-cmp__narrow { display: none !important; }
-  .c-cmp__masthead { background: none; color: var(--c-charcoal); }
-  .c-cmp__masthead h1 { color: var(--c-charcoal); }
-  .c-cmp__lead, .c-cmp__notice { color: var(--c-charcoal); }
-  .c-cmp__table thead tr { background: none; color: var(--c-charcoal); border-bottom: 2px solid var(--c-charcoal); }
-  .c-cmp__result, .c-cmp__card { break-inside: avoid; }
+  .c-cmp__step--1, .c-cmp__step--2, .c-cmp__share { display: none; }
+  .c-cmp-chart__bar { animation: none; }
+}
+.c-cmp__datatable th[scope="row"] { vertical-align: top; }
+.c-cmp__shortcuts { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; margin: 12px 0 0; font-size: 16px; color: var(--u-muted, #3F5264); }
+.c-cmp__shortcuts a { display: inline-flex; align-items: center; min-height: 44px; color: var(--c-link, #0C7A4E); font-weight: 600; }
+.c-cmp__shortcuts a[aria-current="true"] { color: var(--c-green-dark, #0B5F3E); text-decoration-thickness: 3px; }
+.c-cmp__hero-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 48px; align-items: center; }
+.c-cmp__hero-grid { display: block; }
+.c-cmp__hero .u-figures { margin-top: 16px; }
+.c-cmp__photo { margin: 0; }
+.c-cmp__photo-frame { aspect-ratio: 16 / 10; overflow: hidden; border-radius: 12px; border: 1px solid var(--u-line, #D9E3EC); background: var(--u-pale, #F4F8F6); }
+.c-cmp__photo-frame picture, .c-cmp__masthead-media picture { display: block; width: 100%; height: 100%; }
+.c-cmp__photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.c-cmp__result { display: block; }
+.c-cmp-chart__row { outline: none; }
+@media (max-width: 899.98px) {
+  .c-cmp__hero-wrap { grid-template-columns: 1fr; gap: 16px; }
+  .c-cmp__photo { order: -1; }
+  .c-cmp__photo-frame { aspect-ratio: 16 / 9; max-height: 240px; }
 }
 
-/* The flag beside the ISO code. Never instead of it: two characters a
-   regulator reads at a glance beat a 24px picture, and the flag is there to
-   make the row scannable rather than to identify it. */
-.c-cmp__state .c-flag, .c-cmp__state-cell .c-flag { flex: none; margin-right: 2px; }
-.c-cmp__state-cell .c-flag { border-color: var(--c-navy-line); }
+/* Home comparison console (C8). */
+.c-hcmp { padding-block: 64px; background: var(--u-pale, #F4F8F6); }
+.c-hcmp__head { margin-bottom: 24px; max-width: 70ch; }
+.c-hcmp__intro { margin: 0; font-size: 18px; color: var(--u-muted, #3F5264); }
+.c-hcmp__console { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px; align-items: start; }
+.c-hcmp__form { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; margin-bottom: 8px; }
+.c-hcmp__field { margin-bottom: 16px; }
+.c-hcmp__field--wide { grid-column: 1 / -1; }
+.c-hcmp__apply { grid-column: 1 / -1; justify-self: start; margin-bottom: 16px; }
+.c-hcmp__table { background: #FFFFFF; }
+.c-hcmp__table td { vertical-align: middle; }
+.c-hcmp__summary { margin: 12px 0 0; font-size: 16px; color: var(--u-ink, #25384A); }
+.c-hcmp__chart { margin: 0; padding: 20px; background: #FFFFFF; }
+.c-hcmp__plain, .c-hcmp__source, .c-hcmp__note { margin: 12px 0 0; font-size: 14px; color: var(--u-muted, #3F5264); }
+.c-hcmp__open { margin: 16px 0 0; }
+[data-home-compare] [data-cmp-slot][aria-busy="true"] { opacity: .6; transition: opacity 150ms; }
+@media (max-width: 899.98px) {
+  .c-hcmp { padding-block: 40px; }
+  .c-hcmp__console { grid-template-columns: minmax(0, 1fr); }
+  .c-hcmp__form { grid-template-columns: 1fr; }
+}
+.c-hcmp__apply[hidden], [data-cmp-copy][hidden] { display: none; }
+
+/* Browse mode: the result needs the full width for the ranking and the
+ * map side by side, so the steps stack and the picker runs in columns. */
+@media (min-width: 1100px) {
+  .c-cmp__console--browse { grid-template-columns: minmax(0, 1fr); }
+  .c-cmp__console--browse .c-cmp__step--1 { grid-row: auto; }
+  .c-cmp__console--browse .c-cmp__step--2, .c-cmp__console--browse .c-cmp__step--3 { grid-column: auto; }
+  .c-cmp__console--browse .c-cmp__sectors { grid-template-columns: 6fr 3fr 7fr; gap: 24px; }
+  .c-cmp__console--browse .c-cmp__sector[data-sector="telecommunications"] .c-cmp__picks,
+  .c-cmp__console--browse .c-cmp__sector[data-sector="postal"] .c-cmp__picks { grid-template-columns: 1fr 1fr; }
+  .c-cmp__console--browse .c-cmp__view--browse { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
+  .c-cmp__console--browse .c-cmp__words--row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+}
+.c-hcmp__left, .c-hcmp__right { min-width: 0; }

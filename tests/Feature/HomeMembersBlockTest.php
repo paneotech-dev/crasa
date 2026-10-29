@@ -66,8 +66,11 @@ class HomeMembersBlockTest extends TestCase
             );
         }
 
-        $this->assertStringNotContainsString('>Madagascar<', $section);
-        $this->assertStringNotContainsString('>Seychelles<', $section);
+        // Named since 29 October 2026 (brief D1), in muted ink and with
+        // the note that they are not CRASA members, and never a link.
+        foreach (['Madagascar', 'Seychelles'] as $name) {
+            $this->assertStringContainsString('aria-label="'.$name.': SADC member state, not a CRASA member"', $section);
+        }
         $this->assertDoesNotMatchRegularExpression('~href="[^"]*/members/(mg|sc)"~', $section);
     }
 

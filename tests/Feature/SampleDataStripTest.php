@@ -347,7 +347,8 @@ class SampleDataStripTest extends TestCase
             ->assertDontSee('Undefined')
             ->assertDontSee('Exception');
 
-        $this->get('/en/comparator')->assertOk()->assertSee(__('comparator.empty_title'));
+        // Day 2: the comparator still opens on a result, which says Not reported.
+        $this->get('/en/comparator')->assertOk()->assertSee(__('comparator.not_reported'));
     }
 
     public function test_the_files_behind_demonstration_documents_are_removed_too(): void

@@ -234,7 +234,8 @@ class SectionBandTest extends TestCase
     {
         $html = $this->get('/en/comparator')->assertOk()->getContent();
 
-        $this->assertStringContainsString('c-cmp__masthead', $html);
+        // Day 2 (S9): the band is the shared short hero with its own figures.
+        $this->assertStringContainsString('u-hero c-cmp__hero', $html);
         $this->assertStringNotContainsString('c-band__counts', $html);
     }
 

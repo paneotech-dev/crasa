@@ -103,7 +103,9 @@ return [
             // Malawi's shape. At y=280 Mozambique spans 480 to 567 and
             // Malawi stops at 481, so the name sits on its own country.
             // 530 rather than 523 to clear Malawi's code by eight pixels.
-            'label' => [530, 280],
+            // Down to y=300 on 29 October 2026: at the home map's size the
+            // name still touched "MW" on the same baseline.
+            'label' => [532, 300],
             'inset' => null,
         ],
         'na' => [
