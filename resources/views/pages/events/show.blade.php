@@ -174,7 +174,7 @@
                             <svg class="e-map__pin" viewBox="0 0 24 24" width="36" height="36" aria-hidden="true"><path d="M12 22s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 15.8 12 22 12 22z" fill="#0B5F3E" stroke="#FFFFFF" stroke-width="1.5"/><circle cx="12" cy="10.5" r="2.6" fill="#FFFFFF"/></svg>
                         </div>
                         <figcaption class="e-map__caption">
-                            <span>{!! config('crasa.map.tile_attribution') !!}</span>
+                            <span>{{ html_entity_decode(config('crasa.map.tile_attribution'), ENT_QUOTES | ENT_HTML5, 'UTF-8') }}</span>
                             <a href="https://www.openstreetmap.org/?mlat={{ $place['lat'] }}&amp;mlon={{ $place['lng'] }}#map=12/{{ $place['lat'] }}/{{ $place['lng'] }}" target="_blank" rel="noopener">{{ __('e.open_map') }}<span class="c-sr"> {{ __('events.new_tab') }}</span></a>
                         </figcaption>
                     </figure>

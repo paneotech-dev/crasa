@@ -179,11 +179,12 @@
                 </article>
             </template>
             @php
-                $groupsJson = json_encode(collect($groups)->mapWithKeys(fn ($g) => [$g->code => ['name' => $g->label(), 'colour' => $g->colour]]), JSON_HEX_TAG | JSON_HEX_AMP);
-                $labelsJson = json_encode(['public' => __('e.visibility_public'), 'members' => __('e.visibility_members'), 'online' => __('e.online'), 'empty' => __('e.summary_empty')], JSON_HEX_TAG | JSON_HEX_AMP);
+                $groupsData = collect($groups)->mapWithKeys(fn ($g) => [$g->code => ['name' => $g->label(), 'colour' => $g->colour]]);
+                $labelsData = ['public' => __('e.visibility_public'), 'members' => __('e.visibility_members'), 'online' => __('e.online'), 'empty' => __('e.summary_empty')];
             @endphp
-            <script type="application/json" data-groups>{!! $groupsJson !!}</script>
-            <script type="application/json" data-labels>{!! $labelsJson !!}</script>
+            {{-- @json hex-escapes <, >, &, ' and ", so a committee name cannot close the script element. --}}
+            <script type="application/json" data-groups>@json($groupsData)</script>
+            <script type="application/json" data-labels>@json($labelsData)</script>
         </section>
 
         <div class="a-form__actions e-steps__nav">
