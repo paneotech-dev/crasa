@@ -41,7 +41,7 @@ class CommitteeGridTest extends TestCase
     {
         $html = $this->get('/en/committees')->assertOk()->getContent();
 
-        $this->assertStringContainsString('b-committees', $html);
+        $this->assertStringContainsString('cp-com-grid', $html);
 
         foreach (Committee::where('is_active', true)->pluck('name') as $name) {
             $this->assertStringContainsString($name, $html, $name.' is a committee and is not listed.');
@@ -89,7 +89,7 @@ class CommitteeGridTest extends TestCase
         $this->get('/en/committees')
             ->assertOk()
             ->assertSee('has not yet scheduled its first meeting')
-            ->assertDontSee('b-committee__tally', false);
+            ->assertDontSee('cp-com-tally', false);
     }
 
     public function test_a_committee_with_work_behind_it_states_its_counts(): void
@@ -99,7 +99,7 @@ class CommitteeGridTest extends TestCase
 
         $html = $this->get('/en/committees')->assertOk()->getContent();
 
-        $this->assertStringContainsString('b-committee__tally', $html);
+        $this->assertStringContainsString('cp-com-tally', $html);
         // The count links to the documents it counts.
         $this->assertStringContainsString('publications?committee='.$committee->slug, $html);
     }
@@ -149,7 +149,7 @@ class CommitteeGridTest extends TestCase
     {
         Committee::query()->delete();
         // A reader gets no editor guidance (15 October 2026); the back office does.
-        $this->get('/en/committees')->assertOk()->assertDontSee('No committees are listed yet')->assertDontSee('b-committees', false);
+        $this->get('/en/committees')->assertOk()->assertDontSee('No committees are listed yet')->assertDontSee('cp-com-grid', false);
         $this->actingAs(User::factory()->editor()->create())
             ->get('/en/committees')->assertOk()->assertSee('No committees are listed yet');
     }
@@ -166,5 +166,28 @@ class CommitteeGridTest extends TestCase
         $this->assertMatchesRegularExpression('~\.b-committees \{[^}]*align-items: stretch~', $css);
         $this->assertMatchesRegularExpression('~@media \(min-width: 992px\) \{ \.b-committees \{ grid-template-columns: repeat\(3, minmax\(0, 1fr\)\); \} \}~', $css);
         $this->assertStringContainsString('.b-committee > .b-committee__tally, .b-committee > .b-committee__dormant { margin-top: auto; }', $css);
+    }
+
+    /**
+     * Each card opens the committee's own page (C17, 29 October 2026): its
+     * mandate, its public documents and its next meeting, or a sentence
+     * saying none is scheduled.
+     */
+    public function test_each_committee_has_a_page_with_its_documents(): void
+    {
+        $committee = Committee::where('is_active', true)->first();
+        $publication = Publication::factory()->create(['committee_id' => $committee->id, 'is_public' => true]);
+
+        $this->get('/en/committees')->assertOk()->assertSee('/en/committees/'.$committee->slug, false);
+
+        $this->get('/en/committees/'.$committee->slug)
+            ->assertOk()
+            ->assertSee($committee->name)
+            ->assertSee('/en/publications/'.$publication->slug, false)
+            ->assertSee(__('cpages_a.no_next_meeting'))
+            ->assertSee('u-cta', false);
+
+        $committee->update(['is_active' => false]);
+        $this->get('/en/committees/'.$committee->slug)->assertNotFound();
     }
 }
