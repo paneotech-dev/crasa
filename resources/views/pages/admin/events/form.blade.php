@@ -100,7 +100,7 @@
                     'options' => collect($kinds)->mapWithKeys(fn ($k) => [$k => __('e.kind_'.$k)])->all()])
             </div>
             @include('pages.admin.events._field', ['name' => 'committee_id', 'label' => __('e.field_committee'), 'type' => 'select', 'help' => __('e.field_committee_help'), 'value' => $meeting->committee_id,
-                'options' => ['' => __('e.field_committee_none')] + $committees->pluck('name', 'id')->all()])
+                'options' => ['' => __('e.field_committee_none')] + $committees->mapWithKeys(fn ($c) => [$c->id => $c->displayName()])->all()])
             @include('pages.admin.events._field', ['name' => 'summary', 'label' => __('e.field_summary'), 'type' => 'textarea', 'rows' => 3, 'help' => __('e.field_summary_help'), 'value' => $meeting->summary])
             @include('pages.admin.events._field', ['name' => 'organiser', 'label' => __('e.field_organiser'), 'value' => $meeting->organiser, 'max' => 200])
         </fieldset>
