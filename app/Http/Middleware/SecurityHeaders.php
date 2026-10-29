@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Turnstile;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,12 +38,17 @@ class SecurityHeaders
          * through, which is the attack that matters for an administration
          * interface.
          */
-        $policy = implode('; ', [
+        // Turnstile, when it is on, loads a script and draws its check in a
+        // frame, both from Cloudflare's challenge host.
+        $turnstile = Turnstile::enabled() ? ' '.Turnstile::HOST : '';
+
+        $policy = implode('; ', array_filter([
             "default-src 'self'",
             // Cloudflare injects its Web Analytics beacon in front of the
             // site; without these two hosts the browser logs a CSP error on
             // every page.
-            "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com",
+            "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com".$turnstile,
+            $turnstile !== '' ? "frame-src 'self'".$turnstile : null,
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data:",
             "font-src 'self'",
@@ -52,7 +58,7 @@ class SecurityHeaders
             "base-uri 'self'",
             "object-src 'none'",
             'upgrade-insecure-requests',
-        ]);
+        ]));
 
         $headers = [
             'Content-Security-Policy' => $policy,

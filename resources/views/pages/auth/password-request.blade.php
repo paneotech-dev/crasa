@@ -19,6 +19,7 @@
                     <input class="c-input" type="email" id="email" name="email" value="{{ old('email') }}" required autocomplete="username">
                     @error('email')<p class="c-field__error">{{ $message }}</p>@enderror
                 </div>
+                @include('partials.turnstile')
                 <button type="submit" class="c-btn c-btn--primary">{{ __('auth.send_link') }}</button>
             </form>
         </div>

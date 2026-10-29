@@ -145,10 +145,12 @@ class ContactFormTest extends TestCase
         $this->assertStringContainsString('tabindex="-1"', $html);
     }
 
-    /* Rate limiting, not a CAPTCHA ------------------------------------------ */
+    /* Rate limiting; Turnstile only when its keys are set (TurnstileTest) ---- */
 
-    public function test_the_form_uses_no_captcha(): void
+    public function test_without_turnstile_keys_the_form_uses_no_captcha(): void
     {
+        config(['services.turnstile.site_key' => null, 'services.turnstile.secret' => null]);
+
         $html = $this->get('/en/contact')->getContent();
 
         foreach (['recaptcha', 'hcaptcha', 'turnstile', 'g-recaptcha'] as $term) {

@@ -187,6 +187,14 @@ html.translation-notice-closed .c-translation,
   color: var(--c-slate);
 }
 
+/* Turnstile -------------------------------------------------------------- */
+
+/* The form check above a public form's submit button, drawn only when
+   Turnstile is on. The height is the widget's own, reserved so the button
+   does not jump when Cloudflare's frame arrives. */
+.c-turnstile { margin-block: var(--s-4); }
+.cf-turnstile { min-height: 65px; }
+
 /* Text size --------------------------------------------------------------- */
 
 /* The stylesheets set type in pixels, so scaling the root font size alone

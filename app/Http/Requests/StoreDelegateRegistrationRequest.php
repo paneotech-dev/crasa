@@ -17,9 +17,11 @@ use Illuminate\Foundation\Http\FormRequest;
  * them is the moment this crosses the line, and DelegateBoundaryTest walks
  * the names.
  *
- * No CAPTCHA, for the same reason the contact form has none: a puzzle a
- * screen reader user cannot solve fails WCAG 2.1 AA and excludes the people
- * most likely to need it. A honeypot and a rate limit do the same job.
+ * No puzzle CAPTCHA, for the same reason the contact form has none: a
+ * puzzle a screen reader user cannot solve fails WCAG 2.1 AA and excludes
+ * the people most likely to need it. A honeypot and a rate limit do the
+ * job, with Cloudflare Turnstile in front of the route when its keys are
+ * set (VerifyTurnstile).
  */
 class StoreDelegateRegistrationRequest extends FormRequest
 {
