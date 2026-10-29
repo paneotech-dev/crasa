@@ -64,4 +64,9 @@ class EveningAccessibilityRowsTest extends TestCase
         $this->assertStringContainsString('.a-input[type="date"]:focus-within', file_get_contents(public_path('css/admin-workflow.css')));
         $this->assertStringContainsString("@section('title', __('extranet.folders'))", file_get_contents(resource_path('views/pages/extranet/index.blade.php')));
     }
+
+    public function test_back_office_table_frames_contain_their_visually_hidden_text_at_390(): void
+    {
+        $this->assertStringContainsString('.a-tablewrap { position: relative; }', file_get_contents(public_path('css/admin-workflow.css')));
+    }
 }

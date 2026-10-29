@@ -88,7 +88,8 @@ class EveningModerationTest extends TestCase
         $approval = Approvals::pending($news);
 
         $this->actingAs($this->editor)->get("/en/admin/data/news/{$news->id}")->assertOk()
-            ->assertSee(__('evening.locked_notice'))->assertDontSee(__('evening.withdraw_button'));
+            ->assertSee(__('evening.locked_notice'))->assertDontSee(__('evening.withdraw_button'))
+            ->assertSee('<fieldset class="aw-lockset" disabled', false);
         $this->actingAs($this->moderator)->get("/en/admin/data/news/{$news->id}")->assertOk();
         $this->actingAs($this->moderator)->get("/en/admin/approvals/{$approval->id}")->assertOk()
             ->assertSee('Postal committee met in Windhoek');

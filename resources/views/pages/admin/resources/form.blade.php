@@ -43,6 +43,9 @@
         : route('admin.resources.update', ['locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $record->getKey()]) }}">
         @csrf
         @unless ($isNew) @method('PUT') @endunless
+        @php($lockedForReview = ! $isNew && \App\Support\Approvals::isLocked($record))
+        {{-- In review: read only until approved or returned (evening pass). --}}
+        <fieldset class="aw-lockset" @disabled($lockedForReview)>
 
         @if ($definition->fields !== [])
             <section class="a-panel">
@@ -172,10 +175,13 @@
             </section>
         @endif
 
+        </fieldset>
         <div class="a-form__actions">
+            @unless ($lockedForReview)
             <button type="submit" class="a-btn a-btn--primary">
                 {{ $isNew ? __('admin.resource_create', ['name' => $definition->singular()]) : __('admin.resource_save', ['name' => $definition->singular()]) }}
             </button>
+            @endunless
             <a href="{{ route('admin.resources', ['locale' => app()->getLocale(), 'resource' => $definition->key]) }}">{{ __('admin.cancel') }}</a>
         </div>
     </form>
