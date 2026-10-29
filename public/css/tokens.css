@@ -18,6 +18,16 @@
   --c-amber:#C2710C; --c-white:#FFFFFF;
   --c-red:#9B2226; --c-red-light:#FBEDED;
 
+  /* CRASA blue, the navy of the crasa.org buttons (Learn More, Extranet,
+     Contact), sampled from that site's stylesheet on 29 October 2026
+     (.button background, --primary-1). The secondary colour of the
+     platform: primary buttons and the current sidebar item in the member
+     area and the back office, the public footer and closing bands, event
+     date blocks, the second series of a chart. Green stays the public
+     identity colour. Pairs measured in docs/accessibility/contrast-crasa-blue.md:
+     white on it 13.94, it on white 13.94. */
+  --c-crasa-blue:#052D53;
+
   /* Neutrals. Borders and disabled text on light surfaces, and the
      pressed and border tones used on navy surfaces. */
   /* --c-border and --c-border-input both had to reach 3:1 against white for

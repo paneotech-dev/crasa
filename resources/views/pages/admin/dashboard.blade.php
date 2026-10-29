@@ -228,8 +228,8 @@
                 </details>
 
                 <div class="a-panel__foot a-legend">
-                    <span><span class="a-legend__swatch" style="background:var(--c-green-dark)"></span>{{ __('admin.sector_ict') }}, {{ $byYear['ict'] }}</span>
-                    <span><span class="a-legend__swatch" style="background:var(--c-navy)"></span>{{ __('admin.sector_postal') }}, {{ $byYear['postal'] }}</span>
+                    <span><span class="a-legend__swatch" data-series="1"></span>{{ __('admin.sector_ict') }}, {{ $byYear['ict'] }}</span>
+                    <span><span class="a-legend__swatch" data-series="2"></span>{{ __('admin.sector_postal') }}, {{ $byYear['postal'] }}</span>
                     <span class="a-legend__note">{{ __('admin.bars_read_without_colour') }}</span>
                 </div>
             @endif

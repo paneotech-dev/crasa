@@ -44,10 +44,13 @@ body[data-surface="admin"] {
   --a-head-ground: var(--c-white);
   /* The admin button tokens. Variation V-ADMIN-BUTTON, docs/VARIATIONS.md:
      proposed and applied 16 September 2026, pending the client's sign-off.
-     Values only from the approved palette. The light theme is unchanged. */
-  --a-btn: var(--a-green, var(--c-green-dark));
+     Values only from the approved palette. Day 3 (29 October 2026): the
+     light set's primary button is the CRASA blue (white on it 13.94:1),
+     pressed and hovered to the navy (white 17.28:1). The dark set below
+     keeps its green, because the blue on the dark ground is 1.34:1. */
+  --a-btn: var(--a-blue, var(--a-green, var(--c-green-dark)));
   --a-btn-ink: var(--c-white);
-  --a-btn-hover: var(--a-green-deep, var(--c-navy));
+  --a-btn-hover: var(--c-navy);
   --a-btn-hover-ink: var(--c-white);
 
   background: var(--a-ground);
@@ -2642,7 +2645,7 @@ body[data-surface="admin"] .c-small { color: var(--a-ink-quiet); }
 .rd__block--wide { grid-column: 1 / -1; }
 .rd__bhead { display: flex; align-items: center; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; margin-bottom: 8px; }
 .rd__btitle { font-size: 18px; line-height: 1.35; }
-.rd__badge { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border-radius: 999px; font-size: 14px; font-weight: 600; background: var(--a-btn); color: var(--a-btn-ink); }
+.rd__badge { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border-radius: 999px; font-size: 14px; font-weight: 600; background: var(--a-badge); color: var(--a-badge-ink); }
 .rd__badge[data-zero="true"] { background: var(--a-current); color: var(--a-ink-strong); }
 .rd__status { margin: 0 0 8px; font-size: 14px; color: var(--a-ink); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--a-rule); }
 .rd__status[data-tone="notice"] { border-color: var(--c-amber-mid); background: var(--c-amber-light); color: var(--c-amber-dark); }
@@ -2693,6 +2696,11 @@ body[data-surface="admin"] {
   --a-side-current-ink: var(--c-white);
   --a-side-badge: var(--u-blue-ink);
   --a-side-badge-ink: var(--c-white);
+  /* Day 3: the current item's text is the CRASA blue (13.94:1 on the white
+     sidebar); badges stay green. */
+  --a-side-current-text: var(--a-blue);
+  --a-badge: var(--a-green);
+  --a-badge-ink: var(--c-white);
 }
 
 body[data-surface="admin"][data-theme="dark"] {
@@ -2709,6 +2717,9 @@ body[data-surface="admin"][data-theme="dark"] {
   --a-side-current-ink: var(--c-white);
   --a-side-badge: var(--c-green-light);
   --a-side-badge-ink: var(--c-navy);
+  --a-side-current-text: var(--c-cream);
+  --a-badge: var(--d-green);
+  --a-badge-ink: var(--d-bg);
 }
 @media (prefers-color-scheme: dark) {
   body[data-surface="admin"][data-theme="system"] {
@@ -2725,6 +2736,9 @@ body[data-surface="admin"][data-theme="dark"] {
     --a-side-current-ink: var(--c-white);
     --a-side-badge: var(--c-green-light);
     --a-side-badge-ink: var(--c-navy);
+    --a-side-current-text: var(--c-cream);
+    --a-badge: var(--d-green);
+    --a-badge-ink: var(--d-bg);
   }
 }
 
@@ -2738,14 +2752,14 @@ body[data-surface="admin"] .a-side__me { border-color: var(--a-side-edge); }
 body[data-surface="admin"] .a-side__mark { color: var(--a-side-ink-strong); }
 body[data-surface="admin"] .a-side__mark:hover { color: var(--a-side-ink-strong); text-decoration: underline; text-underline-offset: 3px; }
 body[data-surface="admin"] .a-side__area { color: var(--a-side-ink); border-color: var(--a-side-edge); min-height: 32px; }
-body[data-surface="admin"] .a-side__area:hover { color: var(--a-side-hover-ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
-body[data-surface="admin"] .a-side__area.is-current { color: var(--a-side-hover-ink); font-weight: 600; }
+body[data-surface="admin"] .a-side__area:hover { background: none; color: var(--a-side-hover-ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+body[data-surface="admin"] .a-side__area.is-current { color: var(--a-side-current-text); font-weight: 600; background: none; border-color: var(--a-side-edge); }
 body[data-surface="admin"] .a-side__grouplabel { color: var(--a-side-label); }
 body[data-surface="admin"] .a-side__link { color: var(--a-side-ink); border-left-color: transparent; border-radius: 0 8px 8px 0; margin-right: 8px; min-height: 40px; transition: background-color 150ms ease, color 150ms ease; }
-body[data-surface="admin"] .a-side__link:hover { color: var(--a-side-hover-ink); }
+body[data-surface="admin"] .a-side__link:hover { color: var(--a-side-hover-ink); background: none; }
 body[data-surface="admin"] .a-side__link:hover span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
-body[data-surface="admin"] .a-side__link:active { color: var(--a-side-hover-ink); }
-body[data-surface="admin"] .a-side__link.is-current { color: var(--a-side-hover-ink); font-weight: 600; }
+body[data-surface="admin"] .a-side__link:active { color: var(--a-side-hover-ink); background: none; }
+body[data-surface="admin"] .a-side__link.is-current { color: var(--a-side-current-text); font-weight: 600; background: none; border-left-color: transparent; }
 body[data-surface="admin"] .a-side__link.is-current:hover span { text-decoration: none; }
 body[data-surface="admin"] .a-side__name { color: var(--a-side-ink-strong); }
 body[data-surface="admin"] .a-side__name:hover { color: var(--a-side-ink-strong); }
@@ -2792,3 +2806,26 @@ body[data-surface="admin"] .a-search:focus-within { outline: 2px solid var(--a-f
 body[data-surface="admin"] .a-top__field:focus-visible { outline: 2px solid var(--a-focus); outline-offset: 2px; }
 body[data-surface="admin"] :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible { outline-width: 2px; outline-style: solid; outline-color: var(--a-focus); }
 body[data-surface="admin"] .a-search input:focus-visible { outline: 0; }
+
+/* =========================================================================
+   Day 3: the CRASA blue in the member area and the back office.
+   Primary buttons from the UI system and the public button set take the
+   admin button tokens, so every primary action on a signed-in screen is
+   one colour. The second series of a chart is the blue, the first the
+   green (#0F8757 against the blue 3.07:1, each on white 4.54 and 13.94).
+   Event date chips carry the blue day. Pairs:
+   docs/accessibility/contrast-crasa-blue.md.
+   ========================================================================= */
+body[data-surface="admin"] :is(.u-btn--primary, .c-btn--primary) { background: var(--a-btn); border-color: var(--a-btn); color: var(--a-btn-ink); }
+body[data-surface="admin"] :is(.u-btn--primary, .c-btn--primary):hover { background: var(--a-btn-hover); border-color: var(--a-btn-hover); color: var(--a-btn-hover-ink); }
+body[data-surface="admin"] { --a-series-1: var(--a-green); --a-series-2: var(--a-blue); --a-date-ink: var(--a-blue); }
+body[data-surface="admin"][data-theme="dark"] { --a-series-1: var(--d-green); --a-series-2: var(--c-green-step-1); --a-date-ink: var(--a-ink); }
+@media (prefers-color-scheme: dark) {
+  body[data-surface="admin"][data-theme="system"] { --a-series-1: var(--d-green); --a-series-2: var(--c-green-step-1); --a-date-ink: var(--a-ink); }
+}
+.a-bars__seg[data-sector="ict"], .a-track__seg[data-sector="ict"] { background: var(--a-series-1); }
+.a-bars__seg[data-sector="postal"], .a-track__seg[data-sector="postal"] { background: var(--a-series-2); }
+.a-legend__swatch[data-series="1"] { background: var(--a-series-1); }
+.a-legend__swatch[data-series="2"] { background: var(--a-series-2); }
+.r-bar__fill { background: var(--a-series-1); }
+body[data-surface="admin"] .e-dash__day { color: var(--a-date-ink); }

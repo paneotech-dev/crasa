@@ -64,6 +64,9 @@
 .c-cmp-chart__value { font-size: 14px; fill: var(--u-ink, #25384A); font-weight: 700; }
 .c-cmp-chart__year { font-weight: 400; fill: var(--u-muted, #3F5264); }
 .c-cmp-chart__missing { font-size: 14px; fill: var(--u-muted, #3F5264); font-style: italic; }
+.c-cmp-chart__bar { fill: var(--u-green, #0F8757); }
+/* The second series: the CRASA blue (on white 13.94:1, against the green 3.07:1). */
+.c-cmp-chart__bar--second { fill: var(--u-crasa-blue, #052D53); }
 .c-cmp-chart__bar { transform-box: fill-box; transform-origin: left center; animation: c-cmp-grow 400ms cubic-bezier(.2,.75,.25,1) both; animation-delay: calc(var(--i, 0) * 30ms); }
 @keyframes c-cmp-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .c-cmp__map { padding: 16px; }
