@@ -25,7 +25,9 @@
 
 @section('actions')
     @unless ($isNew)
-        <a class="a-btn a-btn--secondary" href="{{ route('events.show', ['locale' => $locale, 'meeting' => $meeting->slug]) }}">{{ __('e.admin_preview') }}</a>
+        @can('view', $meeting)
+            <a class="a-btn a-btn--secondary" href="{{ route('events.show', ['locale' => $locale, 'meeting' => $meeting->slug]) }}">{{ __('e.admin_preview') }}</a>
+        @endcan
         <a class="a-btn a-btn--secondary" href="{{ route('admin.delegates', ['locale' => $locale, 'meeting' => $meeting->slug]) }}">{{ __('e.admin_delegates') }}</a>
     @endunless
 @endsection

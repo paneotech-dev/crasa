@@ -80,7 +80,10 @@
                                         @can('update', $meeting)
                                             <a class="a-btn a-btn--secondary a-btn--small" href="{{ route('admin.meetings.edit', ['locale' => $locale, 'meeting' => $meeting->slug]) }}">{{ __('e.admin_edit') }}<span class="c-sr"> {{ $meeting->title }}</span></a>
                                         @endcan
-                                        <a class="a-btn a-btn--secondary a-btn--small" href="{{ route('events.show', ['locale' => $locale, 'meeting' => $meeting->slug]) }}">{{ __('e.admin_preview') }}<span class="c-sr"> {{ $meeting->title }}</span></a>
+                                        {{-- The public page answers the meeting policy's view rule; link it only for a reader it will answer. --}}
+                                        @can('view', $meeting)
+                                            <a class="a-btn a-btn--secondary a-btn--small" href="{{ route('events.show', ['locale' => $locale, 'meeting' => $meeting->slug]) }}">{{ __('e.admin_preview') }}<span class="c-sr"> {{ $meeting->title }}</span></a>
+                                        @endcan
                                         @can('delete', $meeting)
                                             <a class="a-btn a-btn--danger a-btn--small" href="{{ route('admin.meetings.delete', ['locale' => $locale, 'meeting' => $meeting->slug]) }}"
                                                data-delete-event data-title="{{ $meeting->title }}" data-action="{{ route('admin.meetings.destroy', ['locale' => $locale, 'meeting' => $meeting->slug]) }}">{{ __('e.admin_delete') }}<span class="c-sr"> {{ $meeting->title }}</span></a>
