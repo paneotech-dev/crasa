@@ -48,9 +48,10 @@
                     <a class="u-btn u-btn--secondary" href="{{ $meeting->registration_url }}" rel="noopener">{{ __('events.register_elsewhere') }}</a>
                 @endif
             </div>
-        @elseif ($meeting->registration_opens_on && ! $meeting->hasEnded() && $meeting->registration_opens_on->toDateString() > \App\Support\LocalTime::today())
+        @elseif ($meeting->registration_opens_on && ! $meeting->date_unknown && ! $meeting->hasEnded() && $meeting->registration_opens_on->toDateString() > \App\Support\LocalTime::today())
             <p>{{ __('e.registration_from', ['date' => $fmt($meeting->registration_opens_on)]) }}</p>
-        @elseif ($meeting->hasEnded())
+        @elseif ($meeting->date_unknown || $meeting->hasEnded())
+            {{-- An undated legacy meeting is read as past, as on its card. --}}
             <p>{{ __('delegates.closed') }}</p>
         @else
             <p>{{ __('e.registration_closed') }}</p>

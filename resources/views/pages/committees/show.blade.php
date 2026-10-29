@@ -63,7 +63,6 @@
             <h2 class="u-h2">{{ __('cpages_a.documents') }}</h2>
             @if ($publications->isEmpty())
                 <div class="u-panel u-panel--tint cp-com-empty">
-                    <span class="cp-icon-badge">@include('partials.cpages.committee-icon', ['slug' => $committee->slug])</span>
                     <p class="u-text">{{ __('cpages_a.no_documents') }}</p>
                     <a class="u-btn u-btn--secondary" href="{{ route('publications', ['locale' => $locale]) }}">{{ __('cpages_a.browse_library') }}</a>
                 </div>

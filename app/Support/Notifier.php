@@ -302,6 +302,12 @@ final class Notifier
             return (string) $data['title'];
         }
 
+        // A return notice stored without its country (older rows) reads
+        // "Return 2025: Returned" rather than a sentence with a gap in it.
+        if (($data['type'] ?? null) === 'submission' && blank($data['country'] ?? null) && isset($data['period'], $data['status'])) {
+            return MemberHome::notificationLabel($notification);
+        }
+
         if (($data['type'] ?? null) === 'submission' && Lang::has('d3_notify.submission_'.($data['status'] ?? ''))) {
             return (string) __('d3_notify.submission_'.$data['status'], ['country' => $data['country'] ?? '', 'period' => $data['period'] ?? '']);
         }

@@ -17,7 +17,6 @@
 <section class="c-hcmp" id="home-compare" aria-labelledby="home-compare-title">
     <div class="u-container">
         <div class="c-hcmp__head">
-            <p class="u-eyebrow">{{ __('d.eyebrow') }}</p>
             <h2 class="u-h2" id="home-compare-title">{{ __('d.home_heading') }}</h2>
             <p class="c-hcmp__intro">{{ __('d.home_intro') }}</p>
         </div>

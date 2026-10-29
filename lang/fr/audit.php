@@ -26,6 +26,7 @@ return [
     'action_invitation_accepted' => "Acceptation d'une invitation",
     'action_reactivated' => 'Réactivation d\'un compte',
     'action_registration_resent' => 'Renvoi à un délégué de la copie de son inscription',
+    'action_registrations_exported' => 'Export des inscriptions des délégués',
     // Day 3: docs
     'action_document_added' => "Ajout d'un fichier dans un dossier",
     'action_document_replaced' => "Ajout d'une nouvelle version d'un fichier",

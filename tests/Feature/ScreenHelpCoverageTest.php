@@ -27,6 +27,10 @@ class ScreenHelpCoverageTest extends TestCase
         'submissions.export.csv',
         'submissions.export.json',
         'notifications.open',
+        'admin.registrations.csv',
+        'admin.registrations.xlsx',
+        'extranet.version',
+        'extranet.shared',
     ];
 
     /** @return list<string> */
@@ -109,6 +113,24 @@ class ScreenHelpCoverageTest extends TestCase
             ->assertOk()
             ->assertSee(__('d3_notify.help_general_note'))
             ->assertSee(trans('screenhelp_core')['_member']['purpose']);
+    }
+
+    /**
+     * Help for a screen is open to anyone who may open the screen. A member
+     * state representative builds reports under /admin/reports, so reads its
+     * help; the rest of the back office's help stays refused to them.
+     */
+    public function test_help_for_a_shared_back_office_screen_follows_the_screen(): void
+    {
+        $rep = User::factory()->memberStateRep(\App\Models\Country::first() ?? \App\Models\Country::factory()->create())->create();
+        $committee = User::factory()->committeeMember()->create();
+
+        $this->actingAs($rep)->get('/en/admin/reports')->assertOk();
+        $this->actingAs($rep)->get('/en/help/admin.reports')->assertOk();
+        $this->actingAs($rep)->get('/en/help/admin.dashboard')->assertForbidden();
+
+        $this->actingAs($committee)->get('/en/help/admin.reports')->assertForbidden();
+        $this->actingAs($committee)->get('/en/help/extranet.dashboard')->assertOk();
     }
 
     public function test_help_files_from_other_parts_of_the_platform_are_read(): void

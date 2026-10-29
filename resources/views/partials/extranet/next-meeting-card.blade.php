@@ -1,19 +1,13 @@
 {{--
     "Your next meeting": the next meeting this account may see whose
     registration is open, with its date and the way to the form. Takes
-    $user. Self-contained so the member dashboard can place it anywhere;
+    $user, and $registrationMeeting when the caller already has it from
+    App\Support\NextRegistration. Self-contained so the member dashboard can place it anywhere;
     renders nothing when no meeting is open for registration.
 --}}
 @php
-    // The same meetings the member dashboard calls yours: your committees'
-    // and the CRASA-wide ones; the Secretariat sees every one.
-    $nextSeats = $user?->committees()->pluck('committees.id');
-    $nextMeeting = $user
-        ? \App\Models\Meeting::upcoming()->with('committee')
-            ->when(! $user->seesAllCountries(), fn ($q) => $q->where(fn ($w) => $w->whereIn('committee_id', $nextSeats)->orWhereNull('committee_id')))
-            ->get()
-            ->first(fn ($m) => $m->registrationIsOpen() && \Illuminate\Support\Facades\Gate::forUser($user)->allows('view', $m))
-        : null;
+    // $registrationMeeting when the caller has already looked it up.
+    $nextMeeting = $registrationMeeting ?? \App\Support\NextRegistration::for($user);
     $nextMine = $nextMeeting
         ? \App\Models\DelegateRegistration::where('meeting_id', $nextMeeting->id)->where('user_id', $user->id)->first()
         : null;

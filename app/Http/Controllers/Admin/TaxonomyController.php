@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\Permission;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
-use App\Models\Concerns\Auditable;
 use App\Models\Sector;
 use App\Models\Translation;
 use App\Support\BadgeColours;
@@ -60,6 +59,7 @@ class TaxonomyController extends Controller
         abort_unless(Taxonomies::has($kind), 404);
 
         $model = Taxonomies::model($kind);
+        $this->authorizeTerm('create', $model);
         $term = new $model;
         $term->sort_order = (int) $model::query()->max('sort_order') + 1;
 
@@ -72,6 +72,7 @@ class TaxonomyController extends Controller
         abort_unless(Taxonomies::has($kind), 404);
 
         $model = Taxonomies::model($kind);
+        $this->authorizeTerm('create', $model);
         $term = new $model;
         $data = $request->validate($this->rules($kind, $term));
 
@@ -106,6 +107,7 @@ class TaxonomyController extends Controller
     {
         $this->authorizeScreen();
         $term = $this->term($kind, $id);
+        $this->authorizeTerm('delete', $term);
         $name = Taxonomies::label($kind, $term);
         $used = Taxonomies::usage($kind, $term);
 
@@ -140,6 +142,20 @@ class TaxonomyController extends Controller
     {
         Gate::authorize('enter-back-office');
         Gate::authorize(Permission::ManageSettings->value);
+    }
+
+    /**
+     * Sectors are reference data with a policy of their own (SectorPolicy),
+     * asked here too so this screen and the generic data screen give the
+     * same answer. The other kinds answer to this screen's rule alone.
+     *
+     * @param  Model|class-string<Model>  $subject
+     */
+    private function authorizeTerm(string $ability, Model|string $subject): void
+    {
+        if ($subject instanceof Sector || $subject === Sector::class) {
+            Gate::authorize($ability, $subject);
+        }
     }
 
     private function term(string $kind, int $id): Model
@@ -243,8 +259,8 @@ class TaxonomyController extends Controller
         }
 
         // Names live in the translations table, which the model's own
-        // audit does not see; Tag has no audit of its own at all.
-        if ($changed !== [] || ! in_array(Auditable::class, class_uses_recursive($term), true)) {
+        // audit (Auditable, on all four kinds) does not see.
+        if ($changed !== []) {
             AuditLog::record($term->wasRecentlyCreated ? AuditLog::CREATED : AuditLog::UPDATED, $term, [
                 'translations' => $changed,
                 'slug' => $term->slug,

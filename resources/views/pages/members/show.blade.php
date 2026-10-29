@@ -76,7 +76,6 @@
                     <ul class="u-cols-2 cp-memberpage__committees" role="list">
                         @foreach ($committees as $committee)
                             <li class="u-panel cp-memberpage__committee">
-                                <span class="cp-icon-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 14.5c3 0 6 1.9 6 5.5"/></svg></span>
                                 <span>
                                     <span class="cp-memberpage__committee-name">{{ $committee->name }}</span>
                                     @if ($committee->pivot?->role)

@@ -1,9 +1,11 @@
-{{-- Call-to-action band (UI system). $ctaTitle, $ctaText?, $ctaPrimary [label,url], $ctaSecondary [label,url]? --}}
+{{-- Call-to-action band (UI system). $ctaTitle, $ctaPrimary [label,url], $ctaSecondary [label,url]?
+     $ctaText is accepted and not drawn (item 8f): the heading and the two
+     buttons say it, and a helper sentence under a heading is drawn only
+     where the reader needs it to act. --}}
 <section class="u-cta cp-cta" aria-labelledby="cp-cta-title">
     <div class="u-container u-cta__inner">
         <div>
             <h2 class="u-cta__title" id="cp-cta-title">{{ $ctaTitle }}</h2>
-            @if (! empty($ctaText))<p class="u-cta__text">{{ $ctaText }}</p>@endif
         </div>
         <div class="u-actions">
             @if (! empty($ctaPrimary))<a class="u-btn u-btn--primary" href="{{ $ctaPrimary[1] }}">{{ $ctaPrimary[0] }}</a>@endif

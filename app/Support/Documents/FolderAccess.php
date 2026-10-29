@@ -10,6 +10,7 @@ use App\Models\Country;
 use App\Models\Document;
 use App\Models\Folder;
 use App\Models\User;
+use App\Support\PermissionMatrix;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -42,10 +43,21 @@ final class FolderAccess
 
     public const TYPES = ['signed_in', 'roles', 'country', 'committee', 'users', 'secretariat'];
 
-    /** The roles a rule may name. */
+    /**
+     * The roles a rule may name: those that can reach the member area,
+     * where folders are read. Taken from the grant behind the
+     * enter-member-area gate (ReachCommitteeWorkspace) rather than listed,
+     * so a viewer, moderator or auditor, who never reach a folder, is not
+     * offered, and a role given that permission on the roles screen is.
+     *
+     * @return list<Role>
+     */
     public static function roles(): array
     {
-        return [Role::Administrator, Role::Editor, Role::MemberStateRep, Role::CommitteeMember, Role::Viewer, Role::Moderator, Role::Auditor];
+        return array_values(array_filter(
+            Role::cases(),
+            fn (Role $role) => PermissionMatrix::grant($role, Permission::ReachCommitteeWorkspace)->allowsAnything(),
+        ));
     }
 
     /**

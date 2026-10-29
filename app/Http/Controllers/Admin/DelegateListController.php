@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\Permission;
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\DelegateRegistration;
 use App\Models\Meeting;
+use App\Support\SpreadsheetCell;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -71,7 +73,7 @@ class DelegateListController extends Controller
      * Platform: the website has collected the information and this is how
      * it leaves.
      */
-    public function csv(Meeting $meeting): StreamedResponse
+    public function csv(Request $request, Meeting $meeting): StreamedResponse
     {
         Gate::authorize(Permission::ManageMeetings->value);
 
@@ -80,6 +82,13 @@ class DelegateListController extends Controller
             ->with('country')
             ->orderBy('arrival_on')
             ->get();
+
+        // Who took the list off the platform, for which event, how many rows.
+        AuditLog::record('registrations_exported', $meeting, [
+            'format' => 'csv',
+            'meeting' => $meeting->slug,
+            'rows' => $registrations->count(),
+        ], $request->user());
 
         return response()->streamDownload(function () use ($registrations) {
             $handle = fopen('php://output', 'w');
@@ -100,7 +109,7 @@ class DelegateListController extends Controller
             ]);
 
             foreach ($registrations as $row) {
-                fputcsv($handle, [
+                fputcsv($handle, SpreadsheetCell::row([
                     $row->delegate_name,
                     $row->delegate_email,
                     $row->delegate_role,
@@ -114,7 +123,7 @@ class DelegateListController extends Controller
                     $row->departure_reference,
                     $row->notes,
                     __('e.delegate_'.($row->status ?: 'filed')),
-                ]);
+                ]));
             }
 
             fclose($handle);

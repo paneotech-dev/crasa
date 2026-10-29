@@ -51,7 +51,7 @@ return [
 
     // Inscrições de delegados
     'reg_note' => 'Cada chegada e partida indicadas na página de uma reunião, por reunião.',
-    'reg_chain' => 'Um delegado preenche o formulário na página da reunião. A inscrição chega aqui com o estado Submetida e o delegado recebe uma cópia por correio eletrónico. O Secretariado confirma-a ou recusa-a, e o delegado é informado. A exportação é a lista enviada aos organizadores da reunião.',
+    'reg_chain' => 'Um delegado preenche o formulário na página da reunião. A inscrição chega aqui com o estado Submetida; o delegado vê-a na plataforma (e recebe uma cópia por correio eletrónico quando o envio estiver ativo). O Secretariado confirma-a ou recusa-a, e o delegado é informado. A exportação é a lista enviada aos organizadores da reunião.',
     'mail_off_note' => 'O envio de correio eletrónico está desativado nesta plataforma. Reenviar coloca a cópia do delegado em fila de espera, mas não é entregue enquanto o envio estiver desativado.',
     'resend' => 'Reenviar cópia',
     'resend_off_short' => 'O envio de correio eletrónico está desativado: a cópia fica em fila de espera e não é entregue enquanto estiver desativado.',
@@ -62,7 +62,7 @@ return [
     'export_xlsx' => 'Exportar Excel',
     'all_events' => 'Todas as reuniões',
     'all_statuses' => 'Todos os estados',
-    'reg_count' => '{0} Nenhuma inscrição|{1} Uma inscrição|[2,*] :count inscrições',
+    'reg_count' => '{0} Ainda nenhuma inscrição|{1} Uma inscrição|[2,*] :count inscrições',
     'reg_counts' => 'Submetidas: :filed. Confirmadas: :confirmed. Recusadas: :declined.',
     'reg_caption' => 'Inscrições de delegados para :event',
     'reg_empty_title' => 'Nenhuma inscrição corresponde',
@@ -88,7 +88,7 @@ return [
     'reg_next_title' => 'O que acontece a seguir',
     'reg_next_copy' => 'Recebe uma cópia do que submeteu no endereço de correio eletrónico que indicar.',
     'reg_next_review' => 'O Secretariado da CRASA recebe a sua inscrição, confirma-a ou recusa-a, e escreve-lhe em qualquer dos casos antes de :date.',
-    'reg_next_change' => 'Para alterar um dado, preencha de novo com o mesmo endereço de correio eletrónico. A nova inscrição substitui a anterior.',
+    'reg_next_change' => 'Para alterar um dado, inicie sessão com a conta do seu endereço de correio eletrónico e preencha de novo, ou escreva ao Secretariado. A nova inscrição substitui a anterior.',
     // Finding the form (member area) and after sending
     'reg_members_only' => 'Esta reunião é reservada aos membros: inicie sessão com a sua conta da plataforma para preencher.',
     'reg_yours' => 'Já se inscreveu nesta reunião. Estado: :status.',
@@ -100,7 +100,7 @@ return [
     'done_title' => 'Inscrição recebida',
     'done_lead' => 'O Secretariado recebeu a sua chegada e partida. Estado: :status.',
     'done_sent' => 'O que enviou',
-    'done_edit' => 'Pode alterar a sua inscrição enquanto o Secretariado não a confirmar: abra de novo o formulário e envie-o com o mesmo endereço de correio eletrónico.',
+    'done_edit' => 'Pode alterar a sua inscrição enquanto o Secretariado não a confirmar: inicie sessão com a conta deste endereço de correio eletrónico e envie de novo o formulário, ou escreva ao Secretariado.',
     'done_confirmed' => 'O Secretariado confirmou a sua inscrição. Para alterar algo agora, escreva ao Secretariado.',
     'back_to_event' => 'Voltar à reunião',
     'register_attendance' => 'Inscrever-me na reunião',

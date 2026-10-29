@@ -6,7 +6,6 @@ use App\Models\AuditLog;
 use App\Models\Document;
 use App\Models\DocumentVersion;
 use App\Models\Folder;
-use App\Models\Scopes\CountryScope;
 use App\Support\Documents\DocumentStore;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -156,15 +155,9 @@ class FolderDocumentController extends Controller
     public function bin(Request $request): View
     {
         $admin = $request->routeIs('admin.*');
+        $this->authoriseBackOfficeBin($request);
 
-        $documents = Document::onlyTrashed()
-            ->whereNotNull('folder_id')
-            ->with(['deleter', 'folder' => fn ($q) => $q->withoutGlobalScope(CountryScope::class)])
-            ->orderByDesc('deleted_at')
-            ->limit(500)
-            ->get()
-            ->filter(fn (Document $d) => $d->folder !== null && Gate::allows('upload', $d->folder))
-            ->values();
+        $documents = DocumentStore::binned();
 
         return view('pages.documents.bin', [
             'layout' => $admin ? 'layouts.admin' : 'layouts.extranet',
@@ -175,6 +168,8 @@ class FolderDocumentController extends Controller
 
     public function restore(Request $request, int $document): RedirectResponse
     {
+        $this->authoriseBackOfficeBin($request);
+
         $document = Document::onlyTrashed()->whereNotNull('folder_id')->find($document);
         abort_if($document === null, 404);
 
@@ -209,6 +204,18 @@ class FolderDocumentController extends Controller
             'Cache-Control' => 'no-store, no-cache, must-revalidate, private',
             'X-Content-Type-Options' => 'nosniff',
         ], 'attachment');
+    }
+
+    /*
+     * The back office's bin is part of the folders screen, and asks what
+     * that screen asks (FolderPolicy::create, manage content). The door to
+     * the back office alone let a moderator or an auditor open it.
+     */
+    private function authoriseBackOfficeBin(Request $request): void
+    {
+        if ($request->routeIs('admin.*')) {
+            Gate::authorize('create', Folder::class);
+        }
     }
 
     /* ------------------------------------------------------------------ */

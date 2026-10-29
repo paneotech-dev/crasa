@@ -127,7 +127,6 @@
 
             <aside class="cp-contact__cards" aria-label="{{ __('contact.secretariat') }}">
                 <div class="u-panel cp-contact-card">
-                    <span class="cp-icon-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.3 7-12a7 7 0 1 0-14 0c0 5.7 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
                     <div>
                         <h2 class="cp-contact-card__title">{{ __('cpages.contact_address_title') }}</h2>
                         <address class="cp-contact-card__text">
@@ -139,7 +138,6 @@
                 </div>
 
                 <div class="u-panel cp-contact-card">
-                    <span class="cp-icon-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="m4 6 8 7 8-7"/></svg></span>
                     <div>
                         <h2 class="cp-contact-card__title">{{ __('cpages.contact_email_title') }}</h2>
                         <a class="cp-contact-card__link" href="mailto:{{ $email }}">{{ $email }}</a>
@@ -149,7 +147,6 @@
                 </div>
 
                 <div class="u-panel cp-contact-card">
-                    <span class="cp-icon-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
                     <div>
                         <h2 class="cp-contact-card__title">{{ __('cpages.contact_hours_title') }}</h2>
                         <p class="cp-contact-card__text">{{ __('cpages.contact_hours') }}</p>
@@ -158,7 +155,6 @@
 
                 @if ($socials->isNotEmpty())
                     <div class="u-panel cp-contact-card">
-                        <span class="cp-icon-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg></span>
                         <div>
                             <h2 class="cp-contact-card__title">{{ __('cpages.contact_social_title') }}</h2>
                             <ul class="cp-contact-social" role="list">

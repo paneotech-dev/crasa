@@ -52,7 +52,7 @@ return [
 
     // Delegate registrations
     'reg_note' => 'Every arrival and departure filed on an event page, by event.',
-    'reg_chain' => 'A delegate files on the event page. The filing arrives here as Filed and the delegate receives a copy by email. The Secretariat confirms or declines it, and the delegate is told. The export is the list that goes to the event organisers.',
+    'reg_chain' => 'A delegate files on the event page. The filing arrives here as Filed, and the delegate sees it in the platform (and receives a copy by e-mail once e-mail is switched on). The Secretariat confirms or declines it, and the delegate is told. The export is the list that goes to the event organisers.',
     'mail_off_note' => 'Outbound mail is switched off on this platform. Resending queues the delegate\'s copy, but it is not delivered until mail is switched on.',
     'resend' => 'Resend copy',
     'resend_off_short' => 'Mail is switched off: the copy is queued and not delivered until mail is switched on.',
@@ -63,7 +63,7 @@ return [
     'export_xlsx' => 'Export Excel',
     'all_events' => 'All events',
     'all_statuses' => 'All statuses',
-    'reg_count' => '{0} No registrations|{1} One registration|[2,*] :count registrations',
+    'reg_count' => '{0} No filings yet|{1} One registration|[2,*] :count registrations',
     'reg_counts' => 'Filed: :filed. Confirmed: :confirmed. Declined: :declined.',
     'reg_caption' => 'Delegate registrations for :event',
     'reg_empty_title' => 'No registrations match',
@@ -89,7 +89,7 @@ return [
     'reg_next_title' => 'What happens next',
     'reg_next_copy' => 'You receive a copy of what you filed at the email address you give.',
     'reg_next_review' => 'The CRASA Secretariat receives your filing, confirms or declines it, and writes to you either way before :date.',
-    'reg_next_change' => 'To change a detail, file again with the same email address. The new filing replaces the old one.',
+    'reg_next_change' => 'To change a detail, sign in with the account for your email address and file again, or write to the Secretariat. The new filing replaces the old one.',
     // Finding the form (member area) and after sending
     'reg_members_only' => 'This meeting is for members: sign in with your platform account to file.',
     'reg_yours' => 'You have filed for this meeting. Status: :status.',
@@ -101,7 +101,7 @@ return [
     'done_title' => 'Registration received',
     'done_lead' => 'The Secretariat has your arrival and departure. Status: :status.',
     'done_sent' => 'What you sent',
-    'done_edit' => 'You can change your registration until the Secretariat confirms it: open the form again and send it with the same email address.',
+    'done_edit' => 'You can change your registration until the Secretariat confirms it: sign in with the account for this email address and send the form again, or write to the Secretariat.',
     'done_confirmed' => 'The Secretariat has confirmed your registration. To change anything now, write to the Secretariat.',
     'back_to_event' => 'Back to the meeting',
     'register_attendance' => 'Register my attendance',

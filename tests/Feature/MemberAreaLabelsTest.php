@@ -118,10 +118,12 @@ class MemberAreaLabelsTest extends TestCase
         $migration->up();
         $migration->up();
 
-        $labels = DB::table('translations')->where('translatable_id', $id)->where('field', 'label')->pluck('value', 'locale')->all();
+        // By type as well as id: the taxonomy terms' names share the table
+        // and can carry the same id.
+        $labels = DB::table('translations')->where('translatable_type', 'App\Models\MenuItem')->where('translatable_id', $id)->where('field', 'label')->pluck('value', 'locale')->all();
         $this->assertSame(['en' => 'Member area', 'fr' => 'Espace membres', 'pt' => 'Members'], $labels);
 
         $migration->down();
-        $this->assertSame('Extranet', DB::table('translations')->where('translatable_id', $id)->where('locale', 'en')->value('value'));
+        $this->assertSame('Extranet', DB::table('translations')->where('translatable_type', 'App\Models\MenuItem')->where('translatable_id', $id)->where('field', 'label')->where('locale', 'en')->value('value'));
     }
 }

@@ -274,6 +274,53 @@ final class HomeData
         ];
     }
 
+    /**
+     * The three tiles under the home hero (item 8f): the library's
+     * guidelines, the comparator's reach and the next public meeting, each
+     * counted or read from the data at render time. A tile with nothing to
+     * say (no guideline, no indicator, no meeting to come) is left out.
+     *
+     * @return list<array{label: string, value: string, url: string}>
+     */
+    public static function tiles(): array
+    {
+        $nav = fn (string $path) => Navigation::url($path);
+        $figures = self::figures();
+        $tiles = [];
+
+        if ($figures['guidelines'] > 0) {
+            $tiles[] = [
+                'label' => __('d3_polish.tile_library'),
+                'value' => trans_choice('d3_polish.tile_library_value', $figures['guidelines'], ['count' => $figures['guidelines']]),
+                'url' => $nav('publications?type[]=guideline'),
+            ];
+        }
+
+        $indicators = Indicator::active()->count();
+
+        if ($indicators > 0) {
+            $tiles[] = [
+                'label' => __('d3_polish.tile_comparator'),
+                'value' => __('d3_polish.tile_comparator_value', ['states' => $figures['members'], 'indicators' => $indicators]),
+                'url' => $nav('comparator'),
+            ];
+        }
+
+        $next = Meeting::public()->upcoming()->limit(5)->get()->first(fn (Meeting $m) => ! $m->isCancelled());
+
+        if ($next !== null) {
+            $place = trim(explode(',', (string) $next->location)[0]);
+            $date = $next->starts_on->copy()->locale(app()->getLocale())->isoFormat(__('d3_polish.tile_date_format'));
+            $tiles[] = [
+                'label' => __('d3_polish.tile_meeting'),
+                'value' => $place !== '' ? $date.', '.($next->isOnline() && strcasecmp($place, 'Online') === 0 ? __('e.online') : $place) : $date,
+                'url' => route('events.show', ['locale' => app()->getLocale(), 'meeting' => $next->slug]),
+            ];
+        }
+
+        return $tiles;
+    }
+
     /** Figures for the hero, the glance band and the work cards. @return array<string, int> */
     public static function figures(): array
     {

@@ -17,7 +17,6 @@
     <div class="u-container">
         <div class="s-latest__head">
             <h2 class="u-h2" id="news-social-heading">{{ __('fb.feed_heading') }}</h2>
-            <p class="u-lead">{{ $socialPosts->isNotEmpty() ? __('fb.feed_intro') : __('fb.channels_intro') }}</p>
         </div>
         @if ($socialPosts->isNotEmpty())
             <div class="s-posts">

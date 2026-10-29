@@ -11,6 +11,7 @@ use App\Models\DelegateRegistration;
 use App\Models\Meeting;
 use App\Support\DeliveryCheck;
 use App\Support\SimpleXlsx;
+use App\Support\SpreadsheetCell;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
@@ -56,7 +57,10 @@ class RegistrationAdminController extends Controller
             ->where(fn ($q) => $q->whereIn('id', $registrations->keys())
                 ->when(! $filter['status'], fn ($q) => $q->orWhere(fn ($open) => $open
                     ->where('date_unknown', false)->whereNotNull('starts_on')
-                    ->where('starts_on', '>', \App\Support\LocalTime::today())
+                    // Still to start, or under way with its form open until
+                    // an explicit closing date (the Lilongwe workshop).
+                    ->where(fn ($when) => $when->where('starts_on', '>', \App\Support\LocalTime::today())
+                        ->orWhereDate('registration_closes_on', '>=', \App\Support\LocalTime::today()))
                     ->where('status', '!=', 'cancelled'))))
             ->get()
             ->sortBy([
@@ -130,14 +134,16 @@ class RegistrationAdminController extends Controller
     {
         Gate::authorize(Permission::ManageMeetings->value);
 
-        $rows = $this->rows($this->query($this->filters($request))->get());
+        $filters = $this->filters($request);
+        $rows = $this->rows($this->query($filters)->get());
+        $this->audit($request, $filters, 'csv', count($rows) - 1);
 
         return response()->streamDownload(function () use ($rows) {
             $handle = fopen('php://output', 'w');
             // Byte order mark, so Excel reads accented names correctly.
             fwrite($handle, "\u{FEFF}");
             foreach ($rows as $row) {
-                fputcsv($handle, $row);
+                fputcsv($handle, SpreadsheetCell::row($row));
             }
             fclose($handle);
         }, $this->filename($request, 'csv'), ['Content-Type' => 'text/csv; charset=UTF-8']);
@@ -148,12 +154,30 @@ class RegistrationAdminController extends Controller
     {
         Gate::authorize(Permission::ManageMeetings->value);
 
-        $rows = $this->rows($this->query($this->filters($request))->get());
+        $filters = $this->filters($request);
+        $rows = $this->rows($this->query($filters)->get());
+        $this->audit($request, $filters, 'xlsx', count($rows) - 1);
 
         return response(SimpleXlsx::build($rows, __('admin.nav_delegates')), 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition' => 'attachment; filename="'.$this->filename($request, 'xlsx').'"',
         ]);
+    }
+
+    /**
+     * Who took the delegate list off the platform, for which event and how
+     * many rows. The list carries names, addresses and travel details.
+     *
+     * @param  array{meeting: ?Meeting, status: ?string}  $filters
+     */
+    private function audit(Request $request, array $filters, string $format, int $count): void
+    {
+        AuditLog::record('registrations_exported', $filters['meeting'], [
+            'format' => $format,
+            'meeting' => $filters['meeting']?->slug,
+            'status' => $filters['status'],
+            'rows' => $count,
+        ], $request->user());
     }
 
     /** @return array{meeting: ?Meeting, status: ?string} */

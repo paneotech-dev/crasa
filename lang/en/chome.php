@@ -95,7 +95,7 @@ return [
     'sm_members' => 'Members and committees',
     'sm_publications' => 'Publications and resources',
     'sm_news' => 'News and events',
-    'sm_services' => 'Services',
+    'sm_services' => 'Members',
     'contact' => 'Contact',
     'follow' => 'Follow us',
     'footer_blurb' => 'A Specialised Agency of SADC, established in 1997, harmonising the postal and ICT regulatory environment in the SADC region.',
@@ -129,7 +129,7 @@ return [
 
     'mission_label' => 'Our mission',
     'mission_heading' => 'Our mission and areas of work',
-    'what_we_do' => 'What we do',
+    'what_we_do' => 'Our work',
     'work_more_0' => 'Guidelines',
     'work_more_1' => 'Coverage in the comparator',
     'work_more_2' => 'Postal guidelines',
@@ -157,7 +157,7 @@ return [
     'edition' => 'Edition :year',
 
     'members_label' => 'Members and regional cooperation',
-    'members_heading' => 'Fourteen national authorities',
+    'members_heading' => 'Member regulators',
     'members_directory' => 'Members directory',
 
     'social_heading' => 'Follow CRASA',

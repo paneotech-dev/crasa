@@ -124,24 +124,52 @@ class DelegateRegistrationController extends Controller
         }
 
         /*
-         * The unique key is the meeting and the email, so filing again
-         * amends rather than duplicating. That is what the confirmation
-         * tells the delegate to do: there is no edit link to send them,
-         * because a link that opens somebody's travel details is a link
-         * that opens somebody's travel details.
+         * Whose filing this amends.
          *
-         * A signed-in delegate's country comes from their account and
-         * overrides what the form said; a delegate without one chooses it.
+         * Matching on the meeting and the address alone let anybody who
+         * typed another delegate's address replace that delegate's filing,
+         * flight and all. So: a signed-in delegate amends only their own
+         * filing, found by their account. A filing sent signed out under the
+         * address of the account now signed in is theirs too, and is taken
+         * over. Anything else already held under the address is somebody
+         * else's, and is never overwritten: the reader is told a filing
+         * exists and to sign in or write to the Secretariat. Nothing about
+         * the refused attempt is stored or logged.
          */
-        $registration = DelegateRegistration::updateOrCreate(
-            ['meeting_id' => $meeting->id, 'delegate_email' => $data['delegate_email']],
-            array_merge($data, [
-                'user_id' => $user?->id,
-                'country_id' => $user?->country_id ?? ($data['country_id'] ?? null),
-                'authority_id' => $data['authority_id'] ?? $user?->authority_id,
-                'status' => 'filed',
-            ])
-        );
+        $existing = DelegateRegistration::withoutGlobalScopes()->where('meeting_id', $meeting->id)
+            ->where('delegate_email', $data['delegate_email'])->first();
+        $own = $user
+            ? DelegateRegistration::withoutGlobalScopes()->where('meeting_id', $meeting->id)->where('user_id', $user->id)->first()
+            : null;
+
+        if ($own === null && $existing !== null && $existing->user_id === null && $user !== null
+            && $user->hasVerifiedEmail() && strcasecmp($user->email, $existing->delegate_email) === 0) {
+            $own = $existing;
+        }
+
+        if ($existing !== null && ($own === null || ! $existing->is($own))) {
+            return back()->withInput()->withErrors(['delegate_email' => __('d3_security.reg_filing_exists')]);
+        }
+
+        // A signed-in delegate's country comes from their account and
+        // overrides what the form said; a delegate without one chooses it.
+        $attributes = array_merge($data, [
+            'meeting_id' => $meeting->id,
+            'user_id' => $user?->id,
+            'country_id' => $user?->country_id ?? ($data['country_id'] ?? null),
+            'authority_id' => $data['authority_id'] ?? $user?->authority_id,
+            'status' => 'filed',
+        ]);
+
+        if ($own !== null) {
+            if ($own->status === 'confirmed') {
+                return back()->withInput()->withErrors(['delegate_email' => __('d3_people.reg_already_confirmed')]);
+            }
+            $own->update($attributes);
+            $registration = $own;
+        } else {
+            $registration = DelegateRegistration::create($attributes);
+        }
 
         /*
          * Stored first, then confirmed. If the mail fails the delegate is

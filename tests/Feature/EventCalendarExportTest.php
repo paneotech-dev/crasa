@@ -74,13 +74,17 @@ class EventCalendarExportTest extends TestCase
             app()->setLocale($locale);
             $ics = "/{$locale}/events/agm-15/calendar.ics";
 
-            foreach (["/{$locale}/events/agm-15", "/{$locale}/events"] as $page) {
-                $this->get($page)->assertOk()
-                    ->assertSee(__('events.add_to_calendar'))
-                    ->assertSee(url($ics), false)
-                    ->assertSee('https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=CRASA%2015th%20Annual%20General%20Meeting%3B%20plenary&amp;dates=20270310%2F20270314', false)
-                    ->assertSee('location=Gaborone%2C%20Botswana', false);
-            }
+            // The three options live on the event page; a card links to
+            // them with one "Add to calendar" (item 8f).
+            $this->get("/{$locale}/events/agm-15")->assertOk()
+                ->assertSee(__('events.add_to_calendar'))
+                ->assertSee('id="add-to-calendar"', false)
+                ->assertSee(url($ics), false)
+                ->assertSee('https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=CRASA%2015th%20Annual%20General%20Meeting%3B%20plenary&amp;dates=20270310%2F20270314', false)
+                ->assertSee('location=Gaborone%2C%20Botswana', false);
+            $this->get("/{$locale}/events")->assertOk()
+                ->assertSee(__('d3_polish.add_to_calendar'))
+                ->assertSee(url("/{$locale}/events/agm-15").'#add-to-calendar', false);
         }
     }
 
