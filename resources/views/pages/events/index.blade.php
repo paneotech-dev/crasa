@@ -153,7 +153,7 @@
         </div>
     </section>
 
-    <section class="u-section u-section--pale" aria-labelledby="upcoming-title">
+    <section class="u-section u-section--pale" id="upcoming" aria-labelledby="upcoming-title">
         <div class="u-container">
             <h2 class="u-h2" id="upcoming-title">{{ __('events.upcoming') }}</h2>
             @if ($upcoming->isEmpty())
@@ -172,7 +172,7 @@
     </section>
 
     @if ($pastByYear->isNotEmpty())
-        <section class="u-section" aria-labelledby="past-title" data-past>
+        <section class="u-section" id="past" aria-labelledby="past-title" data-past>
             <div class="u-container">
                 <div class="e-past-head">
                     <h2 class="u-h2" id="past-title">{{ __('events.past') }}</h2>

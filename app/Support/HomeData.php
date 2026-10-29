@@ -85,9 +85,8 @@ final class HomeData
             ->where('is_visible', true)->pluck('anchor')->unique()->values()->all());
 
         // Sections a page template draws itself rather than a block: the
-        // newsroom's social feed. Add "upcoming" and "past" here once the
-        // events page carries those ids.
-        return in_array($fragment, $anchors, true) || in_array($fragment, ['social'], true);
+        // newsroom's social feed, the events page's upcoming and past lists.
+        return in_array($fragment, $anchors, true) || in_array($fragment, ['social', 'upcoming', 'past'], true);
     }
 
     /** The last path segment of a header address: "about" for /en/about. */
