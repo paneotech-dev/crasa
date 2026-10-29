@@ -12,6 +12,7 @@
         "d3_crud.ref_documents",
         "d3_crud.ref_instruments",
         "d3_crud.ref_publications",
+        "d3_i18n.label_value",
         "events.calendar_google",
         "fa.page_slug_format",
         "footer.address_line_1",
