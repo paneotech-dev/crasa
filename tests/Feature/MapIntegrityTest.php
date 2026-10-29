@@ -404,22 +404,13 @@ class MapIntegrityTest extends TestCase
         //  border-radius:var(--r-md);padding:var(--s-5)" -- screen 08 line
         // 108, headed "The region" with "Select a member state" at right.
         // It was floating on the bare section ground.
+        // Since C14 (29 October 2026) the map takes the full width of its
+        // own section under "The region", the directory follows as cards.
         $html = $this->map();
 
-        $this->assertStringContainsString('b-members__layout', $html);
-        $this->assertStringContainsString('b-members__map', $html);
+        $this->assertStringContainsString('class="u-section cp-members-map"', $html);
         $this->assertStringContainsString('The region', $html);
-        $this->assertStringContainsString('Select a member state', $html);
-
-        $css = file_get_contents(public_path('css/blocks.css'));
-        $this->assertMatchesRegularExpression(
-            '/\.b-members__map \{[^}]*background: var\(--c-white\)/s',
-            $css,
-        );
-        $this->assertMatchesRegularExpression(
-            '/\.b-members__map \{[^}]*border-radius: var\(--r-md\)/s',
-            $css,
-        );
+        $this->assertLessThan(strpos($html, 'cp-members-dir'), strpos($html, 'cp-members-map'));
     }
 
     public function test_the_directory_lists_all_fourteen_beside_the_map(): void
@@ -429,7 +420,7 @@ class MapIntegrityTest extends TestCase
         // Lesotho has one.
         $html = $this->map();
 
-        $this->assertSame(14, substr_count($html, 'b-directory__row'));
+        $this->assertSame(14, substr_count($html, 'class="u-card cp-member"'));
         $this->assertStringContainsString('Directory', $html);
         $this->assertStringNotContainsString('class="b-members"', $html);
     }

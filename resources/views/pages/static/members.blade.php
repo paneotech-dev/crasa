@@ -33,7 +33,7 @@
         'eyebrow' => $title?->value,
         'title' => $page->translate('heading')?->value ?: ($title?->value ?? ''),
         'lead' => $page->translate('standfirst')?->value,
-        'figures' => array_map(fn ($c) => ['value' => $c['value'], 'label' => $c['label']], $counts),
+        'figures' => $counts,
     ])
 
     @foreach ($page->visibleBlocks as $block)

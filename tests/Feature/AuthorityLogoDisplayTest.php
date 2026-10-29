@@ -74,7 +74,7 @@ class AuthorityLogoDisplayTest extends TestCase
         // And the name is still there, once.
         $this->assertSame(
             1,
-            substr_count($html, '<p class="c-lead">Botswana Communications Regulatory Authority</p>')
+            substr_count($html, '<p class="u-lead">Botswana Communications Regulatory Authority</p>')
         );
     }
 

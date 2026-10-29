@@ -71,7 +71,7 @@ class SectionBandTest extends TestCase
     {
         foreach (['/en/publications', '/en/newsroom', '/en/events', '/en/members', '/en/committees', '/en/about', '/en/search'] as $url) {
             $this->assertMatchesRegularExpression(
-                '~c-band__counts|class="u-figures"~',
+                '~c-band__counts|class="u-figures[ "]~',
                 $this->get($url)->assertOk()->getContent(),
                 $url.' opens with a band that says nothing about how much is in it.'
             );
@@ -119,7 +119,8 @@ class SectionBandTest extends TestCase
     public function test_counts_link_to_what_they_count(): void
     {
         $html = $this->get('/en/members')->assertOk()->getContent();
-        $band = substr($html, strpos($html, 'c-band__counts'), 1400);
+        $at = strpos($html, 'c-band__counts');
+        $band = substr($html, $at !== false ? $at : (int) strpos($html, 'class="u-figures'), 1400);
 
         $this->assertStringContainsString('/en/committees', $band);
         $this->assertStringContainsString('/en/comparator', $band);

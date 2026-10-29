@@ -26,7 +26,6 @@
 
         return ['block' => $block, 'heading' => $block->translate('heading')?->value, 'body' => $value, 'lang' => $body?->isFallback() ? $body->locale : null];
     };
-    $render = fn (string $paragraph, $block) => $renderer->render($paragraph, 'block:'.$block->id);
     $initials = function (string $name): string {
         $words = array_values(array_filter(preg_split('/\s+/', preg_replace('/^(Mr|Mrs|Ms|Dr|Prof|Eng|Hon)\.?\s+/i', '', trim($name)))));
         $first = mb_substr($words[0] ?? '', 0, 1);
@@ -58,17 +57,6 @@
     $ctaUrl = $cta ? \App\Support\Navigation::resolve($cta->setting('cta_url')) : null;
     $locale = app()->getLocale();
 
-    $pillarIcons = [
-        '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
-        '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
-        '<path d="M4 22V4"/><path d="M4 4h12l-2 4 2 4H4"/>',
-    ];
-    $governanceIcons = [
-        '<path d="M3 21h18"/><path d="M5 21V10l7-5 7 5v11"/><path d="M9 21v-6h6v6"/>',
-        '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 14.5c3 0 6 1.9 6 5.5"/>',
-        '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
-        '<path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/>',
-    ];
 @endphp
 
 @section('title', $title?->value ?? __('nav.about'))
@@ -83,7 +71,7 @@
         'eyebrow' => $title?->value,
         'title' => $page->translate('heading')?->value ?: ($title?->value ?? ''),
         'lead' => $page->translate('standfirst')?->value,
-        'figures' => array_map(fn ($c) => ['value' => $c['value'], 'label' => $c['label']], $counts),
+        'figures' => $counts,
         'photoName' => 'institutional',
         'photoAlt' => '',
     ])
@@ -94,13 +82,13 @@
                 <div class="cp-about-who__text">
                     <h2 class="u-h2" id="who-we-are-title">{{ $who['heading'] }}</h2>
                     <div class="cp-prose cp-prose--lead" @if ($who['lang']) lang="{{ $who['lang'] }}" @endif>
-                        {!! $render($who['body'] ?? '', $who['block']) !!}
+                        {!! $renderer->render($who['body'] ?? '', 'block:'.$who['block']->id) !!}
                     </div>
                     @if ($sadc)
                         <div class="cp-about-sadc" id="sadc">
                             <h3 class="u-h3">{{ $sadc['heading'] }}</h3>
                             <div class="cp-prose" @if ($sadc['lang']) lang="{{ $sadc['lang'] }}" @endif>
-                                {!! $render($sadc['body'] ?? '', $sadc['block']) !!}
+                                {!! $renderer->render($sadc['body'] ?? '', 'block:'.$sadc['block']->id) !!}
                             </div>
                         </div>
                     @endif
@@ -129,10 +117,10 @@
                     @foreach ($pillars as $i => $pillar)
                         <article class="u-card cp-about-pillar">
                             <div class="u-card__body">
-                                <span class="cp-icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">{!! $pillarIcons[$i] ?? $pillarIcons[0] !!}</svg></span>
+                                <span class="cp-icon-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">@include('partials.cpages.icon', ['name' => ['target', 'eye', 'flag'][$i] ?? 'target'])</svg></span>
                                 <h3 class="u-card__title">{{ $pillar['heading'] }}</h3>
                                 @foreach ($pillar['paragraphs'] as $paragraph)
-                                    <p class="u-card__text">{!! $render($paragraph, $vmh['block']) !!}</p>
+                                    <p class="u-card__text">{!! $renderer->render($paragraph, 'block:'.$vmh['block']->id) !!}</p>
                                 @endforeach
                             </div>
                         </article>
@@ -172,24 +160,24 @@
                 </div>
                 <div @if ($governance['lang']) lang="{{ $governance['lang'] }}" @endif>
                     @foreach ($governanceParts['intro'] as $paragraph)
-                        <p class="u-lead">{!! $render($paragraph, $governance['block']) !!}</p>
+                        <p class="u-lead">{!! $renderer->render($paragraph, 'block:'.$governance['block']->id) !!}</p>
                     @endforeach
                     @if ($governanceParts['sections'] !== [])
                         <div class="u-cols-4 cp-about-gov">
                             @foreach ($governanceParts['sections'] as $i => $section)
                                 <article class="u-card">
                                     <div class="u-card__body">
-                                        <span class="cp-icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">{!! $governanceIcons[$i % 4] !!}</svg></span>
+                                        <span class="cp-icon-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">@include('partials.cpages.icon', ['name' => ['building', 'people', 'grid', 'check'][$i % 4]])</svg></span>
                                         <h3 class="u-card__title cp-gov__title">{{ $section['heading'] }}</h3>
                                         @foreach ($section['paragraphs'] as $paragraph)
-                                            <p class="u-card__text">{!! $render($paragraph, $governance['block']) !!}</p>
+                                            <p class="u-card__text">{!! $renderer->render($paragraph, 'block:'.$governance['block']->id) !!}</p>
                                         @endforeach
                                     </div>
                                 </article>
                             @endforeach
                         </div>
                     @elseif ($governance['body'])
-                        <div class="cp-prose">{!! $render($governance['body'], $governance['block']) !!}</div>
+                        <div class="cp-prose">{!! $renderer->render($governance['body'], 'block:'.$governance['block']->id) !!}</div>
                     @endif
                 </div>
             </div>
@@ -203,17 +191,17 @@
                 <div class="cp-about-people__text">
                     <h2 class="u-h2" id="{{ $anchor }}-title">{{ $part['heading'] }}</h2>
                     @if ($parts['people'] === [] && $part['body'])
-                        <div class="cp-prose">{!! $render($part['body'], $part['block']) !!}</div>
+                        <div class="cp-prose">{!! $renderer->render($part['body'], 'block:'.$part['block']->id) !!}</div>
                     @else
                         @foreach (array_slice($parts['intro'], 0, 1) as $paragraph)
-                            <p class="u-text">{!! $render($paragraph, $part['block']) !!}</p>
+                            <p class="u-text">{!! $renderer->render($paragraph, 'block:'.$part['block']->id) !!}</p>
                         @endforeach
                         @if (count($parts['intro']) > 1)
                             <details class="u-acc cp-about-more">
                                 <summary>{{ __('cpages.about_more_exec') }}</summary>
                                 <div class="u-acc__body cp-prose">
                                     @foreach (array_slice($parts['intro'], 1) as $paragraph)
-                                        <p>{!! $render($paragraph, $part['block']) !!}</p>
+                                        <p>{!! $renderer->render($paragraph, 'block:'.$part['block']->id) !!}</p>
                                     @endforeach
                                 </div>
                             </details>
@@ -243,7 +231,7 @@
             <section class="u-section" id="{{ $anchor }}">
                 <div class="u-container u-cols-2">
                     <h2 class="u-h2">{{ $extra['heading'] }}</h2>
-                    <div class="cp-prose" @if ($extra['lang']) lang="{{ $extra['lang'] }}" @endif>{!! $render($extra['body'], $extra['block']) !!}</div>
+                    <div class="cp-prose" @if ($extra['lang']) lang="{{ $extra['lang'] }}" @endif>{!! $renderer->render($extra['body'], 'block:'.$extra['block']->id) !!}</div>
                 </div>
             </section>
         @endif

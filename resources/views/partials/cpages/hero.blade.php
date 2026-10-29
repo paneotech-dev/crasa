@@ -22,14 +22,14 @@
                 @if ($figures !== [] && ! $figuresAside)
                     <dl class="u-figures">
                         @foreach ($figures as $figure)
-                            <div class="u-figure"><dd>{{ $figure['value'] }}</dd><dt>{{ $figure['label'] }}</dt></div>
+                            <div class="u-figure"><dd>@if (! empty($figure['url']))<a class="cp-figure__link" href="{{ $figure['url'] }}">{{ $figure['value'] }}</a>@else{{ $figure['value'] }}@endif</dd><dt>{{ $figure['label'] }}</dt></div>
                         @endforeach
                     </dl>
                 @endif
                 @if (! empty($heroActions))<div class="u-actions cp-hero__actions">{!! $heroActions !!}</div>@endif
             </div>
             @if (! empty($photoName) && \App\Support\ImageLibrary::has($photoName))
-                <figure class="u-hero__photo">
+                <figure class="u-hero__photo" @if (empty($photoAlt)) aria-hidden="true" @endif>
                     <x-responsive-image :name="$photoName" :alt="$photoAlt ?? ''" :decorative="empty($photoAlt)" sizes="(min-width: 992px) 480px, 100vw" loading="eager" fetchpriority="high" />
                 </figure>
             @elseif ($photo)
@@ -39,7 +39,7 @@
             @elseif ($figuresAside)
                 <dl class="u-figures cp-hero__figures">
                     @foreach ($figures as $figure)
-                        <div class="u-figure"><dd>{{ $figure['value'] }}</dd><dt>{{ $figure['label'] }}</dt></div>
+                        <div class="u-figure"><dd>@if (! empty($figure['url']))<a class="cp-figure__link" href="{{ $figure['url'] }}">{{ $figure['value'] }}</a>@else{{ $figure['value'] }}@endif</dd><dt>{{ $figure['label'] }}</dt></div>
                     @endforeach
                 </dl>
             @elseif ($heroAside)

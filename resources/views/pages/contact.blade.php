@@ -25,11 +25,6 @@
     $phone = \App\Support\SiteContact::phone();
     $email = \App\Support\SiteContact::email();
     $socials = collect(\App\Support\SocialAccounts::all())->filter();
-    $describe = function (string $field, ?string $hint = null) use ($errors) {
-        $ids = array_filter([$hint, $errors->has($field) ? $field.'-error' : null]);
-
-        return $ids === [] ? '' : 'aria-describedby="'.implode(' ', $ids).'"';
-    };
     $counts = \App\Support\SectionCounts::forPage('contact');
 @endphp
 
@@ -38,7 +33,7 @@
         'eyebrow' => __('contact.band_eyebrow'),
         'title' => __('contact.title'),
         'lead' => __('contact.intro'),
-        'figures' => array_map(fn ($c) => ['value' => $c['value'], 'label' => $c['label']], $counts),
+        'figures' => $counts,
     ])
 
     <section class="u-section cp-contact">
@@ -49,7 +44,7 @@
 
                 @if (session('enquiry_received'))
                     <div class="u-success cp-contact__success" role="status">
-                        <svg class="cp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+                        <svg width="20" height="20" class="cp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
                         <div>
                             <div>{{ __('contact.received_title') }}</div>
                             <div class="cp-contact__success-body">{{ __('contact.received_body') }}</div>
@@ -69,13 +64,13 @@
                     <div class="cp-form__row">
                         <div @class(['u-field', 'u-field--error' => $errors->has('name')])>
                             <label for="name">{{ __('contact.field_name') }} <span class="u-req">({{ __('cpages.required') }})</span></label>
-                            <input class="u-input" type="text" id="name" name="name" value="{{ old('name') }}" required autocomplete="name" @error('name') aria-invalid="true" @enderror {!! $describe('name') !!}>
+                            <input class="u-input" type="text" id="name" name="name" value="{{ old('name') }}" required autocomplete="name" @error('name') aria-invalid="true" @enderror @error('name') aria-describedby="name-error" @enderror>
                             @error('name')<p class="u-error" id="name-error">{{ $message }}</p>@enderror
                         </div>
 
                         <div @class(['u-field', 'u-field--error' => $errors->has('email')])>
                             <label for="email">{{ __('contact.field_email') }} <span class="u-req">({{ __('cpages.required') }})</span></label>
-                            <input class="u-input" type="email" id="email" name="email" value="{{ old('email') }}" required autocomplete="email" @error('email') aria-invalid="true" @enderror {!! $describe('email') !!}>
+                            <input class="u-input" type="email" id="email" name="email" value="{{ old('email') }}" required autocomplete="email" @error('email') aria-invalid="true" @enderror @error('email') aria-describedby="email-error" @enderror>
                             @error('email')<p class="u-error" id="email-error">{{ $message }}</p>@enderror
                         </div>
                     </div>
@@ -100,13 +95,13 @@
 
                     <div @class(['u-field', 'u-field--error' => $errors->has('subject')])>
                         <label for="subject">{{ __('contact.field_subject') }} <span class="u-req">({{ __('cpages.required') }})</span></label>
-                        <input class="u-input" type="text" id="subject" name="subject" value="{{ old('subject') }}" required @error('subject') aria-invalid="true" @enderror {!! $describe('subject') !!}>
+                        <input class="u-input" type="text" id="subject" name="subject" value="{{ old('subject') }}" required @error('subject') aria-invalid="true" @enderror @error('subject') aria-describedby="subject-error" @enderror>
                         @error('subject')<p class="u-error" id="subject-error">{{ $message }}</p>@enderror
                     </div>
 
                     <div @class(['u-field', 'u-field--error' => $errors->has('message')])>
                         <label for="message">{{ __('contact.field_message') }} <span class="u-req">({{ __('cpages.required') }})</span></label>
-                        <textarea class="u-textarea" id="message" name="message" rows="7" required @error('message') aria-invalid="true" @enderror {!! $describe('message', 'message-hint') !!}>{{ old('message') }}</textarea>
+                        <textarea class="u-textarea" id="message" name="message" rows="7" required @error('message') aria-invalid="true" @enderror aria-describedby="message-hint @error('message') message-error @enderror">{{ old('message') }}</textarea>
                         <p class="u-help" id="message-hint">{{ __('contact.hint_message') }}</p>
                         @error('message')<p class="u-error" id="message-error">{{ $message }}</p>@enderror
                     </div>
@@ -122,7 +117,7 @@
 
                     <div class="cp-form__submit">
                         <button type="submit" class="u-btn u-btn--primary">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
                             {{ __('contact.submit') }}
                         </button>
                         <p class="u-help">{{ __('contact.privacy_note') }}</p>
@@ -132,7 +127,7 @@
 
             <aside class="cp-contact__cards" aria-label="{{ __('contact.secretariat') }}">
                 <div class="u-panel cp-contact-card">
-                    <span class="cp-icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.3 7-12a7 7 0 1 0-14 0c0 5.7 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                    <span class="cp-icon-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.3 7-12a7 7 0 1 0-14 0c0 5.7 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
                     <div>
                         <h2 class="cp-contact-card__title">{{ __('cpages.contact_address_title') }}</h2>
                         <address class="cp-contact-card__text">
@@ -144,7 +139,7 @@
                 </div>
 
                 <div class="u-panel cp-contact-card">
-                    <span class="cp-icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="m4 6 8 7 8-7"/></svg></span>
+                    <span class="cp-icon-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="m4 6 8 7 8-7"/></svg></span>
                     <div>
                         <h2 class="cp-contact-card__title">{{ __('cpages.contact_email_title') }}</h2>
                         <a class="cp-contact-card__link" href="mailto:{{ $email }}">{{ $email }}</a>
@@ -154,7 +149,7 @@
                 </div>
 
                 <div class="u-panel cp-contact-card">
-                    <span class="cp-icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                    <span class="cp-icon-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
                     <div>
                         <h2 class="cp-contact-card__title">{{ __('cpages.contact_hours_title') }}</h2>
                         <p class="cp-contact-card__text">{{ __('cpages.contact_hours') }}</p>
@@ -163,7 +158,7 @@
 
                 @if ($socials->isNotEmpty())
                     <div class="u-panel cp-contact-card">
-                        <span class="cp-icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg></span>
+                        <span class="cp-icon-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg></span>
                         <div>
                             <h2 class="cp-contact-card__title">{{ __('cpages.contact_social_title') }}</h2>
                             <ul class="cp-contact-social" role="list">
@@ -190,7 +185,7 @@
                     <p class="u-text u-muted cp-map__label">{{ __('contact.map_label') }}</p>
                 </div>
                 <a class="u-btn u-btn--secondary" href="{{ $googleMaps }}" target="_blank" rel="noopener">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.3 7-12a7 7 0 1 0-14 0c0 5.7 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.3 7-12a7 7 0 1 0-14 0c0 5.7 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>
                     {{ __('cpages.contact_open_maps') }}
                 </a>
             </div>

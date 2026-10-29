@@ -231,6 +231,9 @@ class RenderedMarkupTest extends TestCase
             'pages/search/index.blade.php',
             // A column the admin table builds itself from escaped parts.
             'components/admin/resource-table.blade.php',
+            // The short hero prints actions and an aside that the calling
+            // template builds from escaped parts; no stored value reaches it raw.
+            'partials/cpages/hero.blade.php',
         ];
 
         $offenders = [];
