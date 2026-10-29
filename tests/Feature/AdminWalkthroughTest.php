@@ -310,18 +310,18 @@ class AdminWalkthroughTest extends TestCase
             'menu' => 'header',
             'destination_type' => 'route',
             'destination' => 'publications',
-            'label_en' => 'Annual reports',
+            'label_en' => 'Reports by year',  // The mega panel lists Annual reports from config (29 October 2026); a distinct label proves the record.
             'label_fr' => 'Rapports annuels',
             'label_pt' => 'Relatórios anuais',
         ])->assertRedirect()->assertSessionHasNoErrors();
 
         $item = MenuItem::where('menu', 'header')->orderByDesc('id')->firstOrFail();
 
-        $this->get('/en')->assertOk()->assertSee('Annual reports');
+        $this->get('/en')->assertOk()->assertSee('Reports by year');
 
         // Hidden: off the header, still a record.
         $this->admin()->put("/en/admin/menus/{$item->id}/visibility")->assertRedirect();
-        $this->get('/en')->assertOk()->assertDontSee('Annual reports');
+        $this->get('/en')->assertOk()->assertDontSee('Reports by year');
         $this->assertDatabaseHas('menu_items', ['id' => $item->id]);
 
         // Deleted.

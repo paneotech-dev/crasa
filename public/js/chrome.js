@@ -1,122 +1,121 @@
-/* CRASA Digital Anchor Ecosystem — public header behaviour.
+/* CRASA public header: the phone and tablet drawer, and the share button
+ * in the breadcrumb row (Concept 3 port, 29 October 2026).
  *
- * Two jobs, and neither of them is layout.
+ * Drawer: the Menu button opens it; focus moves to its first control and
+ * stays inside while it is open; Escape, the close button and the scrim
+ * close it and focus returns to the Menu button. Each section is an
+ * accordion button with aria-expanded.
  *
- * The drawer: Escape closes it, focus is trapped inside it while it is
- * open, and focus returns to the trigger on close.
- *
- * The compressed sticky state screen 02 draws: an IntersectionObserver on
- * a sentinel at the top of the document, so the browser reports whether the
- * page has scrolled and the stylesheet decides everything else.
- *
- * The collapse itself is CSS, at the breakpoints screen 01 names. It used to
- * be measured at runtime and that failed three times, each time hiding a
- * navigation that fitted. A media query cannot be wrong about the viewport
- * width, so there is nothing here to get wrong.
- *
- * Without this file the header keeps every item and wraps to a second row.
+ * Share: the system share sheet where there is one, otherwise the address
+ * is copied and "Link copied" is announced.
  */
 (function () {
   'use strict';
 
-  var header = document.querySelector('[data-header]');
-  if (!header) return;
+  var drawer = document.querySelector('[data-k-drawer]');
+  var opener = document.querySelector('[data-k-drawer-open]');
+  var scrim = document.querySelector('.k-scrim');
 
-  /* The compressed sticky state ------------------------------------------
-   *
-   * Screen 02 draws the header compressed once the page has scrolled.
-   *
-   * An IntersectionObserver on a sentinel above the header, not a scroll
-   * handler and not a measurement. Nothing here reads a width or a
-   * position: the browser reports whether the top of the document is still
-   * on screen, and the stylesheet decides everything else. Without
-   * JavaScript the header stays in its resting state, which is the state
-   * the screen draws at rest.
-   */
-  if (window.IntersectionObserver) {
-    var sentinel = document.createElement('div');
-    sentinel.setAttribute('aria-hidden', 'true');
-    sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:1px;';
-    document.body.insertBefore(sentinel, document.body.firstChild);
+  if (drawer && opener) {
+    var lastFocus = null;
 
-    new IntersectionObserver(function (entries) {
-      if (entries[0].isIntersecting) {
-        header.removeAttribute('data-compressed');
-      } else {
-        header.setAttribute('data-compressed', '');
-      }
-    }).observe(sentinel);
-  }
+    var focusables = function () {
+      return Array.prototype.slice.call(drawer.querySelectorAll('a[href], button, input, [tabindex]:not([tabindex="-1"])'))
+        .filter(function (el) { return el.offsetParent !== null; });
+    };
 
-  var toggle = header.querySelector('[data-drawer-toggle]');
-  var drawer = document.querySelector('[data-drawer]');
-  if (!toggle || !drawer) return;
-
-  var FOCUSABLE = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
-
-  /* Drawer ------------------------------------------------------------- */
-
-  function openDrawer() {
-    drawer.hidden = false;
-    toggle.setAttribute('aria-expanded', 'true');
-    toggle.setAttribute('aria-label', toggle.getAttribute('data-label-close'));
-    var first = drawer.querySelector(FOCUSABLE);
-    if (first) first.focus();
-    document.addEventListener('keydown', onKeydown, true);
-  }
-
-  function closeDrawer(returnFocus) {
-    if (drawer.hidden) return;
-    drawer.hidden = true;
-    toggle.setAttribute('aria-expanded', 'false');
-    toggle.setAttribute('aria-label', toggle.getAttribute('data-label-open'));
-    document.removeEventListener('keydown', onKeydown, true);
-    if (returnFocus !== false) toggle.focus();
-  }
-
-  function onKeydown(event) {
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      closeDrawer(true);
-      return;
-    }
-    if (event.key !== 'Tab') return;
-
-    var items = Array.prototype.filter.call(
-      drawer.querySelectorAll(FOCUSABLE),
-      function (el) { return el.offsetParent !== null; }
-    );
-    items.unshift(toggle);
-    if (!items.length) return;
-
-    var first = items[0];
-    var last = items[items.length - 1];
-
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
-  }
-
-  /* Wiring -------------------------------------------------------------- */
-
-  toggle.addEventListener('click', function () {
-    if (drawer.hidden) openDrawer(); else closeDrawer(true);
-  });
-
-  /* Close the drawer when the viewport grows past the breakpoint, so a
-     reader who rotates a tablet is not left with an open drawer over a
-     header that is no longer collapsed. */
-  if (window.matchMedia) {
-    var mobile = window.matchMedia('(max-width: 767.98px)');
-    if (mobile.addEventListener) {
-      mobile.addEventListener('change', function () {
-        if (!mobile.matches) closeDrawer(false);
+    var openDrawer = function () {
+      lastFocus = document.activeElement;
+      drawer.hidden = false;
+      if (scrim) scrim.hidden = false;
+      // A frame so the transition runs from the hidden state.
+      requestAnimationFrame(function () {
+        drawer.classList.add('is-on');
+        if (scrim) scrim.classList.add('is-on');
       });
-    }
+      opener.setAttribute('aria-expanded', 'true');
+      document.documentElement.classList.add('k-drawer-open');
+      var first = drawer.querySelector('[data-k-drawer-close]');
+      if (first) first.focus();
+    };
+
+    var closeDrawer = function () {
+      drawer.classList.remove('is-on');
+      if (scrim) scrim.classList.remove('is-on');
+      opener.setAttribute('aria-expanded', 'false');
+      document.documentElement.classList.remove('k-drawer-open');
+      setTimeout(function () {
+        drawer.hidden = true;
+        if (scrim) scrim.hidden = true;
+      }, 260);
+      (lastFocus || opener).focus();
+    };
+
+    opener.addEventListener('click', openDrawer);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-k-drawer-close]'), function (el) {
+      el.addEventListener('click', closeDrawer);
+    });
+
+    drawer.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeDrawer();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      var list = focusables();
+      if (!list.length) return;
+      var first = list[0];
+      var last = list[list.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    });
+
+    Array.prototype.forEach.call(drawer.querySelectorAll('[data-k-acc]'), function (acc) {
+      var button = acc.querySelector('[data-k-acc-toggle]');
+      button.addEventListener('click', function () {
+        var open = button.getAttribute('aria-expanded') !== 'true';
+        button.setAttribute('aria-expanded', open ? 'true' : 'false');
+        acc.classList.toggle('is-open', open);
+      });
+    });
+
+    // The section the reader is in starts open.
+    Array.prototype.forEach.call(drawer.querySelectorAll('[data-k-acc]'), function (acc) {
+      if (acc.querySelector('[aria-current="page"]')) {
+        acc.classList.add('is-open');
+        acc.querySelector('[data-k-acc-toggle]').setAttribute('aria-expanded', 'true');
+      }
+    });
+
+    // Back at desktop width the drawer has nothing to do.
+    var wide = window.matchMedia('(min-width: 1100px)');
+    var onWide = function () { if (wide.matches && !drawer.hidden) closeDrawer(); };
+    if (wide.addEventListener) wide.addEventListener('change', onWide);
   }
 
+  var share = document.querySelector('[data-k-share]');
+  if (share) {
+    var live = document.querySelector('[data-k-share-live]');
+    share.addEventListener('click', function () {
+      var data = { title: document.title, url: location.href };
+      if (navigator.share) {
+        navigator.share(data).catch(function () {});
+        return;
+      }
+      var done = function () {
+        if (live) {
+          live.textContent = '';
+          setTimeout(function () { live.textContent = share.getAttribute('data-copied'); }, 50);
+        }
+        share.classList.add('is-done');
+        setTimeout(function () { share.classList.remove('is-done'); }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(location.href).then(done, done);
+      } else {
+        done();
+      }
+    });
+  }
 })();

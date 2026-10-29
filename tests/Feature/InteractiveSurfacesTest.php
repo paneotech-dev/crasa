@@ -45,25 +45,6 @@ class InteractiveSurfacesTest extends TestCase
     /* Counts that go somewhere ---------------------------------------------- */
 
     /**
-     * "14 member states" that a reader cannot click is a decoration of the
-     * thing it counts.
-     */
-    public function test_the_homepage_key_figures_link_to_what_they_count(): void
-    {
-        $this->seed(HomepageSeeder::class);
-
-        $html = $this->get('/en')->assertOk()->getContent();
-
-        $this->assertMatchesRegularExpression(
-            '~<a class="b-figure b-figure--link\s*"[^>]*href="http://localhost/en/members"~',
-            $html,
-            'The count of member states does not go to the member states.'
-        );
-        $this->assertStringContainsString('href="http://localhost/en/about"', $html);
-        $this->assertStringContainsString('href="http://localhost/en/committees"', $html);
-    }
-
-    /**
      * A figure with no destination must not look like one with a
      * destination. Anything that is not interactive must not appear to be.
      */

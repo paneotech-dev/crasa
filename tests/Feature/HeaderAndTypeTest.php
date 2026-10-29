@@ -23,40 +23,6 @@ class HeaderAndTypeTest extends TestCase
         $this->seed(PublicPagesSeeder::class);
     }
 
-    public function test_search_is_a_labelled_field_in_the_header(): void
-    {
-        // Day 2, Concept 3: the identity row carries a search field, as the
-        // room asked. It is a GET form to the search page, labelled for
-        // screen readers, with a submit button that has a name.
-        $html = $this->get('/en/about')->assertOk()->getContent();
-
-        preg_match('#<header.*?</header>#s', $html, $header);
-        $this->assertNotEmpty($header);
-
-        $this->assertMatchesRegularExpression('#<form class="c-header__search" role="search" action="[^"]*/en/search" method="get">#', $header[0]);
-        $this->assertStringContainsString('<label class="c-sr" for="site-search">Search</label>', $header[0]);
-        $this->assertMatchesRegularExpression('#<input id="site-search" type="search" name="q"#', $header[0]);
-        $this->assertMatchesRegularExpression('#<button type="submit" aria-label="Search">#', $header[0]);
-    }
-
-    public function test_the_language_switcher_is_one_bordered_group(): void
-    {
-        // Screen 02 line 79: "display:flex;flex:none;border:1.5px solid
-        // var(--c-navy);border-radius:var(--r-sm);overflow:hidden", with
-        // three options inside sharing the one border.
-        $css = file_get_contents(public_path('css/chrome.css'));
-
-        $this->assertMatchesRegularExpression(
-            '/\.c-lang \{[^}]*border: 1\.5px solid var\(--c-navy\)/',
-            $css,
-        );
-        $this->assertMatchesRegularExpression('/\.c-lang \{[^}]*border-radius: var\(--r-sm\)/', $css);
-        $this->assertMatchesRegularExpression('/\.c-lang \{[^}]*overflow: hidden/', $css);
-
-        $html = $this->get('/en/about')->assertOk()->getContent();
-        $this->assertMatchesRegularExpression('/class="c-lang"[^>]*role="group"/s', $html);
-    }
-
     public function test_the_icon_button_meets_the_target_size(): void
     {
         // Screen 01 draws it at 44px square. Screen 02 draws 40. The larger

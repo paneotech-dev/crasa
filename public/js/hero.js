@@ -221,3 +221,132 @@
   show(0, false);
   start();
 })();
+
+/* The Concept 3 home hero (C6, 29 October 2026).
+ *
+ * Crossfade 600ms with the caption sliding in (k.css), advance every 7s,
+ * paused on hover, while focus is inside, while the tab is hidden and by
+ * the pause button (aria-pressed). Previous and next, the dots and the
+ * Featured list choose a slide; arrow keys work while focus is in the
+ * hero; a horizontal swipe on the photograph moves one slide. Each change
+ * is announced politely. Under prefers-reduced-motion nothing advances on
+ * its own and the change is a plain swap.
+ */
+(function () {
+  'use strict';
+
+  var hero = document.querySelector('[data-k-hero]');
+  if (!hero) return;
+
+  var caps = Array.prototype.slice.call(hero.querySelectorAll('[data-k-slide]'));
+  var figs = Array.prototype.slice.call(hero.querySelectorAll('[data-k-fig]'));
+  var dots = Array.prototype.slice.call(hero.querySelectorAll('[data-k-dot]'));
+  var live = hero.querySelector('[data-k-live]');
+  var pause = hero.querySelector('[data-k-pause]');
+  var photo = hero.querySelector('.k-hero__photo');
+  var total = caps.length;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var DELAY = 7000;
+  var index = 0;
+  var timer = null;
+  var root = document.documentElement;
+  var userPaused = reduce || root.classList.contains('a11y-no-motion') || root.classList.contains('a11y-pause');
+  var hovering = false;
+  var focusInside = false;
+
+  if (total < 2) return;
+
+  hero.style.setProperty('--k-dur', DELAY + 'ms');
+
+  function show(next, announce) {
+    index = (next + total) % total;
+    caps.forEach(function (cap, i) {
+      var on = i === index;
+      cap.classList.toggle('is-on', on);
+      if (on) { cap.removeAttribute('aria-hidden'); cap.removeAttribute('inert'); }
+      else { cap.setAttribute('aria-hidden', 'true'); cap.setAttribute('inert', ''); }
+    });
+    figs.forEach(function (fig, i) {
+      fig.classList.toggle('is-on', i === index);
+      var img = fig.querySelector('img[loading="lazy"]');
+      if (i === index && img) img.loading = 'eager';
+    });
+    dots.forEach(function (dot) {
+      var on = parseInt(dot.getAttribute('data-k-dot'), 10) === index;
+      dot.setAttribute('aria-current', on ? 'true' : 'false');
+      // Restart the progress bar of the Featured item.
+      if (on && dot.classList.contains('k-fitem')) {
+        dot.classList.remove('is-run');
+        void dot.offsetWidth;
+        dot.classList.add('is-run');
+      }
+    });
+    if (announce && live) {
+      live.textContent = live.getAttribute('data-template')
+        .replace(':index', index + 1).replace(':total', total)
+        .replace(':name', caps[index].getAttribute('data-name') || '');
+    }
+    schedule();
+  }
+
+  function running() {
+    return !userPaused && !hovering && !focusInside && !document.hidden;
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    hero.classList.toggle('is-paused', !running());
+    if (running()) timer = setTimeout(function () { show(index + 1, false); }, DELAY);
+  }
+
+  hero.querySelector('[data-k-prev]').addEventListener('click', function () { show(index - 1, true); });
+  hero.querySelector('[data-k-next]').addEventListener('click', function () { show(index + 1, true); });
+  dots.forEach(function (dot) {
+    dot.addEventListener('click', function () { show(parseInt(dot.getAttribute('data-k-dot'), 10), true); });
+  });
+
+  function setPaused(value) {
+    userPaused = value;
+    pause.setAttribute('aria-pressed', value ? 'true' : 'false');
+    pause.setAttribute('aria-label', pause.getAttribute(value ? 'data-label-play' : 'data-label-pause'));
+    schedule();
+  }
+  pause.addEventListener('click', function () { setPaused(!userPaused); });
+  if (userPaused) setPaused(true);
+  // The display options toolbar's "pause animations" stops the slideshow.
+  document.addEventListener('crasa:a11y-pause', function (event) {
+    var on = !event.detail || event.detail.paused !== false;
+    setPaused(on ? true : (reduce ? true : false));
+  });
+
+  hero.addEventListener('mouseenter', function () { hovering = true; schedule(); });
+  hero.addEventListener('mouseleave', function () { hovering = false; schedule(); });
+  hero.addEventListener('focusin', function () { focusInside = true; schedule(); });
+  hero.addEventListener('focusout', function (event) {
+    if (!event.relatedTarget || !hero.contains(event.relatedTarget)) { focusInside = false; schedule(); }
+  });
+  document.addEventListener('visibilitychange', schedule);
+
+  hero.addEventListener('keydown', function (event) {
+    if (event.target.matches('input, textarea, select')) return;
+    if (event.key === 'ArrowLeft') { event.preventDefault(); show(index - 1, true); }
+    if (event.key === 'ArrowRight') { event.preventDefault(); show(index + 1, true); }
+  });
+
+  var startX = null;
+  var startY = null;
+  photo.addEventListener('touchstart', function (event) {
+    startX = event.touches[0].clientX;
+    startY = event.touches[0].clientY;
+  }, { passive: true });
+  photo.addEventListener('touchend', function (event) {
+    if (startX === null) return;
+    var dx = event.changedTouches[0].clientX - startX;
+    var dy = event.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) show(index + (dx < 0 ? 1 : -1), true);
+    startX = null;
+  });
+
+  hero.classList.add('is-ready');
+  show(0, false);
+})();

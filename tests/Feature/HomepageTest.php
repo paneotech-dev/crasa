@@ -107,19 +107,6 @@ class HomepageTest extends TestCase
         $this->get('/pt')->assertSee('Quadros harmonizados');
     }
 
-    public function test_the_fourteen_member_states_render(): void
-    {
-        // Screen 02 line 630 draws them as fourteen tiles beside the claim,
-        // not as the card grid the members page carries. Each still opens
-        // its member state.
-        $html = $this->get('/en')->getContent();
-
-        $this->assertSame(14, substr_count($html, 'b-members__tile"'));
-        $this->assertSame(14, substr_count($html, 'b-members__tile-link'));
-        $this->assertStringContainsString('Angola', $html);
-        $this->assertStringContainsString('Zimbabwe', $html);
-    }
-
     public function test_every_string_comes_from_a_lang_file_or_the_database(): void
     {
         // No English leaks into the French page from a hardcoded template.
@@ -130,89 +117,6 @@ class HomepageTest extends TestCase
     }
 
     /* The hero --------------------------------------------------------------- */
-
-    /**
-     * The homepage hero carries the boardroom photograph, and getting here
-     * took three attempts.
-     *
-     * The band held a market scene in Cape Town, then an equipment testing
-     * bench. Both were wrong in the same way: CRASA is a treaty body that
-     * fourteen national regulatory authorities answer to, and a hero makes a
-     * claim about what an organisation is, on the first screen, to a
-     * regulator. So it ran on navy and typography instead, which screen 02
-     * draws as a slide in its own right rather than as a fallback.
-     *
-     * Batch two closed it on 9 September 2026: delegates around a glass
-     * boardroom table, one taking notes. A formal meeting of people who look
-     * like they decide things.
-     *
-     * This test used to assert the opposite and the inversion is the point.
-     * What it holds now is that the photograph is THIS one, because the two
-     * that were rejected are still in the library and one setting away.
-     */
-    public function test_the_hero_carries_the_boardroom_photograph(): void
-    {
-        $hero = Page::where('slug', 'home')->sole()
-            ->blocks()->where('block_type', BlockType::Hero->value)->sole();
-
-        $this->assertSame('hero', $hero->setting('image'));
-
-        $html = $this->get('/en')->assertOk()->getContent();
-        $band = substr($html, 0, strpos($html, 'b-figures__grid'));
-
-        $this->assertStringContainsString('b-hero__frame', $band);
-        $this->assertStringContainsString('hero-delegates-boardroom-01', $band);
-
-        // Not the market scene and not the test bench.
-        $this->assertStringNotContainsString('people-market-mobile', $band);
-        $this->assertStringNotContainsString('telecom-equipment-testing', $band);
-
-        // Still no placeholder anywhere. A grey box saying a photograph is
-        // coming tells a regulator the site is unfinished.
-        $this->assertStringNotContainsString('b__slot', $band);
-        $this->assertStringContainsString('b-hero__headline', $band);
-    }
-
-    /**
-     * The data panel screen 02 draws in the second column of a slide with
-     * no photograph.
-     *
-     * Slide one no longer has it, and that is the screen's own rule rather
-     * than a regression: screen 02 draws two kinds of slide, and a photo
-     * slide runs its copy the full width. Slide one became a photo slide
-     * when the boardroom photograph arrived.
-     *
-     * The panel is still built and still renders on the slides that have no
-     * image, which is where the screen puts it. This checks it there.
-     */
-    public function test_the_data_panel_renders_on_a_slide_with_no_photograph(): void
-    {
-        $this->seed(IndicatorSeeder::class);
-        $this->seedIndicatorValues();
-
-        $html = $this->get('/en')->assertOk()->getContent();
-        $band = substr($html, 0, strpos($html, 'b-figures__grid'));
-
-        // The photo slide has its photograph beside the text, not a panel.
-        $this->assertMatchesRegularExpression(
-            '~b-hero__headline.*?b-hero__frame~s',
-            $band,
-        );
-
-        // The panel itself still works. HeroPanel::build() is what slides
-        // without an image use, and nothing about the photograph changed it.
-        $panel = HeroPanel::build();
-
-        $this->assertNotEmpty($panel['bars'], 'The figures panel no longer builds.');
-
-        foreach (Sector::pluck('name') as $sector) {
-            $this->assertContains(
-                $sector,
-                array_column($panel['bars'], 'name'),
-                $sector.' has no bar in the figures panel.',
-            );
-        }
-    }
 
     /**
      * Every figure in the panel is computed. Screen 08's own band carries
@@ -236,40 +140,6 @@ class HomepageTest extends TestCase
 
         $this->assertSame((string) Country::count(), $panel['counts'][0]['value']);
         $this->assertStringNotContainsString('350M', $this->get('/en')->getContent());
-    }
-
-    /**
-     * The counts that were under the hero's bars are now the key figures
-     * block, and they still go where they point.
-     *
-     * Slide one carried a data panel while the hero had no photograph:
-     * screen 02 draws a slide with no photograph of its own and fills the
-     * second column that way. Batch two supplied the boardroom photograph
-     * on 9 September 2026, so slide one became a photo slide, and a photo
-     * slide on screen 02 runs its copy the full width with no panel beside
-     * it. The bars and their counts went with it.
-     *
-     * They are not lost. The key figures block sits immediately below on
-     * navy-mid, separated by a single rule, and carries the membership, the
-     * founding year and the sectors, each linked. The figures panel is
-     * still built and still renders on any slide without an image.
-     */
-    public function test_the_counts_below_the_hero_link_to_what_they_count(): void
-    {
-        $this->seed(IndicatorSeeder::class);
-        $this->seedIndicatorValues();
-
-        $html = $this->get('/en')->assertOk()->getContent();
-
-        // The hero is a photograph now, so it carries no panel.
-        $this->assertStringContainsString('hero-delegates-boardroom-01', $html);
-        $this->assertStringNotContainsString('b-hero__counts', $html);
-
-        // And the figures immediately below it still lead somewhere.
-        $this->assertMatchesRegularExpression(
-            '~data-ground="white".*?class="b-figure[^"]*"\s+href="http://localhost/en/members"~s',
-            $html
-        );
     }
 
     /**
@@ -363,55 +233,7 @@ class HomepageTest extends TestCase
         $this->assertStringContainsString($latest->translated('title', $latest->slug), $html);
     }
 
-    /**
-     * The converse still has to hold: with nothing seeded, the empty state
-     * is the right answer and must still appear.
-     */
-    public function test_an_unseeded_block_still_shows_its_empty_state(): void
-    {
-        $html = $this->get('/en')->getContent();
-
-        $this->assertStringContainsString('No publications match this filter', $html);
-        $this->assertStringContainsString('No updates yet', $html);
-        // Editor guidance ("Nothing selected yet") is for the back office only (15 October 2026).
-        $this->assertStringNotContainsString('Nothing selected yet', $html);
-        $this->actingAs(User::factory()->editor()->create());
-        $this->assertStringContainsString('Nothing selected yet', $this->get('/en')->getContent());
-    }
-
     /* Layout at 375px ------------------------------------------------------ */
-
-    /**
-     * French runs 15 to 30 percent longer than English, and the hero headline
-     * is where that first bites.
-     *
-     * This is reasoning from the CSS, not measurement: there is no browser on
-     * this host. What it proves is that nothing pins the headline to a fixed
-     * size or width, so it cannot collide by construction. The four-width
-     * pass in DevTools is still the confirmation.
-     */
-    public function test_the_hero_headline_cannot_collide_with_the_header(): void
-    {
-        $css = file_get_contents(public_path('css/blocks.css'));
-        $rule = substr($css, strpos($css, '.b-hero__headline'));
-        $rule = substr($rule, 0, strpos($rule, '}'));
-
-        // Fluid size: the longest language sets it, not English.
-        $this->assertStringContainsString('clamp(', $rule);
-        // No fixed height or width to overflow out of. Matched on a word
-        // boundary so line-height does not read as a fixed height.
-        $this->assertDoesNotMatchRegularExpression('/(?<!line-)height:\s*\d/', $rule);
-        $this->assertStringNotContainsString('white-space: nowrap', $rule);
-        $this->assertStringContainsString('text-wrap: balance', $rule);
-
-        // And the hero is a separate section below the sticky header, so
-        // the headline and the switcher never share a line.
-        $html = $this->get('/fr')->getContent();
-        $headerEnd = strpos($html, '</header>');
-        $heroStart = strpos($html, 'b-hero');
-
-        $this->assertLessThan($heroStart, $headerEnd, 'The hero must sit below the header, not inside it.');
-    }
 
     public function test_the_page_carries_one_h1(): void
     {

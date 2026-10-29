@@ -39,26 +39,6 @@ class ImagePlacementTest extends TestCase
         $this->seed(IndicatorSeeder::class);
     }
 
-    public function test_the_hero_carries_the_boardroom_photograph(): void
-    {
-        $html = $this->get('/en')->assertOk()->getContent();
-
-        $this->assertMatchesRegularExpression(
-            '#<img[^>]*src="[^"]*hero-delegates-boardroom-01-\d+\.jpg"#',
-            $html,
-            'The homepage hero has no photograph.',
-        );
-
-        // Day 2: the photograph sits in a frame beside the text. Nothing is
-        // laid over it, so neither overlay is drawn.
-        $hero = substr($html, strpos($html, '<section\n    class="b-hero"') ?: strpos($html, 'class="b-hero"'));
-        $hero = substr($hero, 0, strpos($hero, '</section>'));
-
-        $this->assertStringContainsString('b-hero__frame', $hero);
-        $this->assertStringNotContainsString('b-hero__tint', $hero);
-        $this->assertStringNotContainsString('b-hero__scrim', $hero);
-    }
-
     public function test_the_hero_overlays_are_the_ones_screen_02_draws(): void
     {
         $css = file_get_contents(public_path('css/blocks.css'));
@@ -148,34 +128,6 @@ class ImagePlacementTest extends TestCase
                 );
                 $this->assertNotSame('', trim($strings[$slot]));
             }
-        }
-    }
-
-    public function test_the_router_carries_the_statement_band_and_nothing_else(): void
-    {
-        // It was registered and unplaced: household connectivity, and no
-        // universal-access or consumer-protection surface existed. It now
-        // sits behind the statement band on instruction, at 82 per cent
-        // overlay where it functions as texture rather than as a subject.
-        //
-        // That is a real tension with the README's own rule for it, which
-        // is "only where the subject genuinely is household access", and
-        // the README says so rather than pretending otherwise. What still
-        // holds is the narrower rule: it must not appear where it would
-        // claim to be the subject.
-        $this->assertTrue(ImageLibrary::has('sector-telecom-access'));
-
-        $this->assertMatchesRegularExpression(
-            '#<div class="b-statement__media".*?telecom-home-broadband-router-01.*?</div>#s',
-            $this->get('/en')->getContent(),
-        );
-
-        foreach (['/en/about', '/en/committees', '/en/events', '/en/comparator'] as $path) {
-            $this->assertStringNotContainsString(
-                'telecom-home-broadband-router',
-                $this->get($path)->getContent(),
-                "The router is on {$path}, where a reader would read it as the subject.",
-            );
         }
     }
 

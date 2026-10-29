@@ -55,6 +55,8 @@
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/blocks.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/theme-light.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/ui.css') }}">
+    {{-- Concept 3 port: header, breadcrumb row, home, sitemap, footer (k-). --}}
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/k.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/a11y.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/print.css') }}" media="print">
     @stack('styles')
@@ -67,6 +69,13 @@
     <a class="c-skip" href="#content">{{ __('nav.skip') }}</a>
 
     @include('partials.site-header')
+
+    {{-- Breadcrumb and share row on every public page. A page may give its
+         own trail with @section('breadcrumb'), or none with
+         @section('no-breadcrumb', true). --}}
+    @unless (View::hasSection('no-breadcrumb'))
+        @include('partials.k.breadcrumb')
+    @endunless
 
     <main id="content" tabindex="-1">
         @include('partials.translation-notice')
@@ -134,6 +143,7 @@
     <script src="{{ \App\Support\Assets::url('js/app.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/password.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/a11y.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/motion.js') }}" defer></script>
     @stack('scripts')
 <!--/email_off-->
 </body>

@@ -13,9 +13,21 @@ use Illuminate\Http\Request;
  */
 class PageController extends Controller
 {
+    /**
+     * The home page is the Concept 3 composition (pages/home.blade.php),
+     * still bound to the home page's block records: their texts, settings
+     * and visibility come from the back office.
+     */
     public function home()
     {
-        return $this->render('home');
+        $page = Page::published()
+            ->where('slug', 'home')
+            ->with(['translations', 'visibleBlocks'])
+            ->first();
+
+        abort_if($page === null, 404);
+
+        return view('pages.home', ['page' => $page]);
     }
 
     public function show(Request $request)

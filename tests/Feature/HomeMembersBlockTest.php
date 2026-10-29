@@ -45,33 +45,25 @@ class HomeMembersBlockTest extends TestCase
         return substr($html, $start, $end - $start);
     }
 
-    public function test_the_homepage_members_intro_is_printed_once(): void
+    public function test_the_home_map_marks_the_islands_and_names_the_two_non_members(): void
     {
-        $section = $this->membersSection($this->get('/en')->assertOk()->getContent());
-
-        preg_match('~<p class="b-members__lead">(.*?)</p>~s', $section, $lead);
-        $this->assertNotEmpty($lead, 'The summary lost its lead.');
-        $this->assertSame(1, substr_count($section, trim($lead[1])), 'The intro is on the homepage twice.');
-        $this->assertStringNotContainsString('class="b__intro"', $section);
-    }
-
-    public function test_the_homepage_map_marks_comoros_and_mauritius_and_names_no_non_member(): void
-    {
-        $section = $this->membersSection($this->get('/en')->assertOk()->getContent());
+        // Brief D1, on the Concept 3 home page: Comoros and Mauritius are
+        // dots that link to their member page; Madagascar and Seychelles are
+        // named as SADC states that are not CRASA members, and never links.
+        $html = $this->get('/en')->assertOk()->getContent();
 
         foreach (['km' => 'Comoros', 'mu' => 'Mauritius'] as $iso => $name) {
             $this->assertMatchesRegularExpression(
                 '~<a\s+class="c-map-region__member c-map-region__member--dot"\s+href="[^"]*/en/members/'.$iso.'".*?>'.$name.'</text>~s',
-                $section,
+                $html,
             );
         }
 
-        // Named since 29 October 2026 (brief D1), in muted ink and with
-        // the note that they are not CRASA members, and never a link.
         foreach (['Madagascar', 'Seychelles'] as $name) {
-            $this->assertStringContainsString('aria-label="'.$name.': SADC member state, not a CRASA member"', $section);
+            $this->assertStringContainsString('aria-label="'.$name.': SADC member state, not a CRASA member"', $html);
         }
-        $this->assertDoesNotMatchRegularExpression('~href="[^"]*/members/(mg|sc)"~', $section);
+        $this->assertDoesNotMatchRegularExpression('~href="[^"]*/members/(mg|sc)"~', $html);
+        $this->assertStringContainsString('c-map-region__insets', $html);
     }
 
     public function test_the_members_standfirst_says_two_work_in_french(): void
