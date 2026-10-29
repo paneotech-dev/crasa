@@ -148,7 +148,7 @@ class ConceptHeaderTest extends TestCase
 
         $css = file_get_contents(public_path('css/k.css'));
         $this->assertMatchesRegularExpression('/\.k-idb__full \{[^}]*font: 600 20px[^}]*white-space: nowrap/', $css);
-        $this->assertMatchesRegularExpression('/\.k-idb \{[^}]*max-width: 52%/', $css);
+        $this->assertMatchesRegularExpression('/\.k-idb \{[^}]*max-width: max\(52%/', $css);
     }
 
     public function test_labels_are_translated(): void

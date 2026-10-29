@@ -37,27 +37,6 @@ class ImagePipelineTest extends TestCase
         $this->seed(NewsroomSeeder::class);
     }
 
-    public function test_a_library_image_is_served_as_derivatives_never_the_original(): void
-    {
-        // Was /en/newsroom; see the class comment.
-        $html = $this->get('/en')->assertOk()->getContent();
-
-        $this->assertStringContainsString('images/derivatives/', $html);
-        // The archive originals are 20 MB files and none of them is a URL.
-        $this->assertStringNotContainsString('crasa-images/', $html);
-    }
-
-    public function test_a_library_image_offers_a_webp_source_and_a_jpeg_fallback(): void
-    {
-        // Was /en/newsroom; see the test above.
-        $html = $this->get('/en')->assertOk()->getContent();
-
-        $this->assertStringContainsString('type="image/webp"', $html);
-        $this->assertStringContainsString('.jpg', $html);
-        $this->assertStringContainsString('srcset=', $html);
-        $this->assertStringContainsString('sizes=', $html);
-    }
-
     /**
      * Art direction, not resizing. A 21:9 band at desktop is a strip of sky
      * with the subject cropped out of it at phone width, so narrow

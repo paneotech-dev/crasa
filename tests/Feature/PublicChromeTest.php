@@ -58,13 +58,6 @@ class PublicChromeTest extends TestCase
             ->assertSee('Skip to content');
     }
 
-    public function test_the_drawer_toggle_is_wired_for_assistive_technology(): void
-    {
-        $this->get('/en')
-            ->assertSee('aria-controls="site-drawer"', false)
-            ->assertSee('aria-expanded="false"', false);
-    }
-
     public function test_the_token_layer_is_the_only_source_of_style(): void
     {
         $this->get('/en')

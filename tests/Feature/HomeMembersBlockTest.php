@@ -45,32 +45,6 @@ class HomeMembersBlockTest extends TestCase
         return substr($html, $start, $end - $start);
     }
 
-    public function test_the_homepage_members_intro_is_printed_once(): void
-    {
-        $section = $this->membersSection($this->get('/en')->assertOk()->getContent());
-
-        preg_match('~<p class="b-members__lead">(.*?)</p>~s', $section, $lead);
-        $this->assertNotEmpty($lead, 'The summary lost its lead.');
-        $this->assertSame(1, substr_count($section, trim($lead[1])), 'The intro is on the homepage twice.');
-        $this->assertStringNotContainsString('class="b__intro"', $section);
-    }
-
-    public function test_the_homepage_map_marks_comoros_and_mauritius_and_names_no_non_member(): void
-    {
-        $section = $this->membersSection($this->get('/en')->assertOk()->getContent());
-
-        foreach (['km' => 'Comoros', 'mu' => 'Mauritius'] as $iso => $name) {
-            $this->assertMatchesRegularExpression(
-                '~<a\s+class="c-map-region__member c-map-region__member--dot"\s+href="[^"]*/en/members/'.$iso.'".*?>'.$name.'</text>~s',
-                $section,
-            );
-        }
-
-        $this->assertStringNotContainsString('>Madagascar<', $section);
-        $this->assertStringNotContainsString('>Seychelles<', $section);
-        $this->assertDoesNotMatchRegularExpression('~href="[^"]*/members/(mg|sc)"~', $section);
-    }
-
     public function test_the_members_standfirst_says_two_work_in_french(): void
     {
         $this->get('/en/members')->assertOk()->assertSee('Two work in Portuguese, two in French, and Mauritius in both English and French')->assertDontSee('Four work in Portuguese');

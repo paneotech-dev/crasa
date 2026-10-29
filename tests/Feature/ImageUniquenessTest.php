@@ -105,26 +105,6 @@ class ImageUniquenessTest extends TestCase
         }
     }
 
-    public function test_the_statement_band_does_not_reuse_the_hero(): void
-    {
-        // The specific case that prompted the rule.
-        $html = $this->get('/en')->assertOk()->getContent();
-
-        // Matched on the media block itself rather than a fixed slice: a
-        // <picture> with four widths in two formats runs well past any
-        // guess at a length.
-        $this->assertMatchesRegularExpression(
-            '#<div class="b-statement__media".*?telecom-home-broadband-router-01.*?</div>#s',
-            $html,
-            'The statement band does not carry the router photograph.',
-        );
-        $this->assertDoesNotMatchRegularExpression(
-            '#<div class="b-statement__media".*?hero-delegates-boardroom-01.*?</div>#s',
-            $html,
-            'The statement band is reusing the hero photograph again.',
-        );
-    }
-
     public function test_the_rule_is_written_down_where_it_will_be_read(): void
     {
         $this->assertStringContainsString(

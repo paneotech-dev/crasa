@@ -241,7 +241,7 @@
                 <a href="{{ $nav('publications') }}">{{ __('chome.quick_library') }} {!! $arrowSm !!}</a>
                 <a href="{{ $nav('comparator') }}">{{ __('chome.quick_comparator') }} {!! $arrowSm !!}</a>
                 <a href="{{ $nav('members') }}">{{ __('chome.quick_members') }} {!! $arrowSm !!}</a>
-                <a href="{{ $nav('events') }}">{{ __('chome.m.events_upcoming') }} {!! $arrowSm !!}</a>
+                <a href="{{ $nav('events') }}">{{ __('chome.m.events') }} {!! $arrowSm !!}</a>
             </div>
         </div>
         <div>
@@ -384,7 +384,7 @@
                 <div class="k-ann">
                     <h4>{{ __('chome.related') }}</h4>
                     <a href="{{ $nav('publications?type[]=communique') }}">{{ __('chome.m.pubs_communiques') }} <span aria-hidden="true">→</span></a>
-                    <a href="{{ $nav('events#past') }}">{{ __('chome.m.events_past') }} <span aria-hidden="true">→</span></a>
+                    <a href="{{ $nav('events') }}">{{ __('chome.m.events_all') }} <span aria-hidden="true">→</span></a>
                     <a href="{{ $nav('newsroom#social') }}">{{ __('chome.m.news_social') }} <span aria-hidden="true">→</span></a>
                 </div>
             </aside>
@@ -455,7 +455,8 @@
             </div>
             <div class="k-sbtns" data-stagger>
                 @foreach ($accounts as $network => $url)
-                    <a class="k-sbtn u-reveal" href="{{ $url }}" rel="noopener" data-network="{{ $network }}">
+                    <a class="k-sbtn u-reveal" href="{{ $url }}" target="_blank" rel="noopener" data-network="{{ $network }}"
+                       aria-label="{{ __('blocks.social_account', ['network' => \App\Support\SocialAccounts::label($network)]) }}">
                         <span class="k-sbtn__si"><x-social-mark :network="$network" /></span>
                         <span><b>{{ \App\Support\SocialAccounts::label($network) }}</b><small>{{ \Illuminate\Support\Str::limit(\App\Support\SocialAccounts::handle($network, $url), 22) }}</small></span>
                         <svg class="k-sbtn__ar" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>

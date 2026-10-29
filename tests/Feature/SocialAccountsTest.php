@@ -97,7 +97,7 @@ class SocialAccountsTest extends TestCase
         foreach (array_keys(Locales::all()) as $locale) {
             $html = $this->get("/{$locale}")->assertOk()->getContent();
 
-            preg_match_all('/<a class="b-social__link"[^>]*>/', $html, $links);
+            preg_match_all('/<a class="k-sbtn[^"]*"[^>]*>/', $html, $links);
 
             $this->assertNotEmpty($links[0], "No social links in {$locale}.");
 
@@ -184,7 +184,7 @@ class SocialAccountsTest extends TestCase
             // The footer keeps its own "Follow us" label; the section does not.
             $this->assertStringNotContainsString('class="b__heading">Follow us<', $html);
             $this->assertStringContainsString('@CRASA_ORG', $html);
-            $this->assertStringContainsString('c-socials__handle', $html);
+            $this->assertStringContainsString('class="k-sbtns"', $html);
             // The homepage loads nothing from Facebook.
             $this->assertStringNotContainsString('data-fb-timeline', $html);
             $this->assertStringNotContainsString('facebook.com/plugins', $html);

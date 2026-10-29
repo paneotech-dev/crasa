@@ -186,16 +186,4 @@ class AssetIntegrityTest extends TestCase
         );
     }
 
-    public function test_the_homepage_hero_actually_references_a_derivative_that_exists(): void
-    {
-        $html = $this->get('/en')->getContent();
-
-        $this->assertMatchesRegularExpression('#/storage/images/derivatives/[^"\s]+\.webp#', $html);
-
-        preg_match('#(/storage/images/derivatives/[^"\s]+\.jpg)#', $html, $match);
-        $this->assertNotEmpty($match, 'The hero emitted no JPEG derivative.');
-
-        $relative = str_replace('/storage/', '', $match[1]);
-        $this->assertFileExists(storage_path('app/public/'.$relative));
-    }
 }

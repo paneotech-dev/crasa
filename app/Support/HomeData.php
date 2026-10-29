@@ -40,11 +40,13 @@ final class HomeData
             }
 
             $panel = $config[$section];
-            $links = array_map(fn ($l) => [
+            $keep = fn ($l) => self::anchorExists($l['path'])
+                && ! Navigation::pointsAtUnwrittenSection(Navigation::url($l['path']));
+            $links = array_values(array_map(fn ($l) => [
                 'label' => __($l['label']),
                 'desc' => isset($l['desc']) ? __($l['desc']) : null,
                 'url' => Navigation::url($l['path']),
-            ], $panel['links'] ?? []);
+            ], array_filter($panel['links'] ?? [], $keep)));
 
             // Children a Secretariat editor adds to the menu record are
             // listed after the configured ones, so the record still wins.
@@ -55,15 +57,37 @@ final class HomeData
             $panels[$item['key']] = [
                 'section' => $section,
                 'links' => $links,
-                'related' => array_map(fn ($l) => [
+                'related' => array_values(array_map(fn ($l) => [
                     'label' => __($l['label']),
                     'url' => Navigation::url($l['path']),
-                ], $panel['related'] ?? []),
+                ], array_filter($panel['related'] ?? [], $keep))),
                 'feature' => self::feature($panel['feature'] ?? 'comparator'),
             ];
         }
 
         return $panels;
+    }
+
+    /**
+     * A section link ("about#governance") is kept only while a visible
+     * block on the site carries that anchor, so a panel never links to a
+     * section that is not there.
+     */
+    private static function anchorExists(string $path): bool
+    {
+        $fragment = parse_url($path, PHP_URL_FRAGMENT);
+
+        if ($fragment === null || $fragment === false) {
+            return true;
+        }
+
+        $anchors = PublicCache::remember('k-anchors', fn () => \App\Models\PageBlock::whereNotNull('anchor')
+            ->where('is_visible', true)->pluck('anchor')->unique()->values()->all());
+
+        // Sections a page template draws itself rather than a block: the
+        // newsroom's social feed. Add "upcoming" and "past" here once the
+        // events page carries those ids.
+        return in_array($fragment, $anchors, true) || in_array($fragment, ['social'], true);
     }
 
     /** The last path segment of a header address: "about" for /en/about. */

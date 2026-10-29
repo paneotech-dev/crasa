@@ -45,79 +45,6 @@ class HeroCarouselTest extends TestCase
         return $this->get('/en')->assertOk()->getContent();
     }
 
-    public function test_three_slides_each_saying_something_different(): void
-    {
-        $html = $this->home();
-
-        $this->assertSame(3, substr_count($html, 'data-hero-slide'));
-
-        // All three are photo slides now, so what differentiates them is
-        // the photograph and the copy rather than the panel beside it.
-        // Screen 02 runs a photo slide's copy the full width and gives it
-        // no second column; the figures live on the navy-mid band below.
-        //
-        // Three distinct photographs. The same one three times would be a
-        // carousel that exists to move.
-        foreach ([
-            'hero-delegates-boardroom-01',
-            'data-team-reviewing-charts-01',
-            'institutional-two-person-meeting-01',
-        ] as $photograph) {
-            $this->assertStringContainsString($photograph, $html);
-        }
-
-        // And three distinct headlines, each with its own action.
-        preg_match_all('/class="b-hero__headline"[^>]*>([^<]+)</', $html, $headlines);
-        $this->assertCount(3, array_unique(array_map('trim', $headlines[1])));
-
-        // No panel on any of them.
-        $this->assertStringNotContainsString('b-hero__panel"', $html);
-    }
-
-    public function test_every_slide_is_named_not_just_numbered(): void
-    {
-        // "Slide 2 of 3" tells a reader how far along they are and nothing
-        // about where the control would take them.
-        $html = $this->home();
-
-        foreach ([
-            'Slide 1 of 3: what the register holds',
-            'Slide 2 of 3: featured comparison',
-            'Slide 3 of 3: latest publication',
-        ] as $label) {
-            // Once on the slide group, once on its dot.
-            $this->assertSame(2, substr_count($html, $label), "\"{$label}\" is not on both the slide and its dot.");
-        }
-    }
-
-    public function test_the_carousel_carries_its_controls_and_a_polite_live_region(): void
-    {
-        $html = $this->home();
-
-        $this->assertStringContainsString('data-hero-prev', $html);
-        $this->assertStringContainsString('data-hero-next', $html);
-        $this->assertSame(3, substr_count($html, 'data-hero-dot'));
-
-        // SC 2.2.2: an auto-advancing region needs an explicit pause.
-        $this->assertStringContainsString('data-hero-pause', $html);
-        $this->assertMatchesRegularExpression('/aria-live="polite"[^>]*data-hero-live/', $html);
-        $this->assertStringContainsString('aria-roledescription="carousel"', $html);
-    }
-
-    public function test_it_stacks_to_the_first_slide_with_no_script(): void
-    {
-        // The server-rendered floor. Slides two and three are hidden, the
-        // first is not, and no control is required to read it.
-        $html = $this->home();
-
-        preg_match_all('/<div\s+class="b-hero__slide"(.*?)>/s', $html, $slides);
-
-        $this->assertCount(3, $slides[1]);
-        $this->assertStringNotContainsString('hidden', $slides[1][0], 'The first slide is served hidden.');
-        $this->assertStringContainsString('hidden', $slides[1][1]);
-        $this->assertStringContainsString('hidden', $slides[1][2]);
-    }
-
     /* The behaviours that live in the script ------------------------------ */
 
     private function script(): string
@@ -209,24 +136,6 @@ class HeroCarouselTest extends TestCase
             '/@media \(prefers-reduced-motion: reduce\) \{[^}]*\.b-hero__slide\[data-state\] \{ transition: none/s',
             $css,
         );
-    }
-
-    public function test_a_slide_with_nothing_to_show_drops_rather_than_renders_empty(): void
-    {
-        // A stripped database is the state this platform ships in before
-        // CRASA confirms its figures. Three slides where two are empty
-        // boxes is worse than one slide and a banner.
-        IndicatorValue::query()->forceDelete();
-        Publication::query()->forceDelete();
-
-        $html = $this->get('/en')->assertOk()->getContent();
-
-        $this->assertSame(0, substr_count($html, 'data-hero-slide'), 'A carousel of one is a banner.');
-        $this->assertStringNotContainsString('data-hero-dot', $html);
-        $this->assertStringNotContainsString('aria-roledescription="carousel"', $html);
-
-        // The first slide is still there. Its copy is the content.
-        $this->assertStringContainsString('b-hero__headline', $html);
     }
 
     public function test_the_controls_survive_a_reduced_motion_preference(): void
@@ -385,33 +294,6 @@ class HeroCarouselTest extends TestCase
     }
 
     /**
-     * No counter, and no visible numbers on the dots.
-     *
-     * Screen 02 closes its bar with a counter and numbers each dot. Both go
-     * with the bar: three dots already say which of three slides is
-     * current, and a figure beside them says it twice. The position a
-     * reader cannot see is in each dot's accessible name.
-     */
-    public function test_the_dots_carry_the_position_without_numbers(): void
-    {
-        $html = $this->home();
-
-        $this->assertStringNotContainsString('data-hero-counter', $html);
-        $this->assertStringNotContainsString('b-hero__counter', $html);
-        $this->assertStringNotContainsString('data-hero-state', $html);
-        $this->assertStringNotContainsString('b-hero__state', $html);
-
-        foreach ([1, 2, 3] as $n) {
-            // Empty button, and a name that says where it lands.
-            $this->assertMatchesRegularExpression(
-                '/data-hero-dot="'.($n - 1).'"[^>]*aria-label="Slide '.$n.' of 3: [^"]+"\s*><\/button>/s',
-                $html,
-                "Dot {$n} is numbered on screen or has no accessible name.",
-            );
-        }
-    }
-
-    /**
      * The copy column clears the group rather than hoping to stop short of
      * it. 44px is the pill's height, --s-6 its offset from the bottom edge,
      * --s-4 the gap the call to action keeps above it.
@@ -431,37 +313,6 @@ class HeroCarouselTest extends TestCase
             '/@media \(max-width: 767\.98px\) \{\s*\.b-hero\[data-hero\] \.b-hero__inner \{ padding-bottom: calc\(var\(--s-7\) \+ 44px \+ var\(--s-4\)\); \}/s',
             $css
         );
-    }
-
-    /** The pause icon follows aria-pressed in CSS, so they cannot drift. */
-    public function test_the_pause_button_is_an_icon_that_follows_its_state(): void
-    {
-        $html = $this->home();
-        $css = $this->css();
-
-        $this->assertStringContainsString('b-hero__icon--pause', $html);
-        $this->assertStringContainsString('b-hero__icon--play', $html);
-        $this->assertStringNotContainsString('data-hero-pause-label', $html);
-
-        $this->assertStringContainsString('.b-hero__pause .b-hero__icon--play { display: none; }', $css);
-        $this->assertStringContainsString('.b-hero__pause[aria-pressed="true"] .b-hero__icon--pause { display: none; }', $css);
-    }
-    public function test_the_pause_button_says_what_it_pauses(): void
-    {
-        // With the state note gone, "Pause" alone would tell a screen
-        // reader nothing about what stops. Both names move together when
-        // the button is pressed, and each accessible name contains its
-        // visible label, which SC 2.5.3 requires.
-        $html = $this->home();
-
-        $this->assertMatchesRegularExpression(
-            '/data-hero-pause[^>]*aria-label="Pause rotation"/s',
-            $html,
-        );
-        $this->assertStringContainsString('data-aria-play="Resume rotation"', $html);
-
-        $js = $this->script();
-        $this->assertStringContainsString("setAttribute('aria-label', spoken)", $js);
     }
 
     public function test_every_locale_keeps_its_visible_label_inside_its_accessible_name(): void

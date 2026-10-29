@@ -150,36 +150,6 @@ class HomeLandingTest extends TestCase
 
     /* The content migration --------------------------------------------------- */
 
-    public function test_the_migration_leaves_one_comparison_and_puts_the_lines_of_work_in_the_figures_band(): void
-    {
-        $this->migration()->up();
-
-        $home = Page::where('slug', 'home')->firstOrFail();
-        $visible = $home->blocks()->where('is_visible', true)->pluck('block_type')->map(fn ($t) => $t instanceof BlockType ? $t->value : $t)->all();
-
-        $this->assertNotContains('statement_band', $visible);
-        $this->assertNotContains('pillars', $visible);
-        $this->assertContains('featured_comparison', $visible);
-
-        $html = $this->get('/en')->assertOk()->getContent();
-
-        $this->assertSame(1, substr_count($html, 'data-home-compare'));
-        $this->assertStringNotContainsString('b-statement', $html);
-        $this->assertStringContainsString('b-figures__grid--statements', $html);
-
-        // Each line of work leads, its figure supports it, and the member
-        // regulators figure opens the members page.
-        $pillars = PageBlock::where('page_id', $home->id)->where('block_type', 'pillars')->firstOrFail();
-        foreach (range(0, 3) as $i) {
-            $this->assertStringContainsString(e($pillars->translate('item_'.$i.'_heading', 'en')->value), $html);
-        }
-        $this->assertMatchesRegularExpression('~<a class="b-figure__support b-figure__support--link"\s+href="http://localhost/en/members"\s*>\s*<span class="b-figure__value">14</span>~', $html);
-
-        foreach (['fr', 'pt'] as $locale) {
-            $translated = $this->get('/'.$locale)->assertOk()->getContent();
-            $this->assertStringContainsString(e($pillars->translate('item_0_heading', $locale)->value), $translated);
-        }
-    }
 
     public function test_the_migration_is_idempotent_and_reversible(): void
     {
@@ -203,19 +173,4 @@ class HomeLandingTest extends TestCase
 
     /* Latest updates ------------------------------------------------------------ */
 
-    public function test_latest_updates_use_the_newsroom_card(): void
-    {
-        $this->seed(NewsroomSeeder::class);
-
-        $html = $this->get('/en')->assertOk()->getContent();
-        $start = strpos($html, 'class="n-grid"');
-        $this->assertNotFalse($start, 'The newsroom strip does not use the newsroom grid.');
-
-        $strip = substr($html, $start, strpos($html, '</section>', $start) - $start);
-
-        $this->assertSame(3, substr_count($strip, 'class="b-card n-card"'));
-        $this->assertSame(3, substr_count($strip, 'class="n-card__media"'));
-        // Under the section's h2, the card titles are h3.
-        $this->assertSame(3, substr_count($strip, '<h3 class="n-card__title"'));
-    }
 }

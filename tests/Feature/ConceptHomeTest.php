@@ -115,4 +115,38 @@ class ConceptHomeTest extends TestCase
         $this->assertStringContainsString('duration = 400', $js);
         $this->assertStringContainsString('counter.unobserve', $js);
     }
+
+    public function test_the_glance_figures_link_to_what_they_count(): void
+    {
+        $html = $this->get('/en')->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression('~<a class="k-fig u-reveal"\s+href="http://localhost/en/members"\s*>\s*<span class="k-fig__n"\s+data-count="14"~', $html);
+    }
+
+    public function test_the_members_paragraph_is_printed_once_beside_the_map_and_fourteen_cards(): void
+    {
+        foreach (\App\Models\Country::all() as $country) {
+            \App\Models\Authority::factory()->create(['country_id' => $country->id]);
+        }
+
+        $html = $this->get('/en')->assertOk()->getContent();
+        $section = substr($html, strpos($html, 'class="k-sec k-memsec"'));
+        $section = substr($section, 0, strpos($section, '</section>'));
+
+        $intro = \App\Models\PageBlock::where('block_type', 'member_grid')->whereHas('page', fn ($q) => $q->where('slug', 'home'))->firstOrFail()->translate('intro', 'en')?->value;
+        if ($intro) {
+            $this->assertSame(1, substr_count($html, e($intro)));
+        }
+        $this->assertSame(14, substr_count($section, 'class="k-dcard u-reveal"'));
+        $dir = substr($section, strpos($section, 'class="k-dir"'));
+        $this->assertSame(14, preg_match_all('~href="http://localhost/en/members/[a-z]{2}"~i', $dir));
+        $this->assertStringContainsString('<svg', $section);
+    }
+
+    public function test_the_hero_sits_below_the_header(): void
+    {
+        $html = $this->get('/en')->assertOk()->getContent();
+
+        $this->assertLessThan(strpos($html, '<h1'), strpos($html, '</header>'));
+    }
 }
