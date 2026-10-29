@@ -2039,6 +2039,12 @@ body[data-surface="admin"] .a-side__name:hover { color: var(--c-white); text-dec
 .a-top__spacer { flex: 1 1 auto; }
 
 .a-top__utilities { margin-left: auto; display: flex; align-items: center; gap: var(--s-3); }
+/* At phone width the search keeps room for its own icon and a few letters
+   rather than sliding under the language pills. */
+@media (max-width: 479.98px) {
+  .a-top__utilities { gap: var(--s-1); }
+  .a-top__search { min-width: 64px; }
+}
 
 /* The language, as a pill group. Each is a link to this page in that
    language, so switching never loses the reader's place. */
