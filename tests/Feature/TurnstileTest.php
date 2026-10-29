@@ -94,8 +94,9 @@ class TurnstileTest extends TestCase
     {
         $policy = $this->get('/en/contact')->headers->get('Content-Security-Policy');
 
+        // frame-src may exist for other embeds (the newsroom's Facebook
+        // page); off, it never names Cloudflare's challenge host.
         $this->assertStringNotContainsString('challenges.cloudflare.com', $policy);
-        $this->assertStringNotContainsString('frame-src', $policy);
     }
 
     public function test_off_the_honeypot_still_rejects(): void

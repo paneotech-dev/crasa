@@ -252,6 +252,10 @@ class RenderedMarkupTest extends TestCase
 
                 $safe = str_contains($expression, 'ContentRenderer')
                     || str_contains($expression, '$rendered')
+                    // A template that binds $renderer to the ContentRenderer
+                    // and prints through it.
+                    || (str_starts_with($expression, '$renderer->render(')
+                        && str_contains($contents, '$renderer = app(\\App\\Services\\ContentRenderer::class)'))
                     || str_starts_with($expression, '__(');
 
                 if (! $safe) {
