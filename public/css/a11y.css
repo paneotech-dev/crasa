@@ -371,3 +371,39 @@ html.a11y-pause .u-card:focus-within { transform: none !important; }
 
 /* The toolbar in high contrast keeps a visible edge on its own controls. */
 html.a11y-contrast .c-a11y__hint { color: #000000; }
+
+/* Accessibility statement (G5) ------------------------------------------- */
+
+/* Two columns: the table of contents stays in view beside the text on a
+   wide screen and comes first on a phone. */
+.g-statement { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: var(--u-5, 32px); align-items: start; }
+.g-statement__toc { position: sticky; top: var(--s-6, 24px); }
+.g-statement__toc-title { margin: 0 0 var(--u-2, 8px); font: 600 18px/1.3 var(--f-body); color: var(--u-ink, #25384A); }
+.g-statement__toc ol { margin: 0; padding-left: 1.4em; display: grid; gap: var(--u-1, 4px); }
+.g-statement__toc li { padding-block: 6px; }
+.g-statement__toc a { display: inline; color: var(--u-green-deep, #0B5F3E); }
+.g-statement__section { padding-bottom: var(--u-6, 40px); margin-bottom: var(--u-6, 40px); border-bottom: 1px solid var(--u-line, #D9E3EC); scroll-margin-top: 96px; }
+.g-statement__section:last-child { border-bottom: 0; margin-bottom: 0; }
+.g-statement__section:focus { outline: none; }
+.g-statement__section .u-text { max-width: 72ch; }
+.g-statement__list { margin: 0; padding-left: 1.3em; display: grid; gap: var(--u-2, 8px); max-width: 72ch; color: var(--u-ink, #25384A); line-height: 1.5; }
+.g-statement__table th[scope="row"] { font-weight: 400; text-align: left; vertical-align: top; }
+.g-statement__table td { vertical-align: top; }
+.g-statement__table thead th:first-child { width: 56%; }
+.g-statement__table thead th:nth-child(2) { width: 18%; }
+.g-statement__what { display: block; font-weight: 600; color: var(--u-ink, #25384A); }
+.g-statement__detail { display: block; margin-top: 2px; color: var(--u-muted, #3F5264); }
+.g-statement__contact { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--u-3, 16px); margin: var(--u-4, 24px) 0; }
+.g-statement__contact dt { font: 600 14px/1.3 var(--f-body); color: var(--u-muted, #3F5264); }
+.g-statement__contact dd { margin: 4px 0 0; font-size: 18px; overflow-wrap: anywhere; }
+
+@media (max-width: 991.98px) {
+  .g-statement { grid-template-columns: minmax(0, 1fr); }
+  .g-statement__toc { position: static; }
+}
+@media (max-width: 639.98px) {
+  .g-statement__contact { grid-template-columns: minmax(0, 1fr); }
+  .g-statement__table td { white-space: normal; }
+}
+.g-statement__table tbody th { position: static; background: transparent; font-size: 16px; padding: 12px 16px; border-bottom: 1px solid var(--u-line, #D9E3EC); }
+.g-statement__table tbody tr:nth-child(even) th { background: var(--u-pale, #F4F8F6); }

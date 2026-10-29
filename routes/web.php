@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccessibilityStatementController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\AdminSearchController;
 use App\Http\Controllers\Admin\AnnouncementAdminController;
@@ -182,7 +183,12 @@ Route::prefix('{locale}')
 
         Route::get('privacy', [PageController::class, 'show'])->defaults('slug', 'privacy')->name('privacy');
         Route::get('terms', [PageController::class, 'show'])->defaults('slug', 'terms')->name('terms');
-        Route::get('accessibility', [PageController::class, 'show'])->defaults('slug', 'accessibility')->name('accessibility');
+        // The accessibility statement, G5: one address per language, each
+        // answering in all three (AccessibilityStatementController::url()
+        // builds the reader's own).
+        Route::get('accessibility', [AccessibilityStatementController::class, 'show'])->name('accessibility');
+        Route::get('accessibilite', [AccessibilityStatementController::class, 'show'])->name('accessibility.fr');
+        Route::get('acessibilidade', [AccessibilityStatementController::class, 'show'])->name('accessibility.pt');
 
         /*
          * The extranet is phase 3. Its entry point is the sign-in page,
