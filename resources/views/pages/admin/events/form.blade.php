@@ -48,6 +48,12 @@
         </div>
     @endif
 
+    {{-- Send for approval, Approve or Return: the same panel as news,
+         publications and pages. Approving an event makes it public. --}}
+    @unless ($isNew)
+        @includeIf('pages.admin.approvals._panel', ['record' => $meeting])
+    @endunless
+
     @unless ($isNew)
         <section class="a-card e-status-card" aria-labelledby="status-title">
             <div class="a-card__head">
