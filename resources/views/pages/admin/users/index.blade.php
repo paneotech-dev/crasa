@@ -4,6 +4,9 @@
 @section('note', __('admin.users_note'))
 
 @section('actions')
+    @can(\App\Enums\Permission::AssignRoles->value)
+        <a class="a-btn a-btn--secondary" href="{{ route('admin.roles', ['locale' => app()->getLocale()]) }}">{{ __('fa.roles_title') }}</a>
+    @endcan
     <a class="a-btn a-btn--primary" href="{{ route('admin.users.form', ['locale' => app()->getLocale()]) }}">{{ __('admin.invite') }}</a>
 @endsection
 
@@ -43,8 +46,8 @@
                         @method('PUT')
                         <label class="c-sr" for="role-{{ $account->id }}">{{ __('admin.change_role_for', ['name' => $account->name]) }}</label>
                         <select class="a-select" id="role-{{ $account->id }}" name="role" @disabled(auth()->id() === $account->id)>
-                    @foreach ($roles as $role)
-                        <option value="{{ $role->value }}" @selected($account->role === $role)>{{ $role->label() }}</option>
+                    @foreach ($roleOptions as $option)
+                        <option value="{{ $option->key }}" @selected(($account->customRole?->key ?? $account->role->value) === $option->key)>{{ $option->label() }}</option>
                     @endforeach
                         </select>
                         <button type="submit" class="a-btn a-btn--secondary" @disabled(auth()->id() === $account->id)>{{ __('admin.apply') }}</button>
@@ -71,6 +74,16 @@
                         {{ $account->isSuspended() ? __('admin.reactivate') : __('admin.suspend') }}
                     </button>
                         </form>
+                        @if ($account->isSuspended())
+                            @can('delete', $account)
+                                <form method="POST" action="{{ route('admin.users.destroy', ['locale' => app()->getLocale(), 'user' => $account->id]) }}"
+                                      data-confirm="{{ __('fa.user_delete_confirm', ['name' => $account->name]) }}"
+                                      data-confirm-title="{{ __('fa.user_delete_title') }}" data-confirm-action="{{ __('fa.delete') }}">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="a-btn a-btn--danger a-btn--small">{{ __('fa.delete') }}<span class="c-sr"> {{ $account->name }}</span></button>
+                                </form>
+                            @endcan
+                        @endif
                     @endif
                 </td>
                     </tr>

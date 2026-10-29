@@ -97,7 +97,7 @@ class SocialAccountsTest extends TestCase
         foreach (array_keys(Locales::all()) as $locale) {
             $html = $this->get("/{$locale}")->assertOk()->getContent();
 
-            preg_match_all('/<a class="k-sbtn[^"]*"[^>]*>/', $html, $links);
+            preg_match_all('/<a class="b-social__link"[^>]*>/', $html, $links);
 
             $this->assertNotEmpty($links[0], "No social links in {$locale}.");
 
@@ -184,41 +184,39 @@ class SocialAccountsTest extends TestCase
             // The footer keeps its own "Follow us" label; the section does not.
             $this->assertStringNotContainsString('class="b__heading">Follow us<', $html);
             $this->assertStringContainsString('@CRASA_ORG', $html);
-            $this->assertStringContainsString('class="k-sbtns"', $html);
+            $this->assertStringContainsString('c-socials__handle', $html);
             // The homepage loads nothing from Facebook.
             $this->assertStringNotContainsString('data-fb-timeline', $html);
             $this->assertStringNotContainsString('facebook.com/plugins', $html);
         }
     }
 
-    /**
-     * The Facebook page box rendered empty on the newsroom and is gone (C13,
-     * 29 October 2026). The posts themselves come from the newsroom feed
-     * partial, which carries its own tests.
-     */
-    public function test_the_newsroom_has_no_empty_facebook_page_box(): void
+    public function test_the_newsroom_ends_with_the_channels_and_no_empty_facebook_frame(): void
     {
-        foreach (['en', 'fr', 'pt'] as $locale) {
+        foreach (['en' => 'CRASA on social media', 'fr' => 'La CRASA sur les réseaux sociaux', 'pt' => 'A CRASA nas redes sociais'] as $locale => $heading) {
             $html = $this->get("/{$locale}/newsroom")->assertOk()->getContent();
 
+            $this->assertStringContainsString($heading, $html);
+            foreach (['x', 'facebook', 'linkedin'] as $network) {
+                $this->assertStringContainsString('href="'.e(SiteSetting::get('social_'.$network)).'"', $html);
+            }
+
+            // Facebook's page plugin sent a signed-out reader to its login
+            // page and drew an empty frame. It is gone.
             $this->assertStringNotContainsString('data-fb-timeline', $html);
             $this->assertStringNotContainsString('plugins/page.php', $html);
-            $this->assertStringNotContainsString('<iframe', $html);
+            $this->assertStringNotContainsString('js/social-timeline.js', $html);
         }
-
-        // The feed partial is drawn when it exists; until then the channel
-        // cards stand in, under the id="social" the footer links to.
-        $this->assertStringContainsString(
-            "view()->exists('partials.newsroom.social')",
-            file_get_contents(resource_path('views/pages/newsroom/index.blade.php'))
-        );
     }
 
-    public function test_the_policy_frames_facebook_and_nothing_else(): void
+    public function test_the_policy_frames_the_three_embed_hosts_and_nothing_else(): void
     {
         $policy = $this->get('/en/newsroom')->headers->get('Content-Security-Policy');
 
-        $this->assertStringContainsString('frame-src https://www.facebook.com;', $policy);
+        $this->assertMatchesRegularExpression('/frame-src [^;]*https:\/\/www\.facebook\.com/', $policy);
+        $this->assertMatchesRegularExpression('/frame-src [^;]*https:\/\/www\.linkedin\.com/', $policy);
+        $this->assertMatchesRegularExpression('/frame-src [^;]*https:\/\/platform\.twitter\.com/', $policy);
+        $this->assertMatchesRegularExpression('/script-src [^;]*https:\/\/platform\.twitter\.com/', $policy);
         $this->assertStringContainsString("frame-ancestors 'none'", $policy);
         $this->assertSame(1, substr_count($policy, 'frame-src'));
     }

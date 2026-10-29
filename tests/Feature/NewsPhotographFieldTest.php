@@ -35,6 +35,9 @@ class NewsPhotographFieldTest extends TestCase
         $this->seed(SectorSeeder::class);
         $asset = $this->asset('media/originals/2026/10/workshop.jpg');
         $editor = User::factory()->editor()->create();
+        // Day 2 (F2): news needs a moderator by default; this test is about
+        // the photograph, so the rule is set to "no approval".
+        \Illuminate\Support\Facades\DB::table('approval_rules')->where('content_type', 'news')->update(['mode' => 'none']);
 
         $this->actingAs($editor)
             ->get('/en/admin/data/news/new')

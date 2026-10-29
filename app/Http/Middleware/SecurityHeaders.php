@@ -23,6 +23,12 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class SecurityHeaders
 {
+    /** The hosts the social post embeds load their scripts from. */
+    public const EMBED_SCRIPTS = 'https://platform.twitter.com https://connect.facebook.net';
+
+    /** The hosts that draw a social post in a frame. */
+    public const EMBED_FRAMES = 'https://platform.twitter.com https://syndication.twitter.com https://www.facebook.com https://www.linkedin.com';
+
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
@@ -47,8 +53,7 @@ class SecurityHeaders
             // Cloudflare injects its Web Analytics beacon in front of the
             // site; without these two hosts the browser logs a CSP error on
             // every page.
-            "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com".$turnstile,
-            $turnstile !== '' ? "frame-src 'self'".$turnstile : null,
+            "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com ".self::EMBED_SCRIPTS.$turnstile,
             "style-src 'self' 'unsafe-inline'",
             // The contact map's tile server, and only that host. Without it
             // the browser refused every tile and the map showed a pin on
@@ -57,10 +62,11 @@ class SecurityHeaders
             "font-src 'self'",
             "connect-src 'self' https://cloudflareinsights.com",
             "form-action 'self'",
-            // The newsroom shows CRASA's Facebook page timeline in Facebook's
-            // own page plugin frame. That frame is the only thing this site
-            // embeds from another origin, and nothing else may be framed.
-            "frame-src https://www.facebook.com",
+            // CRASA's own social posts: X's post frame (drawn by its widget
+            // script), Facebook's single-post plugin and LinkedIn's post
+            // embed. Nothing else may be framed. One frame-src only: a
+            // second directive of the same name is ignored by the browser.
+            'frame-src '.($turnstile !== '' ? "'self'".$turnstile.' ' : '').self::EMBED_FRAMES,
             "frame-ancestors 'none'",
             "base-uri 'self'",
             "object-src 'none'",

@@ -39,7 +39,11 @@
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/vendor/bootstrap-grid.min.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/grid.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/base.css') }}">
+    {{-- The UI system's tokens (--u-*), which the light back office reads. --}}
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/ui.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/admin-tokens.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/admin-workflow.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/print.css') }}" media="print">
     @stack('styles')
 </head>
@@ -89,6 +93,7 @@
     <script src="{{ \App\Support\Assets::url('js/shell.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/password.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/modal.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/admin-workflow.js') }}" defer></script>
     @stack('scripts')
 <!--/email_off-->
 </body>

@@ -76,6 +76,9 @@
         </div>
     @endif
 
+    {{-- The role's own blocks (F4): what needs this reader, first. --}}
+    @include('partials.role-dashboard')
+
     {{-- 2. FOUR TILES. Every figure is a link to what it counts. --}}
     <div class="a-tiles">
         @foreach ($tiles as $tile)

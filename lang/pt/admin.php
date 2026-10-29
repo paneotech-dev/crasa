@@ -613,6 +613,8 @@ return [
     'group_platform' => 'Plataforma',
     'nav_dashboard' => 'Painel',
     'nav_audit' => 'Registo de auditoria',
+    'nav_approvals' => 'A aguardar aprovação',
+    'nav_roles' => 'Funções',
     'nav_pages' => 'Páginas',
     'nav_publications' => 'Publicações',
     'nav_newsroom' => 'Notícias',

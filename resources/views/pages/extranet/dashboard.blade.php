@@ -49,9 +49,13 @@
         </div>
     @endif
 
+    {{-- The role's own blocks first (F4). --}}
+    @include('partials.role-dashboard')
+
     {{-- A proposal, not a feature. Member state representatives and
          committee members only. See the partial. --}}
     @include('partials.assistant-proposal')
+
 
     @if ($isCountryView)
         {{-- Returned first. It is the only item on this page that is

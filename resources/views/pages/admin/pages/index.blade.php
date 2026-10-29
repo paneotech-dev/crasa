@@ -3,6 +3,12 @@
 @section('title', __('admin.section_content'))
 @section('note', __('admin.pages_note'))
 
+@can('create', \App\Models\Page::class)
+    @section('actions')
+        <a class="a-btn a-btn--primary" href="{{ route('admin.pages.create', ['locale' => app()->getLocale()]) }}">{{ __('fa.page_new') }}</a>
+    @endsection
+@endcan
+
 @section('content')
     @php
         // The approval column only when a page on this screen has something
@@ -49,8 +55,11 @@
                 'updated' => $p->updated_at?->displayed()->isoFormat('D MMM YYYY') ?? '',
             ],
             'actions' => [
-                ['label' => __('admin.edit'), 'url' => route('admin.pages.edit', ['locale' => app()->getLocale(), 'page' => $p->slug])],
-                ['label' => __('admin.preview'), 'url' => route('admin.pages.preview', ['locale' => app()->getLocale(), 'page' => $p->slug])],
+                ['label' => __('admin.edit'), 'sr' => '/'.$p->slug, 'url' => route('admin.pages.edit', ['locale' => app()->getLocale(), 'page' => $p->slug])],
+                ['label' => __('admin.preview'), 'sr' => '/'.$p->slug, 'url' => route('admin.pages.preview', ['locale' => app()->getLocale(), 'page' => $p->slug])],
+                ...(auth()->user()->can('delete', $p) ? [['label' => __('fa.delete'), 'method' => 'DELETE', 'sr' => '/'.$p->slug,
+                    'url' => route('admin.pages.destroy', ['locale' => app()->getLocale(), 'page' => $p->slug]),
+                    'confirm' => __('fa.page_delete_confirm', ['slug' => '/'.$p->slug])]] : []),
             ],
         ]">
 

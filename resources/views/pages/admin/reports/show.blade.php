@@ -82,7 +82,7 @@
     </article>
 
     <form method="POST" action="{{ route('admin.reports.destroy', ['locale' => app()->getLocale(), 'report' => $report->id]) }}"
-          onsubmit="return confirm('{{ __('reports.delete_confirm') }}')" class="a-form">
+          data-confirm="{{ __('reports.delete_confirm') }}" data-confirm-title="{{ __('fa.confirm_title') }}" class="a-form">
         @csrf
         @method('DELETE')
         <div class="a-form__actions">

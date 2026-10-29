@@ -25,7 +25,7 @@ final class Workspace
      */
     public static function isBackOffice(?User $user): bool
     {
-        return $user !== null && $user->hasPermission(Permission::ManageContent);
+        return $user !== null && \Illuminate\Support\Facades\Gate::forUser($user)->allows('enter-back-office');
     }
 
     /**
@@ -45,7 +45,7 @@ final class Workspace
 
         $locale = app()->getLocale();
 
-        if ($user->hasPermission(Permission::ManageContent)) {
+        if (\Illuminate\Support\Facades\Gate::forUser($user)->allows('enter-back-office')) {
             return ['url' => route('admin.dashboard', ['locale' => $locale]), 'label' => __('nav.back_office')];
         }
 

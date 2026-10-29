@@ -46,6 +46,8 @@ return [
     'trigger_thread_comment' => 'A comment on a thread I am in',
     'trigger_thread_comment_note' => 'Replies on a document thread you have written in.',
     'trigger_announcement' => 'An announcement from the Secretariat',
+    'trigger_approval' => 'Moderation of content',
+    'trigger_admin_activity' => 'Another administrator acted',
     'trigger_announcement_note' => 'Notices to the membership, sometimes narrowed to one sector or one committee.',
     'filed' => "':file' was filed into :committee.",
     'meeting_moved' => "':title' is now :date.",

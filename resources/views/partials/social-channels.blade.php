@@ -1,30 +1,25 @@
 {{--
     CRASA's own channels: the network's mark, the handle and the link.
 
-    Used twice. The homepage shows the three channels and nothing else, so
-    it loads no third-party code at all. The newsroom adds the Facebook page
-    timeline, the only one of the three a platform lets a site show without
-    an access token. X and LinkedIn need one, so they stay links.
-
-    The timeline is not in the markup. A script puts the frame in when the
-    reader scrolls near it; until then, and with scripting off, the reader
-    has a plain link to the page, which stays under the frame either way.
+    Used twice. With $timeline (the newsroom) CRASA's published social
+    posts follow the channels; partials.newsroom.social is the full
+    replacement for that section.
 
     Every URL comes from site settings through SocialAccounts. The handle is
     read off the same URL, so the two cannot disagree.
 
-    @param  bool  $timeline  Show the Facebook timeline (newsroom only).
+    @param  bool  $timeline  Show the published posts (newsroom only).
 --}}
 @php
     $urls = $urls ?? \App\Support\SocialAccounts::all();
     $networks = collect($networks ?? ['x', 'facebook', 'linkedin'])
         ->filter(fn ($n) => filled($urls[$n] ?? null))
         ->values();
-    $timeline = ($timeline ?? false) && filled($urls['facebook'] ?? null);
+    $timeline = (bool) ($timeline ?? false);
 @endphp
 
 @if ($networks->isNotEmpty())
-    <div @class(['c-socials', 'c-socials--timeline' => $timeline])>
+    <div class="c-socials">
         <ul class="c-socials__list" role="list">
             @foreach ($networks as $network)
                 @php $handle = \App\Support\SocialAccounts::handle($network, $urls[$network]); @endphp
@@ -46,33 +41,27 @@
         </ul>
 
         @if ($timeline)
+            {{-- The newsroom: CRASA's published posts under the channels.
+                 The Facebook page plugin that stood here drew an empty
+                 frame: Facebook sends a reader who is not signed in to its
+                 login page instead of the CRASA page. --}}
             @php
-                $frame = 'https://www.facebook.com/plugins/page.php?'.http_build_query([
-                    'href' => \App\Support\SocialAccounts::facebookPluginHref($urls['facebook']),
-                    'tabs' => 'timeline',
-                    'width' => 500,
-                    'height' => 560,
-                    'small_header' => 'true',
-                    'adapt_container_width' => 'true',
-                    'hide_cover' => 'true',
-                    'show_facepile' => 'false',
-                    'locale' => match (app()->getLocale()) { 'fr' => 'fr_FR', 'pt' => 'pt_PT', default => 'en_GB' },
-                ]);
+                $socialPosts = \Illuminate\Support\Facades\Schema::hasTable('social_posts')
+                    ? \App\Models\SocialPost::live()->limit(12)->get()
+                    : collect();
             @endphp
-            <div class="c-socials__timeline">
-                <div class="c-socials__frame" data-fb-timeline
-                     data-src="{{ $frame }}"
-                     data-title="{{ __('social.timeline_title') }}"></div>
-                <p class="c-socials__fallback">
-                    <a href="{{ $urls['facebook'] }}" target="_blank" rel="noopener">{{ __('social.timeline_link') }}</a>
-                </p>
-            </div>
-
-            @once
-                @push('scripts')
-                    <script src="{{ \App\Support\Assets::url('js/social-timeline.js') }}" defer></script>
-                @endpush
-            @endonce
+            @if ($socialPosts->isNotEmpty())
+                @once
+                    @push('styles')
+                        <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/social.css') }}">
+                    @endpush
+                @endonce
+                <div class="s-posts c-socials__posts">
+                    @foreach ($socialPosts as $post)
+                        @include('partials.social-post', ['post' => $post])
+                    @endforeach
+                </div>
+            @endif
         @endif
     </div>
 @endif

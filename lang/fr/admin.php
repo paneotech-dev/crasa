@@ -613,6 +613,8 @@ return [
     'group_platform' => 'Plateforme',
     'nav_dashboard' => 'Tableau de bord',
     'nav_audit' => 'Journal d\'audit',
+    'nav_approvals' => 'En attente d\'approbation',
+    'nav_roles' => 'Rôles',
     'nav_pages' => 'Pages',
     'nav_publications' => 'Publications',
     'nav_newsroom' => 'Actualités',

@@ -86,7 +86,7 @@
 
         {{-- Confirmed, and it names what it is about to remove. --}}
         <form method="POST" action="{{ route('admin.menus.destroy', ['locale' => $locale, 'item' => $item->id]) }}"
-              onsubmit="return confirm('{{ __('admin.menu_delete_confirm', ['label' => $item->labelFor()]) }}')">
+              data-confirm="{{ __('admin.menu_delete_confirm', ['label' => $item->labelFor()]) }}" data-confirm-title="{{ __('fa.confirm_title') }}">
             @csrf @method('DELETE')
             <button class="a-btn a-btn--danger a-btn--small" type="submit">{{ __('admin.delete') }}</button>
         </form>

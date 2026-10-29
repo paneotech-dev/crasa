@@ -1,0 +1,10 @@
+/* Back office light set (F11, 29 October 2026): the two greens of the UI
+ * system as admin tokens. tokens.css still carries the older greens for the
+ * screens drawn against them, and ui.css's --u-green aliases resolve to
+ * those on the back office, where theme-light.css is not loaded. White on
+ * --a-green is 4.54:1, on --a-green-deep 7.72:1.
+ */
+:root {
+  --a-green: #0F8757;
+  --a-green-deep: #0B5F3E;
+}

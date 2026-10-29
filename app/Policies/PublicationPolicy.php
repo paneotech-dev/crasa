@@ -14,12 +14,12 @@ class PublicationPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission(Permission::ManageContent);
+        return $user->hasAnyPermission([Permission::ManageContent, Permission::ReadContent, Permission::ApproveContent]);
     }
 
     public function view(User $user, Publication $publication): bool
     {
-        return $user->hasPermission(Permission::ManageContent);
+        return $user->hasAnyPermission([Permission::ManageContent, Permission::ReadContent, Permission::ApproveContent]);
     }
 
     public function create(User $user): bool
@@ -32,9 +32,14 @@ class PublicationPolicy
         return $user->hasPermission(Permission::ManageContent);
     }
 
+    public function sendForApproval(User $user, Publication $publication): bool
+    {
+        return $user->hasPermission(Permission::ManageContent);
+    }
+
     public function publish(User $user, Publication $publication): bool
     {
-        return $user->hasPermission(Permission::PublishContent);
+        return \App\Support\Approvals::mayPublishDirectly($user, $publication);
     }
 
     public function delete(User $user, Publication $publication): bool

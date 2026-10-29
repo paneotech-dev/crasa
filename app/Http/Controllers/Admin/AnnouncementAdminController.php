@@ -126,6 +126,18 @@ class AnnouncementAdminController extends Controller
         return back()->with('status', __('announcements.unpublished'));
     }
 
+    /** Delete an announcement (F1). Soft deleted; notices already sent stay sent. */
+    public function destroy(Request $request, Announcement $announcement): RedirectResponse
+    {
+        Gate::authorize('delete', $announcement);
+
+        $announcement->delete();
+        \App\Models\AuditLog::record(\App\Models\AuditLog::DELETED, $announcement, null, $request->user());
+
+        return redirect()->route('admin.announcements', ['locale' => app()->getLocale()])
+            ->with('status', __('fa.announcement_deleted'));
+    }
+
     /**
      * Who this announcement is for.
      *
