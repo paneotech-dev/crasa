@@ -20,7 +20,7 @@ use Tests\TestCase;
  * used the back-office layout and the back-office menu, filtered by a
  * member's permissions, is empty. This walks every parameterless GET route
  * behind sign-in as each of the seven roles and checks the sidebar on every
- * page that renders it has its menu groups.
+ * page that renders it: its groups, and the item that is current.
  */
 class SidebarEveryScreenTest extends TestCase
 {
@@ -43,7 +43,7 @@ class SidebarEveryScreenTest extends TestCase
     }
 
     #[DataProvider('roles')]
-    public function test_every_shell_screen_has_its_menu_groups(string $state): void
+    public function test_every_shell_screen_has_its_menu_groups_and_a_current_item(string $state): void
     {
         $country = Country::where('iso_code', 'bw')->first();
         $factory = User::factory()->withoutTwoFactor();
@@ -65,6 +65,8 @@ class SidebarEveryScreenTest extends TestCase
             $checked++;
             if (substr_count($html, 'a-side__grouplabel') === 0) {
                 $problems[] = $uri.': no menu groups';
+            } elseif (! preg_match('/a-side__link[^"]*is-current|aria-current="page"/', $html)) {
+                $problems[] = $uri.': no current item';
             }
         }
 

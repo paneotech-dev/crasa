@@ -145,10 +145,10 @@ return [
     'period_submitted' => 'Entregue',
     'period_validated' => 'Validada',
     'nav_announcements' => 'Do Secretariado',
-    'nav_notifications' => 'Notificacoes',
+    'nav_notifications' => 'Notificações',
     'nav_contributions' => 'Entregar',
     'nav_register' => 'Registo',
     'nav_authority' => 'A sua autoridade',
     'nav_indicators' => 'Referencia dos indicadores',
-    'nav_directory' => 'Diretorio dos membros',
+    'nav_directory' => 'Diretório dos membros',
 ];
