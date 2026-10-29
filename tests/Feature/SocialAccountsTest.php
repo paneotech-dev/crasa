@@ -97,7 +97,9 @@ class SocialAccountsTest extends TestCase
         foreach (array_keys(Locales::all()) as $locale) {
             $html = $this->get("/{$locale}")->assertOk()->getContent();
 
-            preg_match_all('/<a class="b-social__link"[^>]*>/', $html, $links);
+            // Since the Concept 3 header (29 October 2026) the channels sit in
+            // the utility bar and in the phone drawer, each a data-network link.
+            preg_match_all('/<a [^>]*data-network="(?:x|facebook|linkedin)"[^>]*>/', $html, $links);
 
             $this->assertNotEmpty($links[0], "No social links in {$locale}.");
 
@@ -175,19 +177,25 @@ class SocialAccountsTest extends TestCase
         $this->assertSame('https://www.facebook.com/crasa', SocialAccounts::facebookPluginHref('https://www.facebook.com/crasa'));
     }
 
-    public function test_the_homepage_names_the_section_and_shows_each_channel_with_its_handle_and_no_embed(): void
+    public function test_the_homepage_has_one_social_section_and_no_page_plugin(): void
     {
-        foreach (['en' => 'CRASA on social media', 'fr' => 'La CRASA sur les réseaux sociaux', 'pt' => 'A CRASA nas redes sociais'] as $locale => $heading) {
+        // C11 (29 October 2026): one section on the home page, "Latest from
+        // CRASA", showing the newest posts, or the three channel cards in one
+        // slim row while none is published. The channels themselves stay in
+        // the header and the footer.
+        foreach (['en', 'fr', 'pt'] as $locale) {
+            app()->setLocale($locale);
             $html = $this->get("/{$locale}")->assertOk()->getContent();
 
-            $this->assertStringContainsString($heading, $html);
-            // The footer keeps its own "Follow us" label; the section does not.
+            $this->assertSame(1, substr_count($html, 'id="latest-from-crasa"'), "The home page in {$locale} has not exactly one social section.");
+            $this->assertTrue(
+                str_contains($html, e(__('fb.latest_heading'))) || str_contains($html, e(__('fb.channels_heading'))),
+                "The social section in {$locale} has no heading.",
+            );
             $this->assertStringNotContainsString('class="b__heading">Follow us<', $html);
-            $this->assertStringContainsString('@CRASA_ORG', $html);
-            $this->assertStringContainsString('c-socials__handle', $html);
-            // The homepage loads nothing from Facebook.
+            // No Facebook page plugin: it drew an empty frame for signed-out readers.
             $this->assertStringNotContainsString('data-fb-timeline', $html);
-            $this->assertStringNotContainsString('facebook.com/plugins', $html);
+            $this->assertStringNotContainsString('facebook.com/plugins/page.php', $html);
         }
     }
 

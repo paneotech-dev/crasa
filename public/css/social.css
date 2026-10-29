@@ -11,6 +11,10 @@
 /* Posts: one row of three on home, a grid in the newsroom. */
 .s-posts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start; }
 .s-posts .u-card { height: auto; }
+.s-post { min-width: 0; }
+.s-post__on { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+/* The newsroom feed sits on the pale ground under the listing. */
+.s-feed { border-top: 1px solid #D9E3EC; }
 .s-posts .u-card:hover, .s-posts .u-card:focus-within { transform: none; }
 
 .s-post__head { display: flex; align-items: center; gap: 8px; padding: 16px 16px 8px; font: 600 14px/1.4 var(--u-sans, 'IBM Plex Sans', system-ui, sans-serif); color: #25384A; }
