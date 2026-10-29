@@ -42,6 +42,34 @@ class PageVersion extends Model
         });
     }
 
+    /**
+     * The change summary in the interface language. It is stored in the
+     * language of whoever made the change, so a summary that matches one of
+     * the platform's own lines in English, French or Portuguese is shown in
+     * the reader's language; anything else is shown as written.
+     */
+    public function displaySummary(): string
+    {
+        $summary = (string) $this->change_summary;
+
+        foreach (\App\Support\Locales::SUPPORTED as $locale) {
+            foreach (['page_version_initial', 'page_version_details'] as $key) {
+                if ($summary === __('admin.'.$key, [], $locale)) {
+                    return __('admin.'.$key);
+                }
+            }
+            foreach (\App\Enums\BlockType::cases() as $type) {
+                foreach (['page_version_block_added', 'page_version_block_edited'] as $key) {
+                    if ($summary === __('admin.'.$key, ['type' => $type->label($locale)], $locale)) {
+                        return __('admin.'.$key, ['type' => $type->label()]);
+                    }
+                }
+            }
+        }
+
+        return $summary;
+    }
+
     public function page(): BelongsTo
     {
         return $this->belongsTo(Page::class);

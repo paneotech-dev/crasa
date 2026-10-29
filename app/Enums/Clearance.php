@@ -29,12 +29,7 @@ enum Clearance: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::Public => 'Public',
-            self::Member => 'Member',
-            self::Confidential => 'Confidential',
-            self::Secretariat => 'Secretariat',
-        };
+        return __('d3_i18n.clearance_'.$this->value);
     }
 
     public function requiresAuthentication(): bool

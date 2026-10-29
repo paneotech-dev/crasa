@@ -44,7 +44,7 @@
                 <th scope="row">
                     <a href="{{ route('admin.users.show', ['locale' => app()->getLocale(), 'user' => $account->id]) }}">{{ $account->name }}</a>
                     <span class="a-table__sub">{{ $account->email }}</span>
-                    @if ($account->country)<span class="a-table__sub">{{ $account->country->name }}</span>@endif
+                    @if ($account->country)<span class="a-table__sub">{{ $account->country->displayName() }}</span>@endif
                 </th>
                 <td>
                     <form method="POST" action="{{ route('admin.users.role', ['locale' => app()->getLocale(), 'user' => $account->id]) }}" class="a-form__actions">

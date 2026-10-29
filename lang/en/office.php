@@ -29,6 +29,8 @@ return [
     'filter_all_type' => 'All types',
     'filter_visibility' => 'Visibility',
     'filter_all_visibility' => 'Published and hidden',
+    'filter_state' => 'Progress',
+    'filter_all_state' => 'Current and past',
     'visibility_public' => 'Published',
     'visibility_hidden' => 'Hidden',
     'status_review' => 'In review',

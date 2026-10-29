@@ -9,12 +9,12 @@
 <ul>
     @foreach ($items as $item)
         <li>
-            <a href="{{ route('notifications.open', ['locale' => $locale, 'notification' => $item->id]) }}">{{ $item->data['title'] ?? __('notifications.untitled', [], $locale) }}</a>
-            &mdash; {{ __('notifications.trigger_'.($item->data['type'] ?? 'announcement'), [], $locale) }}
+            <a href="{{ route('notifications.open', ['locale' => $locale, 'notification' => $item->id]) }}">{{ $item->data['title'] ?? __('notifications.untitled', [], $locale) }}</a>,
+            {{ __('notifications.trigger_'.($item->data['type'] ?? 'announcement'), [], $locale) }}
         </li>
     @endforeach
 </ul>
 
 <p>
-    <a href="{{ route('notifications', ['locale' => $locale]) }}">{{ __('notifications.digest_action', [], $locale) }}</a>
+    <a href="{{ route('notifications', ['locale' => $locale]) }}">{{ __('notifications.digest_action', [], $locale) }}</a>,
 </p>

@@ -151,6 +151,25 @@ trait HasLocalisedNames
         return $this->localisedName($key, $value, $spec);
     }
 
+    /** Set while displayName() reads a name, so the back office gets one too. */
+    private static bool $localiseInBackOffice = false;
+
+    /**
+     * The name in the interface language, in the back office as well. The
+     * attribute itself stays English there, because edit forms read it into
+     * the English field; lists, labels and pills use this instead.
+     */
+    public function displayName(string $field = 'name'): string
+    {
+        self::$localiseInBackOffice = true;
+
+        try {
+            return (string) $this->getAttributeValue($field);
+        } finally {
+            self::$localiseInBackOffice = false;
+        }
+    }
+
     /** The column itself, whatever the language. */
     public function rawName(string $field = 'name'): ?string
     {
@@ -166,7 +185,7 @@ trait HasLocalisedNames
         }
 
         $request = app()->bound('request') ? request() : null;
-        if ($request?->route()?->getName() !== null && str_starts_with((string) $request->route()->getName(), 'admin.')) {
+        if (! self::$localiseInBackOffice && $request?->route()?->getName() !== null && str_starts_with((string) $request->route()->getName(), 'admin.')) {
             return $value;
         }
 

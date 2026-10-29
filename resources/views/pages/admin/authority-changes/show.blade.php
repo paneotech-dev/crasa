@@ -8,12 +8,12 @@
     answered without seeing what it replaces.
 --}}
 
-@section('title', $change->country->name)
+@section('title', $change->country->displayName())
 @section('note', __('authority.review_title'))
 
 @section('crumbs')
     <li><a href="{{ route('admin.authority-changes', ['locale' => app()->getLocale()]) }}">{{ __('authority.review_title') }}</a></li>
-    <li aria-current="page">{{ $change->country->name }}</li>
+    <li aria-current="page">{{ $change->country->displayName() }}</li>
 @endsection
 
 @section('content')
@@ -42,13 +42,13 @@
                     @endforeach
                     <tr>
                         <th scope="row">{{ __('authority.mandate') }}</th>
-                        <td>{{ collect($current['sectors'] ?? [])->map(fn ($id) => $sectors[$id]?->name)->filter()->implode(', ') ?: '–' }}</td>
-                        <td>{{ collect($change->payload['sectors'] ?? [])->map(fn ($id) => $sectors[$id]?->name)->filter()->implode(', ') ?: '–' }}</td>
+                        <td>{{ collect($current['sectors'] ?? [])->map(fn ($id) => $sectors[$id]?->displayName())->filter()->implode(', ') ?: '–' }}</td>
+                        <td>{{ collect($change->payload['sectors'] ?? [])->map(fn ($id) => $sectors[$id]?->displayName())->filter()->implode(', ') ?: '–' }}</td>
                     </tr>
                     <tr>
                         <th scope="row">{{ __('authority.seats') }}</th>
-                        <td>{{ collect($current['committees'] ?? [])->map(fn ($id) => $committees[$id]?->name)->filter()->implode(', ') ?: '–' }}</td>
-                        <td>{{ collect($change->payload['committees'] ?? [])->map(fn ($id) => $committees[$id]?->name)->filter()->implode(', ') ?: '–' }}</td>
+                        <td>{{ collect($current['committees'] ?? [])->map(fn ($id) => $committees[$id]?->displayName())->filter()->implode(', ') ?: '–' }}</td>
+                        <td>{{ collect($change->payload['committees'] ?? [])->map(fn ($id) => $committees[$id]?->displayName())->filter()->implode(', ') ?: '–' }}</td>
                     </tr>
                 </tbody>
             </table>

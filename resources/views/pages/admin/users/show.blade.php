@@ -31,11 +31,11 @@
         <dl class="d3p-facts">
             <div><dt>{{ __('account.role') }}</dt><dd>{{ $account->roleLabel() }}@if ($isSelf) ({{ __('d3_people.you') }})@endif</dd></div>
             <div><dt>{{ __('account.status') }}</dt><dd>{{ $account->status->label() }}</dd></div>
-            <div><dt>{{ __('contact.field_country') }}</dt><dd>{{ $account->country?->name ?? __('admin.secretariat_no_country') }}</dd></div>
+            <div><dt>{{ __('contact.field_country') }}</dt><dd>{{ $account->country?->displayName() ?? __('admin.secretariat_no_country') }}</dd></div>
             <div><dt>{{ __('d3_people.authority') }}</dt><dd>{{ $account->authority ? $account->authority->acronym.', '.$account->authority->name : __('d3_people.no_authority') }}</dd></div>
             <div><dt>{{ __('d3_people.section_committees') }}</dt><dd>
                 @forelse ($account->committees as $committee)
-                    {{ $committee->name }} ({{ __('extranet.seat_'.$committee->pivot->role) }})@if (! $loop->last)<br>@endif
+                    {{ $committee->displayName() }} ({{ __('extranet.seat_'.$committee->pivot->role) }})@if (! $loop->last)<br>@endif
                 @empty
                     {{ __('d3_people.no_seats') }}
                 @endforelse

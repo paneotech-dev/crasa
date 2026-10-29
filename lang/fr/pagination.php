@@ -19,4 +19,8 @@ return [
     'next_page' => 'Page suivante, page :page',
     'go_to_page' => 'Aller à la page :page',
     'current_page' => 'Page :page, page actuelle',
+
+    // Laravel's own pagination views, should one be used.
+    'previous' => '&laquo; Précédent',
+    'next' => 'Suivant &raquo;',
 ];

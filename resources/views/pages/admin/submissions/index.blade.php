@@ -27,7 +27,7 @@
         :row="fn ($s) => [
             'url' => route('admin.submissions.show', ['locale' => app()->getLocale(), 'submission' => $s->id]),
             'cells' => [
-                'country' => $s->country?->name ?? '',
+                'country' => $s->country?->displayName() ?? '',
                 'period' => $s->period,
                 'progress' => $s->values->filter->isComplete()->count().' / '.\App\Models\Indicator::active()->count(),
                 'status' => new \Illuminate\Support\HtmlString(

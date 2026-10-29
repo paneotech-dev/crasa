@@ -59,7 +59,7 @@
                 <select class="a-input" id="country_id" name="country_id">
                     <option value="">{{ __('admin.secretariat_no_country') }}</option>
                     @foreach ($countries as $country)
-                        <option value="{{ $country->id }}" @selected((string) old('country_id', $account->country_id) === (string) $country->id)>{{ $country->name }}</option>
+                        <option value="{{ $country->id }}" @selected((string) old('country_id', $account->country_id) === (string) $country->id)>{{ $country->displayName() }}</option>
                     @endforeach
                 </select>
             </div>
@@ -68,7 +68,7 @@
                 <select class="a-input" id="authority_id" name="authority_id" aria-describedby="authority_id-help @error('authority_id') authority_id-error @enderror">
                     <option value="">{{ __('d3_people.no_authority') }}</option>
                     @foreach ($authorities as $authority)
-                        <option value="{{ $authority->id }}" @selected((string) old('authority_id', $account->authority_id) === (string) $authority->id)>{{ $authority->acronym }}@if ($authority->country), {{ $authority->country->name }}@endif</option>
+                        <option value="{{ $authority->id }}" @selected((string) old('authority_id', $account->authority_id) === (string) $authority->id)>{{ $authority->acronym }}@if ($authority->country), {{ $authority->country->displayName() }}@endif</option>
                     @endforeach
                 </select>
                 <span class="a-hint" id="authority_id-help">{{ __('d3_people.authority_help') }}</span>
@@ -93,7 +93,7 @@
                             @foreach ($committees as $committee)
                                 @php($val = old('committees.'.$committee->id, $seats[$committee->id] ?? ''))
                                 <tr>
-                                    <th scope="row"><label for="committee-{{ $committee->id }}">{{ $committee->name }}</label></th>
+                                    <th scope="row"><label for="committee-{{ $committee->id }}">{{ $committee->displayName() }}</label></th>
                                     <td>
                                         <select class="a-input" id="committee-{{ $committee->id }}" name="committees[{{ $committee->id }}]">
                                             <option value="">{{ __('d3_people.seat_none') }}</option>

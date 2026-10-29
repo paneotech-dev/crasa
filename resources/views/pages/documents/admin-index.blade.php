@@ -51,7 +51,7 @@
                                         <a href="{{ route('extranet.folder', ['locale' => app()->getLocale(), 'folder' => $folder->id]) }}">{{ $folder->name }}</a>
                                     </span>
                                 </th>
-                                <td>{{ $folder->country?->name ?? $folder->committee?->name ?? __('extranet.regional') }}</td>
+                                <td>{{ $folder->country?->displayName() ?? $folder->committee?->displayName() ?? __('extranet.regional') }}</td>
                                 <td><span class="a-pill" data-status="{{ $folder->clearance->value }}">{{ $folder->clearance->label() }}</span></td>
                                 <td>{{ \App\Support\Documents\FolderAccess::summary($folder)[0] }}</td>
                                 <td data-numeric>{{ $folder->documents_count }}</td>

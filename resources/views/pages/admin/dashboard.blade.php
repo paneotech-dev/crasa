@@ -137,7 +137,7 @@
                         <ul class="a-results" role="list">
                             @foreach ($awaitingSubmissions as $submission)
                                 <li>
-                                    <a href="{{ route('admin.submissions.show', ['locale' => app()->getLocale(), 'submission' => $submission->id]) }}">{{ $submission->country?->name }}</a>
+                                    <a href="{{ route('admin.submissions.show', ['locale' => app()->getLocale(), 'submission' => $submission->id]) }}">{{ $submission->country?->displayName() }}</a>
                                     <span class="a-results__meta">{{ $submission->period }}</span>
                                 </li>
                             @endforeach
@@ -307,7 +307,7 @@
             'cells' => [
                 'title' => $p->translate('title')?->value ?? $p->slug,
                 'type' => $p->typeLabel(),
-                'sector' => $p->sector?->name ?? '',
+                'sector' => $p->sector?->displayName() ?? '',
                 'year' => $p->published_on?->year ?? '',
                 'languages' => implode(' ', $p->language_codes),
                 'status' => new \Illuminate\Support\HtmlString(

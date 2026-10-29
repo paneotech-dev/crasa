@@ -123,7 +123,7 @@
                         <select class="a-select" id="{{ $ability }}-country" name="access[{{ $ability }}][country_id]">
                             <option value="">{{ __('d3_docs.choose') }}</option>
                             @foreach ($countries as $country)
-                                <option value="{{ $country->id }}" @selected($rule['country_id'] === $country->id)>{{ $country->name }}</option>
+                                <option value="{{ $country->id }}" @selected($rule['country_id'] === $country->id)>{{ $country->displayName() }}</option>
                             @endforeach
                         </select>
                         @error('access.'.$ability.'.country_id')<p class="a-hint" role="alert">{{ $message }}</p>@enderror
@@ -134,7 +134,7 @@
                         <select class="a-select" id="{{ $ability }}-committee" name="access[{{ $ability }}][committee_id]">
                             <option value="">{{ __('d3_docs.choose') }}</option>
                             @foreach ($committees as $committee)
-                                <option value="{{ $committee->id }}" @selected($rule['committee_id'] === $committee->id)>{{ $committee->name }}</option>
+                                <option value="{{ $committee->id }}" @selected($rule['committee_id'] === $committee->id)>{{ $committee->displayName() }}</option>
                             @endforeach
                         </select>
                         @error('access.'.$ability.'.committee_id')<p class="a-hint" role="alert">{{ $message }}</p>@enderror

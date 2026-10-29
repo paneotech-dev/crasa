@@ -18,11 +18,7 @@ enum UserStatus: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::Invited => 'Invited',
-            self::Active => 'Active',
-            self::Suspended => 'Suspended',
-        };
+        return __('d3_i18n.user_status_'.$this->value);
     }
 
     public function mayUsePlatform(): bool

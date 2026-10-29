@@ -145,9 +145,11 @@ class AppServiceProvider extends ServiceProvider
             // back() with an explicit fallback: a request with no referer,
             // which a privacy-conscious browser or a proxy can strip, would
             // otherwise land on the site root rather than the form.
-            ->response(fn () => back(fallback: route('contact', ['locale' => app()->getLocale()]))
+            // The limiter answers before SetLocale has run, so the language
+            // comes from the address itself.
+            ->response(fn () => back(fallback: route('contact', ['locale' => $request->route('locale') ?? app()->getLocale()]))
                 ->withInput($request->except('website'))
-                ->withErrors(['message' => __('contact.throttled')])));
+                ->withErrors(['message' => __('contact.throttled', [], $request->route('locale') ?? app()->getLocale())])));
 
         //
     }

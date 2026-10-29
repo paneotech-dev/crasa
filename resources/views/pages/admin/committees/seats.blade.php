@@ -10,12 +10,12 @@
     has been no way to record them.
 --}}
 
-@section('title', __('admin.seats_title', ['committee' => $committee->name]))
+@section('title', __('admin.seats_title', ['committee' => $committee->displayName()]))
 @section('note', __('admin.seats_note'))
 
 @section('crumbs')
     <li><a href="{{ route('admin.resources', ['locale' => app()->getLocale(), 'resource' => 'committees']) }}">{{ __('admin.nav_committees') }}</a></li>
-    <li aria-current="page">{{ $committee->name }}</li>
+    <li aria-current="page">{{ $committee->displayName() }}</li>
 @endsection
 
 @section('actions')
@@ -49,7 +49,7 @@
                     <tbody>
                         @foreach ($seated as $country)
                             <tr>
-                                <th scope="row">{{ $country->name }}</th>
+                                <th scope="row">{{ $country->displayName() }}</th>
                                 <td>
                                     {{-- The role is changed in place. A
                                          separate edit screen for one select
@@ -58,7 +58,7 @@
                                     <form class="a-seatform" method="POST"
                                           action="{{ route('admin.committees.seats.update', ['locale' => app()->getLocale(), 'committee' => $committee->slug, 'country' => $country->iso_code]) }}">
                                         @csrf @method('PUT')
-                                        <label class="c-sr" for="role-{{ $country->id }}">{{ __('admin.seats_role_for', ['country' => $country->name]) }}</label>
+                                        <label class="c-sr" for="role-{{ $country->id }}">{{ __('admin.seats_role_for', ['country' => $country->displayName()]) }}</label>
                                         <select class="a-select" id="role-{{ $country->id }}" name="role">
                                             @foreach ($roles as $role)
                                                 <option value="{{ $role->value }}" @selected($country->pivot->role === $role->value)>{{ $role->label() }}</option>
@@ -70,7 +70,7 @@
                                 <td>
                                     <form method="POST"
                                           action="{{ route('admin.committees.seats.destroy', ['locale' => app()->getLocale(), 'committee' => $committee->slug, 'country' => $country->iso_code]) }}"
-                                          data-confirm="{{ __('admin.seats_remove_confirm', ['country' => $country->name, 'committee' => $committee->name]) }}" data-confirm-title="{{ __('fa.confirm_title') }}">
+                                          data-confirm="{{ __('admin.seats_remove_confirm', ['country' => $country->displayName(), 'committee' => $committee->displayName()]) }}" data-confirm-title="{{ __('fa.confirm_title') }}">
                                         @csrf @method('DELETE')
                                         <button class="a-btn a-btn--danger a-btn--small" type="submit">{{ __('admin.seats_remove') }}</button>
                                     </form>
@@ -104,7 +104,7 @@
                          change of role. --}}
                     <select class="a-select" id="country_id" name="country_id" required>
                         @foreach ($available as $country)
-                            <option value="{{ $country->id }}" @selected((int) old('country_id') === $country->id)>{{ $country->name }}</option>
+                            <option value="{{ $country->id }}" @selected((int) old('country_id') === $country->id)>{{ $country->displayName() }}</option>
                         @endforeach
                     </select>
                     @error('country_id')<p class="c-field__error">{{ $message }}</p>@enderror
@@ -179,7 +179,7 @@
                                 <td>
                                     <form method="POST"
                                           action="{{ route('admin.committees.members.destroy', ['locale' => app()->getLocale(), 'committee' => $committee->slug, 'user' => $person->id]) }}"
-                                          data-confirm="{{ __('d3_crud.people_remove_confirm', ['name' => $person->name, 'committee' => $committee->name]) }}" data-confirm-title="{{ __('fa.confirm_title') }}">
+                                          data-confirm="{{ __('d3_crud.people_remove_confirm', ['name' => $person->name, 'committee' => $committee->displayName()]) }}" data-confirm-title="{{ __('fa.confirm_title') }}">
                                         @csrf @method('DELETE')
                                         <button class="a-btn a-btn--danger a-btn--small" type="submit">{{ __('admin.seats_remove') }}<span class="c-sr"> {{ $person->name }}</span></button>
                                     </form>

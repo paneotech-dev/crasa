@@ -125,7 +125,7 @@
                                         <span class="a-table__sub">{{ $row->delegate_email }}</span>
                                         @if ($row->delegate_role)<span class="a-table__sub">{{ $row->delegate_role }}</span>@endif
                                     </th>
-                                    <td>{{ $row->country?->name }}</td>
+                                    <td>{{ $row->country?->displayName() }}</td>
                                     <td>{{ $row->arrival_on?->locale($locale)->isoFormat('D MMM YYYY') }}@if ($row->arrival_at)<span class="a-table__sub">{{ substr((string) $row->arrival_at, 0, 5) }} {{ $row->arrival_point }}</span>@endif</td>
                                     <td>{{ $row->departure_on?->locale($locale)->isoFormat('D MMM YYYY') }}@if ($row->departure_at)<span class="a-table__sub">{{ substr((string) $row->departure_at, 0, 5) }}</span>@endif</td>
                                     <td><span class="a-pill" data-status="{{ $pill[$st] ?? 'pending' }}">{{ __('d3_people.reg_'.$st) }}</span></td>
