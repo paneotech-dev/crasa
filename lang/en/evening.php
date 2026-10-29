@@ -24,10 +24,10 @@ return [
     'preview_close' => 'Close the preview',
     // Concept 3 areas, in the sitemap band.
     'areas_heading' => 'Areas of work',
-    'area_frameworks' => 'Harmonised frameworks',
-    'area_spectrum' => 'Spectrum and infrastructure',
-    'area_postal' => 'Postal and logistics reform',
-    'area_capacity' => 'Capacity and consumer protection',
+    'area_frameworks' => 'Frameworks',
+    'area_spectrum' => 'Spectrum',
+    'area_postal' => 'Postal',
+    'area_capacity' => 'Capacity',
     // Accessibility rows.
     'statement_not_this_record' => 'The public accessibility statement is written in the platform\'s language files and kept up to date with each review. Changes saved here do not change what visitors read at the statement\'s address.',
 ];

@@ -42,7 +42,7 @@ class EveningProjectFactsTest extends TestCase
         $this->project();
 
         $page = $this->get('/en/projects/harmonised-numbering')->assertOk();
-        $page->assertDontSee('cp-proj-milestones', false)
+        $page->assertDontSee('data-milestones', false)
             ->assertDontSee(__('evening.project_funding_partner'))
             ->assertDontSee(__('evening.project_lead_committee'))
             ->assertDontSee(__('evening.project_countries'));
@@ -53,15 +53,15 @@ class EveningProjectFactsTest extends TestCase
     {
         $committee = Committee::factory()->create(['name' => 'Numbering Committee']);
         $project = $this->project([
-            'programme' => 'EGEE-ICT', 'funding_partner' => 'Example Fund', 'countries' => 'Botswana, Malawi',
+            'programme' => 'Regional programme', 'funding_partner' => 'Example Fund', 'countries' => 'Botswana, Malawi',
             'lead_committee_id' => $committee->id, 'starts_on' => '2025-01-01', 'ends_on' => '2027-12-31',
         ]);
         $project->setTranslations('en', ['milestones' => "January 2025 | Inception\nMarch 2026: Validation workshop\nFinal report"]);
 
-        $this->get('/en/projects')->assertOk()->assertSee('EGEE-ICT')->assertSee('cp-proj-time__bar', false);
+        $this->get('/en/projects')->assertOk()->assertSee('Regional programme')->assertSee('cp-proj-time__bar', false);
 
         $html = $this->get('/en/projects/harmonised-numbering')->assertOk()->getContent();
-        foreach (['EGEE-ICT', 'Example Fund', 'Botswana, Malawi', 'Numbering Committee', 'cp-proj-milestones', 'Inception', 'Validation workshop', 'Final report'] as $needle) {
+        foreach (['Regional programme', 'Example Fund', 'Botswana, Malawi', 'Numbering Committee', 'data-milestones', 'Inception', 'Validation workshop', 'Final report'] as $needle) {
             $this->assertStringContainsString($needle, $html);
         }
         $this->assertSame([
@@ -83,18 +83,18 @@ class EveningProjectFactsTest extends TestCase
             ->assertSee('name="en[milestones]"', false);
 
         $this->actingAs($admin)->put("/en/admin/data/projects/{$project->id}", [
-            'state' => 'current', 'status' => 'published', 'programme' => 'EGEE-ICT', 'countries' => 'Namibia',
+            'state' => 'current', 'status' => 'published', 'programme' => 'Regional programme', 'countries' => 'Namibia',
             'starts_on' => '2026-01-01', 'ends_on' => '2025-01-01',
             'en' => ['title' => 'Harmonised numbering plan', 'milestones' => 'May 2026 | Draft plan'],
         ])->assertSessionHasErrors('ends_on');
 
         $this->actingAs($admin)->put("/en/admin/data/projects/{$project->id}", [
-            'state' => 'current', 'status' => 'published', 'programme' => 'EGEE-ICT', 'countries' => 'Namibia',
+            'state' => 'current', 'status' => 'published', 'programme' => 'Regional programme', 'countries' => 'Namibia',
             'en' => ['title' => 'Harmonised numbering plan', 'milestones' => 'May 2026 | Draft plan'],
         ])->assertSessionHasNoErrors();
 
         $fresh = $project->fresh();
-        $this->assertSame('EGEE-ICT', $fresh->programme);
+        $this->assertSame('Regional programme', $fresh->programme);
         $this->assertSame(['Namibia'], $fresh->countryList());
         $this->assertSame('Draft plan', $fresh->milestoneList()[0]['label']);
     }

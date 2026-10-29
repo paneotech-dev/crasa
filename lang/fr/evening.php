@@ -23,10 +23,10 @@ return [
     'preview_close' => 'Fermer l\'aperçu',
     // Concept 3 areas, in the sitemap band.
     'areas_heading' => 'Domaines d\'action',
-    'area_frameworks' => 'Cadres harmonisés',
-    'area_spectrum' => 'Spectre et infrastructures',
-    'area_postal' => 'Réforme postale et logistique',
-    'area_capacity' => 'Renforcement des capacités et protection des consommateurs',
+    'area_frameworks' => 'Cadres',
+    'area_spectrum' => 'Spectre',
+    'area_postal' => 'Poste',
+    'area_capacity' => 'Capacités',
     // Accessibility rows.
     'statement_not_this_record' => 'La déclaration d\'accessibilité publique est rédigée dans les fichiers de langue de la plateforme et mise à jour à chaque revue. Les modifications enregistrées ici ne changent pas ce que les visiteurs lisent à l\'adresse de la déclaration.',
 ];

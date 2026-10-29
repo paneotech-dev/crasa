@@ -126,7 +126,7 @@
     <section class="u-section u-section--tint" aria-labelledby="proj-milestones-h">
         <div class="u-container">
             <h2 class="u-h2" id="proj-milestones-h">{{ __('evening.project_milestones') }}</h2>
-            <ol class="u-timeline cp-proj-milestones">
+            <ol class="u-timeline" data-milestones>
                 @foreach ($milestones as $step)
                     <li @if ($step['lang']) lang="{{ $step['lang'] }}" @endif>
                         @if ($step['when'])<p class="u-timeline__date">{{ $step['when'] }}</p>@endif

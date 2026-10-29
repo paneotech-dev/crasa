@@ -805,7 +805,7 @@ return [
     'resource_projects' => 'Projetos',
     'resource_projects_one' => 'projeto',
     'field_programme' => 'Programa',
-    'field_programme_hint' => 'Por exemplo EGEE-ICT. Deixe vazio se o projeto não pertencer a nenhum programa.',
+    'field_programme_hint' => 'O programa de financiamento ou de cooperação a que o projeto pertence. Deixe vazio se não houver.',
     'field_lead_committee_id' => 'Comité responsável',
     'field_partner' => 'Parceiros',
     'field_partner_hint' => 'Separe os parceiros com vírgulas.',
@@ -821,4 +821,5 @@ return [
     'option_current' => 'Em curso',
     'option_past' => 'Concluído',
     'column_title' => 'Título',
+    'resourcenote_projects' => 'Projetos em curso e concluídos, com os seus dados e etapas.',
 ];

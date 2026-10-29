@@ -16,12 +16,12 @@
     $workspace = \App\Support\Workspace::for(auth()->user());
     // Concept 3 "areas" quick links. They do not fit beside the primary menu
     // at 1366 (about 200 px free) and the nav row is a drawer at 1024, so
-    // they live here, linking to the filtered library and the home pillars.
+    // they live here, linking to the filtered library and the committees, as the home pillars do.
     $areas = [
         ['label' => __('evening.area_frameworks'), 'url' => $nav('publications?type[]=guideline')],
         ['label' => __('evening.area_spectrum'), 'url' => $nav('publications?sector=telecommunications')],
         ['label' => __('evening.area_postal'), 'url' => $nav('publications?sector=postal')],
-        ['label' => __('evening.area_capacity'), 'url' => url('/'.app()->getLocale()).'#what-we-do'],
+        ['label' => __('evening.area_capacity'), 'url' => $nav('committees')],
     ];
 @endphp
 <nav class="k-smap" data-surface-tone="dark" aria-label="{{ __('chome.sitemap') }}">

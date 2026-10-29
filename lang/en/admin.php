@@ -805,7 +805,7 @@ return [
     'resource_projects' => 'Projects',
     'resource_projects_one' => 'project',
     'field_programme' => 'Programme',
-    'field_programme_hint' => 'For example EGEE-ICT. Leave empty if the project belongs to no programme.',
+    'field_programme_hint' => 'The funding or cooperation programme the project belongs to. Leave empty if there is none.',
     'field_lead_committee_id' => 'Lead committee',
     'field_partner' => 'Partners',
     'field_partner_hint' => 'Separate partners with commas.',
@@ -821,4 +821,5 @@ return [
     'option_current' => 'Current',
     'option_past' => 'Past',
     'column_title' => 'Title',
+    'resourcenote_projects' => 'Current and past projects, with their facts and milestones.',
 ];

@@ -45,7 +45,7 @@ class EveningAreasLinksTest extends TestCase
                 $this->assertStringContainsString("/{$locale}/publications?type[]=guideline", urldecode($col));
                 $this->assertStringContainsString("/{$locale}/publications?sector=telecommunications", $col);
                 $this->assertStringContainsString("/{$locale}/publications?sector=postal", $col);
-                $this->assertStringContainsString("/{$locale}#what-we-do", $col);
+                $this->assertStringContainsString("/{$locale}/committees", $col);
                 $this->assertSame(4, substr_count($col, '<a href='));
             }
         }
@@ -56,8 +56,4 @@ class EveningAreasLinksTest extends TestCase
         $this->assertStringNotContainsString(__('evening.area_frameworks'), $row);
     }
 
-    public function test_the_capacity_anchor_exists_on_home(): void
-    {
-        $this->assertStringContainsString('id="what-we-do"', $this->get('/en')->getContent());
-    }
 }

@@ -23,10 +23,10 @@ return [
     'preview_close' => 'Fechar a pré-visualização',
     // Concept 3 areas, in the sitemap band.
     'areas_heading' => 'Áreas de trabalho',
-    'area_frameworks' => 'Quadros harmonizados',
-    'area_spectrum' => 'Espetro e infraestruturas',
-    'area_postal' => 'Reforma postal e logística',
-    'area_capacity' => 'Capacitação e proteção do consumidor',
+    'area_frameworks' => 'Quadros',
+    'area_spectrum' => 'Espetro',
+    'area_postal' => 'Correios',
+    'area_capacity' => 'Capacitação',
     // Accessibility rows.
     'statement_not_this_record' => 'A declaração de acessibilidade pública está escrita nos ficheiros de idioma da plataforma e é atualizada a cada revisão. As alterações guardadas aqui não mudam o que os visitantes leem no endereço da declaração.',
 ];
