@@ -115,10 +115,11 @@ class CountsTest extends TestCase
     {
         $html = $this->get('/en/members/bw')->assertOk()->getContent();
 
-        $this->assertStringContainsString('c-tiles', $html);
+        // The four counts sit in the page hero since the UI system (29 October 2026).
+        $this->assertStringContainsString('class="u-figures"', $html);
         $this->assertGreaterThanOrEqual(
             4,
-            substr_count($html, 'c-tile"'),
+            substr_count($html, 'class="u-figure"'),
             'The member profile carries fewer counts than it did as a card.'
         );
     }
@@ -138,7 +139,7 @@ class CountsTest extends TestCase
         $html = $this->get('/en/members/'.$empty->iso_code)->assertOk()->getContent();
 
         $this->assertMatchesRegularExpression(
-            '~c-tile.*?<dd>\s*0\s*</dd>~s',
+            '~u-figure.*?<dd>\s*0\s*</dd>~s',
             $html,
             'A member state with nothing filed shows no zero, which turns a fact about '
             .'the data into a gap in the interface.'
