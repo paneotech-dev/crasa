@@ -76,10 +76,12 @@ class AboutPageLayoutTest extends TestCase
             $this->assertStringContainsString($anchor, $html);
         }
 
-        $this->assertStringContainsString('<h3 class="b-sections__heading">Annual general meeting</h3>', $html);
-        $this->assertStringContainsString('<h3 class="b-sections__heading">Task teams</h3>', $html);
-        $this->assertMatchesRegularExpression('~<li class="b-person">.*?<span class="b-person__name">Dr\. Stanley Shanapinda</span>\s*<span class="b-person__title">Executive Secretary</span>~s', $html);
-        $this->assertSame(3, substr_count($html, 'class="b-person"'));
+        // Governance as four cards, people as grids with initials (C16, UI system).
+        $this->assertStringContainsString('<h3 class="u-card__title cp-gov__title">Annual general meeting</h3>', $html);
+        $this->assertStringContainsString('<h3 class="u-card__title cp-gov__title">Task teams</h3>', $html);
+        $this->assertMatchesRegularExpression('~<li class="u-person">\s*<span class="u-avatar" aria-hidden="true">SS</span>.*?<span class="u-person__name">Dr\. Stanley Shanapinda</span>\s*<span class="u-person__role">Executive Secretary</span>~s', $html);
+        $this->assertSame(3, substr_count($html, 'class="u-person"'));
+        $this->assertStringContainsString('class="u-timeline cp-about-timeline"', $html);
     }
 
     public function test_sadc_comes_first_and_links_to_its_site_in_every_locale(): void

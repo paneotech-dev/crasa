@@ -1,7 +1,7 @@
 {{--
     Short page hero (UI system). Parameters:
     $eyebrow, $title (h1), $lead (one line), $figures ([['value'=>, 'label'=>]]),
-    $photo (['src'=>, 'alt'=>, 'srcset'=>?, 'position'=>?]), $tone ('green'|'blue'),
+    $photoName (ImageLibrary slot) + $photoAlt, or $photo (['src'=>, 'alt'=>, 'srcset'=>?, 'position'=>?]), $tone ('green'|'blue'),
     $heroActions (html string, optional), $heroAside (html string in place of photo).
 --}}
 @php
@@ -25,7 +25,11 @@
                 @endif
                 @if (! empty($heroActions))<div class="u-actions cp-hero__actions">{!! $heroActions !!}</div>@endif
             </div>
-            @if ($photo)
+            @if (! empty($photoName) && \App\Support\ImageLibrary::has($photoName))
+                <figure class="u-hero__photo">
+                    <x-responsive-image :name="$photoName" :alt="$photoAlt ?? ''" :decorative="empty($photoAlt)" sizes="(min-width: 992px) 480px, 100vw" loading="eager" fetchpriority="high" />
+                </figure>
+            @elseif ($photo)
                 <figure class="u-hero__photo">
                     <img src="{{ $photo['src'] }}" @if (! empty($photo['srcset'])) srcset="{{ $photo['srcset'] }}" sizes="(max-width: 991px) 100vw, 480px" @endif alt="{{ $photo['alt'] ?? '' }}" width="{{ $photo['width'] ?? 800 }}" height="{{ $photo['height'] ?? 600 }}" fetchpriority="high" style="object-position: {{ $photo['position'] ?? '50% 40%' }}">
                 </figure>
