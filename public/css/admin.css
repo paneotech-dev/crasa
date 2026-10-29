@@ -2792,3 +2792,18 @@ body[data-surface="admin"] .a-search:focus-within { outline: 2px solid var(--a-f
 body[data-surface="admin"] .a-top__field:focus-visible { outline: 2px solid var(--a-focus); outline-offset: 2px; }
 body[data-surface="admin"] :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible { outline-width: 2px; outline-style: solid; outline-color: var(--a-focus); }
 body[data-surface="admin"] .a-search input:focus-visible { outline: 0; }
+
+/* Day 3: docs. Folder description, version tag, activity time, the
+   indented folder tree in the back office and the access rule fields. */
+.d3d-description { margin: var(--s-2) 0 0; font-size: 14.5px; line-height: 1.5; color: var(--a-ink); max-width: 70ch; }
+.d3d-version { font-size: 13px; color: var(--a-ink-quiet); margin-left: var(--s-2); }
+.d3d-when { font-size: 13px; color: var(--a-ink-quiet); flex: none; }
+.d3d-panel-note { margin: var(--s-3) 0 0; }
+.d3d-tree-name[data-depth="2"] { padding-left: var(--s-5); }
+.d3d-tree-name[data-depth="3"] { padding-left: var(--s-7); }
+.d3d-rule { display: grid; gap: var(--s-3); }
+.d3d-rule__options { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); }
+.d3d-share { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
+.d3d-share .a-input { flex: 1 1 280px; min-width: 0; }
+.d3d-actions { display: grid; gap: var(--s-5); grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+/* end Day 3: docs */

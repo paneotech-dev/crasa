@@ -11,6 +11,9 @@ use App\Models\Meeting;
 use App\Services\CalendarFeed;
 use App\Services\NotifiesMembers;
 use App\Support\CountryDashboard;
+use App\Support\Documents\DocumentStore;
+use App\Support\Documents\FolderAccess;
+use App\Support\Documents\PdfText;
 use App\Support\ExtranetNavigation;
 use App\Support\LocalTime;
 use Carbon\CarbonImmutable;
@@ -19,8 +22,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 /**
  * The extranet: secure folders, the committee workspace and the meetings
@@ -71,18 +72,59 @@ class ExtranetController extends Controller
 
         $folder->load(['children', 'country', 'committee', 'parent']);
 
+        $documents = $folder->documents()
+            ->with(['uploader', 'validator'])
+            ->latest()
+            ->get()
+            ->each(fn (Document $document) => $document->setRelation('folder', $folder))
+            ->filter(fn (Document $document) => Gate::allows('view', $document))
+            ->values();
+
+        $effective = FolderAccess::effective($folder);
+
         return view('pages.extranet.folder', [
             'folder' => $folder,
             'children' => $folder->children->filter(fn (Folder $child) => Gate::allows('view', $child))->values(),
-            'documents' => $folder->documents()
-                ->with('uploader')
-                ->latest()
-                ->get()
-                ->filter(fn (Document $document) => Gate::allows('view', $document))
-                ->values(),
+            'documents' => $documents,
             'canUpload' => Gate::allows('upload', $folder),
+            'canValidate' => Gate::allows('validate', $folder),
+            'canEdit' => Gate::allows('update', $folder),
+            'canAddSubfolder' => Gate::allows('update', $folder) && $folder->depth() < Folder::MAX_DEPTH,
+            'canDelete' => Gate::allows('delete', $folder),
             'ancestors' => $folder->ancestors(),
+            'access' => FolderAccess::summary($folder),
+            'inheritedFrom' => $effective['from'] !== null && $effective['from']->id !== $folder->id ? $effective['from'] : null,
+            'activity' => $this->activity($folder),
         ]);
+    }
+
+    /**
+     * The folder's activity, from the audit log: files added, replaced,
+     * downloaded, moved, renamed, validated, binned and restored.
+     */
+    private function activity(Folder $folder)
+    {
+        $ids = Document::withTrashed()->where('folder_id', $folder->id)->pluck('id')->all();
+        $folderActions = [DocumentStore::FOLDER_CREATED, DocumentStore::FOLDER_CHANGED];
+
+        return AuditLog::query()
+            ->with('user')
+            ->where(function ($q) use ($folder, $ids, $folderActions): void {
+                $q->where(fn ($f) => $f->where('auditable_type', $folder->getMorphClass())->where('auditable_id', $folder->id)->whereIn('action', $folderActions));
+                if ($ids !== []) {
+                    $q->orWhere(fn ($d) => $d->where('auditable_type', (new Document)->getMorphClass())->whereIn('auditable_id', $ids)->whereIn('action', [
+                        DocumentStore::ADDED, DocumentStore::REPLACED, DocumentStore::RENAMED, DocumentStore::MOVED,
+                        DocumentStore::BINNED, DocumentStore::RESTORED, DocumentStore::VALIDATED, AuditLog::DOCUMENT_DOWNLOADED,
+                    ]));
+                }
+            })
+            ->orderByDesc('id')
+            ->limit(200)
+            ->get()
+            // A move is written for both folders; each shows its own.
+            ->filter(fn (AuditLog $row) => ! isset($row->changes['folder_id']) || (int) $row->changes['folder_id'] === $folder->id)
+            ->take(15)
+            ->values();
     }
 
     /**
@@ -96,75 +138,44 @@ class ExtranetController extends Controller
     {
         Gate::authorize('upload', $folder);
 
+        // Several files at once ("files[]"), or one ("file", as before).
         $request->validate([
-            'file' => [
-                'required', 'file', 'max:25600',
-                'mimetypes:application/pdf,application/msword,'
-                .'application/vnd.openxmlformats-officedocument.wordprocessingml.document,'
-                .'application/vnd.ms-excel,'
-                .'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,'
-                .'text/csv,text/plain',
-            ],
-        ]);
+            'files' => ['required_without:file', 'array', 'max:20'],
+            'files.*' => DocumentStore::fileRules(),
+            'file' => array_merge(['required_without:files'], DocumentStore::fileRules()),
+        ], [], ['files.*' => __('d3_docs.file_attribute'), 'file' => __('d3_docs.file_attribute')]);
 
-        $file = $request->file('file');
-        $name = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
-        $path = 'extranet/'.$folder->id.'/'.$name.'-'.Str::random(8).'.'.$file->getClientOriginalExtension();
+        $files = $request->hasFile('files') ? $request->file('files') : [$request->file('file')];
+        $store = app(DocumentStore::class);
+        $added = [];
 
-        /*
-         * The private disk. Nothing in the extranet is ever served from the
-         * filesystem: every byte goes through the document controller,
-         * which checks clearance, country and committee before streaming.
-         */
-        Storage::disk('local')->put($path, file_get_contents($file->getRealPath()));
+        foreach ($files as $file) {
+            $document = $store->add($folder, $file, $request->user());
+            $added[] = $document->original_filename;
 
-        $document = Document::create([
-            'documentable_type' => Folder::class,
-            'documentable_id' => $folder->id,
-            'folder_id' => $folder->id,
-            'country_id' => $folder->country_id,
-            'committee_id' => $folder->committee_id,
-            'uploaded_by' => $request->user()->id,
-            'file_path' => $path,
-            'original_filename' => $file->getClientOriginalName(),
-            'mime_type' => $file->getMimeType(),
-            'size_bytes' => $file->getSize(),
-            'clearance' => $folder->clearance,
-        ]);
-
-        /*
-         * RP-05: a document added to my committee. Fired here rather than
-         * on the model, because a document created by the legacy import or
-         * by a seeder is not something to wake fourteen regulators about.
-         *
-         * The audience is the seats on that committee, worked out at send
-         * time from the pivot rather than from a stored subscription list.
-         */
-        if ($folder->committee !== null) {
-            app(NotifiesMembers::class)->fire(
-                NotificationTrigger::CommitteeDocument,
-                __('notifications.filed', [
-                    'file' => $document->original_filename,
-                    'committee' => $folder->committee->name,
-                ]),
-                route('extranet.folder', ['locale' => app()->getLocale(), 'folder' => $folder->id]),
-                committee: $folder->committee,
-                except: $request->user(),
-                payload: ['document_id' => $document->id],
-            );
+            /*
+             * RP-05: a document added to my committee. Fired here rather than
+             * on the model, because a document created by the legacy import or
+             * by a seeder is not something to wake fourteen regulators about.
+             */
+            if ($folder->committee !== null) {
+                app(NotifiesMembers::class)->fire(
+                    NotificationTrigger::CommitteeDocument,
+                    __('notifications.filed', [
+                        'file' => $document->original_filename,
+                        'committee' => $folder->committee->name,
+                    ]),
+                    route('extranet.folder', ['locale' => app()->getLocale(), 'folder' => $folder->id]),
+                    committee: $folder->committee,
+                    except: $request->user(),
+                    payload: ['document_id' => $document->id],
+                );
+            }
         }
 
-        AuditLog::create([
-            'user_id' => $request->user()->id,
-            'action' => AuditLog::CREATED,
-            'auditable_type' => Document::class,
-            'auditable_id' => $document->id,
-            'changes' => ['folder' => $folder->name],
-            'ip_address' => $request->ip(),
-            'created_at' => now(),
-        ]);
-
-        return back()->with('status', __('extranet.uploaded', ['name' => $document->original_filename]));
+        return back()->with('status', count($added) === 1
+            ? __('extranet.uploaded', ['name' => $added[0]])
+            : __('d3_docs.uploaded_many', ['count' => count($added)]));
     }
 
     /** The committee workspace, screen 04. */
@@ -263,11 +274,17 @@ class ExtranetController extends Controller
             'meetings' => $found ? Meeting::where(fn ($q) => $q->where('title', 'like', $like)->orWhere('location', 'like', $like))
                 ->orderByDesc('starts_on')->limit(25)->get()
                 ->filter(fn (Meeting $m) => Gate::allows('view', $m))->values() : collect(),
-            'folders' => $found ? Folder::where('name', 'like', $like)->orderBy('name')->limit(25)->get()
+            'folders' => $found ? Folder::where(fn ($q) => $q->where('name', 'like', $like)->orWhere('description', 'like', $like))
+                ->orderBy('name')->limit(25)->get()
                 ->filter(fn (Folder $f) => Gate::allows('view', $f))->values() : collect(),
-            'documents' => $found ? Document::whereNotNull('folder_id')->where('original_filename', 'like', $like)
-                ->latest()->limit(25)->get()
-                ->filter(fn (Document $d) => Gate::allows('view', $d))->values() : collect(),
+            // By name, and inside a PDF by its text. Every result is checked
+            // against the same policy as the file itself, so a match in
+            // another member state's folder is never returned.
+            'documents' => $found ? Document::whereNotNull('folder_id')
+                ->where(fn ($q) => $q->where('original_filename', 'like', $like)->orWhere('search_text', 'like', $like))
+                ->latest()->limit(100)->get()
+                ->filter(fn (Document $d) => Gate::allows('view', $d))->take(25)->values() : collect(),
+            'textSearch' => PdfText::tool() !== null,
         ]);
     }
 

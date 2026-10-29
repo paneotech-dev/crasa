@@ -68,6 +68,8 @@ final class ShellNavigation
                 ['key' => 'projects', 'route' => 'admin.resources', 'params' => ['resource' => 'projects'], 'icon' => 'publications', 'permission' => Permission::ManageContent, 'label' => __('admin.resource_projects')],
                 ['key' => 'events', 'route' => 'extranet.calendar', 'icon' => 'events', 'permission' => Permission::ManageMeetings],
                 ['key' => 'media', 'route' => 'admin.media', 'icon' => 'media', 'permission' => Permission::ManageContent],
+                // Day 3: docs. The member area's folders, managed.
+                ['key' => 'documents', 'route' => 'admin.documents', 'icon' => 'folder', 'permission' => Permission::ManageContent, 'label' => __('d3_docs.nav_documents')],
                 ['key' => 'navigation', 'route' => 'admin.menus', 'icon' => 'navigation', 'permission' => Permission::ManageContent],
                 ['key' => 'announcements', 'route' => 'admin.announcements', 'icon' => 'bell', 'permission' => Permission::ManageContent],
                 ['key' => 'social', 'route' => 'admin.social', 'icon' => 'newsroom', 'permission' => Permission::ManageContent, 'label' => __('fb.nav_social'),

@@ -35,11 +35,14 @@ class Folder extends Model
 {
     use Auditable, HasFactory, MarksSampleData, SoftDeletes;
 
-    protected $fillable = ['parent_id', 'country_id', 'committee_id', 'name', 'slug', 'clearance', 'is_sample'];
+    protected $fillable = ['parent_id', 'country_id', 'committee_id', 'name', 'slug', 'description', 'clearance', 'access', 'is_sample'];
+
+    /** Folders nest to three levels: a root, a subfolder, and one below it. */
+    public const MAX_DEPTH = 3;
 
     protected function casts(): array
     {
-        return ['clearance' => Clearance::class, 'is_sample' => 'boolean'];
+        return ['clearance' => Clearance::class, 'is_sample' => 'boolean', 'access' => 'array'];
     }
 
     protected static function booted(): void
@@ -123,6 +126,56 @@ class Folder extends Model
         }
 
         return $path;
+    }
+
+    /**
+     * Every live folder, whichever member state owns it. For the server's
+     * own reasoning about the tree (depth, inheritance, sync), never for
+     * what a reader is shown: that goes through the scope and the policy.
+     */
+    public static function unscoped(): Builder
+    {
+        return static::withoutGlobalScope(CountryScope::class);
+    }
+
+    /** 1 for a root folder, 2 for a subfolder, 3 below that. */
+    public function depth(): int
+    {
+        $depth = 1;
+        $parentId = $this->parent_id;
+
+        while ($parentId !== null && $depth <= 10) {
+            $depth++;
+            $parentId = self::unscoped()->whereKey($parentId)->value('parent_id');
+        }
+
+        return $depth;
+    }
+
+    /** How many levels this folder and the folders below it take: 1 for a folder with no subfolders. */
+    public function height(): int
+    {
+        $children = self::unscoped()->where('parent_id', $this->getKey())->get();
+
+        return 1 + (int) $children->map(fn (Folder $child) => $child->height())->max();
+    }
+
+    /**
+     * This folder's id and the ids of every folder below it.
+     *
+     * @return list<int>
+     */
+    public function subtreeIds(): array
+    {
+        $ids = [$this->getKey()];
+        $level = [$this->getKey()];
+
+        for ($i = 0; $i < 10 && $level !== []; $i++) {
+            $level = self::unscoped()->whereIn('parent_id', $level)->pluck('id')->all();
+            $ids = array_merge($ids, $level);
+        }
+
+        return $ids;
     }
 
     public function humanSize(): string

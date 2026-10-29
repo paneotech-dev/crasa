@@ -39,3 +39,10 @@ Schedule::command('data:check')->dailyAt('03:20')->withoutOverlapping();
  * `schedule:run`, which this application does not yet have.
  */
 Schedule::command('notifications:digest')->dailyAt('06:40')->withoutOverlapping();
+
+/*
+ * Day 3: docs. The recycle bin of the member area's folders keeps a
+ * deleted file for thirty days; after that it is removed with its
+ * versions. Same caveat: this needs the cron entry that runs schedule:run.
+ */
+Schedule::command('documents:purge-bin')->dailyAt('03:40')->withoutOverlapping();

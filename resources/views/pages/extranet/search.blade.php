@@ -14,6 +14,7 @@
     @if (mb_strlen($term) < 2)
         <div class="a-empty">
             <p class="a-empty__title">{{ __('office.member_search_prompt') }}</p>
+            <p class="a-empty__body">{{ ($textSearch ?? false) ? __('d3_docs.search_scope_text') : __('d3_docs.search_scope_names') }}</p>
         </div>
     @elseif ($total === 0)
         <div class="a-empty">
@@ -54,8 +55,8 @@
                 <ul class="a-results">
                     @foreach ($documents as $document)
                         <li>
-                            <a href="{{ route('documents.download', ['locale' => app()->getLocale(), 'document' => $document->id]) }}">{{ $document->original_filename }}</a>
-                            <span class="a-results__meta">{{ $document->created_at?->displayed()->isoFormat('D MMMM YYYY') }}</span>
+                            <a href="{{ route('extranet.document', ['locale' => app()->getLocale(), 'document' => $document->id]) }}">{{ $document->original_filename }}</a>
+                            <span class="a-results__meta">{{ $document->created_at?->displayed()->isoFormat('D MMMM YYYY') }}@if (mb_stripos($document->original_filename, $term) === false), {{ __('d3_docs.search_in_text') }}@endif</span>
                         </li>
                     @endforeach
                 </ul>

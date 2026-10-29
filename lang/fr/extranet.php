@@ -21,7 +21,7 @@ return [
     'child_count' => '{0} Vide|{1} 1 dossier|[2,*] :count dossiers',
     'file_count' => '{0} Aucun fichier|{1} 1 fichier|[2,*] :count fichiers',
     'upload_label' => 'Ajouter un fichier',
-    'upload_hint' => 'PDF, Word, Excel, CSV ou texte. Jusqu\'à 25 Mo. Les archives ne sont pas acceptées : un zip permet de contourner le contrôle de type, et un dossier dont personne ne peut lister le contenu n\'est pas un espace documentaire.',
+    'upload_hint' => 'PDF, Word, Excel, CSV ou texte, 25 Mo au plus. Les archives ne sont pas acceptées.',
     'upload_action' => 'Déposer le fichier',
     'uploaded' => ':name a été ajouté à ce dossier.',
     'no_files_title' => 'Ce dossier est vide',
