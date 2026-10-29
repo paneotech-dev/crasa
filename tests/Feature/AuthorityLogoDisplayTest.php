@@ -94,7 +94,8 @@ class AuthorityLogoDisplayTest extends TestCase
 
         $html = $this->get('/en/members')->assertOk()->getContent();
 
-        $this->assertStringContainsString('class="b-directory__logo"', $html);
+        // The directory is a grid of cards since C14 (29 October 2026).
+        $this->assertStringContainsString('class="cp-member__logo"', $html);
         $this->assertStringContainsString(
             'alt="Botswana Communications Regulatory Authority"',
             $html,
@@ -141,6 +142,7 @@ class AuthorityLogoDisplayTest extends TestCase
 
             $this->assertStringNotContainsString('b-member__logo', $tiles);
             $this->assertStringNotContainsString('b-directory__logo', $tiles);
+            $this->assertStringNotContainsString('cp-member__logo', $tiles);
         }
     }
 
@@ -150,7 +152,8 @@ class AuthorityLogoDisplayTest extends TestCase
             ->assertOk()
             ->assertSee('Botswana')
             ->assertDontSee('b-member__logo')
-            ->assertDontSee('b-directory__logo');
+            ->assertDontSee('b-directory__logo')
+            ->assertDontSee('cp-member__logo');
     }
 
     public function test_every_logo_rule_uses_tokens_and_no_raw_colour(): void

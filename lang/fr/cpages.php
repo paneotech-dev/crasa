@@ -49,4 +49,10 @@ return [
     'contact_cta_text' => 'La bibliothèque réglementaire et la salle de presse répondent à la plupart des demandes.',
     'contact_cta_library' => 'Ouvrir la bibliothèque',
     'contact_cta_members' => 'Trouver un régulateur membre',
+    // Members
+    'members_cta_title' => 'Comparer les quatorze États membres',
+    'members_cta_text' => 'Les indicateurs déclarés par chaque régulateur, côte à côte, avec la source et l\'année.',
+    'members_cta_compare' => 'Ouvrir le comparateur',
+    'member_facts' => 'Fiche de l\'État membre',
+    'member_nothing_yet' => 'Rien n\'a encore été déposé pour :country sur la plateforme.',
 ];

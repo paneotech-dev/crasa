@@ -49,4 +49,10 @@ return [
     'contact_cta_text' => 'Most enquiries are answered by the regulatory library and the newsroom.',
     'contact_cta_library' => 'Open the library',
     'contact_cta_members' => 'Find a member regulator',
+    // Members
+    'members_cta_title' => 'Compare the fourteen member states',
+    'members_cta_text' => 'Indicators reported by each regulator, side by side, with source and year.',
+    'members_cta_compare' => 'Open the comparator',
+    'member_facts' => 'Member state record',
+    'member_nothing_yet' => 'Nothing has been filed for :country on the platform yet.',
 ];
