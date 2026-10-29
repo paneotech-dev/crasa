@@ -87,7 +87,7 @@ class AppServiceProvider extends ServiceProvider
          */
         foreach ([
             \App\Models\Authority::class, \App\Models\Committee::class, \App\Models\Country::class,
-            \App\Models\Document::class, \App\Models\Indicator::class, \App\Models\IndicatorValue::class,
+            \App\Models\Document::class, \App\Models\Indicator::class, \App\Models\IndicatorValue::class, \App\Models\MediaAsset::class,
             \App\Models\Meeting::class, \App\Models\NewsItem::class, \App\Models\Page::class,
             \App\Models\PageBlock::class, \App\Models\Publication::class, \App\Models\Sector::class,
             \App\Models\Translation::class,

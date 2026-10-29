@@ -27,6 +27,12 @@ final class PublicCache
 {
     public const TTL = 600;
 
+    /**
+     * Raised whenever the shape of a cached value changes, so a deploy
+     * never serves an entry written by the previous release.
+     */
+    private const SHAPE = 2;
+
     private const VERSION_KEY = 'public-cache-version';
 
     /**
@@ -40,7 +46,8 @@ final class PublicCache
         // The host is part of the key because the values carry absolute
         // links, and a preview and the live site share nothing else.
         $key = sprintf(
-            'public:%s:%s:%s:%s',
+            'public:%d.%s:%s:%s:%s',
+            self::SHAPE,
             self::version(),
             substr(md5(request()->getSchemeAndHttpHost()), 0, 8),
             app()->getLocale(),

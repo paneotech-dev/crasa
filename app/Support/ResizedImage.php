@@ -61,6 +61,19 @@ final class ResizedImage
             ];
         }
 
+        // Every rendition is narrower than the photograph and than the role
+        // allows (an 810 pixel photograph has only a 480 rendition): offer
+        // the original as well, when it is light enough, rather than
+        // stretching the small copy across a wide card.
+        $native = (int) ($asset['width'] ?? 0);
+
+        if ($native > 1.25 * $usable->keys()->last() && $native <= $cap
+            && Storage::disk('public')->exists($path)
+            && Storage::disk('public')->size($path) <= self::ORIGINAL_MAX_BYTES) {
+            $usable->put($native, $path);
+            $disk = Storage::disk('public');
+        }
+
         return [
             'src' => $disk->url($usable->last()),
             'srcset' => $usable->map(fn (string $p, int $width) => $disk->url($p).' '.$width.'w')->implode(', '),
@@ -68,6 +81,8 @@ final class ResizedImage
             'height' => $asset['height'] ?? null,
         ];
     }
+
+    private const ORIGINAL_MAX_BYTES = 400 * 1024;
 
     /** The public-disk path of the card-sized rendition, or the path itself. */
     public static function cardPath(?string $path): ?string
