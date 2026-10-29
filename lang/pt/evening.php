@@ -27,4 +27,6 @@ return [
     'area_spectrum' => 'Espetro e infraestruturas',
     'area_postal' => 'Reforma postal e logística',
     'area_capacity' => 'Capacitação e proteção do consumidor',
+    // Accessibility rows.
+    'statement_not_this_record' => 'A declaração de acessibilidade pública está escrita nos ficheiros de idioma da plataforma e é atualizada a cada revisão. As alterações guardadas aqui não mudam o que os visitantes leem no endereço da declaração.',
 ];

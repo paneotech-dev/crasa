@@ -27,4 +27,6 @@ return [
     'area_spectrum' => 'Spectre et infrastructures',
     'area_postal' => 'Réforme postale et logistique',
     'area_capacity' => 'Renforcement des capacités et protection des consommateurs',
+    // Accessibility rows.
+    'statement_not_this_record' => 'La déclaration d\'accessibilité publique est rédigée dans les fichiers de langue de la plateforme et mise à jour à chaque revue. Les modifications enregistrées ici ne changent pas ce que les visiteurs lisent à l\'adresse de la déclaration.',
 ];
