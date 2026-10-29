@@ -10,7 +10,7 @@
  * rgb(0,131,81), blue rgb(99,146,203)), Concept 3 for structure. Contrast,
  * WCAG 2.1, measured on 29 October 2026:
  *   ink #25384A        white 12.05  tint-green 10.72  tint-blue 10.74
- *   muted #55687A      white  5.76  tint-green  5.12  tint-blue  5.13
+ *   muted #3F5264      white  8.07  tint-green  7.18  tint-blue  7.19
  *   green-dark #0B5F3E white  7.72  tint-green  6.87  tint-blue  6.88
  *   link #0C7A4E       white  5.37  tint-green  4.78  tint-blue  4.79
  *   blue-ink #2F4F8F   white  7.97  tint-green  7.09  tint-blue  7.10
@@ -33,7 +33,7 @@
   --c-navy:#0B5F3E; --c-navy-mid:#0E6B47; --c-navy-line:#3D7E63;
   --c-navy-deep:#084A30; --c-navy-edge:#7FB39A; --c-navy-soft:#6A80BC;
 
-  --c-charcoal:#25384A; --c-slate:#55687A;
+  --c-charcoal:#25384A; --c-slate:#3F5264;
   --c-cream:#EEF2FA; --c-sand:#D9E3EC; --c-hatch:#C3CFDB;
   --c-border:#7B8794; --c-line:#D9E3EC;
 

@@ -73,7 +73,7 @@ class HomeMembersBlockTest extends TestCase
 
     public function test_the_members_standfirst_says_two_work_in_french(): void
     {
-        $this->get('/en/members')->assertOk()->assertSee('Four work in Portuguese, two in French')->assertDontSee('three in French');
+        $this->get('/en/members')->assertOk()->assertSee('Two work in Portuguese, two in French, and Mauritius in both English and French')->assertDontSee('Four work in Portuguese');
         $this->get('/fr/members')->assertOk()->assertSee('deux en français', false);
         $this->get('/pt/members')->assertOk()->assertSee('dois em francês', false);
     }
