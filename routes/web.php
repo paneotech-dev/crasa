@@ -198,10 +198,17 @@ Route::prefix('{locale}')
             ->middleware(['auth', 'throttle:feature-interest'])
             ->name('extranet.interest');
 
-        Route::get('extranet', fn () => auth()->check()
-            ? redirect()->route('extranet.dashboard', ['locale' => app()->getLocale()])
-            : redirect()->route('login', ['locale' => app()->getLocale()]))
-            ->name('extranet');
+        // A signed-in account with no member area (a viewer) is refused here
+        // with the friendly 403 page, not sent on to a page that refuses it
+        // (PM-01).
+        Route::get('extranet', function () {
+            if (! auth()->check()) {
+                return redirect()->route('login', ['locale' => app()->getLocale()]);
+            }
+            abort_unless(auth()->user()->can('enter-member-area'), 403);
+
+            return redirect()->route('extranet.dashboard', ['locale' => app()->getLocale()]);
+        })->name('extranet');
 
         /*
          * Search. WS-04. Behind a driver interface, so a managed
@@ -342,16 +349,16 @@ Route::prefix('{locale}')
              * redirected past this into the folder list, so the extranet's
              * first sentence to a national regulator was a file browser.
              */
-            Route::get('extranet/dashboard', [ExtranetController::class, 'dashboard'])->name('extranet.dashboard');
-            Route::get('extranet/folders', [ExtranetController::class, 'index'])->name('extranet.folders');
-            Route::get('extranet/folders/{folder}', [ExtranetController::class, 'folder'])->name('extranet.folder');
-            Route::post('extranet/folders/{folder}/upload', [ExtranetController::class, 'upload'])->name('extranet.upload');
-            Route::get('extranet/committees/{committee}', [ExtranetController::class, 'committee'])->name('extranet.committee');
-            Route::get('extranet/search', [ExtranetController::class, 'search'])->name('extranet.search');
-            Route::get('extranet/calendar', [ExtranetController::class, 'calendar'])->name('extranet.calendar');
+            Route::get('extranet/dashboard', [ExtranetController::class, 'dashboard'])->middleware('can:enter-member-area')->name('extranet.dashboard');
+            Route::get('extranet/folders', [ExtranetController::class, 'index'])->middleware('can:enter-member-area')->name('extranet.folders');
+            Route::get('extranet/folders/{folder}', [ExtranetController::class, 'folder'])->middleware('can:enter-member-area')->name('extranet.folder');
+            Route::post('extranet/folders/{folder}/upload', [ExtranetController::class, 'upload'])->middleware('can:enter-member-area')->name('extranet.upload');
+            Route::get('extranet/committees/{committee}', [ExtranetController::class, 'committee'])->middleware('can:enter-member-area')->name('extranet.committee');
+            Route::get('extranet/search', [ExtranetController::class, 'search'])->middleware('can:enter-member-area')->name('extranet.search');
+            Route::get('extranet/calendar', [ExtranetController::class, 'calendar'])->middleware('can:enter-member-area')->name('extranet.calendar');
             // Screen 12 draws an export beside the month grid. A meeting a
             // regulator cannot put in their own calendar is one they miss.
-            Route::get('extranet/calendar.ics', [ExtranetController::class, 'calendarExport'])->name('extranet.calendar.ics');
+            Route::get('extranet/calendar.ics', [ExtranetController::class, 'calendarExport'])->middleware('can:enter-member-area')->name('extranet.calendar.ics');
 
             /*
              * Contributing a national instrument, RP-03 and RP-06.
@@ -377,8 +384,8 @@ Route::prefix('{locale}')
              * harmonisation mandate. Contributing and editing are scoped;
              * reading is not.
              */
-            Route::get('register', [RegisterController::class, 'index'])->name('register');
-            Route::get('register/{instrument}', [RegisterController::class, 'show'])->name('register.show');
+            Route::get('register', [RegisterController::class, 'index'])->middleware('can:enter-member-area')->name('register');
+            Route::get('register/{instrument}', [RegisterController::class, 'show'])->middleware('can:enter-member-area')->name('register.show');
 
             /*
              * The indicator taxonomy, RP-11 and extranet item 11.
@@ -388,7 +395,7 @@ Route::prefix('{locale}')
              * the same thing, they need somewhere to read what the thing
              * is.
              */
-            Route::get('indicators', [IndicatorReferenceController::class, 'index'])->name('indicators.reference');
+            Route::get('indicators', [IndicatorReferenceController::class, 'index'])->middleware('can:enter-member-area')->name('indicators.reference');
 
             /*
              * The member state's own record, extranet item 3.
@@ -408,10 +415,10 @@ Route::prefix('{locale}')
              * regulators' direct lines is exactly the file that must not
              * leave the extranet. Consent gates every listing.
              */
-            Route::get('directory', [DirectoryController::class, 'index'])->name('directory');
-            Route::post('directory', [DirectoryController::class, 'store'])->name('directory.store');
-            Route::put('directory/{contact}', [DirectoryController::class, 'update'])->name('directory.update');
-            Route::delete('directory/{contact}', [DirectoryController::class, 'destroy'])->name('directory.destroy');
+            Route::get('directory', [DirectoryController::class, 'index'])->middleware('can:enter-member-area')->name('directory');
+            Route::post('directory', [DirectoryController::class, 'store'])->middleware('can:enter-member-area')->name('directory.store');
+            Route::put('directory/{contact}', [DirectoryController::class, 'update'])->middleware('can:enter-member-area')->name('directory.update');
+            Route::delete('directory/{contact}', [DirectoryController::class, 'destroy'])->middleware('can:enter-member-area')->name('directory.destroy');
 
             /*
              * Secretariat announcements, RP-05 and extranet item 10.
@@ -421,8 +428,8 @@ Route::prefix('{locale}')
              * linked and not reachable by guessing a slug for anyone
              * without that seat.
              */
-            Route::get('announcements', [AnnouncementController::class, 'index'])->name('announcements');
-            Route::get('announcements/{announcement}', [AnnouncementController::class, 'show'])->name('announcements.show');
+            Route::get('announcements', [AnnouncementController::class, 'index'])->middleware('can:enter-member-area')->name('announcements');
+            Route::get('announcements/{announcement}', [AnnouncementController::class, 'show'])->middleware('can:enter-member-area')->name('announcements.show');
 
             /*
              * The notification centre, RP-05 and extranet item 6.
