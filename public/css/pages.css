@@ -12,6 +12,13 @@
 .cp-hero__text { min-width: 0; }
 .cp-figure__link { color: inherit; text-decoration: none; border-bottom: 2px solid var(--u-blue); }
 .cp-figure__link:hover { border-bottom-color: var(--u-green); }
+/* The underline sits under the number, never across the label below it. */
+.cp-figure__link { display: inline-block; line-height: 1.1; padding-bottom: 2px; }
+.cp-hero__figures .u-figure dt { margin-top: 6px; }
+/* A word figure (Gaborone) shrinks on a phone instead of breaking inside the word. */
+@media (max-width: 639.98px) {
+  .cp-hero__figures .u-figure dd { font-size: clamp(22px, 7vw, 36px); overflow-wrap: normal; word-break: keep-all; }
+}
 .cp-hero__figures { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--u-3); }
 .cp-hero__figures .u-figure { background: var(--u-white); border: 1px solid var(--u-line); border-radius: var(--u-radius); padding: var(--u-4); }
 .cp-hero__figures:has(> :nth-child(4)) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
