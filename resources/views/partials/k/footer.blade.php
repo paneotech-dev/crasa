@@ -60,7 +60,7 @@
                 @if ($a11yUrl)
                     <a href="{{ $a11yUrl }}">{{ __('footer.accessibility') }}</a>
                 @endif
-                <a href="#top"><x-shell-icon name="arrow-up" :size="14" /> {{ __('chome.back_to_top') }}</a>
+                <a href="#top">{{ __('chome.back_to_top') }}</a>
             </nav>
         </div>
     </div>
