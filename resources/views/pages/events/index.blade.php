@@ -207,7 +207,10 @@
                 <p class="u-cta__text">{{ __('e.cta_text') }}</p>
             </div>
             <div class="u-actions">
-                <a class="u-btn u-btn--primary" href="{{ route('extranet.calendar', ['locale' => $locale]) }}">{{ __('e.cta_member') }}</a>
+                {{-- The member calendar answers the enter-member-area gate; a guest is sent to sign in, a signed-in account without it is refused, so it does not see the link. --}}
+                @if (! auth()->check() || auth()->user()->can('enter-member-area'))
+                    <a class="u-btn u-btn--primary" href="{{ route('extranet.calendar', ['locale' => $locale]) }}">{{ __('e.cta_member') }}</a>
+                @endif
                 <a class="u-btn u-btn--secondary" href="{{ route('newsroom', ['locale' => $locale]) }}">{{ __('e.cta_news') }}</a>
             </div>
         </div>

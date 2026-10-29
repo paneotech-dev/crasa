@@ -88,6 +88,18 @@ class EventCalendarExportTest extends TestCase
     {
         $this->travelTo('2027-06-01');
 
-        $this->get('/en/events/agm-15')->assertOk()->assertDontSee(__('events.add_to_calendar'));
+        $html = $this->get('/en/events/agm-15')->assertOk()->getContent();
+
+        // The Concept 3 header's Events menu names Add to my calendar on
+        // every page, so only the page's own content is read.
+        $this->assertStringNotContainsString(__('events.add_to_calendar'), $this->mainContent($html));
+    }
+
+    private function mainContent(string $html): string
+    {
+        $start = strpos($html, '<main id="content"');
+        $this->assertNotFalse($start);
+
+        return substr($html, $start, strpos($html, '</main>', $start) - $start);
     }
 }

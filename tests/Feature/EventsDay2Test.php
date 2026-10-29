@@ -33,6 +33,14 @@ class EventsDay2Test extends TestCase
         $this->travelTo('2026-10-29 10:00:00');
     }
 
+    private function mainContent(string $html): string
+    {
+        $start = strpos($html, '<main id="content"');
+        $this->assertNotFalse($start);
+
+        return substr($html, $start, strpos($html, '</main>', $start) - $start);
+    }
+
     private function meeting(array $over = []): Meeting
     {
         static $n = 0;
@@ -104,9 +112,11 @@ class EventsDay2Test extends TestCase
         $this->meeting(['title' => 'Postal one', 'committee_code' => 'PC']);
         $this->meeting(['title' => 'Legal one', 'committee_code' => 'LPC']);
 
-        $this->get('/en/events?committee=LPC')->assertOk()
-            ->assertSee('Legal one')
-            ->assertDontSee('Postal one');
+        // The Concept 3 header's Events menu features the next event on
+        // every page, so only the page's own content is read.
+        $main = $this->mainContent($this->get('/en/events?committee=LPC')->assertOk()->getContent());
+        $this->assertStringContainsString('Legal one', $main);
+        $this->assertStringNotContainsString('Postal one', $main);
     }
 
     public function test_a_members_only_event_shows_only_to_signed_in_members(): void
@@ -145,11 +155,14 @@ class EventsDay2Test extends TestCase
     {
         $this->meeting(['title' => 'Called off', 'slug' => 'called-off', 'status' => 'cancelled', 'status_note' => 'Moved to 2027.']);
 
-        $this->get('/en/events/called-off')->assertOk()
+        $html = $this->get('/en/events/called-off')->assertOk()
             ->assertSee('This meeting is cancelled.')
             ->assertSee('Moved to 2027.')
-            ->assertDontSee(__('events.add_to_calendar'))
-            ->assertDontSee(__('e.file_arrival'));
+            ->getContent();
+        // The header's Events menu names Add to my calendar on every page.
+        $main = $this->mainContent($html);
+        $this->assertStringNotContainsString(__('events.add_to_calendar'), $main);
+        $this->assertStringNotContainsString(__('e.file_arrival'), $main);
         $this->get('/en/events')->assertSee('Cancelled');
     }
 
