@@ -251,19 +251,19 @@ class PublicPagesSeeder extends Seeder
             'en' => [
                 'title' => 'Members',
                 'heading' => 'Fourteen national communications and postal authorities',
-                'standfirst' => "CRASA's membership covers the national regulatory authorities of fourteen SADC member states. Four work in Portuguese, three in French, and all fourteen sit on the committees and attend the annual general meeting.",
+                'standfirst' => "CRASA's membership covers the national regulatory authorities of fourteen SADC member states. Four work in Portuguese, two in French, and all fourteen sit on the committees and attend the annual general meeting.",
                 'meta_description' => 'The fourteen national regulatory authorities that make up CRASA.',
             ],
             'fr' => [
                 'title' => 'Membres',
                 'heading' => 'Quatorze autorités nationales des communications et des postes',
-                'standfirst' => "La CRASA réunit les autorités de régulation nationales de quatorze États membres de la SADC. Quatre travaillent en portugais, trois en français, et les quatorze siègent aux comités et participent à l'assemblée générale annuelle.",
+                'standfirst' => "La CRASA réunit les autorités de régulation nationales de quatorze États membres de la SADC. Quatre travaillent en portugais, deux en français, et les quatorze siègent aux comités et participent à l'assemblée générale annuelle.",
                 'meta_description' => 'Les quatorze autorités de régulation nationales qui composent la CRASA.',
             ],
             'pt' => [
                 'title' => 'Membros',
                 'heading' => 'Catorze autoridades nacionais das comunicações e dos correios',
-                'standfirst' => 'A CRASA reúne as autoridades reguladoras nacionais de catorze Estados membros da SADC. Quatro trabalham em português, três em francês, e as catorze participam nos comités e na assembleia geral anual.',
+                'standfirst' => 'A CRASA reúne as autoridades reguladoras nacionais de catorze Estados membros da SADC. Quatro trabalham em português, dois em francês, e as catorze participam nos comités e na assembleia geral anual.',
                 'meta_description' => 'As catorze autoridades reguladoras nacionais que compõem a CRASA.',
             ],
         ]);
