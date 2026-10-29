@@ -5,14 +5,14 @@ namespace App\Http\Controllers;
 use App\Support\ScreenHelp;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 
 /**
  * The help page for one screen (client brief, item 7). The help icon in the
  * top bar of the back office and the member area links here with the
  * current route name. Signed in only; the help for a back-office screen is
- * for the accounts that may enter the back office.
+ * for the accounts that may enter the back office, or that may open that
+ * screen when it is shared with the member area (ScreenHelp::mayRead).
  */
 class ScreenHelpController extends Controller
 {
@@ -22,9 +22,7 @@ class ScreenHelpController extends Controller
 
         abort_if($route === null || ! in_array('GET', $route->methods(), true), 404);
 
-        if (ScreenHelp::section($screen) === ScreenHelp::BACK_OFFICE) {
-            Gate::authorize('enter-back-office');
-        }
+        abort_unless(ScreenHelp::mayRead($request->user(), $screen), 403);
 
         return view('pages.help.screen', [
             'screen' => $screen,

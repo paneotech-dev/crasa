@@ -235,5 +235,7 @@ html:not(.has-js) .u-reveal { opacity: 1; transform: none; }
   .u-card:hover, .u-card:focus-within { transform: none; }
 }
 
-/* The viewer's dashboard list (my-dashboard). */
+/* The viewer's dashboard (my-dashboard): the name and role line under the
+   heading, then the list. */
+.my-dash__who { margin: 0 0 var(--u-2); font-weight: 600; }
 .my-dash__list { list-style: none; margin: 16px 0 0; padding: 0; }

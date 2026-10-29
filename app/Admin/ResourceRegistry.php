@@ -351,7 +351,7 @@ final class ResourceRegistry
                     }),
                 ],
                 rules: [
-                    'publication_type' => ['required', 'string', Rule::exists('publication_types', 'slug')],
+                    'publication_type' => ['required', 'string', 'exists:publication_types,slug'],
                     'sector_id' => ['nullable', 'exists:sectors,id'],
                     'committee_id' => ['nullable', 'exists:committees,id'],
                     'country_id' => ['nullable', 'exists:countries,id'],
@@ -423,7 +423,7 @@ final class ResourceRegistry
                 rulesUsing: fn (?Model $record, Request $request) => \App\Support\NewsPhoto::rules(),
                 rules: [
                     'hero_image_path' => ['nullable', 'string', Rule::exists('media_assets', 'path')->whereNull('deleted_at')],
-                    'category' => ['required', 'string', Rule::exists('news_categories', 'slug')],
+                    'category' => ['required', 'string', 'exists:news_categories,slug'],
                     'sector_id' => ['nullable', 'exists:sectors,id'],
                     'status' => ['required', 'in:draft,published'],
                     'published_at' => ['nullable', 'date'],

@@ -154,7 +154,9 @@ class NotifyPerRoleTest extends TestCase
         $html = $this->actingAs($user)->get(route($screen, ['locale' => 'en']))->assertOk()->getContent();
         $this->assertStringContainsString('href="'.url('/en/help/'.$screen), $html);
 
-        $help = trans('screenhelp_core')[$screen];
+        // The merged entry: a stream's own file may supersede the core one
+        // (the member home's help is in screenhelp_look since its redesign).
+        $help = \App\Support\ScreenHelp::for($screen, 'en');
 
         $this->actingAs($user)->get('/en/help/'.$screen)
             ->assertOk()
@@ -165,7 +167,7 @@ class NotifyPerRoleTest extends TestCase
             ->assertSee(__('d3_notify.help_guide'));
 
         // And in French.
-        $this->actingAs($user)->get('/fr/help/'.$screen)->assertOk()->assertSee(trans('screenhelp_core', [], 'fr')[$screen]['purpose']);
+        $this->actingAs($user)->get('/fr/help/'.$screen)->assertOk()->assertSee(\App\Support\ScreenHelp::for($screen, 'fr')['purpose']);
     }
 
     #[DataProvider('roles')]

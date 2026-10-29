@@ -2,7 +2,10 @@
 
 namespace App\Support;
 
+use App\Models\Report;
+use App\Models\User;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Help per screen, keyed by route name (client brief, item 7).
@@ -81,6 +84,43 @@ final class ScreenHelp
     public static function section(string $route): string
     {
         return str_starts_with($route, 'admin.') ? self::BACK_OFFICE : self::MEMBER;
+    }
+
+    /**
+     * Back-office screens that a member-area role may also open, each with
+     * the check its controller makes. A member state representative builds
+     * reports for their own country under /admin/reports.
+     *
+     * @return array<string, array{0: string, 1: class-string}>
+     */
+    public static function sharedBackOfficeScreens(): array
+    {
+        return [
+            'admin.reports' => ['viewAny', Report::class],
+            'admin.reports.show' => ['viewAny', Report::class],
+        ];
+    }
+
+    /**
+     * Whether this reader may read the help for a screen: anyone for the
+     * member area, the back office's accounts for a back-office screen, and
+     * anyone the screen itself admits for one shared with the member area.
+     */
+    public static function mayRead(User $user, string $route): bool
+    {
+        if (self::section($route) !== self::BACK_OFFICE) {
+            return true;
+        }
+
+        $gate = Gate::forUser($user);
+
+        if ($gate->allows('enter-back-office')) {
+            return true;
+        }
+
+        $shared = self::sharedBackOfficeScreens()[$route] ?? null;
+
+        return $shared !== null && $gate->allows($shared[0], $shared[1]);
     }
 
     /**

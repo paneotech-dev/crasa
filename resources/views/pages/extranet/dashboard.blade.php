@@ -68,7 +68,7 @@
             @if ($isRep)
                 {{-- My return: the open period this country should be
                      working on, how far it is, and the next field. --}}
-                <section class="mh-card mh-return" aria-labelledby="mh-return-h" data-block="return">
+                <section class="mh-card" aria-labelledby="mh-return-h" data-block="return">
                     <div class="mh-card__head">
                         <h2 class="mh-card__title" id="mh-return-h">{{ __('d3_look.my_return') }}</h2>
                         <span class="a-pill" data-status="{{ $myReturn['status'] === 'not_started' ? 'archived' : $myReturn['status'] }}">{{ __('extranet.period_'.$myReturn['status']) }}</span>
@@ -126,9 +126,8 @@
                 <h3 class="mh-sub">{{ __('extranet.dash_next_meeting') }}</h3>
                 {{-- The registration card when a meeting of yours is open for
                      registration; otherwise the next meeting as it stands. --}}
-                @php($registrationCard = trim(view('partials.extranet.next-meeting-card', ['user' => auth()->user()])->render()))
-                @if ($registrationCard !== '')
-                    {!! $registrationCard !!}
+                @if ($regMeeting = \App\Support\NextRegistration::for(auth()->user()))
+                    @include('partials.extranet.next-meeting-card', ['user' => auth()->user(), 'registrationMeeting' => $regMeeting])
                 @elseif ($next_meeting === null)
                     <div class="a-empty">
                         <p class="a-empty__title">{{ __('extranet.dash_no_meetings_title') }}</p>
@@ -279,13 +278,14 @@
                     <h2 class="mh-card__title" id="mh-notif-h">{{ __('extranet.dash_notifications') }}</h2>
                     <a href="{{ route('notifications', ['locale' => $locale]) }}">{{ __('d3_look.all_notifications') }}</a>
                 </div>
-                @if (View::exists('partials.notifications.latest'))
-                    @includeIf('partials.notifications.latest', ['user' => auth()->user(), 'notifications' => $notifications])
-                @elseif ($notifications->isEmpty())
+                @if ($notifications->isEmpty())
                     <div class="a-empty">
                         <p class="a-empty__title">{{ __('extranet.dash_no_notifications_title') }}</p>
                         <p class="a-empty__body">{{ __('extranet.dash_no_notifications_body') }}</p>
                     </div>
+                @elseif (View::exists('partials.notifications.latest'))
+                    {{-- The bell's list, with its Mark as read buttons. --}}
+                    @include('partials.notifications.latest', ['limit' => 5])
                 @else
                     <ul class="mh-list" role="list">
                         @foreach ($notifications as $notification)

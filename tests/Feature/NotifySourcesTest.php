@@ -1,33 +1,5 @@
 <?php
 
-namespace App\Events {
-    /*
-     * Stand-ins for events other parts of the platform fire. Declared here
-     * only when the real class does not exist yet, with the same public
-     * properties the brief gives them.
-     */
-    if (! class_exists(DocumentAdded::class)) {
-        class DocumentAdded
-        {
-            public function __construct(public readonly mixed $document, public readonly mixed $folder) {}
-        }
-    }
-
-    if (! class_exists(RegistrationConfirmed::class)) {
-        class RegistrationConfirmed
-        {
-            public function __construct(public readonly mixed $registration) {}
-        }
-    }
-
-    if (! class_exists(RegistrationReceived::class)) {
-        class RegistrationReceived
-        {
-            public function __construct(public readonly mixed $registration) {}
-        }
-    }
-}
-
 namespace Tests\Feature {
 
     use App\Enums\Clearance;
@@ -372,9 +344,23 @@ namespace Tests\Feature {
 
         public function test_a_listener_ignores_an_event_without_its_model(): void
         {
-            event(new DocumentAdded(null, null));
-            event(new RegistrationConfirmed(null));
-            event(new RegistrationReceived(null));
+            // Real events whose rows are gone by the time the listener runs:
+            // a file moved to the bin, a file whose folder was deleted, and
+            // a registration withdrawn.
+            $folder = $this->folder($this->botswana);
+            $binned = $this->document($folder, $this->bwRep);
+            $binned->delete();
+            event(new DocumentAdded($binned, $folder));
+
+            $gone = $this->folder($this->botswana);
+            $orphan = $this->document($gone, $this->bwRep);
+            $gone->delete();
+            event(new DocumentAdded($orphan, $gone));
+
+            $registration = $this->registration(User::factory()->committeeMember($this->botswana)->create());
+            $registration->delete();
+            event(new RegistrationConfirmed($registration));
+            event(new RegistrationReceived($registration));
 
             $this->assertSame(0, \Illuminate\Notifications\DatabaseNotification::count());
         }
