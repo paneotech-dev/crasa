@@ -18,7 +18,7 @@
     $plain = fn ($slug) => trans()->has('d.plain.'.$slug) ? __('d.plain.'.$slug) : null;
 @endphp
 
-<div class="c-cmp__console">
+<div @class(["c-cmp__console", "c-cmp__console--browse" => $isBrowse])>
     {{-- Step 1 --}}
     <section class="c-cmp__step c-cmp__step--1" aria-labelledby="cmp-step1">
         <h2 class="c-cmp__step-title" id="cmp-step1"><span class="c-cmp__step-n">{{ __('d.step_n', ['n' => 1]) }}</span> {{ __('d.step1') }}</h2>

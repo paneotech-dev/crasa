@@ -166,3 +166,17 @@
   .c-hcmp__form { grid-template-columns: 1fr; }
 }
 .c-hcmp__apply[hidden], [data-cmp-copy][hidden] { display: none; }
+
+/* Browse mode: the result needs the full width for the ranking and the
+ * map side by side, so the steps stack and the picker runs in columns. */
+@media (min-width: 1100px) {
+  .c-cmp__console--browse { grid-template-columns: minmax(0, 1fr); }
+  .c-cmp__console--browse .c-cmp__step--1 { grid-row: auto; }
+  .c-cmp__console--browse .c-cmp__step--2, .c-cmp__console--browse .c-cmp__step--3 { grid-column: auto; }
+  .c-cmp__console--browse .c-cmp__sectors { grid-template-columns: 6fr 3fr 7fr; gap: 24px; }
+  .c-cmp__console--browse .c-cmp__sector[data-sector="telecommunications"] .c-cmp__picks,
+  .c-cmp__console--browse .c-cmp__sector[data-sector="postal"] .c-cmp__picks { grid-template-columns: 1fr 1fr; }
+  .c-cmp__console--browse .c-cmp__view--browse { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
+  .c-cmp__console--browse .c-cmp__words--row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+  .c-cmp__console--browse .c-cmp-chart { min-width: 0; }
+}

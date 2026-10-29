@@ -10,12 +10,11 @@
 @section('content')
     @php
         $locale = app()->getLocale();
-        $validatedCount = \App\Models\IndicatorValue::where('confidence', 'validated')->count();
     @endphp
 
     {{-- A short hero: what the tool does and three figures. The console
          starts right under it and opens on a result (S4, 29 October). --}}
-    <section class="u-hero c-cmp__hero c-cmp__masthead">
+    <section class="u-hero c-cmp__hero">
         <div class="u-container">
             <div class="c-cmp__hero-wrap">
             <div class="c-cmp__hero-grid">
@@ -27,9 +26,8 @@
             <dl class="u-figures">
                 <div class="u-figure"><dt>{{ __('d.figure_indicators') }}</dt><dd>{{ \App\Models\Indicator::where('is_active', true)->count() }}</dd></div>
                 <div class="u-figure"><dt>{{ __('d.figure_states') }}</dt><dd>14</dd></div>
-                <div class="u-figure"><dt>{{ __('d.figure_validated') }}</dt><dd>{{ $validatedCount }}</dd></div>
+                <div class="u-figure"><dt>{{ __('d.figure_sectors') }}</dt><dd>{{ \App\Models\Indicator::where('is_active', true)->whereNotNull('sector_id')->distinct()->count('sector_id') }}</dd></div>
             </dl>
-            </div>
             </div>
             {{-- Three colleagues comparing a printed chart against a tablet:
                  a framed photograph, not a background (S9). --}}
@@ -38,6 +36,7 @@
                     <x-responsive-image name="data" decorative sizes="(min-width: 1100px) 400px, 100vw" loading="eager" class="c-img--cover" />
                 </div>
             </figure>
+            </div>
         </div>
     </section>
 

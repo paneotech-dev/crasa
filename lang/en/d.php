@@ -10,6 +10,7 @@ return [
     'eyebrow' => 'Regulatory comparator',
     'figure_indicators' => 'indicators',
     'figure_states' => 'member states',
+    'figure_sectors' => 'sectors',
     'figure_validated' => 'figures validated',
     'step1' => 'Choose an indicator',
     'step2' => 'Choose member states',

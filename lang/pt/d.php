@@ -4,6 +4,7 @@ return [
     'eyebrow' => 'Comparador regulamentar',
     'figure_indicators' => 'indicadores',
     'figure_states' => 'Estados-Membros',
+    'figure_sectors' => 'setores',
     'figure_validated' => 'valores validados',
     'step1' => 'Escolher um indicador',
     'step2' => 'Escolher Estados-Membros',
