@@ -24,7 +24,7 @@
     @endpush
 @endonce
 @if ($homeUpcoming->isNotEmpty())
-    <section class="u-section e-home" aria-labelledby="home-upcoming-title">
+    <section class="u-section" aria-labelledby="home-upcoming-title">
         <div class="u-container">
             <div class="e-home__head">
                 <div>

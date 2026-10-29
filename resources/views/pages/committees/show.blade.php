@@ -39,7 +39,7 @@
                     </dl>
                 @endif
             </div>
-            <div class="u-panel cp-com-hero-panel">
+            <div class="u-panel">
                 <h2 class="cp-side-title">{{ __('cpages_a.next_meeting') }}</h2>
                 @if ($next)
                     <div class="cp-meeting">

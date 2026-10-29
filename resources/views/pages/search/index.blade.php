@@ -102,8 +102,8 @@
                     </div>
                 </div>
             @else
-                <div class="u-main-side cp-search__layout">
-                    <div class="cp-search__results">
+                <div class="u-main-side">
+                    <div>
                         @foreach ($groups as $type => $hits)
                             <section class="cp-search__group" aria-labelledby="group-{{ $type }}">
                                 <h2 class="cp-search__group-title" id="group-{{ $type }}">

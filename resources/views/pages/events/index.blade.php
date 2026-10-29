@@ -68,7 +68,7 @@
                 <ul class="e-filter__list">
                     <li><a class="u-chip" data-filter="" href="{{ route('events', $base + $query(['committee' => null])) }}#cal-title" @if (! $committee) aria-current="true" @endif>{{ __('e.filter_all') }}</a></li>
                     @foreach ($groups as $g)
-                        <li><a class="u-chip e-chip-filter" data-filter="{{ $g->code }}" href="{{ route('events', $base + $query(['committee' => $g->code])) }}#cal-title" @if ($committee === $g->code) aria-current="true" @endif>@include('pages.events._badge', ['group' => $g]){{ $g->code === 'CRASA' ? __('e.filter_crasa') : $g->code }}</a></li>
+                        <li><a class="u-chip" data-filter="{{ $g->code }}" href="{{ route('events', $base + $query(['committee' => $g->code])) }}#cal-title" @if ($committee === $g->code) aria-current="true" @endif>@include('pages.events._badge', ['group' => $g]){{ $g->code === 'CRASA' ? __('e.filter_crasa') : $g->code }}</a></li>
                     @endforeach
                 </ul>
             </nav>

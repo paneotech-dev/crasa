@@ -95,7 +95,7 @@
         'heroAside' => $aside,
     ])
 
-    <section class="u-section cp-legal">
+    <section class="u-section">
         <div class="u-container cp-legal__grid">
             @if (count($sections) > 1)
                 <nav class="cp-legal__toc" aria-labelledby="cp-toc-title">

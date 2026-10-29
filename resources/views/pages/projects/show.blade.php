@@ -69,7 +69,7 @@
 <section class="u-section">
     <div class="u-container {{ $bodyHtml ? 'u-main-side' : '' }}">
         @if ($bodyHtml)
-        <div class="cp-proj-main">
+        <div>
             @if ($bodyHtml)
                 <h2 class="u-h2">{{ __('cpages_a.description') }}</h2>
                 <div class="cp-prose cp-proj-body @if (mb_strlen(strip_tags($bodyHtml)) > 1200) cp-proj-body--cols @endif" @if ($body->isFallback()) lang="{{ $body->locale }}" @endif>
