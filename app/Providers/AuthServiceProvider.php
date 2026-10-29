@@ -142,9 +142,13 @@ class AuthServiceProvider extends ServiceProvider
         ]));
 
         /*
-         * The member area (PM-01). Every role but the viewer: a viewer reads
-         * what is public and is refused the member area by the server, on
-         * every route in it, with the friendly 403 page.
+         * The member area (PM-01). Whoever holds the committee workspace
+         * permission: as shipped, administrators, editors, member state
+         * representatives and committee members. Viewers, moderators and
+         * auditors read what is public (and moderators and auditors work in
+         * the back office); the server refuses them the member area, on
+         * every route in it, with the friendly 403 page. A role made on the
+         * roles screen enters if it is granted that permission.
          */
         Gate::define('enter-member-area', fn (User $user) => $user->hasPermission(Permission::ReachCommitteeWorkspace));
 
