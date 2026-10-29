@@ -199,6 +199,8 @@ return [
     'setting_items' => 'Items',
     'setting_columns' => 'Columns',
     'setting_alignment' => 'Alignment',
+    'setting_layout' => 'Layout (prose, columns of headed sections, or a grid of people)',
+    'setting_also_anchor' => 'Second anchor for links (optional)',
     'setting_limit' => 'How many to show',
     'setting_filter' => 'Filter',
     'setting_sector' => 'Sector',

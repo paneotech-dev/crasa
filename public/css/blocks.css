@@ -496,6 +496,29 @@
 .b-richtext__body > * + * { margin-top: var(--s-4); }
 .b-richtext[data-alignment="center"] .b-richtext__body { margin-inline: auto; }
 
+/* Rich text laid out as headed sections side by side, or as a grid of
+   people (the About page, 29 October 2026). Two balanced columns on a wide
+   screen, so the four short Focus, Vision, Mission sections sit beside the
+   long History rather than above it. */
+.b-richtext[data-layout="columns"] .b-richtext__body,
+.b-richtext[data-layout="people"] .b-richtext__body { max-width: none; }
+.b-richtext__intro { max-width: 66ch; margin: 0; }
+.b-sections { columns: 1; column-gap: var(--s-7); }
+.b-sections__item { break-inside: avoid; padding-top: var(--s-3); border-top: 1px solid var(--c-sand); margin: 0 0 var(--s-5); }
+.b-sections__item > p { margin: var(--s-2) 0 0; }
+.b-sections__heading { font-family: var(--f-head); font-size: var(--t-h3-size); line-height: var(--t-h3-line); font-weight: 600; color: var(--c-green-dark); margin: 0; }
+.b-people__intro { columns: 1; column-gap: var(--s-7); }
+.b-people__intro > p { margin: 0 0 var(--s-3); break-inside: avoid; }
+@media (min-width: 900px) {
+  .b-sections, .b-people__intro { columns: 2; }
+}
+.b-people { list-style: none; margin: var(--s-5) 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); gap: var(--s-4); }
+.b-person { display: flex; flex-direction: column; gap: var(--s-1); min-width: 0; padding: var(--s-4); background: var(--c-white); border: 1px solid var(--c-sand); border-radius: var(--r-sm); }
+.b-person__photo { display: flex; align-items: center; justify-content: center; width: 72px; height: 72px; margin-bottom: var(--s-2); background: var(--c-green-light); color: var(--c-green-dark); border-radius: var(--r-xs); }
+.b-person__name { font-weight: 600; color: var(--c-charcoal); line-height: 1.35; }
+.b-person__title { font-size: var(--t-small-size); line-height: 1.45; color: var(--c-slate); }
+.b__also-anchor { display: block; height: 0; }
+
 /* Card lists: publications, documents, news ---------------------------- */
 /* One grid serves all three. align-items:start again, and the track minimum
    is generous enough that a long title does not force a two-character line

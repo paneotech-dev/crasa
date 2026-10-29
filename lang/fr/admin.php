@@ -199,6 +199,8 @@ return [
     'setting_items' => 'Éléments',
     'setting_columns' => 'Colonnes',
     'setting_alignment' => 'Alignement',
+    'setting_layout' => 'Mise en page (texte, colonnes de sections titrées ou grille de personnes)',
+    'setting_also_anchor' => 'Seconde ancre pour les liens (facultatif)',
     'setting_limit' => 'Nombre d\'éléments',
     'setting_filter' => 'Filtre',
     'setting_sector' => 'Secteur',

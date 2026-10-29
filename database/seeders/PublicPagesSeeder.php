@@ -83,6 +83,14 @@ class PublicPagesSeeder extends Seeder
             ],
         ], 'who-we-are');
 
+        // SADC first where the two are named together; the footer's own
+        // wording (29 October 2026).
+        $this->block($page, BlockType::RichText, $position++, ['alignment' => 'start'], [
+            'en' => ['heading' => 'SADC and CRASA', 'body' => '<p>'.__('footer.blurb', [], 'en').'</p><p><a href="https://www.sadc.int">Southern African Development Community (SADC)</a></p>'],
+            'fr' => ['heading' => 'La SADC et la CRASA', 'body' => '<p>'.__('footer.blurb', [], 'fr').'</p><p><a href="https://www.sadc.int">Communauté de développement de l\'Afrique australe (SADC)</a></p>'],
+            'pt' => ['heading' => 'A SADC e a CRASA', 'body' => '<p>'.__('footer.blurb', [], 'pt').'</p><p><a href="https://www.sadc.int">Comunidade de Desenvolvimento da África Austral (SADC)</a></p>'],
+        ], 'sadc');
+
         // Not sourceable. The governance structure, who holds each office
         // and the meeting cycle are not in any source available to this
         // build. The Executive Committee and the Secretariat get their own
@@ -92,7 +100,7 @@ class PublicPagesSeeder extends Seeder
             $page,
             BlockType::RichText,
             $position++,
-            ['alignment' => 'start'],
+            ['alignment' => 'start', 'layout' => 'columns', 'also_anchor' => 'structure'],
             'Governance: the structure of the Annual General Meeting and how decisions pass between it, the Executive Committee and the Secretariat. The meeting cycle and the current office holders.',
             [
                 'en' => ['heading' => 'Governance'],
@@ -106,7 +114,7 @@ class PublicPagesSeeder extends Seeder
             $page,
             BlockType::RichText,
             $position++,
-            ['alignment' => 'start'],
+            ['alignment' => 'start', 'layout' => 'people'],
             'Executive Committee: how many members it has, how they are elected and for how long, which authorities currently hold the chair and the vice-chair, and what the committee decides rather than recommends.',
             [
                 'en' => ['heading' => 'Executive Committee'],
@@ -120,7 +128,7 @@ class PublicPagesSeeder extends Seeder
             $page,
             BlockType::RichText,
             $position++,
-            ['alignment' => 'start'],
+            ['alignment' => 'start', 'layout' => 'people'],
             'Secretariat: where it is based, its establishment, the Executive Secretary and the functional roles, and the contact route for each. The contact page carries the general address already; this section is the standing description.',
             [
                 'en' => ['heading' => 'Secretariat'],
