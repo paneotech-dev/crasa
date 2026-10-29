@@ -137,13 +137,13 @@ final class ShellNavigation
                 ['key' => 'dashboard', 'route' => 'extranet.dashboard', 'icon' => 'dashboard', 'permission' => null],
                 ['key' => 'submissions', 'route' => 'submissions', 'icon' => 'submissions', 'permission' => Permission::SubmitCountryReturn],
                 ['key' => 'folders', 'route' => 'extranet.folders', 'icon' => 'folder', 'permission' => Permission::OpenMemberDocuments],
-                // A country is what these two pages ask for (ContributionController,
-                // AuthorityProfileController), so a committee member with one
-                // reads them too.
+                // The member area and a country is what these two pages ask
+                // for (ContributionController, AuthorityProfileController), so
+                // a committee member with one reads them too.
                 ['key' => 'contributions', 'route' => 'contributions', 'icon' => 'instruments', 'permission' => null,
-                    'can' => fn () => auth()->user()?->country_id !== null],
+                    'can' => fn () => Gate::allows('read-own-country-record')],
                 ['key' => 'authority', 'route' => 'authority', 'icon' => 'authorities', 'permission' => null,
-                    'can' => fn () => auth()->user()?->country_id !== null],
+                    'can' => fn () => Gate::allows('read-own-country-record')],
                 ['key' => 'announcements', 'route' => 'announcements', 'icon' => 'newsroom', 'permission' => null],
             ],
             'committees' => [],

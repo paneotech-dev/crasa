@@ -43,7 +43,7 @@
         @csrf
         @method('PUT')
 
-        <fieldset class="a-fieldset">
+        <fieldset class="a-fieldset" @disabled(! $mayPropose)>
             <legend class="a-legend">{{ __('authority.the_authority') }}</legend>
 
             <div class="a-field">
@@ -84,7 +84,7 @@
             </div>
         </fieldset>
 
-        <fieldset class="a-fieldset">
+        <fieldset class="a-fieldset" @disabled(! $mayPropose)>
             <legend class="a-legend">{{ __('authority.mandate') }}</legend>
             <p class="a-hint">{{ __('authority.mandate_hint') }}</p>
 
@@ -99,7 +99,7 @@
             @endforeach
         </fieldset>
 
-        <fieldset class="a-fieldset">
+        <fieldset class="a-fieldset" @disabled(! $mayPropose)>
             <legend class="a-legend">{{ __('authority.seats') }}</legend>
             <p class="a-hint">{{ __('authority.seats_hint') }}</p>
 
@@ -114,8 +114,12 @@
             @endforeach
         </fieldset>
 
-        <div class="a-form__actions">
-            <button class="a-btn a-btn--primary" type="submit">{{ __('authority.propose') }}</button>
-        </div>
+        @if ($mayPropose)
+            <div class="a-form__actions">
+                <button class="a-btn a-btn--primary" type="submit">{{ __('authority.propose') }}</button>
+            </div>
+        @else
+            <p class="a-hint">{{ __('d3_security.authority_read_only') }}</p>
+        @endif
     </form>
 @endsection

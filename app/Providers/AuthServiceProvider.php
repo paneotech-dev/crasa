@@ -148,6 +148,15 @@ class AuthServiceProvider extends ServiceProvider
          */
         Gate::define('enter-member-area', fn (User $user) => $user->hasPermission(Permission::ReachCommitteeWorkspace));
 
+        /*
+         * A member state's own pages in the member area: its contributions
+         * and its authority record. Read by anyone in the member area who
+         * belongs to a member state (a committee member included); written
+         * only with SubmitCountryReturn, which the controllers check on
+         * every write. The sidebar asks this same gate.
+         */
+        Gate::define('read-own-country-record', fn (User $user) => $user->country_id !== null && $user->can('enter-member-area'));
+
         /**
          * No Gate::before superuser shortcut. An administrator's power comes
          * from the matrix, which lets the two-factor withholding in
