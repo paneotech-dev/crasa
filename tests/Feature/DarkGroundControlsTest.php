@@ -103,37 +103,27 @@ class DarkGroundControlsTest extends TestCase
         }
     }
 
-    public function test_every_select_on_a_dark_section_is_reached_by_the_component_rule(): void
+    public function test_the_homepage_has_no_dark_section_and_its_selects_carry_the_component(): void
     {
-        // The rule is unconditional on .c-select, so this checks the markup
-        // side: every select on a dark ground actually carries that class.
+        // Day 2: the light theme leaves no navy ground on the homepage, so
+        // the comparison's selects sit on a light ground. They still carry
+        // .c-select, which is what styles them and their options.
         foreach (array_keys(Locales::all()) as $locale) {
             $html = $this->get("/{$locale}")->assertOk()->getContent();
 
-            preg_match_all('/data-ground="(navy(?:-mid)?)"/', $html, $grounds, PREG_OFFSET_CAPTURE);
+            $this->assertDoesNotMatchRegularExpression(
+                '/data-ground="navy(?:-mid)?"/',
+                $html,
+                "A homepage section in {$locale} is still on a navy ground.",
+            );
 
-            $found = 0;
+            preg_match_all('/<select[^>]*name="cmp_[^"]*"[^>]*>/', $html, $selects);
 
-            foreach ($grounds[0] as [$ignored, $offset]) {
-                $end = strpos($html, '</section>', $offset);
-                $section = substr($html, $offset, $end - $offset);
+            $this->assertNotEmpty($selects[0], "No comparison select found in {$locale} to check.");
 
-                preg_match_all('/<select[^>]*>/', $section, $selects);
-
-                foreach ($selects[0] as $select) {
-                    $found++;
-                    $this->assertStringContainsString(
-                        'c-select',
-                        $select,
-                        "A select on a dark section in {$locale} does not carry .c-select, so the "
-                        .'option rule never reaches it.',
-                    );
-                }
+            foreach ($selects[0] as $select) {
+                $this->assertStringContainsString('c-select', $select, "A comparison select in {$locale} does not carry .c-select.");
             }
-
-            // The homepage comparison band carries three. If that ever
-            // drops to zero this test is passing on an empty set.
-            $this->assertGreaterThan(0, $found, "No dark-ground select found in {$locale} to check.");
         }
     }
 

@@ -101,7 +101,7 @@ enum BlockType: string
             self::CommitteeGrid => 'sand',
             self::RichText, self::DocumentList => 'cream',
             // "background:var(--c-navy)" -- screen 02 line 376.
-            self::StatementBand => 'navy',
+            self::StatementBand => 'white',
             self::CallToAction => 'navy',
         };
     }
