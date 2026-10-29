@@ -152,7 +152,7 @@
 }
 
 .c-cmp__state:hover { border-color: var(--c-border); background: var(--c-cream); }
-.c-cmp__state[aria-pressed="true"] { border-color: var(--c-green-dark); background: var(--c-green-light); }
+.c-cmp__state[aria-current="true"] { border-color: var(--c-green-dark); background: var(--c-green-light); }
 
 /* A state that cannot be added because four are already chosen. It stays a
    link so it can still be read and focused, and says why rather than

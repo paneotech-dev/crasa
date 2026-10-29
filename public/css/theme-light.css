@@ -250,6 +250,7 @@ html:not(.has-js) .c-header__navrow { display: block; }
 :root .c-cmp__masthead { background: var(--c-tint-blue); color: var(--c-charcoal); border-bottom: 1px solid var(--c-sand); }
 :root .c-cmp__masthead-scrim { display: none; }
 :root .c-cmp__masthead h1 { color: var(--c-green-dark); }
+:root .c-cmp__lead { color: var(--c-charcoal); }
 
 .n-hero { background: var(--c-tint-blue); }
 .b-card__typeslot, .c-article__typeslot, .n-card__media { background: var(--c-green-light); }

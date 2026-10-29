@@ -361,7 +361,7 @@ class ComparatorTest extends TestCase
         @$dom->loadHTML($html);
         $xpath = new \DOMXPath($dom);
 
-        $unselected = $xpath->query('//a[contains(@class,"c-cmp__state")][@aria-pressed="false"]');
+        $unselected = $xpath->query('//a[contains(@class,"c-cmp__state")][not(@aria-current)]');
         $this->assertSame(11, $unselected->length);
         $this->assertSame(0, $xpath->query('//a[contains(@class,"c-cmp__state")][@data-at-limit]')->length, 'A fourth state is offered.');
 
@@ -381,7 +381,7 @@ class ComparatorTest extends TestCase
         $xpath = new \DOMXPath($dom);
 
         $this->assertSame(10, $xpath->query('//a[contains(@class,"c-cmp__state")][@data-at-limit][@aria-disabled="true"]')->length);
-        $this->assertSame(4, $xpath->query('//a[contains(@class,"c-cmp__state")][@aria-pressed="true"][not(@data-at-limit)]')->length);
+        $this->assertSame(4, $xpath->query('//a[contains(@class,"c-cmp__state")][@aria-current="true"][not(@data-at-limit)]')->length);
     }
 
     /**

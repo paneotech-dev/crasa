@@ -28,7 +28,9 @@ class MeetingFactory extends Factory
             'slug' => Str::slug($title).'-'.$this->faker->unique()->numberBetween(1, 99999),
             'kind' => 'committee',
             'starts_on' => $starts,
-            'ends_on' => $starts,
+            // Follows starts_on when a test sets only that: a meeting never
+            // ends before it starts, and a running meeting is read by its end.
+            'ends_on' => fn (array $attributes) => $attributes['starts_on'],
             'location' => $this->faker->city().', Botswana',
             'clearance' => 'member',
             'is_sample' => true,

@@ -109,7 +109,7 @@
                                 @endphp
                                 <a class="c-cmp__state"
                                    href="{{ $nav(['mode' => 'compare', 'category' => $comparison->category, 'countries' => $next->implode(',')]) }}"
-                                   aria-pressed="{{ $selected ? 'true' : 'false' }}"
+                                   @if ($selected) aria-current="true" @endif
                                    @if ($atLimit) data-at-limit aria-disabled="true" @endif>
                                     <x-flag :iso="$country->iso_code" />
                                     <span class="c-cmp__code">{{ strtoupper($country->iso_code) }}</span>
