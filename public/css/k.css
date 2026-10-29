@@ -502,3 +502,10 @@ html:not(.k-motion) .k-home .u-reveal { opacity: 1; transform: none; }
   .k-header *, .k-drawer, .k-home *, .k-crumb * { transition-duration: .01ms !important; animation: none !important; }
   .k-cap > *, .k-hero__fig figcaption { transform: none !important; }
 }
+
+/* Social channels in the utility bar (desktop). White marks on the deep green. */
+.k-ubar__soc { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 2px; }
+.k-ubar__soc a { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: #FFFFFF; }
+.k-ubar__soc a:hover { background: rgba(255, 255, 255, .12); }
+.k-ubar__soc a:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
+.k-ubar__soc svg { width: 16px; height: 16px; }
