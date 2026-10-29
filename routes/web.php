@@ -776,6 +776,26 @@ Route::prefix('{locale}')
 
                 Route::get('audit', [AuditLogController::class, 'index'])->name('audit');
 
+                // Day 3: taxo
+                /*
+                 * Content > Taxonomies: news categories, publication types,
+                 * sectors and tags. ManageSettings, checked in the
+                 * controller on every action.
+                 */
+                Route::get('taxonomies/{kind?}', [\App\Http\Controllers\Admin\TaxonomyController::class, 'index'])
+                    ->where('kind', 'categories|publication-types|sectors|tags')->name('taxonomies');
+                Route::get('taxonomies/{kind}/new', [\App\Http\Controllers\Admin\TaxonomyController::class, 'create'])
+                    ->where('kind', 'categories|publication-types|sectors|tags')->name('taxonomies.create');
+                Route::post('taxonomies/{kind}', [\App\Http\Controllers\Admin\TaxonomyController::class, 'store'])
+                    ->where('kind', 'categories|publication-types|sectors|tags')->name('taxonomies.store');
+                Route::get('taxonomies/{kind}/{id}', [\App\Http\Controllers\Admin\TaxonomyController::class, 'edit'])
+                    ->where('kind', 'categories|publication-types|sectors|tags')->whereNumber('id')->name('taxonomies.edit');
+                Route::put('taxonomies/{kind}/{id}', [\App\Http\Controllers\Admin\TaxonomyController::class, 'update'])
+                    ->where('kind', 'categories|publication-types|sectors|tags')->whereNumber('id')->name('taxonomies.update');
+                Route::delete('taxonomies/{kind}/{id}', [\App\Http\Controllers\Admin\TaxonomyController::class, 'destroy'])
+                    ->where('kind', 'categories|publication-types|sectors|tags')->whereNumber('id')->name('taxonomies.destroy');
+                // end Day 3: taxo
+
                 /*
                  * Moderated publishing (F2): the awaiting approval inbox,
                  * one item's decision, sending an item, the rules page.

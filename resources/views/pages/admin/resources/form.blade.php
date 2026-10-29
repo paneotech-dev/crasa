@@ -57,7 +57,8 @@
 
     <form method="POST" action="{{ $isNew
         ? route('admin.resources.store', ['locale' => app()->getLocale(), 'resource' => $definition->key])
-        : route('admin.resources.update', ['locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $record->getKey()]) }}">
+        : route('admin.resources.update', ['locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $record->getKey()]) }}"
+        @if (collect($definition->fields)->contains(fn ($f) => $f->control === 'photo')) enctype="multipart/form-data" @endif>
         @csrf
         @unless ($isNew) @method('PUT') @endunless
         @php
@@ -92,6 +93,10 @@
                                     @endif
                                 </div>
                             @endif
+
+                        {{-- A photograph: library or upload, thumbnail, focal point (Day 3, taxo). --}}
+                        @elseif ($field->control === 'photo')
+                            @include('pages.admin.news._photo')
 
                         @elseif ($field->control === 'checkbox')
                             <div class="a-field">

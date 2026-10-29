@@ -76,6 +76,8 @@ final class ShellNavigation
                 ['key' => 'events', 'route' => 'admin.meetings', 'icon' => 'events', 'permission' => Permission::ManageMeetings],
                 ['key' => 'media', 'route' => 'admin.media', 'icon' => 'media', 'permission' => Permission::ManageContent],
                 ['key' => 'navigation', 'route' => 'admin.menus', 'icon' => 'navigation', 'permission' => Permission::ManageContent],
+                // Day 3 (taxo): categories, publication types, sectors, tags.
+                ['key' => 'taxonomies', 'route' => 'admin.taxonomies', 'icon' => 'tag', 'permission' => Permission::ManageSettings, 'label' => __('d3_taxo.nav')],
                 ['key' => 'announcements', 'route' => 'admin.announcements', 'icon' => 'bell', 'permission' => Permission::ManageContent],
                 ['key' => 'social', 'route' => 'admin.social', 'icon' => 'newsroom', 'permission' => Permission::ManageContent, 'label' => __('fb.nav_social'),
                     'badge' => fn () => \App\Support\RoleDashboard::socialDrafts()],

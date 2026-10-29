@@ -130,7 +130,7 @@ class PermissionChecksDay2Test extends TestCase
             'category' => 'press_release', 'status' => 'draft', 'published_at' => '2026-10-28',
             'en' => ['title' => 'Workshop news item, edited', 'summary' => 'A summary.', 'body' => 'A body.'],
         ])->assertRedirect()->assertSessionHasNoErrors();
-        $this->assertSame('press_release', $item->fresh()->category->value);
+        $this->assertSame('press_release', $item->fresh()->categorySlug());
 
         $this->actingAs($editor)->delete("/en/admin/data/news/{$item->id}")->assertRedirect();
         $this->assertSoftDeleted('news_items', ['id' => $item->id]);

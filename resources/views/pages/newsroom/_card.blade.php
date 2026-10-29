@@ -17,9 +17,9 @@
             <img src="{{ $photo['src'] }}"
                  @if ($photo['srcset']) srcset="{{ $photo['srcset'] }}" sizes="{{ $featured ? '(max-width: 760px) 100vw, 50vw' : '(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw' }}" @endif
                  @if ($photo['width'] && $photo['height']) width="{{ $photo['width'] }}" height="{{ $photo['height'] }}" @endif
-                 alt="" loading="{{ $featured ? 'eager' : 'lazy' }}" @if ($featured) fetchpriority="high" @endif decoding="async">
+                 alt="" loading="{{ $featured ? 'eager' : 'lazy' }}" @if ($featured) fetchpriority="high" @endif decoding="async" @if ($item->hero_focal_x !== null) style="object-position: {{ $item->heroPosition() }}" @endif>
         @else
-            <img src="{{ \App\Support\NewsFormat::placeholder($item->category->value) }}"
+            <img src="{{ \App\Support\NewsFormat::placeholder($item->categorySlug()) }}"
                  alt="" loading="lazy" decoding="async">
         @endif
     </div>

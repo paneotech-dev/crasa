@@ -7,6 +7,7 @@ use App\Admin\ResourceRegistry;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Support\Locales;
+use App\Support\NewsPhoto;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
@@ -141,6 +142,7 @@ class ResourceController extends Controller
         $data = $request->validate($this->rules($definition, new $definition->model, $request));
 
         $record = new $definition->model;
+        $data = NewsPhoto::apply($definition, $record, $request, $data);
         $record->fill($this->attributes($definition, $data));
         $wentLive = $this->guardPublishing($record);
         $this->assignSlug($definition, $record, $data);
@@ -181,6 +183,7 @@ class ResourceController extends Controller
         $this->authorizeAction('update', $definition, $record);
 
         $data = $request->validate($this->rules($definition, $record, $request));
+        $data = NewsPhoto::apply($definition, $record, $request, $data);
 
         $record->fill($this->attributes($definition, $data));
         $wentLive = $this->guardPublishing($record);
@@ -309,7 +312,11 @@ class ResourceController extends Controller
                     ->mapWithKeys(fn ($year) => [$year => $year])
                     ->all();
             } else {
-                $options = collect($filter['options'])->map(fn ($key) => __($key))->all();
+                // A closure lists names already in the interface language
+                // (the taxonomy lists); otherwise the options are lang keys.
+                $options = $filter['options'] instanceof \Closure
+                    ? ($filter['options'])()
+                    : collect($filter['options'])->map(fn ($key) => __($key))->all();
             }
 
             $asked = $request->string($filter['key'])->toString();
@@ -438,6 +445,15 @@ class ResourceController extends Controller
             // Shown, never written. See Field::readOnly.
             if ($field->readOnly) {
                 continue;
+            }
+
+            // The photograph also carries its focal point (Day 3, taxo).
+            if ($field->control === 'photo') {
+                foreach ($field->options as $column) {
+                    if (array_key_exists($column, $data)) {
+                        $attributes[$column] = $data[$column];
+                    }
+                }
             }
 
             if ($field->control === 'checkbox') {

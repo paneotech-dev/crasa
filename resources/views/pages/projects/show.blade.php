@@ -154,11 +154,11 @@
                             @if ($document?->thumbnail_path)
                                 <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($document->thumbnail_path) }}" alt="" loading="lazy" width="320" height="240" style="object-fit: contain">
                             @else
-                                <span class="cp-doc-thumb" aria-hidden="true">{{ $document ? strtoupper(pathinfo($document->original_filename, PATHINFO_EXTENSION)) : __($publication->publication_type->labelKey()) }}</span>
+                                <span class="cp-doc-thumb" aria-hidden="true">{{ $document ? strtoupper(pathinfo($document->original_filename, PATHINFO_EXTENSION)) : $publication->typeLabel() }}</span>
                             @endif
                         </figure>
                         <div class="u-card__body">
-                            <span class="u-card__label">{{ __($publication->publication_type->labelKey()) }}</span>
+                            <span class="u-card__label">{{ $publication->typeLabel() }}</span>
                             <h3 class="u-card__title"><a href="{{ route('publications.show', ['locale' => $locale, 'slug' => $publication->slug]) }}" @if ($ptitle?->isFallback()) lang="{{ $ptitle->locale }}" @endif>{{ $ptitle?->value ?? $publication->slug }}</a></h3>
                             <div class="u-card__meta">
                                 @if ($publication->published_on)<span>{{ $publication->published_on->format('Y') }}</span>@endif

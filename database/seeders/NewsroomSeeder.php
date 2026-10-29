@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Enums\NewsCategory;
 use App\Models\NewsItem;
 use App\Models\Sector;
 use App\Models\Tag;
@@ -116,7 +115,7 @@ class NewsroomSeeder extends Seeder
             $item = NewsItem::updateOrCreate(
                 ['slug' => $article['slug']],
                 [
-                    'category' => NewsCategory::from($article['category']),
+                    'category' => $article['category'],
                     'sector_id' => $article['sector'] === null ? null : ($sectors[$article['sector']] ?? null),
                     'published_at' => now()->subDays(($index + 1) * 9),
                     'author_name' => 'CRASA Secretariat',

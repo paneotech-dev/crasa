@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Enums\PublicationType;
 use App\Models\Publication;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -16,7 +15,7 @@ class PublicationFactory extends Factory
     {
         return [
             'slug' => Str::slug($this->faker->unique()->words(5, true)),
-            'publication_type' => PublicationType::Guideline,
+            'publication_type' => 'guideline',
             'sector_id' => null,
             'committee_id' => null,
             'country_id' => null,

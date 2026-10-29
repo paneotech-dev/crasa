@@ -306,7 +306,7 @@
             'url' => route('publications.show', ['locale' => app()->getLocale(), 'slug' => $p->slug]),
             'cells' => [
                 'title' => $p->translate('title')?->value ?? $p->slug,
-                'type' => __($p->publication_type->labelKey()),
+                'type' => $p->typeLabel(),
                 'sector' => $p->sector?->name ?? '',
                 'year' => $p->published_on?->year ?? '',
                 'languages' => implode(' ', $p->language_codes),

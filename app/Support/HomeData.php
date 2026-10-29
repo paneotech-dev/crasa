@@ -2,7 +2,6 @@
 
 namespace App\Support;
 
-use App\Enums\PublicationType;
 use App\Models\Committee;
 use App\Models\Country;
 use App\Models\Indicator;
@@ -184,8 +183,8 @@ final class HomeData
 
                     return [
                         'title' => $p->translated('title', $p->slug),
-                        'type' => __($p->publication_type->labelKey()),
-                        'type_key' => $p->publication_type->value,
+                        'type' => $p->typeLabel(),
+                        'type_key' => $p->typeSlug(),
                         'sector' => $p->sector?->name,
                         'year' => $p->published_on?->format('Y'),
                         'format' => $document ? strtoupper(pathinfo((string) $document->original_filename, PATHINFO_EXTENSION)) : null,
@@ -218,12 +217,14 @@ final class HomeData
                     'id' => $n->id,
                     'title' => $n->translated('title', $n->slug),
                     'summary' => NewsFormat::excerpt($n->translated('summary', '') ?: strip_tags($n->translated('body', ''))),
-                    'type' => __($n->category->labelKey()),
-                    'type_key' => $n->category->value,
+                    'type' => $n->categoryLabel(),
+                    'type_key' => $n->categorySlug(),
                     'date' => $n->date_unknown ? null : $n->published_at?->translatedFormat('j F Y'),
                     'iso' => $n->date_unknown ? null : $n->published_at?->toDateString(),
                     'image' => $n->hero_image_path ? ResizedImage::attributes($n->hero_image_path, 'card') : null,
-                    'placeholder' => NewsFormat::placeholder($n->category->value),
+                    'placeholder' => NewsFormat::placeholder($n->categorySlug()),
+                    // Null unless an editor set a focal point: the card keeps its framing.
+                    'position' => $n->hero_focal_x !== null ? $n->heroPosition() : null,
                     'url' => route('newsroom.show', ['locale' => app()->getLocale(), 'slug' => $n->slug]),
                 ])
                 ->values()
@@ -280,7 +281,7 @@ final class HomeData
             'members' => Country::count(),
             'committees' => Committee::where('is_active', true)->count(),
             'publications' => PublishedCounts::publications(),
-            'guidelines' => PublishedCounts::publicationsQuery()->where('publication_type', PublicationType::Guideline->value)->count(),
+            'guidelines' => PublishedCounts::publicationsQuery()->where('publication_type', 'guideline')->count(),
             'postal' => PublishedCounts::publicationsQuery()->whereRelation('sector', 'slug', 'postal')->count(),
             'indicators' => Indicator::count(),
         ]);
