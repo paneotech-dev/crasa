@@ -54,7 +54,7 @@
                             </span>
                         </span>
                         <span class="a-row__time">
-                            <time datetime="{{ $notification->created_at?->toIso8601String() }}">{{ $notification->created_at?->isoFormat('D MMMM YYYY, HH:mm') }}</time>
+                            <time datetime="{{ $notification->created_at?->toIso8601String() }}">{{ $notification->created_at?->displayed()->isoFormat('D MMMM YYYY, HH:mm') }}</time>
                         </span>
                         {{-- Read state is a word as well as a weight. An
                              unread row told apart only by a heavier font is

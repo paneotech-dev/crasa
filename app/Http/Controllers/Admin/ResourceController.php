@@ -85,12 +85,31 @@ class ResourceController extends Controller
                 });
             });
 
+        $filters = $this->filters($definition, $request);
+        foreach ($filters as $filter) {
+            if ($filter['value'] === null) {
+                continue;
+            }
+            if ($filter['type'] === 'year') {
+                $query->whereYear($filter['column'], (int) $filter['value']);
+            } else {
+                $query->where($filter['column'], $filter['value']);
+            }
+        }
+
+        // Undated items (the legacy import's "date not known") after the
+        // dated ones: their stored date is the import day, not a real one.
+        if ($definition->orderBy !== null && in_array('date_unknown', (new ($definition->model))->getFillable(), true)) {
+            $query->orderBy('date_unknown');
+        }
+
         if ($definition->orderBy !== null) {
-            $query->orderBy($definition->orderBy);
+            $query->orderBy($definition->orderBy, $definition->orderDirection)->orderBy($query->getModel()->getQualifiedKeyName(), $definition->orderDirection);
         }
 
         return view('pages.admin.resources.index', [
             'definition' => $definition,
+            'filters' => $filters,
             'records' => $query->paginate(25)->withQueryString(),
             'showingDeleted' => $showingDeleted,
             'deletedCount' => $definition->softDeletes() ? $definition->query()->onlyTrashed()->count() : 0,
@@ -249,6 +268,47 @@ class ResourceController extends Controller
     }
 
     /* ---------------------------------------------------------------------- */
+
+    /**
+     * The list filters a resource declares, with their options and the value
+     * asked for. A value that is not one of the options is ignored rather
+     * than passed to the query.
+     *
+     * @return list<array{key: string, column: string, type: string, options: array<string, string>, value: ?string}>
+     */
+    private function filters(Resource $definition, Request $request): array
+    {
+        $out = [];
+
+        foreach ($definition->filters as $filter) {
+            $type = $filter['type'] ?? 'options';
+
+            if ($type === 'year') {
+                $options = $definition->query()
+                    ->whereNotNull($filter['column'])
+                    ->pluck($filter['column'])
+                    ->map(fn ($date) => \Illuminate\Support\Carbon::parse($date)->format('Y'))
+                    ->unique()
+                    ->sortDesc()
+                    ->mapWithKeys(fn ($year) => [$year => $year])
+                    ->all();
+            } else {
+                $options = collect($filter['options'])->map(fn ($key) => __($key))->all();
+            }
+
+            $asked = $request->string($filter['key'])->toString();
+
+            $out[] = [
+                'key' => $filter['key'],
+                'column' => $filter['column'],
+                'type' => $type,
+                'options' => $options,
+                'value' => array_key_exists($asked, $options) ? $asked : null,
+            ];
+        }
+
+        return $out;
+    }
 
     private function definition(string $resource): Resource
     {

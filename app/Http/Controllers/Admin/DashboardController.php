@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\PublishedCounts;
 use App\Enums\PageStatus;
 use App\Enums\Permission;
 use App\Enums\SubmissionStatus;
@@ -103,8 +104,9 @@ class DashboardController extends Controller
     private function tiles(): array
     {
         $locale = app()->getLocale();
-        $publications = Publication::count();
-        $ict = Publication::whereRelation('sector', 'slug', '!=', 'postal')->count();
+        // Published only, the same count the public site states (INC-10).
+        $publications = PublishedCounts::publications();
+        $ict = PublishedCounts::ictPublications();
         $reporting = Country::whereHas('indicatorValues')->count();
 
         return [
@@ -116,9 +118,9 @@ class DashboardController extends Controller
                 'url' => route('admin.resources', ['locale' => $locale, 'resource' => 'publications']),
             ],
             [
-                'n' => NewsItem::count(),
+                'n' => PublishedCounts::news(),
                 'label' => __('admin.dash_stat_news'),
-                'note' => __('admin.stat_news_note', ['n' => NewsItem::whereYear('published_at', now()->year)->count()]),
+                'note' => __('admin.stat_news_note', ['n' => PublishedCounts::newsThisYear()]),
                 'icon' => 'newsroom',
                 'url' => route('admin.resources', ['locale' => $locale, 'resource' => 'news']),
             ],
@@ -144,8 +146,9 @@ class DashboardController extends Controller
      */
     private function stats(): array
     {
-        $publications = Publication::count();
-        $ict = Publication::whereRelation('sector', 'slug', '!=', 'postal')->count();
+        // Published only, the same count the public site states (INC-10).
+        $publications = PublishedCounts::publications();
+        $ict = PublishedCounts::ictPublications();
 
         return [
             [
@@ -154,9 +157,9 @@ class DashboardController extends Controller
                 'note' => __('admin.stat_publications_note', ['ict' => $ict, 'postal' => $publications - $ict]),
             ],
             [
-                'n' => NewsItem::count(),
+                'n' => PublishedCounts::news(),
                 'label' => __('admin.stat_news'),
-                'note' => __('admin.stat_news_note', ['n' => NewsItem::whereYear('published_at', now()->year)->count()]),
+                'note' => __('admin.stat_news_note', ['n' => PublishedCounts::newsThisYear()]),
             ],
             [
                 'n' => Committee::count(),
@@ -169,7 +172,7 @@ class DashboardController extends Controller
                 'note' => __('admin.stat_members_note', ['n' => Country::has('authorities')->count()]),
             ],
             [
-                'n' => Instrument::count(),
+                'n' => PublishedCounts::instruments(),
                 'label' => __('admin.stat_instruments'),
                 'note' => __('admin.stat_instruments_note', ['n' => Instrument::where('status', 'in_force')->count()]),
             ],

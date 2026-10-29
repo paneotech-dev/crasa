@@ -14,7 +14,7 @@ return [
     // The legacy site gave no date; the stored one is the day it was read.
     'date_not_stated' => 'Date not stated',
     'none_upcoming_title' => 'Nothing scheduled publicly',
-    'none_upcoming_body' => 'Meetings appear here once the Secretariat publishes them. Committee meetings are listed in the extranet for the member states that sit on them.',
+    'none_upcoming_body' => 'Meetings appear here once the Secretariat publishes them. Committee meetings are listed in the member area for the member states that sit on them.',
     'agenda' => 'Agenda',
     'registration' => 'Registration',
     'registration_body' => 'File your arrival and departure so the Secretariat knows when to expect you. Everything else about the meeting is arranged by the organisers.',

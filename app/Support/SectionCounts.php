@@ -83,13 +83,13 @@ final class SectionCounts
         $locale = app()->getLocale();
 
         return [
-            self::count(Publication::listed()->count(), 'publications.count_documents', route('publications', ['locale' => $locale])),
+            self::count(PublishedCounts::publications(), 'publications.count_documents', route('publications', ['locale' => $locale])),
             self::count(
                 Publication::listed()->whereNotNull('country_id')->distinct()->count('country_id'),
                 'publications.count_states',
                 route('members', ['locale' => $locale])
             ),
-            self::count(Instrument::published()->count(), 'publications.count_instruments', null),
+            self::count(PublishedCounts::instruments(), 'publications.count_instruments', null),
         ];
     }
 
@@ -102,7 +102,7 @@ final class SectionCounts
             self::count(Country::count(), 'blocks.hero_count_members', null),
             self::count(Committee::where('is_active', true)->count(), 'members.count_committees', route('committees', ['locale' => $locale])),
             self::count(Indicator::active()->count(), 'blocks.hero_count_indicators', route('comparator', ['locale' => $locale])),
-            self::count(Publication::listed()->count(), 'blocks.hero_count_publications', route('publications', ['locale' => $locale])),
+            self::count(PublishedCounts::publications(), 'blocks.hero_count_publications', route('publications', ['locale' => $locale])),
         ];
     }
 
@@ -130,7 +130,7 @@ final class SectionCounts
         $newest = NewsItem::published()->where('date_unknown', false)->max('published_at');
 
         return array_values(array_filter([
-            self::count(NewsItem::published()->count(), 'news.count_items', null),
+            self::count(PublishedCounts::news(), 'news.count_items', null),
             self::count(NewsItem::published()->where('category', 'press_release')->count(), 'news.count_press_releases', null),
             $newest ? [
                 'value' => \App\Support\NewsFormat::longDate(\Illuminate\Support\Carbon::parse($newest)),
@@ -184,9 +184,9 @@ final class SectionCounts
         $locale = app()->getLocale();
 
         return [
-            self::count(Publication::listed()->count(), 'publications.count_documents', route('publications', ['locale' => $locale])),
-            self::count(NewsItem::published()->count(), 'news.count_items', route('newsroom', ['locale' => $locale])),
-            self::count(Instrument::published()->count(), 'publications.count_instruments', null),
+            self::count(PublishedCounts::publications(), 'publications.count_documents', route('publications', ['locale' => $locale])),
+            self::count(PublishedCounts::news(), 'news.count_items', route('newsroom', ['locale' => $locale])),
+            self::count(PublishedCounts::instruments(), 'publications.count_instruments', null),
         ];
     }
 
@@ -199,8 +199,8 @@ final class SectionCounts
     public static function forCountry(Country $country): array
     {
         return [
-            'instruments' => Instrument::published()->where('country_id', $country->id)->count(),
-            'publications' => Publication::listed()->where('country_id', $country->id)->count(),
+            'instruments' => PublishedCounts::instruments($country),
+            'publications' => PublishedCounts::publications($country),
             'committees' => $country->committees()->count(),
             'indicators' => IndicatorValue::query()
                 ->where('country_id', $country->id)

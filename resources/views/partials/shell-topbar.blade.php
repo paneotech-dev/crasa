@@ -30,23 +30,41 @@
         {{-- Back-office roles search the administration. Every other role
              searches the public site: the administration search refuses
              them, and a box that leads to a refusal is worse than none
-             (presentation of 14 October 2026). --}}
+             (presentation of 14 October 2026).
+
+             In the member area the box searches the member area, for every
+             role that may enter it, and says so (INC-11): an administrator
+             inside the member area was offered "Search the administration". --}}
         @php
-            $adminSearch = $user?->can('enter-back-office') ?? false;
-            $searchRoute = $adminSearch ? 'admin.search' : 'search';
+            $inMemberArea = ($area ?? null) === 'member' || ! ($user?->can('enter-back-office') ?? false);
+            $memberSearch = $inMemberArea && ($user?->can('viewAny', \App\Models\Folder::class) ?? false);
+            $adminSearch = ! $inMemberArea && ($user?->can('enter-back-office') ?? false);
+            $searchRoute = $memberSearch ? 'extranet.search' : ($adminSearch ? 'admin.search' : 'search');
+            $searchLabel = $memberSearch ? __('office.member_search_label') : ($adminSearch ? __('admin.search_everything') : __('search.label'));
+            $searchPlaceholder = $memberSearch ? __('office.member_search_label').'…' : ($adminSearch ? __('admin.search_placeholder') : __('search.label').'…');
         @endphp
         <form class="a-top__search" method="GET" action="{{ route($searchRoute, ['locale' => $locale]) }}" role="search">
-            <label class="c-sr" for="admin-search">{{ $adminSearch ? __('admin.search_everything') : __('search.label') }}</label>
+            <label class="c-sr" for="admin-search">{{ $searchLabel }}</label>
             <x-shell-icon name="search" :size="17" class="a-top__searchicon" />
             <input class="a-top__field" type="search" id="admin-search" name="q"
                    value="{{ request()->routeIs($searchRoute) ? request('q') : '' }}"
-                   placeholder="{{ $adminSearch ? __('admin.search_placeholder') : __('search.label').'…' }}">
+                   placeholder="{{ $searchPlaceholder }}">
         </form>
     @else
         <span class="a-top__spacer"></span>
     @endif
 
     <div class="a-top__utilities">
+        {{-- Mail switched off, in plain words, for the accounts that can
+             switch it on. Nobody else sees it. --}}
+        @if ($user?->can(\App\Enums\Permission::ManageSettings->value) && \App\Support\DeliveryCheck::mailIsSilentInProduction())
+            <p class="a-top__mailoff" role="status" title="{{ __('office.mail_off_badge') }} {{ __('office.mail_off_badge_more') }}">
+                <x-shell-icon name="bell" :size="15" />
+                <span>{{ __('office.mail_off_badge') }}</span>
+                <span class="a-top__mailoff-more">{{ __('office.mail_off_badge_more') }}</span>
+            </p>
+        @endif
+
         {{-- The language, as a pill group. Each is a link to this same page
              in that language, so switching never loses the reader's place. --}}
         <div class="a-pills" role="group" aria-label="{{ __('admin.interface_language') }}">
@@ -69,12 +87,20 @@
             @endif
         </a>
 
-        {{-- The help pages are the back office's; the extranet gets a 403. --}}
-        @can('enter-back-office')
-            <a class="a-top__icon" href="{{ route('admin.help', ['locale' => $locale]) }}" aria-label="{{ __('help.title') }}">
+        {{-- Help opens the guide for this account's role, on the workshop
+             site, in a new tab (UX-17). Every role has a section. --}}
+        @if ($user && config('crasa.role_guide_url'))
+            @php
+                $guideAnchor = [
+                    'administrator' => 'admin', 'editor' => 'editor', 'member_state_rep' => 'member',
+                    'committee_member' => 'committee', 'viewer' => 'everyone',
+                ][$user->role->value] ?? 'everyone';
+            @endphp
+            <a class="a-top__icon" href="{{ config('crasa.role_guide_url') }}#{{ $guideAnchor }}"
+               target="_blank" rel="noopener" aria-label="{{ __('office.role_guide') }}">
                 <x-shell-icon name="help" :size="19" />
             </a>
-        @endcan
+        @endif
 
         {{-- The initials open the account. A menu with two items that are
              both one click away already is a menu that adds a click. --}}

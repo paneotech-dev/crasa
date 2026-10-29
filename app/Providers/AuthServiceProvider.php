@@ -136,6 +136,13 @@ class AuthServiceProvider extends ServiceProvider
             Permission::ManageSettings,
         ]));
 
+        /*
+         * The member area (PM-01). Every role but the viewer: a viewer reads
+         * what is public and is refused the member area by the server, on
+         * every route in it, with the friendly 403 page.
+         */
+        Gate::define('enter-member-area', fn (User $user) => $user->hasPermission(Permission::ReachCommitteeWorkspace));
+
         /**
          * No Gate::before superuser shortcut. An administrator's power comes
          * from the matrix, which lets the two-factor withholding in

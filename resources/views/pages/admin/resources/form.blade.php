@@ -76,11 +76,15 @@
                                     <input type="checkbox" id="f-{{ $field->name }}" name="{{ $field->name }}" value="1" @checked((bool) $current)>
                                     {{ __('admin.field_'.$field->name) }}
                                 </label>
+                                @if (__('admin.field_'.$field->name.'_hint') !== 'admin.field_'.$field->name.'_hint')
+                                    <span class="a-hint">{{ __('admin.field_'.$field->name.'_hint') }}</span>
+                                @endif
+                                @error($field->name)<p class="c-field__error" id="e-{{ $field->name }}">{{ $message }}</p>@enderror
                             </div>
 
                         @elseif ($field->control === 'relation')
                             <div class="a-field">
-                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}@if ($field->required)<span class="a-required" aria-hidden="true">*</span><span class="c-sr">{{ __('admin.required') }}</span>@endif</label>
+                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}@if ($field->required) <span class="a-required">{{ __('admin.required') }}</span>@endif</label>
                                 <select class="a-select" id="f-{{ $field->name }}" name="{{ $field->name }}" @required($field->required)>
                                     @unless ($field->required)<option value="">{{ __('admin.setting_none') }}</option>@endunless
                                     @foreach ($options[$field->name] ?? [] as $id => $label)
@@ -95,7 +99,7 @@
 
                         @elseif ($field->control === 'select')
                             <div class="a-field">
-                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}@if ($field->required)<span class="a-required" aria-hidden="true">*</span><span class="c-sr">{{ __('admin.required') }}</span>@endif</label>
+                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}@if ($field->required) <span class="a-required">{{ __('admin.required') }}</span>@endif</label>
                                 <select class="a-select" id="f-{{ $field->name }}" name="{{ $field->name }}" @required($field->required)>
                                     @unless ($field->required)<option value="">{{ __('admin.setting_none') }}</option>@endunless
                                     @foreach ($field->options as $option)
@@ -104,22 +108,28 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error($field->name)<p class="c-field__error" id="e-{{ $field->name }}">{{ $message }}</p>@enderror
                             </div>
 
                         @elseif ($field->control === 'textarea')
                             <div class="a-field">
-                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}@if ($field->required)<span class="a-required" aria-hidden="true">*</span><span class="c-sr">{{ __('admin.required') }}</span>@endif</label>
+                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}@if ($field->required) <span class="a-required">{{ __('admin.required') }}</span>@endif</label>
                                 <textarea class="a-input" id="f-{{ $field->name }}" name="{{ $field->name }}" rows="4" @required($field->required)>{{ $current }}</textarea>
+                                @error($field->name)<p class="c-field__error" id="e-{{ $field->name }}">{{ $message }}</p>@enderror
                             </div>
 
                         @else
                             <div class="a-field">
-                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}@if ($field->required)<span class="a-required" aria-hidden="true">*</span><span class="c-sr">{{ __('admin.required') }}</span>@endif</label>
+                                <label class="a-label" for="f-{{ $field->name }}">{{ __('admin.field_'.$field->name) }}@if ($field->required) <span class="a-required">{{ __('admin.required') }}</span>@endif</label>
                                 <input class="a-input"
                                        type="{{ $field->control === 'date' ? 'date' : ($field->control === 'number' ? 'number' : ($field->control === 'url' ? 'url' : 'text')) }}"
                                        id="f-{{ $field->name }}" name="{{ $field->name }}"
                                        value="{{ $current instanceof \Illuminate\Support\Carbon ? $current->toDateString() : ($current instanceof BackedEnum ? $current->value : $current) }}"
                                        @required($field->required)>
+                                @if (__('admin.field_'.$field->name.'_hint') !== 'admin.field_'.$field->name.'_hint')
+                                    <span class="a-hint">{{ __('admin.field_'.$field->name.'_hint') }}</span>
+                                @endif
+                                @error($field->name)<p class="c-field__error" id="e-{{ $field->name }}">{{ $message }}</p>@enderror
                             </div>
                         @endif
                     @endforeach

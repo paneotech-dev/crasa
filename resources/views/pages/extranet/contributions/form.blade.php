@@ -42,7 +42,7 @@
                     <strong>{{ __('contributions.returned_heading') }}</strong>
                     <p>{{ $instrument->review_note }}</p>
                     @if ($instrument->reviewed_at)
-                        <p class="a-hint">{{ __('contributions.reviewed_on', ['date' => $instrument->reviewed_at->isoFormat('D MMMM YYYY')]) }}</p>
+                        <p class="a-hint">{{ __('contributions.reviewed_on', ['date' => $instrument->reviewed_at->displayed()->isoFormat('D MMMM YYYY')]) }}</p>
                     @endif
                 </div>
             @endif

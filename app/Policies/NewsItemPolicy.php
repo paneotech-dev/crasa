@@ -34,13 +34,20 @@ class NewsItemPolicy
         return $user->hasPermission(Permission::PublishContent);
     }
 
+    /*
+     * PM-05 (re-run 29 October 2026): an editor creates, edits AND deletes a
+     * news item. Screen 13's matrix keeps DeleteContent for administrators,
+     * and that stays true for pages, media, publications and folders. A
+     * news item is the editor's own daily material, its delete is soft and
+     * the editor can restore it, so ManageContent is enough here.
+     */
     public function delete(User $user, NewsItem $newsItem): bool
     {
-        return $user->hasPermission(Permission::DeleteContent);
+        return $user->hasPermission(Permission::DeleteContent) || $user->hasPermission(Permission::ManageContent);
     }
 
     public function restore(User $user, NewsItem $newsItem): bool
     {
-        return $user->hasPermission(Permission::DeleteContent);
+        return $user->hasPermission(Permission::DeleteContent) || $user->hasPermission(Permission::ManageContent);
     }
 }

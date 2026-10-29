@@ -56,6 +56,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         /*
+         * A stored instant shown in the Secretariat's zone. Storage stays
+         * UTC; this is display only (App\Support\LocalTime).
+         */
+        foreach ([\Carbon\Carbon::class, \Carbon\CarbonImmutable::class] as $carbon) {
+            $carbon::macro('displayed', fn () => \App\Support\LocalTime::display($this));
+        }
+
+        /*
          * Say so if mail is going nowhere.
          *
          * MAIL_MAILER=log accepts every message and delivers none, and does

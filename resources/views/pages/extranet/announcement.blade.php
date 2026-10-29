@@ -6,7 +6,7 @@
 @php($body = $announcement->translate('body'))
 
 @section('title', $title?->value ?? __('announcements.title'))
-@section('note', $announcement->published_at?->isoFormat('D MMMM YYYY') ?? '')
+@section('note', $announcement->published_at?->displayed()->isoFormat('D MMMM YYYY') ?? '')
 
 @section('crumbs')
     <li><a href="{{ route('announcements', ['locale' => app()->getLocale()]) }}">{{ __('announcements.title') }}</a></li>
@@ -25,7 +25,7 @@
         <dl class="a-panel__meta">
             <div>
                 <dt>{{ __('announcements.col_published') }}</dt>
-                <dd>{{ $announcement->published_at?->isoFormat('D MMMM YYYY') }}</dd>
+                <dd>{{ $announcement->published_at?->displayed()->isoFormat('D MMMM YYYY') }}</dd>
             </div>
             <div>
                 <dt>{{ __('announcements.audience') }}</dt>

@@ -33,7 +33,7 @@
                     @foreach ($versions as $version)
                         <option value="{{ $version->id }}" @selected($version->id === $before->id)>
                             {{ __('admin.page_history_version', ['n' => $version->version_number]) }},
-                            {{ $version->created_at?->isoFormat('D MMM YYYY') }}
+                            {{ $version->created_at?->displayed()->isoFormat('D MMM YYYY') }}
                         </option>
                     @endforeach
                 </select>
@@ -45,7 +45,7 @@
                     @foreach ($versions as $version)
                         <option value="{{ $version->id }}" @selected($version->id === $after->id)>
                             {{ __('admin.page_history_version', ['n' => $version->version_number]) }},
-                            {{ $version->created_at?->isoFormat('D MMM YYYY') }}
+                            {{ $version->created_at?->displayed()->isoFormat('D MMM YYYY') }}
                         </option>
                     @endforeach
                 </select>
@@ -74,7 +74,7 @@
                 <span class="a-diffhead__which">{{ __('admin.diff_'.$side) }}</span>
                 <span class="a-diffhead__n">{{ __('admin.page_history_version', ['n' => $version->version_number]) }}</span>
                 <span class="a-diffhead__meta">
-                    {{ $version->created_at?->isoFormat('D MMMM YYYY, HH:mm') }},
+                    {{ $version->created_at?->displayed()->isoFormat('D MMMM YYYY, HH:mm') }},
                     {{ $version->author?->name ?? __('admin.system') }}
                 </span>
                 <span class="a-diffhead__summary">{{ $version->change_summary }}</span>

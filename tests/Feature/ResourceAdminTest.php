@@ -162,6 +162,8 @@ class ResourceAdminTest extends TestCase
                 'sector_id' => Sector::first()->id,
                 'published_on' => '2026-03-01',
                 'is_public' => '1',
+                // Published with no file needs the link to where it lives.
+                'external_url' => 'https://example.org/roaming',
                 'en' => ['title' => 'SADC roaming guidelines', 'summary' => 'The regional framework.'],
                 'fr' => ['title' => 'Lignes directrices sur itinerance'],
                 'pt' => ['title' => 'Diretrizes de roaming'],

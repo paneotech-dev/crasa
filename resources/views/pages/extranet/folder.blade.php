@@ -83,7 +83,7 @@
                                     </span>
                                 </th>
                                 <td>{{ $document->uploader?->name ?? __('admin.system') }}</td>
-                                <td data-quiet>{{ $document->created_at->isoFormat('D MMM YYYY') }}</td>
+                                <td data-quiet>{{ $document->created_at->displayed()->isoFormat('D MMM YYYY') }}</td>
                                 <td data-numeric>{{ number_format($document->size_bytes / 1024) }} KB</td>
                                 <td>
                                     <span class="a-table__actions">

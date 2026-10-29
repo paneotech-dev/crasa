@@ -64,8 +64,10 @@ class GoLiveBlockersTest extends TestCase
     }
 
     /**
-     * The banner is the part that actually gets seen. A log line on a shared
+     * The notice is the part that actually gets seen. A log line on a shared
      * host is read by nobody; the Secretariat opens the back office daily.
+     * Since 29 October 2026 it is a small badge in the top bar, in plain
+     * words, for administrators only (INC-06, ML-T03).
      */
     public function test_the_back_office_says_so_on_every_screen_when_mail_goes_nowhere(): void
     {
@@ -75,10 +77,22 @@ class GoLiveBlockersTest extends TestCase
         $this->actingAs(User::factory()->administrator()->create())
             ->get('/en/admin')
             ->assertOk()
-            ->assertSee('Mail is not being delivered.')
-            // Named, so the reader knows what to change rather than only
-            // that something is wrong.
-            ->assertSee('log', false);
+            ->assertSee('E-mail is switched off.')
+            ->assertSee('Invitations and notices are not being sent.')
+            ->assertSee('a-top__mailoff', false)
+            // No technical words: no driver, no file name, no red banner.
+            ->assertDontSee('.env')
+            ->assertDontSee('Mail is not being delivered.');
+    }
+
+    public function test_the_badge_is_in_three_languages(): void
+    {
+        config(['mail.default' => 'log']);
+        $this->app['env'] = 'production';
+        $admin = User::factory()->administrator()->create();
+
+        $this->actingAs($admin)->get('/fr/admin')->assertOk()->assertSee(__('office.mail_off_badge', [], 'fr'));
+        $this->actingAs($admin)->get('/pt/admin')->assertOk()->assertSee(__('office.mail_off_badge', [], 'pt'));
     }
 
     public function test_a_member_state_representative_is_not_shown_a_setting_they_cannot_change(): void
@@ -92,6 +106,20 @@ class GoLiveBlockersTest extends TestCase
         $this->actingAs($rep)
             ->get('/en/submissions')
             ->assertOk()
+            ->assertDontSee('E-mail is switched off.')
+            ->assertDontSee('a-top__mailoff', false)
+            ->assertDontSee('Mail is not being delivered.');
+    }
+
+    public function test_an_editor_is_not_shown_the_mail_notice(): void
+    {
+        config(['mail.default' => 'log']);
+        $this->app['env'] = 'production';
+
+        $this->actingAs(User::factory()->editor()->create())
+            ->get('/en/admin')
+            ->assertOk()
+            ->assertDontSee('E-mail is switched off.')
             ->assertDontSee('Mail is not being delivered.');
     }
 
@@ -106,7 +134,7 @@ class GoLiveBlockersTest extends TestCase
         $this->actingAs(User::factory()->administrator()->create())
             ->get('/en/admin')
             ->assertOk()
-            ->assertDontSee('Mail is not being delivered.')
+            ->assertDontSee('E-mail is switched off.')
             ->assertDontSee('The sending address is still a placeholder.');
     }
 

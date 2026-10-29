@@ -14,7 +14,7 @@ return [
     // The legacy site gave no date; the stored one is the day it was read.
     'date_not_stated' => 'Date non précisée',
     'none_upcoming_title' => 'Rien de prévu publiquement',
-    'none_upcoming_body' => 'Les réunions apparaissent ici une fois publiées par le Secrétariat. Les réunions de comité figurent dans l\'extranet pour les États membres qui y siègent.',
+    'none_upcoming_body' => 'Les réunions apparaissent ici une fois publiées par le Secrétariat. Les réunions de comité figurent dans l\'espace membres pour les États membres qui y siègent.',
     'agenda' => 'Ordre du jour',
     'registration' => 'Inscription',
     'registration_body' => 'Indiquez votre arrivée et votre départ pour que le Secrétariat sache quand vous attendre. Tout le reste est organisé par les organisateurs.',

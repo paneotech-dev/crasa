@@ -21,6 +21,15 @@ final class ResourceCell
 {
     public static function render(Resource $definition, Model $record, string $column): string|HtmlString
     {
+        // Virtual columns (UX-05, TR-03): the state of each language, and
+        // whether the record has a file of its own.
+        if ($column === 'languages' && $definition->translatable !== []) {
+            return TranslationState::cell($record, $definition->translatable[0]);
+        }
+        if ($column === 'has_file' && method_exists($record, 'hasFile')) {
+            return __($record->hasFile() ? 'admin.yes' : 'admin.no');
+        }
+
         // A translatable field comes from the translations table, with the
         // English fallback and its notice already applied.
         if (in_array($column, $definition->translatable, true) && method_exists($record, 'translate')) {
@@ -42,12 +51,27 @@ final class ResourceCell
 
         $value = $record->getAttribute($column);
 
+        // A date the record does not know is said in words, not left blank
+        // and not shown as the placeholder it was stored with (INC-03,
+        // INC-12): the legacy import's undated items carry the import day.
+        $isDate = $record->hasCast($column, ['date', 'datetime', 'immutable_date', 'immutable_datetime']);
+        if ($isDate && ($value === null || (array_key_exists('date_unknown', $record->getAttributes()) && (bool) $record->getAttribute('date_unknown')))) {
+            return new HtmlString('<span class="a-hint">'.e(__('office.date_not_recorded')).'</span>');
+        }
+
         if ($value === null) {
             return '';
         }
 
         if ($value instanceof Carbon) {
-            return $value->isoFormat('D MMM YYYY');
+            return $value->displayed()->isoFormat('D MMM YYYY');
+        }
+
+        // An enum column reads as its label in the interface language, not
+        // as its stored value ("press_release"). Status columns keep their
+        // pill, below.
+        if ($value instanceof BackedEnum && ! in_array($column, ['status', 'state'], true) && method_exists($value, 'labelKey')) {
+            return __($value->labelKey());
         }
 
         if ($value instanceof BackedEnum) {

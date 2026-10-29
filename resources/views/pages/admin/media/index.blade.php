@@ -112,7 +112,7 @@
                                 <td data-quiet>{{ $asset->dimensions() ?? '—' }}</td>
                                 <td><span class="a-altstate" data-state="{{ $state }}">{{ __('admin.alt_state_'.$state, ['n' => $altCount]) }}</span></td>
                                 <td>{{ $usage[$asset->id] === [] ? __('admin.media_unused') : trans_choice('admin.media_used_on', count($usage[$asset->id]), ['count' => count($usage[$asset->id])]) }}</td>
-                                <td data-quiet>{{ $asset->created_at->isoFormat('D MMM YYYY') }}</td>
+                                <td data-quiet>{{ $asset->created_at->displayed()->isoFormat('D MMM YYYY') }}</td>
                                 <td>
                                     <span class="a-table__actions">
                                         <a href="{{ route('admin.media.edit', ['locale' => app()->getLocale(), 'asset' => $asset->id]) }}">{{ __('admin.open') }}</a>

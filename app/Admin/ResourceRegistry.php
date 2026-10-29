@@ -208,13 +208,18 @@ final class ResourceRegistry
             'publications' => new Resource(
                 key: 'publications',
                 model: Publication::class,
-                columns: ['title', 'publication_type', 'sector', 'published_on'],
+                columns: ['title', 'publication_type', 'published_on', 'is_public', 'languages', 'has_file', 'updated_at'],
                 fields: [
                     Field::select('publication_type', array_column(PublicationType::cases(), 'value'), required: true),
                     Field::belongsTo('sector_id', 'sector'),
                     Field::belongsTo('committee_id', 'committee'),
                     Field::belongsTo('country_id', 'country'),
-                    Field::date('published_on', required: true),
+                    // Empty when the document does not state its date: the
+                    // site then says "Date not recorded" (INC-03).
+                    Field::date('published_on'),
+                    // A publication that lives on another site. Without a
+                    // file of its own it can only be published with this.
+                    Field::url('external_url'),
                     Field::boolean('is_public'),
 
                     /*
@@ -275,12 +280,28 @@ final class ResourceRegistry
                     'sector_id' => ['nullable', 'exists:sectors,id'],
                     'committee_id' => ['nullable', 'exists:committees,id'],
                     'country_id' => ['nullable', 'exists:countries,id'],
-                    // Not nullable in the schema, and it should not be:
-                    // a publication with no date cannot be cited.
-                    'published_on' => ['required', 'date'],
+                    // Empty since 29 October 2026: five legacy guidelines
+                    // carried 1 January of their year as a placeholder, and
+                    // a made-up date is worse than none (INC-03).
+                    'published_on' => ['nullable', 'date'],
+                    'external_url' => ['nullable', 'url:http,https', 'max:2048'],
                     'is_public' => ['nullable', 'boolean'],
                 ],
                 rulesUsing: fn (?Model $record, Request $request) => [
+                    // INC-04, UX-14, UC-T07: published needs a file, or a link
+                    // to where the publication lives.
+                    'is_public' => [
+                        'nullable', 'boolean',
+                        function (string $attribute, mixed $value, \Closure $fail) use ($record, $request) {
+                            if (! filter_var($value, FILTER_VALIDATE_BOOLEAN)) {
+                                return;
+                            }
+                            $hasFile = $record instanceof Publication && $record->exists && $record->hasFile();
+                            if (! $hasFile && trim((string) $request->input('external_url')) === '') {
+                                $fail(__('office.publication_needs_file'));
+                            }
+                        },
+                    ],
                     'supersedes_id' => [
                         'nullable',
                         new SupersedesRule(
@@ -294,12 +315,18 @@ final class ResourceRegistry
                 searchable: ['slug'],
                 with: ['sector'],
                 orderBy: 'published_on',
+                orderDirection: 'desc',
+                filters: [
+                    ['key' => 'type', 'column' => 'publication_type', 'options' => collect(PublicationType::cases())->mapWithKeys(fn ($t) => [$t->value => $t->labelKey()])->all()],
+                    ['key' => 'year', 'column' => 'published_on', 'type' => 'year'],
+                    ['key' => 'visibility', 'column' => 'is_public', 'options' => ['1' => 'office.visibility_public', '0' => 'office.visibility_hidden']],
+                ],
             ),
 
             'news' => new Resource(
                 key: 'news',
                 model: NewsItem::class,
-                columns: ['title', 'category', 'status', 'published_at'],
+                columns: ['title', 'category', 'status', 'published_at', 'languages'],
                 fields: [
                     Field::select('category', array_column(NewsCategory::cases(), 'value'), required: true),
                     Field::belongsTo('sector_id', 'sector'),
@@ -328,7 +355,15 @@ final class ResourceRegistry
                 translatable: ['title', 'summary', 'body'],
                 searchable: ['slug', 'author_name'],
                 with: ['sector'],
+                // Newest first, by the date the item was published, not the
+                // day the legacy import created the row (INC-02, UX-07).
                 orderBy: 'published_at',
+                orderDirection: 'desc',
+                filters: [
+                    ['key' => 'category', 'column' => 'category', 'options' => collect(NewsCategory::cases())->mapWithKeys(fn ($c) => [$c->value => $c->labelKey()])->all()],
+                    ['key' => 'year', 'column' => 'published_at', 'type' => 'year'],
+                    ['key' => 'status', 'column' => 'status', 'options' => ['draft' => 'admin.status_draft', 'review' => 'office.status_review', 'published' => 'admin.status_published']],
+                ],
             ),
 
             'indicator-values' => new Resource(

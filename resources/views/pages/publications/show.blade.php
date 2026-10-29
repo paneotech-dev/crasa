@@ -53,7 +53,7 @@
 
             <dl class="c-meta">
                 <div><dt>{{ __('publications.type') }}</dt><dd>{{ __($publication->publication_type->labelKey()) }}</dd></div>
-                <div><dt>{{ __('publications.published') }}</dt><dd>{{ $publication->published_on->translatedFormat('j F Y') }}</dd></div>
+                <div><dt>{{ __('publications.published') }}</dt><dd>{{ $publication->published_on?->translatedFormat('j F Y') ?? __('office.date_not_recorded') }}</dd></div>
                 @if ($publication->country)
                     <div><dt>{{ __('publications.country') }}</dt><dd>{{ $publication->country->name }}</dd></div>
                 @endif
@@ -149,12 +149,15 @@
                     <h2 class="c-cite__title">{{ __('publications.cite') }}</h2>
                     <p class="c-cite__reference">{{ __('publications.cite_reference', [
                         'author' => __('site.acronym'),
-                        'year' => $publication->published_on->format('Y'),
+                        'year' => $publication->published_on?->format('Y') ?? __('office.no_date_cite'),
                         'title' => $publication->translated('title', $publication->slug),
                         'url' => route('publications.show', ['locale' => app()->getLocale(), 'slug' => $publication->slug]),
                     ]) }}</p>
                     <p class="c-cite__note">{{ __('publications.cite_note') }}</p>
                 </div>
+            @elseif ($publication->isExternal())
+                {{-- Published elsewhere, with no file of its own (UX-14). --}}
+                <p><a class="c-btn c-btn--primary" href="{{ $publication->external_url }}" rel="noopener external">{{ __('office.publication_external_open') }}</a></p>
             @endif
 
             @if ($lineage->count() > 1)
@@ -178,7 +181,7 @@
                                 $isLatest = $step->supersededBy->isEmpty();
                             @endphp
                             <li class="c-lineage__node @if ($isCurrent) is-current @endif @if ($isLatest) is-latest @endif">
-                                <span class="c-lineage__year c-num">{{ $step->published_on->format('Y') }}</span>
+                                <span class="c-lineage__year c-num">{{ $step->published_on?->format('Y') ?? __('office.no_date_cite') }}</span>
 
                                 <span class="c-lineage__marker" aria-hidden="true"></span>
 

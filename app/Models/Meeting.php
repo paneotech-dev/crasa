@@ -112,11 +112,16 @@ class Meeting extends Model
     /**
      * A meeting whose date is not known is never upcoming: its stored date
      * is the day the legacy site was read, not the day it met.
+     *
+     * "Today" is the Secretariat's day (LocalTime), and a meeting that is
+     * running is still upcoming until its last day has passed: a workshop
+     * on its second day is not in the past.
      */
     public function scopeUpcoming(Builder $query): Builder
     {
         return $query->where('date_unknown', false)
-            ->whereDate('starts_on', '>=', now()->toDateString())->orderBy('starts_on');
+            ->whereRaw('COALESCE(ends_on, starts_on) >= ?', [\App\Support\LocalTime::today()])
+            ->orderBy('starts_on');
     }
 
     /** Past meetings, newest first, and those with no stated date after them. */
@@ -124,7 +129,7 @@ class Meeting extends Model
     {
         return $query->where(fn (Builder $q) => $q
             ->where('date_unknown', true)
-            ->orWhereDate('starts_on', '<', now()->toDateString()))
+            ->orWhereRaw('COALESCE(ends_on, starts_on) < ?', [\App\Support\LocalTime::today()]))
             ->orderBy('date_unknown')
             ->orderByDesc('starts_on');
     }

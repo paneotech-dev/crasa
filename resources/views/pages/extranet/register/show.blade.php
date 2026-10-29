@@ -25,9 +25,7 @@
             <div><dt>{{ __('register.col_type') }}</dt><dd>{{ __($instrument->instrument_type->labelKey()) }}</dd></div>
             <div><dt>{{ __('register.col_status') }}</dt><dd>{{ __($instrument->status->labelKey()) }}</dd></div>
             <div><dt>{{ __('register.col_reference') }}</dt><dd>{{ $instrument->reference_number }}</dd></div>
-            @if ($instrument->enacted_on)
-                <div><dt>{{ __('register.col_enacted') }}</dt><dd>{{ $instrument->enacted_on->isoFormat('D MMMM YYYY') }}</dd></div>
-            @endif
+            <div><dt>{{ __('register.col_enacted') }}</dt><dd>{{ $instrument->enacted_on?->isoFormat('D MMMM YYYY') ?? __('office.date_not_recorded') }}</dd></div>
             @if ($instrument->effective_from)
                 <div><dt>{{ __('register.col_effective') }}</dt><dd>{{ $instrument->effective_from->isoFormat('D MMMM YYYY') }}</dd></div>
             @endif

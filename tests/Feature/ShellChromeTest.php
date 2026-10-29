@@ -99,7 +99,8 @@ class ShellChromeTest extends TestCase
 
         $this->assertStringContainsString('a-top__search', $top, $url.' has no search field.');
         $this->assertSame(3, substr_count($top, 'a-pills__item'), $url.' does not carry all three languages.');
-        $this->assertStringContainsString('/admin/help', $top, $url.' has no help icon.');
+        // Help opens the role guide in a new tab since 29 October 2026 (UX-17).
+        $this->assertStringContainsString(config('crasa.role_guide_url').'#admin', $top, $url.' has no help icon.');
         $this->assertStringContainsString('a-top__avatar', $top, $url.' has no avatar.');
         // The bell, by its own path rather than by a class it shares. It
         // pointed at an anchor on the account page until 10 September 2026,

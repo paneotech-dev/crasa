@@ -33,7 +33,7 @@
                 'status' => new \Illuminate\Support\HtmlString(
                     '<span class=\'a-pill\' data-status=\'' . e($s->status->value) . '\'>' . e(__($s->status->labelKey())) . '</span>'
                 ),
-                'submitted' => $s->submitted_at?->isoFormat('D MMM YYYY') ?? '',
+                'submitted' => $s->submitted_at?->displayed()->isoFormat('D MMM YYYY') ?? '',
             ],
             'actions' => [
                 ['label' => __('submissions.review'), 'url' => route('admin.submissions.show', ['locale' => app()->getLocale(), 'submission' => $s->id])],

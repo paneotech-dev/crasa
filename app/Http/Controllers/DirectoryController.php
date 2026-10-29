@@ -60,6 +60,7 @@ class DirectoryController extends Controller
             'authorities' => Authority::with('country')->orderBy('name')->get(),
             'sectors' => Sector::orderBy('name')->get(),
             'filters' => $filters,
+            'anyListed' => AuthorityContact::listed()->exists(),
             'mine' => $request->user()->country_id !== null
                 ? AuthorityContact::where('country_id', $request->user()->country_id)->with('sectors')->orderBy('name')->get()
                 : collect(),

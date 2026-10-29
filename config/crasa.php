@@ -44,6 +44,12 @@ return [
     'timezone' => env('CRASA_TIMEZONE', 'Africa/Gaborone'),
 
     /*
+     * The role guide the help icon opens, in a new tab (UX-17). Each role
+     * has a section: #admin, #editor, #member, #committee, #everyone.
+     */
+    'role_guide_url' => env('CRASA_ROLE_GUIDE_URL', 'https://workshopcrasa.paneo.tech/training.html'),
+
+    /*
      * Search.
      *
      * ElasticSearch is named in the specifications and cannot run on this

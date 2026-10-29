@@ -8,7 +8,7 @@
  */
 
 return [
-    'title' => 'Extranet',
+    'title' => 'Área de membros',
     'note' => 'Pastas seguras, espaços de comité e calendário de reuniões.',
     'folders' => 'Pastas',
     'folders_note' => 'O seu Estado membro, os comités em que tem assento, e o que a CRASA partilha com todos.',

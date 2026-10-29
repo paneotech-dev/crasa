@@ -29,6 +29,29 @@
         <span class="a-side__wordmark">{{ $brand }}</span>
     </a>
 
+    {{-- The area switcher (UX-03): an administrator inside the member area
+         had no way back. Only the areas this account may enter. --}}
+    @if ($user)
+        @php
+            $locale = app()->getLocale();
+            $inMember = ($area ?? null) === 'member' || ! $user->can('enter-back-office');
+            $areas = array_values(array_filter([
+                $user->can('enter-back-office') ? ['key' => 'admin', 'label' => __('office.area_admin'), 'url' => route('admin.dashboard', ['locale' => $locale]), 'current' => ! $inMember] : null,
+                $user->can('viewAny', \App\Models\Folder::class) ? ['key' => 'member', 'label' => __('office.area_member'), 'url' => route('extranet.dashboard', ['locale' => $locale]), 'current' => $inMember] : null,
+                ['key' => 'public', 'label' => __('office.area_public'), 'url' => route('home', ['locale' => $locale]), 'current' => false],
+            ]));
+        @endphp
+        <ul class="a-side__areas" role="list" aria-label="{{ __('office.area_switcher') }}">
+            @foreach ($areas as $switch)
+                <li>
+                    <a @class(['a-side__area', 'is-current' => $switch['current']])
+                       href="{{ $switch['url'] }}" data-area="{{ $switch['key'] }}"
+                       @if ($switch['current']) aria-current="true" @endif>{{ $switch['label'] }}</a>
+                </li>
+            @endforeach
+        </ul>
+    @endif
+
     <div class="a-side__scroll">
         @foreach ($groups as $group)
             <div class="a-side__group">
@@ -58,13 +81,16 @@
             <span class="a-side__avatar" aria-hidden="true">{{ \App\Support\Initials::of($user->name ?? '') }}</span>
             <span class="a-side__metext">
                 <a class="a-side__name" href="{{ route('account', ['locale' => app()->getLocale()]) }}">{{ $user->name }}</a>
-                <span class="a-side__role">{{ $user->role->label() }}</span>
+                <span class="a-side__role" title="{{ $user->role->label() }}">{{ $user->role->label() }}</span>
             </span>
 
             <form method="POST" action="{{ route('logout', ['locale' => app()->getLocale()]) }}">
                 @csrf
-                <button type="submit" class="a-side__out" aria-label="{{ __('admin.sign_out') }}">
+                {{-- The word beside the icon (UX-15): an icon alone was not
+                     read as the way out. --}}
+                <button type="submit" class="a-side__out">
                     <x-shell-icon name="sign-out" />
+                    <span>{{ __('admin.sign_out') }}</span>
                 </button>
             </form>
         </div>

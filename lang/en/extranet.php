@@ -8,7 +8,7 @@
  */
 
 return [
-    'title' => 'Extranet',
+    'title' => 'Member area',
     'note' => 'Secure folders, committee workspaces and the meetings calendar.',
     'folders' => 'Folders',
     'folders_note' => 'Your member state, the committees you sit on, and what CRASA shares with everyone.',

@@ -54,7 +54,7 @@
                 'status' => new \Illuminate\Support\HtmlString(
                     '<span class=\'a-pill\' data-status=\'' . e($s->status->value) . '\'>' . e(__($s->status->labelKey())) . '</span>'
                 ),
-                'updated' => $s->updated_at?->isoFormat('D MMM YYYY') ?? '',
+                'updated' => $s->updated_at?->displayed()->isoFormat('D MMM YYYY') ?? '',
             ],
             'actions' => [
                 ['label' => __('admin.edit'), 'url' => route('submissions.edit', ['locale' => app()->getLocale(), 'submission' => $s->id])],

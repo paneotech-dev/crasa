@@ -3,7 +3,7 @@
 return [
     'sign_in' => 'Sign in',
     'sign_out' => 'Sign out',
-    'intro' => "One login reaches the extranet and the members' workspace. Access is granted by the Secretariat on the instruction of your authority.",
+    'intro' => "One login reaches the member area and the members' workspace. Access is granted by the Secretariat on the instruction of your authority.",
     'email' => 'Email address',
     'password' => 'Password',
     'remember' => 'Stay signed in on this device',

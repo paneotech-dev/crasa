@@ -20,7 +20,7 @@
     <section class="a-card a-card--flush">
         <div class="a-card__head">
             <h2>{{ __('authority.proposed_by', ['name' => $change->proposer?->name ?? '—']) }}</h2>
-            <span class="a-card__meta">{{ $change->submitted_at?->isoFormat('D MMMM YYYY') }}</span>
+            <span class="a-card__meta">{{ $change->submitted_at?->displayed()->isoFormat('D MMMM YYYY') }}</span>
         </div>
 
         <div class="a-tablewrap">

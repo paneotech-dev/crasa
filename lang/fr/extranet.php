@@ -8,7 +8,7 @@
  */
 
 return [
-    'title' => 'Extranet',
+    'title' => 'Espace membres',
     'note' => 'Dossiers sécurisés, espaces de comité et calendrier des réunions.',
     'folders' => 'Dossiers',
     'folders_note' => 'Votre État membre, les comités où vous siégez, et ce que la CRASA partage avec tous.',

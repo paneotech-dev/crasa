@@ -19,6 +19,10 @@
             <a @class(['a-chip', 'is-current' => $sector === $option->slug])
                href="{{ route('register', ['locale' => app()->getLocale(), 'sector' => $option->slug]) }}">{{ $option->name }}</a>
         @endforeach
+        {{-- In force by default; repealed instruments only when asked. --}}
+        <a @class(['a-chip', 'is-current' => $includeRepealed])
+           @if ($includeRepealed) aria-current="true" @endif
+           href="{{ request()->fullUrlWithQuery(['repealed' => $includeRepealed ? null : 1, 'page' => null]) }}">{{ __('office.register_include_repealed') }}</a>
     </nav>
 
     @if ($instruments->isEmpty())
@@ -51,7 +55,7 @@
                                 <td>{{ $instrument->country?->name }}</td>
                                 <td>{{ $instrument->sector?->name }}</td>
                                 <td><span class="a-pill" data-status="{{ $instrument->status?->value }}">{{ __($instrument->status->labelKey()) }}</span></td>
-                                <td>{{ $instrument->enacted_on?->isoFormat('D MMMM YYYY') ?? '—' }}</td>
+                                <td>{{ $instrument->enacted_on?->isoFormat('D MMMM YYYY') ?? __('office.date_not_recorded') }}</td>
                             </tr>
                         @endforeach
                     </tbody>

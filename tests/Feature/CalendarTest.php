@@ -30,6 +30,9 @@ class CalendarTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        // A fixed clock, so no test depends on the day it runs. The 29th on
+        // purpose: "2027-02" parsed with today's day used to roll into March.
+        $this->travelTo(\Carbon\Carbon::parse('2026-10-29 10:00:00', 'UTC'));
         $this->seed(CountrySeeder::class);
         $this->seed(SectorSeeder::class);
         $this->seed(CommitteeSeeder::class);
@@ -63,6 +66,119 @@ class CalendarTest extends TestCase
             ->assertOk()
             ->assertSee('February 2027')
             ->assertSee('February planning session');
+    }
+
+    /**
+     * On the 29th, 30th and 31st of any month, "2027-02" used to take its day
+     * from today and roll over into March: an empty March 2027.
+     */
+    public function test_a_month_is_the_month_asked_for_on_any_day(): void
+    {
+        Meeting::factory()->create([
+            'title' => 'February planning session',
+            'starts_on' => '2027-02-11',
+            'ends_on' => '2027-02-11',
+            'clearance' => 'member',
+        ]);
+
+        foreach (['2026-10-31 08:00:00', '2026-01-30 08:00:00', '2026-03-01 08:00:00'] as $instant) {
+            $this->travelTo(\Carbon\Carbon::parse($instant, 'UTC'));
+
+            $this->actingAs($this->user)
+                ->get('/en/extranet/calendar?month=2027-02')
+                ->assertOk()
+                ->assertSee('February 2027')
+                ->assertDontSee('March 2027')
+                ->assertSee('February planning session');
+        }
+    }
+
+    /**
+     * "Today" is Gaborone's day. At 23:30 UTC on 28 October it is already
+     * 29 October in Gaborone, and the highlighted cell has to say so.
+     */
+    public function test_today_is_computed_in_gaborone_time(): void
+    {
+        $this->travelTo(\Carbon\Carbon::parse('2026-10-28 23:30:00', 'UTC'));
+
+        $html = $this->actingAs($this->user)->get('/en/extranet/calendar?month=2026-10')->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression('/e-cal__cell is-today">\s*<span class="e-cal__daynum">29</', $html);
+    }
+
+    /**
+     * A meeting that is running is upcoming until its last day, and a
+     * meeting that ended yesterday in Gaborone is past.
+     */
+    public function test_a_running_meeting_is_still_upcoming(): void
+    {
+        Meeting::factory()->create([
+            'title' => 'Validation workshop',
+            'starts_on' => '2026-10-28',
+            'ends_on' => '2026-10-30',
+            'clearance' => 'member',
+        ]);
+
+        $this->assertSame(['Validation workshop'], Meeting::upcoming()->pluck('title')->all());
+
+        $this->travelTo(\Carbon\Carbon::parse('2026-10-30 22:30:00', 'UTC'));
+        $this->assertSame([], Meeting::upcoming()->pluck('title')->all());
+        $this->assertSame(['Validation workshop'], Meeting::past()->pluck('title')->all());
+    }
+
+    /** A three-day meeting sits on each of its three days. */
+    public function test_a_meeting_is_on_every_day_it_runs(): void
+    {
+        Meeting::factory()->create([
+            'title' => 'Validation workshop',
+            'kind' => 'workshop',
+            'starts_on' => '2026-10-28',
+            'ends_on' => '2026-10-30',
+            'clearance' => 'member',
+        ]);
+
+        $html = $this->actingAs($this->user)->get('/en/extranet/calendar')->assertOk()->getContent();
+        $grid = substr($html, strpos($html, 'e-cal__grid'), strpos($html, 'e-cal__export') - strpos($html, 'e-cal__grid'));
+
+        $this->assertSame(3, substr_count($grid, 'Validation workshop'));
+        $this->assertStringContainsString('October 2026', $html);
+    }
+
+    /**
+     * PE-T05, PE-T06: opened on an empty month, the calendar goes to the next
+     * month that has a meeting, and says it did.
+     */
+    public function test_an_empty_current_month_opens_on_the_next_month_with_a_meeting(): void
+    {
+        Meeting::factory()->create([
+            'title' => 'January session',
+            'starts_on' => '2027-01-20',
+            'ends_on' => '2027-01-21',
+            'clearance' => 'member',
+        ]);
+
+        $this->actingAs($this->user)
+            ->get('/en/extranet/calendar')
+            ->assertOk()
+            ->assertSee('January 2027')
+            ->assertSee('Nothing is scheduled in October 2026, so the calendar opens on January 2027', false)
+            ->assertSee('January session');
+
+        // Asked for by URL, the month is shown as asked, empty or not.
+        $this->actingAs($this->user)
+            ->get('/en/extranet/calendar?month=2026-10')
+            ->assertOk()
+            ->assertSee('No meetings scheduled this month')
+            ->assertDontSee('so the calendar opens on');
+    }
+
+    /** One "nothing scheduled" message, not two stacked. */
+    public function test_an_empty_calendar_says_so_once(): void
+    {
+        $html = $this->actingAs($this->user)->get('/en/extranet/calendar')->assertOk()->getContent();
+
+        $this->assertSame(1, substr_count($html, 'No meetings scheduled this month'));
+        $this->assertStringNotContainsString('Nothing scheduled', $html);
     }
 
     /**

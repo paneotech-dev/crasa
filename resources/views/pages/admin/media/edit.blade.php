@@ -120,7 +120,7 @@
                             </label>
                             @if ($asset->rights_confirmed_at)
                                 <span class="a-hint">{{ __('admin.rights_confirmed_on', [
-                                    'date' => $asset->rights_confirmed_at->isoFormat('D MMMM YYYY'),
+                                    'date' => $asset->rights_confirmed_at->displayed()->isoFormat('D MMMM YYYY'),
                                     'who' => $asset->rightsConfirmer?->name ?? __('admin.system'),
                                 ]) }}</span>
                             @endif

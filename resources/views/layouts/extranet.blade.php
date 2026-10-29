@@ -16,5 +16,6 @@
 @extends('layouts.shell', [
     'groups' => \App\Support\ShellNavigation::extranet(),
     'brand' => __('extranet.title'),
+    'area' => 'member',
     'home' => route('extranet.dashboard', ['locale' => app()->getLocale()]),
 ])
