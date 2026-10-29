@@ -49,9 +49,16 @@
             'cells' => collect($definition->columns)->mapWithKeys(fn ($c) => [
                 $c => \App\Support\ResourceCell::render($definition, $r, $c),
             ])->all(),
-            'actions' => $showingDeleted ? [] : [
-                ['label' => __('admin.edit'), 'url' => route('admin.resources.edit', ['locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $r->getKey()])],
-            ],
+            'actions' => $showingDeleted ? [] : array_values(array_filter([
+                ['label' => __('admin.edit'), 'url' => route('admin.resources.edit', ['locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $r->getKey()]), 'sr' => $definition->titleFor($r)],
+                $definition->deletable && auth()->user()->can('delete', $r)
+                    ? ($definition->softDeletes()
+                        ? ['label' => __('fa.delete'), 'method' => 'DELETE', 'sr' => $definition->titleFor($r),
+                           'url' => route('admin.resources.destroy', ['locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $r->getKey()]),
+                           'confirm' => __('fa.delete_recoverable_confirm', ['name' => $definition->titleFor($r)])]
+                        : ['label' => __('fa.delete'), 'sr' => $definition->titleFor($r), 'url' => route('admin.resources.edit', ['locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $r->getKey()]).'#delete'])
+                    : null,
+            ])),
         ]">
         @if ($filters !== [])
             <x-slot:filters>

@@ -90,7 +90,15 @@
                             <td>
                                 <span class="a-table__actions">
                                     @foreach ($data['actions'] ?? [] as $action)
-                                        <a href="{{ $action['url'] }}">{{ $action['label'] }}</a>
+                                        @if (($action['method'] ?? 'GET') === 'DELETE')
+                                            <form class="aw-inline-form" method="POST" action="{{ $action['url'] }}"
+                                                  data-confirm="{{ $action['confirm'] ?? '' }}" data-confirm-title="{{ $action['confirmTitle'] ?? __('fa.confirm_title') }}" data-confirm-action="{{ $action['label'] }}">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="a-linkbutton a-linkbutton--danger">{{ $action['label'] }}@isset($action['sr'])<span class="c-sr"> {{ $action['sr'] }}</span>@endisset</button>
+                                            </form>
+                                        @else
+                                            <a href="{{ $action['url'] }}">{{ $action['label'] }}@isset($action['sr'])<span class="c-sr"> {{ $action['sr'] }}</span>@endisset</a>
+                                        @endif
                                     @endforeach
                                 </span>
                             </td>

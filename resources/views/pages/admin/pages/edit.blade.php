@@ -168,7 +168,7 @@
                         @can('delete', $block)
                             <form method="POST"
                                   action="{{ route('admin.pages.blocks.destroy', ['locale' => app()->getLocale(), 'page' => $page->slug, 'block' => $block->id]) }}"
-                                  onsubmit="return confirm('{{ __('admin.block_delete_confirm', ['type' => $block->type()->label()]) }}')">
+                                  data-confirm="{{ __('admin.block_delete_confirm', ['type' => $block->type()->label()]) }}" data-confirm-title="{{ __('fa.confirm_title') }}">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="a-linkbutton a-linkbutton--danger">{{ __('admin.delete') }}</button>
                             </form>
@@ -256,4 +256,16 @@
             </ol>
         @endif
     </section>
+    @can('delete', $page)
+        <section class="a-panel" id="delete" aria-labelledby="page-delete-title">
+            <div class="a-panel__head"><h2 id="page-delete-title">{{ __('fa.page_delete_title') }}</h2></div>
+            <p class="a-hint">{{ __('fa.page_delete_help') }}</p>
+            <form method="POST" action="{{ route('admin.pages.destroy', ['locale' => app()->getLocale(), 'page' => $page->slug]) }}"
+                  data-confirm="{{ __('fa.page_delete_confirm', ['slug' => '/'.$page->slug]) }}"
+                  data-confirm-title="{{ __('fa.page_delete_title') }}" data-confirm-action="{{ __('fa.delete') }}">
+                @csrf @method('DELETE')
+                <button type="submit" class="a-btn a-btn--danger">{{ __('fa.page_delete_title') }}</button>
+            </form>
+        </section>
+    @endcan
 @endsection

@@ -30,7 +30,8 @@
 .aw-rule { margin-bottom: 16px; }
 
 /* Roles grid (F3) */
-.aw-grid select { min-width: 9rem; }
+.aw-grid select { min-width: 0; width: 100%; max-width: 11rem; }
+.aw-grid td, .aw-grid th { padding-left: 10px; padding-right: 10px; }
 .aw-grid td, .aw-grid th { vertical-align: top; }
 .aw-grid .aw-cell { display: grid; gap: 6px; }
 .aw-grid .aw-cell label { font-size: 14px; color: #3F5264; }
@@ -49,3 +50,8 @@
 .aw-slug { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
 .aw-slug span { color: #3F5264; font-size: 14px; }
 .aw-slug .a-input { flex: 1 1 14rem; min-width: 0; }
+
+/* The roles grid needs the page's width: five columns of selects. */
+.a-form.aw-wide { max-width: none; }
+.aw-wide .a-panel > .a-field, .aw-wide .a-panel > .a-hint { max-width: 640px; }
+.aw-grid th[scope="row"] { min-width: 9rem; }

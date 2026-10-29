@@ -503,6 +503,7 @@ Route::prefix('{locale}')
                 Route::put('pages/{page}/status', [PageAdminController::class, 'updateStatus'])->name('pages.status');
                 Route::put('pages/{page}/client-review', [PageAdminController::class, 'clientReview'])->name('pages.client-review');
                 Route::get('pages/{page}/preview', [PageAdminController::class, 'preview'])->name('pages.preview');
+                Route::delete('pages/{page}', [PageAdminController::class, 'destroy'])->name('pages.destroy');
 
                 Route::get('pages/{page}/blocks/add', [PageBlockController::class, 'create'])->name('pages.blocks.create');
                 Route::post('pages/{page}/blocks', [PageBlockController::class, 'store'])->name('pages.blocks.store');
@@ -668,6 +669,7 @@ Route::prefix('{locale}')
                 Route::put('users/{user}/role', [UserAdminController::class, 'assignRole'])->name('users.role');
                 Route::put('users/{user}/suspend', [UserAdminController::class, 'suspend'])->name('users.suspend');
                 Route::put('users/{user}/reactivate', [UserAdminController::class, 'reactivate'])->name('users.reactivate');
+                Route::delete('users/{user}', [UserAdminController::class, 'destroy'])->name('users.destroy');
                 // Roles under People (F3).
                 Route::get('roles', [\App\Http\Controllers\Admin\RoleController::class, 'index'])->name('roles');
                 Route::get('roles/new', [\App\Http\Controllers\Admin\RoleController::class, 'create'])->name('roles.create');
@@ -707,6 +709,7 @@ Route::prefix('{locale}')
                 Route::put('announcements/{announcement}', [AnnouncementAdminController::class, 'update'])->name('announcements.update');
                 Route::put('announcements/{announcement}/publish', [AnnouncementAdminController::class, 'publish'])->name('announcements.publish');
                 Route::put('announcements/{announcement}/unpublish', [AnnouncementAdminController::class, 'unpublish'])->name('announcements.unpublish');
+                Route::delete('announcements/{announcement}', [AnnouncementAdminController::class, 'destroy'])->name('announcements.destroy');
 
                 Route::get('audit', [AuditLogController::class, 'index'])->name('audit');
 

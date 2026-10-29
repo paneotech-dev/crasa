@@ -59,6 +59,13 @@
                                 <td>{{ $announcement->published_at?->displayed()->isoFormat('D MMMM YYYY') ?? __('office.date_not_recorded') }}</td>
                                 <td class="a-table__actions">
                                     <a href="{{ route('admin.announcements.edit', ['locale' => app()->getLocale(), 'announcement' => $announcement->slug]) }}">{{ __('admin.edit') }}</a>
+                                    @can('delete', $announcement)
+                                        <form class="aw-inline-form" method="POST" action="{{ route('admin.announcements.destroy', ['locale' => app()->getLocale(), 'announcement' => $announcement->slug]) }}"
+                                              data-confirm="{{ __('fa.announcement_delete_confirm') }}" data-confirm-title="{{ __('fa.confirm_title') }}" data-confirm-action="{{ __('fa.delete') }}">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="a-linkbutton a-linkbutton--danger">{{ __('fa.delete') }}</button>
+                                        </form>
+                                    @endcan
                                 </td>
                             </tr>
                         @endforeach

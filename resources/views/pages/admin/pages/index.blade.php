@@ -57,6 +57,9 @@
             'actions' => [
                 ['label' => __('admin.edit'), 'url' => route('admin.pages.edit', ['locale' => app()->getLocale(), 'page' => $p->slug])],
                 ['label' => __('admin.preview'), 'url' => route('admin.pages.preview', ['locale' => app()->getLocale(), 'page' => $p->slug])],
+                ...(auth()->user()->can('delete', $p) ? [['label' => __('fa.delete'), 'method' => 'DELETE', 'sr' => '/'.$p->slug,
+                    'url' => route('admin.pages.destroy', ['locale' => app()->getLocale(), 'page' => $p->slug]),
+                    'confirm' => __('fa.page_delete_confirm', ['slug' => '/'.$p->slug])]] : []),
             ],
         ]">
 

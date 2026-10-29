@@ -13,7 +13,7 @@
 @endsection
 
 @section('content')
-    <form class="a-form" method="POST" action="{{ $isNew ? route('admin.roles.store', ['locale' => $locale]) : route('admin.roles.update', ['locale' => $locale, 'role' => $role->key]) }}" novalidate>
+    <form class="a-form aw-wide" method="POST" action="{{ $isNew ? route('admin.roles.store', ['locale' => $locale]) : route('admin.roles.update', ['locale' => $locale, 'role' => $role->key]) }}" novalidate>
         @csrf
         @unless ($isNew) @method('PUT') @endunless
 

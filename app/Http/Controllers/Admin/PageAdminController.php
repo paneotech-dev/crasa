@@ -218,6 +218,38 @@ class PageAdminController extends Controller
     }
 
     /**
+     * Delete a page (F1). Refused while a menu points at it: removing the
+     * page first would leave the menu entry with nowhere to go. Pages are
+     * soft deleted and can be restored.
+     */
+    public function destroy(Request $request, Page $page): RedirectResponse
+    {
+        Gate::authorize('delete', $page);
+
+        $entries = \App\Models\MenuItem::where('destination_type', 'page')->where('destination', $page->slug)->get();
+
+        if ($entries->isNotEmpty()) {
+            return back()->withErrors(['page' => trans_choice('fa.page_in_menu', $entries->count(), [
+                'menus' => $entries->pluck('menu')->unique()->map(fn ($m) => __('fa.page_menu_'.$m))->implode(', '),
+            ])]);
+        }
+
+        if ($page->slug === 'home' || in_array($page->template, ['landing'], true)) {
+            return back()->withErrors(['page' => __('fa.page_home_protected')]);
+        }
+
+        if (($open = \App\Support\Approvals::pending($page)) !== null) {
+            $open->update(['state' => \App\Models\Approval::WITHDRAWN, 'decided_by' => $request->user()->id, 'decided_at' => now()]);
+        }
+
+        $page->delete();
+        AuditLog::record(AuditLog::DELETED, $page, ['slug' => $page->slug], $request->user());
+
+        return redirect()->route('admin.pages', ['locale' => app()->getLocale()])
+            ->with('status', __('fa.page_deleted', ['slug' => '/'.$page->slug]));
+    }
+
+    /**
      * @return list<PageStatus>
      */
     private function allowedTransitions(Page $page): array

@@ -11,9 +11,6 @@
 @endsection
 
 @section('content')
-    @if ($errors->any())
-        <div class="a-notice a-notice--error" role="alert">@foreach ($errors->all() as $e)<p>{{ $e }}</p>@endforeach</div>
-    @endif
     @if ($unenrolledCount > 0)
         <div class="a-notice a-notice--pending" role="status">
             <strong>{{ trans_choice('admin.unenrolled_title', $unenrolledCount, ['count' => $unenrolledCount]) }}</strong>
@@ -77,6 +74,16 @@
                         {{ $account->isSuspended() ? __('admin.reactivate') : __('admin.suspend') }}
                     </button>
                         </form>
+                        @if ($account->isSuspended())
+                            @can('delete', $account)
+                                <form method="POST" action="{{ route('admin.users.destroy', ['locale' => app()->getLocale(), 'user' => $account->id]) }}"
+                                      data-confirm="{{ __('fa.user_delete_confirm', ['name' => $account->name]) }}"
+                                      data-confirm-title="{{ __('fa.user_delete_title') }}" data-confirm-action="{{ __('fa.delete') }}">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="a-btn a-btn--danger a-btn--small">{{ __('fa.delete') }}<span class="c-sr"> {{ $account->name }}</span></button>
+                                </form>
+                            @endcan
+                        @endif
                     @endif
                 </td>
                     </tr>

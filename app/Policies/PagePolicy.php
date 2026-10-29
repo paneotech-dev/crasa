@@ -64,7 +64,9 @@ class PagePolicy
 
     public function delete(User $user, Page $page): bool
     {
-        return $user->hasPermission(Permission::DeleteContent);
+        // As for news: a page is soft deleted and restorable, so the editor
+        // who made it may remove it (test plan PM-05).
+        return $user->hasPermission(Permission::DeleteContent) || $user->hasPermission(Permission::ManageContent);
     }
 
     public function restore(User $user, Page $page): bool

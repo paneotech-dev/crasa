@@ -174,7 +174,10 @@ class LoginController extends Controller
         }
 
         return match (true) {
-            $user->hasPermission(Permission::ManageContent) => route('admin.dashboard', ['locale' => $locale]),
+            // Day 2: moderators, auditors and roles made on the roles
+            // screen enter the back office without editing content, so the
+            // door is asked, not one permission.
+            \Illuminate\Support\Facades\Gate::forUser($user)->allows('enter-back-office') => route('admin.dashboard', ['locale' => $locale]),
             $user->hasPermission(Permission::ReachCommitteeWorkspace) => route('extranet.dashboard', ['locale' => $locale]),
             // A viewer has no workspace. The public site, signed in, is
             // the whole of what they have, and the account page is one

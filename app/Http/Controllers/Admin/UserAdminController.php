@@ -164,6 +164,51 @@ class UserAdminController extends Controller
         return back()->with('status', __('admin.reactivated'));
     }
 
+    /**
+     * Delete a suspended account (F1). Only once suspended, so deleting is
+     * never the first thing done to an account. The row is kept and
+     * stripped of the person: the audit log then reads "Former user" for
+     * everything they did, and nothing they wrote loses its author link.
+     */
+    public function destroy(Request $request, User $user)
+    {
+        $this->authorize('delete', $user);
+
+        if (! $user->isSuspended()) {
+            return back()->withErrors(['user' => __('fa.user_delete_suspend_first')]);
+        }
+
+        $name = $user->name;
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($user, $request, $name) {
+            AuditLog::record(AuditLog::DELETED, $user, ['former_name' => $name, 'former_role' => $user->role->value], $request->user());
+
+            $user->forceFill([
+                'name' => __('fa.former_user', [], 'en'),
+                'email' => 'former-user-'.$user->id.'@deleted.invalid',
+                'password' => Str::random(64),
+                'remember_token' => null,
+                'two_factor_secret' => null,
+                'two_factor_recovery_codes' => null,
+                'two_factor_confirmed_at' => null,
+                'country_id' => null,
+                'authority_id' => null,
+                'custom_role_id' => null,
+                'role' => Role::Viewer,
+                'anonymised_at' => now(),
+            ])->saveQuietly();
+
+            $user->committees()->detach();
+            $user->notifications()->delete();
+        });
+
+        \App\Support\AdminAlerts::send($request->user(), 'deleted', ['subject' => $name],
+            route('admin.audit', ['locale' => app()->getLocale()]));
+
+        return redirect()->route('admin.users', ['locale' => app()->getLocale()])
+            ->with('status', __('fa.user_deleted', ['name' => $name]));
+    }
+
     public function form(Request $request)
     {
         $this->authorize('create', User::class);
