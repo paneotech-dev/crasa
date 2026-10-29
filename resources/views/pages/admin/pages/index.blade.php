@@ -3,6 +3,12 @@
 @section('title', __('admin.section_content'))
 @section('note', __('admin.pages_note'))
 
+@can('create', \App\Models\Page::class)
+    @section('actions')
+        <a class="a-btn a-btn--primary" href="{{ route('admin.pages.create', ['locale' => app()->getLocale()]) }}">{{ __('fa.page_new') }}</a>
+    @endsection
+@endcan
+
 @section('content')
     @php
         // The approval column only when a page on this screen has something

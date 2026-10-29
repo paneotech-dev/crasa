@@ -44,3 +44,8 @@
 .aw-dialog p { margin: 0 0 16px; }
 .aw-dialog__actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
 .aw-inline-form { display: inline; }
+
+/* New page (F9) */
+.aw-slug { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.aw-slug span { color: #3F5264; font-size: 14px; }
+.aw-slug .a-input { flex: 1 1 14rem; min-width: 0; }

@@ -90,6 +90,7 @@
     <script src="{{ \App\Support\Assets::url('js/shell.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/password.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/modal.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/admin-workflow.js') }}" defer></script>
     @stack('scripts')
 <!--/email_off-->
 </body>

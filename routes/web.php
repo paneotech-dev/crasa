@@ -495,6 +495,9 @@ Route::prefix('{locale}')
                  * navigation is not the access control.
                  */
                 Route::get('pages', [PageAdminController::class, 'index'])->name('pages');
+                // New page (F9). Before pages/{page}, so "new" is not read as a page.
+                Route::get('pages/new', [\App\Http\Controllers\Admin\NewPageController::class, 'create'])->name('pages.create');
+                Route::post('pages', [\App\Http\Controllers\Admin\NewPageController::class, 'store'])->name('pages.store');
                 Route::get('pages/{page}', [PageAdminController::class, 'edit'])->name('pages.edit');
                 Route::put('pages/{page}', [PageAdminController::class, 'update'])->name('pages.update');
                 Route::put('pages/{page}/status', [PageAdminController::class, 'updateStatus'])->name('pages.status');
