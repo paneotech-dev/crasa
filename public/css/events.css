@@ -211,3 +211,8 @@ button.e-addcal__action { cursor: pointer; font-family: var(--u-sans); }
   .e-doc { flex-wrap: wrap; }
 }
 .u-hero__photo .e-placeholder__mark { width: 72px; height: 72px; object-fit: contain; }
+
+/* ---- Home block (C12) ----------------------------------------------------- */
+.e-home__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--u-3); margin-bottom: var(--u-4); }
+.e-home__head .u-h2 { margin-bottom: var(--u-2); }
+.e-home__lead { margin: 0; }
