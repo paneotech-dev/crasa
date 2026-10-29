@@ -83,9 +83,9 @@
                     {{ __('d3_people.reg_counts', ['filed' => $counts['filed'] ?? 0, 'confirmed' => $counts['confirmed'] ?? 0, 'declined' => $counts['declined'] ?? 0]) }}
                 </p>
                 <p class="d3p-event__links">
-                    @if ($meeting->registrationIsOpen())
+                    @if ($meeting->registrationIsOpen() && auth()->user()->can('view', $meeting))
                         <a class="a-btn a-btn--secondary a-btn--small" href="{{ route('events.register', ['locale' => $locale, 'meeting' => $meeting->slug]) }}">{{ __('d3_people.public_form') }}<span class="c-sr"> {{ $meeting->title }}</span></a>
-                    @else
+                    @elseif (! $meeting->registrationIsOpen())
                         <span class="a-hint">{{ __('d3_people.form_closed') }}</span>
                         @can('view', $meeting)
                             <a class="a-btn a-btn--secondary a-btn--small" href="{{ route('events.show', ['locale' => $locale, 'meeting' => $meeting->slug]) }}">{{ __('d3_people.public_page') }}<span class="c-sr"> {{ $meeting->title }}</span></a>
