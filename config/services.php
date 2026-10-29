@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    /*
+     * Cloudflare Turnstile on the public forms. On only when both values
+     * are set: without them every form works as it did, behind its
+     * honeypot and its rate limit. See App\Support\Turnstile.
+     */
+    'turnstile' => [
+        'site_key' => env('TURNSTILE_SITE_KEY'),
+        'secret' => env('TURNSTILE_SECRET'),
+    ],
+
 ];

@@ -27,6 +27,7 @@
                     <input class="c-input" type="password" id="password_confirmation" name="password_confirmation" required autocomplete="new-password">
                 </div>
 
+                @include('partials.turnstile')
                 <button type="submit" class="c-btn c-btn--primary">{{ __('auth.set_password') }}</button>
             </form>
         </div>

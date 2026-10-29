@@ -58,6 +58,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\SubmissionImportController;
 use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\VerifyTurnstile;
 use App\Support\Locales;
 use Illuminate\Support\Facades\Route;
 
@@ -176,7 +177,7 @@ Route::prefix('{locale}')
         // reach. Loose enough that a delegate who mistypes a date three
         // times is not locked out.
         Route::post('events/{meeting}/register', [DelegateRegistrationController::class, 'store'])
-            ->middleware('throttle:registration')
+            ->middleware(['throttle:registration', VerifyTurnstile::class])
             ->name('events.register.store');
 
         Route::get('privacy', [PageController::class, 'show'])->defaults('slug', 'privacy')->name('privacy');
@@ -240,12 +241,14 @@ Route::prefix('{locale}')
         /*
          * Contact. The rate limit is per IP and deliberately loose: six an
          * hour stops a script without stopping a regulator who sends two
-         * enquiries in a morning. No CAPTCHA, which WCAG 2.1 AA and
-         * CLAUDE.md both point away from.
+         * enquiries in a morning. No puzzle CAPTCHA, which WCAG 2.1 AA and
+         * CLAUDE.md both point away from: Cloudflare Turnstile when its keys
+         * are set (VerifyTurnstile, App\Support\Turnstile), nothing extra
+         * when they are not.
          */
         Route::get('contact', [ContactController::class, 'show'])->name('contact');
         Route::post('contact', [ContactController::class, 'store'])
-            ->middleware('throttle:enquiries')
+            ->middleware(['throttle:enquiries', VerifyTurnstile::class])
             ->name('contact.store');
 
         /*
@@ -278,15 +281,15 @@ Route::prefix('{locale}')
              * counter with sign-in.
              */
             Route::post('login', [LoginController::class, 'store'])
-                ->middleware('throttle:sign-in')
+                ->middleware(['throttle:sign-in', VerifyTurnstile::class])
                 ->name('login.store');
 
             Route::get('password/forgotten', [PasswordResetController::class, 'request'])->name('password.request');
             Route::post('password/forgotten', [PasswordResetController::class, 'email'])
-                ->middleware('throttle:password-email')->name('password.email');
+                ->middleware(['throttle:password-email', VerifyTurnstile::class])->name('password.email');
             Route::get('password/reset/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
             Route::post('password/reset', [PasswordResetController::class, 'update'])
-                ->middleware('throttle:password-update')->name('password.update');
+                ->middleware(['throttle:password-update', VerifyTurnstile::class])->name('password.update');
 
             /*
              * The SSO handoff and its error states, IN-01.

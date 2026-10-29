@@ -15,6 +15,7 @@
     <meta name="crasa-pw-show" content="{{ __('auth.show_password') }}">
     <meta name="crasa-pw-hide" content="{{ __('auth.hide_password') }}">
     <script>document.documentElement.classList.add('has-js');</script>
+    <script>try{var a=JSON.parse(localStorage.getItem('crasa-a11y')||'{}'),h=document.documentElement;if(['smaller','larger','largest'].indexOf(a.size)>-1)h.classList.add('a11y-text-'+a.size);if(a.contrast===true)h.classList.add('a11y-contrast');if(a.underline===true)h.classList.add('a11y-underline');if(localStorage.getItem('crasa-translation-notice')==='closed')h.classList.add('translation-notice-closed');}catch(e){}</script>
 
     <title>@yield('title', __('site.acronym')) — {{ __('site.acronym') }}</title>
     @hasSection('description')
@@ -53,6 +54,7 @@
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/chrome.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/blocks.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/theme-light.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/a11y.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/print.css') }}" media="print">
     @stack('styles')
 </head>
@@ -66,6 +68,7 @@
     @include('partials.site-header')
 
     <main id="content" tabindex="-1">
+        @include('partials.translation-notice')
         @if (session('expired'))
             <div class="c-section">
                 <div class="c-page c-page--reading">
@@ -129,6 +132,7 @@
     <script src="{{ \App\Support\Assets::url('js/hero.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/app.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/password.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/a11y.js') }}" defer></script>
     @stack('scripts')
 <!--/email_off-->
 </body>

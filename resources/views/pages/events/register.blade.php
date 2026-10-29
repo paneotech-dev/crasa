@@ -139,6 +139,7 @@
                     <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" value="">
                 </div>
 
+                @include('partials.turnstile')
                 <button type="submit" class="c-btn c-btn--primary">{{ __('delegates.file_action') }}</button>
             </form>
         </div>

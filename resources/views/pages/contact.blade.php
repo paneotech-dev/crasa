@@ -125,6 +125,7 @@
 
                 <p class="c-form__note">{{ __('contact.privacy_note') }}</p>
 
+                @include('partials.turnstile')
                 <button type="submit" class="c-btn c-btn--primary">{{ __('contact.submit') }}</button>
             </form>
 
