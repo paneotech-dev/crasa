@@ -97,6 +97,12 @@ class ResourceController extends Controller
             }
         }
 
+        // Undated items (the legacy import's "date not known") after the
+        // dated ones: their stored date is the import day, not a real one.
+        if ($definition->orderBy !== null && in_array('date_unknown', (new ($definition->model))->getFillable(), true)) {
+            $query->orderBy('date_unknown');
+        }
+
         if ($definition->orderBy !== null) {
             $query->orderBy($definition->orderBy, $definition->orderDirection)->orderBy($query->getModel()->getQualifiedKeyName(), $definition->orderDirection);
         }
