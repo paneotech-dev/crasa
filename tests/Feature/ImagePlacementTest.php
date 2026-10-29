@@ -49,10 +49,14 @@ class ImagePlacementTest extends TestCase
             'The homepage hero has no photograph.',
         );
 
-        // Screen 02's photo-slide treatment: the image, then the colour
-        // blend, then the readability gradient. Both overlays or neither.
-        $this->assertStringContainsString('b-hero__tint', $html);
-        $this->assertStringContainsString('b-hero__scrim', $html);
+        // Day 2: the photograph sits in a frame beside the text. Nothing is
+        // laid over it, so neither overlay is drawn.
+        $hero = substr($html, strpos($html, '<section\n    class="b-hero"') ?: strpos($html, 'class="b-hero"'));
+        $hero = substr($hero, 0, strpos($hero, '</section>'));
+
+        $this->assertStringContainsString('b-hero__frame', $hero);
+        $this->assertStringNotContainsString('b-hero__tint', $hero);
+        $this->assertStringNotContainsString('b-hero__scrim', $hero);
     }
 
     public function test_the_hero_overlays_are_the_ones_screen_02_draws(): void

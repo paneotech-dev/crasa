@@ -24,6 +24,7 @@
         'cta_url' => \App\Support\Navigation::resolve($block->setting('cta_url')),
         'image' => $block->setting('image'),
         'panel' => $block->setting('panel', 'figures'),
+        'caption' => $block->translate('caption'),
     ];
 
     $rendered = collect([$primary])->concat(
@@ -35,6 +36,7 @@
             'cta_url' => \App\Support\Navigation::resolve($slide['cta_url'] ?? null),
             'image' => $slide['image'] ?? null,
             'panel' => $slide['panel'] ?? null,
+            'caption' => $block->translate('slide_'.$i.'_caption'),
         ])
     )->filter(fn ($s) => $s['headline'] !== null)->values();
 
@@ -129,53 +131,6 @@
                     : ($slide['image'] ? \App\Support\ImageLibrary::resolve($slide['image']) : null);
             @endphp
 
-            @if ($image)
-                {{-- Behind the text, not beside it. The scrim below is what
-                     keeps the headline readable over a photograph.
-
-                     The image keeps its alt text rather than being marked
-                     decorative: screen 02 gives each hero slide an accessible
-                     label, and the foundations make alt a required field in
-                     all three languages. --}}
-                <div class="b-hero__media">
-                    @if ($isUpload)
-                        <x-media-image
-                            :reference="$slide['image']"
-                            sizes="100vw"
-                            :width="1600"
-                            :loading="$index === 0 ? 'eager' : 'lazy'"
-                            class="c-img--cover"
-                        />
-                    @else
-                        <x-responsive-image
-                            :name="$slide['image']"
-                            :alt="__('images.'.$slide['image'])"
-                            sizes="100vw"
-                            :loading="$index === 0 ? 'eager' : 'lazy'"
-                            class="c-img--cover"
-                        />
-                    @endif
-                </div>
-                {{-- Screen 02 draws a colour-blend tint and then the
-                     readability scrim, in that order. --}}
-                <div class="b-hero__tint" aria-hidden="true"></div>
-                <div class="b-hero__scrim" aria-hidden="true"></div>
-                <div class="b-hero__weave" aria-hidden="true"></div>
-            @else
-                {{-- No photograph, and that is a composition rather than a
-                     gap. Screen 02 draws a slide with no photograph of its
-                     own — its chart slide — and what it puts on the navy is
-                     the weave alone:
-
-                       repeating-linear-gradient(58deg,rgba(26,140,90,.09) 0 2px,transparent 2px 24px)
-
-                     The navy ground and the type are the design. The
-                     headline runs at its own measure because the grid is
-                     auto-fit and there is nothing beside it to share the
-                     row with, which is the screen's own layout with one
-                     column rather than a variation on it. --}}
-                <div class="b-hero__weave" aria-hidden="true"></div>
-            @endif
 
             <div class="b-hero__inner">
                 <div class="b-hero__copy">
@@ -207,10 +162,43 @@
 
                     @if ($slide['cta_label'] && $slide['cta_url'])
                         <div class="b-hero__actions">
-                            <a class="c-btn c-btn--on-navy" href="{{ $slide['cta_url'] }}">{{ $slide['cta_label']->value }}</a>
+                            <a class="c-btn c-btn--primary" href="{{ $slide['cta_url'] }}">{{ $slide['cta_label']->value }}</a>
                         </div>
                     @endif
                 </div>
+
+                {{-- The photograph sits in a frame beside the text, never
+                     behind it: no tint, no scrim, nothing laid over a
+                     picture of the people CRASA works with. Only the first
+                     slide's image is fetched with the page; the others are
+                     lazy inside hidden slides, so they load when shown. --}}
+                @if ($image)
+                    <figure class="b-hero__frame">
+                        <div class="b-hero__photo">
+                            @if ($isUpload)
+                                <x-media-image
+                                    :reference="$slide['image']"
+                                    sizes="(min-width: 992px) 560px, 100vw"
+                                    :width="1600"
+                                    :loading="$index === 0 ? 'eager' : 'lazy'"
+                                    :fetchpriority="$index === 0 ? 'high' : null"
+                                    class="c-img--cover"
+                                />
+                            @else
+                                <x-responsive-image
+                                    :name="$slide['image']"
+                                    :alt="__('images.'.$slide['image'])"
+                                    sizes="(min-width: 992px) 560px, 100vw"
+                                    :loading="$index === 0 ? 'eager' : 'lazy'"
+                                    class="c-img--cover"
+                                />
+                            @endif
+                        </div>
+                        @if ($slide['caption'])
+                            <figcaption class="b-hero__caption" @if ($slide['caption']->isFallback()) lang="{{ $slide['caption']->locale }}" @endif>{{ $slide['caption']->value }}</figcaption>
+                        @endif
+                    </figure>
+                @endif
 
                 @if (! $image && $hasPanel($slide['panel']))
                     {{-- The screen's own answer to a slide with no

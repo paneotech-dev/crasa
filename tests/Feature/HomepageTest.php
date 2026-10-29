@@ -160,7 +160,7 @@ class HomepageTest extends TestCase
         $html = $this->get('/en')->assertOk()->getContent();
         $band = substr($html, 0, strpos($html, 'b-figures__grid'));
 
-        $this->assertStringContainsString('b-hero__media', $band);
+        $this->assertStringContainsString('b-hero__frame', $band);
         $this->assertStringContainsString('hero-delegates-boardroom-01', $band);
 
         // Not the market scene and not the test bench.
@@ -193,9 +193,9 @@ class HomepageTest extends TestCase
         $html = $this->get('/en')->assertOk()->getContent();
         $band = substr($html, 0, strpos($html, 'b-figures__grid'));
 
-        // The photo slide has no panel beside it.
+        // The photo slide has its photograph beside the text, not a panel.
         $this->assertMatchesRegularExpression(
-            '~b-hero__media.*?b-hero__headline~s',
+            '~b-hero__headline.*?b-hero__frame~s',
             $band,
         );
 

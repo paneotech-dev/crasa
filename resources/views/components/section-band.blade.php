@@ -55,53 +55,53 @@
 @endphp
 
 <section @class(['c-band', 'c-band--image' => $photo])>
-    @if ($photo)
-        <div class="c-band__media" aria-hidden="true">
-            <x-responsive-image :name="$photo" decorative sizes="100vw" loading="eager" class="c-img--cover" />
-        </div>
-        {{-- The overlay. Not decoration: it is what makes the type legible
-             over an unknown photograph, and the ratio it guarantees is
-             measured against a white image beneath. --}}
-        <div class="c-band__scrim" aria-hidden="true"></div>
-    @endif
-
     <div class="c-band__inner c-page">
-        @if ($eyebrow)
-            {{-- Screen 08 sets this in tracked caps. The CLAUDE.md ruling
-                 excludes eyebrows and wins, as it does on the hero and the
-                 hero panel. Size, weight, colour and spacing are the
-                 screen's. Logged in docs/OPEN_ITEMS.md. --}}
-            <p class="c-band__eyebrow">{{ $eyebrow }}</p>
+        <div class="c-band__text">
+            @if ($eyebrow)
+                {{-- Screen 08 sets this in tracked caps. The CLAUDE.md ruling
+                     excludes eyebrows and wins, as it does on the hero and the
+                     hero panel. Size, weight, colour and spacing are the
+                     screen's. Logged in docs/OPEN_ITEMS.md. --}}
+                <p class="c-band__eyebrow">{{ $eyebrow }}</p>
+            @endif
+
+            <{{ $level }} class="c-band__title">{{ $title }}</{{ $level }}>
+
+            @if ($lead)
+                <p class="c-band__lead">{{ $lead }}</p>
+            @endif
+
+            @if ($counts !== [])
+                {{-- How much is in this section, stated where the reader arrives
+                     rather than discovered by scrolling. Each count links to
+                     what it counts. A count of zero is shown, because zero is
+                     information: an empty section that says nothing about being
+                     empty reads as a section that failed to load. --}}
+                <dl class="c-band__counts">
+                    @foreach ($counts as $count)
+                        <div>
+                            <dd>
+                                @if (! empty($count['url']))
+                                    <a href="{{ $count['url'] }}">{{ $count['value'] }}</a>
+                                @else
+                                    {{ $count['value'] }}
+                                @endif
+                            </dd>
+                            <dt>{{ $count['label'] }}</dt>
+                        </div>
+                    @endforeach
+                </dl>
+            @endif
+
+            {{ $slot }}
+        </div>
+
+        {{-- The photograph sits in a frame beside the text, never behind
+             it: no scrim, no tint, nothing laid over a picture. --}}
+        @if ($photo)
+            <div class="c-band__media" aria-hidden="true">
+                <x-responsive-image :name="$photo" decorative sizes="(min-width: 992px) 480px, 100vw" loading="eager" class="c-img--cover" />
+            </div>
         @endif
-
-        <{{ $level }} class="c-band__title">{{ $title }}</{{ $level }}>
-
-        @if ($lead)
-            <p class="c-band__lead">{{ $lead }}</p>
-        @endif
-
-        @if ($counts !== [])
-            {{-- How much is in this section, stated where the reader arrives
-                 rather than discovered by scrolling. Each count links to
-                 what it counts. A count of zero is shown, because zero is
-                 information: an empty section that says nothing about being
-                 empty reads as a section that failed to load. --}}
-            <dl class="c-band__counts">
-                @foreach ($counts as $count)
-                    <div>
-                        <dd>
-                            @if (! empty($count['url']))
-                                <a href="{{ $count['url'] }}">{{ $count['value'] }}</a>
-                            @else
-                                {{ $count['value'] }}
-                            @endif
-                        </dd>
-                        <dt>{{ $count['label'] }}</dt>
-                    </div>
-                @endforeach
-            </dl>
-        @endif
-
-        {{ $slot }}
     </div>
 </section>
