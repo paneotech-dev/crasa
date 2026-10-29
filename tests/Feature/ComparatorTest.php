@@ -408,7 +408,7 @@ class ComparatorTest extends TestCase
         $svg = app(ComparisonExport::class)->svg($comparison);
 
         $this->assertStringContainsString('[1] '.htmlspecialchars(Str::limit($source, 170), ENT_QUOTES | ENT_XML1), $svg);
-        $this->assertMatchesRegularExpression('/>[^<]*\s\[1\]</', $svg, 'The figure points at its source.');
+        $this->assertMatchesRegularExpression('/>[^<]*\[1\]</', $svg, 'The figure points at its source.');
         $this->assertStringContainsString('xlink:href="data:image/png;base64,', $svg);
         $this->assertStringNotContainsString('url(#_Radial1)', $svg);
 
