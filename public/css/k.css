@@ -548,13 +548,18 @@ html:not(.k-motion) .k-home .u-reveal { opacity: 1; transform: none; }
 #content:not(.a-main) .cp-doc-card__dl:hover { color: var(--k-green); }
 
 /* Hero tiles: three links reading a fact each. */
-.k-featured { list-style: none; margin: 0; padding: 0; }
+.k-featured { list-style: none; padding: 0; }
 .k-featured > li { display: flex; min-width: 0; border-left: 1px solid var(--k-line-soft); }
 .k-featured > li:first-child { border-left: 0; }
 .k-featured .k-fitem { flex: 1; border-left: 0; text-decoration: none; cursor: pointer; }
 .k-featured .k-fitem::before { content: none; }
 .k-featured .k-fitem:hover b { text-decoration: underline; text-underline-offset: 3px; }
-@media (max-width: 900px) { .k-featured .k-fitem .k-lbl { display: block; } }
+@media (max-width: 900px) { .k-featured .k-fitem .k-lbl { display: block; white-space: normal; } }
+@media (max-width: 600px) {
+  .k-featured { grid-template-columns: minmax(0, 1fr); }
+  .k-featured > li { border-left: 0; border-top: 1px solid var(--k-line-soft); }
+  .k-featured > li:first-child { border-top: 0; }
+}
 
 /* An item without a photograph: the CRASA mark on white, no label. */
 .k-ph, #content:not(.a-main) .cp-news-ph, #content:not(.a-main) .cp-placeholder { background: var(--k-white); border: 0; }
@@ -571,4 +576,9 @@ html:not(.k-motion) .k-home .u-reveal { opacity: 1; transform: none; }
 
 /* Social cards: one caption above the embed. */
 p.s-post__head { margin: 0; font-weight: 600; }
+/* Pager: the current page's inner spans (screen-reader text and the
+   number) are not drawn as boxes of their own inside the current box. */
+.c-pager__links [aria-current="page"] > span { border: 0; padding: 0; min-width: 0; background: none; color: inherit; }
+.c-pager__links [aria-current="page"] { display: flex; align-items: center; justify-content: center; }
+.c-pager__links [aria-current="page"] > span[aria-hidden="true"] { height: auto; }
 /* ==== end Day 3 polish ==== */
