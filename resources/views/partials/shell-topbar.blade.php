@@ -47,6 +47,16 @@
     @endif
 
     <div class="a-top__utilities">
+        {{-- Mail switched off, in plain words, for the accounts that can
+             switch it on. Nobody else sees it. --}}
+        @if ($user?->can(\App\Enums\Permission::ManageSettings->value) && \App\Support\DeliveryCheck::mailIsSilentInProduction())
+            <p class="a-top__mailoff" role="status" title="{{ __('office.mail_off_badge') }} {{ __('office.mail_off_badge_more') }}">
+                <x-shell-icon name="bell" :size="15" />
+                <span>{{ __('office.mail_off_badge') }}</span>
+                <span class="a-top__mailoff-more">{{ __('office.mail_off_badge_more') }}</span>
+            </p>
+        @endif
+
         {{-- The language, as a pill group. Each is a link to this same page
              in that language, so switching never loses the reader's place. --}}
         <div class="a-pills" role="group" aria-label="{{ __('admin.interface_language') }}">
