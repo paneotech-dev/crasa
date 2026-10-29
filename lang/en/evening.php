@@ -13,4 +13,10 @@ return [
     'withdrawn_comment' => 'Withdrawn to Draft by an administrator.',
     'withdrawn_flash' => '":title" is back in Draft and can be edited again.',
     'may_not_approve_type' => 'Your role cannot approve this type of item.',
+    // Projects (S8 remainder).
+    'project_programme' => 'Programme',
+    'project_funding_partner' => 'Funding partner',
+    'project_countries' => 'Countries',
+    'project_lead_committee' => 'Lead committee',
+    'project_milestones' => 'Milestones',
 ];

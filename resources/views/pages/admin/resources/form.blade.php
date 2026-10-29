@@ -158,8 +158,9 @@
                                 @endphp
                                 <div class="a-field">
                                     <label class="a-label" for="t-{{ $locale }}-{{ $field }}">{{ __('admin.field_'.$field) }}</label>
-                                    @if (in_array($field, ['body', 'summary'], true))
-                                        <textarea class="a-input" id="t-{{ $locale }}-{{ $field }}" name="{{ $locale }}[{{ $field }}]" rows="{{ $field === 'body' ? 8 : 3 }}" lang="{{ $locale }}">{{ old($locale.'.'.$field, $value) }}</textarea>
+                                    @if (in_array($field, ['body', 'summary', 'milestones'], true))
+                                        <textarea class="a-input" id="t-{{ $locale }}-{{ $field }}" name="{{ $locale }}[{{ $field }}]" rows="{{ $field === 'body' ? 8 : ($field === 'milestones' ? 5 : 3) }}" lang="{{ $locale }}" @if ($field === 'milestones') aria-describedby="t-{{ $locale }}-milestones-help" @endif>{{ old($locale.'.'.$field, $value) }}</textarea>
+                                        @if ($field === 'milestones')<span class="a-hint" id="t-{{ $locale }}-milestones-help">{{ __('admin.field_milestones_hint') }}</span>@endif
                                     @else
                                         <input class="a-input" type="text" id="t-{{ $locale }}-{{ $field }}" name="{{ $locale }}[{{ $field }}]" lang="{{ $locale }}" value="{{ old($locale.'.'.$field, $value) }}">
                                     @endif

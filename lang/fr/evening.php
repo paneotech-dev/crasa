@@ -12,4 +12,10 @@ return [
     'withdrawn_comment' => 'Remis en brouillon par un administrateur.',
     'withdrawn_flash' => '« :title » est de nouveau un brouillon et peut être modifié.',
     'may_not_approve_type' => 'Votre rôle ne permet pas d\'approuver ce type d\'élément.',
+    // Projects (S8 remainder).
+    'project_programme' => 'Programme',
+    'project_funding_partner' => 'Partenaire financier',
+    'project_countries' => 'Pays',
+    'project_lead_committee' => 'Comité chef de file',
+    'project_milestones' => 'Étapes',
 ];

@@ -12,4 +12,10 @@ return [
     'withdrawn_comment' => 'Retirado para rascunho por um administrador.',
     'withdrawn_flash' => '":title" voltou a rascunho e pode ser editado de novo.',
     'may_not_approve_type' => 'A sua função não permite aprovar este tipo de item.',
+    // Projects (S8 remainder).
+    'project_programme' => 'Programa',
+    'project_funding_partner' => 'Parceiro financiador',
+    'project_countries' => 'Países',
+    'project_lead_committee' => 'Comité responsável',
+    'project_milestones' => 'Etapas',
 ];
