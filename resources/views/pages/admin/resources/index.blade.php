@@ -52,7 +52,21 @@
             'actions' => $showingDeleted ? [] : [
                 ['label' => __('admin.edit'), 'url' => route('admin.resources.edit', ['locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $r->getKey()])],
             ],
-        ]" />
+        ]">
+        @if ($filters !== [])
+            <x-slot:filters>
+                @foreach ($filters as $filter)
+                    <label class="c-sr" for="filter-{{ $filter['key'] }}">{{ __('office.filter_'.$filter['key']) }}</label>
+                    <select class="a-filter" id="filter-{{ $filter['key'] }}" name="{{ $filter['key'] }}">
+                        <option value="">{{ __('office.filter_all_'.$filter['key']) }}</option>
+                        @foreach ($filter['options'] as $value => $label)
+                            <option value="{{ $value }}" @selected($filter['value'] === (string) $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                @endforeach
+            </x-slot:filters>
+        @endif
+    </x-admin.resource-table>
 
     @if ($showingDeleted)
         <section class="a-panel">

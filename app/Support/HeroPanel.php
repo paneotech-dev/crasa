@@ -219,7 +219,7 @@ final class HeroPanel
                 'url' => route('comparator', ['locale' => $locale]),
             ],
             [
-                'value' => (string) Publication::listed()->count(),
+                'value' => (string) \App\Support\PublishedCounts::publications(),
                 'label' => __('blocks.hero_count_publications'),
                 'url' => route('publications', ['locale' => $locale]),
             ],

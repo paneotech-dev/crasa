@@ -404,6 +404,7 @@ return [
     'field_published_on' => 'Published',
     'field_published_at' => 'Published',
     'field_is_public' => 'Public',
+    'field_external_url' => 'External link (when the publication lives on another site)',
     'field_category' => 'Category',
     'field_author_name' => 'Author',
     'field_hero_image_path' => 'Photograph',

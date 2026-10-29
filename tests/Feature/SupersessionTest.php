@@ -57,6 +57,13 @@ class SupersessionTest extends TestCase
 
         $publication->setTranslations('en', ['title' => $title, 'summary' => 'A guideline.']);
 
+        // A published publication has its file (INC-04): the form refuses
+        // to keep one published without it.
+        \App\Models\Document::factory()->create([
+            'documentable_type' => $publication->getMorphClass(),
+            'documentable_id' => $publication->id,
+        ]);
+
         return $publication->fresh();
     }
 

@@ -167,6 +167,9 @@ class AdminWalkthroughTest extends TestCase
             'sector_id' => $sector->id,
             'published_on' => '2026-03-01',
             'is_public' => 1,
+            // No file can be attached on this form, so it is published as
+            // an external link: without either it may not be published.
+            'external_url' => 'https://example.org/numbering-plan',
             'en' => ['title' => 'Regional numbering plan guidelines', 'summary' => 'A guideline.'],
         ])->assertRedirect()->assertSessionHasNoErrors();
 
@@ -183,6 +186,9 @@ class AdminWalkthroughTest extends TestCase
             'sector_id' => $sector->id,
             'published_on' => '2026-03-01',
             'is_public' => 1,
+            // No file can be attached on this form, so it is published as
+            // an external link: without either it may not be published.
+            'external_url' => 'https://example.org/numbering-plan',
             'en' => ['title' => 'Regional numbering plan guidelines, 2026 edition', 'summary' => 'A guideline.'],
         ])->assertRedirect()->assertSessionHasNoErrors();
 

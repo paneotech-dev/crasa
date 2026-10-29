@@ -226,7 +226,7 @@ final class BlockData
                 'meta' => collect([
                     $p->country?->name,
                     $p->sector?->name,
-                    $p->published_on->format('Y'),
+                    $p->published_on?->format('Y'),
                 ])->filter()->implode(', '),
                 'url' => route('publications.show', ['locale' => app()->getLocale(), 'slug' => $p->slug]),
             ]);
@@ -301,7 +301,7 @@ final class BlockData
             // translations, since the mandate became per language on
             // 10 September 2026. Without it every card lazy-loads its own.
             ->with(['sector', 'chairAuthority.country', 'translations'])
-            ->withCount(['countries', 'publications', 'meetings'])
+            ->withCount(['countries', 'publications' => PublishedCounts::listedScope(), 'meetings'])
             ->unless($block->setting('include_inactive'), fn ($q) => $q->where('is_active', true))
             ->when($filter['sector'] ?? null, fn ($q, $v) => $q->whereHas('sector', fn ($s) => $s->where('slug', $v)))
             ->orderBy('name')

@@ -68,6 +68,8 @@ class PublicationController extends Controller
         $years = Publication::listed()
             ->orderByDesc('published_on')
             ->pluck('published_on')
+            // Only real years: an undated publication has none (PE-T09).
+            ->filter()
             // Derived in PHP rather than with a raw YEAR(), which exists in
             // MariaDB and not in SQLite.
             ->map(fn ($date) => (string) $date->format('Y'))
@@ -93,7 +95,7 @@ class PublicationController extends Controller
             'publications' => $publications,
             'filters' => $filters,
             'counts' => $this->facetCounts($filters, $options),
-            'total' => Publication::listed()->count(),
+            'total' => \App\Support\PublishedCounts::publications(),
             'types' => $types,
             'sectors' => $sectors,
             'countries' => $countries,
@@ -169,6 +171,7 @@ class PublicationController extends Controller
             // already loaded them.
             'year' => fn (Builder $q) => $q
                 ->pluck('published_on')
+                ->filter()
                 ->countBy(fn ($date) => (string) $date->format('Y')),
         ];
 

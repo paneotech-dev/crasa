@@ -64,6 +64,15 @@ final class Resource
          * @var (\Closure(?Model, \Illuminate\Http\Request): array<string, mixed>)|null
          */
         public readonly ?\Closure $rulesUsing = null,
+        // 'asc' or 'desc'. Dated content lists newest first (INC-02).
+        public readonly string $orderDirection = 'asc',
+        /*
+         * List filters, drawn by the resource table's filter slot:
+         * list<array{key: string, column: string, type: 'options'|'year', options?: array<string, string>}>
+         * An 'options' filter offers value => translation key; a 'year'
+         * filter offers the years present in the column.
+         */
+        public readonly array $filters = [],
     ) {}
 
     public function label(): string

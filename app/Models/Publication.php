@@ -27,7 +27,7 @@ class Publication extends Model
 
     protected $fillable = [
         'slug', 'publication_type', 'sector_id', 'committee_id', 'country_id',
-        'published_on', 'supersedes_id', 'is_public', 'is_sample',
+        'published_on', 'supersedes_id', 'is_public', 'external_url', 'is_sample',
     ];
 
     protected function casts(): array
@@ -48,6 +48,20 @@ class Publication extends Model
     /** The slug is the citation permalink and is permanent once created. */
     protected static function booted(): void
     {
+        /*
+         * INC-04, UX-14, UC-T07: a publication is published with a file, or
+         * as a link to where it lives. Checked when an existing record is
+         * switched to published, which is the step the form takes; the form
+         * says the same thing next to the field before it gets here.
+         */
+        static::updating(function (Publication $publication): void {
+            if ($publication->isDirty('is_public') && $publication->is_public && ! $publication->mayBePublished()) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'is_public' => __('office.publication_needs_file'),
+                ]);
+            }
+        });
+
         static::updating(function (Publication $publication): void {
             if ($publication->isDirty('slug')) {
                 throw new RuntimeException(
@@ -79,6 +93,22 @@ class Publication extends Model
     }
 
     /** What this publication replaced. */
+    public function hasFile(): bool
+    {
+        return $this->relationLoaded('documents') ? $this->documents->isNotEmpty() : $this->documents()->exists();
+    }
+
+    public function isExternal(): bool
+    {
+        return trim((string) $this->external_url) !== '';
+    }
+
+    /** A file of its own, or a link to where it lives. */
+    public function mayBePublished(): bool
+    {
+        return $this->hasFile() || $this->isExternal();
+    }
+
     public function supersedes(): BelongsTo
     {
         return $this->belongsTo(self::class, 'supersedes_id');

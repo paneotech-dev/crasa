@@ -31,7 +31,7 @@
             <span>{{ __($publication->publication_type->labelKey()) }}</span>
             @if ($publication->country)<span>{{ $publication->country->name }}</span>@endif
             @if ($publication->sector)<span>{{ $publication->sector->name }}</span>@endif
-            <span>{{ $publication->published_on->format('Y') }}</span>
+            <span>{{ $publication->published_on?->format('Y') ?? __('office.date_not_recorded') }}</span>
             @if ($document)
                 <span>{{ $document->readableSize() }}</span>
                 <span class="c-lang-badge">{{ strtoupper($document->locale) }}</span>
