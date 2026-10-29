@@ -66,13 +66,15 @@ class EventAdminController extends Controller
 
     public function edit(Meeting $meeting): View
     {
-        Gate::authorize('update', $meeting);
+        Gate::authorize('edit', $meeting);
 
         return $this->form($meeting->load('documents'));
     }
 
     public function update(Request $request, Meeting $meeting): RedirectResponse
     {
+        \App\Support\Approvals::refuseIfLocked($meeting);
+
         Gate::authorize('update', $meeting);
 
         $data = $this->validated($request);
@@ -96,6 +98,8 @@ class EventAdminController extends Controller
     /** Cancel, postpone or restore. The public page shows the status. */
     public function status(Request $request, Meeting $meeting): RedirectResponse
     {
+        \App\Support\Approvals::refuseIfLocked($meeting);
+
         Gate::authorize('update', $meeting);
 
         $data = $request->validate([

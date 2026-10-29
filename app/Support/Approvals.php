@@ -11,6 +11,7 @@ use App\Models\Meeting;
 use App\Models\NewsItem;
 use App\Models\Page;
 use App\Models\Publication;
+use App\Models\SocialPost;
 use App\Models\User;
 use App\Notifications\ApprovalActivity;
 use DomainException;
@@ -32,6 +33,12 @@ use Illuminate\Support\Facades\Schema;
  *
  * Public for other workers: awaitingCountFor(User) is the number on the
  * sidebar badge and the dashboard block; awaitingFor(User) is the list.
+ *
+ * Evening pass: approving is a permission per content type (approve
+ * publications, news, events, pages, social posts). The inbox and the count
+ * hold only the types this person may approve. An item In review is locked:
+ * nobody edits it until it is approved or returned; an administrator may
+ * withdraw it to Draft, which is audited.
  */
 final class Approvals
 {
@@ -49,6 +56,7 @@ final class Approvals
         'news' => NewsItem::class,
         'events' => Meeting::class,
         'pages' => Page::class,
+        'social' => SocialPost::class,
     ];
 
     /* ------------------------------------------------------------------ */
@@ -63,6 +71,7 @@ final class Approvals
         }
 
         return Approval::awaiting()
+            ->whereIn('approvable_type', self::morphTypesFor($user))
             ->where(fn ($q) => $q->whereNull('submitted_by')->orWhere('submitted_by', '!=', $user->id))
             ->count();
     }
@@ -75,7 +84,76 @@ final class Approvals
         }
 
         return Approval::awaiting()->with(['approvable', 'submitter'])
+            ->whereIn('approvable_type', self::morphTypesFor($user))
             ->orderBy('submitted_at')->limit($limit)->get();
+    }
+
+    /** Whether this person holds the approve permission for one content type. */
+    public static function mayApproveType(User $user, string $type): bool
+    {
+        $permission = Permission::approveFor($type);
+
+        return $permission !== null && $user->hasPermission($permission);
+    }
+
+    /**
+     * The stored approvable_type values of the types this person may approve.
+     *
+     * @return list<string>
+     */
+    public static function morphTypesFor(User $user): array
+    {
+        $out = [];
+
+        foreach (self::TYPES as $type => $class) {
+            if (self::mayApproveType($user, $type)) {
+                $out[] = (new $class)->getMorphClass();
+            }
+        }
+
+        return $out;
+    }
+
+    /** The content type key of a request, from its stored morph type. */
+    public static function typeOfApproval(Approval $approval): ?string
+    {
+        foreach (self::TYPES as $type => $class) {
+            if ((new $class)->getMorphClass() === $approval->approvable_type) {
+                return $type;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * An item In review is locked: its content may not change while a
+     * moderator reads it. It opens again when approved, returned or
+     * withdrawn by an administrator.
+     */
+    public static function isLocked(Model $model): bool
+    {
+        return self::typeOf($model) !== null && self::pending($model) !== null;
+    }
+
+    /**
+     * For a save on a locked item: back to the editor with the reason
+     * beside the approval panel, instead of a bare 403. The policies refuse
+     * the same save, so this is the friendly answer, not the only check.
+     */
+    public static function refuseIfLocked(?Model $model): void
+    {
+        if ($model !== null && self::isLocked($model)) {
+            throw new \Illuminate\Http\Exceptions\HttpResponseException(
+                back()->withErrors(['approval' => __('evening.locked_refused')])
+            );
+        }
+    }
+
+    /** Administrators (holders of "publish without approval") may withdraw an item in review to Draft. */
+    public static function mayWithdraw(User $user, Approval $approval): bool
+    {
+        return $approval->isOpen() && $user->hasPermission(Permission::PublishWithoutApproval);
     }
 
     /** Items this person sent that came back, with the comment. @return Collection<int, Approval> */
@@ -133,6 +211,7 @@ final class Approvals
             $model instanceof NewsItem => $model->status === 'published',
             $model instanceof Publication => (bool) $model->is_public,
             $model instanceof Meeting => $model->clearance === Clearance::Public,
+            $model instanceof SocialPost => $model->status === 'published',
             default => false,
         };
     }
@@ -217,7 +296,7 @@ final class Approvals
         });
 
         self::notify(
-            self::approvers()->reject(fn (User $u) => $u->is($by)),
+            self::approvers(self::typeOf($model))->reject(fn (User $u) => $u->is($by)),
             'approval_submitted', $approval, $model, $by
         );
 
@@ -227,8 +306,10 @@ final class Approvals
     /** Four eyes: the decider may not be the author. */
     public static function mayDecide(User $user, Approval $approval): bool
     {
+        $type = self::typeOfApproval($approval);
+
         return $approval->isOpen()
-            && $user->hasPermission(Permission::ApproveContent)
+            && $type !== null && self::mayApproveType($user, $type)
             && $approval->submitted_by !== $user->id;
     }
 
@@ -291,6 +372,49 @@ final class Approvals
     }
 
     /**
+     * An administrator takes an item out of review: back to Draft, nobody
+     * decided it. Audited, and the author is told.
+     */
+    public static function withdraw(Approval $approval, User $by, ?string $comment = null): Approval
+    {
+        if (! $approval->isOpen()) {
+            throw new DomainException(__('fa.approval_already_decided'));
+        }
+
+        if (! self::mayWithdraw($by, $approval)) {
+            throw new DomainException(__('evening.withdraw_refused'));
+        }
+
+        $model = $approval->approvable;
+        $comment = $comment !== null && trim($comment) !== '' ? trim($comment) : null;
+
+        DB::transaction(function () use ($approval, $by, $comment, $model) {
+            if ($model instanceof Page && $model->status === PageStatus::Review) {
+                $model->update(['status' => PageStatus::Draft]);
+            }
+
+            if ($model instanceof NewsItem && $model->status === 'review') {
+                $model->update(['status' => 'draft']);
+            }
+
+            $approval->update([
+                'state' => Approval::WITHDRAWN,
+                'decided_by' => $by->id,
+                'decided_at' => now(),
+                'comment' => $comment ?? __('evening.withdrawn_comment'),
+            ]);
+
+            AuditLog::record('approval_withdrawn', $model, ['approval_id' => $approval->id, 'comment' => $comment], $by);
+        });
+
+        if ($approval->submitter !== null && ! $approval->submitter->is($by)) {
+            self::notify(collect([$approval->submitter]), 'approval_withdrawn', $approval, $model, $by);
+        }
+
+        return $approval;
+    }
+
+    /**
      * Record a direct publication by someone allowed to skip the moderator,
      * where the type's rule asks for one approval. Writes the audit row and
      * tells the other administrators (F10). Call after the item is public.
@@ -338,15 +462,23 @@ final class Approvals
             ]),
             $model instanceof Publication => $model->update(['is_public' => true]),
             $model instanceof Meeting => $model->update(['clearance' => Clearance::Public]),
+            $model instanceof SocialPost => $model->update([
+                'status' => 'published',
+                'published_at' => $model->published_at ?? now(),
+            ]),
             default => throw new DomainException(__('fa.approval_not_moderated')),
         };
     }
 
-    /** @return Collection<int, User> */
-    public static function approvers(): Collection
+    /**
+     * Who may approve: of one type when given, of any type otherwise.
+     *
+     * @return Collection<int, User>
+     */
+    public static function approvers(?string $type = null): Collection
     {
         return User::query()->withoutGlobalScopes()->where('status', 'active')->get()
-            ->filter(fn (User $u) => $u->hasPermission(Permission::ApproveContent))
+            ->filter(fn (User $u) => $type !== null ? self::mayApproveType($u, $type) : $u->hasPermission(Permission::ApproveContent))
             ->values();
     }
 
@@ -354,6 +486,10 @@ final class Approvals
     {
         if ($model === null) {
             return __('fa.former_item');
+        }
+
+        if ($model instanceof SocialPost) {
+            return \Illuminate\Support\Str::limit((string) ($model->caption ?: $model->url), 80);
         }
 
         if (method_exists($model, 'translated')) {
@@ -375,6 +511,8 @@ final class Approvals
             $model instanceof Page => route('admin.pages.edit', ['locale' => $locale, 'page' => $model->slug]),
             $model instanceof NewsItem => route('admin.resources.edit', ['locale' => $locale, 'resource' => 'news', 'id' => $model->id]),
             $model instanceof Publication => route('admin.resources.edit', ['locale' => $locale, 'resource' => 'publications', 'id' => $model->id]),
+            $model instanceof SocialPost => route('admin.social.edit', ['locale' => $locale, 'post' => $model->id]),
+            $model instanceof Meeting && \Illuminate\Support\Facades\Route::has('admin.meetings.edit') => route('admin.meetings.edit', ['locale' => $locale, 'meeting' => $model->slug]),
             default => route('admin.approvals', ['locale' => $locale]),
         };
     }
@@ -460,7 +598,9 @@ final class Approvals
             throw new DomainException(__('fa.approval_four_eyes'));
         }
 
-        if (! $by->hasPermission(Permission::ApproveContent)) {
+        $type = self::typeOfApproval($approval);
+
+        if ($type === null || ! self::mayApproveType($by, $type)) {
             throw new DomainException(__('fa.approval_may_not_decide'));
         }
 

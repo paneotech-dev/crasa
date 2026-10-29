@@ -65,6 +65,7 @@ final class ShellNavigation
                 ['key' => 'pages', 'route' => 'admin.pages', 'icon' => 'pages', 'permission' => Permission::ManageContent],
                 ['key' => 'publications', 'route' => 'admin.resources', 'params' => ['resource' => 'publications'], 'icon' => 'publications', 'permission' => Permission::ManageContent],
                 ['key' => 'newsroom', 'route' => 'admin.resources', 'params' => ['resource' => 'news'], 'icon' => 'newsroom', 'permission' => Permission::ManageContent],
+                ['key' => 'projects', 'route' => 'admin.resources', 'params' => ['resource' => 'projects'], 'icon' => 'publications', 'permission' => Permission::ManageContent, 'label' => __('admin.resource_projects')],
                 ['key' => 'events', 'route' => 'extranet.calendar', 'icon' => 'events', 'permission' => Permission::ManageMeetings],
                 ['key' => 'media', 'route' => 'admin.media', 'icon' => 'media', 'permission' => Permission::ManageContent],
                 ['key' => 'navigation', 'route' => 'admin.menus', 'icon' => 'navigation', 'permission' => Permission::ManageContent],

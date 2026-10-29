@@ -48,7 +48,7 @@ class ApprovalController extends Controller
         Gate::authorize('enter-back-office');
         $user = $request->user();
 
-        abort_unless($user->hasPermission(Permission::ApproveContent) || $approval->submitted_by === $user->id, 403);
+        Gate::authorize('view', $approval);
 
         $approval->load('approvable', 'submitter', 'decider');
 
@@ -57,6 +57,7 @@ class ApprovalController extends Controller
             'item' => $approval->approvable,
             'changes' => Approvals::changes($approval),
             'mayDecide' => Approvals::mayDecide($user, $approval),
+            'mayWithdraw' => Approvals::mayWithdraw($user, $approval),
             'ownItem' => $approval->submitted_by === $user->id,
             'history' => Approval::with('submitter', 'decider')
                 ->where('approvable_type', $approval->approvable_type)
@@ -86,7 +87,8 @@ class ApprovalController extends Controller
 
     public function approve(Request $request, Approval $approval): RedirectResponse
     {
-        abort_unless($request->user()->hasPermission(Permission::ApproveContent), 403);
+        // The approve permission for this item's own type (evening pass).
+        Gate::authorize('decide', $approval);
         $data = $request->validate(['comment' => ['nullable', 'string', 'max:2000']]);
 
         try {
@@ -103,7 +105,8 @@ class ApprovalController extends Controller
 
     public function returnItem(Request $request, Approval $approval): RedirectResponse
     {
-        abort_unless($request->user()->hasPermission(Permission::ApproveContent), 403);
+        // The approve permission for this item's own type (evening pass).
+        Gate::authorize('decide', $approval);
         $data = $request->validate(['comment' => ['required', 'string', 'max:2000']], [
             'comment.required' => __('fa.approval_comment_required'),
         ]);
@@ -118,7 +121,25 @@ class ApprovalController extends Controller
             ->with('status', __('fa.approval_returned_flash', ['title' => Approvals::title($approval->approvable)]));
     }
 
-    public function rules(Request $request): View
+    /**
+     * An administrator takes an item out of review, back to Draft, so it
+     * can be edited again. Audited; the author is told.
+     */
+    public function withdraw(Request $request, Approval $approval): RedirectResponse
+    {
+        Gate::authorize('withdraw', $approval);
+        $data = $request->validate(['comment' => ['nullable', 'string', 'max:2000']]);
+
+        try {
+            Approvals::withdraw($approval, $request->user(), $data['comment'] ?? null);
+        } catch (DomainException $e) {
+            throw ValidationException::withMessages(['approval' => $e->getMessage()]);
+        }
+
+        return back()->with('status', __('evening.withdrawn_flash', ['title' => Approvals::title($approval->approvable)]));
+    }
+
+        public function rules(Request $request): View
     {
         abort_unless($request->user()->hasPermission(Permission::ManageSettings), 403);
 

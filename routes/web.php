@@ -765,6 +765,7 @@ Route::prefix('{locale}')
                 Route::get('approvals/{approval}', [\App\Http\Controllers\Admin\ApprovalController::class, 'show'])->whereNumber('approval')->name('approvals.show');
                 Route::put('approvals/{approval}/approve', [\App\Http\Controllers\Admin\ApprovalController::class, 'approve'])->whereNumber('approval')->name('approvals.approve');
                 Route::put('approvals/{approval}/return', [\App\Http\Controllers\Admin\ApprovalController::class, 'returnItem'])->whereNumber('approval')->name('approvals.return');
+                Route::put('approvals/{approval}/withdraw', [\App\Http\Controllers\Admin\ApprovalController::class, 'withdraw'])->whereNumber('approval')->name('approvals.withdraw');
             });
         });
 

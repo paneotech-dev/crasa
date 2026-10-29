@@ -23,7 +23,7 @@ final class RoleAreas
                 'view' => [Permission::ReadContent],
                 'edit' => [Permission::ManageContent, Permission::EditTranslations, Permission::EditHomepage],
                 'delete' => [Permission::DeleteContent],
-                'approve' => [Permission::ApproveContent, Permission::PublishContent, Permission::PublishWithoutApproval],
+                'approve' => [Permission::ApprovePublications, Permission::ApproveNews, Permission::ApproveEvents, Permission::ApprovePages, Permission::ApproveSocial, Permission::PublishContent, Permission::PublishWithoutApproval],
             ],
             'data' => [
                 'edit' => [Permission::SubmitCountryReturn],

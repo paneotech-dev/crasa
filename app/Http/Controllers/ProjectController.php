@@ -44,7 +44,7 @@ class ProjectController extends Controller
             404
         );
 
-        $project->load(['translations', 'sector', 'documents']);
+        $project->load(['translations', 'sector', 'documents', 'leadCommittee']);
 
         // Related by sector, the one link the records hold (29 October 2026).
         $publications = $project->sector_id === null ? collect() : \App\Models\Publication::query()

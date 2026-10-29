@@ -26,7 +26,7 @@
     <meta name="crasa-pw-hide" content="{{ __('auth.hide_password') }}">
     <script>document.documentElement.classList.add('has-js');</script>
 
-    <title>@yield('title', $brand) — {{ $brand }}</title>
+    <title>@yield('title', $brand) | {{ $brand }}</title>
 
     {{-- Never indexed. It is behind authentication, but a crawler that
          reaches a login redirect should not keep the URL. --}}

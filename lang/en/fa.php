@@ -17,10 +17,12 @@ return [
     'type_news' => 'News item',
     'type_events' => 'Event',
     'type_pages' => 'Page',
+    'type_social' => 'Social post',
     'types_publications' => 'Publications',
     'types_news' => 'News',
     'types_events' => 'Events and meetings',
     'types_pages' => 'Pages',
+    'types_social' => 'Social posts',
 
     // Panel on an item
     'panel_title' => 'Approval',
@@ -100,6 +102,7 @@ return [
     'notify_approval_submitted' => ':actor sent ":subject" for approval',
     'notify_approval_approved' => ':actor approved ":subject"; it is live',
     'notify_approval_returned' => ':actor returned ":subject" with a comment',
+    'notify_approval_withdrawn' => ':actor withdrew ":subject" from review; it is a draft again',
 
     // Rules
     'rules_title' => 'Approval rules',

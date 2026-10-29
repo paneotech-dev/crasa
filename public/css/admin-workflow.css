@@ -58,3 +58,8 @@
 
 /* A Tab stop inside a date field's segments shows the ring (g row 19). */
 .a-input[type="date"]:focus-within { outline: 2px solid var(--focus-ring, #2F4F8F); outline-offset: 2px; }
+.aw-lockset { margin: 0; padding: 0; border: 0; min-width: 0; }
+/* Visually hidden captions and labels (.c-sr, position: absolute) inside a
+   table frame took the page as their containing block and widened it: the
+   back office scrolled about 500 px sideways at 390. The frame contains them. */
+.a-tablewrap { position: relative; }

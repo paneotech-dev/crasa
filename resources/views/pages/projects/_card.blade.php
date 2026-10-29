@@ -27,7 +27,7 @@
     </figure>
     <div class="u-card__body">
         <div class="cp-proj-card__top">
-            @if ($project->sector)<span class="u-card__label">{{ $project->sector->name }}</span>@endif
+            @if ($project->programme || $project->sector)<span class="u-card__label">{{ collect([$project->programme, $project->sector?->name])->filter()->implode(', ') }}</span>@endif
             <span class="u-pill {{ $current ? 'u-pill--ok' : 'u-pill--muted' }}">
                 @if ($current)
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/></svg>

@@ -278,11 +278,17 @@ class ExtranetController extends Controller
         $asked = $this->monthFrom($request->query('month'));
         $committee = $request->string('committee')->value() ?: null;
 
+        // The filter takes the public calendar's committee codes (PC, SFMC:
+        // App\Support\EventGroup), so the two calendars share colours, codes
+        // and links; a committee slug from an older link still works.
+        $isCode = $committee !== null && isset(\App\Support\EventGroup::GROUPS[$committee]);
+
         $visible = fn ($query) => $query
             ->with('committee')
-            ->when($committee, fn ($q, $v) => $q->whereHas('committee', fn ($c) => $c->where('slug', $v)))
+            ->when($committee && ! $isCode, fn ($q) => $q->whereHas('committee', fn ($c) => $c->where('slug', $committee)))
             ->get()
             ->filter(fn (Meeting $m) => Gate::allows('view', $m))
+            ->when($isCode, fn ($c) => $c->filter(fn (Meeting $m) => $m->group()->code === $committee))
             ->values();
 
         $today = LocalTime::today();
@@ -310,6 +316,9 @@ class ExtranetController extends Controller
             'movedFrom' => $movedFrom,
             'committeeFilter' => $committee,
             'committees' => Committee::where('is_active', true)->orderBy('name')->get(),
+            'groups' => \App\Support\EventGroup::present(
+                Meeting::query()->get()->filter(fn (Meeting $m) => Gate::allows('view', $m))
+            ),
             'inMonth' => $inMonth,
             'upcoming' => $visible(Meeting::upcoming()),
             'past' => $visible(Meeting::past()->limit(20)),

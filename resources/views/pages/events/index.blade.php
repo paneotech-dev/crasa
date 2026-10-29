@@ -103,7 +103,7 @@
                                                 <span class="e-day__num" @if ($d->toDateString() === $today) aria-current="date" @endif><span class="c-sr">{{ $d->locale($locale)->isoFormat('D MMMM') }}</span><span aria-hidden="true">{{ $d->day }}</span>@if ($d->toDateString() === $today)<span class="e-day__today">{{ __('e.today') }}</span>@endif</span>
                                                 @foreach ($day['meetings'] as $m)
                                                     @php($g = $m->group())
-                                                    <a class="e-chip @if ($m->isCancelled()) e-chip--cancelled @endif @unless ($m->starts_on->isSameDay($d) || $d->isMonday() || $d->day === 1) e-chip--cont @endunless" data-group="{{ $g->code }}" style="--e-c: {{ $g->colour }}" href="{{ route('events.show', ['locale' => $locale, 'meeting' => $m->slug]) }}">
+                                                    <a data-preview="e-pv-{{ $m->id }}" class="e-chip @if ($m->isCancelled()) e-chip--cancelled @endif @unless ($m->starts_on->isSameDay($d) || $d->isMonday() || $d->day === 1) e-chip--cont @endunless" data-group="{{ $g->code }}" style="--e-c: {{ $g->colour }}" href="{{ route('events.show', ['locale' => $locale, 'meeting' => $m->slug]) }}">
                                                         <span class="e-chip__code" aria-hidden="true">{{ $g->code }}</span>
                                                         <span class="e-chip__text"><span class="c-sr">{{ $d->locale($locale)->isoFormat('D MMMM') }}, {{ $g->label() }}: </span>{{ $m->title }}@if ($m->isCancelled())<span class="c-sr"> ({{ __('e.status_cancelled') }})</span>@endif</span>
                                                     </a>
@@ -116,6 +116,37 @@
                         </table>
                         @if ($monthEvents->isEmpty())
                             <p class="e-month__empty">{{ __('e.month_empty') }}</p>
+                        @else
+                            {{-- Chip preview (evening pass): one inert template per event, shown in a
+                                 native <dialog> by events.js. Without script the chip is a link. --}}
+                            @foreach ($monthEvents as $m)
+                                @php($g = $m->group())
+                                <template id="e-pv-{{ $m->id }}">
+                                    <p class="e-pv__group"><span class="e-badge" style="--e-c: {{ $g->colour }}" aria-hidden="true">{{ $g->code }}</span><span>{{ $g->label() }}</span></p>
+                                    <h2 class="e-pv__title" id="e-pv-title" tabindex="-1">{{ $m->title }}</h2>
+                                    <p class="e-pv__line">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+                                        @if ($m->date_unknown)<span>{{ __('events.date_not_stated') }}</span>@else<time datetime="{{ $m->starts_on->toDateString() }}">{{ $m->dateRange() }}</time>@endif
+                                    </p>
+                                    @if ($m->isOnline() || $m->location)
+                                        <p class="e-pv__line">
+                                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                                            <span>{{ $m->isOnline() && strcasecmp((string) $m->location, 'Online') === 0 ? __('e.online') : $m->location }}</span>
+                                        </p>
+                                    @endif
+                                    @if ($m->isCancelled())<p class="e-pv__line"><span class="u-pill e-pill--cancelled">{{ __('e.status_cancelled') }}</span></p>@endif
+                                    @include('pages.events._add-to-calendar', ['meeting' => $m, 'compact' => true, 'idPrefix' => 'pv-'])
+                                    <p class="e-pv__actions"><a class="u-btn u-btn--primary" href="{{ route('events.show', ['locale' => $locale, 'meeting' => $m->slug]) }}">{{ __('evening.preview_open') }}<span class="c-sr">: {{ $m->title }}</span></a></p>
+                                </template>
+                            @endforeach
+                            <dialog class="e-pv" aria-labelledby="e-pv-title" data-preview-dialog>
+                                <div class="e-pv__inner">
+                                    <button type="button" class="e-pv__close" data-preview-close>
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="c-sr">{{ __('evening.preview_close') }}</span>
+                                    </button>
+                                    <div data-preview-body></div>
+                                </div>
+                            </dialog>
                         @endif
                     </div>
 

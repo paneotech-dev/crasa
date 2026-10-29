@@ -27,9 +27,16 @@ class PublicationPolicy
         return $user->hasPermission(Permission::ManageContent);
     }
 
-    public function update(User $user, Publication $publication): bool
+    /** Open the editor. An item In review opens read only. */
+    public function edit(User $user, Publication $publication): bool
     {
         return $user->hasPermission(Permission::ManageContent);
+    }
+
+    /** Save a change. Refused while the item is In review (locked until approved or returned). */
+    public function update(User $user, Publication $publication): bool
+    {
+        return $user->hasPermission(Permission::ManageContent) && ! \App\Support\Approvals::isLocked($publication);
     }
 
     public function sendForApproval(User $user, Publication $publication): bool

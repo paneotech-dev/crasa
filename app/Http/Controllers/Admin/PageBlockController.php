@@ -47,6 +47,8 @@ class PageBlockController extends Controller
 
     public function store(Request $request, Page $page): RedirectResponse
     {
+        \App\Support\Approvals::refuseIfLocked($page);
+
         Gate::authorize('create', PageBlock::class);
 
         $data = $request->validate([
@@ -92,6 +94,8 @@ class PageBlockController extends Controller
 
     public function update(Request $request, Page $page, PageBlock $block): RedirectResponse
     {
+        \App\Support\Approvals::refuseIfLocked($page);
+
         Gate::authorize('update', $block);
         abort_unless($block->page_id === $page->id, 404);
 
@@ -162,6 +166,8 @@ class PageBlockController extends Controller
      */
     public function move(Request $request, Page $page, PageBlock $block): RedirectResponse
     {
+        \App\Support\Approvals::refuseIfLocked($page);
+
         Gate::authorize('update', $block);
         abort_unless($block->page_id === $page->id, 404);
 
@@ -203,6 +209,8 @@ class PageBlockController extends Controller
      */
     public function duplicate(Page $page, PageBlock $block): RedirectResponse
     {
+        \App\Support\Approvals::refuseIfLocked($page);
+
         Gate::authorize('create', PageBlock::class);
         abort_unless($block->page_id === $page->id, 404);
 
@@ -241,6 +249,8 @@ class PageBlockController extends Controller
     /** Hiding is not deleting. A hidden block keeps its copy and its place. */
     public function toggle(Page $page, PageBlock $block): RedirectResponse
     {
+        \App\Support\Approvals::refuseIfLocked($page);
+
         Gate::authorize('update', $block);
         abort_unless($block->page_id === $page->id, 404);
 
@@ -251,6 +261,8 @@ class PageBlockController extends Controller
 
     public function destroy(Page $page, PageBlock $block): RedirectResponse
     {
+        \App\Support\Approvals::refuseIfLocked($page);
+
         Gate::authorize('delete', $block);
         abort_unless($block->page_id === $page->id, 404);
 

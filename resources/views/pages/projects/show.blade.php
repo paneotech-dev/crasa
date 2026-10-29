@@ -12,6 +12,8 @@
     $renderer = app(\App\Services\ContentRenderer::class);
     $current = $project->isCurrent();
     $partners = $project->partner ? array_filter(array_map('trim', explode(',', $project->partner))) : [];
+    $countries = $project->countryList();
+    $milestones = $project->milestoneList();
     // A body that is only an image credit and empty paragraphs is not a
     // description. Image credits are dropped from the text a reader sees.
     $bodyHtml = $body ? preg_replace('~<p>\s*(Picture|Image) Source:.*?</p>|<p>(\s|&nbsp;|\x{200D})*</p>~iu', '', $body->value) : null;
@@ -88,8 +90,20 @@
                     @if ($partners !== [])
                         <div><dt>{{ __('cpages_a.partners') }}</dt><dd><ul class="cp-proj-partners" role="list">@foreach ($partners as $partner)<li>{{ $partner }}</li>@endforeach</ul></dd></div>
                     @endif
+                    @if ($project->programme)
+                        <div><dt>{{ __('evening.project_programme') }}</dt><dd>{{ $project->programme }}</dd></div>
+                    @endif
+                    @if ($project->funding_partner)
+                        <div><dt>{{ __('evening.project_funding_partner') }}</dt><dd>{{ $project->funding_partner }}</dd></div>
+                    @endif
                     @if ($period)
                         <div><dt>{{ __('cpages_a.period') }}</dt><dd>{{ $period }}</dd></div>
+                    @endif
+                    @if ($countries !== [])
+                        <div><dt>{{ __('evening.project_countries') }}</dt><dd>{{ implode(', ', $countries) }}</dd></div>
+                    @endif
+                    @if ($project->leadCommittee)
+                        <div><dt>{{ __('evening.project_lead_committee') }}</dt><dd><a href="{{ route('committees.show', ['locale' => $locale, 'committee' => $project->leadCommittee]) }}">{{ $project->leadCommittee->name }}</a></dd></div>
                     @endif
                     <div><dt>{{ __('projects.title') }}</dt><dd>{{ $current ? __('cpages_a.status_current') : __('cpages_a.status_completed') }}</dd></div>
                 </dl>
@@ -107,6 +121,22 @@
         </aside>
     </div>
 </section>
+
+@if ($milestones !== [])
+    <section class="u-section u-section--tint" aria-labelledby="proj-milestones-h">
+        <div class="u-container">
+            <h2 class="u-h2" id="proj-milestones-h">{{ __('evening.project_milestones') }}</h2>
+            <ol class="u-timeline" data-milestones>
+                @foreach ($milestones as $step)
+                    <li @if ($step['lang']) lang="{{ $step['lang'] }}" @endif>
+                        @if ($step['when'])<p class="u-timeline__date">{{ $step['when'] }}</p>@endif
+                        <p class="u-timeline__title">{{ $step['label'] }}</p>
+                    </li>
+                @endforeach
+            </ol>
+        </div>
+    </section>
+@endif
 
 @if ($publications->isNotEmpty())
     <section class="u-section u-section--blue">

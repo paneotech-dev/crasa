@@ -6,7 +6,7 @@
 --}}
 @php
     $eventUrl = route('events.show', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug]);
-    $calendarId = 'addcal-'.$meeting->id.($compact ?? false ? '-card' : '');
+    $calendarId = ($idPrefix ?? '').'addcal-'.$meeting->id.($compact ?? false ? '-card' : '');
     $feed = app(\App\Services\CalendarFeed::class);
 @endphp
 @if (! $meeting->date_unknown && $meeting->starts_on && ! $meeting->hasEnded() && ! $meeting->isCancelled())
