@@ -39,6 +39,33 @@
 /* ---- Newsroom ------------------------------------------------------------ */
 
 /* ---- Search -------------------------------------------------------------- */
+.cp-search__form { background: var(--u-white); border: 1px solid var(--u-line); border-radius: var(--u-radius); padding: var(--u-4); display: grid; gap: var(--u-2); }
+.cp-search__field { position: relative; display: flex; gap: var(--u-2); }
+.cp-search__field .u-input { flex: 1; min-width: 0; }
+.cp-search__count { margin: 0 0 var(--u-4); font: 600 var(--u-t-18)/1.4 var(--u-sans); color: var(--u-green-deep); }
+.cp-search__count:empty { display: none; }
+.cp-search__group + .cp-search__group { margin-top: var(--u-6); }
+.cp-search__group-title { display: flex; align-items: center; gap: var(--u-3); margin: 0 0 var(--u-3); font: 600 var(--u-t-22)/1.3 var(--u-sans); color: var(--u-ink); }
+.cp-search__cards, .cp-linkcards { list-style: none; margin: 0; padding: 0; }
+.cp-search mark, .cp-result mark { background: #FFF1C2; color: var(--u-ink); padding: 0 2px; border-radius: 2px; }
+.cp-search__facets { position: sticky; top: 96px; }
+.cp-search__facets .c-filters { display: grid; gap: var(--u-3); margin: 0; }
+.cp-search__facets .c-filters__legend { font-size: var(--u-t-14); font-weight: 600; color: var(--u-ink); }
+.cp-search__facets .c-chip { min-height: 44px; font-size: var(--u-t-14); }
+.cp-search__facets .c-chip__count { font-size: var(--u-t-14); }
+.cp-search__empty { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--u-5); align-items: start; }
+.cp-pager { display: flex; flex-wrap: wrap; align-items: center; gap: var(--u-3); margin-top: var(--u-5); color: var(--u-muted); }
+@media (max-width: 991.98px) {
+  .cp-search__facets { position: static; order: -1; }
+  .cp-search__empty { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 479.98px) {
+  .cp-search__field { flex-direction: column; }
+}
+@media (max-width: 767.98px) {
+  .cp-search__facets .c-filters__options { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: var(--u-2); padding-bottom: 4px; }
+  .cp-search__facets .c-chip { flex: none; }
+}
 
 /* ---- Sign in and register ------------------------------------------------- */
 

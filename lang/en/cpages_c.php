@@ -1,0 +1,19 @@
+<?php
+
+// Search, sign-in, error and legal pages on the UI system (29 October 2026).
+return [
+    'search_title_query' => 'Results for :query',
+    'browse_heading' => 'Or start from a section',
+    'browse_publications' => 'Guidelines, model laws, reports and position papers from the three sectors.',
+    'browse_newsroom' => 'News, statements and meeting reports from the Secretariat.',
+    'browse_members' => 'The fourteen national regulators and their pages.',
+    'browse_comparator' => 'Indicators side by side for up to four member states.',
+    'group_instrument' => 'Regulatory instruments',
+    'group_publication' => 'Publications',
+    'group_news' => 'Newsroom',
+    'group_member' => 'Member states',
+    'search_cta_title' => 'Not finding the document you need?',
+    'search_cta_text' => 'Browse the full library by sector and type, or ask the Secretariat in Gaborone.',
+    'search_cta_primary' => 'Browse the library',
+    'search_cta_secondary' => 'Contact the Secretariat',
+];
