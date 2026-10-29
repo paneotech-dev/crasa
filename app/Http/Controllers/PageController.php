@@ -46,6 +46,11 @@ class PageController extends Controller
 
         abort_if($page === null, 404);
 
-        return view('pages.composed', ['page' => $page]);
+        // A page with its own layout (29 October 2026, UI system) reads the
+        // same block records through a template drawn for it; every other
+        // page is composed from its blocks in order.
+        $view = 'pages.static.'.$slug;
+
+        return view(view()->exists($view) ? $view : 'pages.composed', ['page' => $page]);
     }
 }
