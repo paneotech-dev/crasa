@@ -78,9 +78,10 @@ class D3PublicChromeTest extends TestCase
         $this->assertSame(1, $x->query('//footer[contains(@class, "k-foot")]//img[contains(@src, "crasa-logo")]')->length, $path);
         $this->assertSame(1, $x->query('//footer[contains(@class, "k-foot")]//address')->length, $path);
 
-        // The bottom line: terms, privacy, accessibility statement.
+        // The bottom line: terms, privacy, cookie settings (item 1h),
+        // accessibility statement.
         $this->assertSame(
-            [__('footer.terms'), __('footer.privacy'), __('footer.accessibility')],
+            [__('footer.terms'), __('footer.privacy'), __('d3_privacy.footer_link'), __('footer.accessibility')],
             $this->texts($x, '//div[contains(@class, "k-fbar")]//a'),
             $path
         );

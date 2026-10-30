@@ -62,7 +62,7 @@ return new class extends Migration
         if ($changed) {
             // A new "last updated" date on the page, and the draft stays
             // flagged for CRASA's review in the back office.
-            $page->forceFill(['needs_client_review' => true, 'updated_at' => now()])->save();
+            $page->forceFill(['needs_client_review' => true, 'client_reviewed_at' => null, 'client_reviewed_by' => null, 'updated_at' => now()])->save();
         }
     }
 

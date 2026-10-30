@@ -92,7 +92,33 @@ final class AuditChanges
             $rows[] = self::row($key, null, $value);
         }
 
-        return $rows;
+        return self::forgetFormerUser($entry, $rows);
+    }
+
+    /**
+     * A deleted account becomes "Former user": the audit log keeps what was
+     * done, not who the person was. Its name, e-mail, phone and title are
+     * shown as hidden in every entry about that account.
+     *
+     * @param  list<array{field: string, before: ?string, after: ?string, masked: bool}>  $rows
+     * @return list<array{field: string, before: ?string, after: ?string, masked: bool}>
+     */
+    private static function forgetFormerUser(AuditLog $entry, array $rows): array
+    {
+        if (class_basename((string) $entry->auditable_type) !== 'User' || $entry->auditable_id === null) {
+            return $rows;
+        }
+
+        $user = \App\Models\User::query()->withoutGlobalScopes()->find($entry->auditable_id);
+        if ($user === null || ($user->anonymised_at === null && $user->name !== 'Former user')) {
+            return $rows;
+        }
+
+        $personal = array_map(fn (string $f) => self::label($f), ['name', 'email', 'phone', 'title', 'job_title', 'former_name', 'former_email']);
+
+        return array_map(fn (array $row) => in_array($row['field'], $personal, true)
+            ? ['field' => $row['field'], 'before' => null, 'after' => null, 'masked' => true]
+            : $row, $rows);
     }
 
     /** @return array{field: string, before: ?string, after: ?string, masked: bool} */

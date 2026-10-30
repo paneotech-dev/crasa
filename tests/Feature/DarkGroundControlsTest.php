@@ -119,7 +119,8 @@ class DarkGroundControlsTest extends TestCase
 
             preg_match_all('/<select[^>]*name="cmp_[^"]*"[^>]*>/', $html, $selects);
 
-            $this->assertNotEmpty($selects[0], "No comparison select found in {$locale} to check.");
+            // Since 30 October (item 1c) the homepage has no comparison
+            // block; any select that remains must still carry the component.
 
             // .c-select (blocks) or .u-select (the UI system since the
             // Concept 3 home): either component styles the select and its options.

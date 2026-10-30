@@ -53,7 +53,7 @@ final class MediaUsage
             }
 
             $usages[] = [
-                'label' => ($page->translate('title')?->value ?? $page->slug).' — '.$block->type()->label(),
+                'label' => ($page->translate('title')?->value ?? $page->slug).': '.$block->type()->label(),
                 'url' => route('admin.pages.edit', ['locale' => app()->getLocale(), 'page' => $page->slug]),
                 'slot' => $block->type() === \App\Enums\BlockType::Hero ? 'hero' : null,
             ];

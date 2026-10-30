@@ -307,10 +307,10 @@ class InteractiveSurfacesTest extends TestCase
 
         $html = $this->get('/en')->assertOk()->getContent();
 
-        // Selectors, present, on the page that describes the comparator.
-        $this->assertStringContainsString('name="cmp_indicator"', $html);
-        $this->assertStringContainsString('name="cmp_a"', $html);
-        $this->assertStringContainsString('name="cmp_b"', $html);
+        // Since 30 October (item 1c) the homepage carries no comparison
+        // block: the comparator is reached from the menu and the hero.
+        $this->assertStringNotContainsString('name="cmp_indicator"', $html);
+        $this->assertMatchesRegularExpression('#href="[^"]*/en/comparator"#', $html);
     }
 
     public function test_the_homepage_comparison_shows_the_two_states_it_is_asked_for(): void

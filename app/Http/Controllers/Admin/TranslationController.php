@@ -310,7 +310,7 @@ class TranslationController extends Controller
     private function labelFor(Model $record): string
     {
         if ($record instanceof PageBlock) {
-            return ($record->page?->slug ?? '').' — '.$record->type()->label();
+            return ($record->page?->slug ?? '').': '.$record->type()->label();
         }
 
         if ($record instanceof MediaAsset) {
