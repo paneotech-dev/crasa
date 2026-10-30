@@ -25,12 +25,6 @@
 @endpush
 
 @section('content')
-    @if (session('status'))
-        <div class="a-notice a-notice--success" role="status">{{ session('status') }}</div>
-    @endif
-    @if ($errors->any())
-        <div class="a-notice a-notice--error" role="alert">{{ $errors->first() }}</div>
-    @endif
 
     {{-- The chain, in one paragraph: where a filing comes from and where it goes. --}}
     <p class="a-hint">{{ __('d3_people.reg_chain') }}</p>
