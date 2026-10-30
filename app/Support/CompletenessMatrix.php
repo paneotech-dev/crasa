@@ -46,7 +46,7 @@ final class CompletenessMatrix
             ->join('indicators', 'indicators.id', '=', 'indicator_values.indicator_id')
             ->where('indicators.is_active', true)
             ->when($period, fn ($q) => $q->where('indicator_values.period', $period))
-            ->selectRaw('indicator_values.country_id, indicators.category, COUNT(*) as reported')
+            ->selectRaw('indicator_values.country_id, indicators.category, COUNT(DISTINCT indicator_values.indicator_id) as reported')
             ->groupBy('indicator_values.country_id', 'indicators.category')
             ->get();
 

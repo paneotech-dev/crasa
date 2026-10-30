@@ -26,7 +26,7 @@ return [
     'preferences_saved' => 'Your notification preferences are saved.',
     'save_preferences' => 'Save preferences',
     'by_email' => 'By email',
-    'email_note' => 'A decision on your own return is emailed as it happens. Everything else waits for the digest, because one email per event is a channel people stop opening.',
+    'email_note' => 'E-mail is switched off for the workshop, so every notice stays here. Once e-mail is on, a decision on your own return is sent as it happens and everything else waits for the digest you choose below.',
     'digest_label' => 'Send the digest',
     'digest_daily' => 'Once a day',
     'digest_weekly' => 'Once a week',
@@ -49,6 +49,8 @@ return [
     'trigger_approval' => 'Moderation of content',
     'trigger_admin_activity' => 'Another administrator acted',
     'trigger_announcement_note' => 'Notices to the membership, sometimes narrowed to one sector or one committee.',
+    'trigger_registration_confirmed' => 'A registration for a meeting is confirmed',
+    'trigger_registration_confirmed_note' => 'Your own registration, or one from your member state, accepted by the Secretariat.',
     'filed' => "':file' was filed into :committee.",
     'meeting_moved' => "':title' is now :date.",
 

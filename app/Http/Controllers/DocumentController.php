@@ -56,7 +56,7 @@ class DocumentController extends Controller
                     'clearance' => $document->clearance->value,
                     'filename' => $document->original_filename,
                     'disposition' => $disposition,
-                ],
+                ] + ($document->folder_id !== null ? ['folder_id' => $document->folder_id, 'version' => $document->version] : []),
                 $request->user(),
             );
         }

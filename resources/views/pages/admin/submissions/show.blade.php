@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 
-@section('title', __('submissions.review_title', ['country' => $submission->country?->name, 'period' => $submission->period]))
+@section('title', __('submissions.review_title', ['country' => $submission->country?->displayName(), 'period' => $submission->period]))
 @section('note', __('submissions.review_note'))
 
 @section('crumbs')
     <li><a href="{{ route('admin.submissions', ['locale' => app()->getLocale()]) }}">{{ __('submissions.queue_title') }}</a></li>
-    <li aria-current="page">{{ $submission->country?->name }} {{ $submission->period }}</li>
+    <li aria-current="page">{{ $submission->country?->displayName() }} {{ $submission->period }}</li>
 @endsection
 
 @section('content')
@@ -50,7 +50,7 @@
                             @endphp
                             <tr>
                                 <th scope="row">
-                                    {{ $indicator->name }}
+                                    {{ $indicator->displayName() }}
                                     <span class="a-table__sub">{{ __('comparator.category_'.$category) }}</span>
                                 </th>
                                 <td data-numeric @unless ($value?->hasFigure()) data-quiet @endunless>
@@ -72,7 +72,7 @@
                                         <form method="POST" action="{{ route('admin.submissions.comment', ['locale' => app()->getLocale(), 'submission' => $submission->id]) }}">
                                             @csrf
                                             <input type="hidden" name="indicator_id" value="{{ $indicator->id }}">
-                                            <label class="c-sr" for="c-{{ $indicator->id }}">{{ __('submissions.comment_on', ['field' => $indicator->name]) }}</label>
+                                            <label class="c-sr" for="c-{{ $indicator->id }}">{{ __('submissions.comment_on', ['field' => $indicator->displayName()]) }}</label>
                                             <input class="a-input" id="c-{{ $indicator->id }}" name="comment" type="text" placeholder="{{ __('submissions.comment_placeholder') }}">
                                         </form>
                                     @endif

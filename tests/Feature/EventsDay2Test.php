@@ -82,15 +82,21 @@ class EventsDay2Test extends TestCase
         $this->assertMatchesRegularExpression('/data-date="2026-10-30">\s*<span class="e-day__num"\s+aria-current="date"/', $html);
     }
 
-    public function test_upcoming_cards_offer_google_outlook_and_ics(): void
+    public function test_upcoming_cards_link_to_the_calendar_options_on_the_event_page(): void
     {
         $this->meeting(['title' => 'Card meeting', 'slug' => 'card-meeting']);
 
+        // Item 8f: one "Add to calendar" link per card; Google, Outlook
+        // and the .ics file are on the event page.
         $this->get('/en/events')->assertOk()
+            ->assertSee(url('/en/events/card-meeting').'#add-to-calendar', false)
+            ->assertSee('Add to calendar')
+            ->assertSee('Register');
+
+        $this->get('/en/events/card-meeting')->assertOk()
             ->assertSee('https://calendar.google.com/calendar/render?action=TEMPLATE', false)
             ->assertSee('https://outlook.live.com/calendar/0/deeplink/compose?', false)
-            ->assertSee(url('/en/events/card-meeting/calendar.ics'), false)
-            ->assertSee('Register');
+            ->assertSee(url('/en/events/card-meeting/calendar.ics'), false);
     }
 
     public function test_past_meetings_are_grouped_by_year_with_a_filter(): void
@@ -176,7 +182,8 @@ class EventsDay2Test extends TestCase
         $this->assertStringContainsString('Only upcoming', $html);
         $this->assertStringContainsString('Last spring', $html);
         $this->assertStringContainsString('Last winter', $html);
-        $this->assertStringContainsString('>Past<', $html);
+        // Day 3: a meeting that has ended reads Held (computed), not Past.
+        $this->assertStringContainsString('>Held<', $html);
     }
 
     /* Back office ------------------------------------------------------------- */

@@ -147,7 +147,7 @@ class EventAdminController extends Controller
         return view('pages.admin.events.form', [
             'meeting' => $meeting,
             'groups' => array_map(fn ($code) => EventGroup::code($code), array_keys(EventGroup::GROUPS)),
-            'committees' => Committee::orderBy('name')->get(['id', 'name']),
+            'committees' => Committee::orderBy('name')->get(['id', 'slug', 'name']),
             'kinds' => self::KINDS,
             'clearances' => [Clearance::Public, Clearance::Member, Clearance::Confidential, Clearance::Secretariat],
         ]);

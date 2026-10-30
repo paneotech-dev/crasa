@@ -27,8 +27,23 @@
     @if ($definition->isReferenceData)
         {{-- Reference data is what every other record points at. Saying so
              here is cheaper than explaining an orphaned foreign key. --}}
-        <div class="a-notice a-notice--pending" role="note">{{ __('admin.reference_data_note') }}</div>
+        <div class="a-notice a-notice--pending" role="note">{{ $definition->deletable ? __('d3_crud.reference_data_note') : __('admin.reference_data_note') }}</div>
     @endif
+    @if ($definition->key === 'sectors')
+        {{-- Sectors are added and deleted under Content > Taxonomies, with
+             their three names and the check for what points at them;
+             SectorPolicy lets the same readers do it. --}}
+        @can('create', \App\Models\Sector::class)
+            <p class="a-hint">
+                <a href="{{ route('admin.taxonomies', ['locale' => app()->getLocale(), 'kind' => 'sectors']) }}">{{ __('d3_security.sectors_in_taxonomies') }}</a>
+            </p>
+        @endcan
+    @endif
+
+    {{-- A refused delete from a row of this list comes back here. --}}
+    @error('record')
+        <div class="a-notice a-notice--error" role="alert">{{ $message }}</div>
+    @enderror
 
     @if ($showingDeleted)
         <div class="a-notice a-notice--pending" role="status">{{ __('admin.showing_deleted') }}</div>

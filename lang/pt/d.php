@@ -55,7 +55,7 @@ return [
     'summary_label' => 'Em palavras',
     'open_full' => 'Abrir no comparador',
     'home_heading' => 'Comparar Estados-Membros',
-    'home_intro' => 'Escolha um indicador e dois Estados-Membros. A tabela e o gráfico mudam a cada escolha.',
+    'home_intro' => 'Escolha um indicador e dois Estados-Membros.',
     'home_indicator' => 'Indicador',
     'home_state_a' => 'Primeiro Estado-Membro',
     'home_state_b' => 'Segundo Estado-Membro',

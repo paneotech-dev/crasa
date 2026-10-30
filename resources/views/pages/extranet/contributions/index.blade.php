@@ -11,7 +11,9 @@
 @section('note', __('contributions.note'))
 
 @section('actions')
-    <a class="a-btn a-btn--primary" href="{{ route('contributions.create', ['locale' => app()->getLocale()]) }}">{{ __('contributions.add') }}</a>
+    @can(\App\Enums\Permission::SubmitCountryReturn->value)
+        <a class="a-btn a-btn--primary" href="{{ route('contributions.create', ['locale' => app()->getLocale()]) }}">{{ __('contributions.add') }}</a>
+    @endcan
 @endsection
 
 @section('content')

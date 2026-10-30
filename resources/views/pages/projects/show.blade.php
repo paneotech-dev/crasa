@@ -61,7 +61,7 @@
                 @if ($project->hero_image_path)
                     <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($project->hero_image_path) }}" alt="" loading="eager" fetchpriority="high" decoding="async" width="800" height="600">
                 @else
-                    <span class="cp-placeholder"><x-sector-icon :sector="$project->sector?->slug" /><span>{{ $project->sector?->name ?? __('projects.title') }}</span></span>
+                    <span class="cp-placeholder" aria-hidden="true"><img src="{{ asset('img/crasa-logo.svg') }}" alt="" width="56" height="56"></span>
                 @endif
             </figure>
         </div>
@@ -142,7 +142,6 @@
     <section class="u-section u-section--blue">
         <div class="u-container">
             <h2 class="u-h2">{{ __('cpages_a.related_publications') }}</h2>
-            <p class="u-text u-muted cp-proj-related-note">{{ __('cpages_a.same_sector', ['sector' => $project->sector->name]) }}</p>
             <ul class="u-cols-3 cp-doc-grid" role="list">
                 @foreach ($publications as $publication)
                     @php
@@ -154,11 +153,11 @@
                             @if ($document?->thumbnail_path)
                                 <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($document->thumbnail_path) }}" alt="" loading="lazy" width="320" height="240" style="object-fit: contain">
                             @else
-                                <span class="cp-doc-thumb" aria-hidden="true">{{ $document ? strtoupper(pathinfo($document->original_filename, PATHINFO_EXTENSION)) : __($publication->publication_type->labelKey()) }}</span>
+                                <span class="cp-doc-thumb" aria-hidden="true">{{ $document ? strtoupper(pathinfo($document->original_filename, PATHINFO_EXTENSION)) : $publication->typeLabel() }}</span>
                             @endif
                         </figure>
                         <div class="u-card__body">
-                            <span class="u-card__label">{{ __($publication->publication_type->labelKey()) }}</span>
+                            <span class="u-card__label">{{ $publication->typeLabel() }}</span>
                             <h3 class="u-card__title"><a href="{{ route('publications.show', ['locale' => $locale, 'slug' => $publication->slug]) }}" @if ($ptitle?->isFallback()) lang="{{ $ptitle->locale }}" @endif>{{ $ptitle?->value ?? $publication->slug }}</a></h3>
                             <div class="u-card__meta">
                                 @if ($publication->published_on)<span>{{ $publication->published_on->format('Y') }}</span>@endif
@@ -176,7 +175,6 @@
     <section class="u-section">
         <div class="u-container">
             <h2 class="u-h2">{{ __('cpages_a.related_news') }}</h2>
-            <p class="u-text u-muted cp-proj-related-note">{{ __('cpages_a.same_sector', ['sector' => $project->sector->name]) }}</p>
             <ul class="u-cols-3 cp-doc-grid" role="list">
                 @foreach ($news as $item)
                     @php
@@ -188,7 +186,7 @@
                             @if ($photo)
                                 <img src="{{ $photo['src'] }}" @if (! empty($photo['srcset'])) srcset="{{ $photo['srcset'] }}" sizes="(max-width: 640px) 100vw, 380px" @endif alt="" loading="lazy" decoding="async" @if (! empty($photo['width'])) width="{{ $photo['width'] }}" height="{{ $photo['height'] }}" @endif>
                             @else
-                                <span class="cp-placeholder"><x-sector-icon :sector="$project->sector?->slug" /><span>{{ __('nav.newsroom') }}</span></span>
+                                <span class="cp-placeholder" aria-hidden="true"><img src="{{ asset('img/crasa-logo.svg') }}" alt="" width="56" height="56"></span>
                             @endif
                         </figure>
                         <div class="u-card__body">

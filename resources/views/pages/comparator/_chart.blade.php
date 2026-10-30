@@ -7,6 +7,8 @@
     Every bar states its own figure and year, so the chart reads without
     colour, and "Not reported" is a hatched stub with words, never a zero.
     The bars grow once when drawn (CSS, 400ms, off under reduced motion).
+    Bar colours are tokens in comparator.css: the series in green, the
+    highlighted bar (the first, when browsing) in the CRASA blue.
 --}}
 @php
     // Two geometries: 640 wide for desktop, 360 for phones, so the text
@@ -39,7 +41,7 @@
         <g class="c-cmp-chart__row" style="--i: {{ $i }}">
             <text class="c-cmp-chart__name" x="{{ $labelW - 12 }}" y="{{ $y + 20 }}" text-anchor="end">{{ \Illuminate\Support\Str::limit($bar['name'], ($narrow ?? false) ? 12 : 20) }}</text>
             @if ($reported)
-                <rect class="c-cmp-chart__bar" x="{{ $labelW }}" y="{{ $y + 4 }}" width="{{ $w }}" height="22" rx="3" fill="{{ $i === 0 && ($highlightFirst ?? false) ? '#0B5F3E' : '#0F8757' }}"></rect>
+                <rect @class(['c-cmp-chart__bar', 'c-cmp-chart__bar--second' => $i === 0 && ($highlightFirst ?? false)]) x="{{ $labelW }}" y="{{ $y + 4 }}" width="{{ $w }}" height="22" rx="3"></rect>
                 <text class="c-cmp-chart__value" x="{{ $labelW + $w + 8 }}" y="{{ $y + 20 }}">{{ $bar['display'] }}@if ($bar['period'])<tspan class="c-cmp-chart__year" dx="6">{{ $bar['period'] }}</tspan>@endif</text>
             @else
                 <rect x="{{ $labelW }}" y="{{ $y + 4 }}" width="{{ $w }}" height="22" rx="3" fill="url(#{{ $uid }}-hatch)" stroke="#7B8794" stroke-width="1" stroke-dasharray="3 2"></rect>

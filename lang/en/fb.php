@@ -44,7 +44,7 @@ return [
     'preview' => 'Preview',
 
     // Social posts, public
-    'latest_heading' => 'Latest from CRASA',
+    'latest_heading' => 'CRASA on social media',
     'latest_intro' => 'What the Secretariat has posted on X, LinkedIn and Facebook.',
     'feed_heading' => 'CRASA on social media',
     'feed_intro' => 'Posts from the Secretariat, newest first.',

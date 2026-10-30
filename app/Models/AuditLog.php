@@ -141,6 +141,24 @@ class AuditLog extends Model
         return $line === $key ? $this->action : trim($line);
     }
 
+    /** An action name as a short phrase for the filters and the table. */
+    public static function actionLabel(string $action): string
+    {
+        $key = 'audit.action_'.$action;
+
+        return \Illuminate\Support\Facades\Lang::has($key)
+            ? \Illuminate\Support\Str::ucfirst(trim(__($key, ['subject' => __('d3_i18n.audit_a_record'), 'id' => ''])))
+            : $action;
+    }
+
+    /** A record type (a class name or its short form) in plain language. */
+    public static function typeLabel(string $type): string
+    {
+        $key = 'audit.subject_'.mb_strtolower(class_basename($type));
+
+        return \Illuminate\Support\Facades\Lang::has($key) ? \Illuminate\Support\Str::ucfirst(__($key)) : class_basename($type);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

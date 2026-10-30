@@ -58,6 +58,12 @@ class Announcement extends Model
         return $this->belongsTo(Committee::class);
     }
 
+    /** Files attached to the notice (documents are polymorphic). */
+    public function documents(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
+    }
+
     public function scopeLive(Builder $query): Builder
     {
         return $query->where('status', 'published')

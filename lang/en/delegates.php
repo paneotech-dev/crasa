@@ -44,7 +44,7 @@ return [
     'rejected' => 'This registration could not be accepted. Write to the Secretariat directly.',
     'confirmation_subject' => 'Your registration for :meeting',
     'confirmation_intro' => 'The CRASA Secretariat has recorded your arrival and departure for this meeting.',
-    'confirmation_amend' => 'To change anything, file the form again with the same email address. The later filing replaces this one.',
+    'confirmation_amend' => 'To change anything before the Secretariat confirms it, sign in with the account for this email address and file the form again, or write to the Secretariat.',
     'confirmation_boundary' => 'Accommodation, transfers and catering are arranged by the meeting organisers rather than through this platform.',
     'confirmation_none' => 'Not stated',
 ];

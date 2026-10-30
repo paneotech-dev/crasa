@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Enums\NewsCategory;
 use App\Models\NewsItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -16,7 +15,7 @@ class NewsItemFactory extends Factory
     {
         return [
             'slug' => Str::slug($this->faker->unique()->words(5, true)),
-            'category' => NewsCategory::News,
+            'category' => 'news',
             'sector_id' => null,
             'published_at' => now()->subDays($this->faker->numberBetween(1, 300)),
             'hero_image_path' => null,

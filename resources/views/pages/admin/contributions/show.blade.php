@@ -12,7 +12,7 @@
 @php($summary = $instrument->translate('summary'))
 
 @section('title', $title?->value ?? $instrument->reference_number)
-@section('note', $instrument->country?->name ?? '')
+@section('note', $instrument->country?->displayName() ?? '')
 
 @section('crumbs')
     <li><a href="{{ route('admin.contributions', ['locale' => app()->getLocale()]) }}">{{ __('contributions.review_title') }}</a></li>
@@ -29,12 +29,12 @@
         </div>
 
         <dl class="a-panel__meta">
-            <div><dt>{{ __('contributions.col_country') }}</dt><dd>{{ $instrument->country?->name }}</dd></div>
-            <div><dt>{{ __('contributions.col_sector') }}</dt><dd>{{ $instrument->sector?->name }}</dd></div>
+            <div><dt>{{ __('contributions.col_country') }}</dt><dd>{{ $instrument->country?->displayName() }}</dd></div>
+            <div><dt>{{ __('contributions.col_sector') }}</dt><dd>{{ $instrument->sector?->displayName() }}</dd></div>
             <div><dt>{{ __('contributions.field_type') }}</dt><dd>{{ __($instrument->instrument_type->labelKey()) }}</dd></div>
             <div><dt>{{ __('contributions.field_status') }}</dt><dd>{{ __($instrument->status->labelKey()) }}</dd></div>
             <div><dt>{{ __('contributions.field_reference') }}</dt><dd>{{ $instrument->reference_number }}</dd></div>
-            <div><dt>{{ __('contributions.contributed_by') }}</dt><dd>{{ $instrument->contributor?->name ?? '—' }}</dd></div>
+            <div><dt>{{ __('contributions.contributed_by') }}</dt><dd>{{ $instrument->contributor?->name ?? '–' }}</dd></div>
             <div><dt>{{ __('contributions.col_submitted') }}</dt><dd>{{ $instrument->submitted_at?->displayed()->isoFormat('D MMMM YYYY') ?? __('office.date_not_recorded') }}</dd></div>
         </dl>
 

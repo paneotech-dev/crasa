@@ -110,9 +110,15 @@ class AnnouncementAdminController extends Controller
 
         $announcement->update(['status' => 'published', 'published_at' => now()]);
 
-        foreach ($this->audience($announcement) as $user) {
-            $user->notify(new AnnouncementPublished($announcement));
-        }
+        // Through the one notifier: members who may open the announcement,
+        // once per publication.
+        \App\Support\Notifier::send(
+            $this->audience($announcement),
+            new AnnouncementPublished($announcement),
+            'announcement',
+            'announcement:'.$announcement->id.':published',
+            fn (\App\Models\User $user) => \Illuminate\Support\Facades\Gate::forUser($user)->allows('enter-member-area'),
+        );
 
         return back()->with('status', __('announcements.published'));
     }

@@ -165,21 +165,26 @@ class DataIntegrityTest extends TestCase
 
     public function test_the_check_reports_orphans_and_fails_so_a_scheduler_notices(): void
     {
+        $before = DB::table('translations')->count();
         $this->orphan();
 
         // Non-zero exit, or a nightly schedule reports nothing wrong.
         $this->artisan('data:check')->assertFailed();
 
-        $this->assertSame(1, DB::table('translations')->count(), 'The check removed rows without being asked to.');
+        $this->assertSame($before + 1, DB::table('translations')->count(), 'The check removed rows without being asked to.');
     }
 
     public function test_the_check_clears_them_when_asked(): void
     {
+        // The migrations seed translated names for the taxonomy terms; those
+        // rows have their parent and must survive the fix.
+        $before = DB::table('translations')->count();
         $this->orphan();
 
         $this->artisan('data:check --fix')->assertSuccessful();
 
-        $this->assertSame(0, DB::table('translations')->count());
+        $this->assertSame($before, DB::table('translations')->count());
+        $this->assertSame(0, DB::table('translations')->where('translatable_id', 999_999)->count());
     }
 
     public function test_a_clean_platform_reports_clean(): void
@@ -195,6 +200,7 @@ class DataIntegrityTest extends TestCase
      */
     public function test_a_translation_for_a_class_that_no_longer_exists_is_an_orphan(): void
     {
+        $before = DB::table('translations')->count();
         DB::table('translations')->insert([
             'translatable_type' => 'App\\Models\\SomethingRemoved',
             'translatable_id' => 1,
@@ -207,7 +213,8 @@ class DataIntegrityTest extends TestCase
 
         $this->artisan('data:check --fix')->assertSuccessful();
 
-        $this->assertSame(0, DB::table('translations')->count());
+        $this->assertSame($before, DB::table('translations')->count());
+        $this->assertSame(0, DB::table('translations')->where('translatable_type', 'App\\Models\\SomethingRemoved')->count());
     }
 
     /** The check runs nightly, so nobody has to remember it. */

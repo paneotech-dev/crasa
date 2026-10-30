@@ -5,13 +5,16 @@ namespace App\Models;
 use App\Enums\Clearance;
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\MarksSampleData;
+use Carbon\CarbonInterface;
 use Database\Factories\DocumentFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 /**
  * A file attached to an instrument, a publication or a committee.
@@ -28,8 +31,12 @@ class Document extends Model
     protected $fillable = [
         'documentable_type', 'documentable_id', 'file_path', 'original_filename',
         'mime_type', 'size_bytes', 'locale', 'thumbnail_path', 'folder_id', 'country_id', 'uploaded_by', 'clearance',
-        'committee_id', 'is_sample',
+        'committee_id', 'is_sample', 'version', 'search_text', 'share_token', 'deleted_by',
+        'validated_at', 'validated_by',
     ];
+
+    /** Files in the recycle bin are kept this many days, then purged (documents:purge-bin). */
+    public const BIN_DAYS = 30;
 
     protected function casts(): array
     {
@@ -38,7 +45,57 @@ class Document extends Model
             'size_bytes' => 'integer',
             'download_count' => 'integer',
             'is_sample' => 'boolean',
+            'version' => 'integer',
+            'validated_at' => 'datetime',
         ];
+    }
+
+    /**
+     * The extracted text is for search, the token is a link: neither is
+     * something a reader of the audit trail wants written out.
+     *
+     * @return list<string>
+     */
+    protected function auditIgnored(): array
+    {
+        return ['updated_at', 'last_seen_at', 'search_text', 'share_token', 'download_count'];
+    }
+
+    /** Every version of the file, newest first. */
+    public function versions(): HasMany
+    {
+        return $this->hasMany(DocumentVersion::class)->orderByDesc('version');
+    }
+
+    public function validator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'validated_by');
+    }
+
+    public function deleter(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    /**
+     * The token behind the file's share link, made the first time it is
+     * asked for. The link is stable; opening it still checks access.
+     */
+    public function shareToken(): string
+    {
+        if ($this->share_token === null) {
+            $token = Str::random(32);
+            static::withoutGlobalScopes()->withTrashed()->whereKey($this->getKey())->toBase()->update(['share_token' => $token]);
+            $this->forceFill(['share_token' => $token])->syncOriginalAttribute('share_token');
+        }
+
+        return $this->share_token;
+    }
+
+    /** The day a file in the recycle bin is purged. */
+    public function purgeDate(): ?CarbonInterface
+    {
+        return $this->deleted_at?->copy()->addDays(self::BIN_DAYS);
     }
 
     public function documentable(): MorphTo

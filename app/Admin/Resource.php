@@ -73,7 +73,66 @@ final class Resource
          * filter offers the years present in the column.
          */
         public readonly array $filters = [],
+        /*
+         * Day 3. Columns that hold English text and take a French and a
+         * Portuguese value beside it, kept in the translations table and
+         * read by HasLocalisedNames on public pages. A member state's or an
+         * indicator's name is a column every query sorts and joins on, so
+         * the English stays where it is.
+         *
+         * @var list<string>
+         */
+        public readonly array $localised = [],
+        /*
+         * Day 3. What still points at a record, as label key => count. A
+         * delete is refused while any count is above zero, and the message
+         * names each of them. Null for a resource whose deletion nothing
+         * blocks.
+         *
+         * @var (\Closure(Model): array<string, int>)|null
+         */
+        public readonly ?\Closure $references = null,
     ) {}
+
+    /**
+     * The records that still point at this one, without the zeroes.
+     *
+     * @return array<string, int>
+     */
+    public function referencesTo(Model $record): array
+    {
+        if ($this->references === null) {
+            return [];
+        }
+
+        return array_filter(($this->references)($record), fn (int $count) => $count > 0);
+    }
+
+    /**
+     * "This committee has 12 meetings and 3 workspace folders; move or
+     * delete them first." Null when nothing points at the record.
+     */
+    public function refusalFor(Model $record): ?string
+    {
+        $references = $this->referencesTo($record);
+
+        if ($references === []) {
+            return null;
+        }
+
+        $parts = [];
+        foreach ($references as $key => $count) {
+            $parts[] = trans_choice('d3_crud.ref_'.$key, $count, ['count' => $count]);
+        }
+
+        $last = array_pop($parts);
+        $list = $parts === [] ? $last : implode(', ', $parts).' '.__('d3_crud.and').' '.$last;
+
+        return __('d3_crud.delete_refused', [
+            'thing' => __('d3_crud.this_'.$this->key),
+            'list' => $list,
+        ]);
+    }
 
     public function label(): string
     {
@@ -99,6 +158,15 @@ final class Resource
 
     public function titleFor(Model $record): string
     {
+        // A name column first where there is one: a committee's first
+        // translatable field is its mandate, a paragraph, and the typed
+        // delete confirmation asks for the title (Day 3).
+        if (filled($record->getAttribute('name')) && ! in_array('name', $this->translatable, true)) {
+            // In the interface language where the name is translated; the
+            // typed delete confirmation is checked in the same language.
+            return method_exists($record, 'displayName') ? $record->displayName() : (string) $record->getAttribute('name');
+        }
+
         if ($this->translatable !== [] && method_exists($record, 'translate')) {
             $title = $record->translate($this->translatable[0])?->value;
 

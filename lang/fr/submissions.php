@@ -9,7 +9,7 @@
 
 return [
     'title' => 'Soumission de données',
-    'index_note' => 'Les retours de votre pays, par période. RP-09.',
+    'index_note' => 'Les retours de votre pays, par période.',
     'table_note' => 'Un retour par État membre et par période.',
     'open_title' => 'Ouvrir un retour',
     'open_note' => 'Un par période. Ouvrir une période existante y conduit plutôt que d\'en créer une seconde.',

@@ -203,7 +203,7 @@ final class HeroPanel
 
         return [
             'title' => $title,
-            'kind' => __($publication->publication_type->labelKey()),
+            'kind' => $publication->typeLabel(),
             'year' => $publication->published_on?->format('Y'),
             'format' => $document
                 ? strtoupper(pathinfo($document->original_filename, PATHINFO_EXTENSION))

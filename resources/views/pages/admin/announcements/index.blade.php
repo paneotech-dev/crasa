@@ -48,9 +48,9 @@
                                 </th>
                                 <td>
                                     @if ($announcement->committee)
-                                        {{ $announcement->committee->name }}
+                                        {{ $announcement->committee->displayName() }}
                                     @elseif ($announcement->sector)
-                                        {{ $announcement->sector->name }}
+                                        {{ $announcement->sector->displayName() }}
                                     @else
                                         {{ __('announcements.audience_all') }}
                                     @endif

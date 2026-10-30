@@ -15,7 +15,8 @@
 
 @php($isNew = ! $instrument->exists)
 @php($state = $instrument->contribution_state)
-@php($editable = $isNew || $instrument->isEditableByContributor())
+{{-- A committee member of the same state reads the form and files nothing. --}}
+@php($editable = ($isNew || $instrument->isEditableByContributor()) && auth()->user()->can(\App\Enums\Permission::SubmitCountryReturn->value))
 
 @section('title', $isNew ? __('contributions.add') : __('contributions.edit_title'))
 @section('note', $isNew ? __('contributions.add_note') : $instrument->reference_number)

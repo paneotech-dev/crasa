@@ -33,12 +33,12 @@ return [
         'postal' => 'Serviços postais',
     ],
     'committees' => [
-        'spectrum-and-frequency-management' => 'Gestão do Espetro e das Frequências',
-        'postal-and-logistics' => 'Correios e Logística',
-        'legal-and-regulatory-affairs' => 'Assuntos Jurídicos e Regulamentares',
+        'spectrum-and-frequency-management' => 'Gestão do espetro e das frequências',
+        'postal-and-logistics' => 'Correios e logística',
+        'legal-and-regulatory-affairs' => 'Assuntos jurídicos e regulamentares',
         'economics' => 'Economia',
-        'consumer-affairs-and-protection' => 'Assuntos e Proteção do Consumidor',
-        'human-and-institutional-capacity' => 'Capacidade Humana e Institucional',
+        'consumer-affairs-and-protection' => 'Assuntos e proteção do consumidor',
+        'human-and-institutional-capacity' => 'Capacidade humana e institucional',
     ],
     'indicators' => [
         'fixed-telephone-subscriptions' => [

@@ -9,7 +9,7 @@
 
 return [
     'title' => 'Submissão de dados',
-    'index_note' => 'Os retornos do seu país, por período. RP-09.',
+    'index_note' => 'Os retornos do seu país, por período.',
     'table_note' => 'Um retorno por Estado membro e por período.',
     'open_title' => 'Abrir um retorno',
     'open_note' => 'Um por período. Abrir um período existente leva-o até ele em vez de criar um segundo.',

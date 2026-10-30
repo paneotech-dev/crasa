@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\PublicationType;
 use App\Models\Committee;
 use App\Models\Country;
 use App\Models\Publication;
+use App\Models\PublicationType;
 use App\Models\Sector;
 use App\Support\Facets;
 use App\Support\Locales;
@@ -61,8 +61,8 @@ class PublicationController extends Controller
             'language' => Facets::values($request, 'language'),
         ];
 
-        $types = collect(PublicationType::cases());
-        $sectors = Sector::orderBy('name')->get();
+        $types = PublicationType::terms();
+        $sectors = Sector::ordered()->get();
         $countries = Country::orderBy('name')->get();
         $committees = Committee::orderBy('name')->get();
         $years = Publication::listed()
@@ -77,7 +77,7 @@ class PublicationController extends Controller
             ->values();
 
         $options = [
-            'type' => $types->map(fn ($t) => (string) $t->value)->all(),
+            'type' => $types->map(fn ($t) => $t->slug)->all(),
             'sector' => $sectors->pluck('slug')->all(),
             'country' => $countries->pluck('iso_code')->all(),
             'committee' => $committees->pluck('slug')->all(),

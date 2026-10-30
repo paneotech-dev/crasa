@@ -7,7 +7,7 @@
 
 return [
     'title' => 'Ajuda',
-    'note' => 'O que faz cada parte do back office, e as regras que a plataforma cumpre.',
+    'note' => 'O que faz cada parte da administração, e as regras que a plataforma cumpre.',
     'welcome_title' => 'Bem-vindo, :name',
     'welcome_body' => 'É aqui que o site da CRASA se edita. Seis secções, cada uma com uma função. Nada aqui precisa de um programador nem de uma implantação.',
     'welcome_foot' => 'Este painel desaparece quando o fechar. Tudo o que contém fica na',

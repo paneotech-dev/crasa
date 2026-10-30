@@ -35,7 +35,7 @@
                 <tbody>
                     @foreach ($counts as $type => $rows)
                         <tr>
-                            <th scope="row">{{ $type }}</th>
+                            <th scope="row">{{ \App\Models\AuditLog::typeLabel($type) }}</th>
                             <td class="a-table__num">{{ number_format($rows) }}</td>
                         </tr>
                     @endforeach

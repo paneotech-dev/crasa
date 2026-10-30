@@ -5,7 +5,7 @@
 
 return [
     'title' => 'Assistant réglementaire',
-    'label' => 'Extension proposée — ne fait pas partie de la plateforme actuelle',
+    'label' => 'Extension proposée, ne fait pas partie de la plateforme actuelle',
     'framing' => "Demandez ce qu'un État membre a fait sur n'importe quel sujet, dans votre langue, et obtenez la disposition avec sa source.",
 
     'card_action' => 'Voir ce qu’il ferait',

@@ -154,6 +154,12 @@ class EventsAndDelegatesTest extends TestCase
             ->assertSessionHasErrors('departure_on');
     }
 
+    /*
+     * Filing twice signed in updates the delegate's own filing. This used to
+     * file twice signed out and expect the second to replace the first;
+     * matching on the address alone let anybody replace another delegate's
+     * filing, so a signed-out second filing is now refused and stores nothing.
+     */
     public function test_filing_twice_updates_rather_than_duplicates(): void
     {
         $payload = [
@@ -162,11 +168,16 @@ class EventsAndDelegatesTest extends TestCase
             'arrival_on' => now()->addMonth()->toDateString(),
             'departure_on' => now()->addMonth()->addDays(4)->toDateString(),
         ];
+        $delegate = User::factory()->create(['email' => 'delegate@example.org']);
 
-        $this->post('/en/events/agm-15/register', $payload);
-        $this->post('/en/events/agm-15/register', $payload + ['arrival_reference' => 'BP 202']);
+        $this->actingAs($delegate)->post('/en/events/agm-15/register', $payload);
+        $this->actingAs($delegate)->post('/en/events/agm-15/register', $payload + ['arrival_reference' => 'BP 202']);
 
         $this->assertSame(1, DelegateRegistration::withoutGlobalScopes()->count());
+        $this->assertSame('BP 202', DelegateRegistration::withoutGlobalScopes()->sole()->arrival_reference);
+
+        auth()->logout();
+        $this->post('/en/events/agm-15/register', $payload + ['arrival_reference' => 'XX 1'])->assertSessionHasErrors('delegate_email');
         $this->assertSame('BP 202', DelegateRegistration::withoutGlobalScopes()->sole()->arrival_reference);
     }
 

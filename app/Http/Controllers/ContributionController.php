@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ContributionState;
 use App\Enums\InstrumentStatus;
 use App\Enums\InstrumentType;
+use App\Enums\Permission;
 use App\Models\Document;
 use App\Models\Instrument;
 use App\Models\Sector;
@@ -41,7 +42,7 @@ class ContributionController extends Controller
     {
         $user = $request->user();
 
-        abort_unless($user->country_id !== null, 403);
+        $this->authoriseReader($request);
 
         return view('pages.extranet.contributions.index', [
             'contributions' => Instrument::withContributor()
@@ -54,7 +55,7 @@ class ContributionController extends Controller
 
     public function create(Request $request): View
     {
-        abort_unless($request->user()->country_id !== null, 403);
+        $this->authoriseWriter($request);
 
         return view('pages.extranet.contributions.form', [
             'instrument' => new Instrument,
@@ -67,6 +68,9 @@ class ContributionController extends Controller
 
     public function edit(Request $request, Instrument $instrument): View
     {
+        // Reading: a committee member of the same state sees the
+        // contribution, with the form disabled.
+        $this->authoriseReader($request);
         $this->authoriseContributor($request, $instrument);
 
         return view('pages.extranet.contributions.form', [
@@ -87,7 +91,7 @@ class ContributionController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $user = $request->user();
-        abort_unless($user->country_id !== null, 403);
+        $this->authoriseWriter($request);
 
         $data = $this->validated($request);
 
@@ -122,6 +126,7 @@ class ContributionController extends Controller
 
     public function update(Request $request, Instrument $instrument): RedirectResponse
     {
+        $this->authoriseWriter($request);
         $this->authoriseContributor($request, $instrument);
 
         abort_unless($instrument->isEditableByContributor(), 403);
@@ -148,11 +153,32 @@ class ContributionController extends Controller
     /** Send it to the Secretariat. */
     public function submit(Request $request, Instrument $instrument): RedirectResponse
     {
+        $this->authoriseWriter($request);
         $this->authoriseContributor($request, $instrument);
 
         $this->workflow->transition($instrument, ContributionState::Submitted, $request->user());
 
         return back()->with('status', __('contributions.submitted'));
+    }
+
+    /**
+     * Reading this member state's contributions: the member area and a
+     * country (the gate the sidebar asks too). A viewer, moderator or
+     * auditor who happens to carry a country is refused.
+     */
+    private function authoriseReader(Request $request): void
+    {
+        abort_unless($request->user()->can('read-own-country-record'), 403);
+    }
+
+    /**
+     * Contributing: reading, plus the permission representatives hold to
+     * file for their own state. A committee member reads and does not file.
+     */
+    private function authoriseWriter(Request $request): void
+    {
+        $this->authoriseReader($request);
+        abort_unless($request->user()->can(Permission::SubmitCountryReturn->value), 403);
     }
 
     /**

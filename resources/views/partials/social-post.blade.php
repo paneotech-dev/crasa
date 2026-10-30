@@ -9,21 +9,27 @@
     ground that carries the caption behind it until the frame paints.
     Without either, the card is the caption and "Open the post".
 
-    The link under every post is the same: the post on its network.
+    One line of caption above every post names the network and the date,
+    "Posted on LinkedIn, 28 October" (the year is added when it is not
+    the current one). The embed carries its own link to the network, so
+    there is no second link under it.
 --}}
 @php
     $network = $post->network;
     $label = \App\Support\SocialAccounts::label($network);
     $frameHeight = $network === 'linkedin' ? 560 : 520;
+    $posted = $post->posted_at?->copy()->locale(app()->getLocale());
+    $postedDate = $posted?->isoFormat($posted->year === now()->year ? __('d3_polish.tile_date_format') : __('d3_polish.tile_date_format').' YYYY');
+    $hasEmbed = ($network === 'x' && filled($post->embed_html)) || filled($post->embed_url);
 @endphp
 <article class="u-card s-post" data-network="{{ $network }}">
-    <header class="s-post__head">
-        <x-social-mark :network="$network" />
-        <span class="s-post__on">{{ __('fb.posted_on', ['network' => $label]) }}</span>
-        @if ($post->posted_at)
-            <time class="s-post__date" datetime="{{ $post->posted_at->toDateString() }}">{{ $post->posted_at->isoFormat('D MMMM YYYY') }}</time>
+    <p class="s-post__head">
+        @if ($posted)
+            <span>{{ __('d3_polish.posted_caption', ['network' => $label, 'date' => $postedDate]) }}</span>
+        @else
+            <span>{{ __('fb.posted_on', ['network' => $label]) }}</span>
         @endif
-    </header>
+    </p>
 
     <div class="s-post__body">
         @if ($network === 'x' && filled($post->embed_html))
@@ -55,7 +61,9 @@
         @endif
     </div>
 
-    <p class="s-post__open">
-        <a href="{{ $post->url }}" target="_blank" rel="noopener">{{ __('fb.open_post', ['network' => $label]) }}</a>
-    </p>
+    @unless ($hasEmbed)
+        <p class="s-post__open">
+            <a href="{{ $post->url }}" target="_blank" rel="noopener">{{ __('fb.open_post', ['network' => $label]) }}</a>
+        </p>
+    @endunless
 </article>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Permission;
 use App\Models\AuthorityChange;
 use App\Models\Committee;
 use App\Models\Sector;
@@ -34,9 +35,11 @@ class AuthorityProfileController extends Controller
 
     public function show(Request $request): View
     {
-        $country = $request->user()->country;
+        // The member area and a country, like the sidebar row; a committee
+        // member reads the record and does not propose.
+        abort_unless($request->user()->can('read-own-country-record'), 403);
 
-        abort_if($country === null, 403);
+        $country = $request->user()->country;
 
         $country->load(['authority.sectors', 'committees']);
 
@@ -51,6 +54,7 @@ class AuthorityProfileController extends Controller
             // what the platform still holds.
             'values' => $open?->payload ?? $this->profile->current($country),
             'open' => $open,
+            'mayPropose' => $request->user()->can(Permission::SubmitCountryReturn->value),
             'sectors' => Sector::orderBy('id')->get(),
             'committees' => Committee::where('is_active', true)->orderBy('name')->get(),
             'lastDecision' => AuthorityChange::whereIn('status', ['approved', 'returned'])
@@ -63,9 +67,12 @@ class AuthorityProfileController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $user = $request->user();
-        $country = $user->country;
 
-        abort_if($country === null, 403);
+        // Proposing a change is the representative's: the member area, a
+        // country and the permission to file for it.
+        abort_unless($user->can('read-own-country-record') && $user->can(Permission::SubmitCountryReturn->value), 403);
+
+        $country = $user->country;
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:200'],

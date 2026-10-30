@@ -24,7 +24,7 @@ class EnquiryReceived extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Website enquiry: '.$this->enquiry->subject,
+            subject: __('d3_i18n.enquiry_subject', ['subject' => $this->enquiry->subject]),
             replyTo: [$this->enquiry->email],
         );
     }

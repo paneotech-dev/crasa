@@ -1,5 +1,5 @@
 {{--
-    Home: "Latest from CRASA". The three most recent published social
+    Home: "CRASA on social media". The three most recent published social
     posts in one row. With none published, CRASA's three channels in one
     slim row and nothing else.
 --}}
@@ -18,7 +18,6 @@
         @if ($socialPosts->isNotEmpty())
             <div class="s-latest__head">
                 <h2 class="u-h2" id="latest-from-crasa-heading">{{ __('fb.latest_heading') }}</h2>
-                <p class="u-lead">{{ __('fb.latest_intro') }}</p>
             </div>
             <div class="s-posts s-posts--row">
                 @foreach ($socialPosts as $post)

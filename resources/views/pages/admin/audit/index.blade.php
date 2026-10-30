@@ -20,7 +20,7 @@
             <select class="a-input" id="action" name="action">
         <option value="">{{ __('news.all') }}</option>
         @foreach ($actions as $action)
-            <option value="{{ $action }}" @selected(($filters['action'] ?? null) === $action)>{{ $action }}</option>
+            <option value="{{ $action }}" @selected(($filters['action'] ?? null) === $action)>{{ \App\Models\AuditLog::actionLabel($action) }}</option>
         @endforeach
             </select>
         </div>
@@ -29,7 +29,7 @@
             <select class="a-input" id="type" name="type">
         <option value="">{{ __('news.all') }}</option>
         @foreach ($types as $type)
-            <option value="{{ $type }}" @selected(($filters['type'] ?? null) === $type)>{{ $type }}</option>
+            <option value="{{ $type }}" @selected(($filters['type'] ?? null) === $type)>{{ \App\Models\AuditLog::typeLabel($type) }}</option>
         @endforeach
             </select>
         </div>
@@ -66,9 +66,9 @@
                 <tr>
             <td class="c-num">{{ $entry->created_at?->displayed()->format('Y-m-d H:i') }}</td>
             <td>{{ $entry->user?->anonymised_at ? __('fa.former_user') : ($entry->user?->name ?? __('admin.no_actor')) }}</td>
-            <td>{{ $entry->action }}</td>
-            <td>{{ $entry->auditable_type ? class_basename($entry->auditable_type).' #'.$entry->auditable_id : '—' }}</td>
-            <td class="c-num">{{ $entry->ip_address ?? '—' }}</td>
+            <td>{{ \App\Models\AuditLog::actionLabel($entry->action) }}</td>
+            <td>{{ $entry->auditable_type ? __('d3_i18n.audit_record', ['subject' => \App\Models\AuditLog::typeLabel($entry->auditable_type), 'id' => $entry->auditable_id]) : '–' }}</td>
+            <td class="c-num">{{ $entry->ip_address ?? '–' }}</td>
                 </tr>
             @endforeach
         </tbody>

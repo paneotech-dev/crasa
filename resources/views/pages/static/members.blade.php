@@ -46,7 +46,7 @@
                         </div>
                         @php $mapView = \App\Support\MapView::resolve($countries, request()->query('indicator')); @endphp
                         <div class="cp-members-map__frame" data-live-filters data-live-swap="#members-map" data-live-status="#members-map-status">
-                            <p class="c-results" id="members-map-status" role="status">{{ $mapView->summary() }}</p>
+                            <p class="c-sr" id="members-map-status" role="status">{{ $mapView->summary() }}</p>
                             <div id="members-map">
                                 <x-region-map :countries="$countries" :view="$mapView" />
                             </div>
@@ -59,7 +59,6 @@
                 <div class="u-container">
                     <div class="cp-section-head">
                         <h2 class="u-h2" id="members-dir-title">{{ __('members.directory_heading') }}</h2>
-                        <p class="u-text u-muted">{{ trans_choice('members.directory_note', $countries->count(), ['count' => $countries->count()]) }}</p>
                     </div>
                     <ul class="u-cols-3 cp-members-grid" role="list">
                         @foreach ($countries as $country)

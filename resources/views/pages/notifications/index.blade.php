@@ -30,6 +30,28 @@
 @endsection
 
 @section('content')
+    {{-- Day 3: filter by type and by read state. A plain GET form. --}}
+    <form class="a-filters n-filters" method="GET" action="{{ route('notifications', ['locale' => app()->getLocale()]) }}">
+        <div class="a-field">
+            <label class="a-label" for="filter-type">{{ __('d3_notify.filter_type') }}</label>
+            <select class="a-select" id="filter-type" name="type">
+                <option value="">{{ __('d3_notify.filter_all_types') }}</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category }}" @selected($type === $category)>{{ __('d3_notify.category_'.$category) }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="a-field">
+            <label class="a-label" for="filter-state">{{ __('d3_notify.filter_state') }}</label>
+            <select class="a-select" id="filter-state" name="state">
+                <option value="">{{ __('d3_notify.state_all') }}</option>
+                <option value="unread" @selected($state === 'unread')>{{ __('d3_notify.state_unread') }}</option>
+                <option value="read" @selected($state === 'read')>{{ __('d3_notify.state_read') }}</option>
+            </select>
+        </div>
+        <button class="a-btn a-btn--secondary" type="submit">{{ __('d3_notify.apply_filters') }}</button>
+    </form>
+
     <section class="a-card a-card--flush">
         <div class="a-card__head">
             <h2>{{ __('notifications.recent') }}</h2>
@@ -38,19 +60,25 @@
 
         @if ($notifications->isEmpty())
             <div class="a-empty">
-                <div class="a-empty__title">{{ __('notifications.empty_title') }}</div>
-                <div class="a-empty__body">{{ __('notifications.empty_body') }}</div>
+                @if ($type !== null || $state !== null)
+                    <div class="a-empty__title">{{ __('d3_notify.filtered_empty_title') }}</div>
+                    <div class="a-empty__body">{{ __('d3_notify.filtered_empty_body') }}</div>
+                @else
+                    <div class="a-empty__title">{{ __('notifications.empty_title') }}</div>
+                    <div class="a-empty__body">{{ __('notifications.empty_body') }}</div>
+                @endif
             </div>
         @else
-            <ul class="a-rows" role="list">
+            <ul class="a-rows n-rows" role="list">
                 @foreach ($notifications as $notification)
+                    @php($rowTitle = \App\Support\Notifier::titleOf($notification))
                     <li @class(['a-row', 'is-unread' => $notification->read_at === null])>
                         <span class="a-row__grow">
                             <a href="{{ route('notifications.open', ['locale' => app()->getLocale(), 'notification' => $notification->id]) }}">
-                                {{ $notification->data['title'] ?? __('notifications.untitled') }}
+                                {{ $rowTitle }}
                             </a>
                             <span class="a-row__who">
-                                {{ __('notifications.trigger_'.($notification->data['type'] ?? 'announcement')) }}
+                                {{ __('d3_notify.category_'.\App\Support\Notifier::categoryOf($notification->data)) }}
                             </span>
                         </span>
                         <span class="a-row__time">
@@ -61,6 +89,10 @@
                              a distinction carried by one visual channel. --}}
                         @if ($notification->read_at === null)
                             <span class="a-pill" data-status="pending">{{ __('notifications.unread') }}</span>
+                            <form class="n-rowform" method="POST" action="{{ route('notifications.read', ['locale' => app()->getLocale(), 'notification' => $notification->id]) }}">
+                                @csrf
+                                <button class="n-latest__read" type="submit" aria-label="{{ __('d3_notify.mark_read_named', ['title' => \Illuminate\Support\Str::limit($rowTitle, 80)]) }}">{{ __('d3_notify.mark_read') }}</button>
+                            </form>
                         @endif
                     </li>
                 @endforeach

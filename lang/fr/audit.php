@@ -25,6 +25,21 @@ return [
     'action_suspended' => 'Suspension d\'un compte',
     'action_invitation_accepted' => "Acceptation d'une invitation",
     'action_reactivated' => 'Réactivation d\'un compte',
+    'action_registration_resent' => 'Renvoi à un délégué de la copie de son inscription',
+    'action_registrations_exported' => 'Export des inscriptions des délégués',
+    // Day 3: docs
+    'action_document_added' => "Ajout d'un fichier dans un dossier",
+    'action_document_replaced' => "Ajout d'une nouvelle version d'un fichier",
+    'action_document_renamed' => "Changement de nom d'un fichier",
+    'action_document_moved' => "Déplacement d'un fichier",
+    'action_document_binned' => "Mise à la corbeille d'un fichier",
+    'action_document_restored' => "Restauration d'un fichier depuis la corbeille",
+    'action_document_validated' => "Validation d'un fichier",
+    'action_document_purged' => "Suppression définitive d'un fichier de la corbeille",
+    'action_folder_created' => "Création d'un dossier",
+    'action_folder_changed' => "Modification d'un dossier",
+    'action_folder_deleted' => "Suppression d'un dossier",
+    // end Day 3: docs
     'subject_page' => 'une page',
     'subject_pageblock' => 'un bloc',
     'subject_publication' => 'une publication',
@@ -43,6 +58,8 @@ return [
     'subject_enquiry' => 'une demande',
     'subject_tag' => 'une étiquette',
     'subject_sector' => 'un secteur',
+    'subject_newscategory' => 'une catégorie d\'actualités',
+    'subject_publicationtype' => 'un type de publication',
 
     // Record types added since the first list (19 October 2026).
     'subject_announcement' => 'une annonce',
@@ -58,4 +75,6 @@ return [
     'subject_submission' => 'une déclaration de données',
     'subject_submissionfieldcomment' => 'un commentaire sur une déclaration de données',
     'subject_submissionvalue' => 'une valeur dans une déclaration de données',
+    'subject_featureinterest' => 'un intérêt signalé pour une fonction',
+    'subject_documentversion' => 'une version d’un document',
 ];

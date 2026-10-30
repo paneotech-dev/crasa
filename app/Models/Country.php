@@ -12,7 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * A CRASA member state. Fourteen rows, seeded, not user-editable.
+ * A CRASA member state. Fourteen rows, seeded. Since Day 3 an
+ * administrator can add one, and delete one nothing points at.
  */
 class Country extends Model
 {

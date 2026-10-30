@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('title', $meeting->title)
-@section('description', \Illuminate\Support\Str::limit(strip_tags((string) ($meeting->summary ?: $meeting->dateRange().'. '.$meeting->location)), 155))
+@section('description', \Illuminate\Support\Str::limit(strip_tags((string) ($meeting->summary ?: $meeting->dateRange().'. '.$meeting->displayLocation())), 155))
 
 @push('styles')
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/events.css') }}">
@@ -57,7 +57,7 @@
                 </ul>
 
                 <div class="e-ev-actions">
-                    @include('pages.events._add-to-calendar', ['meeting' => $meeting])
+                    @include('pages.events._add-to-calendar', ['meeting' => $meeting, 'anchor' => true])
                     <div class="e-share" role="group" aria-labelledby="share-label">
                         <span class="e-addcal__label" id="share-label">{{ __('e.share') }}</span>
                         <button type="button" class="e-addcal__action" data-copy-link="{{ $url }}" data-copied="{{ __('e.copied') }}" aria-controls="share-status">
@@ -148,9 +148,10 @@
                 <div class="u-panel">
                     <dl class="u-facts">
                         <div><dt>{{ __('e.when') }}</dt><dd>{{ $meeting->dateRange() }}</dd></div>
+                        <div><dt>{{ __('d3_people.status') }}</dt><dd>{{ $meeting->displayStatusLabel() }}</dd></div>
                         <div><dt>{{ __('e.time_zone') }}</dt><dd>{{ $meeting->timezone ?: \App\Support\LocalTime::zone() }}</dd></div>
                         @if ($meeting->location || $online)
-                            <div><dt>{{ __('e.where') }}</dt><dd>{{ collect([$meeting->venue, $meeting->location])->filter()->implode(', ') }}</dd></div>
+                            <div><dt>{{ __('e.where') }}</dt><dd>{{ collect([$meeting->venue, $meeting->displayLocation()])->filter()->implode(', ') }}</dd></div>
                         @endif
                         @if ($meeting->organiser)
                             <div><dt>{{ __('e.organiser') }}</dt><dd>{{ $meeting->organiser }}</dd></div>
@@ -180,30 +181,7 @@
                     </figure>
                 @endif
 
-                <div class="u-panel u-panel--tint e-reg" aria-labelledby="reg-title">
-                    <h2 class="u-h3" id="reg-title">{{ __('events.registration') }}</h2>
-                    @if ($meeting->isCancelled())
-                        <p>{{ __('e.registration_cancelled') }}</p>
-                    @elseif ($meeting->registrationIsOpen())
-                        <p>{{ __('events.registration_body') }}</p>
-                        @if ($meeting->registration_opens_on && $meeting->registration_closes_on)
-                            <p class="u-help">{{ __('e.registration_window', ['from' => $meeting->registration_opens_on->locale($locale)->isoFormat('D MMMM YYYY'), 'to' => $meeting->registration_closes_on->locale($locale)->isoFormat('D MMMM YYYY')]) }}</p>
-                        @elseif ($meeting->registration_closes_on)
-                            <p class="u-help">{{ __('e.registration_until', ['date' => $meeting->registration_closes_on->locale($locale)->isoFormat('D MMMM YYYY')]) }}</p>
-                        @endif
-                        @if ($meeting->capacity)<p class="u-help">{{ __('e.capacity', ['count' => $meeting->capacity]) }}</p>@endif
-                        <div class="u-actions">
-                            <a class="u-btn u-btn--primary" href="{{ route('events.register', ['locale' => $locale, 'meeting' => $meeting->slug]) }}">{{ __('e.file_arrival') }}</a>
-                            @if ($meeting->registration_url)
-                                <a class="u-btn u-btn--secondary" href="{{ $meeting->registration_url }}" rel="noopener">{{ __('events.register_elsewhere') }}</a>
-                            @endif
-                        </div>
-                    @elseif ($meeting->registration_opens_on && ! $meeting->hasEnded() && $meeting->registration_opens_on->toDateString() > \App\Support\LocalTime::today())
-                        <p>{{ __('e.registration_from', ['date' => $meeting->registration_opens_on->locale($locale)->isoFormat('D MMMM YYYY')]) }}</p>
-                    @else
-                        <p>{{ __('delegates.closed') }}</p>
-                    @endif
-                </div>
+                @include('partials.events.registration-block', ['meeting' => $meeting])
             </aside>
         </div>
     </section>

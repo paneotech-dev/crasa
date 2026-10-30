@@ -6,7 +6,13 @@ use App\Enums\Permission;
 use App\Models\Sector;
 use App\Models\User;
 
-/** Three sectors, seeded. A fourth is a decision, not a commit. */
+/**
+ * Three sectors, seeded. A fourth, or one fewer, is a site setting:
+ * administrators (ManageSettings) add and delete sectors under Content >
+ * Taxonomies, which refuses a delete while anything points at the sector.
+ * The generic data screen corrects a sector's name and sends a reader who
+ * may add or delete there.
+ */
 class SectorPolicy
 {
     public function viewAny(User $user): bool
@@ -21,7 +27,7 @@ class SectorPolicy
 
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasPermission(Permission::ManageSettings);
     }
 
     public function update(User $user, Sector $sector): bool
@@ -31,6 +37,6 @@ class SectorPolicy
 
     public function delete(User $user, Sector $sector): bool
     {
-        return false;
+        return $user->hasPermission(Permission::ManageSettings);
     }
 }

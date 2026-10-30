@@ -88,6 +88,48 @@ class Meeting extends Model
         return $this->status === 'postponed';
     }
 
+    /**
+     * The status a reader sees, worked out when it is shown rather than
+     * stored: cancelled and postponed as recorded, otherwise held once the
+     * last day has passed and scheduled before that. Nothing has to run on
+     * the day after a meeting for it to stop reading "Scheduled".
+     */
+    public function displayStatus(): string
+    {
+        return match (true) {
+            $this->isCancelled() => 'cancelled',
+            $this->isPostponed() => 'postponed',
+            $this->hasEnded() => 'held',
+            default => 'scheduled',
+        };
+    }
+
+    /**
+     * The day by which the Secretariat answers a filing: the meeting's
+     * first day, or for a meeting already running with its form still open,
+     * the form's closing day (never a day already gone).
+     */
+    public function registrationReplyBy(): ?\Carbon\CarbonInterface
+    {
+        if (! $this->starts_on) {
+            return null;
+        }
+
+        if ($this->starts_on->toDateString() > \App\Support\LocalTime::today()) {
+            return $this->starts_on;
+        }
+
+        return $this->registration_closes_on ?? $this->lastDay();
+    }
+
+    /** The display status in the reader's language. */
+    public function displayStatusLabel(): string
+    {
+        $status = $this->displayStatus();
+
+        return $status === 'held' ? __('d3_people.status_held') : __('e.status_'.$status);
+    }
+
     public function isOnline(): bool
     {
         return $this->online_url !== null && $this->online_url !== ''
@@ -102,8 +144,9 @@ class Meeting extends Model
 
     /**
      * Whether a delegate can still file an arrival and a departure: a dated
-     * meeting that has not started, is not cancelled, and is inside its
-     * registration window where one is set.
+     * meeting that has not started (or has a closing date that has not
+     * passed), is not cancelled, and is inside its registration window
+     * where one is set.
      */
     public function registrationIsOpen(): bool
     {
@@ -113,7 +156,12 @@ class Meeting extends Model
 
         $today = \App\Support\LocalTime::today();
 
-        if ($this->starts_on->toDateString() <= $today) {
+        // A meeting closes its form when it starts, unless the Secretariat
+        // set a closing date: then the form stays open to that date, and
+        // never past the meeting's last day (Day 3: a workshop whose
+        // delegates register in the room).
+        if ($this->starts_on->toDateString() <= $today
+            && ! ($this->registration_closes_on && $this->lastDay()->toDateString() >= $today)) {
             return false;
         }
 
@@ -200,24 +248,30 @@ class Meeting extends Model
      */
     protected static function booted(): void
     {
-        static::updating(function (Meeting $meeting): void {
-            if ($meeting->committee_id === null || $meeting->getOriginal('synced_at') === null) {
+        /*
+         * Client brief item 7: a meeting moved or cancelled reaches that
+         * committee's members and the people registered for it, through the
+         * one notifier (App\Support\Notifier). An edit in the back office
+         * counts as well as the sync; the first sync of a meeting still does
+         * not, for the reason above.
+         */
+        static::updated(function (Meeting $meeting): void {
+            if ($meeting->wasChanged('synced_at') && $meeting->getOriginal('synced_at') === null) {
                 return;
             }
 
-            if (! $meeting->isDirty(['starts_on', 'ends_on', 'venue', 'location'])) {
+            $cancelled = $meeting->wasChanged('status') && $meeting->status === 'cancelled';
+            $moved = $meeting->wasChanged(['starts_on', 'ends_on', 'starts_at', 'ends_at', 'venue', 'location', 'online_url'])
+                || ($meeting->wasChanged('status') && $meeting->status === 'postponed');
+
+            if (! $cancelled && ! $moved) {
                 return;
             }
 
-            app(\App\Services\NotifiesMembers::class)->fire(
-                \App\Enums\NotificationTrigger::MeetingChanged,
-                __('notifications.meeting_moved', [
-                    'title' => $meeting->title,
-                    'date' => $meeting->starts_on?->isoFormat('D MMMM YYYY') ?? '',
-                ]),
-                route('extranet.calendar', ['locale' => 'en']),
-                committee: $meeting->committee,
-                payload: ['meeting_id' => $meeting->id],
+            \App\Support\Notifier::meetingChanged(
+                $meeting,
+                $cancelled ? 'cancelled' : 'changed',
+                (string) $meeting->updated_at?->timestamp,
             );
         });
     }
@@ -257,5 +311,11 @@ class Meeting extends Model
     public function scopePublic(Builder $query): Builder
     {
         return $query->where('clearance', Clearance::Public);
+    }
+
+    /** The place as a reader sees it: "Online" is said in the reader's language. */
+    public function displayLocation(): ?string
+    {
+        return strcasecmp((string) $this->location, 'Online') === 0 ? __('e.online') : $this->location;
     }
 }

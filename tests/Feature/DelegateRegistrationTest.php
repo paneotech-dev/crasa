@@ -98,9 +98,11 @@ class DelegateRegistrationTest extends TestCase
     {
         $malawi = Country::where('iso_code', 'mw')->sole();
 
-        $this->register(['country_id' => $malawi->id])
-            ->assertRedirect()
-            ->assertSessionHasNoErrors();
+        // The delegate is told it worked. (This used to file a second time
+        // to read the message; a signed-out second filing is now refused.)
+        $this->followingRedirects()->register(['country_id' => $malawi->id])
+            ->assertOk()
+            ->assertSee(__('delegates.filed', ['name' => 'Thandiwe Moyo']), false);
 
         $registration = DelegateRegistration::withoutGlobalScopes()->sole();
 
@@ -109,10 +111,6 @@ class DelegateRegistrationTest extends TestCase
         $this->assertSame('KQ 794', $registration->arrival_reference);
         $this->assertNull($registration->user_id);
         $this->assertSame('filed', $registration->status);
-
-        // The delegate is told it worked.
-        $this->followingRedirects()->register(['country_id' => $malawi->id])
-            ->assertSee(__('delegates.filed', ['name' => 'Thandiwe Moyo']), false);
 
         // The Secretariat's roster now has a row, and so does the export.
         $admin = User::factory()->administrator()->create();
@@ -149,14 +147,82 @@ class DelegateRegistrationTest extends TestCase
         $this->assertSame($rep->id, $registration->user_id);
     }
 
-    /** Filing again amends. The unique key is the meeting and the email. */
-    public function test_filing_again_amends_rather_than_duplicating(): void
+    /**
+     * Filing again amends only the reader's own filing. Until 29 October
+     * 2026 the match was the meeting and the email alone, so anybody who
+     * typed another delegate's address replaced that delegate's filing; this
+     * test used to assert a signed-out second filing amended the first.
+     */
+    public function test_a_signed_in_delegate_amends_their_own_filing_rather_than_duplicating(): void
     {
-        $this->register()->assertRedirect();
-        $this->register(['arrival_reference' => 'SA 172', 'arrival_at' => '09:05'])->assertRedirect();
+        $rep = User::factory()->memberStateRep(Country::where('iso_code', 'bw')->sole())->create();
+
+        $this->actingAs($rep)->post("/en/events/{$this->meeting->slug}/register", $this->filing())->assertRedirect();
+        $this->actingAs($rep)->post("/en/events/{$this->meeting->slug}/register",
+            $this->filing(['arrival_reference' => 'SA 172', 'arrival_at' => '09:05']))->assertRedirect()->assertSessionHasNoErrors();
 
         $this->assertSame(1, DelegateRegistration::withoutGlobalScopes()->count());
         $this->assertSame('SA 172', DelegateRegistration::withoutGlobalScopes()->sole()->arrival_reference);
+    }
+
+    public function test_a_signed_out_reader_never_overwrites_an_existing_filing(): void
+    {
+        $this->register()->assertRedirect();
+        $audits = AuditLog::count();
+
+        $this->register(['delegate_name' => 'Somebody Else', 'arrival_reference' => 'XX 1'])
+            ->assertSessionHasErrors(['delegate_email' => __('d3_security.reg_filing_exists')]);
+
+        $row = DelegateRegistration::withoutGlobalScopes()->sole();
+        $this->assertSame('Thandiwe Moyo', $row->delegate_name);
+        $this->assertSame('KQ 794', $row->arrival_reference);
+        $this->assertSame($audits, AuditLog::count());
+    }
+
+    public function test_a_signed_in_reader_cannot_overwrite_another_delegates_filing(): void
+    {
+        $owner = User::factory()->memberStateRep(Country::where('iso_code', 'bw')->sole())->create();
+        $other = User::factory()->memberStateRep(Country::where('iso_code', 'mz')->sole())->create();
+
+        $this->actingAs($owner)->post("/en/events/{$this->meeting->slug}/register", $this->filing())->assertRedirect();
+
+        // Another account typing the owner's address, with or without a
+        // filing of its own.
+        $this->actingAs($other)->post("/en/events/{$this->meeting->slug}/register",
+            $this->filing(['delegate_name' => 'Somebody Else']))
+            ->assertSessionHasErrors(['delegate_email' => __('d3_security.reg_filing_exists')]);
+
+        $this->actingAs($other)->post("/en/events/{$this->meeting->slug}/register",
+            $this->filing(['delegate_email' => 'other@example.test', 'delegate_name' => 'Other Delegate']))->assertRedirect();
+        $this->actingAs($other)->post("/en/events/{$this->meeting->slug}/register",
+            $this->filing(['delegate_name' => 'Somebody Else']))
+            ->assertSessionHasErrors(['delegate_email' => __('d3_security.reg_filing_exists')]);
+
+        $this->assertSame('Thandiwe Moyo', DelegateRegistration::withoutGlobalScopes()->where('user_id', $owner->id)->value('delegate_name'));
+        $this->assertSame(2, DelegateRegistration::withoutGlobalScopes()->count());
+    }
+
+    public function test_a_filing_sent_signed_out_is_amended_by_the_account_for_that_address(): void
+    {
+        $this->register()->assertRedirect();
+        $delegate = User::factory()->memberStateRep(Country::where('iso_code', 'bw')->sole())
+            ->create(['email' => 'thandiwe.moyo@example.test']);
+
+        $this->actingAs($delegate)->post("/en/events/{$this->meeting->slug}/register",
+            $this->filing(['arrival_reference' => 'SA 172']))->assertRedirect()->assertSessionHasNoErrors();
+
+        $row = DelegateRegistration::withoutGlobalScopes()->sole();
+        $this->assertSame('SA 172', $row->arrival_reference);
+        $this->assertSame($delegate->id, $row->user_id);
+    }
+
+    public function test_the_refusal_reads_in_every_language(): void
+    {
+        foreach (['en', 'fr', 'pt'] as $locale) {
+            $this->assertNotSame('d3_security.reg_filing_exists', __('d3_security.reg_filing_exists', [], $locale));
+        }
+        $this->assertNotSame(__('d3_security.reg_filing_exists', [], 'en'), __('d3_security.reg_filing_exists', [], 'fr'));
+        $this->assertNotSame(__('d3_security.reg_filing_exists', [], 'en'), __('d3_security.reg_filing_exists', [], 'pt'));
     }
 
     public function test_the_confirmation_is_queued_to_the_delegate(): void

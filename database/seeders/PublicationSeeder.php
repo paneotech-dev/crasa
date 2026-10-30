@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Enums\Clearance;
-use App\Enums\PublicationType;
 use App\Models\Committee;
 use App\Models\Country;
 use App\Models\Document;
@@ -67,7 +66,7 @@ class PublicationSeeder extends Seeder
             $publication = Publication::updateOrCreate(
                 ['slug' => $spec['slug']],
                 [
-                    'publication_type' => PublicationType::from($spec['type']),
+                    'publication_type' => $spec['type'],
                     'sector_id' => $spec['sector'] === null ? null : ($sectors[$spec['sector']] ?? null),
                     // Regional unless it belongs to one member state. Most
                     // regional instruments are exactly that.
@@ -128,7 +127,7 @@ class PublicationSeeder extends Seeder
         if (SampleDocumentPdf::isOutdated($existing)) {
             Storage::disk('local')->put($path, SampleDocumentPdf::forPublication(
                 (string) $publication->translated('title', $publication->slug, 'en'),
-                $publication->publication_type->value,
+                $publication->typeSlug(),
                 (int) $publication->published_on?->year ?: (int) now()->year,
             ));
         }

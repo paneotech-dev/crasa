@@ -3,8 +3,8 @@
 namespace App\Notifications;
 
 use App\Enums\NotificationTrigger;
+use App\Notifications\Concerns\InApp;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 /**
@@ -16,11 +16,9 @@ use Illuminate\Notifications\Notification;
  * change the digest rule, and the trigger is already a closed enum that the
  * preferences screen and the audience resolver both read.
  *
- * THE DATABASE ROW ALWAYS, THE EMAIL ONLY WHEN ASKED. The in-app centre is
- * the record, and it is written whatever the account's email preference is,
- * so turning email off does not mean losing the notice. Mail goes out only
- * for accounts subscribed to this trigger and set to receive it as it
- * happens; the rest is swept up by the digest.
+ * IN-APP ONLY. The bell and the notifications page are the record. Mail
+ * stays off on this platform; the digest command is the only mail path and
+ * it reads these rows.
  *
  * REGULATORY CONTENT ONLY. There is deliberately no shared base class
  * between this and SubmissionStateChanged for a meeting reminder to be hung
@@ -28,7 +26,7 @@ use Illuminate\Notifications\Notification;
  */
 class RegulatoryActivity extends Notification
 {
-    use Queueable;
+    use InApp, Queueable;
 
     /**
      * @param  array<string, mixed>  $payload
@@ -40,45 +38,18 @@ class RegulatoryActivity extends Notification
         public readonly array $payload = [],
     ) {}
 
-    /** @return list<string> */
-    public function via(object $notifiable): array
+    protected function defaultCategory(): string
     {
-        $channels = ['database'];
-
-        // Only the decision on this reader's own return interrupts. Every
-        // other trigger waits for the digest, because a channel that sends
-        // one email per event becomes a channel nobody opens.
-        if ($this->trigger === NotificationTrigger::SubmissionDecision
-            && $this->wants($notifiable)
-            && ($notifiable->digest_frequency ?? 'daily') !== 'never') {
-            $channels[] = 'mail';
-        }
-
-        return $channels;
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        $locale = $notifiable->preferred_locale ?? 'en';
-
-        return (new MailMessage)
-            ->subject(__($this->trigger->labelKey(), [], $locale))
-            ->line($this->title)
-            ->action(__('notifications.open', [], $locale), $this->url);
+        return \App\Support\Notifier::categoryOfTrigger($this->trigger);
     }
 
     /** @return array<string, mixed> */
     public function toArray(object $notifiable): array
     {
-        return [
+        return $this->withInApp([
             'type' => $this->trigger->value,
             'title' => $this->title,
             'url' => $this->url,
-        ] + $this->payload;
-    }
-
-    private function wants(object $notifiable): bool
-    {
-        return in_array($this->trigger->value, $notifiable->notification_preferences ?? [], true);
+        ] + $this->payload);
     }
 }

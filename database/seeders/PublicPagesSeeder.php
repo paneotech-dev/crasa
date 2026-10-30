@@ -172,9 +172,9 @@ class PublicPagesSeeder extends Seeder
         );
 
         $this->block($page, BlockType::CallToAction, $position++, ['tone' => 'navy', 'cta_url' => '/members'], [
-            'en' => ['headline' => 'Fourteen national regulators, one regional framework', 'cta_label' => 'See the member states'],
-            'fr' => ['headline' => 'Quatorze régulateurs nationaux, un cadre régional', 'cta_label' => 'Voir les États membres'],
-            'pt' => ['headline' => 'Catorze reguladores nacionais, um quadro regional', 'cta_label' => 'Ver os Estados membros'],
+            'en' => ['headline' => 'ICT and postal regulators from the SADC region', 'cta_label' => 'See the member states'],
+            'fr' => ['headline' => 'Régulateurs des TIC et de la poste de la région SADC', 'cta_label' => 'Voir les États membres'],
+            'pt' => ['headline' => 'Reguladores das TIC e dos correios da região da SADC', 'cta_label' => 'Ver os Estados membros'],
         ]);
     }
 
@@ -279,9 +279,9 @@ class PublicPagesSeeder extends Seeder
         $position = 0;
 
         $this->block($page, BlockType::MemberGrid, $position++, ['show_map' => true, 'filter' => [], 'directory' => true], [
-            'en' => ['heading' => 'Fourteen national authorities', 'intro' => "CRASA's membership covers the communications and postal regulators of fourteen SADC member states, from Angola to Zimbabwe."],
-            'fr' => ['heading' => 'Quatorze autorités nationales', 'intro' => "La CRASA réunit les régulateurs des communications et des services postaux de quatorze États membres de la SADC, de l'Angola au Zimbabwe."],
-            'pt' => ['heading' => 'Catorze autoridades nacionais', 'intro' => 'A CRASA reúne os reguladores das comunicações e dos serviços postais de catorze Estados membros da SADC, de Angola ao Zimbabué.'],
+            'en' => ['heading' => 'Member regulators', 'intro' => "CRASA's membership covers the communications and postal regulators of fourteen SADC member states, from Angola to Zimbabwe."],
+            'fr' => ['heading' => 'Régulateurs membres', 'intro' => "La CRASA réunit les régulateurs des communications et des services postaux de quatorze États membres de la SADC, de l'Angola au Zimbabwe."],
+            'pt' => ['heading' => 'Reguladores membros', 'intro' => 'A CRASA reúne os reguladores das comunicações e dos serviços postais de catorze Estados membros da SADC, de Angola ao Zimbabué.'],
         ]);
 
         $this->placeholder(

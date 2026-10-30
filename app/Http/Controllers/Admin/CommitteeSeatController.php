@@ -49,6 +49,12 @@ class CommitteeSeatController extends Controller
             // that does turns "add" into a silent change of role.
             'available' => Country::whereNotIn('id', $seated->pluck('id'))->orderBy('name')->get(),
             'roles' => CommitteeRole::cases(),
+            // Day 3: the people on the committee, and who may be added.
+            'people' => $committee->users()->orderBy('name')->get(),
+            'availableUsers' => \App\Models\User::query()
+                ->whereNotIn('id', $committee->users()->pluck('users.id'))
+                ->orderBy('name')
+                ->get(['id', 'name', 'email']),
         ]);
     }
 

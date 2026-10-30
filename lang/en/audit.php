@@ -25,6 +25,21 @@ return [
     'action_suspended' => 'Suspended an account',
     'action_invitation_accepted' => "Accepted an invitation",
     'action_reactivated' => 'Reactivated an account',
+    'action_registration_resent' => 'Resent a delegate their registration copy',
+    'action_registrations_exported' => 'Exported delegate registrations',
+    // Day 3: docs
+    'action_document_added' => 'Added a file to a folder',
+    'action_document_replaced' => 'Added a new version of a file',
+    'action_document_renamed' => 'Renamed a file',
+    'action_document_moved' => 'Moved a file',
+    'action_document_binned' => 'Sent a file to the recycle bin',
+    'action_document_restored' => 'Restored a file from the recycle bin',
+    'action_document_validated' => 'Validated a file',
+    'action_document_purged' => 'Removed a file from the recycle bin for good',
+    'action_folder_created' => 'Created a folder',
+    'action_folder_changed' => 'Changed a folder',
+    'action_folder_deleted' => 'Deleted a folder',
+    // end Day 3: docs
     'subject_page' => 'a page',
     'subject_pageblock' => 'a block',
     'subject_publication' => 'a publication',
@@ -43,6 +58,8 @@ return [
     'subject_enquiry' => 'an enquiry',
     'subject_tag' => 'a tag',
     'subject_sector' => 'a sector',
+    'subject_newscategory' => 'a news category',
+    'subject_publicationtype' => 'a publication type',
 
     // Record types added since the first list (19 October 2026).
     'subject_announcement' => 'an announcement',
@@ -58,4 +75,6 @@ return [
     'subject_submission' => 'a data return',
     'subject_submissionfieldcomment' => 'a comment on a data return',
     'subject_submissionvalue' => 'a figure in a data return',
+    'subject_featureinterest' => 'a note of interest in a feature',
+    'subject_documentversion' => 'a version of a document',
 ];

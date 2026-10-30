@@ -2,16 +2,13 @@
     Sitemap band (Concept 3), on every public page.
 
     The columns are the footer menu records (back office, Menus), so the
-    Secretariat edits them without a deploy. A fixed Services column
-    follows: the ways in and the legal pages.
+    Secretariat edits them without a deploy. A fixed Members column
+    follows: the member area, the member directory and contact. The back
+    office is reached from the utility bar; the accessibility statement sits
+    in the footer's bottom line, beside the terms and the privacy notice.
 --}}
 @php
     $nav = fn (string $path) => \App\Support\Navigation::url($path);
-    // The accessibility statement (g stream): its own localised address
-    // where the controller exists, the named route otherwise.
-    $a11yUrl = class_exists(\App\Http\Controllers\AccessibilityStatementController::class)
-        ? \App\Http\Controllers\AccessibilityStatementController::url()
-        : (Route::has('accessibility') ? route('accessibility', ['locale' => app()->getLocale()]) : null);
     $columns = \App\Support\Navigation::footer();
     $workspace = \App\Support\Workspace::for(auth()->user());
     // Concept 3 "areas" quick links. They do not fit beside the primary menu
@@ -43,12 +40,12 @@
         </div>
         <div>
             <h2 class="k-smap__h">{{ __('chome.sm_services') }}</h2>
-            <a href="{{ route('admin.dashboard', ['locale' => app()->getLocale()]) }}">{{ __('nav.back_office') }}</a>
             <a href="{{ $workspace['url'] ?? $nav(config('navigation.extranet_path')) }}">{{ $workspace['label'] ?? __('nav.extranet') }}</a>
-            <a href="{{ $nav('contact') }}">{{ __('chome.contact_us') }}</a>
-            @if ($a11yUrl)
-                <a href="{{ $a11yUrl }}">{{ __('footer.accessibility') }}</a>
+            {{-- A guest is sent to sign in; a signed-in reader sees the link only where the directory opens to them. --}}
+            @if (! auth()->check() || \Illuminate\Support\Facades\Gate::allows('enter-member-area'))
+                <a href="{{ route('directory', ['locale' => app()->getLocale()]) }}">{{ __('d3_polish.member_directory') }}</a>
             @endif
+            <a href="{{ $nav('contact') }}">{{ __('d3_polish.contact') }}</a>
         </div>
     </div>
 </nav>
