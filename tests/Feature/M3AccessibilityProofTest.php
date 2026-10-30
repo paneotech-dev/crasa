@@ -263,6 +263,19 @@ class M3AccessibilityProofTest extends TestCase
         $this->assertStringContainsString('.k-foot { padding-bottom: calc(88px + var(--s-2) + var(--s-6)', $css);
     }
 
+    /** axe scrollable-region-focusable on the users and samples lists at 390. */
+    public function test_a_wide_table_that_scrolls_can_take_keyboard_focus(): void
+    {
+        $this->assertStringContainsString("js/tablewrap.js", file_get_contents(resource_path('views/layouts/shell.blade.php')));
+        $js = file_get_contents(public_path('js/tablewrap.js'));
+        $this->assertStringContainsString("wrap.scrollWidth > wrap.clientWidth", $js);
+        $this->assertStringContainsString("wrap.setAttribute('tabindex', '0')", $js);
+        $this->assertStringContainsString("wrap.setAttribute('role', 'region')", $js);
+
+        $admin = \App\Models\User::factory()->administrator()->create();
+        $this->actingAs($admin)->get('/en/admin/users')->assertOk()->assertSee('js/tablewrap.js', false);
+    }
+
     private function ratio(string $a, string $b): float
     {
         $la = $this->luminance($a);
