@@ -1,3 +1,9 @@
+# Static files are served by Apache without the application's headers: give
+# them nosniff too (ZAP baseline, 30 October).
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+</IfModule>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes

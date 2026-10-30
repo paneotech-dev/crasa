@@ -136,6 +136,8 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('sso-callback', fn (Request $request) => Limit::perMinutes(10, 60)->by($request->ip()));
         RateLimiter::for('registration', fn (Request $request) => Limit::perHour(60)->by($request->ip()));
         RateLimiter::for('feature-interest', fn (Request $request) => Limit::perHour(20)->by((string) ($request->user()?->id ?? $request->ip())));
+        // Day 3: exports. The PNG and PDF are drawn on the server and cost CPU.
+        RateLimiter::for('comparator-export', fn (Request $request) => Limit::perMinute(20)->by($request->ip()));
         RateLimiter::for('search-suggest', fn (Request $request) => Limit::perMinute(120)->by($request->ip()));
 
         // Six enquiries an hour per address. Enough that a regulator sending

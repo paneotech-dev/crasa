@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Country;
 use App\Models\Indicator;
 use App\Services\ComparisonExport;
 use App\Support\Comparison;
@@ -95,6 +96,7 @@ class ComparatorController extends Controller
      */
     public function image(Request $request): Response
     {
+        $this->refuseUnknown($request);
         $comparison = Comparison::fromQuery($request->query());
 
         return response($this->export->png($comparison), 200, [
@@ -105,12 +107,35 @@ class ComparatorController extends Controller
 
     public function pdf(Request $request): Response
     {
+        $this->refuseUnknown($request);
         $comparison = Comparison::fromQuery($request->query());
 
         return response($this->export->pdf($comparison), 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="'.$this->export->filename($comparison, 'pdf').'"',
         ]);
+    }
+
+    /**
+     * Day 3: an export names what it draws. An indicator or a member state
+     * that does not exist is a 404, not a document about something else.
+     */
+    private function refuseUnknown(Request $request): void
+    {
+        $slug = $request->query('indicator');
+        if ($slug !== null) {
+            abort_unless(is_string($slug) && Indicator::query()->where('is_active', true)->where('slug', $slug)->exists(), 404);
+        }
+
+        $raw = $request->query('countries');
+        if ($raw === null || $raw === '') {
+            return;
+        }
+        $codes = collect(is_array($raw) ? $raw : explode(',', (string) $raw))
+            ->map(fn ($code) => is_scalar($code) ? strtolower(trim((string) $code)) : null);
+        abort_if($codes->contains(null), 404);
+        $codes = $codes->filter()->unique();
+        abort_unless(Country::query()->whereIn('iso_code', $codes->all())->count() === $codes->count(), 404);
     }
 
     /**

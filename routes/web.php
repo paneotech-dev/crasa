@@ -174,8 +174,8 @@ Route::prefix('{locale}')
         Route::get('comparator/data', [ComparatorController::class, 'data'])->name('comparator.data');
         Route::get('comparator/export.csv', [ComparatorController::class, 'csv'])->name('comparator.csv');
         Route::get('comparator/export.xlsx', [ComparatorController::class, 'xlsx'])->name('comparator.xlsx');
-        Route::get('comparator/export.png', [ComparatorController::class, 'image'])->name('comparator.png');
-        Route::get('comparator/export.pdf', [ComparatorController::class, 'pdf'])->name('comparator.pdf');
+        Route::get('comparator/export.png', [ComparatorController::class, 'image'])->middleware('throttle:comparator-export')->name('comparator.png');
+        Route::get('comparator/export.pdf', [ComparatorController::class, 'pdf'])->middleware('throttle:comparator-export')->name('comparator.pdf');
 
         /*
          * The public events section, WS-07. Read only: the website

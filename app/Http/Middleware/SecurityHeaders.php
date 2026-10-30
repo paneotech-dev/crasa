@@ -58,7 +58,7 @@ class SecurityHeaders
             // The contact map's tile server, and only that host. Without it
             // the browser refused every tile and the map showed a pin on
             // an empty grey square.
-            trim("img-src 'self' data: ".$this->tileHost()),
+            trim("img-src 'self' data: blob: ".$this->tileHost()),
             "font-src 'self'",
             "connect-src 'self' https://cloudflareinsights.com",
             "form-action 'self'",
@@ -94,6 +94,8 @@ class SecurityHeaders
             'Permissions-Policy' => 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
 
             'Cross-Origin-Opener-Policy' => 'same-origin',
+            // Our files are for our pages and our own subdomains (ZAP baseline, 30 October).
+            'Cross-Origin-Resource-Policy' => 'same-site',
         ];
 
         // Only over TLS, and only for the real host: an HSTS header served

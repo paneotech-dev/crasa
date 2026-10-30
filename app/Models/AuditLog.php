@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Support\AuditChain;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -14,6 +16,15 @@ use RuntimeException;
  * model, rather than left to convention: an audit trail a developer can
  * quietly rewrite is not an audit trail. Purging for retention, if it is
  * ever agreed, is a deliberate database operation, not an Eloquent delete.
+ *
+ * Day 3: auditlock. The database enforces it too: on MySQL and MariaDB,
+ * triggers refuse every UPDATE and DELETE on audit_log, whoever connects.
+ * On production the application user holds only SELECT and INSERT on the
+ * table (prod-grants.sh); on the workshop site the same grants are a
+ * proposed operations script, not yet run, so there the application user
+ * still has every privilege and the triggers are the guard. Each
+ * row carries a hash chain (prev_hash, row_hash; see App\Support\AuditChain),
+ * computed here at insert and checked nightly by audit:verify-chain.
  */
 class AuditLog extends Model
 {
@@ -88,6 +99,38 @@ class AuditLog extends Model
 
             $entry->created_at ??= now();
         });
+
+        // The chain: the predecessor's hash is read from the one-row table
+        // audit_chain_head under a primary-key row lock (no gap lock, so two
+        // inserts wait for each other instead of deadlocking), inside the
+        // insert's transaction (performInsert below).
+        static::creating(function (AuditLog $entry): void {
+            $prev = $entry->getConnection()->table(AuditChain::HEAD)->where('id', 1)->lockForUpdate()->value('hash') ?? AuditChain::GENESIS;
+
+            $entry->setAttribute('prev_hash', $prev);
+            $entry->setAttribute('row_hash', AuditChain::hash($entry->getAttributes(), $prev));
+        });
+    }
+
+    /**
+     * The insert and the move of the chain head run in one transaction (a
+     * savepoint inside an outer one), so the head's lock is held until the
+     * row is written and committed. At the top level a deadlock or a lock
+     * wait timeout is retried up to three times.
+     */
+    protected function performInsert(Builder $query)
+    {
+        return $this->getConnection()->transaction(function () use ($query) {
+            // A retry starts from scratch: no id or state from the attempt rolled back.
+            $this->exists = false;
+            unset($this->attributes[$this->getKeyName()]);
+
+            $saved = parent::performInsert($query);
+
+            $this->getConnection()->table(AuditChain::HEAD)->updateOrInsert(['id' => 1], ['hash' => $this->row_hash]);
+
+            return $saved;
+        }, 3);
     }
 
     /**

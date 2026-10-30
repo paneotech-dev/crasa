@@ -104,10 +104,19 @@
     });
   }
 
+  // The banner's height as --cc-h on <html>: the floating controls sit
+  // above it and focused content scrolls clear of it, so nothing a keyboard
+  // reader reaches is hidden under the banner.
+  function setBannerHeight() {
+    var h = banner && !banner.hidden ? banner.offsetHeight : 0;
+    document.documentElement.style.setProperty('--cc-h', h + 'px');
+  }
+
   function hideBanner() {
     if (!banner || banner.hidden) return;
     var hadFocus = banner.contains(document.activeElement);
     banner.hidden = true;
+    setBannerHeight();
     // Focus would otherwise be lost with the banner.
     if (hadFocus) {
       var main = document.getElementById('content');
@@ -189,7 +198,11 @@
 
   var choice = read();
   if (choice) apply(choice);
-  else if (banner) banner.hidden = false;
+  else if (banner) {
+    banner.hidden = false;
+    setBannerHeight();
+    window.addEventListener('resize', setBannerHeight);
+  }
 
   window.CRASAConsent = { read: read };
 })();

@@ -293,3 +293,9 @@ html:not(.has-js) .e-admin-dialog { display: none; }
 .e-pv__actions { margin: 16px 0 0; }
 @media (prefers-reduced-motion: no-preference) { .e-pv[open] { animation: e-pv-in .15s ease-out; } }
 @keyframes e-pv-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* Day 3 (phones): the month grid scrolls sideways inside its own frame. */
+.e-month { overflow-x: auto; max-width: 100%; }
+@media (max-width: 768px) {
+  .e-grid .e-chip { display: flex; align-items: center; min-height: 44px; }
+}

@@ -15,6 +15,12 @@
 --}}
 @section('content')
     <p class="a-hint">{{ __('admin.audit_intro') }}</p>
+    {{-- Day 3: auditlock. The retention, from config/crasa.php. --}}
+    @php
+        $years = (int) config('crasa.audit_archive_years');
+        $yearsText = \Illuminate\Support\Facades\Lang::has('d3_auditlock.years.'.$years) ? __('d3_auditlock.years.'.$years) : __('d3_auditlock.years_n', ['n' => $years]);
+    @endphp
+    <p class="a-hint" data-audit-retention>{{ __('d3_auditlock.retention', ['months' => (int) config('crasa.audit_retention_months'), 'years' => $yearsText]) }}</p>
 
     <form method="GET" class="a-filters">
         <div class="a-field">
@@ -83,7 +89,7 @@
             @foreach ($entries as $entry)
                 @php
                     $subject = \App\Support\AuditChanges::subject($entry, $subjects);
-                    $rows = \App\Support\AuditChanges::rows($entry);
+                    $rows = \App\Support\AuditChanges::rows($entry, $references ?? null);
                 @endphp
                 <tr>
             <td class="c-num">{{ $entry->created_at?->displayed()->format('Y-m-d H:i') }}</td>
