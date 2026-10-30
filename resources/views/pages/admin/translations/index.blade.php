@@ -4,6 +4,8 @@
 @section('note', __('admin.translations_note'))
 
 @section('content')
+    @include('pages.admin.translations._approved_drafts')
+
     <section class="a-resource">
         <div class="a-resource__head">
             <form class="a-filters" method="GET" action="{{ url()->current() }}">

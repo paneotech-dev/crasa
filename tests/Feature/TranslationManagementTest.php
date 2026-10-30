@@ -44,16 +44,20 @@ class TranslationManagementTest extends TestCase
 
     /* The rule --------------------------------------------------------------- */
 
-    public function test_nothing_in_the_application_ever_sets_is_machine_draft_to_true(): void
+    public function test_only_the_approval_drafts_ever_set_is_machine_draft_to_true(): void
     {
         $offenders = [];
 
         foreach (File::allFiles(app_path()) as $file) {
             $contents = $file->getContents();
 
-            // The column may be read and it may be cleared. It must never be
-            // set. A machine draft is something that arrives with imported
-            // content, never something this platform manufactures.
+            // The column may be read and it may be cleared. Since item 1b
+            // (Day 3) one place sets it: the machine drafts written when an
+            // item is approved. Nothing else manufactures a machine draft.
+            if ($file->getRelativePathname() === 'Services/MachineTranslation/MachineDrafts.php') {
+                continue;
+            }
+
             if (preg_match('/is_machine_draft[\'"]?\s*(=>|,)\s*(true|1\b)/', $contents)) {
                 $offenders[] = $file->getRelativePathname();
             }

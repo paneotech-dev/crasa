@@ -334,6 +334,9 @@ final class Approvals
 
         self::notify(collect([$approval->submitter])->filter(), 'approval_approved', $approval, $model, $by);
 
+        // Item 1b: the other languages are drafted by machine (App\Listeners\QueueMachineTranslations).
+        event(new \App\Events\ContentApproved($model, $approval, $by->id));
+
         return $approval;
     }
 

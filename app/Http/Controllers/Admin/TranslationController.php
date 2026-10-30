@@ -10,6 +10,10 @@ use App\Models\NewsItem;
 use App\Models\Page;
 use App\Models\PageBlock;
 use App\Models\Publication;
+use App\Models\Approval;
+use App\Models\Translation;
+use App\Services\MachineTranslation\MachineDrafts;
+use App\Support\Approvals;
 use App\Support\Locales;
 use App\Support\TranslationCoverage;
 use Illuminate\Contracts\View\View;
@@ -20,6 +24,11 @@ use Illuminate\Support\Facades\Gate;
 
 /**
  * Translation management, CM-04, against screen 05.
+ *
+ * Item 1b (Day 3): approving an item now drafts its other languages by
+ * machine (App\Services\MachineTranslation\MachineDrafts). Those drafts are
+ * listed at the top of this screen for review, each flagged as a machine
+ * draft until an editor approves or rewrites it.
  *
  * MACHINE DRAFTS ARE NEVER CREATED HERE. Screen 05 draws the state because
  * the client may import copy that came from a machine, and the editor has
@@ -86,6 +95,8 @@ class TranslationController extends Controller
         }
 
         return view('pages.admin.translations.index', [
+            'approvedDrafts' => $this->approvedDrafts(),
+            'machineConfigured' => MachineDrafts::configured(),
             'records' => $records,
             'rows' => $rows,
             'type' => $type,
@@ -235,6 +246,49 @@ class TranslationController extends Controller
             'fields' => $fields,
             'resolved' => $resolved,
         ]);
+    }
+
+    /**
+     * Item 1b: approved items that still carry machine drafts, newest first,
+     * with the languages to review and a link to the item itself.
+     *
+     * @return list<array{type: string, record: Model, label: string, locales: list<string>, item_url: string}>
+     */
+    private function approvedDrafts(): array
+    {
+        $rows = Translation::query()
+            ->where('is_machine_draft', '=', true)
+            ->whereExists(fn ($q) => $q->selectRaw('1')->from('approvals')
+                ->whereColumn('approvals.approvable_type', 'translations.translatable_type')
+                ->whereColumn('approvals.approvable_id', 'translations.translatable_id')
+                ->where('approvals.state', Approval::APPROVED))
+            ->orderByDesc('updated_at')
+            ->get(['translatable_type', 'translatable_id', 'locale'])
+            ->groupBy(fn (Translation $t) => $t->translatable_type.'#'.$t->translatable_id)
+            ->take(50);
+
+        $out = [];
+
+        foreach ($rows as $group) {
+            $first = $group->first();
+            $class = \Illuminate\Database\Eloquent\Relations\Relation::getMorphedModel($first->translatable_type) ?? $first->translatable_type;
+            $type = array_search($class, self::TYPES, true);
+            $record = $type === false ? null : $class::with('translations')->find($first->translatable_id);
+
+            if ($record === null) {
+                continue;
+            }
+
+            $out[] = [
+                'type' => $type,
+                'record' => $record,
+                'label' => $this->labelFor($record),
+                'locales' => $group->pluck('locale')->unique()->sort()->values()->all(),
+                'item_url' => Approvals::adminUrl($record),
+            ];
+        }
+
+        return $out;
     }
 
     /** @return list<string> */
