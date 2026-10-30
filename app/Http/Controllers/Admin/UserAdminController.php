@@ -207,7 +207,10 @@ class UserAdminController extends Controller
         $name = $user->name;
 
         \Illuminate\Support\Facades\DB::transaction(function () use ($user, $request, $name) {
-            AuditLog::record(AuditLog::DELETED, $user, ['former_name' => $name, 'former_role' => $user->role->value], $request->user());
+            // The effective role: a custom role by its name, which outlives
+            // the role itself; a built-in role by its key, read by its label.
+            $formerRole = $user->customRole?->label('en') ?? $user->role->value;
+            AuditLog::record(AuditLog::DELETED, $user, ['former_name' => $name, 'former_role' => $formerRole], $request->user());
 
             $user->forceFill([
                 'name' => __('fa.former_user', [], 'en'),

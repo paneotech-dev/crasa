@@ -92,4 +92,23 @@ class AuditChangeValuesTest extends TestCase
                                                 '.$role->id.'
                                             </td>', false);
     }
+
+    public function test_a_deleted_account_with_a_custom_role_names_that_role_as_its_former_role(): void
+    {
+        $role = $this->observerRole();
+        User::factory()->administrator()->create();
+        $observer = User::factory()->viewer()->suspended()->create(['custom_role_id' => $role->id]);
+        $editor = User::factory()->editor()->suspended()->create();
+
+        $this->actingAs($this->admin)->delete("/en/admin/users/{$observer->id}")->assertRedirect('/en/admin/users');
+        $this->actingAs($this->admin)->delete("/en/admin/users/{$editor->id}")->assertRedirect('/en/admin/users');
+
+        $entry = AuditLog::where('action', AuditLog::DELETED)->where('auditable_id', $observer->id)->sole();
+        $this->assertSame('Workshop observer', $entry->changes['former_role']);
+        $this->assertContains('Workshop observer', array_column(AuditChanges::rows($entry), 'after'));
+
+        $builtIn = AuditLog::where('action', AuditLog::DELETED)->where('auditable_id', $editor->id)->sole();
+        $this->assertSame('editor', $builtIn->changes['former_role']);
+        $this->assertContains('Editor', array_column(AuditChanges::rows($builtIn), 'after'));
+    }
 }
