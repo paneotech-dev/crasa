@@ -117,6 +117,19 @@ class M3AccessibilityProofTest extends TestCase
         $this->assertSame([], $wrong);
     }
 
+    public function test_the_translation_notice_is_a_named_region_first_in_main(): void
+    {
+        foreach (['/fr', '/pt', '/fr/contact', '/pt/publications'] as $url) {
+            $xpath = $this->dom($url);
+            $notice = $xpath->query('//main/*[1][@data-translation-notice]')->item(0);
+            $this->assertInstanceOf(DOMElement::class, $notice, $url.': the notice is not first in main.');
+            $this->assertSame('region', $notice->getAttribute('role'));
+            $title = $xpath->query('//*[@id="'.$notice->getAttribute('aria-labelledby').'"]')->item(0);
+            $this->assertNotSame('', trim((string) $title?->textContent), $url.': the notice region has no name.');
+        }
+        $this->assertSame(0, $this->dom('/en')->query('//*[@data-translation-notice]')->length);
+    }
+
     public function test_every_image_has_an_alt_attribute(): void
     {
         $wrong = [];

@@ -5,9 +5,11 @@
     closes without JavaScript, by keyboard as well as by pointer, and it
     never covers content. a11y.js remembers the close in localStorage, and
     the layout head hides the notice before first paint on later visits.
+    It is a region named by its title and the first thing in main, so the
+    skip link lands on it and a screen reader announces it by name.
 --}}
 @if (in_array(app()->getLocale(), ['fr', 'pt'], true))
-    <div class="c-translation" data-translation-notice>
+    <div class="c-translation" data-translation-notice role="region" aria-labelledby="translation-notice-title">
         <div class="c-page">
             <details class="c-translation__box" open>
                 <summary class="c-translation__close">
@@ -16,7 +18,7 @@
                          stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg>
                 </summary>
                 <div>
-                    <p class="c-translation__title">{{ __('a11y.translation_title') }}</p>
+                    <p class="c-translation__title" id="translation-notice-title">{{ __('a11y.translation_title') }}</p>
                     <p class="c-translation__body">{{ __('a11y.translation_body') }}</p>
                 </div>
             </details>
