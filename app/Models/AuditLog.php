@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Support\AuditChain;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -14,6 +16,12 @@ use RuntimeException;
  * model, rather than left to convention: an audit trail a developer can
  * quietly rewrite is not an audit trail. Purging for retention, if it is
  * ever agreed, is a deliberate database operation, not an Eloquent delete.
+ *
+ * Day 3: auditlock. The database enforces it too: on MySQL and MariaDB,
+ * triggers refuse every UPDATE and DELETE on audit_log, whoever connects,
+ * and the application user holds only SELECT and INSERT on the table. Each
+ * row carries a hash chain (prev_hash, row_hash; see App\Support\AuditChain),
+ * computed here at insert and checked nightly by audit:verify-chain.
  */
 class AuditLog extends Model
 {
@@ -88,6 +96,26 @@ class AuditLog extends Model
 
             $entry->created_at ??= now();
         });
+
+        // The chain: the predecessor's hash is read under a row lock taken
+        // inside the insert's transaction (performInsert below), so two
+        // inserts cannot chain to the same row.
+        static::creating(function (AuditLog $entry): void {
+            $prev = static::query()->orderByDesc('id')->lockForUpdate()->value('row_hash') ?? AuditChain::GENESIS;
+
+            $entry->setAttribute('prev_hash', $prev);
+            $entry->setAttribute('row_hash', AuditChain::hash($entry->getAttributes(), $prev));
+        });
+    }
+
+    /**
+     * The insert runs in a transaction (a savepoint inside an outer one) so
+     * that the lock on the last row is held until the new row is written,
+     * and until the outer transaction commits when there is one.
+     */
+    protected function performInsert(Builder $query)
+    {
+        return $this->getConnection()->transaction(fn () => parent::performInsert($query));
     }
 
     /**

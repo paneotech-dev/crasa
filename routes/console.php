@@ -46,3 +46,13 @@ Schedule::command('notifications:digest')->dailyAt('06:40')->withoutOverlapping(
  * versions. Same caveat: this needs the cron entry that runs schedule:run.
  */
 Schedule::command('documents:purge-bin')->dailyAt('03:40')->withoutOverlapping();
+
+/*
+ * Day 3: auditlock. The audit log's hash chain is verified every night;
+ * the result goes to the Laravel log and to the audit log itself. Once a
+ * month, entries past the online retention are copied to a dated archive
+ * (they stay in the table: the database refuses deletion). Same caveat:
+ * this needs the cron entry that runs schedule:run.
+ */
+Schedule::command('audit:verify-chain')->dailyAt('03:40')->withoutOverlapping();
+Schedule::command('audit:archive')->monthlyOn(1, '04:10')->withoutOverlapping();
