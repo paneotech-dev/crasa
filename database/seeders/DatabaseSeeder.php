@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             HomepageSeeder::class,
             PublicPagesSeeder::class,
             LegalPagesSeeder::class,
+            // After the pages and menus it sits beside: inserts only if missing.
+            PartnerPageSeeder::class,
             NewsroomSeeder::class,
             PublicationSeeder::class,
             IndicatorSeeder::class,
