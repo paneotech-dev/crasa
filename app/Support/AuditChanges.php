@@ -37,6 +37,9 @@ final class AuditChanges
 
     private const QUIET = ['id', 'created_at', 'updated_at', 'last_seen_at'];
 
+    /** Fields whose value is a role key, shown by the role's name. */
+    private const ROLE_FIELDS = ['role', 'former_role', 'invited_as'];
+
     /**
      * @return list<array{field: string, before: ?string, after: ?string, masked: bool}>
      */
@@ -128,10 +131,37 @@ final class AuditChanges
 
         return [
             'field' => self::label($key),
-            'before' => $masked ? null : self::text($before),
-            'after' => $masked ? null : self::text($after),
+            'before' => $masked ? null : self::value($key, $before),
+            'after' => $masked ? null : self::value($key, $after),
             'masked' => $masked,
         ];
+    }
+
+    /** One side of a row as a reader sees it: a role by its name rather than its key. */
+    private static function value(string $key, mixed $value): ?string
+    {
+        if (in_array($key, self::ROLE_FIELDS, true) && is_string($value) && $value !== '') {
+            return self::roleName($value);
+        }
+
+        return self::text($value);
+    }
+
+    /**
+     * A role key by its name: a built-in role from its label in the reader's
+     * language, a custom role from the roles table, the key itself when the
+     * role is gone (or the value was already a name).
+     */
+    public static function roleName(string $key): string
+    {
+        if (($builtIn = \App\Enums\Role::tryFrom($key)) !== null) {
+            return $builtIn->label();
+        }
+
+        // The roles table is small: read once per request, not per row.
+        $roles = once(fn () => \App\Models\RoleDefinition::query()->get()->keyBy('key'));
+
+        return $roles->get($key)?->label() ?? $key;
     }
 
     public static function isSecret(string $key): bool
