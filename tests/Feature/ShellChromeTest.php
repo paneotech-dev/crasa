@@ -133,6 +133,40 @@ class ShellChromeTest extends TestCase
         }
     }
 
+    /* Display options ------------------------------------------------------ */
+
+    /**
+     * Every shell page, back office and member area, carries the floating
+     * display options once: one control, one panel id, one head snippet,
+     * and the "Back to top" target. Twice would repeat ids and announce two
+     * groups of the same name.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('shellPages')]
+    public function test_every_page_carries_the_display_options_once(string $url): void
+    {
+        $this->assertDisplayOptionsOnce($this->actingAs($this->administrator)->get($url)->assertOk()->getContent(), $url);
+    }
+
+    public function test_the_extranet_carries_the_display_options_once(): void
+    {
+        $rep = User::factory()->memberStateRep(Country::where('iso_code', 'bw')->sole())->create();
+
+        foreach (['/en/extranet/dashboard', '/en/extranet/folders', '/en/extranet/calendar', '/en/submissions'] as $url) {
+            $this->assertDisplayOptionsOnce($this->actingAs($rep)->get($url)->assertOk()->getContent(), $url);
+        }
+    }
+
+    private function assertDisplayOptionsOnce(string $html, string $url): void
+    {
+        $this->assertSame(1, substr_count($html, 'class="c-float"'), $url);
+        $this->assertSame(1, substr_count($html, 'id="a11y-panel"'), $url);
+        // The head applies the stored choice once (the toolbar partial
+        // carries its own fallback after the control).
+        $this->assertSame(1, substr_count(strstr($html, '</head>', true), "localStorage.getItem('crasa-a11y')"), $url);
+        $this->assertSame(1, substr_count($html, 'id="top"'), $url);
+        $this->assertSame(1, substr_count($html, 'css/a11y-shell.css'), $url);
+    }
+
     /**
      * The layout half. A sticky bar inside a document that scrolls sideways
      * scrolls sideways with it, so the shell body contains its own

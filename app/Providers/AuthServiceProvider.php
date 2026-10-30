@@ -161,6 +161,9 @@ class AuthServiceProvider extends ServiceProvider
          */
         Gate::define('read-own-country-record', fn (User $user) => $user->country_id !== null && $user->can('enter-member-area'));
 
+        // Day 3: auditdeny. The ability a gate refused, for the audit entry.
+        \App\Support\AccessRefusals::listen();
+
         /**
          * No Gate::before superuser shortcut. An administrator's power comes
          * from the matrix, which lets the two-factor withholding in

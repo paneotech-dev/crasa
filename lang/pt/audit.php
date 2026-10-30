@@ -40,6 +40,8 @@ return [
     'action_folder_created' => 'Criação de uma pasta',
     'action_folder_changed' => 'Alteração de uma pasta',
     'action_folder_deleted' => 'Eliminação de uma pasta',
+    // Day 3: auditdeny
+    'action_access_refused' => 'Acesso recusado',
     // end Day 3: docs
     // Day 3: prodprep
     'action_production_prepared' => 'Preparação da plataforma para a produção',

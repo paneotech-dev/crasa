@@ -66,6 +66,9 @@ class AuditLog extends Model
 
     public const INVITATION_ACCEPTED = 'invitation_accepted';
 
+    // Day 3: auditdeny. A signed-in user refused a screen or a record (App\Support\AccessRefusals).
+    public const ACCESS_REFUSED = 'access_refused';
+
     protected $table = 'audit_log';
 
     public $timestamps = false;

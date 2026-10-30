@@ -385,6 +385,22 @@ class SearchTest extends TestCase
         $this->assertStringContainsString('c-chip', $html);
     }
 
+    /**
+     * The database ignores accents when it matches, so the page must ignore
+     * them when it marks: "itinerance" found "itinérance" and marked nothing.
+     */
+    public function test_a_term_typed_without_accents_is_marked_in_the_accented_title(): void
+    {
+        $p = Publication::factory()->create(['slug' => 'accent-probe']);
+        $p->setTranslations('en', ['title' => 'Itinerance probe', 'summary' => 'Itinerance probe.']);
+        $p->setTranslations('fr', ['title' => 'Note sur l’itinérance', 'summary' => 'Une note sur l’itinérance.']);
+
+        $html = $this->get('/fr/search?q=itinerance')->assertOk()->getContent();
+
+        $this->assertStringContainsString('Note sur l’<mark>itinérance</mark>', $html);
+        $this->assertStringContainsString('Une note sur l’<mark>itinérance</mark>', $html);
+    }
+
     public function test_equal_relevance_puts_the_newer_edition_first(): void
     {
         $old = Publication::factory()->create(['slug' => 'zz-older-edition', 'published_on' => '2015-01-01']);

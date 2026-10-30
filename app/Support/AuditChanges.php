@@ -66,6 +66,11 @@ final class AuditChanges
             return [];
         }
 
+        // Day 3: auditdeny. A refusal reads as what was attempted and why.
+        if ($entry->action === AuditLog::ACCESS_REFUSED) {
+            return self::refusal($changes);
+        }
+
         // A role change: {from, to} at the top.
         if (array_keys($changes) === ['from', 'to'] || array_keys($changes) === ['to', 'from']) {
             return [self::row('role', $changes['from'], $changes['to'], $references)];
@@ -111,6 +116,35 @@ final class AuditChanges
         }
 
         return self::forgetFormerUser($entry, $rows);
+    }
+
+    /**
+     * Day 3: auditdeny. An access_refused entry in plain words: the request
+     * attempted, the screen, the permission checked and the reason.
+     *
+     * @param  array<string, mixed>  $changes
+     * @return list<array{field: string, before: ?string, after: ?string, masked: bool}>
+     */
+    private static function refusal(array $changes): array
+    {
+        $reason = (string) ($changes['reason'] ?? '');
+        $values = [
+            'attempted' => trim(($changes['method'] ?? '').' '.($changes['path'] ?? '')),
+            'screen' => $changes['route'] ?? null,
+            'ability' => $changes['ability'] ?? null,
+            'reason' => Lang::has('d3_auditdeny.reason_'.$reason) ? (string) __('d3_auditdeny.reason_'.$reason) : $reason,
+            'status' => isset($changes['status']) ? (string) $changes['status'] : null,
+        ];
+
+        $rows = [];
+        foreach ($values as $field => $value) {
+            if ($value === null || $value === '') {
+                continue;
+            }
+            $rows[] = ['field' => (string) __('d3_auditdeny.field_'.$field), 'before' => null, 'after' => (string) $value, 'masked' => false];
+        }
+
+        return $rows;
     }
 
     /**
