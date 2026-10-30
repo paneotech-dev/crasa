@@ -62,8 +62,8 @@ final class RegistrationsMailbox
 
     /**
      * One mail to every delegate registered for the meeting (filed or
-     * confirmed; a declined filing is not a registration). Returns how many
-     * were queued.
+     * confirmed; a declined filing is not a registration). Sample
+     * registrations are left out. Returns how many were queued.
      */
     public static function noticeDelegates(Meeting $meeting, string $change): int
     {
@@ -71,6 +71,7 @@ final class RegistrationsMailbox
 
         DelegateRegistration::query()->withoutGlobalScopes()
             ->where('meeting_id', $meeting->id)
+            ->where('is_sample', false)
             ->where(fn ($q) => $q->where('status', '!=', 'declined')->orWhereNull('status'))
             ->get()
             ->each(function (DelegateRegistration $registration) use ($meeting, $change, &$queued) {

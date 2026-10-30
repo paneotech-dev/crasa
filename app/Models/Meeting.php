@@ -288,10 +288,17 @@ class Meeting extends Model
         /*
          * Client item 1e: every delegate registered for the meeting is told
          * by mail when it is cancelled, postponed or given a new date (the
-         * in-app notice below reaches those with accounts).
+         * in-app notice below reaches those with accounts). Not from the
+         * legacy sync (every run sets synced_at) and not from any other
+         * console command unless crasa.meeting_change_mail_from_console is
+         * set: only an edit made by a person mails delegates.
          */
         static::updated(function (Meeting $meeting): void {
-            if ($meeting->wasChanged('synced_at') && $meeting->getOriginal('synced_at') === null) {
+            if ($meeting->wasChanged('synced_at')) {
+                return;
+            }
+
+            if (app()->runningInConsole() && ! config('crasa.meeting_change_mail_from_console', false)) {
                 return;
             }
 

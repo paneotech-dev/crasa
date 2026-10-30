@@ -57,6 +57,14 @@ return [
     'role_guide_url' => env('CRASA_ROLE_GUIDE_URL', 'https://workshopcrasa.paneo.tech/training.html'),
 
     /*
+     * Whether a meeting saved by a console command (the legacy sync, a
+     * maintenance command) mails its registered delegates about a new date,
+     * postponement or cancellation. Off: only edits made by a person mail
+     * them (App\Models\Meeting, item 1e).
+     */
+    'meeting_change_mail_from_console' => (bool) env('CRASA_MEETING_CHANGE_MAIL_FROM_CONSOLE', false),
+
+    /*
      * Search.
      *
      * ElasticSearch is named in the specifications and cannot run on this
