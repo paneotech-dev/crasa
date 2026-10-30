@@ -115,10 +115,17 @@
                     <h2 class="a-resource__title">{{ __('admin.blocks') }}</h2>
                     <div class="a-resource__note">{{ __('admin.blocks_note') }}</div>
                 </div>
+                @php $blocksHeld = \App\Support\EditorFlow::holds(auth()->user(), $page); @endphp
+                @unless ($blocksHeld)
                 <div class="a-pagehead__actions">
                     <a class="a-btn a-btn--primary" href="{{ route('admin.pages.blocks.create', ['locale' => app()->getLocale(), 'page' => $page->slug]) }}">{{ __('admin.add_block') }}</a>
                 </div>
+                @endunless
             </div>
+            {{-- Day 3: the server refuses an editor's block change on a published page; say so here. --}}
+            @if ($blocksHeld)
+                <p class="a-notice a-notice--pending" data-blocks-held>{{ __('m3_edflow.blocks_held') }}</p>
+            @endif
         </div>
 
         @if ($page->editableBlocks->isEmpty())

@@ -323,6 +323,9 @@ class M3EditorFlowTest extends TestCase
         $block->setTranslations('en', ['body' => 'The published paragraph.']);
         $base = '/en/admin/pages/block-page/blocks';
 
+        $this->actingAs($this->editor)->get('/en/admin/pages/block-page')->assertOk()
+            ->assertSee('data-blocks-held', false)->assertSee(__('m3_edflow.blocks_held'));
+
         $this->actingAs($this->editor)->put("{$base}/{$block->id}", ['settings' => [], 'en' => ['body' => 'Changed live']])
             ->assertSessionHasErrors(['approval' => __('m3_edflow.blocks_held')]);
         $this->actingAs($this->editor)->post($base, ['type' => 'rich_text'])->assertSessionHasErrors('approval');
