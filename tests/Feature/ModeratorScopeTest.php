@@ -158,6 +158,15 @@ class ModeratorScopeTest extends TestCase
         $this->assertFalse(ModeratorScope::isScoped($this->unscoped));
     }
 
+    public function test_deleting_a_scoped_moderator_clears_the_scope(): void
+    {
+        $this->scoped->update(['status' => \App\Enums\UserStatus::Suspended]);
+        $this->actingAs($this->admin)->delete("/en/admin/users/{$this->scoped->id}")->assertRedirect('/en/admin/users');
+
+        $this->assertNotNull($this->scoped->fresh()->anonymised_at);
+        $this->assertFalse(ModeratorScope::isScoped($this->scoped));
+    }
+
     public function test_a_scope_naming_an_unknown_member_state_is_refused_and_others_may_not_set_one(): void
     {
         $this->actingAs($this->admin)->put("/en/admin/users/{$this->unscoped->id}", [

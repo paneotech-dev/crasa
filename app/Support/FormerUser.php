@@ -4,6 +4,8 @@ namespace App\Support;
 
 use App\Enums\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 /**
@@ -37,5 +39,10 @@ final class FormerUser
 
         $user->committees()->detach();
         $user->notifications()->delete();
+
+        // Item 1j's moderation scope belongs to the person, not the row.
+        if (Schema::hasTable('moderator_scopes')) {
+            DB::table('moderator_scopes')->where('user_id', $user->id)->delete();
+        }
     }
 }
