@@ -235,14 +235,14 @@ html:not(.has-js) .k-dacc .k-dp a { visibility: visible; }
 html:not(.has-js) .k-share { display: none; }
 
 /* ================= SITEMAP + FOOTER ================= */
-.k-smap { background: var(--k-crasa-blue); border-top: 4px solid var(--k-blue); }
+.k-smap { background: var(--k-deep); border-top: 4px solid var(--k-blue); }
 .k-smap .k-wrap { padding-block: 48px 36px; display: grid; grid-template-columns: repeat(var(--k-cols, 4), minmax(0, 1fr)); gap: 28px; }
 .k-smap__h { margin: 0 0 10px; padding-bottom: 10px; font: 600 15.5px/1.3 var(--k-sans); color: var(--k-white); border-bottom: 2px solid rgba(201, 212, 238, .35); letter-spacing: 0; }
 .k-smap a { display: block; padding: 6px 0; color: var(--k-on-deep); text-decoration: none; font-size: 14.5px; }
 .k-smap a:hover { color: var(--k-white); text-decoration: underline; text-underline-offset: 3px; }
 @media (max-width: 1000px) { .k-smap .k-wrap { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 620px) { .k-smap .k-wrap { grid-template-columns: 1fr 1fr; padding-block: 36px 24px; } .k-smap a { padding: 10px 0; } }
-.k-foot { background: var(--k-crasa-blue); color: var(--k-on-deep); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.k-foot { background: var(--k-deep); color: var(--k-on-deep); padding-bottom: env(safe-area-inset-bottom, 0px); }
 .k-foot .k-wrap { padding-top: 8px; }
 .k-ft { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr) minmax(0, .8fr); gap: 32px; padding-bottom: 32px; border-bottom: 1px solid rgba(227, 238, 232, .18); }
 .k-ft__id { display: flex; flex-direction: column; gap: 14px; }

@@ -69,8 +69,8 @@ class CrasaBlueTest extends TestCase
         $k = $this->css('k.css');
         $ui = $this->css('ui.css');
 
-        $this->assertStringContainsString('.k-smap { background: var(--k-crasa-blue);', $k);
-        $this->assertStringContainsString('.k-foot { background: var(--k-crasa-blue);', $k);
+        $this->assertStringContainsString('.k-smap { background: var(--k-deep);', $k); // footer area green again (client, 30 October)
+        $this->assertStringContainsString('.k-foot { background: var(--k-deep);', $k);
         $this->assertMatchesRegularExpression('/\.u-cta \{[^}]*background: var\(--u-crasa-blue\)/', $ui);
         $this->assertMatchesRegularExpression('/\.u-date \{[^}]*background: var\(--u-crasa-blue\); color: var\(--u-white\)/', $ui);
         $this->assertStringContainsString('.c-cmp-chart__bar--second { fill: var(--u-crasa-blue', $this->css('comparator.css'));
