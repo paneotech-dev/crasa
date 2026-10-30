@@ -51,7 +51,7 @@ class ContentRenderer
         'p', 'br', 'strong', 'b', 'em', 'i', 'sup', 'sub',
         'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'blockquote',
         'a', 'img', 'figure', 'figcaption',
-        'table', 'thead', 'tbody', 'tr', 'th', 'td',
+        'table', 'caption', 'thead', 'tbody', 'tr', 'th', 'td',
     ];
 
     /**
@@ -219,6 +219,10 @@ class ContentRenderer
 
         $this->walk($root);
 
+        foreach (iterator_to_array($root->getElementsByTagName('table')) as $table) {
+            $this->tableHeaders($table);
+        }
+
         $out = '';
 
         foreach ($root->childNodes as $child) {
@@ -301,6 +305,142 @@ class ContentRenderer
         $text = preg_replace('/[\s\x{00A0}\x{200B}-\x{200D}\x{FEFF}]+/u', '', $element->textContent);
 
         return ($text ?? '') === '';
+    }
+
+    /**
+     * Every table states its column headers (Day 2: a page carried a table
+     * with none, and WCAG 1.3.1 wants them).
+     *
+     * A table pasted from a word processor usually has its headings in a
+     * first row of ordinary cells. When a table has no th at all, that row
+     * becomes the header row, in a thead. Every th in the header row (the
+     * thead, or a first row of th only) reads scope="col"; any other th
+     * that has no scope is the row's own heading and reads scope="row". A table that already has its headers
+     * is left as written, apart from a missing scope. Idempotent, like the
+     * rest of the class: a second pass finds the th and changes nothing.
+     */
+    private function tableHeaders(DOMElement $table): void
+    {
+        $rows = [];
+        foreach (iterator_to_array($table->getElementsByTagName('tr')) as $row) {
+            if ($this->owningTable($row) === $table) {
+                $rows[] = $row;
+            }
+        }
+
+        if ($rows === []) {
+            return;
+        }
+
+        $document = $table->ownerDocument;
+        $first = $rows[0];
+        $hasHeader = false;
+        foreach ($rows as $row) {
+            foreach ($row->childNodes as $cell) {
+                if ($cell instanceof DOMElement && strtolower($cell->nodeName) === 'th') {
+                    $hasHeader = true;
+                }
+            }
+        }
+
+        if (! $hasHeader && count($rows) > 1) {
+            foreach (iterator_to_array($first->childNodes) as $cell) {
+                if ($cell instanceof DOMElement && strtolower($cell->nodeName) === 'td') {
+                    $th = $document->createElement('th');
+                    while ($cell->firstChild !== null) {
+                        $th->appendChild($cell->firstChild);
+                    }
+                    $first->replaceChild($th, $cell);
+                }
+            }
+        }
+
+        $inHead = strtolower((string) $first->parentNode?->nodeName) === 'thead';
+        if (! $inHead && ! $hasHeader && count($rows) > 1) {
+            $thead = $document->createElement('thead');
+            $parent = $first->parentNode;
+            $parent->removeChild($first);
+            $anchor = null;
+            foreach ($table->childNodes as $child) {
+                if ($child instanceof DOMElement && strtolower($child->nodeName) !== 'caption') {
+                    $anchor = $child;
+                    break;
+                }
+            }
+            $table->insertBefore($thead, $anchor);
+            $thead->appendChild($first);
+            if ($parent instanceof DOMElement && $parent !== $table && $parent->getElementsByTagName('tr')->length === 0) {
+                $parent->parentNode?->removeChild($parent);
+            }
+        }
+
+        $this->tableName($table, $first);
+
+        foreach ($rows as $i => $row) {
+            $cells = array_filter(iterator_to_array($row->childNodes), fn ($c) => $c instanceof DOMElement);
+            $allTh = $cells !== [] && array_filter($cells, fn ($c) => strtolower($c->nodeName) !== 'th') === [];
+            $header = strtolower((string) $row->parentNode?->nodeName) === 'thead' || ($i === 0 && $allTh);
+            foreach ($row->childNodes as $cell) {
+                if ($cell instanceof DOMElement && strtolower($cell->nodeName) === 'th' && ! in_array($cell->getAttribute('scope'), ['col', 'row', 'colgroup', 'rowgroup'], true)) {
+                    $cell->setAttribute('scope', $header ? 'col' : 'row');
+                }
+            }
+        }
+    }
+
+    /**
+     * A table is named by its caption. Without one, a heading written just
+     * before it names it (aria-labelledby, with an id made from the
+     * heading's words so a second pass makes the same one). With neither,
+     * it gets a caption listing its column headings, which is what the
+     * reader would otherwise have to discover cell by cell.
+     */
+    private function tableName(DOMElement $table, DOMElement $headerRow): void
+    {
+        foreach ($table->childNodes as $child) {
+            if ($child instanceof DOMElement && strtolower($child->nodeName) === 'caption') {
+                return;
+            }
+        }
+
+        $previous = $table->previousSibling;
+        while ($previous instanceof DOMText && trim($previous->textContent) === '') {
+            $previous = $previous->previousSibling;
+        }
+
+        if ($previous instanceof DOMElement && in_array(strtolower($previous->nodeName), ['h2', 'h3', 'h4'], true) && trim($previous->textContent) !== '') {
+            $id = 'table-heading-'.substr(md5(trim($previous->textContent)), 0, 10);
+            $previous->setAttribute('id', $id);
+            $table->setAttribute('aria-labelledby', $id);
+
+            return;
+        }
+
+        $columns = [];
+        foreach ($headerRow->childNodes as $cell) {
+            if ($cell instanceof DOMElement && trim($cell->textContent) !== '') {
+                $columns[] = trim(preg_replace('/\s+/u', ' ', $cell->textContent));
+            }
+        }
+
+        if ($columns === []) {
+            return;
+        }
+
+        $caption = $table->ownerDocument->createElement('caption');
+        $caption->appendChild($table->ownerDocument->createTextNode(__('d3_extras.table_caption', ['columns' => implode(', ', $columns)])));
+        $table->insertBefore($caption, $table->firstChild);
+    }
+
+    private function owningTable(DOMNode $node): ?DOMElement
+    {
+        for ($n = $node->parentNode; $n !== null; $n = $n->parentNode) {
+            if ($n instanceof DOMElement && strtolower($n->nodeName) === 'table') {
+                return $n;
+            }
+        }
+
+        return null;
     }
 
     /** Replace an element with its children, keeping the text. */

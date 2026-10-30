@@ -2226,7 +2226,9 @@
    at --c-navy-mid inside a --c-navy-line rule; what changes between slides
    is what is inside it, not the box. */
 
-.b-hero__table { width: 100%; border-collapse: collapse; margin: var(--s-4) 0 0; }
+.b-hero__table { position: relative; width: 100%; border-collapse: collapse; margin: var(--s-4) 0 0; }
+/* Header row read by screen readers only: no height, no rule. */
+.b-hero__table .b-hero__table-head th { padding: 0; border: 0; }
 .b-hero__table th,
 .b-hero__table td { padding: var(--s-3) 0; border-top: 1px solid var(--c-navy-line); text-align: left; }
 .b-hero__table th {

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Support\Comparison;
 use App\Support\ComparisonCell;
+use App\Support\ComparisonPdf;
 use Illuminate\Support\Str;
 use Imagick;
 use RuntimeException;
@@ -170,9 +171,52 @@ final class ComparisonExport
         return $this->rasterise($comparison, 'png');
     }
 
+    /**
+     * Day 3 (item C): a text PDF. The chart is the same SVG as the PNG,
+     * rasterised to JPEG; the title, the table, the sources and the date
+     * are text, so the file reads the same whatever browser asked for it.
+     */
     public function pdf(Comparison $comparison): string
     {
-        return $this->rasterise($comparison, 'pdf');
+        if (! extension_loaded('imagick')) {
+            throw new RuntimeException('Imagick is required to export a comparison as pdf.');
+        }
+
+        $image = new Imagick;
+        $image->setBackgroundColor('white');
+        $image->readImageBlob($this->svg($comparison));
+        $image->setImageBackgroundColor('white');
+        $image = $image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
+        $image->setImageFormat('jpeg');
+        $image->setImageCompressionQuality(88);
+        $jpeg = $image->getImageBlob();
+        $width = $image->getImageWidth();
+        $height = $image->getImageHeight();
+        $image->clear();
+
+        $indicator = $comparison->indicator;
+        $title = (string) ($indicator?->name ?? __('comparator.title'));
+        $subtitle = trim(Str::ucfirst((string) $indicator?->unitLabel()).'. '.($comparison->mode === Comparison::BROWSE
+            ? __('comparator.export_browse_scope')
+            : $comparison->countries->pluck('name')->implode(', ')), '. ');
+
+        $rows = $comparison->ranked()->map(fn (ComparisonCell $cell) => [
+            (string) $cell->country->name,
+            $cell->display(),
+            (string) ($cell->period() ?? ''),
+            (string) ($cell->source() ?? ''),
+        ])->values()->all();
+
+        $footer = $this->notes($comparison);
+        foreach ($this->sources($comparison) as $n => $source) {
+            $footer[] = __('comparator.csv_source').' ['.($n + 1).'] '.$source;
+        }
+        $footer[] = __('comparator.export_source', ['date' => now()->isoFormat('D MMMM YYYY')]);
+        $footer[] = $comparison->permalink();
+
+        return ComparisonPdf::make($title, $subtitle, $jpeg, $width, $height, [
+            __('comparator.col_state'), __('comparator.col_value'), __('comparator.csv_period'), __('comparator.csv_source'),
+        ], $rows, $footer);
     }
 
     public function filename(Comparison $comparison, string $extension): string

@@ -113,7 +113,7 @@
   .c-cmp__sector[data-sector="postal"] .c-cmp__picks { grid-template-columns: 1fr; }
   .c-cmp__link { flex-direction: column; }
   /* The table becomes one card per member state. */
-  .c-cmp__tableframe { border: 0; overflow: visible; }
+  .c-cmp__tableframe { border: 0; overflow-x: auto; }
   .c-cmp__datatable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .c-cmp__datatable thead th { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .c-cmp__datatable, .c-cmp__datatable tbody, .c-cmp__datatable tr { display: block; width: 100%; }

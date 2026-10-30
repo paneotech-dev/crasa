@@ -578,3 +578,37 @@ p.s-post__head { margin: 0; font-weight: 600; }
 .c-pager__links [aria-current="page"] { display: flex; align-items: center; justify-content: center; }
 .c-pager__links [aria-current="page"] > span[aria-hidden="true"] { height: auto; }
 /* ==== end Day 3 polish ==== */
+
+/* Day 3 (phones): every link and button in the header, the navigation and
+   the main column is at least 44 px tall on a phone or a small tablet. */
+@media (max-width: 768px) {
+  .k-crumb li > a,
+  .k-all,
+  .k-dcard__t a,
+  .k-act h3 a, .k-lead__tx h3 a, main h3 > a, main h2 > a, main h4 > a,
+  .u-card__title a,
+  .s-post__gate-actions a,
+  .s-channel__link,
+  .c-cmp__state-link,
+  main li > a:only-child,
+  main dd > a:only-child { display: inline-flex; align-items: center; min-height: 44px; }
+  .cp-figure__link { min-width: 44px; justify-content: center; }
+  header .k-wrap > div > a, nav .k-wrap > div > a { min-height: 44px; }
+  .k-hctl button, .k-hctl__pause { min-width: 44px; min-height: 44px; }
+  .k-dot { min-width: 44px; min-height: 44px; }
+}
+@media (max-width: 768px) {
+  html body .k-langs a,
+  html body .k-ubar__soc a { min-height: 44px; min-width: 44px; }
+  html body .s-channel__link,
+  html body .cp-meeting__title a,
+  html body .cp-map__gate-actions a,
+  html body .s-post__gate-actions a,
+  html body .c-active__head a,
+  html body .c-active__chip { display: inline-flex; align-items: center; min-height: 44px; }
+}
+@media (max-width: 768px) {
+  html body .cp-doc-langs__item a,
+  html body .e-map__caption a { display: inline-flex; align-items: center; min-height: 44px; }
+  html body .c-pw__toggle { min-width: 44px; min-height: 44px; }
+}
