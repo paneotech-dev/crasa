@@ -2949,3 +2949,16 @@ body[data-surface="admin"] .e-dash__day { color: var(--a-date-ink); }
 /* The notice's own link colour is for text links, not its button. */
 .m3-inbox a.a-btn--primary { color: var(--a-btn-ink); }
 .m3-inbox a.a-btn--primary:hover { color: var(--a-btn-hover-ink); }
+
+/* Day 3 (phones): the member area's drawer, its rows and the language
+   pills are at least 44 px tall below 1024 px. */
+@media (max-width: 1023.98px) {
+  .a-top__burger { min-width: 44px; min-height: 44px; }
+  body[data-surface="admin"] .a-side__link,
+  body[data-surface="admin"] .a-side__area,
+  .a-side__out,
+  .a-side__name,
+  .a-pills__item { min-height: 44px; display: inline-flex; align-items: center; }
+  body[data-surface="admin"] .a-side__link { display: flex; }
+  .a-pills__item { min-width: 44px; justify-content: center; }
+}

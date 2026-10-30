@@ -72,7 +72,7 @@
                 <a @class(['a-pills__item', 'is-current' => $code === $locale])
                    href="{{ \App\Support\Locales::urlFor($code, request()) }}"
                    @if ($code === $locale) aria-current="true" @endif
-                   lang="{{ $code }}">
+                   lang="{{ $code }}" hreflang="{{ $code }}">
                     <span aria-hidden="true">{{ $language['short'] }}</span>
                     <span class="c-sr">{{ $language['native'] }}</span>
                 </a>
