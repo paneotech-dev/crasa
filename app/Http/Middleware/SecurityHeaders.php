@@ -58,7 +58,7 @@ class SecurityHeaders
             // The contact map's tile server, and only that host. Without it
             // the browser refused every tile and the map showed a pin on
             // an empty grey square.
-            trim("img-src 'self' data: ".$this->tileHost()),
+            trim("img-src 'self' data: blob: ".$this->tileHost()),
             "font-src 'self'",
             "connect-src 'self' https://cloudflareinsights.com",
             "form-action 'self'",

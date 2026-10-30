@@ -257,6 +257,21 @@ class M3DelegateRegistrationTest extends TestCase
             ->assertSee(__('m3_deleg.decline_selected'));
     }
 
+    /** The shell renders the status and error once; the list used to add its own copy, so a screen reader heard each twice. */
+    public function test_the_list_announces_status_and_errors_once(): void
+    {
+        $this->row('Chipo Banda', 'mw');
+
+        $html = $this->actingAs($this->admin)->withSession(['status' => 'Two registrations confirmed.'])
+            ->get('/en/admin/registrations')->assertOk()->getContent();
+        $this->assertSame(1, substr_count($html, 'Two registrations confirmed.'));
+
+        $this->actingAs($this->admin)->from('/en/admin/registrations')
+            ->post('/en/admin/registrations/bulk', ['action' => 'declined']);
+        $html = $this->actingAs($this->admin)->get('/en/admin/registrations')->assertOk()->getContent();
+        $this->assertSame(1, substr_count($html, 'role="alert"'));
+    }
+
     public function test_a_role_without_meeting_rights_cannot_use_bulk_actions(): void
     {
         $a = $this->row('Chipo Banda', 'mw');

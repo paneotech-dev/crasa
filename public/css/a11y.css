@@ -441,10 +441,14 @@ html.a11y-contrast .c-a11y__hint { color: #000000; }
    stacked: "Back to top" above once the reader has scrolled one screen,
    the display options in the corner. Each has its own navy ground and a
    white edge, so it reads on the cream page and on the navy footer. */
+/* The consent banner's height, set by consent.js while it shows: focused
+   content scrolls clear of it. */
+html { scroll-padding-bottom: var(--cc-h, 0px); }
+
 .c-float {
   position: fixed;
   right: calc(var(--s-4) + env(safe-area-inset-right, 0px));
-  bottom: calc(var(--s-4) + env(safe-area-inset-bottom, 0px));
+  bottom: calc(var(--s-4) + env(safe-area-inset-bottom, 0px) + var(--cc-h, 0px));
   z-index: 65;
   display: flex;
   flex-direction: column;
@@ -509,13 +513,13 @@ html:not(.has-js) .c-float { display: none; }
     position: fixed;
     left: calc(var(--s-4) + env(safe-area-inset-left, 0px));
     right: calc(var(--s-4) + env(safe-area-inset-right, 0px));
-    bottom: calc(var(--s-4) + 44px + var(--s-2) + env(safe-area-inset-bottom, 0px));
+    bottom: calc(var(--s-4) + 44px + var(--s-2) + env(safe-area-inset-bottom, 0px) + var(--cc-h, 0px));
     top: auto;
     margin: 0;
     max-height: calc(100dvh - 120px);
   }
   /* The footer's last line stays clear of the two squares. */
-  .k-foot { padding-bottom: calc(44px + var(--s-6) + env(safe-area-inset-bottom, 0px)); }
+  .k-foot { padding-bottom: calc(88px + var(--s-2) + var(--s-6) + env(safe-area-inset-bottom, 0px)); }
 }
 
 html.a11y-contrast .c-float__top,
