@@ -86,7 +86,7 @@
 
                 <div class="a-pagehead">
                     <div class="a-pagehead__text">
-                        <h1>@yield('heading', View::getSection('title'))</h1>
+                        <h1>@hasSection('heading')@yield('heading')@else@yield('title')@endif</h1>
                         @hasSection('note')
                             <p class="a-pagehead__note">@yield('note')</p>
                         @endif

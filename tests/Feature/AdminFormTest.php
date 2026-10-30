@@ -245,4 +245,15 @@ class AdminFormTest extends TestCase
             $html
         );
     }
+
+    public function test_an_apostrophe_in_a_record_title_is_escaped_once_in_the_heading(): void
+    {
+        $news = NewsItem::first();
+        $news->setTranslation('title', 'en', "Shu's First Feature");
+
+        $html = $this->actingAs($this->administrator)->get('/en/admin/data/news/'.$news->id)->assertOk()->getContent();
+
+        $this->assertStringNotContainsString('&amp;#039;', $html);
+        $this->assertStringContainsString('Shu&#039;s First Feature', $html);
+    }
 }

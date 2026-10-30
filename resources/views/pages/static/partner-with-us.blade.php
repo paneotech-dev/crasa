@@ -55,8 +55,13 @@
     $themeSlug = request()->query('theme');
     $themeName = null;
     if (is_string($themeSlug) && preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $themeSlug) && strlen($themeSlug) <= 80) {
-        $themePage = \App\Models\Page::published()->where('slug', $themeSlug)->with('translations')->first();
-        $themeName = $themePage?->translate('title')?->value ?: \Illuminate\Support\Str::ucfirst(str_replace('-', ' ', $themeSlug));
+        // A thematic area first (its title in the page's language), then a page
+        // with that slug, then the slug in words.
+        $themeName = \App\Support\Themes::find($themeSlug)['title'] ?? null;
+        if ($themeName === null) {
+            $themePage = \App\Models\Page::published()->where('slug', $themeSlug)->with('translations')->first();
+            $themeName = $themePage?->translate('title')?->value ?: \Illuminate\Support\Str::ucfirst(str_replace('-', ' ', $themeSlug));
+        }
     }
     // Carry the theme into the Contact form's subject.
     if ($themeName) {
