@@ -110,6 +110,8 @@
             @endif
         </section>
 
+        @include('pages.admin.users._scope')
+
         <p class="a-hint">{{ __('d3_people.audit_note') }}</p>
         <div class="a-form__actions">
             <button type="submit" class="a-btn a-btn--primary">{{ __('d3_people.save_user') }}</button>

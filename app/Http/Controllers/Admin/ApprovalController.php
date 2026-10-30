@@ -37,6 +37,7 @@ class ApprovalController extends Controller
                 ->latest('id')->limit(20)->get(),
             'decided' => $user->hasPermission(Permission::ApproveContent)
                 ? Approval::with('approvable', 'submitter', 'decider')->whereIn('state', [Approval::APPROVED, Approval::RETURNED])
+                    ->tap(fn ($q) => \App\Support\ModeratorScope::constrain($q, $user))
                     ->latest('decided_at')->limit(10)->get()
                 : collect(),
             'mayApprove' => $user->hasPermission(Permission::ApproveContent),

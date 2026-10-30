@@ -5,12 +5,14 @@ namespace App\Policies;
 use App\Models\Approval;
 use App\Models\User;
 use App\Support\Approvals;
+use App\Support\ModeratorScope;
 
 /**
  * One approval request. Deciding needs the approve permission for the
  * item's own type (approve publications, news, events, pages or social
  * posts). The four-eyes rule is enforced in Approvals, where it carries its
- * own message.
+ * own message. A moderator limited to member states or committees
+ * (item 1j) sees and decides only items in that scope.
  */
 class ApprovalPolicy
 {
@@ -19,7 +21,7 @@ class ApprovalPolicy
         $type = Approvals::typeOfApproval($approval);
 
         return $approval->submitted_by === $user->id
-            || ($type !== null && Approvals::mayApproveType($user, $type))
+            || ($type !== null && Approvals::mayApproveType($user, $type) && ModeratorScope::covers($user, $approval))
             || Approvals::mayWithdraw($user, $approval);
     }
 
@@ -27,7 +29,7 @@ class ApprovalPolicy
     {
         $type = Approvals::typeOfApproval($approval);
 
-        return $type !== null && Approvals::mayApproveType($user, $type);
+        return $type !== null && Approvals::mayApproveType($user, $type) && ModeratorScope::covers($user, $approval);
     }
 
     public function withdraw(User $user, Approval $approval): bool
