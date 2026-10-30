@@ -33,6 +33,13 @@ final class MachineDrafts
                 config('machine_translation.deepl.url'),
                 (int) config('machine_translation.deepl.timeout', 20),
             ),
+            'rafiki' => new RafikiTranslator(
+                config('machine_translation.rafiki.key'),
+                config('machine_translation.rafiki.url'),
+                [config('machine_translation.rafiki.model'), ...(array) config('machine_translation.rafiki.models', [])],
+                (int) config('machine_translation.rafiki.timeout', 30),
+                (array) config('machine_translation_glossary', []),
+            ),
             default => new NoTranslator,
         };
     }
@@ -40,6 +47,31 @@ final class MachineDrafts
     public static function configured(): bool
     {
         return self::translator()->available();
+    }
+
+    /**
+     * The .env settings still empty for the selected driver, named in the
+     * back-office notice. With no driver selected, the driver setting itself.
+     *
+     * @return list<string>
+     */
+    public static function missingSettings(): array
+    {
+        $required = match (config('machine_translation.driver')) {
+            'deepl' => ['DEEPL_API_KEY' => 'machine_translation.deepl.key'],
+            'rafiki' => ['RAFIKI_API_KEY' => 'machine_translation.rafiki.key'],
+            default => null,
+        };
+
+        if ($required === null) {
+            return ['CRASA_MT_DRIVER'];
+        }
+
+        return array_keys(array_filter($required, function (string $path) {
+            $value = config($path);
+
+            return ! is_string($value) || trim($value) === '';
+        }));
     }
 
     /**
@@ -107,7 +139,14 @@ final class MachineDrafts
         $record->unsetRelation('translations');
 
         if ($drafted !== []) {
-            AuditLog::record('machine_translation_drafted', $record, ['driver' => $translator->name(), 'source' => $source, 'drafted' => $drafted], $by);
+            $details = ['driver' => $translator->name(), 'source' => $source, 'drafted' => $drafted];
+
+            if ($translator instanceof ReportsModel && $translator->models() !== []) {
+                $details['model'] = implode(', ', $translator->models());
+                $details += array_filter(['fallback' => $translator->fallback()]);
+            }
+
+            AuditLog::record('machine_translation_drafted', $record, $details, $by);
         }
 
         return $drafted;
