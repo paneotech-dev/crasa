@@ -1,7 +1,8 @@
 # Static files are served by Apache without the application's headers: give
-# them nosniff too (ZAP baseline, 30 October).
+# them nosniff and the same Permissions-Policy too (ZAP baseline, 30 October).
 <IfModule mod_headers.c>
     Header always set X-Content-Type-Options "nosniff"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
 </IfModule>
 
 <IfModule mod_rewrite.c>
