@@ -27,6 +27,16 @@
 <fieldset class="a-field nf-photo" data-news-photo>
     <legend class="a-label">{{ __('d3_taxo.photo') }}</legend>
 
+    {{-- Item 1i: the photograph in use, or the one just uploaded, is smaller
+         than a news card and article hero need. --}}
+    @php
+        $currentAsset = $current ? \App\Models\MediaAsset::where('path', $current)->first() : null;
+        $photoWarnings = array_unique(array_filter([session('m3_media_warning'), $currentAsset ? \App\Support\ImageSlots::warning($currentAsset, 'news') : null]));
+    @endphp
+    @foreach ($photoWarnings as $photoWarning)
+        <p class="a-band" role="status" data-size-warning>{{ $photoWarning }}</p>
+    @endforeach
+
     <div class="nf-photo__ways">
         <div class="a-field">
             <label class="a-label" for="f-{{ $field->name }}">{{ __('d3_taxo.photo_choose') }}</label>
@@ -46,6 +56,7 @@
                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" aria-describedby="photo-upload-help">
             <span class="a-hint" id="photo-upload-help">{{ __('d3_taxo.photo_upload_help') }}</span>
             @error('photo_upload')<p class="c-field__error">{{ $message }}</p>@enderror
+            @include('pages.admin.media._slot', ['fileInput' => 'photo_upload', 'slotName' => 'photo_used_for', 'selected' => 'news'])
             @foreach (\App\Support\Locales::SUPPORTED as $locale)
                 <label class="a-label" for="photo-alt-{{ $locale }}">{{ __('d3_taxo.photo_alt_in', ['language' => \App\Support\Locales::nameOf($locale)]) }}</label>
                 <input class="a-input" type="text" id="photo-alt-{{ $locale }}" name="photo_alt[{{ $locale }}]" lang="{{ $locale }}" maxlength="255"
