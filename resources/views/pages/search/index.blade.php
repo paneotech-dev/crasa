@@ -17,12 +17,10 @@
 @php
     $locale = app()->getLocale();
     // Terms to mark in titles. The title is escaped first, then the marks go
-    // in, so a stored title cannot inject markup.
-    $terms = collect(preg_split('/\s+/u', trim($query)))->filter(fn ($t) => mb_strlen($t) >= 2)->map(fn ($t) => preg_quote(e($t), '/'))->all();
-    $mark = function (string $text) use ($terms): string {
-        $safe = e($text);
-        return $terms === [] ? $safe : preg_replace('/('.implode('|', $terms).')/iu', '<mark>$1</mark>', $safe);
-    };
+    // in, so a stored title cannot inject markup. Accents are ignored, as
+    // they are when the results are matched.
+    $terms = collect(preg_split('/\s+/u', trim($query)))->filter(fn ($t) => mb_strlen($t) >= 2)->values()->all();
+    $mark = fn (string $text): string => \App\Search\Highlight::mark(e($text), $terms);
     $groups = $query !== '' && ! $results->isEmpty() ? collect($results->hits)->groupBy('type') : collect();
     $order = ['instrument', 'publication', 'news', 'member'];
     $groups = $groups->sortBy(fn ($hits, $type) => ($i = array_search($type, $order, true)) === false ? 99 : $i);
