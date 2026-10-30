@@ -301,7 +301,9 @@ final class Approvals
         });
 
         self::notify(
-            self::approvers(self::typeOf($model))->reject(fn (User $u) => $u->is($by)),
+            self::approvers(self::typeOf($model))
+                ->reject(fn (User $u) => $u->is($by))
+                ->filter(fn (User $u) => ModeratorScope::covers($u, $approval)),
             'approval_submitted', $approval, $model, $by
         );
 
