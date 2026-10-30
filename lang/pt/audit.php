@@ -40,6 +40,10 @@ return [
     'action_folder_changed' => 'Alteração de uma pasta',
     'action_folder_deleted' => 'Eliminação de uma pasta',
     // end Day 3: docs
+    // Day 3: prodprep
+    'action_production_prepared' => 'Preparação da plataforma para a produção',
+    'action_invitation_resent' => 'Envio de um novo convite',
+    // end Day 3: prodprep
     'subject_page' => 'uma página',
     'subject_pageblock' => 'um bloco',
     'subject_publication' => 'uma publicação',

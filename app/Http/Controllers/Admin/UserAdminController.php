@@ -201,23 +201,7 @@ class UserAdminController extends Controller
         \Illuminate\Support\Facades\DB::transaction(function () use ($user, $request, $name) {
             AuditLog::record(AuditLog::DELETED, $user, ['former_name' => $name, 'former_role' => $user->role->value], $request->user());
 
-            $user->forceFill([
-                'name' => __('fa.former_user', [], 'en'),
-                'email' => 'former-user-'.$user->id.'@deleted.invalid',
-                'password' => Str::random(64),
-                'remember_token' => null,
-                'two_factor_secret' => null,
-                'two_factor_recovery_codes' => null,
-                'two_factor_confirmed_at' => null,
-                'country_id' => null,
-                'authority_id' => null,
-                'custom_role_id' => null,
-                'role' => Role::Viewer,
-                'anonymised_at' => now(),
-            ])->saveQuietly();
-
-            $user->committees()->detach();
-            $user->notifications()->delete();
+            \App\Support\FormerUser::anonymise($user);
         });
 
         \App\Support\AdminAlerts::send($request->user(), 'deleted', ['subject' => $name],

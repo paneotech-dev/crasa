@@ -40,6 +40,10 @@ return [
     'action_folder_changed' => "Modification d'un dossier",
     'action_folder_deleted' => "Suppression d'un dossier",
     // end Day 3: docs
+    // Day 3: prodprep
+    'action_production_prepared' => 'Préparation de la plateforme pour la production',
+    'action_invitation_resent' => "Envoi d'une nouvelle invitation",
+    // end Day 3: prodprep
     'subject_page' => 'une page',
     'subject_pageblock' => 'un bloc',
     'subject_publication' => 'une publication',
