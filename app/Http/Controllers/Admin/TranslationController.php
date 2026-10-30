@@ -97,6 +97,8 @@ class TranslationController extends Controller
         return view('pages.admin.translations.index', [
             'approvedDrafts' => $this->approvedDrafts(),
             'machineConfigured' => MachineDrafts::configured(),
+            'machineDriver' => (string) config('machine_translation.driver'),
+            'machineMissing' => MachineDrafts::missingSettings(),
             'records' => $records,
             'rows' => $rows,
             'type' => $type,
