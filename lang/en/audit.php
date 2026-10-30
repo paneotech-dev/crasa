@@ -40,6 +40,8 @@ return [
     'action_folder_created' => 'Created a folder',
     'action_folder_changed' => 'Changed a folder',
     'action_folder_deleted' => 'Deleted a folder',
+    // Day 3: auditdeny
+    'action_access_refused' => 'Access refused',
     // end Day 3: docs
     'subject_page' => 'a page',
     'subject_pageblock' => 'a block',

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\RecordHidden;
 use App\Models\Authority;
 use App\Models\AuthorityContact;
 use App\Models\Sector;
+use App\Support\AccessRefusals;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -135,7 +137,9 @@ class DirectoryController extends Controller
     {
         $user = $request->user();
 
-        abort_unless($user->country_id !== null && $contact->country_id === $user->country_id, 404);
+        if ($user->country_id === null || $contact->country_id !== $user->country_id) {
+            throw new RecordHidden($contact, AccessRefusals::OTHER_MEMBER_STATE);
+        }
     }
 
     /** @return array<string, mixed> */

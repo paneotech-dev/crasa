@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\RecordHidden;
 use App\Models\AuditLog;
 use App\Models\Document;
 use App\Models\DocumentVersion;
 use App\Models\Folder;
+use App\Support\AccessRefusals;
 use App\Support\Documents\DocumentStore;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -52,7 +54,8 @@ class FolderDocumentController extends Controller
 
         $document = Document::query()->whereNotNull('folder_id')->where('share_token', $token)->first();
 
-        abort_if($document === null || Gate::denies('view', $document), 404);
+        abort_if($document === null, 404);
+        $this->hideUnlessAllowed('view', $document);
 
         return redirect()->route('extranet.document', ['locale' => app()->getLocale(), 'document' => $document->id]);
     }
@@ -189,7 +192,8 @@ class FolderDocumentController extends Controller
         $version = DocumentVersion::find($version);
         $document = $version ? Document::query()->whereNotNull('folder_id')->find($version->document_id) : null;
 
-        abort_if($document === null || Gate::denies('view', $document), 404);
+        abort_if($document === null, 404);
+        $this->hideUnlessAllowed('view', $document);
         abort_unless(Storage::disk('local')->exists($version->file_path), 404);
 
         $folder = Folder::unscoped()->find($document->folder_id);
@@ -225,9 +229,18 @@ class FolderDocumentController extends Controller
     {
         $document = Document::query()->whereNotNull('folder_id')->find($id);
 
-        abort_if($document === null || Gate::denies('view', $document), 404);
+        abort_if($document === null, 404);
+        $this->hideUnlessAllowed('view', $document);
 
         return $document;
+    }
+
+    /** Day 3: auditdeny. A file the reader may not open is a 404, and the attempt is audited. */
+    private function hideUnlessAllowed(string $ability, Document $document): void
+    {
+        if (Gate::denies($ability, $document)) {
+            throw new RecordHidden($document, AccessRefusals::NOT_CLEARED, $ability);
+        }
     }
 
     /** The file's folder, when the reader may manage files in it. */

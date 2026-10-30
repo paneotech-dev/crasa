@@ -6,10 +6,12 @@ use App\Enums\ContributionState;
 use App\Enums\InstrumentStatus;
 use App\Enums\InstrumentType;
 use App\Enums\Permission;
+use App\Exceptions\RecordHidden;
 use App\Models\Document;
 use App\Models\Instrument;
 use App\Models\Sector;
 use App\Services\ContributionWorkflow;
+use App\Support\AccessRefusals;
 use App\Support\Locales;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -192,7 +194,9 @@ class ContributionController extends Controller
         $user = $request->user();
 
         abort_if($instrument->contribution_state === null, 404);
-        abort_unless($user->country_id !== null && $instrument->country_id === $user->country_id, 404);
+        if ($user->country_id === null || $instrument->country_id !== $user->country_id) {
+            throw new RecordHidden($instrument, AccessRefusals::OTHER_MEMBER_STATE);
+        }
     }
 
     /** @return array<string, mixed> */

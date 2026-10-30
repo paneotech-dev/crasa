@@ -4,6 +4,7 @@ use App\Http\Middleware\EnsureAccountActive;
 use App\Http\Middleware\EnsureTwoFactorEnrolled;
 use App\Http\Middleware\PublicPageCache;
 use App\Http\Middleware\SecurityHeaders;
+use App\Support\AccessRefusals;
 use App\Support\Locales;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -73,6 +74,17 @@ return Application::configure(basePath: dirname(__DIR__))
             $locale = Locales::isSupported($segment) ? $segment : Locales::FALLBACK;
             app()->setLocale($locale);
             URL::defaults(['locale' => $locale]);
+
+            return null;
+        });
+
+        /*
+         * Day 3: auditdeny. A signed-in user refused (a 403, or a 404 that
+         * hides a record they may not open) is written to the audit log.
+         * The response is unchanged; see App\Support\AccessRefusals.
+         */
+        $exceptions->render(function (HttpException $e, Request $request) {
+            AccessRefusals::capture($e, $request);
 
             return null;
         });
