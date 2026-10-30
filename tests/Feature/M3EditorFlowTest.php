@@ -314,6 +314,64 @@ class M3EditorFlowTest extends TestCase
         $this->assertSame(PageStatus::Published, $page->fresh()->status);
     }
 
+    /* Review fixes: blocks of a published page; only the differences are held -- */
+
+    public function test_an_editor_cannot_change_the_blocks_of_a_published_page_live(): void
+    {
+        $page = Page::create(['slug' => 'block-page', 'template' => 'standard', 'status' => PageStatus::Published, 'published_at' => now()->subDay()]);
+        $block = \App\Models\PageBlock::create(['page_id' => $page->id, 'block_type' => \App\Enums\BlockType::RichText, 'position' => 0, 'is_visible' => true, 'settings' => []]);
+        $block->setTranslations('en', ['body' => 'The published paragraph.']);
+        $base = '/en/admin/pages/block-page/blocks';
+
+        $this->actingAs($this->editor)->put("{$base}/{$block->id}", ['settings' => [], 'en' => ['body' => 'Changed live']])
+            ->assertSessionHasErrors(['approval' => __('m3_edflow.blocks_held')]);
+        $this->actingAs($this->editor)->post($base, ['type' => 'rich_text'])->assertSessionHasErrors('approval');
+        $this->actingAs($this->editor)->put("{$base}/{$block->id}/move", ['direction' => 'down'])->assertSessionHasErrors('approval');
+        $this->actingAs($this->editor)->post("{$base}/{$block->id}/duplicate")->assertSessionHasErrors('approval');
+        $this->actingAs($this->editor)->put("{$base}/{$block->id}/visibility")->assertSessionHasErrors('approval');
+        $this->actingAs($this->editor)->delete("{$base}/{$block->id}")->assertSessionHasErrors('approval');
+
+        $this->assertSame(1, $page->blocks()->count());
+        $this->assertTrue((bool) $block->fresh()->is_visible);
+        $this->assertSame('The published paragraph.', $block->fresh()->translated('body', '', 'en'));
+
+        // An administrator still edits a published page's blocks directly.
+        $this->actingAs($this->admin)->put("{$base}/{$block->id}/visibility")->assertSessionHasNoErrors();
+        $this->assertFalse((bool) $block->fresh()->is_visible);
+    }
+
+    public function test_only_the_changed_fields_are_held_and_a_later_live_change_survives_approval(): void
+    {
+        $news = $this->publishedNews();
+        $news->update(['author_name' => 'Secretariat']);
+
+        $this->actingAs($this->editor)->put("/en/admin/data/news/{$news->id}", [
+            'category' => $news->categorySlug(), 'published_at' => $news->published_at->toDateString(), 'author_name' => 'Secretariat',
+            'en' => ['title' => 'Spectrum workshop: final communique', 'body' => 'The published body.'],
+            'intent' => 'send',
+        ])->assertSessionHasNoErrors();
+
+        $approval = Approvals::pending($news);
+        $this->assertSame([], $approval->revision['attributes']);
+        $this->assertSame(['en' => ['title' => 'Spectrum workshop: final communique']], $approval->revision['translations']);
+
+        // No warning while the live row is as it was.
+        $this->actingAs($this->moderator)->get("/en/admin/approvals/{$approval->id}")->assertOk()
+            ->assertDontSee('data-live-changed', false);
+
+        // Somebody changes the live row after the request was sent.
+        $this->travel(5)->minutes();
+        $news->update(['author_name' => 'Press office']);
+
+        $this->actingAs($this->moderator)->get("/en/admin/approvals/{$approval->id}")->assertOk()
+            ->assertSee('data-live-changed', false);
+
+        $this->actingAs($this->moderator)->put("/en/admin/approvals/{$approval->id}/approve")->assertSessionHasNoErrors();
+        $this->assertSame('Press office', $news->fresh()->author_name);
+        $this->assertSame('Spectrum workshop: final communique', $news->fresh()->translated('title', '', 'en'));
+        $this->assertSame('The published body.', $news->fresh()->translated('body', '', 'en'));
+    }
+
     /* The moderator's badge and dashboard notice -------------------------------- */
 
     public function test_the_moderator_sees_the_badge_and_the_dashboard_notice(): void

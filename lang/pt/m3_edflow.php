@@ -30,5 +30,7 @@ return [
     'event_files_held' => 'Os documentos de um evento público não podem ser alterados numa alteração a aguardar aprovação. Guarde primeiro as outras alterações e depois peça a um moderador que adicione ou retire os documentos.',
     'status_refused' => 'Os editores não escolhem um estado. Use Guardar rascunho ou Guardar e enviar para aprovação.',
     'moderator_revision' => 'Trata-se de alterações a um conteúdo publicado. A versão publicada continua online até as aprovar; aprovar coloca as alterações no site público. A tabela compara-as com a versão publicada.',
+    'blocks_held' => 'Esta página está publicada: envie as suas alterações para aprovação a partir do formulário da página. Os blocos de uma página publicada são alterados por um moderador ou administrador.',
+    'live_changed' => 'A versão publicada foi alterada depois de estas alterações serem enviadas (:date). Aprovar mantém essas alterações posteriores, exceto nos campos indicados abaixo, que estas alterações substituem. Verifique a tabela antes de aprovar.',
     'page_status_help' => 'Um moderador publica esta página depois de a enviar para aprovação.',
 ];

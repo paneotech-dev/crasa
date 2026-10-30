@@ -55,7 +55,7 @@ class NewPageTest extends TestCase
 
         // Not on the public site, and editable with the block editor.
         $this->get('/en/spectrum-harmonisation')->assertNotFound();
-        $this->actingAs($this->editor)->get('/en/admin/pages/spectrum-harmonisation')->assertOk()->assertSee('Send for approval');
+        $this->actingAs($this->editor)->get('/en/admin/pages/spectrum-harmonisation')->assertOk()->assertSee(__('m3_edflow.save_send'));
 
         // Through approval to the site.
         $approval = Approvals::submit($page, $this->editor);

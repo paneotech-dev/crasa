@@ -50,10 +50,12 @@ class PageVersioningTest extends TestCase
     /** The first tracked edit leaves the state before it as well as after. */
     public function test_the_first_edit_records_both_sides_of_itself(): void
     {
+        // Day 3 (editor flow): an editor's change to a published page is held for
+        // approval, so the live edit that versioning records is an administrator's.
         $page = $this->privacy();
         $this->assertSame(0, $page->versions()->count());
 
-        $this->actingAs($this->editor)
+        $this->actingAs($this->administrator)
             ->put('/en/admin/pages/privacy', ['en' => ['title' => 'Privacy notice, revised']])
             ->assertRedirect();
 
@@ -62,17 +64,18 @@ class PageVersioningTest extends TestCase
         $this->assertCount(2, $versions, 'The first edit must keep the state before it.');
         $this->assertSame('Privacy notice', $versions[0]->titleFor('en'));
         $this->assertSame('Privacy notice, revised', $versions[1]->titleFor('en'));
-        $this->assertSame($this->editor->id, $versions[1]->changed_by);
+        $this->assertSame($this->administrator->id, $versions[1]->changed_by);
     }
 
     /** A version keeps the text, not only the fact that text changed. */
     public function test_a_version_keeps_what_the_page_said(): void
     {
+        // Day 3 (editor flow): the live edit that makes the version is an administrator's.
         $page = $this->privacy();
         $block = $page->blocks()->firstOrFail();
         $before = $block->translationValuesFor('body')['en'];
 
-        $this->actingAs($this->editor)
+        $this->actingAs($this->administrator)
             ->put("/en/admin/pages/privacy/blocks/{$block->id}", [
                 'settings' => ['alignment' => 'start'],
                 'en' => ['body' => 'Replaced.'],
@@ -101,7 +104,8 @@ class PageVersioningTest extends TestCase
     /** Append only. A version that can be rewritten records nothing. */
     public function test_history_cannot_be_rewritten_or_deleted(): void
     {
-        $this->actingAs($this->editor)
+        // Day 3 (editor flow): the live edit that makes the version is an administrator's.
+        $this->actingAs($this->administrator)
             ->put('/en/admin/pages/privacy', ['en' => ['title' => 'Changed']])
             ->assertRedirect();
 
@@ -113,7 +117,8 @@ class PageVersioningTest extends TestCase
 
     public function test_history_cannot_be_deleted(): void
     {
-        $this->actingAs($this->editor)
+        // Day 3 (editor flow): the live edit that makes the version is an administrator's.
+        $this->actingAs($this->administrator)
             ->put('/en/admin/pages/privacy', ['en' => ['title' => 'Changed']])
             ->assertRedirect();
 
@@ -213,6 +218,8 @@ class PageVersioningTest extends TestCase
     /** A legal body runs past the cap that protects a headline. */
     public function test_a_legal_body_can_be_saved_from_the_editor(): void
     {
+        // Day 3 (editor flow): an editor's change to a published page is held for
+        // approval, so the live edit that versioning records is an administrator's.
         $page = $this->privacy();
         $block = $page->blocks()->firstOrFail();
         // Trimmed: setTranslations stores the trimmed value, and a test
@@ -221,7 +228,7 @@ class PageVersioningTest extends TestCase
 
         $this->assertGreaterThan(4000, mb_strlen($long));
 
-        $this->actingAs($this->editor)
+        $this->actingAs($this->administrator)
             ->put("/en/admin/pages/privacy/blocks/{$block->id}", [
                 'settings' => ['alignment' => 'start'],
                 'en' => ['body' => $long],

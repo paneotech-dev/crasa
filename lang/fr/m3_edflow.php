@@ -30,5 +30,7 @@ return [
     'event_files_held' => 'Les documents d\'un événement public ne peuvent pas être modifiés dans une modification en attente d\'approbation. Enregistrez d\'abord les autres modifications, puis demandez à un modérateur d\'ajouter ou de retirer les documents.',
     'status_refused' => 'Les rédacteurs ne choisissent pas de statut. Utilisez Enregistrer le brouillon ou Enregistrer et envoyer pour approbation.',
     'moderator_revision' => 'Il s\'agit de modifications d\'un contenu publié. La version publiée reste en ligne jusqu\'à votre approbation ; approuver met les modifications sur le site public. Le tableau les compare à la version publiée.',
+    'blocks_held' => 'Cette page est publiée : envoyez vos modifications pour approbation depuis le formulaire de la page. Les blocs d\'une page publiée sont modifiés par un modérateur ou un administrateur.',
+    'live_changed' => 'La version publiée a été modifiée après l\'envoi de ces modifications (:date). Approuver conserve ces changements ultérieurs, sauf dans les champs listés ci-dessous, que ces modifications remplacent. Vérifiez le tableau avant d\'approuver.',
     'page_status_help' => 'Un modérateur publie cette page après que vous l\'avez envoyée pour approbation.',
 ];

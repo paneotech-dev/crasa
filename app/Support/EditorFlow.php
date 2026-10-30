@@ -53,6 +53,77 @@ final class EditorFlow
         return $model->exists && Approvals::isPublic($model) && self::applies($user, $model);
     }
 
+    /**
+     * The blocks of a published page are not part of a held change, so an
+     * editor may not change them on the live page: refused with the reason.
+     */
+    public static function refuseBlocksIfHeld(Page $page): void
+    {
+        if (self::holds(request()->user(), $page)) {
+            throw new \Illuminate\Http\Exceptions\HttpResponseException(
+                back()->withErrors(['approval' => __('m3_edflow.blocks_held')])
+            );
+        }
+    }
+
+    /**
+     * Only what differs from the live row is held, so approving does not
+     * write back values somebody else changed on the live row meanwhile.
+     */
+    public static function diff(Model $model, array $revision): array
+    {
+        $attributes = [];
+
+        foreach ($revision['attributes'] ?? [] as $key => $value) {
+            // A date field posts the day only; the same day is no change.
+            $live = $model->getAttribute($key);
+            if ($live instanceof \DateTimeInterface && is_string($value) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) && $live->format('Y-m-d') === $value) {
+                continue;
+            }
+
+            $probe = clone $model;
+            $probe->fill([$key => $value]);
+
+            if ($probe->isDirty($key)) {
+                $attributes[$key] = $value;
+            }
+        }
+
+        $translations = [];
+
+        foreach ($revision['translations'] ?? [] as $locale => $fields) {
+            foreach ((array) $fields as $field => $value) {
+                $live = method_exists($model, 'translationValuesFor') ? ($model->translationValuesFor($field)[$locale] ?? null) : null;
+
+                if (trim((string) $live) !== trim((string) $value)) {
+                    $translations[$locale][$field] = $value;
+                }
+            }
+        }
+
+        return ['attributes' => $attributes, 'translations' => $translations];
+    }
+
+    /** When the live row changed after a held change was sent, or null. */
+    public static function liveChangedSince(Approval $approval): ?\Illuminate\Support\Carbon
+    {
+        $model = $approval->approvable;
+
+        if ($approval->revision === null || ! $approval->isOpen() || $model === null || $approval->submitted_at === null) {
+            return null;
+        }
+
+        $times = [$model->updated_at];
+
+        if (method_exists($model, 'translations')) {
+            $times[] = $model->translations()->max('updated_at');
+        }
+
+        $latest = collect($times)->filter()->map(fn ($t) => \Illuminate\Support\Carbon::parse($t))->max();
+
+        return $latest !== null && $latest->gt($approval->submitted_at) ? $latest : null;
+    }
+
     /** The revision the editor is working on, sent, or had returned. */
     public static function pendingFor(Model $model): ?Approval
     {
@@ -200,6 +271,7 @@ final class EditorFlow
      */
     public static function hold(Request $request, Model $model, array $revision): string
     {
+        $revision = self::diff($model, $revision);
         $send = $request->input('intent') === 'send';
 
         if (! $send) {

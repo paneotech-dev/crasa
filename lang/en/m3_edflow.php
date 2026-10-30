@@ -32,5 +32,7 @@ return [
     'event_files_held' => 'The documents of a public event cannot be changed in a change waiting for approval. Save the other changes first, then ask a moderator to add or remove the documents.',
     'status_refused' => 'Editors do not set a status. Use Save draft or Save and send for approval.',
     'moderator_revision' => 'These are changes to a published item. The published version stays online until you approve them; approving puts the changes on the public site. The table compares them with the published version.',
+    'blocks_held' => 'This page is published: send your changes for approval from the page form. Block changes on a published page are made by a moderator or administrator.',
+    'live_changed' => 'The published version was changed after these changes were sent (:date). Approving keeps those later changes, except in the fields listed below, which these changes replace. Check the table before approving.',
     'page_status_help' => 'A moderator publishes this page after you send it for approval.',
 ];
