@@ -69,6 +69,9 @@ class ContentRenderer
         'a' => ['href', 'title'],
         'img' => ['src', 'alt', 'title'],
         'th' => ['scope'],
+        // Only the screen-reader class the generated caption carries; any
+        // other value is removed below.
+        'caption' => ['class'],
     ];
 
     /**
@@ -127,6 +130,9 @@ class ContentRenderer
     public function text(?string $stored): string
     {
         $html = $this->render($stored)->toHtml();
+
+        // A table's caption names it for a screen reader; it is not prose.
+        $html = (string) preg_replace('#<caption\b[^>]*>.*?</caption>#is', ' ', $html);
 
         return trim(html_entity_decode(strip_tags($html), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
     }
@@ -428,6 +434,7 @@ class ContentRenderer
         }
 
         $caption = $table->ownerDocument->createElement('caption');
+        $caption->setAttribute('class', 'c-sr');
         $caption->appendChild($table->ownerDocument->createTextNode(__('d3_extras.table_caption', ['columns' => implode(', ', $columns)])));
         $table->insertBefore($caption, $table->firstChild);
     }
@@ -482,6 +489,10 @@ class ContentRenderer
             if (! in_array($name, $allowed, true)) {
                 $element->removeAttribute($attribute->nodeName);
             }
+        }
+
+        if ($tag === 'caption' && $element->hasAttribute('class') && $element->getAttribute('class') !== 'c-sr') {
+            $element->removeAttribute('class');
         }
 
         if ($tag === 'a') {

@@ -190,7 +190,7 @@ class AuditContent extends Command
         $dropped = count($before[1]) - count($after[1]);
 
         $textBefore = trim(preg_replace('/\s+/', ' ', strip_tags($stored)) ?? '');
-        $textAfter = trim(preg_replace('/\s+/', ' ', strip_tags($rendered)) ?? '');
+        $textAfter = trim(preg_replace('/\s+/', ' ', strip_tags((string) preg_replace('#<caption class="c-sr">.*?</caption>#is', '', $rendered))) ?? '');
 
         if ($shortcodes === [] && $dropped === 0 && $stored === $rendered) {
             return null;

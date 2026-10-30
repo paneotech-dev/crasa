@@ -124,7 +124,7 @@ class ComparatorController extends Controller
     {
         $slug = $request->query('indicator');
         if ($slug !== null) {
-            abort_unless(is_string($slug) && Indicator::query()->where('slug', $slug)->exists(), 404);
+            abort_unless(is_string($slug) && Indicator::query()->where('is_active', true)->where('slug', $slug)->exists(), 404);
         }
 
         $raw = $request->query('countries');

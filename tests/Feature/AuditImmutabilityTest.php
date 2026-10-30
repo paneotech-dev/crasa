@@ -189,6 +189,90 @@ class AuditImmutabilityTest extends TestCase
         }
     }
 
+    public function test_the_head_moves_with_each_insert_and_a_wrong_head_is_reported(): void
+    {
+        $entry = AuditLog::record(AuditLog::LOGIN);
+        $this->assertSame($entry->row_hash, DB::table(AuditChain::HEAD)->where('id', 1)->value('hash'));
+
+        DB::table(AuditChain::HEAD)->where('id', 1)->update(['hash' => str_repeat('a', 64)]);
+        $this->assertSame('audit_chain_head does not match the last row', AuditChain::verify()['reason']);
+    }
+
+    public function test_the_predecessor_is_read_by_primary_key_not_by_a_gap_locking_scan(): void
+    {
+        $source = file_get_contents(app_path('Models/AuditLog.php'));
+        $this->assertStringNotContainsString("orderByDesc('id')->lockForUpdate()", $source);
+        $this->assertStringContainsString("table(AuditChain::HEAD)->where('id', 1)->lockForUpdate()", $source);
+    }
+
+    public function test_the_migration_can_run_again(): void
+    {
+        AuditLog::record(AuditLog::LOGIN);
+        $migration = require database_path('migrations/2026_10_30_083000_chain_and_lock_the_audit_log.php');
+
+        $migration->up();
+        $migration->up();
+
+        $this->assertNull(AuditChain::verify()['broken_id']);
+        $this->assertSame(1, DB::table(AuditChain::HEAD)->count());
+    }
+
+    public function test_two_connections_wait_on_the_chain_head_on_mariadb(): void
+    {
+        $a = $this->mariadb();
+        config(['database.connections.auditlock_mariadb_b' => config('database.connections.auditlock_mariadb')]);
+        $b = DB::connection('auditlock_mariadb_b');
+
+        $a->beginTransaction();
+        $b->beginTransaction();
+
+        try {
+            $a->table(AuditChain::HEAD)->where('id', 1)->lockForUpdate()->value('hash');
+            $b->statement('SET SESSION innodb_lock_wait_timeout = 1');
+
+            try {
+                $b->table(AuditChain::HEAD)->where('id', 1)->lockForUpdate()->value('hash');
+                $this->fail('The second connection read the head while the first held it.');
+            } catch (QueryException $e) {
+                // A lock wait (1205), not a deadlock (1213): the second insert waits its turn.
+                $this->assertStringContainsString('1205', $e->getMessage());
+            }
+        } finally {
+            $b->rollBack();
+            $a->rollBack();
+        }
+    }
+
+    public function test_archive_fails_clearly_when_the_file_cannot_be_written(): void
+    {
+        $dir = sys_get_temp_dir().'/auditlock-'.uniqid();
+        mkdir($dir);
+        config(['crasa.audit_archive_dir' => $dir]);
+        AuditLog::forceCreate(['action' => AuditLog::LOGIN, 'created_at' => now()->subMonths(14)]);
+
+        // A directory where the temporary file should go makes gzopen fail.
+        $from = now()->subMonths(14)->startOfDay()->toDateString();
+        $to = now()->startOfDay()->subMonthsNoOverflow(12)->subDay()->toDateString();
+        mkdir($dir.'/audit-'.$from.'-'.$to.'.jsonl.gz.part');
+
+        try {
+            $this->artisan('audit:archive')->expectsOutputToContain('nothing was archived')->assertExitCode(1);
+        } finally {
+            @rmdir($dir.'/audit-'.$from.'-'.$to.'.jsonl.gz.part');
+            @rmdir($dir);
+        }
+    }
+
+    public function test_the_verify_log_line_carries_the_last_row_hash(): void
+    {
+        $entry = AuditLog::record(AuditLog::LOGIN);
+        \Illuminate\Support\Facades\Log::spy();
+
+        $this->artisan('audit:verify-chain')->assertExitCode(0);
+
+        \Illuminate\Support\Facades\Log::shouldHaveReceived('info')->withArgs(fn ($m, $ctx) => $ctx['last_row_hash'] === $entry->row_hash)->once();
+    }
+
     /** The preview MariaDB connection, or a skip that says why. */
     private function mariadb(): \Illuminate\Database\Connection
     {

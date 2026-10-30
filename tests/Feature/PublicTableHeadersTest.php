@@ -106,10 +106,21 @@ class PublicTableHeadersTest extends TestCase
         $html = $renderer->render(self::HEADERLESS)->toHtml();
 
         $this->assertStringContainsString('<thead><tr><th scope="col">Licence</th><th scope="col">Fee</th></tr></thead>', $html);
-        $this->assertStringContainsString('<table><caption>Table: Licence, Fee</caption><thead>', $html);
+        $this->assertStringContainsString('<table><caption class="c-sr">Table: Licence, Fee</caption><thead>', $html);
         $this->assertStringContainsString('<tbody><tr><td>Class A</td><td>100</td></tr></tbody>', $html);
         // Idempotent: a second pass changes nothing.
         $this->assertSame($html, $renderer->render($html)->toHtml());
+    }
+
+    public function test_a_caption_never_reaches_the_plain_text_summary(): void
+    {
+        $text = app(ContentRenderer::class)->text(self::HEADERLESS);
+
+        $this->assertStringNotContainsString('Table:', $text);
+        $this->assertStringContainsString('Fees.', $text);
+        $this->assertStringNotContainsString('Rates', app(ContentRenderer::class)->text('<table><caption>Rates</caption><tr><th>State</th></tr></table>'));
+        // Typed content cannot put its own class on a caption.
+        $this->assertStringContainsString('<caption>Rates</caption>', app(ContentRenderer::class)->render('<table><caption class="wide">Rates</caption><tr><th>State</th></tr></table>')->toHtml());
     }
 
     public function test_existing_headers_keep_their_place_and_gain_a_scope(): void
