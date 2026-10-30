@@ -40,12 +40,24 @@ final class AuditChanges
     /** Fields whose value is a role key, shown by the role's name. */
     private const ROLE_FIELDS = ['role', 'former_role', 'invited_as'];
 
+    /** Foreign keys shown by the related record's name. */
+    private const REFERENCES = [
+        'custom_role_id' => \App\Models\RoleDefinition::class,
+        'role_id' => \App\Models\RoleDefinition::class,
+        'country_id' => \App\Models\Country::class,
+        'committee_id' => \App\Models\Committee::class,
+        'authority_id' => \App\Models\Authority::class,
+        'user_id' => User::class,
+    ];
+
     /**
+     * @param  array<string, ?string>|null  $references  from references(), once per page
      * @return list<array{field: string, before: ?string, after: ?string, masked: bool}>
      */
-    public static function rows(AuditLog $entry): array
+    public static function rows(AuditLog $entry, ?array $references = null): array
     {
         $changes = $entry->changes;
+        $references ??= self::references([$entry]);
 
         if (! is_array($changes) || $changes === []) {
             return [];
@@ -53,7 +65,7 @@ final class AuditChanges
 
         // A role change: {from, to} at the top.
         if (array_keys($changes) === ['from', 'to'] || array_keys($changes) === ['to', 'from']) {
-            return [self::row('role', $changes['from'], $changes['to'])];
+            return [self::row('role', $changes['from'], $changes['to'], $references)];
         }
 
         $rows = [];
@@ -67,15 +79,15 @@ final class AuditChanges
                         continue;
                     }
                     $rows[] = $entry->action === AuditLog::DELETED
-                        ? self::row((string) $attribute, $attributeValue, null)
-                        : self::row((string) $attribute, null, $attributeValue);
+                        ? self::row((string) $attribute, $attributeValue, null, $references)
+                        : self::row((string) $attribute, null, $attributeValue, $references);
                 }
 
                 continue;
             }
 
             if (is_array($value) && array_key_exists('from', $value) && array_key_exists('to', $value)) {
-                $rows[] = self::row($key, $value['from'], $value['to']);
+                $rows[] = self::row($key, $value['from'], $value['to'], $references);
 
                 continue;
             }
@@ -92,7 +104,7 @@ final class AuditChanges
                 continue;
             }
 
-            $rows[] = self::row($key, null, $value);
+            $rows[] = self::row($key, null, $value, $references);
         }
 
         return self::forgetFormerUser($entry, $rows);
@@ -125,23 +137,38 @@ final class AuditChanges
     }
 
     /** @return array{field: string, before: ?string, after: ?string, masked: bool} */
-    private static function row(string $key, mixed $before, mixed $after): array
+    private static function row(string $key, mixed $before, mixed $after, array $references = []): array
     {
         $masked = self::isSecret($key) || $before === '[redacted]' || $after === '[redacted]';
 
         return [
             'field' => self::label($key),
-            'before' => $masked ? null : self::value($key, $before),
-            'after' => $masked ? null : self::value($key, $after),
+            'before' => $masked ? null : self::value($key, $before, $references),
+            'after' => $masked ? null : self::value($key, $after, $references),
             'masked' => $masked,
         ];
     }
 
-    /** One side of a row as a reader sees it: a role by its name rather than its key. */
-    private static function value(string $key, mixed $value): ?string
+    /**
+     * One side of a row as a reader sees it: a role by its name rather than
+     * its key, a related record by its name rather than its id.
+     *
+     * @param  array<string, ?string>  $references
+     */
+    private static function value(string $key, mixed $value, array $references = []): ?string
     {
         if (in_array($key, self::ROLE_FIELDS, true) && is_string($value) && $value !== '') {
             return self::roleName($value);
+        }
+
+        if (isset(self::REFERENCES[$key]) && (is_int($value) || (is_string($value) && ctype_digit($value)))) {
+            $ref = self::REFERENCES[$key].'#'.(int) $value;
+
+            if (! array_key_exists($ref, $references)) {
+                $references += self::references([], [self::REFERENCES[$key] => [(int) $value]]);
+            }
+
+            return $references[$ref] ?? (string) __('m3_retaud.audit_object_deleted');
         }
 
         return self::text($value);
@@ -216,6 +243,69 @@ final class AuditChanges
     public static function short(string $value): string
     {
         return Str::limit($value, self::SHORT, '...');
+    }
+
+    /**
+     * The names of the records the foreign keys on one page point to, loaded
+     * once per type: "type#id" => name, null when the record is gone.
+     *
+     * @param  iterable<AuditLog>  $entries
+     * @param  array<class-string, list<int>>  $ids  extra ids to look up
+     * @return array<string, ?string>
+     */
+    public static function references(iterable $entries, array $ids = []): array
+    {
+        foreach ($entries as $entry) {
+            $changes = is_array($entry->changes) ? $entry->changes : [];
+            $pairs = [];
+            foreach ($changes as $key => $value) {
+                if ($key === 'attributes' && is_array($value)) {
+                    foreach ($value as $attribute => $attributeValue) {
+                        $pairs[] = [(string) $attribute, $attributeValue];
+                    }
+                } elseif (is_array($value) && array_key_exists('from', $value) && array_key_exists('to', $value)) {
+                    $pairs[] = [(string) $key, $value['from']];
+                    $pairs[] = [(string) $key, $value['to']];
+                } else {
+                    $pairs[] = [(string) $key, $value];
+                }
+            }
+
+            foreach ($pairs as [$key, $value]) {
+                if (isset(self::REFERENCES[$key]) && (is_int($value) || (is_string($value) && ctype_digit($value)))) {
+                    $ids[self::REFERENCES[$key]][] = (int) $value;
+                }
+            }
+        }
+
+        $names = [];
+        foreach ($ids as $type => $list) {
+            $list = array_values(array_unique($list));
+            foreach ($list as $id) {
+                $names[$type.'#'.$id] = null;
+            }
+
+            $query = $type::query()->withoutGlobalScopes()->whereKey($list);
+            if (in_array(SoftDeletes::class, class_uses_recursive($type), true)) {
+                $query->whereNull((new $type)->getQualifiedDeletedAtColumn());
+            }
+
+            foreach ($query->get() as $model) {
+                $names[$type.'#'.$model->getKey()] = self::referenceName($model);
+            }
+        }
+
+        return $names;
+    }
+
+    private static function referenceName(Model $model): string
+    {
+        return match (true) {
+            $model instanceof \App\Models\RoleDefinition => $model->label(),
+            $model instanceof User => (string) ($model->anonymised_at ? __('fa.former_user') : $model->name),
+            method_exists($model, 'displayName') => (string) $model->displayName(),
+            default => self::nameOf($model) ?: (string) $model->getKey(),
+        };
     }
 
     /**
