@@ -110,8 +110,12 @@ class ComparatorServerExportTest extends TestCase
 
     public function test_an_unknown_indicator_or_member_state_is_a_404_never_a_500(): void
     {
+        $inactive = Indicator::where('is_active', true)->where('id', '!=', $this->indicator->id)->firstOrFail();
+        $inactive->update(['is_active' => false]);
+
         foreach (['png', 'pdf'] as $format) {
             foreach ([
+                ['mode' => 'compare', 'indicator' => $inactive->slug, 'countries' => 'bw'],
                 ['mode' => 'compare', 'indicator' => 'no-such-indicator', 'countries' => 'bw'],
                 ['mode' => 'browse', 'indicator' => 'no-such-indicator'],
                 ['mode' => 'compare', 'indicator' => $this->indicator->slug, 'countries' => 'bw,xx'],
