@@ -60,7 +60,8 @@ class UserAdminController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:160', 'unique:users,email'],
-            'role' => ['required', 'in:'.implode(',', array_column(Role::cases(), 'value'))],
+            // Every assignable role, built-in or custom, as on the list's role control.
+            'role' => ['required', 'in:'.implode(',', \App\Models\RoleDefinition::pluck('key')->all() ?: array_column(Role::cases(), 'value'))],
             'country_id' => ['nullable', 'exists:countries,id'],
             'authority_id' => ['nullable', 'exists:authorities,id'],
             'preferred_locale' => ['required', 'in:'.implode(',', Locales::SUPPORTED)],
@@ -69,7 +70,14 @@ class UserAdminController extends Controller
         // No password is set here. The account is invited, and the holder
         // chooses their own password through the reset link. A password
         // typed by an administrator is a password two people know.
+        $key = $data['role'];
+        $custom = Role::tryFrom($key) === null
+            ? \App\Models\RoleDefinition::where('key', $key)->firstOrFail()
+            : null;
+        $data['role'] = $custom !== null ? Role::from($custom->base_role) : Role::from($key);
+
         $user = User::create($data + [
+            'custom_role_id' => $custom?->id,
             'password' => Str::random(64),
             'status' => UserStatus::Invited,
         ]);
@@ -81,7 +89,7 @@ class UserAdminController extends Controller
             $request->user()->name,
         ));
 
-        AuditLog::record(AuditLog::CREATED, $user, ['invited_as' => $data['role']], $request->user());
+        AuditLog::record(AuditLog::CREATED, $user, ['invited_as' => $key], $request->user());
 
         return back()->with('status', __('admin.invited', ['email' => $user->email]));
     }
@@ -379,6 +387,7 @@ class UserAdminController extends Controller
 
         return view('pages.admin.users.invite', [
             'roles' => Role::cases(),
+            'roleOptions' => \App\Models\RoleDefinition::orderByDesc('is_built_in')->orderBy('id')->get(),
             'countries' => Country::orderBy('name')->get(),
             'authorities' => Authority::with('country')->orderBy('acronym')->get(),
         ]);

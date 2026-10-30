@@ -23,9 +23,13 @@
         <div class="a-field">
             <label class="a-label" for="role">{{ __('account.role') }}</label>
             <select class="a-input" id="role" name="role" required>
-        @foreach ($roles as $role)
-            <option value="{{ $role->value }}">{{ $role->label() }}</option>
-        @endforeach
+        @forelse ($roleOptions as $option)
+            <option value="{{ $option->key }}" @selected(old('role') === $option->key)>{{ $option->label() }}</option>
+        @empty
+            @foreach ($roles as $role)
+                <option value="{{ $role->value }}" @selected(old('role') === $role->value)>{{ $role->label() }}</option>
+            @endforeach
+        @endforelse
             </select>
         </div>
         <div class="a-field">
