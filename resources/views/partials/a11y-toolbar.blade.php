@@ -2,10 +2,10 @@
     Display options: text size, line spacing, reading spacing, high
     contrast, underlined links, pause animations.
 
-    One button and the panel it discloses. Self-contained: the header
-    places it with @includeIf('partials.a11y-toolbar') wherever its
-    utility bar is, and on a phone the control lays itself out as a slim
-    row (a11y.css, keyed on .c-a11y only). The choices are classes on
+    One button and the panel it discloses. The floating page controls
+    (partials/float-controls) place it in the bottom corner of every
+    public page, an icon square at every width that opens upwards
+    (a11y.css, .c-float). The choices are classes on
     <html>, kept in localStorage by public/js/a11y.js. The script just
     below applies a stored choice as soon as the header is parsed, so a
     reader with wide spacing does not see the page jump; the layout head

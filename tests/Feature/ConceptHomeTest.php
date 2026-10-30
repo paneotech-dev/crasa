@@ -96,7 +96,8 @@ class ConceptHomeTest extends TestCase
 
         $view = file_get_contents(resource_path('views/pages/home.blade.php'));
         $this->assertStringContainsString("@includeIf('partials.home.upcoming')", $view);
-        $this->assertStringContainsString("View::exists('partials.home.comparator')", $view);
+        // The comparison console left the home on 30 October (client review).
+        $this->assertStringNotContainsString('partials.home.comparator', $view);
         $this->assertStringContainsString("View::exists('partials.home.social')", $view);
         $this->assertStringContainsString('<x-region-map', $view);
     }

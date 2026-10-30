@@ -138,13 +138,16 @@ class ConceptHeaderTest extends TestCase
         $this->assertStringContainsString('width: 300px', file_get_contents(public_path('css/k.css')));
     }
 
-    public function test_the_identity_is_the_full_name_on_one_line_and_the_toolbar_is_in_the_bar(): void
+    public function test_the_identity_is_the_full_name_on_one_line_and_the_toolbar_floats(): void
     {
         $header = $this->between($this->page(), '<header class="k-header"', '</header>');
 
         $this->assertStringContainsString('Communications Regulators&#039; Association of Southern Africa', $header);
         $this->assertStringContainsString('class="k-idb__short"', $header);
-        $this->assertStringContainsString('data-a11y', $header);
+        // Since 30 October the display options float in the bottom corner
+        // (partials/float-controls), straight after the header.
+        $this->assertStringNotContainsString('data-a11y', $header);
+        $this->assertMatchesRegularExpression('#</header>.*?<div class="c-float"[^>]*data-float>.*?data-a11y-toggle.*?<main#s', $this->page());
 
         $css = file_get_contents(public_path('css/k.css'));
         $this->assertMatchesRegularExpression('/\.k-idb__full \{[^}]*font: 600 20px[^}]*white-space: nowrap/', $css);

@@ -82,9 +82,6 @@
 .k-langs a { padding: 3px 8px; border-radius: 4px; min-height: 32px; }
 .k-langs a[aria-current="true"] { color: var(--k-white); font-weight: 700; }
 .k-sep { width: 1px; height: 14px; background: rgba(227, 238, 232, .4); }
-.k-ubar .c-a11y__toggle { color: var(--k-white); background: transparent; border-color: rgba(255, 255, 255, .35); width: 36px; height: 36px; min-width: 36px; }
-.k-ubar .c-a11y__toggle:hover { border-color: var(--k-white); }
-.k-ubar .c-a11y__panel, .k-ubar .c-a11y__panel a { color: var(--k-ink); }
 .k-show-sm { display: none; }
 
 /* ================= IDENTITY HEADER ================= */
@@ -176,12 +173,10 @@ html:not(.k-nav-js) .k-ni--dd:focus-within .k-mega { opacity: 1; visibility: vis
   .k-idb__short { display: block; }
   .k-hide-sm { display: none !important; }
   .k-show-sm { display: inline; }
-  /* Phones: the utility bar is a slim row holding only the display
-     options control (the toolbar lays itself out); languages, Back
-     Office and the member area are at the top of the drawer. */
-  .k-ubar .k-wrap { min-height: 0; padding-block: 0; justify-content: flex-end; }
-  .k-ubar .k-langs, .k-ubar .k-sep { display: none; }
-  .k-ubar__r { width: 100%; justify-content: flex-end; }
+  /* Phones: no utility bar. Languages, Back Office and the member area
+     are at the top of the drawer; the display options float in the
+     bottom corner (partials/float-controls). */
+  .k-ubar { display: none; }
 }
 
 /* ================= DRAWER ================= */

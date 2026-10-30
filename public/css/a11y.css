@@ -434,3 +434,97 @@ html.a11y-contrast .c-a11y__hint { color: #000000; }
   .has-js .c-header--layered .c-header__bar:has(.c-a11y) .c-header__utilities > :not(.c-a11y) { display: none; }
   .has-js .c-header--layered .c-header__bar:has(.c-a11y) .c-header__bar-inner { justify-content: flex-end; padding-block: 2px; }
 }
+
+/* Floating page controls (partials/float-controls) ----------------------- */
+
+/* Bottom right, clear of the notch and the home bar, two 44px squares
+   stacked: "Back to top" above once the reader has scrolled one screen,
+   the display options in the corner. Each has its own navy ground and a
+   white edge, so it reads on the cream page and on the navy footer. */
+.c-float {
+  position: fixed;
+  right: calc(var(--s-4) + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--s-4) + env(safe-area-inset-bottom, 0px));
+  z-index: 65;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--s-2);
+  pointer-events: none;
+}
+.c-float > * { pointer-events: auto; }
+html:not(.has-js) .c-float { display: none; }
+
+.c-float__top,
+.c-float .c-a11y > .c-a11y__toggle {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-white);
+  background: var(--c-navy);
+  border: 1.5px solid var(--c-white);
+  border-radius: var(--r-sm);
+  box-shadow: var(--e-2);
+  cursor: pointer;
+  text-decoration: none;
+}
+.c-float__top[hidden] { display: none; }
+.c-float__top:hover,
+.c-float .c-a11y > .c-a11y__toggle:hover,
+.c-float .c-a11y > .c-a11y__toggle[aria-expanded="true"] { background: var(--c-green); border-color: var(--c-white); }
+/* Two rings, white inside navy, so focus shows on any ground. */
+.c-float__top:focus-visible,
+.c-float .c-a11y > .c-a11y__toggle:focus-visible {
+  outline: 2px solid var(--c-white);
+  outline-offset: 0;
+  box-shadow: 0 0 0 5px var(--c-navy);
+}
+
+/* The control is an icon square at every width; its name stays in the
+   button for assistive technology (.c-a11y__text, visually hidden). */
+.c-float .c-a11y { display: block; width: auto; position: relative; }
+.c-float .c-a11y .c-a11y__text {
+  position: absolute !important;
+  width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.c-float .c-a11y__toggle::after { content: none; }
+
+/* The panel opens upwards from the corner. */
+.c-float .c-a11y__panel {
+  top: auto;
+  bottom: calc(100% + var(--s-2));
+  right: 0;
+  left: auto;
+  max-height: calc(100vh - 120px);
+  max-height: calc(100dvh - 120px);
+}
+@media (max-width: 767.98px) {
+  .c-float .c-a11y__panel {
+    position: fixed;
+    left: calc(var(--s-4) + env(safe-area-inset-left, 0px));
+    right: calc(var(--s-4) + env(safe-area-inset-right, 0px));
+    bottom: calc(var(--s-4) + 44px + var(--s-2) + env(safe-area-inset-bottom, 0px));
+    top: auto;
+    margin: 0;
+    max-height: calc(100dvh - 120px);
+  }
+  /* The footer's last line stays clear of the two squares. */
+  .k-foot { padding-bottom: calc(44px + var(--s-6) + env(safe-area-inset-bottom, 0px)); }
+}
+
+html.a11y-contrast .c-float__top,
+html.a11y-contrast .c-float .c-a11y > .c-a11y__toggle { background: #000000; color: #FFFFFF; border-color: #FFFFFF; }
+
+@media (prefers-reduced-motion: reduce) {
+  .c-float__top, .c-float .c-a11y__toggle { transition: none !important; }
+}
+
+@media print {
+  .c-float { display: none !important; }
+}

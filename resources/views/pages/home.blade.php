@@ -13,13 +13,14 @@
       latest guidelines     featured_publications block: heading
       news and updates      newsroom_strip block: heading
       upcoming meetings     slot partials.home.upcoming (events stream)
-      comparator            slot partials.home.comparator, else the
-                            featured_comparison block as it was
       members               member_grid block: heading and paragraph
       social                slot partials.home.social, else the
                             social_feed block's heading over channel cards
 
-    A section whose block is hidden in the back office is not drawn. The
+    The comparison console left the home on 30 October 2026 (client
+    review): the comparator is reached from the menu and the hero's second
+    button. A section whose block is hidden in the back office is not
+    drawn. The
     order of the sections, the hero figures (PublishedCounts) and the
     "What we do" figures are fixed here.
 --}}
@@ -79,7 +80,6 @@
     $newsBlock = $blocks->get('newsroom_strip');
     $membersBlock = $blocks->get('member_grid');
     $socialBlock = $blocks->get('social_feed');
-    $comparisonBlock = $blocks->get('featured_comparison');
 
     $guidelines = $pubsBlock ? \App\Support\HomeData::guidelines(3) : [];
     $news = $newsBlock ? \App\Support\HomeData::latestNews(4) : [];
@@ -385,13 +385,6 @@
 
 {{-- ================= UPCOMING MEETINGS (C12, events stream) ================= --}}
 @includeIf('partials.home.upcoming')
-
-{{-- ================= COMPARATOR (C8, maps and comparator stream) ================= --}}
-@if (View::exists('partials.home.comparator'))
-    @include('partials.home.comparator')
-@elseif ($comparisonBlock)
-    <div class="k-cmp-fallback"><x-block :block="$comparisonBlock" ground="white" /></div>
-@endif
 
 {{-- ================= MEMBERS (C10) ================= --}}
 @if ($membersBlock)
