@@ -11,6 +11,10 @@
 @section('content')
     @php $locale = app()->getLocale(); @endphp
 
+    @if ($mayApprove && ($scopeLabel = \App\Support\ModeratorScope::label(auth()->user())) !== null)
+        <p class="a-notice" data-moderation-scope>{{ __('m3_scope.your_scope', ['scope' => $scopeLabel]) }}</p>
+    @endif
+
     @if ($mayApprove)
         <section class="a-card" aria-labelledby="aw-waiting">
             <div class="a-card__head">

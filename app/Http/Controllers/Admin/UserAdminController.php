@@ -277,6 +277,7 @@ class UserAdminController extends Controller
             'roleOptions' => \App\Models\RoleDefinition::orderByDesc('is_built_in')->orderBy('id')->get(),
             'seatRoles' => \App\Enums\CommitteeRole::cases(),
             'mayAssignRole' => $request->user()->can('assignRole', $user),
+            'moderationScope' => \App\Support\ModeratorScope::of($user),
         ]);
     }
 
@@ -303,6 +304,10 @@ class UserAdminController extends Controller
             'role' => ['nullable', 'in:'.implode(',', $roleKeys)],
             'committees' => ['nullable', 'array'],
             'committees.*' => ['nullable', 'in:'.implode(',', $seatValues)],
+            'scope_countries' => ['nullable', 'array'],
+            'scope_countries.*' => ['integer', 'exists:countries,id'],
+            'scope_committees' => ['nullable', 'array'],
+            'scope_committees.*' => ['integer', 'exists:committees,id'],
         ], [], [
             'name' => __('account.name'),
             'email' => __('auth.email'),
@@ -353,6 +358,9 @@ class UserAdminController extends Controller
                     'committees' => ['from' => $before, 'to' => $seats],
                 ], $request->user());
             }
+
+            // Item 1j: the moderation scope, audited when it changes.
+            \App\Support\ModeratorScope::set($user, $data['scope_countries'] ?? [], $data['scope_committees'] ?? [], $request->user());
 
             return null;
         });

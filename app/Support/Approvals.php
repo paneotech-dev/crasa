@@ -39,6 +39,9 @@ use Illuminate\Support\Facades\Schema;
  * hold only the types this person may approve. An item In review is locked:
  * nobody edits it until it is approved or returned; an administrator may
  * withdraw it to Draft, which is audited.
+ *
+ * Item 1j: a moderator may be limited to member states and/or committees
+ * (ModeratorScope). The inbox, the count and every decision respect it.
  */
 final class Approvals
 {
@@ -73,6 +76,7 @@ final class Approvals
         return Approval::awaiting()
             ->whereIn('approvable_type', self::morphTypesFor($user))
             ->where(fn ($q) => $q->whereNull('submitted_by')->orWhere('submitted_by', '!=', $user->id))
+            ->tap(fn ($q) => ModeratorScope::constrain($q, $user))
             ->count();
     }
 
@@ -85,6 +89,7 @@ final class Approvals
 
         return Approval::awaiting()->with(['approvable', 'submitter'])
             ->whereIn('approvable_type', self::morphTypesFor($user))
+            ->tap(fn ($q) => ModeratorScope::constrain($q, $user))
             ->orderBy('submitted_at')->limit($limit)->get();
     }
 
@@ -310,7 +315,8 @@ final class Approvals
 
         return $approval->isOpen()
             && $type !== null && self::mayApproveType($user, $type)
-            && $approval->submitted_by !== $user->id;
+            && $approval->submitted_by !== $user->id
+            && ModeratorScope::covers($user, $approval);
     }
 
     public static function approve(Approval $approval, User $by, ?string $comment = null): Approval
@@ -600,7 +606,7 @@ final class Approvals
 
         $type = self::typeOfApproval($approval);
 
-        if ($type === null || ! self::mayApproveType($by, $type)) {
+        if ($type === null || ! self::mayApproveType($by, $type) || ! ModeratorScope::covers($by, $approval)) {
             throw new DomainException(__('fa.approval_may_not_decide'));
         }
 
