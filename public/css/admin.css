@@ -2935,3 +2935,6 @@ body[data-surface="admin"] .e-dash__day { color: var(--a-date-ink); }
 .m3-stepsave { display: inline-flex; flex-wrap: wrap; gap: var(--s-3); }
 .m3-stepsave[hidden] { display: none; }
 .m3-revision strong { display: inline; }
+/* The notice's own link colour is for text links, not its button. */
+.m3-inbox a.a-btn--primary { color: var(--a-btn-ink); }
+.m3-inbox a.a-btn--primary:hover { color: var(--a-btn-hover-ink); }

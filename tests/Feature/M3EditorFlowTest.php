@@ -170,7 +170,8 @@ class M3EditorFlowTest extends TestCase
 
         // The moderator sees the change and approves it; then the public page has it.
         $this->actingAs($this->moderator)->get("/en/admin/approvals/{$approval->id}")->assertOk()
-            ->assertSee('Spectrum workshop: final communique');
+            ->assertSee('Spectrum workshop: final communique')->assertSee(__('m3_edflow.moderator_revision'))
+            ->assertSee('Spectrum harmonisation workshop held in Gaborone');
         $this->actingAs($this->moderator)->put("/en/admin/approvals/{$approval->id}/approve")
             ->assertRedirect()->assertSessionHasNoErrors();
 

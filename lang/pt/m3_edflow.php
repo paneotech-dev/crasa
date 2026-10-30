@@ -29,5 +29,6 @@ return [
     'event_public_kept' => 'Este evento está no site público e continua público. As suas alterações ficam online quando um moderador as aprovar.',
     'event_files_held' => 'Os documentos de um evento público não podem ser alterados numa alteração a aguardar aprovação. Guarde primeiro as outras alterações e depois peça a um moderador que adicione ou retire os documentos.',
     'status_refused' => 'Os editores não escolhem um estado. Use Guardar rascunho ou Guardar e enviar para aprovação.',
+    'moderator_revision' => 'Trata-se de alterações a um conteúdo publicado. A versão publicada continua online até as aprovar; aprovar coloca as alterações no site público. A tabela compara-as com a versão publicada.',
     'page_status_help' => 'Um moderador publica esta página depois de a enviar para aprovação.',
 ];

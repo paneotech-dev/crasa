@@ -587,6 +587,11 @@ final class Approvals
             ->latest('id')->first();
 
         $before = self::flatten($previous?->snapshot ?? []);
+
+        // Day 3: held changes to a published item are read against the live version.
+        if ($approval->revision !== null && in_array($approval->state, [Approval::IN_REVIEW, Approval::DRAFT], true) && $approval->approvable !== null) {
+            $before = self::flatten(self::snapshot($approval->approvable));
+        }
         $after = self::flatten($approval->snapshot ?? []);
         $out = [];
 
