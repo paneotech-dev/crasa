@@ -36,8 +36,9 @@ final class MachineDrafts
             'rafiki' => new RafikiTranslator(
                 config('machine_translation.rafiki.key'),
                 config('machine_translation.rafiki.url'),
-                config('machine_translation.rafiki.model'),
+                [config('machine_translation.rafiki.model'), ...(array) config('machine_translation.rafiki.models', [])],
                 (int) config('machine_translation.rafiki.timeout', 30),
+                (array) config('machine_translation_glossary', []),
             ),
             default => new NoTranslator,
         };

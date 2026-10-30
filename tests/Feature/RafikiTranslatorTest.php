@@ -29,15 +29,27 @@ class RafikiTranslatorTest extends TestCase
 
     private const GATEWAY = 'https://gateway.rafikiai.io/v1/chat/completions';
 
-    private function configure(?string $key = self::KEY, ?string $url = null, ?string $model = null): void
+    private function configure(?string $key = self::KEY, ?string $url = null, ?string $model = null, array $models = ['gpt-mini', 'gpt', 'mistral-small']): void
     {
         config([
             'machine_translation.driver' => 'rafiki',
             'machine_translation.rafiki.key' => $key,
             'machine_translation.rafiki.url' => $url,
             'machine_translation.rafiki.model' => $model,
+            'machine_translation.rafiki.models' => $models,
             'machine_translation.rafiki.timeout' => 30,
         ]);
+    }
+
+    private static function refusal(int $status, string $message, string $type, string $code): \GuzzleHttp\Promise\PromiseInterface
+    {
+        return Http::response(['error' => ['message' => $message, 'type' => $type, 'code' => $code]], $status);
+    }
+
+    /** @return list<string> the model of every request sent, in order */
+    private function modelsSent(): array
+    {
+        return Http::recorded()->map(fn ($pair) => $pair[0]['model'])->values()->all();
     }
 
     private static function answer(string $content, array $headers = []): \GuzzleHttp\Promise\PromiseInterface
@@ -83,7 +95,8 @@ class RafikiTranslatorTest extends TestCase
         $this->assertSame('none', config('machine_translation.driver'));
         $this->assertInstanceOf(NoTranslator::class, MachineDrafts::translator());
         $this->assertSame('https://gateway.rafikiai.io/v1', config('machine_translation.rafiki.url'));
-        $this->assertSame('mistral-small', config('machine_translation.rafiki.model'));
+        $this->assertSame('', config('machine_translation.rafiki.model'));
+        $this->assertSame(['gpt-mini', 'gpt', 'mistral-small'], config('machine_translation.rafiki.models'));
         $this->assertSame(30, config('machine_translation.rafiki.timeout'));
     }
 
@@ -115,11 +128,12 @@ class RafikiTranslatorTest extends TestCase
 
     public function test_the_request_is_a_chat_completion_with_the_bearer_key_the_model_and_the_instruction(): void
     {
-        Http::fake(['gateway.rafikiai.io/*' => self::answer('<p>Catorze reguladores participaram.</p>')]);
+        $answer = '<p class="lead">Catorze <a href="/en/members">reguladores</a> participaram.</p>';
+        Http::fake(['gateway.rafikiai.io/*' => self::answer($answer)]);
         $this->configure();
 
         $html = '<p class="lead">Fourteen <a href="/en/members">regulators</a> attended.</p>';
-        $this->assertSame('<p>Catorze reguladores participaram.</p>', MachineDrafts::translator()->translate($html, 'en', 'pt', true));
+        $this->assertSame($answer, MachineDrafts::translator()->translate($html, 'en', 'pt', true));
 
         Http::assertSentCount(1);
         Http::assertSent(function ($request) use ($html) {
@@ -129,15 +143,15 @@ class RafikiTranslatorTest extends TestCase
                 && $request->url() === self::GATEWAY
                 && $request->hasHeader('Authorization', 'Bearer '.self::KEY)
                 && $request->hasHeader('Content-Type', 'application/json')
-                && $request['model'] === 'mistral-small'
+                && $request['model'] === 'gpt-mini'
                 && $request['temperature'] === 0
                 && $request['max_tokens'] === 256
                 && $request['messages'][0]['role'] === 'system'
-                && str_contains($system, 'from English to European Portuguese')
-                && str_contains($system, 'HTML tag and attribute')
-                && str_contains($system, 'CRASA, SADC, ITU')
-                && str_contains($system, 'numbers')
-                && str_contains($system, 'Return only the translation')
+                && str_starts_with($system, 'You translate official text of CRASA, a regional association of communications regulators, from English to European Portuguese')
+                && str_contains($system, 'Keep every HTML tag and attribute exactly as in the source; add no tags.')
+                && str_contains($system, 'Keep acronyms such as CRASA and SADC, and all numbers and dates.')
+                && ! str_contains($system, 'glossary')
+                && str_ends_with($system, 'Return only the translation, nothing else.')
                 && $request['messages'][1] === ['role' => 'user', 'content' => $html]
                 && array_keys($request->data()) === ['model', 'temperature', 'max_tokens', 'messages'];
         });
@@ -153,7 +167,7 @@ class RafikiTranslatorTest extends TestCase
         $this->configure(self::KEY, 'https://rafiki.test/v1', 'auto');
         MachineDrafts::translator()->translate('Hello', 'en', 'fr');
 
-        $this->configure(self::KEY, 'https://rafiki.test/v1', 'rafiki/translate');
+        $this->configure(self::KEY, 'https://rafiki.test/v1', 'rafiki/task:translation');
         MachineDrafts::translator()->translate('Hello', 'en', 'fr');
 
         $models = [];
@@ -163,7 +177,7 @@ class RafikiTranslatorTest extends TestCase
             return $request->url() === 'https://rafiki.test/v1/chat/completions'
                 && str_contains($request['messages'][0]['content'], 'from English to French');
         });
-        $this->assertSame(['qwen', 'mistral-small', 'mistral-small'], $models);
+        $this->assertSame(['qwen', 'gpt-mini', 'gpt-mini'], $models);
     }
 
     public function test_max_tokens_is_four_times_the_input_within_bounds(): void
@@ -209,7 +223,7 @@ class RafikiTranslatorTest extends TestCase
         MachineDrafts::draft($news);
 
         $entry = json_encode(AuditLog::where('action', 'machine_translation_drafted')->where('auditable_id', $news->id)->sole()->toArray());
-        $this->assertStringContainsString('rafiki:mistral-small', $entry);
+        $this->assertStringContainsString('rafiki:gpt-mini', $entry);
         $this->assertStringContainsString('deepseek', $entry);
     }
 
@@ -278,20 +292,19 @@ class RafikiTranslatorTest extends TestCase
 
         Http::fake(['gateway.rafikiai.io/*' => Http::sequence()
             ->pushResponse(Http::response(['error' => 'upstream', 'ref' => 'r-1'], 502))
-            ->pushFailedConnection('cURL error 28: Operation timed out')]);
+            ->pushFailedConnection('cURL error 28: Operation timed out')
+            ->pushResponse(Http::response(['error' => 'upstream', 'ref' => 'r-2'], 503))]);
 
+        // Each model is tried once; when all fail, the rest of the item is not sent.
         $this->assertSame([], MachineDrafts::draft($news));
-        Http::assertSentCount(1);
-
-        $this->assertSame([], MachineDrafts::draft($news));
-        Http::assertSentCount(2);
+        $this->assertSame(['gpt-mini', 'gpt', 'mistral-small'], $this->modelsSent());
         $this->assertNull($this->row($news, 'fr', 'title'));
     }
 
     public function test_the_key_never_reaches_the_log(): void
     {
         $logged = $this->captureLogs();
-        $this->configure();
+        $this->configure(self::KEY, null, null, ['gpt-mini']);
 
         Http::fake(['gateway.rafikiai.io/*' => Http::sequence()
             ->pushResponse(Http::response(['error' => ['message' => 'bad key '.self::KEY, 'type' => 'authentication_error', 'code' => 'invalid_api_key', 'ref' => 'r-9']], 401))
@@ -311,6 +324,111 @@ class RafikiTranslatorTest extends TestCase
         $this->assertStringContainsString('timed out', $all, 'The exception message is logged.');
         $this->assertStringContainsString('invalid_api_key', $all);
         $this->assertStringContainsString('r-9', $all);
+    }
+
+    public function test_the_next_model_is_tried_after_a_server_error_or_a_refusal_naming_the_model(): void
+    {
+        Http::fake(['gateway.rafikiai.io/*' => function ($request) {
+            return match ($request['model']) {
+                'gpt-mini' => Http::response(['error' => 'upstream', 'ref' => 'r-1'], 503),
+                'gpt' => self::refusal(404, 'The model gpt does not exist', 'invalid_request_error', 'model_not_found'),
+                default => self::answer('Traduit: '.$request['messages'][1]['content'], ['X-Rafiki-Model' => 'mistral-small-2503']),
+            };
+        }]);
+        $this->configure();
+        $news = $this->englishOnlyNews();
+
+        $drafted = MachineDrafts::draft($news);
+
+        $this->assertSame(['title', 'summary', 'body'], $drafted['fr']);
+        // The two failed models are not asked again for the other five fields.
+        $this->assertSame(['gpt-mini', 'gpt', 'mistral-small', 'mistral-small', 'mistral-small', 'mistral-small', 'mistral-small', 'mistral-small'], $this->modelsSent());
+        $entry = json_encode(AuditLog::where('action', 'machine_translation_drafted')->where('auditable_id', $news->id)->sole()->toArray());
+        $this->assertStringContainsString('rafiki:mistral-small-2503', $entry);
+    }
+
+    public function test_an_upstream_model_unavailable_error_tries_the_next_model(): void
+    {
+        Http::fake(['gateway.rafikiai.io/*' => Http::sequence()
+            ->pushResponse(self::refusal(422, 'Upstream model is unavailable', 'upstream_error', 'model_unavailable'))
+            ->pushResponse(self::answer('Bonjour'))]);
+        $this->configure();
+
+        $this->assertSame('Bonjour', MachineDrafts::translator()->translate('Hello', 'en', 'fr'));
+        $this->assertSame(['gpt-mini', 'gpt'], $this->modelsSent());
+    }
+
+    public function test_no_other_model_is_tried_after_a_spent_budget_a_413_or_another_refusal(): void
+    {
+        $this->configure();
+        $refusal = null;
+        Http::fake(['gateway.rafikiai.io/*' => function ($request) use (&$refusal) {
+            return $request['model'] === 'gpt-mini' ? $refusal : self::answer('Bonjour');
+        }]);
+
+        foreach ([
+            self::refusal(429, 'Monthly budget exceeded', 'budget_exceeded', 'budget_exceeded'),
+            self::refusal(413, 'Too long', 'invalid_request_error', 'context_length_exceeded'),
+            self::refusal(400, 'max_tokens is too large', 'invalid_request_error', 'invalid_value'),
+            self::refusal(401, 'Bad key', 'authentication_error', 'invalid_api_key'),
+        ] as $i => $response) {
+            $refusal = $response;
+
+            $this->assertNull(MachineDrafts::translator()->translate('Hello', 'en', 'fr'));
+            $this->assertSame(array_fill(0, $i + 1, 'gpt-mini'), $this->modelsSent());
+        }
+    }
+
+    public function test_an_answer_that_adds_or_drops_tags_tries_the_next_model(): void
+    {
+        $html = '<p>The <strong>annual return</strong> is due on 31 March.</p>';
+        $good = '<p>La <strong>déclaration annuelle</strong> est due le 31 mars.</p>';
+        $this->configure();
+
+        Http::fake(['gateway.rafikiai.io/*' => Http::sequence()
+            ->pushResponse(self::answer('<p>La <strong>déclaration annuelle</strong> est due le 31<sup>er</sup> mars.</p>'))
+            ->pushResponse(self::answer('<p>La déclaration annuelle est due le 31 mars.</p>'))
+            ->pushResponse(self::answer($good))]);
+
+        $this->assertSame($good, MachineDrafts::translator()->translate($html, 'en', 'fr', true));
+        $this->assertSame(['gpt-mini', 'gpt', 'mistral-small'], $this->modelsSent());
+
+        $this->assertSame(['p', 'strong'], RafikiTranslator::tagNames('<P class="x"><strong>a</strong></p>'));
+        $this->assertSame(['br', 'p', 'p'], RafikiTranslator::tagNames('<p>a<br/></p><p>b</p>'));
+    }
+
+    public function test_claude_models_are_sent_without_a_temperature(): void
+    {
+        Http::fake(['gateway.rafikiai.io/*' => self::answer('Bonjour')]);
+        $this->configure(self::KEY, null, 'claude-sonnet');
+
+        $this->assertSame('Bonjour', MachineDrafts::translator()->translate('Hello', 'en', 'fr'));
+
+        Http::assertSent(fn ($request) => $request['model'] === 'claude-sonnet'
+            && ! array_key_exists('temperature', $request->data()));
+    }
+
+    public function test_the_glossary_sends_only_the_terms_found_in_the_text(): void
+    {
+        $this->assertSame('déclaration annuelle', config('machine_translation_glossary.fr')['annual return']);
+        $this->assertSame('Estado-Membro', config('machine_translation_glossary.pt')['member state']);
+        $this->assertCount(8, config('machine_translation_glossary.fr'));
+        $this->assertCount(8, config('machine_translation_glossary.pt'));
+
+        Http::fake(['gateway.rafikiai.io/*' => self::answer('Traduction de test assez longue')]);
+        $this->configure();
+
+        MachineDrafts::translator()->translate('Each member State files its Annual Return with the Secretariat by the institution deadline.', 'en', 'fr');
+        MachineDrafts::translator()->translate('Os Estados-Membros e o Secretariado.', 'pt', 'en');
+        MachineDrafts::translator()->translate('La déclaration annuelle du Secrétariat.', 'fr', 'pt');
+
+        $systems = Http::recorded()->map(fn ($pair) => $pair[0]['messages'][0]['content'])->values();
+
+        $this->assertStringContainsString('Use this glossary: "annual return" = "déclaration annuelle"; "member state" = "État membre"; "Secretariat" = "Secrétariat".', $systems[0]);
+        $this->assertStringNotContainsString('UIT', $systems[0], 'ITU is not found inside "institution".');
+        $this->assertStringContainsString('"Secretariado" = "Secretariat"', $systems[1]);
+        $this->assertStringContainsString('"déclaration annuelle" = "declaração anual"', $systems[2]);
+        $this->assertStringContainsString('"Secrétariat" = "Secretariado"', $systems[2]);
     }
 
     public function test_the_back_office_notice_names_the_missing_settings(): void
