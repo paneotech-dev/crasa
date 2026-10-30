@@ -1,4 +1,4 @@
-/* CRASA Digital Anchor Ecosystem: hero rotation.
+/* CRASA Digital Anchor Ecosystem — hero rotation.
  *
  * A carousel with the accessibility that implies, and the restraint the
  * motion specification requires:
@@ -224,8 +224,7 @@
 
 /* The Concept 3 home hero (C6, 29 October 2026).
  *
- * Crossfade 600ms with the caption sliding in (k.css), advance every 7s
- * with a progress bar per slide and an "01 / 03" counter,
+ * Crossfade 600ms with the caption sliding in (k.css), advance every 7s,
  * paused on hover, while focus is inside, while the tab is hidden and by
  * the pause button (aria-pressed). Previous and next, the dots and the
  * Featured list choose a slide; arrow keys work while focus is in the
@@ -245,7 +244,6 @@
   var live = hero.querySelector('[data-k-live]');
   var pause = hero.querySelector('[data-k-pause]');
   var photo = hero.querySelector('.k-hero__photo');
-  var count = hero.querySelector('[data-k-count]');
   var total = caps.length;
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var DELAY = 7000;
@@ -259,8 +257,6 @@
   if (total < 2) return;
 
   hero.style.setProperty('--k-dur', DELAY + 'ms');
-
-  function pad(n) { return (n < 10 ? '0' : '') + n; }
 
   function show(next, announce) {
     index = (next + total) % total;
@@ -278,14 +274,13 @@
     dots.forEach(function (dot) {
       var on = parseInt(dot.getAttribute('data-k-dot'), 10) === index;
       dot.setAttribute('aria-current', on ? 'true' : 'false');
-      // Restart the slide's progress bar.
-      if (on) {
+      // Restart the progress bar of the Featured item.
+      if (on && dot.classList.contains('k-fitem')) {
         dot.classList.remove('is-run');
         void dot.offsetWidth;
         dot.classList.add('is-run');
       }
     });
-    if (count) count.firstChild.textContent = pad(index + 1);
     if (announce && live) {
       live.textContent = live.getAttribute('data-template')
         .replace(':index', index + 1).replace(':total', total)
