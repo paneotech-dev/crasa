@@ -111,4 +111,27 @@ class AuditChangeValuesTest extends TestCase
         $this->assertSame('editor', $builtIn->changes['former_role']);
         $this->assertContains('Editor', array_column(AuditChanges::rows($builtIn), 'after'));
     }
+
+    public function test_every_date_time_in_a_change_table_reads_in_one_format_in_gaborone_time(): void
+    {
+        $subject = User::factory()->viewer()->create();
+        $entry = AuditLog::record(AuditLog::UPDATED, $subject, [
+            'email_verified_at' => ['from' => '2026-10-29T06:30:00.000000Z', 'to' => '2026-10-29 07:45:00'],
+            'starts_at' => ['from' => '2026-10-29T09:00:00+02:00', 'to' => null],
+            'period' => ['from' => '2026-10-29', 'to' => 'Q3 2026'],
+        ], $this->admin);
+
+        $rows = AuditChanges::rows($entry);
+
+        $this->assertSame('2026-10-29 08:30', $rows[0]['before']);
+        $this->assertSame('2026-10-29 09:45', $rows[0]['after']);
+        $this->assertSame('2026-10-29 09:00', $rows[1]['before']);
+        // A date alone and free text are left as they are.
+        $this->assertSame('2026-10-29', $rows[2]['before']);
+        $this->assertSame('Q3 2026', $rows[2]['after']);
+
+        $this->actingAs($this->admin)->get('/en/admin/audit')->assertOk()
+            ->assertSee('2026-10-29 08:30')
+            ->assertDontSee('2026-10-29T06:30:00.000000Z');
+    }
 }

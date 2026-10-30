@@ -37,6 +37,9 @@ final class AuditChanges
 
     private const QUIET = ['id', 'created_at', 'updated_at', 'last_seen_at'];
 
+    /** A stored date and time, ISO with Z or offset, or the database's own form. */
+    private const DATE_TIME = '/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(:\d{2}(\.\d{1,6})?)?(Z|[+-]\d{2}:?\d{2})?$/';
+
     /** Fields whose value is a role key, shown by the role's name. */
     private const ROLE_FIELDS = ['role', 'former_role', 'invited_as'];
 
@@ -171,7 +174,24 @@ final class AuditChanges
             return $references[$ref] ?? (string) __('m3_retaud.audit_object_deleted');
         }
 
+        if (is_string($value) && preg_match(self::DATE_TIME, $value)) {
+            return self::dateTime($value);
+        }
+
         return self::text($value);
+    }
+
+    /**
+     * A date and time in the platform's format and zone (as the list's own
+     * time column). A value without a zone is stored UTC, as everything is.
+     */
+    public static function dateTime(string $value): string
+    {
+        try {
+            return \Carbon\CarbonImmutable::parse($value, 'UTC')->setTimezone(LocalTime::zone())->format('Y-m-d H:i');
+        } catch (\Throwable) {
+            return $value;
+        }
     }
 
     /**
