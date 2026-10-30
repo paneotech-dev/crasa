@@ -52,7 +52,7 @@ return new class extends Migration
             ->where('field', 'body')
             ->get() as $row) {
             $old = $from[$row->locale] ?? null;
-            if ($old !== null && isset($to[$row->locale]) && trim((string) $row->value) === trim($old)) {
+            if ($old !== null && isset($to[$row->locale]) && $this->same((string) $row->value, $old)) {
                 $row->value = $to[$row->locale];
                 $row->save();
                 $changed = true;
@@ -64,5 +64,13 @@ return new class extends Migration
             // flagged for CRASA's review in the back office.
             $page->forceFill(['needs_client_review' => true, 'updated_at' => now()])->save();
         }
+    }
+
+    /** Equal apart from line endings and surrounding space: the stored text came through a form with CRLF. */
+    private function same(string $a, string $b): bool
+    {
+        $norm = fn (string $s) => trim(str_replace("\r\n", "\n", $s));
+
+        return $norm($a) === $norm($b);
     }
 };

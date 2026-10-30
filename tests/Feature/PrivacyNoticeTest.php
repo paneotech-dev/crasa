@@ -81,7 +81,8 @@ class PrivacyNoticeTest extends TestCase
         $new = require database_path('seeders/data/privacy-notice.php');
         $block = PageBlock::where('page_id', Page::where('slug', 'privacy')->value('id'))->sole();
 
-        $block->setTranslations('en', ['body' => $old['en']]);
+        // As stored on live: typed through a form, with CRLF line endings.
+        $block->setTranslations('en', ['body' => str_replace("\n", "\r\n", $old['en'])]);
         $block->setTranslations('fr', ['body' => $old['fr']]);
         $block->setTranslations('pt', ['body' => 'Texto editado pelo Secretariado.']);
 
