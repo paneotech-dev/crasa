@@ -58,6 +58,8 @@
     {{-- Concept 3 port: header, breadcrumb row, home, sitemap, footer (k-). --}}
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/k.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/a11y.css') }}">
+    {{-- Day 3: privacy. The cookie banner and third-party placeholders. --}}
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/consent.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/print.css') }}" media="print">
     @stack('styles')
 </head>
@@ -67,6 +69,8 @@
      read and clicked anyway. --}}
 <!--email_off-->
     <a class="c-skip" href="#content">{{ __('nav.skip') }}</a>
+
+    @include('partials.consent')
 
     @include('partials.site-header')
 
@@ -149,6 +153,9 @@
     <script src="{{ \App\Support\Assets::url('js/float.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/motion.js') }}" defer></script>
     @stack('scripts')
+    {{-- After the page's own scripts, so the contact map is listening
+         before a stored choice draws it. --}}
+    <script src="{{ \App\Support\Assets::url('js/consent.js') }}" defer></script>
 <!--/email_off-->
 </body>
 </html>

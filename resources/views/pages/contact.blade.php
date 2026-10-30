@@ -185,7 +185,7 @@
                     {{ __('cpages.contact_open_maps') }}
                 </a>
             </div>
-            <div class="cp-map" data-contact-map
+            <div class="cp-map" data-contact-map data-consent-embed="maps" data-embed="map"
                  data-lat="{{ $lat }}" data-lng="{{ $lng }}" data-zoom="{{ config('crasa.map.zoom') }}"
                  data-tiles="{{ config('crasa.map.tile_url') }}"
                  data-attribution="{{ config('crasa.map.tile_attribution') }}"
@@ -194,6 +194,16 @@
                     <img src="{{ asset('images/contact/contact-map.webp') }}" alt="{{ __('cpages.contact_map_static') }}" width="768" height="512" loading="lazy">
                     <span class="cp-map__pin" aria-hidden="true"><svg viewBox="0 0 24 24" width="36" height="36"><path d="M12 23s8-7.2 8-13.5A8 8 0 0 0 4 9.5C4 15.8 12 23 12 23z" fill="#0F8757" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="9.5" r="3" fill="#fff"/></svg></span>
                     <span class="cp-map__credit">{{ __('cpages.contact_map_credit') }}</span>
+                </div>
+                {{-- Item 1h: the live map loads tiles from OpenStreetMap, so it
+                     waits for the reader's consent or this button. --}}
+                <div class="cp-map__gate" data-consent-notice>
+                    <p class="cp-map__gate-text">{{ __('d3_privacy.map_hosted') }}</p>
+                    <address class="cp-map__gate-address">{{ \App\Support\SiteContact::addressLine1() }}<br>{{ \App\Support\SiteContact::addressLine2() }}</address>
+                    <p class="cp-map__gate-actions">
+                        <button type="button" class="u-btn u-btn--primary" data-consent-show>{{ __('d3_privacy.map_show') }}</button>
+                        <a href="{{ $googleMaps }}" target="_blank" rel="noopener">{{ __('cpages.contact_open_maps') }}</a>
+                    </p>
                 </div>
                 <noscript>
                     <p class="cp-map__noscript"><a class="u-btn u-btn--secondary" data-map-load href="{{ $osm }}">{{ __('contact.map_load') }}</a></p>

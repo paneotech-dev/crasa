@@ -59,6 +59,9 @@
             <nav aria-label="{{ __('footer.legal_label') }}">
                 <a href="{{ $nav('terms') }}">{{ __('footer.terms') }}</a>
                 <a href="{{ $nav('privacy') }}">{{ __('footer.privacy') }}</a>
+                {{-- Day 3: privacy. Reopens the cookie settings; without
+                     scripting it leads to the cookies section of the notice. --}}
+                <a href="{{ $nav('privacy') }}" data-consent-open aria-haspopup="dialog">{{ __('d3_privacy.footer_link') }}</a>
                 @if ($a11yUrl)
                     <a href="{{ $a11yUrl }}">{{ __('footer.accessibility') }}</a>
                 @endif

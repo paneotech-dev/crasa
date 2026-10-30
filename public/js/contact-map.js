@@ -1,4 +1,4 @@
-/* CRASA: contact map (29 October 2026). Drawn on load over the saved image
+/* CRASA: contact map (29 October 2026). Drawn after consent over the saved image
  * of the same area. Leaflet is served from this platform. If the tile server
  * fails, the live layer is removed and the saved image with its pin stays.
  */
@@ -61,5 +61,12 @@
     });
   }
 
-  draw();
+  // Item 1h: tiles come from OpenStreetMap, so the map is drawn only once
+  // the reader has allowed maps or pressed "Show the map" (consent.js).
+  var drawn = false;
+  box.addEventListener('consent:show', function () {
+    if (drawn) return;
+    drawn = true;
+    draw();
+  });
 })();

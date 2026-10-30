@@ -202,9 +202,9 @@ class ContactFormTest extends TestCase
     /* Privacy ---------------------------------------------------------------- */
 
     /**
-     * The map is drawn on load (C15, 29 October 2026) over a saved image of
-     * the same area, so a failed tile server still leaves a map; "Show the
-     * map" is only the no-script fallback.
+     * The map is drawn (C15, 29 October 2026) over a saved image of the same
+     * area, so a failed tile server still leaves a map; since item 1h it is
+     * drawn only after consent or "Show the map" (CookieConsentTest).
      */
     public function test_the_map_is_drawn_on_load_with_a_static_fallback(): void
     {
