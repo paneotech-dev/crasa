@@ -74,13 +74,16 @@
                         </span>
                         <span class="a-asset__body">
                             <span class="a-asset__name">{{ $asset->original_name }}</span>
-                            <span class="a-asset__meta">{{ $asset->humanSize() }}{{ $asset->dimensions() ? ', '.$asset->dimensions() : '' }}</span>
+                            <span class="a-asset__meta">{{ $asset->humanSize() }}{{ $asset->width && $asset->height ? ', '.__('m3_media.pixel_size', ['width' => $asset->width, 'height' => $asset->height]) : '' }}</span>
                             <span class="a-asset__usage" @if ($usage[$asset->id] === []) data-unused @endif>
                                 {{ $usage[$asset->id] === [] ? __('admin.media_unused') : trans_choice('admin.media_used_on', count($usage[$asset->id]), ['count' => count($usage[$asset->id])]) }}
                             </span>
                             @if ($altCount < 3)
                                 <span class="a-asset__warning">{{ __('admin.media_alt_missing_short') }}</span>
                             @endif
+                            @foreach (\App\Support\ImageSlots::smallFor($asset, $usage[$asset->id]) as $smallSlot)
+                                <span class="a-asset__warning" data-small-for="{{ $smallSlot }}">{{ __('m3_media.small_for', ['slot' => \App\Support\ImageSlots::label($smallSlot)]) }}</span>
+                            @endforeach
                         </span>
                     </a>
                 @endforeach
@@ -109,7 +112,12 @@
                                 <th scope="row">
                                     <a href="{{ route('admin.media.edit', ['locale' => app()->getLocale(), 'asset' => $asset->id]) }}">{{ $asset->original_name }}</a>
                                 </th>
-                                <td data-quiet>{{ $asset->dimensions() ?? '–' }}</td>
+                                <td data-quiet>
+                                    {{ $asset->width && $asset->height ? __('m3_media.pixel_size', ['width' => $asset->width, 'height' => $asset->height]) : '–' }}
+                                    @foreach (\App\Support\ImageSlots::smallFor($asset, $usage[$asset->id]) as $smallSlot)
+                                        <span class="a-asset__warning" style="display:block" data-small-for="{{ $smallSlot }}">{{ __('m3_media.small_for', ['slot' => \App\Support\ImageSlots::label($smallSlot)]) }}</span>
+                                    @endforeach
+                                </td>
                                 <td><span class="a-altstate" data-state="{{ $state }}">{{ __('admin.alt_state_'.$state, ['n' => $altCount]) }}</span></td>
                                 <td>{{ $usage[$asset->id] === [] ? __('admin.media_unused') : trans_choice('admin.media_used_on', count($usage[$asset->id]), ['count' => count($usage[$asset->id])]) }}</td>
                                 <td data-quiet>{{ $asset->created_at->displayed()->isoFormat('D MMM YYYY') }}</td>

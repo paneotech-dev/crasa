@@ -26,7 +26,10 @@ use Illuminate\Support\Facades\Schema;
 final class MediaUsage
 {
     /**
-     * @return list<array{label: string, url: string|null}>
+     * The slot is the config/media-slots.php key the use draws the image
+     * in (hero slider block, news item), or null when it has no slot.
+     *
+     * @return list<array{label: string, url: string|null, slot: string|null}>
      */
     public static function for(MediaAsset $asset): array
     {
@@ -52,6 +55,7 @@ final class MediaUsage
             $usages[] = [
                 'label' => ($page->translate('title')?->value ?? $page->slug).' — '.$block->type()->label(),
                 'url' => route('admin.pages.edit', ['locale' => app()->getLocale(), 'page' => $page->slug]),
+                'slot' => $block->type() === \App\Enums\BlockType::Hero ? 'hero' : null,
             ];
         }
 
@@ -64,6 +68,25 @@ final class MediaUsage
                     $usages[] = [
                         'label' => $item->translate('title')?->value ?? $item->slug,
                         'url' => null,
+                        'slot' => 'news',
+                    ];
+                });
+        }
+
+        /*
+         * News items point at the asset by its stored path (the news form's
+         * photograph field), not by an id column, so they are found by it.
+         */
+        if (Schema::hasColumn('news_items', 'hero_image_path') && $asset->path) {
+            NewsItem::query()
+                ->where('hero_image_path', $asset->path)
+                ->with('translations')
+                ->get()
+                ->each(function (NewsItem $item) use (&$usages) {
+                    $usages[] = [
+                        'label' => $item->translate('title')?->value ?? $item->slug,
+                        'url' => null,
+                        'slot' => 'news',
                     ];
                 });
         }
