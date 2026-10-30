@@ -18,8 +18,11 @@ use RuntimeException;
  * ever agreed, is a deliberate database operation, not an Eloquent delete.
  *
  * Day 3: auditlock. The database enforces it too: on MySQL and MariaDB,
- * triggers refuse every UPDATE and DELETE on audit_log, whoever connects,
- * and the application user holds only SELECT and INSERT on the table. Each
+ * triggers refuse every UPDATE and DELETE on audit_log, whoever connects.
+ * On production the application user holds only SELECT and INSERT on the
+ * table (prod-grants.sh); on the workshop site the same grants are a
+ * proposed operations script, not yet run, so there the application user
+ * still has every privilege and the triggers are the guard. Each
  * row carries a hash chain (prev_hash, row_hash; see App\Support\AuditChain),
  * computed here at insert and checked nightly by audit:verify-chain.
  */
