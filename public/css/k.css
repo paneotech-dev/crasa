@@ -44,7 +44,7 @@
 }
 
 .k-lbl { display: block; font: 600 13px/1.4 var(--k-sans); letter-spacing: .02em; color: var(--k-blue-ink); }
-.k-all { display: inline-flex; align-items: center; gap: 6px; font: 600 15px var(--k-sans); text-decoration: none; color: var(--k-green); transition: color .15s; }
+.k-all { display: inline-flex; align-items: center; gap: 6px; font: 600 15px var(--k-sans); text-decoration: none; color: var(--k-green-hover); transition: color .15s; }
 .k-all svg { transition: transform .25s var(--k-ease); }
 .k-all:hover { color: var(--k-deep); }
 .k-all:hover svg, a:hover .k-all svg { transform: translateX(4px); }
