@@ -30,7 +30,7 @@ return [
     | your mailers below. You may also add additional mailers if needed.
     |
     | Supported: "smtp", "sendmail", "mailgun", "ses", "ses-v2",
-    |            "postmark", "resend", "log", "array",
+    |            "postmark", "resend", "brevo", "log", "array",
     |            "failover", "roundrobin"
     |
     */
@@ -63,6 +63,12 @@ return [
 
         'resend' => [
             'transport' => 'resend',
+        ],
+
+        // Brevo's HTTP API. Registered in App\Providers\MailTransportServiceProvider;
+        // the key is services.brevo.key (BREVO_API_KEY).
+        'brevo' => [
+            'transport' => 'brevo',
         ],
 
         'sendmail' => [

@@ -235,8 +235,8 @@ final class RoleDashboard
                 'url' => route('admin.social'), 'meta' => null, 'comment' => null];
         }
 
-        $mailer = (string) config('mail.default');
-        $mailOff = in_array($mailer, ['log', 'array', ''], true);
+        $mailer = MailStatus::mailer();
+        $mailOff = MailStatus::isOff();
 
         return [
             'key' => 'attention',

@@ -33,7 +33,7 @@
     @endif
 
     {{-- The chain, in one paragraph: where a filing comes from and where it goes. --}}
-    <p class="a-hint">{{ __('d3_people.reg_chain') }}</p>
+    <p class="a-hint">{{ \App\Support\MailStatus::isOn() ? __('d3_mail.reg_chain_on') : __('d3_people.reg_chain') }}</p>
 
     @if ($mailOff)
         <div class="a-notice a-notice--pending d3p-mail" role="note">{{ __('d3_people.mail_off_note') }}</div>

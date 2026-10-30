@@ -10,7 +10,7 @@ use App\Models\AuditLog;
 use App\Models\Country;
 use App\Models\DelegateRegistration;
 use App\Models\Meeting;
-use App\Support\DeliveryCheck;
+use App\Support\MailStatus;
 use App\Support\SimpleXlsx;
 use App\Support\SpreadsheetCell;
 use Illuminate\Contracts\View\View;
@@ -79,7 +79,7 @@ class RegistrationAdminController extends Controller
             'statuses' => self::STATUSES,
             'allMeetings' => Meeting::query()->whereHas('delegateRegistrations')->orderByDesc('starts_on')->get(['id', 'slug', 'title', 'starts_on']),
             'total' => $registrations->flatten()->count(),
-            'mailOff' => DeliveryCheck::mailIsSilent(),
+            'mailOff' => MailStatus::isOff(),
             'countries' => Country::query()->whereIn('id', DelegateRegistration::query()->whereNotNull('country_id')->select('country_id'))->orderBy('name')->get(),
         ]);
     }
@@ -168,7 +168,7 @@ class RegistrationAdminController extends Controller
 
         AuditLog::record('registration_resent', $row, null, $request->user());
 
-        return back()->with('status', DeliveryCheck::mailIsSilent()
+        return back()->with('status', MailStatus::isOff()
             ? __('d3_people.resent_mail_off', ['name' => $row->delegate_name])
             : __('d3_people.resent', ['name' => $row->delegate_name, 'email' => $row->delegate_email]));
     }
