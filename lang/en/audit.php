@@ -41,6 +41,10 @@ return [
     'action_folder_changed' => 'Changed a folder',
     'action_folder_deleted' => 'Deleted a folder',
     // end Day 3: docs
+    // Day 3: prodprep
+    'action_production_prepared' => 'Prepared the platform for production',
+    'action_invitation_resent' => 'Sent a new invitation',
+    // end Day 3: prodprep
     'subject_page' => 'a page',
     'subject_pageblock' => 'a block',
     'subject_publication' => 'a publication',
