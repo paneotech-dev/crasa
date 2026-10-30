@@ -18,5 +18,5 @@ return [
     'fallback_title' => 'This page is not yet available in :language',
     'fallback_body' => 'The interface is in :language. The text below is shown in English, its original language.',
     'agency' => 'A Specialised Agency of SADC',
-    'mission' => 'Harmonising ICT and postal regulation across Southern Africa',
+    'mission' => 'Harmonising ICT, broadcasting and postal regulation across Southern Africa',
 ];

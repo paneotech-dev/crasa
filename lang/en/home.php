@@ -7,6 +7,6 @@
  */
 
 return [
-    'heading' => 'Harmonising ICT and postal regulation across Southern Africa.',
+    'heading' => 'Harmonising ICT, broadcasting and postal regulation across Southern Africa.',
     'body' => "CRASA brings together the national regulatory authorities of 14 SADC member states to align frameworks, share regulatory practice, and strengthen the region's communications and postal sectors.",
 ];
