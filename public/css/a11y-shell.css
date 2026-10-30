@@ -1,0 +1,141 @@
+/* CRASA: the display options in the signed-in shell.
+ *
+ * Loaded after a11y.css, on the back office and the member area only
+ * (layouts/shell). a11y.css draws the control and carries every option;
+ * this sheet adds what the shell's own structure needs:
+ *   - text size reaches the sidebar and the content, which are not the
+ *     public <main> and footer that a11y.css zooms;
+ *   - high contrast reaches the admin tokens (--a-*), which are set on
+ *     body and would otherwise keep their greens and the dark set;
+ *   - the floating control stays clear of the drawer and of the last
+ *     row of a page.
+ * The top bar is left at its size, as the public header is: it already
+ * wraps to fit and a zoomed bar crushes the search on a phone.
+ */
+
+/* Text size ---------------------------------------------------------------- */
+
+/* The content zooms as a whole, as under browser zoom: tables stay inside
+   their own scrolling wrapper (.a-tablewrap). */
+html:is(.a11y-text-smaller, .a11y-text-larger, .a11y-text-largest) body[data-surface="admin"] .a-main {
+  zoom: var(--a11y-zoom);
+}
+
+/* The sidebar keeps its full height (100vh, sticky or the drawer), so its
+   parts zoom rather than the box, and the box widens with them. */
+html:is(.a11y-text-smaller, .a11y-text-larger, .a11y-text-largest) body[data-surface="admin"] .a-side {
+  width: calc(264px * var(--a11y-zoom));
+  max-width: calc(100vw - 44px);
+}
+html:is(.a11y-text-smaller, .a11y-text-larger, .a11y-text-largest) body[data-surface="admin"] .a-side > * {
+  zoom: var(--a11y-zoom);
+}
+
+/* A zoomed phone has about 300px of content: the list filters' search
+   field (260px basis) shrinks to its card rather than running past it. */
+html:is(.a11y-text-larger, .a11y-text-largest) body[data-surface="admin"] :is(.a-search, .a-search input, .a-search__field) {
+  min-width: 0;
+}
+
+/* The floating control ----------------------------------------------------- */
+
+/* The last row of a page (a form's actions sit bottom right) scrolls clear
+   of the two squares. */
+html.has-js body[data-surface="admin"] .a-main {
+  padding-bottom: calc(88px + var(--s-2) + var(--s-5) + env(safe-area-inset-bottom, 0px));
+}
+
+/* While the drawer is open the page behind it is veiled and focus is held
+   in the drawer (shell.js), so the control leaves with the page. */
+html.has-drawer-open .c-float { visibility: hidden; }
+
+/* Underlined links ---------------------------------------------------------- */
+
+/* Links drawn as buttons or controls keep their own shape, as on the public
+   site. The :not() chain repeats a11y.css's so this rule outranks it. */
+html.a11y-underline body[data-surface="admin"] a:is(.a-btn, .u-btn, .a-pills__item, .a-top__icon, .a-top__avatar, .a-side__mark):not(.c-btn):not(.c-iconbutton):not(.c-skip):not(.c-extranet):not(.c-lang__option) {
+  text-decoration-line: none !important;
+}
+
+/* High contrast ------------------------------------------------------------ */
+
+/* The admin set on the same rule as a11y.css: black on white and one
+   strong green (#006B3B, 6.9:1 on white, white on it the same). It wins
+   over the dark set too (the account theme or the system's), because a
+   reader who asks for contrast asks for this. */
+html.a11y-contrast body[data-surface="admin"] {
+  --a-green: #006B3B;
+  --a-green-deep: #006B3B;
+  --a-blue: #006B3B;
+  --a-ground: #FFFFFF;
+  --a-surface: #FFFFFF;
+  --a-rule: #000000;
+  --a-ink: #000000;
+  --a-ink-quiet: #000000;
+  --a-ink-strong: #000000;
+  --a-link: #006B3B;
+  --a-current: #FFFFFF;
+  --a-head-ground: #FFFFFF;
+  --a-btn: #006B3B;
+  --a-btn-ink: #FFFFFF;
+  --a-btn-hover: #000000;
+  --a-btn-hover-ink: #FFFFFF;
+  --a-focus: #000000;
+  --a-side-bg: #FFFFFF;
+  --a-side-edge: #000000;
+  --a-side-ink: #000000;
+  --a-side-ink-strong: #000000;
+  --a-side-label: #000000;
+  --a-side-hover: #FFFFFF;
+  --a-side-hover-ink: #006B3B;
+  --a-side-active: #FFFFFF;
+  --a-side-current: #006B3B;
+  --a-side-current-ink: #FFFFFF;
+  --a-side-current-text: #006B3B;
+  --a-side-badge: #000000;
+  --a-side-badge-ink: #FFFFFF;
+  --a-badge: #006B3B;
+  --a-badge-ink: #FFFFFF;
+  --a-series-1: #006B3B;
+  --a-series-2: #000000;
+  --a-date-ink: #000000;
+  color-scheme: light;
+  background: #FFFFFF;
+  color: #000000;
+}
+
+/* The current sidebar item is the green and underlined, so it is not
+   carried by colour alone. */
+html.a11y-contrast body[data-surface="admin"] :is(.a-side__link.is-current > span:not(.a-side__badge), .a-side__area.is-current) {
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+/* Buttons drawn as links keep their shape; links in text are underlined
+   (a11y.css), the button fills say they are buttons. */
+html.a11y-contrast body[data-surface="admin"] .a-main a:is(.a-btn, .u-btn) { text-decoration-line: none; }
+html.a11y-contrast body[data-surface="admin"] .a-btn--danger { color: #B00020; border-color: #B00020; }
+html.a11y-contrast body[data-surface="admin"] .a-btn--danger:hover { background: #FFFFFF; }
+
+/* Status pills and workflow states lose their tints to white, so each
+   keeps a black edge to stay a shape. */
+html.a11y-contrast body[data-surface="admin"] :is(.a-pill, .aw-state) {
+  background: #FFFFFF;
+  color: #000000;
+  box-shadow: inset 0 0 0 1px #000000;
+}
+html.a11y-contrast body[data-surface="admin"] .aw-count { background: #006B3B; color: #FFFFFF; }
+html.a11y-contrast body[data-surface="admin"] :is(.aw-lang__code, .aw-grid .aw-cell label, .aw-comment, .aw-quote, .aw-comment blockquote) { color: #000000; }
+html.a11y-contrast body[data-surface="admin"] .aw-comment { background: #FFFFFF; border-left-color: #000000; }
+html.a11y-contrast body[data-surface="admin"] :is(.aw-body, .aw-dialog) { background: #FFFFFF; color: #000000; border-color: #000000; }
+
+/* The dark set names light reds and ambers for its warnings, which high
+   contrast turns white; on the white ground they take the strong ones. */
+html.a11y-contrast body[data-surface="admin"] :is(.a-required, .a-linkbutton--danger, .a-altstate[data-state="missing"], .a-asset__warning, .a-asset__usage[data-unused]) { color: #B00020; }
+html.a11y-contrast body[data-surface="admin"] :is(.a-field[data-state="missing"] .a-hint, .a-coverage__note, .a-altstate[data-state="partial"]) { color: #000000; }
+html.a11y-contrast body[data-surface="admin"] .a-altstate[data-state="complete"] { color: #006B3B; }
+
+/* Inputs and selects: a black edge on white. Focus is the black ring
+   a11y.css draws on every control in this mode. */
+html.a11y-contrast body[data-surface="admin"] :is(.a-input, .a-select) { border-color: #000000; color: #000000; background: #FFFFFF; }
