@@ -40,6 +40,7 @@ final class HomeData
 
             $panel = $config[$section];
             $keep = fn ($l) => self::anchorExists($l['path'])
+                && (! isset($l['page']) || self::pageIsPublished($l['page']))
                 && ! Navigation::pointsAtUnwrittenSection(Navigation::url($l['path']));
             $links = array_values(array_map(fn ($l) => [
                 'label' => __($l['label']),
@@ -65,6 +66,17 @@ final class HomeData
         }
 
         return $panels;
+    }
+
+    /**
+     * A link to a page record is kept only while the page is published, so
+     * an unpublished or deleted page leaves the panel rather than a 404.
+     */
+    private static function pageIsPublished(string $slug): bool
+    {
+        $slugs = PublicCache::remember('k-pages', fn () => \App\Models\Page::published()->pluck('slug')->all());
+
+        return in_array($slug, $slugs, true);
     }
 
     /**

@@ -12,6 +12,8 @@
  * item in the back office keeps its panel. An item whose address matches
  * nothing here is a plain link. Labels are keys in lang/{en,fr,pt}/chome.php.
  *
+ * A link with 'page' => slug is kept only while that page is published.
+ *
  * feature: publication (latest with a file), news (latest), event (next
  * public meeting) or comparator.
  */
@@ -23,6 +25,8 @@ return [
             ['label' => 'chome.m.about_vmh', 'desc' => 'chome.m.about_vmh_d', 'path' => 'about#vision-mission-history'],
             ['label' => 'chome.m.about_governance', 'desc' => 'chome.m.about_governance_d', 'path' => 'about#governance'],
             ['label' => 'chome.m.about_exco', 'desc' => 'chome.m.about_exco_d', 'path' => 'about#executive-committee'],
+            // A page record: listed only while it is published (HomeData).
+            ['label' => 'd3_partner.menu', 'desc' => 'd3_partner.menu_d', 'path' => 'partner-with-us', 'page' => 'partner-with-us'],
         ],
         'related' => [
             ['label' => 'chome.m.members', 'path' => 'members'],
