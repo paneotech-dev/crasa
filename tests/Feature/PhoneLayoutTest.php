@@ -64,5 +64,8 @@ class PhoneLayoutTest extends TestCase
         $admin = file_get_contents(public_path('css/admin.css'));
         $this->assertMatchesRegularExpression('/\.a-top__burger \{ min-width: 44px; min-height: 44px; \}/', $admin);
         $this->assertMatchesRegularExpression('/\.a-pills__item \{ min-height: 44px;/', $admin);
+        $this->assertStringContainsString('body .a-top__icon, body .a-top__avatar { min-width: 44px; min-height: 44px; }', $admin);
+        $this->assertStringContainsString('html body .k-langs a,', $k);
+        $this->assertMatchesRegularExpression('/\.e-grid \.e-chip \{[^}]*min-height: 44px/', file_get_contents(public_path('css/events.css')));
     }
 }
