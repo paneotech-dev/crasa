@@ -147,11 +147,14 @@ class SecurityHardeningTest extends TestCase
         config(['crasa.map.tile_url' => 'https://tile.openstreetmap.org/{z}/{x}/{y}.png']);
         $policy = $this->get('/en')->headers->get('Content-Security-Policy');
 
-        $this->assertMatchesRegularExpression("~img-src 'self' data: https://tile\\.openstreetmap\\.org(;|$)~", $policy);
+        $this->assertMatchesRegularExpression("~img-src 'self' data: blob: https://tile\\.openstreetmap\\.org(;|$)~", $policy);
         $this->assertSame(1, substr_count($policy, 'openstreetmap'));
+        // blob: is for the media upload preview and its early size check,
+        // which draw the chosen file before it is sent; it is images only.
+        $this->assertSame(1, substr_count($policy, 'blob:'));
 
         config(['crasa.map.tile_url' => 'javascript:alert(1)']);
-        $this->assertStringContainsString("img-src 'self' data:;", $this->get('/en')->headers->get('Content-Security-Policy'));
+        $this->assertStringContainsString("img-src 'self' data: blob:;", $this->get('/en')->headers->get('Content-Security-Policy'));
     }
 
     /**
