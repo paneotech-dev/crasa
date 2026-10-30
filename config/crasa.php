@@ -101,4 +101,16 @@ return [
         'tile_url' => env('CRASA_MAP_TILES', 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'),
         'tile_attribution' => '&copy; OpenStreetMap contributors',
     ],
+
+    /*
+     * Day 3: auditlock. Audit retention. Entries stay online in audit_log
+     * for audit_retention_months, then audit:archive copies them to a dated
+     * file in audit_archive_dir, which is kept for audit_archive_years.
+     * Nothing is deleted from the table within or after the retention
+     * period: the database triggers refuse it, and archived rows stay until
+     * a retention decision changes the triggers.
+     */
+    'audit_retention_months' => (int) env('CRASA_AUDIT_RETENTION_MONTHS', 12),
+    'audit_archive_years' => (int) env('CRASA_AUDIT_ARCHIVE_YEARS', 5),
+    'audit_archive_dir' => env('CRASA_AUDIT_ARCHIVE_DIR', '/backup/crasa-app/audit'),
 ];
