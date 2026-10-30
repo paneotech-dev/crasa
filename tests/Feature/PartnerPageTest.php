@@ -146,9 +146,9 @@ class PartnerPageTest extends TestCase
         $this->get('/en/partner-with-us?theme=spectrum-management')->assertOk()
             ->assertSee('You are interested in: Spectrum management');
         $this->get('/fr/partner-with-us?theme=spectrum-management')->assertOk()
-            ->assertSee('Thème qui vous intéresse : Spectrum management');
+            ->assertSee('Thème qui vous intéresse : '.__('d3_themes.themes.spectrum-management.title', [], 'fr'), false);
         $this->get('/pt/partner-with-us?theme=spectrum-management')->assertOk()
-            ->assertSee('Tema do seu interesse: Spectrum management');
+            ->assertSee('Tema do seu interesse: '.__('d3_themes.themes.spectrum-management.title', [], 'pt'), false);
 
         // The title of a published page with that slug, where there is one.
         $this->get('/en/partner-with-us?theme=about')->assertOk()->assertSee('You are interested in: About CRASA');
@@ -173,5 +173,14 @@ class PartnerPageTest extends TestCase
         $this->get('/en/contact?subject='.urlencode('<script>x</script>'))
             ->assertOk()
             ->assertDontSee('<script>x</script>', false);
+    }
+
+    public function test_a_thematic_area_is_named_by_its_own_title_in_each_language(): void
+    {
+        $this->get('/en/partner-with-us?theme=numbering-roaming')->assertOk()->assertSee('Numbering and roaming');
+        $fr = __('d3_themes.themes.broadband-universal-access.title', [], 'fr');
+        $pt = __('d3_themes.themes.cybersecurity.title', [], 'pt');
+        $this->get('/fr/partner-with-us?theme=broadband-universal-access')->assertOk()->assertSee($fr)->assertDontSee('Broadband universal access');
+        $this->get('/pt/partner-with-us?theme=cybersecurity')->assertOk()->assertSee($pt);
     }
 }
