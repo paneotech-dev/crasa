@@ -287,6 +287,14 @@
 
                             <table class="b-hero__table">
                                 <caption class="c-sr">{{ $comparison['indicator'] }}</caption>
+                                {{-- Column headers for assistive technology; the panel
+                                     title and note above say the same to sight. --}}
+                                <thead class="b-hero__table-head">
+                                    <tr>
+                                        <th scope="col"><span class="c-sr">{{ __('blocks.member_state') }}</span></th>
+                                        <th scope="col"><span class="c-sr">{{ __('blocks.value') }}</span></th>
+                                    </tr>
+                                </thead>
                                 <tbody>
                                     @foreach ($comparison['rows'] as $row)
                                         <tr>
