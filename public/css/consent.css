@@ -1,0 +1,54 @@
+/* CRASA: cookie choice and the placeholders for third-party content
+ * (item 1h, 30 October 2026). Uses the UI system's --u-* values. */
+
+/* The banner: at the foot of the screen, never more than half of it on a
+ * phone, scrolling inside itself if the text is longer. */
+.cc { position: fixed; left: 0; right: 0; bottom: 0; z-index: 1000; max-height: 50vh; overflow-y: auto; background: var(--u-white); border-top: 2px solid var(--u-green-deep); box-shadow: var(--e-3); }
+.cc[hidden] { display: none; }
+.cc__inner { max-width: var(--u-container); margin: 0 auto; padding: var(--u-3) var(--u-gutter); display: grid; gap: var(--u-2) var(--u-4); grid-template-columns: 1fr; align-items: center; }
+@media (min-width: 992px) { .cc__inner { grid-template-columns: minmax(0, 1fr) auto; } .cc__title { grid-column: 1 / -1; } }
+.cc__title { margin: 0; font: 600 var(--u-t-18)/1.3 var(--u-display); color: var(--u-ink); }
+.cc__text { margin: 0; font: 400 var(--u-t-16)/1.5 var(--u-sans); color: var(--u-ink); }
+.cc__text a { color: var(--u-green-deep); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.cc__actions { display: flex; flex-wrap: wrap; gap: var(--u-2); }
+@media (max-width: 575.98px) { .cc__actions .u-btn { flex: 1 1 100%; } }
+
+/* The settings dialog. */
+.cc-dialog { width: min(560px, calc(100vw - 32px)); max-height: calc(100vh - 32px); padding: 0; border: 1px solid var(--u-line); border-radius: var(--r-lg, 14px); background: var(--u-white); color: var(--u-ink); box-shadow: var(--e-3); }
+.cc-dialog::backdrop { background: rgba(15, 27, 45, .5); }
+.cc-dialog__form { display: grid; gap: var(--u-3); padding: var(--u-4); }
+.cc-cat { display: grid; grid-template-columns: auto 1fr; gap: var(--u-1) var(--u-2); padding-top: var(--u-3); border-top: 1px solid var(--u-line); }
+.cc-cat > p.cc-cat__name, .cc-cat > .cc-cat__text { grid-column: 1 / -1; }
+.cc-cat__box + .cc-cat__name ~ .cc-cat__text { grid-column: 2; }
+.cc-cat__box { width: 24px; height: 24px; margin: 0; accent-color: var(--u-green-deep); }
+.cc-cat__name { margin: 0; font: 600 var(--u-t-16)/1.5 var(--u-sans); }
+.cc-cat__on { font-weight: 400; color: var(--u-muted); }
+.cc-cat__text { margin: 0; font: 400 var(--u-t-14)/1.5 var(--u-sans); color: var(--u-muted); }
+
+/* Without scripting the "Show" buttons cannot work; the links stay. */
+html:not(.has-js) [data-consent-show] { display: none; }
+
+/* A social post before consent. */
+.s-post__consent { display: grid; gap: var(--u-2); }
+.s-post__quote { margin: 0; padding: 12px 16px; border-left: 3px solid #7A90C8; background: var(--u-pale); border-radius: 6px; font: 400 var(--u-t-16)/1.5 var(--u-sans); color: var(--u-ink); overflow-wrap: anywhere; }
+.s-post__quote a { color: #2F4F8F; }
+.s-post__gate { display: grid; gap: var(--u-2); padding: var(--u-3); border: 1px solid var(--u-line); border-radius: 6px; }
+.s-post__gate-text { margin: 0; font: 400 var(--u-t-14)/1.5 var(--u-sans); color: var(--u-muted); }
+.s-post__gate-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--u-2) var(--u-3); margin: 0; }
+.s-post__gate-actions a { color: var(--u-green-deep); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+/* The contact map before consent: a panel over the saved image. */
+.cp-map__gate { position: absolute; left: var(--u-3); bottom: var(--u-3); z-index: 2; max-width: min(380px, calc(100% - 32px)); display: none; gap: var(--u-2); padding: var(--u-3); background: var(--u-white); border: 1px solid var(--u-line); border-radius: 8px; box-shadow: var(--e-2); }
+.has-js .cp-map__gate { display: grid; }
+.cp-map__gate-text, .cp-map__gate-address { margin: 0; font: 400 var(--u-t-14)/1.5 var(--u-sans); font-style: normal; color: var(--u-ink); }
+.cp-map__gate-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--u-2) var(--u-3); margin: 0; }
+.cp-map__gate-actions a { color: var(--u-green-deep); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 575.98px) { .cp-map__gate { left: var(--u-2); right: var(--u-2); bottom: var(--u-2); max-width: none; } }
+
+/* The event map before consent. */
+.e-map { position: relative; }
+.e-map__gate { display: none; position: absolute; left: 8px; right: 8px; top: 8px; gap: var(--u-2); padding: var(--u-2) var(--u-3); background: var(--u-white); border: 1px solid var(--u-line); border-radius: 8px; }
+.has-js .e-map__gate { display: grid; justify-items: start; }
+.e-map__gate-text { margin: 0; font: 400 var(--u-t-14)/1.4 var(--u-sans); color: var(--u-ink); }
+.e-map__tiles img:not([src]) { visibility: hidden; }
+@media print { .cc, .s-post__gate, .cp-map__gate, .e-map__gate { display: none !important; } }

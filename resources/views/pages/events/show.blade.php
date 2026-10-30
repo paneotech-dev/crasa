@@ -165,14 +165,21 @@
                 </div>
 
                 @if ($place)
-                    <figure class="e-map">
+                    {{-- Item 1h: the tiles come from OpenStreetMap, so they carry
+                         data-src until the reader allows maps or presses the
+                         button (public/js/consent.js). --}}
+                    <figure class="e-map" data-consent-embed="maps" data-embed="tiles">
                         <div class="e-map__frame" role="img" aria-label="{{ __('e.map_label', ['place' => $meeting->location]) }}">
                             <div class="e-map__tiles">
                                 @foreach (\App\Support\EventPlace::tiles($place['lat'], $place['lng']) as $tile)
-                                    <img src="{{ $tile['url'] }}" alt="" width="256" height="256" loading="lazy" decoding="async" style="left: {{ $tile['left'] }}px; top: {{ $tile['top'] }}px">
+                                    <img data-src="{{ $tile['url'] }}" alt="" width="256" height="256" loading="lazy" decoding="async" style="left: {{ $tile['left'] }}px; top: {{ $tile['top'] }}px">
                                 @endforeach
                             </div>
                             <svg class="e-map__pin" viewBox="0 0 24 24" width="36" height="36" aria-hidden="true"><path d="M12 22s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 15.8 12 22 12 22z" fill="#0B5F3E" stroke="#FFFFFF" stroke-width="1.5"/><circle cx="12" cy="10.5" r="2.6" fill="#FFFFFF"/></svg>
+                        </div>
+                        <div class="e-map__gate" data-consent-notice>
+                            <p class="e-map__gate-text">{{ __('d3_privacy.map_hosted') }}</p>
+                            <button type="button" class="u-btn u-btn--secondary" data-consent-show>{{ __('d3_privacy.map_show') }}</button>
                         </div>
                         <figcaption class="e-map__caption">
                             <span>{{ html_entity_decode(config('crasa.map.tile_attribution'), ENT_QUOTES | ENT_HTML5, 'UTF-8') }}</span>

@@ -180,7 +180,12 @@ class PublicPolishTest extends TestCase
 
         $this->assertStringContainsString('CRASA on social media', $html);
         $this->assertStringContainsString('Posted on LinkedIn, '.now()->startOfYear()->addDays(300)->isoFormat('D MMMM'), $html);
-        $this->assertStringNotContainsString('Open the post on LinkedIn', $html);
+        // Item 1h: before consent the embed is a placeholder whose one link
+        // to the post sits beside "Show the post"; still no second link
+        // under the card, and the frame (once shown) carries its own.
+        $this->assertStringNotContainsString('<p class="s-post__open">', $html);
+        $this->assertSame(1, substr_count($html, '<a href="https://www.linkedin.com/feed/update/urn:li:activity:1"'));
+        $this->assertMatchesRegularExpression('~<p class="s-post__gate-actions">.*?Open the post on LinkedIn</a>~s', $html);
     }
 
     public function test_cards_lose_their_shadow_and_lift_on_the_public_site(): void
