@@ -55,6 +55,7 @@
             @if ($summary)
                 <p class="u-lead">{{ $summary->value }}</p>
             @endif
+            @include('partials.k.share')
             @if ($title?->isFallback())
                 <x-fallback-notice />
             @endif

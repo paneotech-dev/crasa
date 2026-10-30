@@ -13,11 +13,6 @@
 @section('title', __('d3_themes.index_title'))
 @section('description', __('d3_themes.index_lead'))
 
-@section('breadcrumb')
-    <li><a href="{{ route('about', ['locale' => $locale]) }}">{{ __('nav.about') }}</a></li>
-    <li aria-current="page">{{ __('d3_themes.index_title') }}</li>
-@endsection
-
 @section('content')
 <section class="u-hero cp-hero">
     <div class="u-container">

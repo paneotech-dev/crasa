@@ -1,5 +1,5 @@
 /* CRASA public header: the phone and tablet drawer, and the share button
- * in the breadcrumb row (Concept 3 port, 29 October 2026).
+ * on content pages (Concept 3 port, 29 October 2026).
  *
  * Drawer: the Menu button opens it; focus moves to its first control and
  * stays inside while it is open; Escape, the close button and the scrim
@@ -96,9 +96,10 @@
     if (wide.addEventListener) wide.addEventListener('change', onWide);
   }
 
-  var share = document.querySelector('[data-k-share]');
-  if (share) {
-    var live = document.querySelector('[data-k-share-live]');
+  // One per content page, beside its own "Link copied" live region.
+  Array.prototype.forEach.call(document.querySelectorAll('[data-k-share]'), function (share) {
+    var row = share.parentNode;
+    var live = row ? row.querySelector('[data-k-share-live]') : null;
     share.addEventListener('click', function () {
       var data = { title: document.title, url: location.href };
       if (navigator.share) {
@@ -119,5 +120,5 @@
         done();
       }
     });
-  }
+  });
 })();

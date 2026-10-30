@@ -43,6 +43,7 @@
                 @if ($quote)
                     <p class="u-lead" @if ($summary->isFallback()) lang="{{ $summary->locale }}" @endif>{{ $quote }}</p>
                 @endif
+                @include('partials.k.share')
                 <div class="u-actions cp-proj-hero__pills">
                     <span class="u-pill {{ $current ? 'u-pill--ok' : 'u-pill--muted' }}">
                         @if ($current)
