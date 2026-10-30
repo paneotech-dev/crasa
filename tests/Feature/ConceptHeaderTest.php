@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 /**
- * The Concept 3 header (S2, S3), breadcrumb row, sitemap band and footer
+ * The Concept 3 header (S2, S3), sitemap band and footer
  * (29 October 2026). Replaces the assertions on the earlier dropdown
  * header (c-nav, c-drawer) in HeaderDropdownTest, HeaderBreakpointTest,
  * HeaderOneRowTest and HeaderAndTypeTest.
@@ -160,12 +160,14 @@ class ConceptHeaderTest extends TestCase
         $this->assertStringContainsString('Relatórios anuais', $this->page('/pt/about'));
     }
 
-    public function test_breadcrumb_sitemap_and_footer_are_on_every_public_page(): void
+    public function test_sitemap_and_footer_are_on_every_public_page_and_the_breadcrumb_row_is_gone(): void
     {
+        // The breadcrumb and share row was removed on 30 October 2026
+        // (client request); Share is on content pages only (ShareButtonTest).
         foreach (['/en', '/en/about', '/en/contact'] as $path) {
             $html = $this->page($path);
-            $this->assertStringContainsString('class="k-crumb"', $html, $path);
-            $this->assertStringContainsString('data-k-share', $html, $path);
+            $this->assertStringNotContainsString('k-crumb', $html, $path);
+            $this->assertStringNotContainsString('data-k-share', $html, $path);
             $this->assertStringContainsString('class="k-smap"', $html, $path);
             $this->assertStringContainsString('class="k-foot"', $html, $path);
         }

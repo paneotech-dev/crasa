@@ -17,12 +17,6 @@
 @section('title', $theme['title'])
 @section('description', $theme['summary'])
 
-@section('breadcrumb')
-    <li><a href="{{ route('about', ['locale' => $locale]) }}">{{ __('nav.about') }}</a></li>
-    <li><a href="{{ route('themes', ['locale' => $locale]) }}">{{ __('d3_themes.index_title') }}</a></li>
-    <li aria-current="page">{{ $theme['title'] }}</li>
-@endsection
-
 @section('content')
 <section class="u-hero cp-hero th-hero">
     <div class="u-container">
@@ -30,6 +24,7 @@
         <p class="u-eyebrow">{{ __('d3_themes.show_eyebrow') }}</p>
         <h1 class="u-h1">{{ $theme['title'] }}</h1>
         <p class="u-lead">{{ $theme['summary'] }}</p>
+        @include('partials.k.share')
         <div class="u-actions">
             <a class="u-btn u-btn--primary" href="{{ $partnerUrl }}" data-partner-theme="{{ $theme['slug'] }}">{{ __('d3_themes.partner_button') }}</a>
         </div>

@@ -71,12 +71,6 @@
     @section('description', $description->value)
 @endif
 
-{{-- Listed under About in the menu, so the trail says so. --}}
-@section('breadcrumb')
-    <li><a href="{{ route('about', ['locale' => $locale]) }}">{{ __('nav.about') }}</a></li>
-    <li aria-current="page">{{ $title?->value ?? __('d3_partner.menu') }}</li>
-@endsection
-
 @section('content')
     @include('partials.cpages.hero', [
         'eyebrow' => __('nav.about'),

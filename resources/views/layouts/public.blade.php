@@ -55,7 +55,7 @@
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/blocks.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/theme-light.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/ui.css') }}">
-    {{-- Concept 3 port: header, breadcrumb row, home, sitemap, footer (k-). --}}
+    {{-- Concept 3 port: header, share button, home, sitemap, footer (k-). --}}
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/k.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/a11y.css') }}">
     {{-- Day 3: privacy. The cookie banner and third-party placeholders. --}}
@@ -76,13 +76,6 @@
 
     {{-- Back to top and the display options, floating in the bottom corner. --}}
     @include('partials.float-controls')
-
-    {{-- Breadcrumb and share row on every public page. A page may give its
-         own trail with @section('breadcrumb'), or none with
-         @section('no-breadcrumb', true). --}}
-    @unless (View::hasSection('no-breadcrumb'))
-        @include('partials.k.breadcrumb')
-    @endunless
 
     <main id="content" tabindex="-1">
         @include('partials.translation-notice')

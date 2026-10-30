@@ -1,6 +1,6 @@
 /* CRASA, Concept 3 port (29 October 2026).
  *
- * Header, breadcrumb and share row, home page, sitemap band and footer,
+ * Header, share button, home page, sitemap band and footer,
  * taken section by section from concepts/CRASA_Concept3_ITU_inspired.html
  * with the colour substitutions of the Day 2 brief and the UI system's
  * container (1200), card radius (12) and 44px controls. Classes are
@@ -66,7 +66,7 @@
 .k-sec { padding-block: 64px; }
 @media (max-width: 767.98px) { .k-sec { padding-block: 40px; } }
 
-.k-header :focus-visible, .k-drawer :focus-visible, .k-crumb :focus-visible, .k-smap :focus-visible, .k-foot :focus-visible, .k-home :focus-visible {
+.k-header :focus-visible, .k-drawer :focus-visible, .k-share:focus-visible, .k-smap :focus-visible, .k-foot :focus-visible, .k-home :focus-visible {
   outline: 2px solid var(--k-blue-ink); outline-offset: 2px; border-radius: 4px;
 }
 .k-ubar, .k-smap, .k-foot, .k-d-head { --focus-ring: #FFFFFF; --u-focus: #FFFFFF; }
@@ -220,19 +220,14 @@ html:not(.has-js) .k-dacc .k-dp a { visibility: visible; }
 .k-d-social { display: flex; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .k-d-social a { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--k-line); border-radius: 6px; }
 
-/* ================= BREADCRUMB ================= */
-.k-crumb { background: var(--k-pale); border-bottom: 1px solid var(--k-line-soft); font-size: 14px; color: var(--k-muted); }
-.k-crumb .k-wrap { min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.k-crumb nav { min-width: 0; }
-.k-crumb ol { list-style: none; margin: 0; padding: 0; display: flex; gap: 8px; align-items: center; min-width: 0; }
-.k-crumb li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: none; }
-.k-crumb li:last-child { min-width: 0; }
-.k-crumb ol li + li::before { content: "›"; margin-right: 8px; color: var(--k-muted); }
-.k-crumb a { color: var(--k-blue-ink); text-decoration: none; }
-.k-crumb a:hover { text-decoration: underline; text-underline-offset: 3px; }
-.k-share { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; background: none; border: 0; color: var(--k-muted); font: inherit; cursor: pointer; flex-shrink: 0; }
+/* ================= SHARE =================
+   One button under the title of a content page (news, publication, event,
+   project, theme). The system share sheet, or the address copied. */
+.k-share-row { margin-top: var(--s-4); }
+.k-share { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0; background: none; border: 0; color: var(--k-muted); font: inherit; font-size: 15px; cursor: pointer; flex-shrink: 0; }
 .k-share:hover, .k-share.is-done { color: var(--k-deep); }
-html:not(.has-js) .k-share { display: none; }
+.k-share:hover span { text-decoration: underline; text-underline-offset: 3px; }
+html:not(.has-js) .k-share-row { display: none; }
 
 /* ================= SITEMAP + FOOTER ================= */
 .k-smap { background: var(--k-deep); border-top: 4px solid var(--k-blue); }
@@ -497,7 +492,7 @@ html:not(.k-motion) .k-home .u-reveal { opacity: 1; transform: none; }
 .k-home [data-stagger] > .u-reveal { will-change: auto; }
 
 @media (prefers-reduced-motion: reduce) {
-  .k-header *, .k-drawer, .k-home *, .k-crumb * { transition-duration: .01ms !important; animation: none !important; }
+  .k-header *, .k-drawer, .k-home * { transition-duration: .01ms !important; animation: none !important; }
   .k-cap > *, .k-hero__fig figcaption { transform: none !important; }
 }
 
@@ -582,7 +577,6 @@ p.s-post__head { margin: 0; font-weight: 600; }
 /* Day 3 (phones): every link and button in the header, the navigation and
    the main column is at least 44 px tall on a phone or a small tablet. */
 @media (max-width: 768px) {
-  .k-crumb li > a,
   .k-all,
   .k-dcard__t a,
   .k-act h3 a, .k-lead__tx h3 a, main h3 > a, main h2 > a, main h4 > a,

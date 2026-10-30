@@ -58,12 +58,7 @@
 
                 <div class="e-ev-actions">
                     @include('pages.events._add-to-calendar', ['meeting' => $meeting, 'anchor' => true])
-                    <div class="e-share" role="group" aria-labelledby="share-label">
-                        <span class="e-addcal__label" id="share-label">{{ __('e.share') }}</span>
-                        <button type="button" class="e-addcal__action" data-copy-link="{{ $url }}" data-copied="{{ __('e.copied') }}" aria-controls="share-status">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>{{ __('e.copy_link') }}</button>
-                        <span class="e-share__status" id="share-status" role="status" aria-live="polite"></span>
-                    </div>
+                    @include('partials.k.share')
                 </div>
             </div>
 

@@ -58,7 +58,8 @@ class PhoneLayoutTest extends TestCase
     public function test_phone_tap_targets_are_44_pixels_in_the_public_and_member_stylesheets(): void
     {
         $k = file_get_contents(public_path('css/k.css'));
-        $this->assertMatchesRegularExpression('/@media \(max-width: 768px\) \{[^@]*\.k-crumb li > a[^@]*min-height: 44px/s', $k);
+        $this->assertMatchesRegularExpression('/@media \(max-width: 768px\) \{[^@]*\.k-all,[^@]*min-height: 44px/s', $k);
+        $this->assertMatchesRegularExpression('/\.k-share \{[^}]*min-height: 44px/', $k);
         $this->assertMatchesRegularExpression('/@media \(max-width: 768px\) \{[^@]*\.k-dot \{ min-width: 44px; min-height: 44px; \}/s', $k);
 
         $admin = file_get_contents(public_path('css/admin.css'));

@@ -120,25 +120,6 @@
       setParam('year', year);
     });
   });
-
-  // Copy link on the event page.
-  document.querySelectorAll('[data-copy-link]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var url = btn.getAttribute('data-copy-link');
-      var done = function () {
-        var out = document.getElementById(btn.getAttribute('aria-controls'));
-        if (out) { out.textContent = btn.getAttribute('data-copied'); }
-      };
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(done, done);
-      } else {
-        var t = document.createElement('textarea');
-        t.value = url; document.body.appendChild(t); t.select();
-        try { document.execCommand('copy'); } catch (e) {}
-        document.body.removeChild(t); done();
-      }
-    });
-  });
 })();
 
 /* Chip preview on the month calendar (evening pass): a native <dialog>
