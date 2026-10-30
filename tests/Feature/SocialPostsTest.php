@@ -172,4 +172,37 @@ class SocialPostsTest extends TestCase
         $this->assertSame($sorted, $positions);
         $this->assertStringContainsString('s-channel', $html);
     }
+
+    public function test_an_x_embed_keeps_only_the_tweet_text_and_links_and_drops_images_and_media(): void
+    {
+        $clean = SocialEmbed::cleanXHtml('<blockquote class="twitter-tweet" data-dnt="true" style="x"><p lang="en" dir="ltr" onclick="alert(1)">Spectrum workshop opens.<br><img src="https://evil.example/x.png"></p>'
+            .'<link rel="stylesheet" href="https://evil.example/a.css"><base href="https://evil.example/"><meta http-equiv="refresh" content="0">'
+            .'<video src="https://evil.example/v.mp4"><source src="https://evil.example/s.mp4"></video><picture><source srcset="https://evil.example/p.png"></picture>'
+            .'<svg><image href="https://evil.example/i.png"/></svg><a href="javascript:alert(1)">bad</a> '
+            .'&mdash; CRASA <a href="https://x.com/CRASA_ORG/status/2113581769001746817" target="_blank">October 23, 2026</a></blockquote>');
+
+        $this->assertNotNull($clean);
+        $this->assertStringNotContainsString('evil.example', $clean);
+        foreach (['<img', '<link', '<base', '<meta', '<video', '<source', '<picture', '<svg', 'onclick', 'style=', 'javascript:', 'target='] as $gone) {
+            $this->assertStringNotContainsString($gone, $clean, $gone);
+        }
+        $this->assertStringStartsWith('<blockquote class="twitter-tweet" data-dnt="true">', $clean);
+        $this->assertStringContainsString('<p lang="en" dir="ltr">Spectrum workshop opens.<br>', $clean);
+        $this->assertStringContainsString('<a href="https://x.com/CRASA_ORG/status/2113581769001746817">October 23, 2026</a>', $clean);
+
+        // Nothing but markup left: nothing to show.
+        $this->assertNull(SocialEmbed::cleanXHtml('<blockquote class="twitter-tweet"><img src="https://evil.example/x.png"></blockquote>'));
+        $this->assertNull(SocialEmbed::cleanXHtml('<div><img src="https://evil.example/x.png"></div>'));
+
+        // Drawn on the page from a stored value: the text and link, no image.
+        SocialPost::query()->update(['status' => 'draft']);
+        SocialPost::create([
+            'network' => 'x', 'url' => self::X_URL, 'status' => 'published', 'posted_at' => now(),
+            'embed_html' => '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Spectrum workshop opens.<img src="https://evil.example/x.png"></p><a href="'.self::X_URL.'">October 23, 2026</a></blockquote>',
+        ]);
+        $html = $this->get('/en/newsroom')->assertOk()->getContent();
+        $this->assertStringNotContainsString('evil.example', $html);
+        $this->assertStringContainsString('Spectrum workshop opens.', $html);
+        $this->assertStringContainsString('<a href="'.self::X_URL.'">October 23, 2026</a>', $html);
+    }
 }
