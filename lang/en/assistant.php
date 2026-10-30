@@ -38,7 +38,7 @@ return [
     'language_title' => 'Answer in your language',
     'language_example' => 'Ask in French or Portuguese about an English-only guideline; the answer comes back in your language with the source cited.',
 
-    'return_title' => 'Help with your data return',
+    'return_title' => 'Help with your annual return',
     'return_example' => 'What counts as an active mobile-broadband subscription?',
 
     'how' => 'How it would work',

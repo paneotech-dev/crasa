@@ -27,6 +27,7 @@ return [
     'action_reactivated' => 'Reativação de uma conta',
     'action_registration_resent' => 'Reenvio a um delegado da cópia da sua inscrição',
     'action_registrations_exported' => 'Exportação das inscrições dos delegados',
+    'action_audit_exported' => 'Exportação do registo de auditoria',
     // Day 3: docs
     'action_document_added' => 'Adição de um ficheiro a uma pasta',
     'action_document_replaced' => 'Adição de uma nova versão de um ficheiro',

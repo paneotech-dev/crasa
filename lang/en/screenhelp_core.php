@@ -139,9 +139,9 @@ return [
         'title' => 'Audit log',
         'purpose' => 'The record of who changed what and when: every publication, approval, account change and data return transition.',
         'actions' => [
-            'Filter the log by person, action or date.',
-            'Open an entry to see the change in detail.',
-            'Export the filtered log where your role allows.',
+            'Filter the log by user, object, action or date.',
+            'Read each change as field, value before and value after.',
+            'Export the filtered log to CSV.',
         ],
     ],
     'admin.announcements' => [
@@ -514,7 +514,7 @@ return [
         ],
     ],
     'admin.submissions' => [
-        'title' => 'Data returns',
+        'title' => 'Annual returns',
         'purpose' => 'The member states\' data returns and their state: draft, submitted, validated or returned.',
         'actions' => [
             'Filter the returns by member state, period or state.',
@@ -733,17 +733,17 @@ return [
         ],
     ],
     'submissions' => [
-        'title' => 'Data returns',
-        'purpose' => 'Your member state\'s data returns, period by period, and their state.',
+        'title' => 'Annual return',
+        'purpose' => 'Your member state\'s annual returns, period by period, and their state.',
         'actions' => [
-            'Start a return for a period.',
+            'Submit a new return for a period.',
             'Open a draft or returned return to complete it.',
             'Export a return as CSV or JSON.',
         ],
     ],
     'submissions.edit' => [
-        'title' => 'Data return',
-        'purpose' => 'One return, indicator by indicator, with any comments from the Secretariat.',
+        'title' => 'Annual return, period, member state',
+        'purpose' => 'One annual return, indicator by indicator, with any comments from the Secretariat.',
         'actions' => [
             'Enter or correct each figure with its source.',
             'Read the Secretariat\'s comments on returned fields.',

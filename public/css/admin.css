@@ -2924,3 +2924,15 @@ body[data-surface="admin"][data-theme="dark"] { --a-series-1: var(--d-green); --
 .a-legend__swatch[data-series="2"] { background: var(--a-series-2); }
 .r-bar__fill { background: var(--a-series-1); }
 body[data-surface="admin"] .e-dash__day { color: var(--a-date-ink); }
+
+/* Day 3: retaud. The audit log's change table, one per entry. */
+.a-auditdiff { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 320px; }
+.a-auditdiff th, .a-auditdiff td { padding: 4px 8px 4px 0; text-align: left; vertical-align: top; border-bottom: 1px solid var(--a-rule); overflow-wrap: anywhere; }
+.a-auditdiff thead th { font-weight: 600; color: var(--a-ink-quiet); font-size: 12px; }
+.a-auditdiff tbody th[scope="row"] { font-weight: 500; white-space: nowrap; }
+.a-auditdiff tbody tr:last-child th, .a-auditdiff tbody tr:last-child td { border-bottom: 0; }
+.a-auditdiff__quiet { color: var(--a-ink-quiet); }
+.a-auditdiff__long > summary { cursor: pointer; }
+.a-auditdiff__more { color: var(--a-link, var(--c-green-dark)); text-decoration: underline; white-space: nowrap; }
+.a-auditdiff__full { margin-top: 4px; white-space: pre-wrap; }
+/* end Day 3: retaud */

@@ -512,10 +512,10 @@ class ResourceController extends Controller
      * translatable on 10 September 2026: rewriting them changed no column at
      * all, and "who changed this committee's mandate" had no answer.
      *
-     * The row names the fields and languages that moved, not their contents.
-     * The contents are in the translations table, which is where a diff
-     * belongs; an audit log carrying every version of every paragraph is an
-     * audit log nobody can read.
+     * The row carries each field and language that moved ("title.fr") with
+     * its value before and after, as the trait does for columns: the audit
+     * screen shows them as a table and shortens long values (Day 3 morning,
+     * 1g; until then the row named the fields only).
      */
     private function writeTranslations(Resource $definition, Model $record, array $data, int $by): void
     {
@@ -545,7 +545,7 @@ class ResourceController extends Controller
                     $record->setLocalisedName($field, $locale, $after, $by);
 
                     if (trim((string) $before) !== trim((string) $record->storedLocalisedName($field, $locale))) {
-                        $changed[] = $field.'.'.$locale;
+                        $changed[$field.'.'.$locale] = ['from' => $before, 'to' => $record->storedLocalisedName($field, $locale)];
                     }
                 }
             }
@@ -559,20 +559,21 @@ class ResourceController extends Controller
                 $record->setTranslation($field, $locale, $after, $by);
 
                 if (trim((string) $before) !== trim((string) $after)) {
-                    $changed[] = $field.'.'.$locale;
+                    $changed[$field.'.'.$locale] = ['from' => $before, 'to' => $after];
                 }
             }
 
             $record->unsetRelation('translations');
         }
 
-        if ($changed === [] || $record->wasChanged()) {
+        // Day 3 morning (1g): written whenever a translation moved, also
+        // when a column moved in the same save; the trait's row has only
+        // the columns.
+        if ($changed === []) {
             return;
         }
 
-        AuditLog::record($record->wasRecentlyCreated ? AuditLog::CREATED : AuditLog::UPDATED, $record, [
-            'translations' => $changed,
-        ], $by);
+        AuditLog::record($record->wasRecentlyCreated ? AuditLog::CREATED : AuditLog::UPDATED, $record, $changed, $by);
     }
 
     /**

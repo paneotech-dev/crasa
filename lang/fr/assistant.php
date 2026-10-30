@@ -25,7 +25,7 @@ return [
     'language_title' => 'Répondre dans votre langue',
     'language_example' => "Posez la question en français ou en portugais sur une ligne directrice qui n'existe qu'en anglais ; la réponse revient dans votre langue, source citée.",
 
-    'return_title' => 'Aider à remplir votre transmission',
+    'return_title' => 'Aider à remplir votre déclaration annuelle',
     'return_example' => "Qu'entend-on par abonnement actif au haut débit mobile ?",
 
     'how' => 'Comment cela fonctionnerait',

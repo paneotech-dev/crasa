@@ -139,9 +139,9 @@ return [
         'title' => 'Registo de auditoria',
         'purpose' => 'O registo de quem alterou o quê e quando: cada publicação, aprovação, alteração de conta e mudança de estado de um relatório.',
         'actions' => [
-            'Filtre o registo por pessoa, ação ou data.',
-            'Abra uma entrada para ver a alteração em pormenor.',
-            'Exporte o registo filtrado, se a sua função o permitir.',
+            'Filtre o registo por utilizador, objeto, ação ou data.',
+            'Leia cada alteração: campo, valor antes e valor depois.',
+            'Exporte o registo filtrado para CSV.',
         ],
     ],
     'admin.announcements' => [
@@ -514,7 +514,7 @@ return [
         ],
     ],
     'admin.submissions' => [
-        'title' => 'Relatórios',
+        'title' => 'Declarações anuais',
         'purpose' => 'Os relatórios dos Estados-membros e o seu estado: rascunho, apresentado, validado ou devolvido.',
         'actions' => [
             'Filtre os relatórios por Estado-membro, período ou estado.',
@@ -733,21 +733,21 @@ return [
         ],
     ],
     'submissions' => [
-        'title' => 'Relatórios',
-        'purpose' => 'Os relatórios do seu Estado-membro, período a período, e o seu estado.',
+        'title' => 'Declaração anual',
+        'purpose' => 'As declarações anuais do seu Estado-membro, período a período, e o seu estado.',
         'actions' => [
-            'Inicie um relatório para um período.',
-            'Abra um relatório em rascunho ou devolvido para o completar.',
-            'Exporte um relatório em CSV ou JSON.',
+            'Submeta uma nova declaração para um período.',
+            'Abra uma declaração em rascunho ou devolvida para a completar.',
+            'Exporte uma declaração em CSV ou JSON.',
         ],
     ],
     'submissions.edit' => [
-        'title' => 'Relatório',
-        'purpose' => 'Um relatório, indicador a indicador, com os eventuais comentários do Secretariado.',
+        'title' => 'Declaração anual, período, Estado-membro',
+        'purpose' => 'Uma declaração anual, indicador a indicador, com os eventuais comentários do Secretariado.',
         'actions' => [
             'Introduza ou corrija cada valor com a respetiva fonte.',
             'Leia os comentários do Secretariado sobre os campos devolvidos.',
-            'Submeta o relatório para validação.',
+            'Submeta a declaração para validação.',
         ],
     ],
     'submissions.import' => [
