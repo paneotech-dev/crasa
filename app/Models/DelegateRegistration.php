@@ -25,6 +25,7 @@ class DelegateRegistration extends Model
     protected $fillable = [
         'meeting_id', 'user_id', 'country_id', 'authority_id',
         'delegate_name', 'delegate_email', 'delegate_role',
+        'preferred_language', 'interpretation_into',
         'arrival_point', 'arrival_on', 'arrival_at', 'arrival_reference',
         'departure_on', 'departure_at', 'departure_reference',
         'notes', 'status', 'is_sample',
@@ -38,6 +39,9 @@ class DelegateRegistration extends Model
             'is_sample' => 'boolean',
         ];
     }
+
+    /** The languages a delegate can ask for: CRASA's three working languages. */
+    public const LANGUAGES = ['en', 'fr', 'pt'];
 
     public function meeting(): BelongsTo
     {

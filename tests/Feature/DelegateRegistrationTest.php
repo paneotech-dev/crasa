@@ -362,7 +362,11 @@ class DelegateRegistrationTest extends TestCase
     {
         $this->register()->assertRedirect();
 
-        Mail::assertQueuedCount(1);
+        // The delegate's copy once, and since 30 October 2026 (client
+        // item 1e) the CRASA registrations mailbox's copy once.
+        Mail::assertQueuedCount(2);
+        Mail::assertQueued(DelegateRegistrationFiled::class, 1);
+        Mail::assertQueued(\App\Mail\RegistrationCopyForMailbox::class, 1);
 
         /*
          * Comments stripped before the check. Both files say in prose that

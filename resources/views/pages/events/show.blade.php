@@ -28,12 +28,12 @@
                 <p class="u-eyebrow e-ev-eyebrow">@include('pages.events._badge', ['group' => $g])<span>{{ $g->label() }}</span></p>
                 <h1 class="u-h1 e-ev-title @if ($meeting->isCancelled()) e-ev-title--cancelled @endif" id="ev-title">{{ $meeting->title }}</h1>
 
-                @if ($meeting->isCancelled() || $meeting->isPostponed())
-                    <div class="e-status e-status--{{ $meeting->status }}" role="status">
+                @if ($meeting->isCancelled() || $meeting->displayStatus() === 'postponed')
+                    <div class="e-status e-status--{{ $meeting->isCancelled() ? 'cancelled' : 'postponed' }}" role="status">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
                             @if ($meeting->isCancelled())<path d="M6 6l12 12M18 6L6 18"/>@else<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>@endif
                         </svg>
-                        <p><strong>{{ $meeting->isCancelled() ? __('e.cancelled_notice') : __('e.postponed_notice') }}</strong>@if ($meeting->status_note) {{ $meeting->status_note }}@endif</p>
+                        <p><strong>{{ $meeting->isCancelled() ? __('e.cancelled_notice') : ($meeting->hasNewDate() ? $meeting->displayStatusLabel().'.' : __('e.postponed_notice')) }}</strong>@if ($meeting->status_note) {{ $meeting->status_note }}@endif</p>
                     </div>
                 @endif
 

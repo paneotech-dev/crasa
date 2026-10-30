@@ -252,7 +252,10 @@ class EventsAndDelegatesTest extends TestCase
             'accommodation', 'hotel', 'nights', 'room',
             'dietary', 'diet', 'meal', 'catering',
             'transfer', 'driver', 'vehicle', 'pickup',
-            'interpretation', 'feedback', 'reminder',
+            // 'interpretation' left this list on 30 October 2026: client
+            // item 1e asked for the delegate's interpretation request
+            // (interpretation_into), a recorded need, not a booking.
+            'feedback', 'reminder',
         ] as $forbidden) {
             foreach ($columns as $column) {
                 $this->assertStringNotContainsString(

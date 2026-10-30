@@ -185,6 +185,9 @@ class DelegateRegistrationController extends Controller
             ]);
         }
 
+        // The CRASA registrations mailbox's copy (client item 1e).
+        \App\Support\RegistrationsMailbox::copy($registration);
+
         event(new RegistrationReceived($registration));
 
         session()->put('registration_done.'.$meeting->id, $registration->id);

@@ -35,6 +35,7 @@ class Meeting extends Model
         'committee_code', 'organiser', 'source', 'news_item_id', 'status', 'status_note',
         'starts_at', 'ends_at', 'timezone', 'online_url',
         'registration_opens_on', 'registration_closes_on', 'capacity',
+        'rescheduled_from',
     ];
 
     /** Statuses an event can carry on the public page. */
@@ -53,6 +54,7 @@ class Meeting extends Model
             'registration_closes_on' => 'date',
             'imported_original' => 'array',
             'capacity' => 'integer',
+            'rescheduled_from' => 'date',
         ];
     }
 
@@ -89,6 +91,16 @@ class Meeting extends Model
     }
 
     /**
+     * Moved to a new date that is known (client item 1e): the date was
+     * changed to a later one, or changed while the meeting was postponed.
+     */
+    public function hasNewDate(): bool
+    {
+        return $this->rescheduled_from !== null && ! $this->date_unknown && $this->starts_on !== null
+            && ! $this->isCancelled();
+    }
+
+    /**
      * The status a reader sees, worked out when it is shown rather than
      * stored: cancelled and postponed as recorded, otherwise held once the
      * last day has passed and scheduled before that. Nothing has to run on
@@ -100,6 +112,7 @@ class Meeting extends Model
             $this->isCancelled() => 'cancelled',
             $this->isPostponed() => 'postponed',
             $this->hasEnded() => 'held',
+            $this->hasNewDate() => 'postponed',
             default => 'scheduled',
         };
     }
@@ -126,6 +139,10 @@ class Meeting extends Model
     public function displayStatusLabel(): string
     {
         $status = $this->displayStatus();
+
+        if ($status === 'postponed' && $this->hasNewDate()) {
+            return __('m3_deleg.postponed_new_date', ['date' => $this->dateRange()]);
+        }
 
         return $status === 'held' ? __('d3_people.status_held') : __('e.status_'.$status);
     }
@@ -248,6 +265,41 @@ class Meeting extends Model
      */
     protected static function booted(): void
     {
+        /*
+         * Client item 1e: a meeting moved to a later date, or given a date
+         * while postponed, remembers the day it had, so the public page can
+         * say "Postponed, new date ...". The first sync of a meeting is not
+         * a move.
+         */
+        static::updating(function (Meeting $meeting): void {
+            $was = $meeting->getOriginal('starts_on');
+
+            if (! $meeting->isDirty('starts_on') || $was === null || $meeting->starts_on === null
+                || $meeting->getOriginal('date_unknown') || $meeting->getOriginal('synced_at') === null && $meeting->isDirty('synced_at')) {
+                return;
+            }
+
+            $was = \Illuminate\Support\Carbon::parse($was);
+            if ($meeting->isPostponed() || $meeting->starts_on->greaterThan($was)) {
+                $meeting->rescheduled_from ??= $was->toDateString();
+            }
+        });
+
+        /*
+         * Client item 1e: every delegate registered for the meeting is told
+         * by mail when it is cancelled, postponed or given a new date (the
+         * in-app notice below reaches those with accounts).
+         */
+        static::updated(function (Meeting $meeting): void {
+            if ($meeting->wasChanged('synced_at') && $meeting->getOriginal('synced_at') === null) {
+                return;
+            }
+
+            if ($change = \App\Support\RegistrationsMailbox::changeOf($meeting)) {
+                \App\Support\RegistrationsMailbox::noticeDelegates($meeting, $change);
+            }
+        });
+
         /*
          * Client brief item 7: a meeting moved or cancelled reaches that
          * committee's members and the people registered for it, through the

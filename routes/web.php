@@ -765,6 +765,10 @@ Route::prefix('{locale}')
                 Route::put('registrations/{registration}/status', [\App\Http\Controllers\Admin\RegistrationAdminController::class, 'decide'])->whereNumber('registration')->name('registrations.decide');
                 Route::post('registrations/{registration}/resend', [\App\Http\Controllers\Admin\RegistrationAdminController::class, 'resend'])->whereNumber('registration')->name('registrations.resend');
                 // end Day 3: people (back office)
+                // Day 3: deleg
+                // Confirm or decline the selected registrations (item 1e).
+                Route::post('registrations/bulk', [\App\Http\Controllers\Admin\RegistrationAdminController::class, 'bulk'])->name('registrations.bulk');
+                // end Day 3: deleg
                 // Roles under People (F3).
                 Route::get('roles', [\App\Http\Controllers\Admin\RoleController::class, 'index'])->name('roles');
                 Route::get('roles/new', [\App\Http\Controllers\Admin\RoleController::class, 'create'])->name('roles.create');
