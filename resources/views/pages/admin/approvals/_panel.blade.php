@@ -13,6 +13,9 @@
         $aLatest = \App\Support\Approvals::latest($record);
         $aNeeds = \App\Support\Approvals::requiresApproval($aType);
         $aLocale = app()->getLocale();
+        // Day 3: an editor saves and sends with the form's two buttons.
+        $aFlow = \App\Support\EditorFlow::applies($aUser, $record);
+        $aRevision = $aFlow ? \App\Support\EditorFlow::pendingFor($record) : null;
     @endphp
     <section class="a-panel aw-panel" aria-labelledby="aw-panel-title" data-approval-state="{{ $aState }}">
         <div class="a-panel__head">
@@ -26,6 +29,13 @@
             <p class="a-notice a-notice--error" role="alert">{{ $message }}</p>
         @enderror
 
+        @if ($aRevision !== null)
+            <p class="a-notice a-notice--pending m3-revision" data-revision-state="{{ $aRevision->state }}">
+                <strong>{{ __('m3_edflow.revision_label') }}.</strong>
+                {{ __(match ($aRevision->state) { 'in_review' => 'm3_edflow.revision_waiting', 'returned' => 'm3_edflow.revision_returned', default => 'm3_edflow.revision_draft' }) }}
+            </p>
+        @endif
+
         @if ($aState === 'in_review')
             <p>{{ __('fa.panel_waiting', ['name' => $aLatest?->submitter?->name ?? __('fa.former_item'), 'date' => $aLatest?->submitted_at?->displayed()->isoFormat('D MMMM YYYY, HH:mm')]) }}</p>
             <p class="a-notice a-notice--pending" data-approval-locked>{{ __('evening.locked_notice') }}</p>
@@ -37,6 +47,12 @@
             @endif
         @elseif ($aState === 'published')
             <p>{{ __('fa.panel_published_help') }}</p>
+            @if ($aRevision?->state === 'returned')
+                <div class="aw-comment">
+                    <p><strong>{{ __('fa.panel_returned', ['name' => $aRevision->decider?->name ?? '', 'date' => $aRevision->decided_at?->displayed()->isoFormat('D MMMM YYYY, HH:mm')]) }}</strong></p>
+                    <blockquote>{{ $aRevision->comment }}</blockquote>
+                </div>
+            @endif
         @else
             @if ($aState === 'returned' && $aLatest)
                 <div class="aw-comment">
@@ -45,7 +61,7 @@
                     <p class="a-hint">{{ __('fa.panel_returned_help') }}</p>
                 </div>
             @endif
-            @if ($aNeeds && \App\Support\Approvals::maySubmit($aUser, $record))
+            @if ($aNeeds && ! $aFlow && \App\Support\Approvals::maySubmit($aUser, $record))
                 <form class="a-form" method="POST" action="{{ route('admin.approvals.submit', ['locale' => $aLocale, 'type' => $aType, 'id' => $record->getKey()]) }}">
                     @csrf
                     <div class="a-field">

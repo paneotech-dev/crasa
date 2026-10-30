@@ -33,7 +33,9 @@
             </span>
         </div>
 
-        @if ($transitions === [])
+        @if ($editorFlow ?? false)
+            <p class="a-hint">{{ __('m3_edflow.page_status_help') }}</p>
+        @elseif ($transitions === [])
             <div class="a-empty">
                 <div class="a-empty__title">{{ __('admin.workflow_locked_title') }}</div>
                 <div class="a-empty__body">{{ __('admin.workflow_locked_body') }}</div>
@@ -72,13 +74,18 @@
                         <h3 style="font-size:16px">{{ \App\Support\Locales::nameOf($locale) }}</h3>
 
                         @foreach (['title' => 255, 'meta_title' => 255, 'meta_description' => 320] as $field => $max)
+                            @php
+                                // Day 3: the editor's held changes to a published page, when there are some.
+                                $held = $revisionTranslations ?? [];
+                                $shown = $held !== [] ? ($held[$locale][$field] ?? null) : $page->translations->firstWhere(fn ($t) => $t->locale === $locale && $t->field === $field)?->value;
+                            @endphp
                             <div class="a-field">
                                 <label class="a-label" for="{{ $locale }}-{{ $field }}">{{ __('admin.field_'.$field) }}</label>
                                 @if ($field === 'meta_description')
-                                    <textarea class="a-input" id="{{ $locale }}-{{ $field }}" name="{{ $locale }}[{{ $field }}]" rows="3" maxlength="{{ $max }}">{{ old($locale.'.'.$field, $page->translations->firstWhere(fn ($t) => $t->locale === $locale && $t->field === $field)?->value) }}</textarea>
+                                    <textarea class="a-input" id="{{ $locale }}-{{ $field }}" name="{{ $locale }}[{{ $field }}]" rows="3" maxlength="{{ $max }}">{{ old($locale.'.'.$field, $shown) }}</textarea>
                                 @else
                                     <input class="a-input" type="text" id="{{ $locale }}-{{ $field }}" name="{{ $locale }}[{{ $field }}]" maxlength="{{ $max }}"
-                                           value="{{ old($locale.'.'.$field, $page->translations->firstWhere(fn ($t) => $t->locale === $locale && $t->field === $field)?->value) }}">
+                                           value="{{ old($locale.'.'.$field, $shown) }}">
                                 @endif
                             </div>
                         @endforeach
@@ -86,9 +93,15 @@
                 @endforeach
             </div>
 
+            @if ($editorFlow ?? false)
+                @unless (\App\Support\Approvals::isLocked($page))
+                    <div style="margin-top:var(--s-5)">@include('pages.admin.approvals._editor_actions')</div>
+                @endunless
+            @else
             <div class="a-form__actions" style="margin-top:var(--s-5)">
                 <button type="submit" class="a-btn a-btn--primary">{{ __('admin.save_page') }}</button>
             </div>
+            @endif
         </form>
     </section>
 
@@ -102,10 +115,17 @@
                     <h2 class="a-resource__title">{{ __('admin.blocks') }}</h2>
                     <div class="a-resource__note">{{ __('admin.blocks_note') }}</div>
                 </div>
+                @php $blocksHeld = \App\Support\EditorFlow::holds(auth()->user(), $page); @endphp
+                @unless ($blocksHeld)
                 <div class="a-pagehead__actions">
                     <a class="a-btn a-btn--primary" href="{{ route('admin.pages.blocks.create', ['locale' => app()->getLocale(), 'page' => $page->slug]) }}">{{ __('admin.add_block') }}</a>
                 </div>
+                @endunless
             </div>
+            {{-- Day 3: the server refuses an editor's block change on a published page; say so here. --}}
+            @if ($blocksHeld)
+                <p class="a-notice a-notice--pending" data-blocks-held>{{ __('m3_edflow.blocks_held') }}</p>
+            @endif
         </div>
 
         @if ($page->editableBlocks->isEmpty())

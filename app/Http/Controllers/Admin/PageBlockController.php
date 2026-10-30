@@ -48,6 +48,8 @@ class PageBlockController extends Controller
     public function store(Request $request, Page $page): RedirectResponse
     {
         \App\Support\Approvals::refuseIfLocked($page);
+        // Day 3: an editor does not change a published page's blocks live.
+        \App\Support\EditorFlow::refuseBlocksIfHeld($page);
 
         Gate::authorize('create', PageBlock::class);
 
@@ -95,6 +97,8 @@ class PageBlockController extends Controller
     public function update(Request $request, Page $page, PageBlock $block): RedirectResponse
     {
         \App\Support\Approvals::refuseIfLocked($page);
+        // Day 3: an editor does not change a published page's blocks live.
+        \App\Support\EditorFlow::refuseBlocksIfHeld($page);
 
         Gate::authorize('update', $block);
         abort_unless($block->page_id === $page->id, 404);
@@ -167,6 +171,8 @@ class PageBlockController extends Controller
     public function move(Request $request, Page $page, PageBlock $block): RedirectResponse
     {
         \App\Support\Approvals::refuseIfLocked($page);
+        // Day 3: an editor does not change a published page's blocks live.
+        \App\Support\EditorFlow::refuseBlocksIfHeld($page);
 
         Gate::authorize('update', $block);
         abort_unless($block->page_id === $page->id, 404);
@@ -210,6 +216,8 @@ class PageBlockController extends Controller
     public function duplicate(Page $page, PageBlock $block): RedirectResponse
     {
         \App\Support\Approvals::refuseIfLocked($page);
+        // Day 3: an editor does not change a published page's blocks live.
+        \App\Support\EditorFlow::refuseBlocksIfHeld($page);
 
         Gate::authorize('create', PageBlock::class);
         abort_unless($block->page_id === $page->id, 404);
@@ -250,6 +258,8 @@ class PageBlockController extends Controller
     public function toggle(Page $page, PageBlock $block): RedirectResponse
     {
         \App\Support\Approvals::refuseIfLocked($page);
+        // Day 3: an editor does not change a published page's blocks live.
+        \App\Support\EditorFlow::refuseBlocksIfHeld($page);
 
         Gate::authorize('update', $block);
         abort_unless($block->page_id === $page->id, 404);
@@ -262,6 +272,8 @@ class PageBlockController extends Controller
     public function destroy(Page $page, PageBlock $block): RedirectResponse
     {
         \App\Support\Approvals::refuseIfLocked($page);
+        // Day 3: an editor does not change a published page's blocks live.
+        \App\Support\EditorFlow::refuseBlocksIfHeld($page);
 
         Gate::authorize('delete', $block);
         abort_unless($block->page_id === $page->id, 404);

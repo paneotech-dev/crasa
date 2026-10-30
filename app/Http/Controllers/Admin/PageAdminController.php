@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Page;
 use App\Services\PageVersioning;
+use App\Support\EditorFlow;
 use App\Support\Locales;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -63,11 +64,14 @@ class PageAdminController extends Controller
         Gate::authorize('edit', $page);
 
         $page->load(['translations', 'editableBlocks', 'blocks.translations', 'clientReviewer']);
+        $flow = EditorFlow::applies(request()->user(), $page);
 
         return view('pages.admin.pages.edit', [
             'page' => $page,
             'locales' => Locales::SUPPORTED,
-            'transitions' => $this->allowedTransitions($page),
+            'transitions' => $flow ? [] : $this->allowedTransitions($page),
+            'editorFlow' => $flow,
+            'revisionTranslations' => EditorFlow::overlay($page, request()->user()),
             'versions' => $page->versions()->with('author')->limit(20)->get(),
             'outstanding' => $page->outstandingClientItems(),
         ]);
@@ -88,21 +92,34 @@ class PageAdminController extends Controller
         }
 
         $data = $request->validate($rules);
+        $redirect = redirect()->route('admin.pages.edit', ['locale' => app()->getLocale(), 'page' => $page->slug]);
+        $kept = [];
+
+        foreach (Locales::SUPPORTED as $locale) {
+            $kept[$locale] = array_filter(
+                $data[$locale] ?? [],
+                fn ($value) => $value !== null && trim($value) !== ''
+            );
+        }
+
+        // Day 3: a published page keeps its live title and metadata until the change is approved.
+        if (EditorFlow::holds($request->user(), $page)) {
+            return $redirect->with('status', EditorFlow::hold($request, $page, ['attributes' => [], 'translations' => $kept]));
+        }
 
         $this->versioning->recordInitial($page);
 
-        foreach (Locales::SUPPORTED as $locale) {
-            $page->setTranslations($locale, array_filter(
-                $data[$locale] ?? [],
-                fn ($value) => $value !== null && trim($value) !== ''
-            ));
+        foreach ($kept as $locale => $values) {
+            $page->setTranslations($locale, $values);
         }
 
         $this->versioning->record($page, __('admin.page_version_details'));
 
-        return redirect()
-            ->route('admin.pages.edit', ['locale' => app()->getLocale(), 'page' => $page->slug])
-            ->with('status', __('admin.page_saved'));
+        if (EditorFlow::applies($request->user(), $page)) {
+            return $redirect->with('status', EditorFlow::afterSave($request, $page));
+        }
+
+        return $redirect->with('status', __('admin.page_saved'));
     }
 
     /**
@@ -126,6 +143,7 @@ class PageAdminController extends Controller
 
         $target = PageStatus::from($data['status']);
 
+
         abort_unless(in_array($target, $page->status->transitions(), true), 422, __('admin.page_transition_invalid'));
 
         /*
@@ -145,6 +163,11 @@ class PageAdminController extends Controller
 
         if ($target->requiresPublishPermission()) {
             Gate::authorize('publish', $page);
+        }
+
+        // Day 3: an editor sets no status; sending for approval is the only move (publishing is refused above).
+        if ($target !== PageStatus::Review && EditorFlow::applies($request->user(), $page)) {
+            return back()->withErrors(['approval' => __('m3_edflow.status_refused')]);
         }
 
         // Back to draft from review withdraws the open request.

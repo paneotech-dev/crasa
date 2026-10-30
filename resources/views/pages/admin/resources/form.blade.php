@@ -75,6 +75,8 @@
 
                 <div class="a-form">
                     @foreach ($definition->fields as $field)
+                        {{-- Day 3: an editor does not choose a status. --}}
+                        @continue($field->name === ($flowField ?? null))
                         @php $current = old($field->name, $record->getAttribute($field->name)); @endphp
 
                         {{-- Shown, never written. "Superseded by" is the
@@ -219,9 +221,10 @@
                             <h3 style="font-size:16px">{{ \App\Support\Locales::nameOf($locale) }}</h3>
                             @foreach ($definition->translatable as $field)
                                 @php
-                                    $value = $record->exists
-                                        ? ($record->translationValuesFor($field)[$locale] ?? null)
-                                        : null;
+                                    // Day 3: an editor's held changes to a published item, when there are some.
+                                    $value = isset($revisionTranslations[$locale]) && array_key_exists($field, $revisionTranslations[$locale])
+                                        ? $revisionTranslations[$locale][$field]
+                                        : ($record->exists ? ($record->translationValuesFor($field)[$locale] ?? null) : null);
                                 @endphp
                                 <div class="a-field">
                                     <label class="a-label" for="t-{{ $locale }}-{{ $field }}">{{ __('admin.field_'.$field) }}</label>
@@ -240,6 +243,9 @@
         @endif
 
         </fieldset>
+        @if (($flowField ?? null) !== null && ! $lockedForReview)
+            @include('pages.admin.approvals._editor_actions', ['cancel' => route('admin.resources', ['locale' => app()->getLocale(), 'resource' => $definition->key])])
+        @else
         <div class="a-form__actions">
             @unless ($lockedForReview)
             <button type="submit" class="a-btn a-btn--primary">
@@ -248,6 +254,7 @@
             @endunless
             <a href="{{ route('admin.resources', ['locale' => app()->getLocale(), 'resource' => $definition->key]) }}">{{ __('admin.cancel') }}</a>
         </div>
+        @endif
     </form>
 
     @if (! $isNew && $definition->deletable)

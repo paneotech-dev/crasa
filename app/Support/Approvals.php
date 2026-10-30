@@ -262,7 +262,12 @@ final class Approvals
     /* Transitions                                                          */
     /* ------------------------------------------------------------------ */
 
-    public static function submit(Model $model, User $by, ?string $note = null): Approval
+    /**
+     * Day 3: with a revision, the request carries changes to a published
+     * item; the live row stays as it is until approve() applies them. A
+     * draft revision already saved for the item becomes the request.
+     */
+    public static function submit(Model $model, User $by, ?string $note = null, ?array $revision = null): Approval
     {
         if (self::typeOf($model) === null) {
             throw new DomainException(__('fa.approval_not_moderated'));
@@ -276,16 +281,26 @@ final class Approvals
             throw new DomainException(__('fa.approval_already_waiting'));
         }
 
-        $approval = DB::transaction(function () use ($model, $by, $note) {
-            $approval = Approval::create([
-                'approvable_type' => $model->getMorphClass(),
-                'approvable_id' => $model->getKey(),
+        $approval = DB::transaction(function () use ($model, $by, $note, $revision) {
+            $values = [
                 'state' => Approval::IN_REVIEW,
                 'submitted_by' => $by->id,
                 'submitted_at' => now(),
                 'note' => $note !== null && trim($note) !== '' ? trim($note) : null,
-                'snapshot' => self::snapshot($model),
-            ]);
+                'snapshot' => $revision !== null ? EditorFlow::snapshot($model, $revision) : self::snapshot($model),
+                'revision' => $revision,
+            ];
+            $draft = self::latest($model);
+
+            if ($revision !== null && $draft?->state === Approval::DRAFT) {
+                $draft->update($values);
+                $approval = $draft;
+            } else {
+                $approval = Approval::create($values + [
+                    'approvable_type' => $model->getMorphClass(),
+                    'approvable_id' => $model->getKey(),
+                ]);
+            }
 
             if ($model instanceof Page && $model->status !== PageStatus::Published) {
                 $model->update(['status' => PageStatus::Review]);
@@ -328,6 +343,11 @@ final class Approvals
         $model = $approval->approvable;
 
         DB::transaction(function () use ($approval, $by, $comment, $model) {
+            // Day 3: changes to a published item reach the live row only now.
+            if ($approval->revision !== null) {
+                EditorFlow::apply($approval, $model, $by);
+            }
+
             self::publish($model);
 
             $approval->update([
@@ -578,6 +598,11 @@ final class Approvals
             ->latest('id')->first();
 
         $before = self::flatten($previous?->snapshot ?? []);
+
+        // Day 3: held changes to a published item are read against the live version.
+        if ($approval->revision !== null && in_array($approval->state, [Approval::IN_REVIEW, Approval::DRAFT], true) && $approval->approvable !== null) {
+            $before = self::flatten(self::snapshot($approval->approvable));
+        }
         $after = self::flatten($approval->snapshot ?? []);
         $out = [];
 

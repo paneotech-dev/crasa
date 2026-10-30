@@ -199,7 +199,14 @@ class PageEditingTest extends TestCase
     {
         $this->page->update(['status' => PageStatus::Published, 'published_at' => now()]);
 
+        // Day 3 (editor flow): an editor may not add a block to a published
+        // page live; an administrator may, and the block still arrives hidden.
         $this->actingAs($this->editor)
+            ->post('/en/admin/pages/test-page/blocks', ['block_type' => 'call_to_action'])
+            ->assertSessionHasErrors('approval');
+        $this->assertSame(0, $this->page->blocks()->count());
+
+        $this->actingAs($this->administrator)
             ->post('/en/admin/pages/test-page/blocks', ['block_type' => 'call_to_action'])
             ->assertRedirect();
 

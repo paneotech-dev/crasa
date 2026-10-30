@@ -127,8 +127,16 @@
 
         <fieldset class="e-step" data-step="3" id="step-3">
             <legend class="e-step__legend"><span class="e-step__count">{{ __('e.step', ['n' => 3, 'total' => 5]) }}</span> {{ __('e.step_people') }}</legend>
-            @include('pages.admin.events._field', ['name' => 'clearance', 'label' => __('e.field_clearance'), 'type' => 'select', 'required' => true, 'help' => __('e.field_clearance_help'), 'value' => $meeting->clearance?->value ?? 'public',
-                'options' => collect($clearances)->mapWithKeys(fn ($c) => [$c->value => __('e.clearance_'.$c->value)])->all()])
+            {{-- Day 3: an editor does not make an event public; a moderator does by approving it. --}}
+            @php $edFlow = \App\Support\EditorFlow::applies(auth()->user(), 'events'); @endphp
+            @if ($edFlow && $meeting->exists && \App\Support\Approvals::isPublic($meeting))
+                <p class="a-hint">{{ __('m3_edflow.event_public_kept') }}</p>
+            @else
+            @include('pages.admin.events._field', ['name' => 'clearance', 'label' => __('e.field_clearance'), 'type' => 'select', 'required' => true,
+                'help' => $edFlow ? __('m3_edflow.event_public_help') : __('e.field_clearance_help'),
+                'value' => $meeting->clearance?->value ?? ($edFlow ? 'member' : 'public'),
+                'options' => collect($clearances)->reject(fn ($c) => $edFlow && $c === \App\Enums\Clearance::Public)->mapWithKeys(fn ($c) => [$c->value => __('e.clearance_'.$c->value)])->all()])
+            @endif
             <div class="e-cols e-cols--3">
                 @include('pages.admin.events._field', ['name' => 'registration_opens_on', 'label' => __('e.field_registration_opens_on'), 'type' => 'date', 'value' => $fmt($meeting->registration_opens_on)])
                 @include('pages.admin.events._field', ['name' => 'registration_closes_on', 'label' => __('e.field_registration_closes_on'), 'type' => 'date', 'value' => $fmt($meeting->registration_closes_on)])
@@ -193,10 +201,25 @@
             <script type="application/json" data-labels>@json($labelsData)</script>
         </section>
 
+        @if (\App\Support\EditorFlow::applies(auth()->user(), 'events'))
+            {{-- Day 3: the editor's two buttons, shown on the last step with the note. --}}
+            <div class="a-field m3-note">
+                <label class="a-label" for="m3-note">{{ __('m3_edflow.note_label') }}</label>
+                <textarea class="a-input" id="m3-note" name="note" rows="2" aria-describedby="m3-note-help">{{ old('note') }}</textarea>
+                <span class="a-hint" id="m3-note-help">{{ __('m3_edflow.note_help') }} {{ __('m3_edflow.actions_help') }}</span>
+            </div>
+        @endif
         <div class="a-form__actions e-steps__nav">
             <button type="button" class="a-btn a-btn--secondary" data-step-back hidden>{{ __('e.step_back') }}</button>
             <button type="button" class="a-btn a-btn--primary" data-step-next hidden>{{ __('e.step_next') }}</button>
+            @if (\App\Support\EditorFlow::applies(auth()->user(), 'events'))
+                <span class="m3-stepsave" data-step-save>
+                    <button type="submit" name="intent" value="draft" class="a-btn a-btn--secondary" data-save-draft>{{ __('m3_edflow.save_draft') }}</button>
+                    <button type="submit" name="intent" value="send" class="a-btn a-btn--primary" data-save-send>{{ __('m3_edflow.save_send') }}</button>
+                </span>
+            @else
             <button type="submit" class="a-btn a-btn--primary" data-step-save>{{ __('e.save') }}</button>
+            @endif
         </div>
     </form>
 

@@ -68,7 +68,7 @@
                         {{-- The second sanctioned caps carve-out. See CLAUDE.md. --}}
                         <h2 class="a-side__grouplabel" id="side-group-{{ $group['key'] }}">{{ $group['label'] }}</h2>
                         @if ($groupBadge > 0)
-                            <span class="a-side__badge" aria-label="{{ trans_choice('fb.side_waiting', $groupBadge, ['count' => $groupBadge]) }}">{{ $groupBadge }}</span>
+                            <span @class(['a-side__badge', 'a-side__badge--approvals' => collect($group['items'])->contains(fn ($i) => $i['key'] === 'approvals' && ($i['badge'] ?? 0) > 0)]) aria-label="{{ trans_choice('fb.side_waiting', $groupBadge, ['count' => $groupBadge]) }}">{{ $groupBadge }}</span>
                         @endif
                         <svg class="a-side__chev" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </summary>
@@ -82,7 +82,7 @@
                                     <x-shell-icon :name="$item['icon']" />
                                     <span>{{ $item['label'] }}</span>
                                     @if (($item['badge'] ?? 0) > 0)
-                                        <span class="a-side__badge"><span aria-hidden="true">{{ $item['badge'] }}</span><span class="rd-sr">{{ trans_choice('fb.side_waiting', $item['badge'], ['count' => $item['badge']]) }}</span></span>
+                                        <span @class(['a-side__badge', 'a-side__badge--approvals' => $item['key'] === 'approvals'])><span aria-hidden="true">{{ $item['badge'] }}</span><span class="rd-sr">{{ trans_choice('fb.side_waiting', $item['badge'], ['count' => $item['badge']]) }}</span></span>
                                     @endif
                                 </a>
                             </li>

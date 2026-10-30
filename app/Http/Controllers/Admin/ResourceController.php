@@ -6,6 +6,7 @@ use App\Admin\Resource;
 use App\Admin\ResourceRegistry;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
+use App\Support\EditorFlow;
 use App\Support\Locales;
 use App\Support\NewsPhoto;
 use Illuminate\Contracts\View\View;
@@ -129,7 +130,7 @@ class ResourceController extends Controller
             'record' => $blank = new $definition->model,
             'options' => $this->relationOptions($definition, $blank),
             'locales' => Locales::SUPPORTED,
-        ]);
+        ] + $this->editorFlowView($definition, $blank));
     }
 
     public function store(Request $request, string $resource): RedirectResponse
@@ -143,7 +144,13 @@ class ResourceController extends Controller
 
         $record = new $definition->model;
         $data = NewsPhoto::apply($definition, $record, $request, $data);
-        $record->fill($this->attributes($definition, $data));
+        $flow = $this->editorFlowField($definition, $request);
+        $record->fill($this->attributes($definition, $data, $flow));
+
+        if ($flow !== null) {
+            $record->fill(EditorFlow::draftDefaults($definition->key));
+        }
+
         $wentLive = $this->guardPublishing($record);
         $this->assignSlug($definition, $record, $data);
         $record->save();
@@ -154,11 +161,15 @@ class ResourceController extends Controller
 
         $this->writeTranslations($definition, $record, $data, $request->user()->id);
 
-        return redirect()
-            ->route('admin.resources.edit', [
-                'locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $record->getKey(),
-            ])
-            ->with('status', __('admin.resource_created', ['name' => $definition->singular()]));
+        $redirect = redirect()->route('admin.resources.edit', [
+            'locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $record->getKey(),
+        ]);
+
+        if ($flow !== null) {
+            return $redirect->with('status', EditorFlow::afterSave($request, $record));
+        }
+
+        return $redirect->with('status', __('admin.resource_created', ['name' => $definition->singular()]));
     }
 
     public function edit(string $resource, int $id): View
@@ -167,12 +178,14 @@ class ResourceController extends Controller
         $record = $this->record($definition, $id);
         $this->authorizeAction('view', $definition, $record);
 
+        $flow = $this->editorFlowView($definition, $record);
+
         return view('pages.admin.resources.form', [
             'definition' => $definition,
             'record' => $record,
             'options' => $this->relationOptions($definition, $record),
             'locales' => Locales::SUPPORTED,
-        ]);
+        ] + $flow);
     }
 
     public function update(Request $request, string $resource, int $id): RedirectResponse
@@ -184,8 +197,29 @@ class ResourceController extends Controller
 
         $data = $request->validate($this->rules($definition, $record, $request));
         $data = NewsPhoto::apply($definition, $record, $request, $data);
+        $flow = $this->editorFlowField($definition, $request);
+        $redirect = redirect()->route('admin.resources.edit', [
+            'locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $record->getKey(),
+        ]);
 
-        $record->fill($this->attributes($definition, $data));
+        /*
+         * Day 3. An editor's change to a published item is held with an
+         * approval request; the live row and the public page stay as they
+         * are until a moderator approves it.
+         */
+        if ($flow !== null && EditorFlow::holds($request->user(), $record)) {
+            $revision = ['attributes' => $this->attributes($definition, $data, $flow), 'translations' => []];
+
+            foreach (Locales::SUPPORTED as $locale) {
+                foreach ($definition->translatable as $field) {
+                    $revision['translations'][$locale][$field] = $data[$locale][$field] ?? null;
+                }
+            }
+
+            return $redirect->with('status', EditorFlow::hold($request, $record, $revision));
+        }
+
+        $record->fill($this->attributes($definition, $data, $flow));
         $wentLive = $this->guardPublishing($record);
         $record->save();
 
@@ -195,11 +229,11 @@ class ResourceController extends Controller
 
         $this->writeTranslations($definition, $record, $data, $request->user()->id);
 
-        return redirect()
-            ->route('admin.resources.edit', [
-                'locale' => app()->getLocale(), 'resource' => $definition->key, 'id' => $record->getKey(),
-            ])
-            ->with('status', __('admin.resource_saved', ['name' => $definition->singular()]));
+        if ($flow !== null) {
+            return $redirect->with('status', EditorFlow::afterSave($request, $record));
+        }
+
+        return $redirect->with('status', __('admin.resource_saved', ['name' => $definition->singular()]));
     }
 
     /**
@@ -334,6 +368,30 @@ class ResourceController extends Controller
     }
 
     /**
+     * Day 3, editor flow. The status field this person may not set on this
+     * resource, or null where they keep the status control (administrators,
+     * and resources outside moderation).
+     */
+    private function editorFlowField(Resource $definition, Request $request): ?string
+    {
+        $field = EditorFlow::STATUS_FIELDS[$definition->key] ?? null;
+
+        return $field !== null && EditorFlow::applies($request->user(), $definition->key) ? $field : null;
+    }
+
+    /** @return array<string, mixed> */
+    private function editorFlowView(Resource $definition, Model $record): array
+    {
+        $field = $this->editorFlowField($definition, request());
+
+        return [
+            'flowField' => $field,
+            'revisionTranslations' => $field !== null && $record->exists ? EditorFlow::overlay($record, request()->user()) : [],
+            'pendingRevision' => $field !== null && $record->exists ? EditorFlow::pendingFor($record) : null,
+        ];
+    }
+
+    /**
      * F2. The generic editor saved news status and publication visibility
      * without asking the publish policy (ROLES_AND_WORKFLOW finding 2).
      * Making a moderated item public here now needs the publish ability,
@@ -430,6 +488,13 @@ class ResourceController extends Controller
 
         $rules['confirm'] = ['nullable', 'string', 'max:255'];
 
+        // Day 3: an editor sets no status; a posted one is not validated or written.
+        if ($request !== null && ($flow = $this->editorFlowField($definition, $request)) !== null) {
+            unset($rules[$flow]);
+            $rules['intent'] = ['nullable', 'in:draft,send'];
+            $rules['note'] = ['nullable', 'string', 'max:2000'];
+        }
+
         return $rules;
     }
 
@@ -437,13 +502,14 @@ class ResourceController extends Controller
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    private function attributes(Resource $definition, array $data): array
+    private function attributes(Resource $definition, array $data, ?string $skip = null): array
     {
         $attributes = [];
 
         foreach ($definition->fields as $field) {
-            // Shown, never written. See Field::readOnly.
-            if ($field->readOnly) {
+            // Shown, never written. See Field::readOnly. And the status an
+            // editor does not set (Day 3).
+            if ($field->readOnly || $field->name === $skip) {
                 continue;
             }
 

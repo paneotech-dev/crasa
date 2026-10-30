@@ -240,7 +240,7 @@ class EveningModerationTest extends TestCase
         $this->actingAs($this->editor)->put("/en/admin/social-posts/{$post->id}/publish")->assertForbidden();
         $this->assertSame('draft', $post->fresh()->status);
 
-        $this->actingAs($this->editor)->get("/en/admin/social-posts/{$post->id}")->assertOk()->assertSee(__('fa.panel_send'));
+        $this->actingAs($this->editor)->get("/en/admin/social-posts/{$post->id}")->assertOk()->assertSee(__('m3_edflow.save_send'));
         $this->actingAs($this->editor)->post("/en/admin/approvals/send/social/{$post->id}")->assertRedirect()->assertSessionHasNoErrors();
         $this->assertSame(Approvals::IN_REVIEW, Approvals::state($post));
 

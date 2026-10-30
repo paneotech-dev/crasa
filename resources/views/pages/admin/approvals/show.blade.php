@@ -22,6 +22,13 @@
                     @include('pages.admin.approvals._state', ['state' => $st])
                 </div>
                 @if ($type)<p class="a-hint">{{ __('fa.type_'.$type) }}</p>@endif
+                @if ($approval->revision !== null)
+                    <p class="a-notice a-notice--pending" data-approval-revision>{{ __('m3_edflow.moderator_revision') }}</p>
+                    @php $liveChanged = \App\Support\EditorFlow::liveChangedSince($approval); @endphp
+                    @if ($liveChanged)
+                        <p class="a-notice a-notice--error" role="alert" data-live-changed>{{ __('m3_edflow.live_changed', ['date' => $liveChanged->displayed()->isoFormat('D MMMM YYYY, HH:mm')]) }}</p>
+                    @endif
+                @endif
                 @foreach (\App\Support\Locales::SUPPORTED as $lang)
                     @php $t = $approval->snapshot['translations']['title.'.$lang] ?? ($lang === 'en' ? ($approval->snapshot['fields']['title'] ?? null) : null); @endphp
                     @if ($t)
@@ -54,7 +61,7 @@
                 @if ($changes === [])
                     <p>{{ __('fa.show_no_changes') }}</p>
                 @else
-                    @if ($history->where('state', 'approved')->where('id', '<', $approval->id)->isEmpty())
+                    @if ($approval->revision === null && $history->where('state', 'approved')->where('id', '<', $approval->id)->isEmpty())
                         <p class="a-hint">{{ __('fa.show_first') }}</p>
                     @endif
                     <div class="a-tablewrap" role="region" aria-labelledby="aw-changes" tabindex="0">
