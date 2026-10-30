@@ -19,7 +19,9 @@ class Translation extends Model
     protected function casts(): array
     {
         return [
-            // Reserved. AI translation is out of scope and nothing sets this.
+            // Set on rows drafted by machine when an item is approved
+            // (App\Services\MachineTranslation\MachineDrafts), cleared when a
+            // person approves or rewrites the string.
             'is_machine_draft' => 'boolean',
         ];
     }
