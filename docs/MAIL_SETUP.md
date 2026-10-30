@@ -162,6 +162,25 @@ MAIL_FROM_ADDRESS=no-reply@crasa.org
 MAIL_FROM_NAME="CRASA"
 ```
 
+### What production uses: Brevo over its HTTP API
+
+Since 30 October 2026 production (crasa.africa) sends through Brevo's HTTP
+API rather than SMTP. The transport is `symfony/brevo-mailer`, registered as
+the `brevo` mailer in `App\Providers\MailTransportServiceProvider`; the key
+is read from `services.brevo.key`. The domain crasa.africa is authenticated
+in Brevo (DKIM and DMARC published). Staging keeps `MAIL_MAILER=log`.
+
+```dotenv
+MAIL_MAILER=brevo
+BREVO_API_KEY=<the Brevo API key>
+MAIL_FROM_ADDRESS=admin@crasa.africa
+MAIL_FROM_NAME="CRASA"
+```
+
+Every "e-mail is switched off" badge and notice reads
+`App\Support\MailStatus::isOn()`, so they disappear once the mailer is
+`brevo` and stay on staging.
+
 ---
 
 ## The queue, which is the other half of this

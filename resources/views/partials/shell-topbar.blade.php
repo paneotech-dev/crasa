@@ -57,7 +57,7 @@
     <div class="a-top__utilities">
         {{-- Mail switched off, in plain words, for the accounts that can
              switch it on. Nobody else sees it. --}}
-        @if ($user?->can(\App\Enums\Permission::ManageSettings->value) && \App\Support\DeliveryCheck::mailIsSilentInProduction())
+        @if ($user?->can(\App\Enums\Permission::ManageSettings->value) && \App\Support\MailStatus::isOffInProduction())
             <p class="a-top__mailoff" role="status" title="{{ __('office.mail_off_badge') }} {{ __('office.mail_off_badge_more') }}">
                 <x-shell-icon name="bell" :size="15" />
                 <span>{{ __('office.mail_off_badge') }}</span>

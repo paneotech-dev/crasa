@@ -10,7 +10,7 @@
     that can change it, because it only shows once mail is switched on.
 --}}
 @php($canActOnMail = auth()->user()?->can(\App\Enums\Permission::ManageSettings->value) ?? false)
-@if ($canActOnMail && ! \App\Support\DeliveryCheck::mailIsSilent() && \App\Support\DeliveryCheck::fromAddressIsUnset())
+@if ($canActOnMail && \App\Support\MailStatus::isOn() && \App\Support\DeliveryCheck::fromAddressIsUnset())
     <div class="a-alert a-alert--pending" role="alert">
         <strong>{{ __('admin.mail_from_title') }}</strong>
         {{ __('admin.mail_from_body', ['address' => config('mail.from.address')]) }}

@@ -26,15 +26,12 @@ use Illuminate\Support\Facades\Log;
  */
 final class DeliveryCheck
 {
-    /** Drivers that accept a message and deliver it nowhere. */
-    private const SILENT = ['log', 'array', 'null'];
-
     private static bool $warned = false;
 
-    /** Whether mail is being swallowed rather than sent. */
+    /** Whether mail is being swallowed rather than sent (App\Support\MailStatus). */
     public static function mailIsSilent(): bool
     {
-        return in_array((string) config('mail.default'), self::SILENT, true);
+        return MailStatus::isOff();
     }
 
     /**
@@ -43,7 +40,7 @@ final class DeliveryCheck
      */
     public static function mailIsSilentInProduction(): bool
     {
-        return self::mailIsSilent() && ! app()->environment('local', 'testing');
+        return MailStatus::isOffInProduction();
     }
 
     /** The from address the framework ships with, still in place. */

@@ -128,7 +128,7 @@
 
             <fieldset class="a-fieldset">
                 <legend class="a-legend">{{ __('notifications.by_email') }}</legend>
-                <p class="a-hint">{{ __('notifications.email_note') }}</p>
+                <p class="a-hint">{{ \App\Support\MailStatus::isOn() ? __('d3_mail.email_note_on') : __('notifications.email_note') }}</p>
 
                 <div class="a-field">
                     <label class="a-label" for="digest_frequency">{{ __('notifications.digest_label') }}</label>
