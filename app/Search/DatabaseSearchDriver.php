@@ -292,14 +292,8 @@ class DatabaseSearchDriver implements SearchDriver
         foreach ($candidates as $candidate) {
             $text = trim(strip_tags($candidate));
 
-            if ($text === '') {
-                continue;
-            }
-
-            foreach ($terms as $term) {
-                if (mb_stripos($text, $term) !== false) {
-                    return $this->snippet($candidate, $query);
-                }
+            if ($text !== '' && Highlight::position($text, $terms) !== null) {
+                return $this->snippet($candidate, $query);
             }
         }
 
@@ -338,29 +332,15 @@ class DatabaseSearchDriver implements SearchDriver
             return '';
         }
 
-        $terms = collect($this->terms($query));
+        $terms = $this->terms($query);
 
-        $position = 0;
-        foreach ($terms as $term) {
-            $found = mb_stripos($text, $term);
-            if ($found !== false) {
-                $position = max(0, $found - 60);
-                break;
-            }
-        }
+        // Accents are ignored, as the database collation ignores them when
+        // it matches (see Highlight).
+        $position = max(0, (Highlight::position($text, $terms) ?? 0) - 60);
 
         $window = Str::limit(mb_substr($text, $position), 200);
-        $escaped = e($position > 0 ? '…'.$window : $window);
 
-        foreach ($terms as $term) {
-            $escaped = preg_replace(
-                '/('.preg_quote(e($term), '/').')/iu',
-                '<mark>$1</mark>',
-                $escaped
-            );
-        }
-
-        return $escaped;
+        return Highlight::mark(e($position > 0 ? '…'.$window : $window), $terms);
     }
 
     /**
