@@ -45,6 +45,7 @@
                     @if ($summary)
                         <p class="u-lead">{{ $summary->value }}</p>
                     @endif
+                    @include('partials.k.share')
                     @if ($item->showsMachineDraft(['title', 'summary', 'body']))<p class="c-machine-note">{{ __('a11y.machine_draft') }}</p>@endif
                     @if ($title?->isFallback())
                         <x-fallback-notice />

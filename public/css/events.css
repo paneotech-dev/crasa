@@ -171,9 +171,8 @@
 .e-ev-lines li { display: flex; gap: 10px; align-items: flex-start; font: 400 var(--u-t-18)/1.45 var(--u-sans); color: var(--u-ink); }
 .e-ev-lines svg { flex: none; margin-top: 3px; color: var(--u-blue-ink); }
 .e-ev-actions { display: grid; gap: var(--u-3); }
-.e-share { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.e-ev-actions .k-share-row { margin-top: 0; }
 button.e-addcal__action { cursor: pointer; font-family: var(--u-sans); }
-.e-share__status { font-size: var(--u-t-14); color: #1E6B44; font-weight: 600; }
 .e-ev-photo { aspect-ratio: 4 / 3; border: 1px solid var(--u-line); }
 .e-placeholder { width: 100%; height: 100%; display: grid; place-content: center; justify-items: center; gap: 12px; padding: var(--u-4); background: var(--u-pale); text-align: center; }
 .e-placeholder__mark { width: 64px; height: 64px; }

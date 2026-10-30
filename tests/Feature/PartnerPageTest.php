@@ -67,8 +67,8 @@ class PartnerPageTest extends TestCase
         $this->assertMatchesRegularExpression('#<section class="u-cta cp-cta".*?class="u-btn u-btn--primary" href="[^"]*/'.$locale.'/contact"#s', $html);
         $this->assertSame(3, substr_count($html, 'class="cp-partner-step"'));
         $this->assertSame(9, substr_count($html, '<li class="u-card">'));
-        // The trail names About.
-        $this->assertMatchesRegularExpression('#class="k-crumb".*?/'.$locale.'/about".*?aria-current="page">'.preg_quote(PartnerPageSeeder::MENU_LABEL[$locale], '#').'<#s', $html);
+        // No breadcrumb row (removed 30 October 2026, client request).
+        $this->assertStringNotContainsString('k-crumb', $html);
     }
 
     #[DataProvider('locales')]
