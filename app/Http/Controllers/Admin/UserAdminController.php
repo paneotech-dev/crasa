@@ -60,16 +60,28 @@ class UserAdminController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:160', 'unique:users,email'],
-            'role' => ['required', 'in:'.implode(',', array_column(Role::cases(), 'value'))],
+            // Every assignable role, built-in or custom, as on the list's role control.
+            'role' => ['required', 'in:'.implode(',', \App\Models\RoleDefinition::pluck('key')->all() ?: array_column(Role::cases(), 'value'))],
             'country_id' => ['nullable', 'exists:countries,id'],
             'authority_id' => ['nullable', 'exists:authorities,id'],
             'preferred_locale' => ['required', 'in:'.implode(',', Locales::SUPPORTED)],
         ]);
 
+        // Inviting into any role but the default is granting a role, so it
+        // needs what "Change the role" needs (AssignRoles), else 403.
+        abort_unless($data['role'] === Role::Viewer->value || $this->mayAssignRoles($request->user()), 403);
+
         // No password is set here. The account is invited, and the holder
         // chooses their own password through the reset link. A password
         // typed by an administrator is a password two people know.
+        $key = $data['role'];
+        $custom = Role::tryFrom($key) === null
+            ? \App\Models\RoleDefinition::where('key', $key)->firstOrFail()
+            : null;
+        $data['role'] = $custom !== null ? Role::from($custom->base_role) : Role::from($key);
+
         $user = User::create($data + [
+            'custom_role_id' => $custom?->id,
             'password' => Str::random(64),
             'status' => UserStatus::Invited,
         ]);
@@ -81,7 +93,7 @@ class UserAdminController extends Controller
             $request->user()->name,
         ));
 
-        AuditLog::record(AuditLog::CREATED, $user, ['invited_as' => $data['role']], $request->user());
+        AuditLog::record(AuditLog::CREATED, $user, ['invited_as' => $key], $request->user());
 
         return back()->with('status', __('admin.invited', ['email' => $user->email]));
     }
@@ -145,6 +157,12 @@ class UserAdminController extends Controller
         return true;
     }
 
+    /** The permission "Change the role" checks (UserPolicy::assignRole), without a subject. */
+    private function mayAssignRoles(User $inviter): bool
+    {
+        return $inviter->hasPermission(Permission::AssignRoles);
+    }
+
     private function activeAdministrators(): int
     {
         return User::query()->withoutGlobalScopes()->where('role', Role::Administrator->value)
@@ -199,7 +217,10 @@ class UserAdminController extends Controller
         $name = $user->name;
 
         \Illuminate\Support\Facades\DB::transaction(function () use ($user, $request, $name) {
-            AuditLog::record(AuditLog::DELETED, $user, ['former_name' => $name, 'former_role' => $user->role->value], $request->user());
+            // The effective role: a custom role by its name, which outlives
+            // the role itself; a built-in role by its key, read by its label.
+            $formerRole = $user->customRole?->label('en') ?? $user->role->value;
+            AuditLog::record(AuditLog::DELETED, $user, ['former_name' => $name, 'former_role' => $formerRole], $request->user());
 
             $user->forceFill([
                 'name' => __('fa.former_user', [], 'en'),
@@ -377,8 +398,14 @@ class UserAdminController extends Controller
     {
         $this->authorize('create', User::class);
 
+        // Only the roles this inviter may assign: the default role alone
+        // without AssignRoles.
+        $all = $this->mayAssignRoles($request->user());
+
         return view('pages.admin.users.invite', [
-            'roles' => Role::cases(),
+            'roles' => $all ? Role::cases() : [Role::Viewer],
+            'roleOptions' => \App\Models\RoleDefinition::orderByDesc('is_built_in')->orderBy('id')
+                ->when(! $all, fn ($q) => $q->where('key', Role::Viewer->value))->get(),
             'countries' => Country::orderBy('name')->get(),
             'authorities' => Authority::with('country')->orderBy('acronym')->get(),
         ]);

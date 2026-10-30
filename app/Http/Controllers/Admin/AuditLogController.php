@@ -37,6 +37,7 @@ class AuditLogController extends Controller
         return view('pages.admin.audit.index', [
             'entries' => $entries,
             'subjects' => AuditChanges::subjects($entries),
+            'references' => AuditChanges::references($entries),
             'actions' => AuditLog::query()->distinct()->orderBy('action')->pluck('action'),
             'types' => $this->types()->map(fn ($t) => class_basename($t))->unique()->sort()->values(),
             'actors' => User::whereIn('id', AuditLog::query()->whereNotNull('user_id')->distinct()->pluck('user_id'))
@@ -72,6 +73,7 @@ class AuditLogController extends Controller
 
             $query->chunk(500, function ($entries) use ($out): void {
                 $subjects = AuditChanges::subjects($entries);
+                $references = AuditChanges::references($entries);
 
                 foreach ($entries as $entry) {
                     $subject = AuditChanges::subject($entry, $subjects);
@@ -84,7 +86,7 @@ class AuditLogController extends Controller
                         $subject ? ($subject['deleted'] ? $subject['label'].' ('.__('m3_retaud.audit_object_deleted').')' : $subject['label']) : '',
                     ];
 
-                    $rows = AuditChanges::rows($entry) ?: [['field' => '', 'before' => null, 'after' => null, 'masked' => false]];
+                    $rows = AuditChanges::rows($entry, $references) ?: [['field' => '', 'before' => null, 'after' => null, 'masked' => false]];
 
                     foreach ($rows as $row) {
                         $masked = $row['masked'] ? __('m3_retaud.audit_masked') : null;

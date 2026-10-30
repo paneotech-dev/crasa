@@ -83,7 +83,7 @@
             @foreach ($entries as $entry)
                 @php
                     $subject = \App\Support\AuditChanges::subject($entry, $subjects);
-                    $rows = \App\Support\AuditChanges::rows($entry);
+                    $rows = \App\Support\AuditChanges::rows($entry, $references ?? null);
                 @endphp
                 <tr>
             <td class="c-num">{{ $entry->created_at?->displayed()->format('Y-m-d H:i') }}</td>

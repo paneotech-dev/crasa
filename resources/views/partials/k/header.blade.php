@@ -20,6 +20,9 @@
     $searchUrl = \App\Support\Navigation::url(config('navigation.search_path'));
     $backOfficeUrl = route('admin.dashboard', ['locale' => app()->getLocale()]);
     $workspace = \App\Support\Workspace::for(auth()->user());
+    // When the reader's workspace is the back office, its link is the one
+    // back-office link: the bar and the drawer do not name it twice.
+    $backOfficeLink = ($workspace['url'] ?? null) !== $backOfficeUrl;
     $social = array_intersect_key(\App\Support\SocialAccounts::all(), array_flip(['x', 'facebook', 'linkedin']));
     $current = app()->getLocale();
     $chev = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
@@ -53,9 +56,11 @@
                     </ul>
                     <span class="k-sep k-hide-sm" aria-hidden="true"></span>
                 @endif
+                @if ($backOfficeLink)
                 <a class="k-hide-sm" href="{{ $backOfficeUrl }}">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>{{ __('nav.back_office') }}
                 </a>
+                @endif
                 @guest
                     <a class="k-hide-sm" href="{{ $extranetUrl }}">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>{{ __('nav.extranet') }}
@@ -201,7 +206,9 @@
     </div>
     <div class="k-d-foot">
         <div class="k-d-btns">
-            <a class="k-btn k-btn--ghost" href="{{ $backOfficeUrl }}">{{ __('nav.back_office') }}</a>
+            @if ($backOfficeLink)
+                <a class="k-btn k-btn--ghost" href="{{ $backOfficeUrl }}">{{ __('nav.back_office') }}</a>
+            @endif
             <a class="k-btn k-btn--green" href="{{ $workspace['url'] ?? $extranetUrl }}">{{ $workspace['label'] ?? __('nav.extranet') }}</a>
         </div>
         @auth
