@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @php
     $locale = app()->getLocale();
-    $query = array_filter(['meeting' => $filter['meeting']?->slug, 'status' => $filter['status']]);
+    $query = array_filter(['meeting' => $filter['meeting']?->slug, 'status' => $filter['status'], 'country' => $filter['country']?->iso_code]);
     $pill = ['filed' => 'pending', 'confirmed' => 'validated', 'declined' => 'rejected'];
 @endphp
 @section('title', __('admin.nav_delegates'))
@@ -19,6 +19,9 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/d3-people.css') }}">
+@endpush
+@push('scripts')
+    <script src="{{ \App\Support\Assets::url('js/m3-deleg.js') }}" defer></script>
 @endpush
 
 @section('content')
@@ -55,8 +58,30 @@
                 @endforeach
             </select>
         </div>
+        <div class="a-field">
+            <label class="a-label" for="f-country">{{ __('admin.field_country') }}</label>
+            <select class="a-input" id="f-country" name="country">
+                <option value="">{{ __('m3_deleg.all_countries') }}</option>
+                @foreach ($countries as $c)
+                    <option value="{{ $c->iso_code }}" @selected($filter['country']?->is($c))>{{ $c->displayName() }}</option>
+                @endforeach
+            </select>
+        </div>
         <button type="submit" class="a-btn a-btn--secondary">{{ __('admin.apply_filters') }}</button>
     </form>
+
+    {{-- Item 1e: confirm or decline the ticked rows in one step. The row
+         checkboxes below belong to this form through form="reg-bulk". --}}
+    @if ($total > 0)
+        <form method="POST" id="reg-bulk" class="a-filters" action="{{ route('admin.registrations.bulk', ['locale' => $locale]) }}" aria-label="{{ __('m3_deleg.bulk_label') }}">
+            @csrf
+            <div class="a-field">
+                <label class="a-check"><input type="checkbox" data-reg-select-all> {{ __('m3_deleg.select_all') }}</label>
+            </div>
+            <button type="submit" name="action" value="confirmed" class="a-btn a-btn--primary">{{ __('m3_deleg.confirm_selected') }}</button>
+            <button type="submit" name="action" value="declined" class="a-btn a-btn--secondary">{{ __('m3_deleg.decline_selected') }}</button>
+        </form>
+    @endif
 
     <p class="c-results" role="status">{{ trans_choice('d3_people.reg_count', $total, ['count' => $total, 'events' => $meetings->count()]) }}</p>
 
@@ -108,8 +133,10 @@
                         <caption class="c-sr">{{ __('d3_people.reg_caption', ['event' => $meeting->title]) }}</caption>
                         <thead>
                             <tr>
+                                <th scope="col"><span class="c-sr">{{ __('m3_deleg.select') }}</span></th>
                                 <th scope="col">{{ __('delegates.col_name') }}</th>
                                 <th scope="col">{{ __('admin.field_country') }}</th>
+                                <th scope="col">{{ __('m3_deleg.language_col') }}</th>
                                 <th scope="col">{{ __('delegates.col_arrival_on') }}</th>
                                 <th scope="col">{{ __('delegates.col_departure_on') }}</th>
                                 <th scope="col">{{ __('d3_people.status') }}</th>
@@ -120,12 +147,14 @@
                             @foreach ($rows as $row)
                                 @php($st = $row->status ?: 'filed')
                                 <tr>
+                                    <td><input type="checkbox" form="reg-bulk" name="ids[]" value="{{ $row->id }}" id="reg-sel-{{ $row->id }}" data-reg-select><label class="c-sr" for="reg-sel-{{ $row->id }}">{{ __('m3_deleg.select_one', ['name' => $row->delegate_name]) }}</label></td>
                                     <th scope="row">
                                         {{ $row->delegate_name }}
                                         <span class="a-table__sub">{{ $row->delegate_email }}</span>
                                         @if ($row->delegate_role)<span class="a-table__sub">{{ $row->delegate_role }}</span>@endif
                                     </th>
                                     <td>{{ $row->country?->displayName() }}</td>
+                                    <td>{{ $row->preferred_language ? __('m3_deleg.lang_'.$row->preferred_language) : '' }}@if ($row->interpretation_into)<span class="a-table__sub">{{ __('m3_deleg.interp_into_'.$row->interpretation_into) }}</span>@endif</td>
                                     <td>{{ $row->arrival_on?->locale($locale)->isoFormat('D MMM YYYY') }}@if ($row->arrival_at)<span class="a-table__sub">{{ substr((string) $row->arrival_at, 0, 5) }} {{ $row->arrival_point }}</span>@endif</td>
                                     <td>{{ $row->departure_on?->locale($locale)->isoFormat('D MMM YYYY') }}@if ($row->departure_at)<span class="a-table__sub">{{ substr((string) $row->departure_at, 0, 5) }}</span>@endif</td>
                                     <td><span class="a-pill" data-status="{{ $pill[$st] ?? 'pending' }}">{{ __('d3_people.reg_'.$st) }}</span></td>

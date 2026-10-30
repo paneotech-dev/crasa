@@ -53,6 +53,11 @@ class SettingsController extends Controller
         'general' => [
             'legacy_website' => ['nullable', 'url', 'max:255'],
         ],
+        // Day 3 item 1e: the mailbox that receives a copy of every
+        // delegate registration. Labels in lang/*/m3_deleg.php.
+        'registrations' => [
+            'registrations_mailbox' => ['nullable', 'email', 'max:160'],
+        ],
     ];
 
     public function edit(): View

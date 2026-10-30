@@ -90,6 +90,31 @@
                     </div>
                 </fieldset>
 
+                {{-- Item 1e: the language the delegate is written to in, and
+                     the language they ask the proceedings to be interpreted
+                     into. Recorded as a request; nothing is booked here. --}}
+                <fieldset>
+                    <legend>{{ __('m3_deleg.language_legend') }}</legend>
+                    <div class="c-field">
+                        <label class="c-label" for="preferred_language">{{ __('m3_deleg.preferred_language') }}</label>
+                        <select class="c-select" id="preferred_language" name="preferred_language">
+                            @foreach (\App\Models\DelegateRegistration::LANGUAGES as $code)
+                                <option value="{{ $code }}" @selected(old('preferred_language', $existing?->preferred_language ?? app()->getLocale()) === $code)>{{ __('m3_deleg.lang_'.$code) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="c-field">
+                        <label class="c-label" for="interpretation_into">{{ __('m3_deleg.interpretation') }}</label>
+                        <select class="c-select" id="interpretation_into" name="interpretation_into" aria-describedby="interpretation-hint">
+                            <option value="">{{ __('m3_deleg.interp_none') }}</option>
+                            @foreach (\App\Models\DelegateRegistration::LANGUAGES as $code)
+                                <option value="{{ $code }}" @selected(old('interpretation_into', $existing?->interpretation_into) === $code)>{{ __('m3_deleg.interp_into_'.$code) }}</option>
+                            @endforeach
+                        </select>
+                        <p class="c-field__hint" id="interpretation-hint">{{ __('m3_deleg.interpretation_hint') }}</p>
+                    </div>
+                </fieldset>
+
                 <fieldset>
                     <legend>{{ __('delegates.arrival') }}</legend>
 

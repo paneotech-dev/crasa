@@ -63,6 +63,12 @@ class StoreDelegateRegistrationRequest extends FormRequest
             // The regulator the delegate attends for, where they name one.
             'authority_id' => ['nullable', 'integer', 'exists:authorities,id'],
 
+            // The language the delegate is written to in, and the language
+            // they ask to have the proceedings interpreted into (empty for
+            // none). A request recorded for the Secretariat, nothing booked.
+            'preferred_language' => ['nullable', 'string', 'in:'.implode(',', \App\Models\DelegateRegistration::LANGUAGES)],
+            'interpretation_into' => ['nullable', 'string', 'in:'.implode(',', \App\Models\DelegateRegistration::LANGUAGES)],
+
             'arrival_point' => ['nullable', 'string', 'max:120'],
             'arrival_on' => ['required', 'date'],
             'arrival_at' => ['nullable', 'date_format:H:i'],
@@ -97,6 +103,8 @@ class StoreDelegateRegistrationRequest extends FormRequest
             'delegate_role' => __('delegates.col_role'),
             'country_id' => __('delegates.col_country'),
             'authority_id' => __('d3_people.authority'),
+            'preferred_language' => __('m3_deleg.preferred_language'),
+            'interpretation_into' => __('m3_deleg.interpretation'),
             'arrival_point' => __('delegates.col_arrival_point'),
             'arrival_on' => __('delegates.col_arrival_on'),
             'arrival_at' => __('delegates.col_arrival_at'),
