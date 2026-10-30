@@ -6,8 +6,8 @@
 
       hero                  hero block: eyebrow, headline, subhead, button,
                             photograph, caption per slide (rotation_items);
-                            an optional "focal" setting per slide sets the
-                            photograph's focal point (CSS object-position)
+                            the photograph is shown whole, so the "focal"
+                            setting (kept in the data) no longer crops it
       at a glance           key_figures block: values, labels and links
       what we do            pillars block: heading, four headings and lines
       latest guidelines     featured_publications block: heading
@@ -98,19 +98,26 @@
 @if ($count > 0)
 <section class="k-hero" @if ($count > 1) data-k-hero aria-roledescription="carousel" @endif aria-label="{{ __('chome.hero_label') }}">
     <div class="k-wrap">
+        {{-- The photograph is shown whole (object-fit: contain) on a
+             blurred, darkened copy of itself, so a panorama, a landscape
+             and a portrait all fill the stage without cropping anyone.
+             The text sits beside it on a CRASA blue card, never over the
+             picture; the controls close the card. --}}
         <div class="k-hero__box">
             <div class="k-hero__photo">
                 @foreach ($slides as $i => $s)
                     <figure class="k-hero__fig @if ($i === 0) is-on @endif" data-k-fig>
                         @if ($s['asset'])
-                            @php $a = $s['asset']; @endphp
-                            <img src="{{ $a->url(1440) ?? $a->url(960) }}"
-                                 srcset="{{ \App\Support\MediaReference::srcset($a) }}"
-                                 sizes="(max-width: 900px) 100vw, 660px"
-                                 alt="{{ $s['alt'] }}"
-                                 @if ($a->width) width="{{ $a->width }}" height="{{ $a->height }}" @endif
-                                 style="object-position: {{ $s['focal'] }}"
-                                 @if ($i === 0) loading="eager" fetchpriority="high" @else loading="lazy" @endif decoding="async">
+                            @php $a = $s['asset']; $lazy = $i === 0 ? 'loading="eager"' : 'loading="lazy"'; @endphp
+                            <img class="k-hero__bg" src="{{ $a->url(480) }}" alt="" aria-hidden="true" {!! $lazy !!} decoding="async">
+                            <span class="k-hero__frame">
+                                <img class="k-hero__img" src="{{ $a->url(1440) ?? $a->url(960) }}"
+                                     srcset="{{ \App\Support\MediaReference::srcset($a) }}"
+                                     sizes="(max-width: 900px) 100vw, 780px"
+                                     alt="{{ $s['alt'] }}"
+                                     @if ($a->width) width="{{ $a->width }}" height="{{ $a->height }}" @endif
+                                     @if ($i === 0) loading="eager" fetchpriority="high" @else loading="lazy" @endif decoding="async">
+                            </span>
                         @else
                             <span class="k-hero__mark" aria-hidden="true"><img src="{{ asset('img/crasa-logo.svg') }}" alt="" width="120" height="120"></span>
                         @endif
@@ -143,33 +150,34 @@
                     @endforeach
                 </div>
 
-                <div class="k-hero__foot">
-                    <dl class="k-hero__figs">
-                        <div><dt>{{ __('chome.fig_members') }}</dt><dd data-count="{{ $figures['members'] }}">{{ $figures['members'] }}</dd></div>
-                        <div><dt>{{ __('chome.fig_committees') }}</dt><dd data-count="{{ $figures['committees'] }}">{{ $figures['committees'] }}</dd></div>
-                        <div><dt>{{ __('chome.fig_publications') }}</dt><dd data-count="{{ $figures['publications'] }}">{{ $figures['publications'] }}</dd></div>
-                    </dl>
-
-                    @if ($count > 1)
-                        <div class="k-hctl" data-k-hero-controls>
-                            <button type="button" data-k-prev aria-label="{{ __('chome.hero_prev') }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
-                            <div class="k-hctl__dots" role="group" aria-label="{{ __('chome.hero_choose') }}">
-                                @foreach ($slides as $i => $s)
-                                    <button type="button" class="k-dot" data-k-dot="{{ $i }}" aria-current="{{ $i === 0 ? 'true' : 'false' }}"
-                                            aria-label="{{ __('chome.hero_slide', ['index' => $i + 1, 'total' => $count, 'name' => $s['name']]) }}"><span></span></button>
-                                @endforeach
-                            </div>
-                            <button type="button" data-k-next aria-label="{{ __('chome.hero_next') }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
-                            <button type="button" class="k-hctl__pause" data-k-pause aria-pressed="false" aria-label="{{ __('chome.hero_pause') }}"
-                                    data-label-pause="{{ __('chome.hero_pause') }}" data-label-play="{{ __('chome.hero_play') }}">
-                                <svg class="k-i-pause" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg>
-                                <svg class="k-i-play" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5l11 6.5-11 6.5z"/></svg>
-                            </button>
-                        </div>
-                        <div class="c-sr" aria-live="polite" data-k-live data-template="{{ __('chome.hero_live', ['index' => ':index', 'total' => ':total', 'name' => ':name']) }}"></div>
-                    @endif
-                </div>
+                <dl class="k-hero__figs">
+                    <div><dt>{{ __('chome.fig_members') }}</dt><dd data-count="{{ $figures['members'] }}">{{ $figures['members'] }}</dd></div>
+                    <div><dt>{{ __('chome.fig_committees') }}</dt><dd data-count="{{ $figures['committees'] }}">{{ $figures['committees'] }}</dd></div>
+                    <div><dt>{{ __('chome.fig_publications') }}</dt><dd data-count="{{ $figures['publications'] }}">{{ $figures['publications'] }}</dd></div>
+                </dl>
             </div>
+
+            @if ($count > 1)
+                <div class="k-hctl" data-k-hero-controls>
+                    <span class="k-hctl__count" data-k-count aria-hidden="true"><b>01</b> / {{ str_pad((string) $count, 2, '0', STR_PAD_LEFT) }}</span>
+                    <div class="k-hctl__dots" role="group" aria-label="{{ __('chome.hero_choose') }}">
+                        @foreach ($slides as $i => $s)
+                            <button type="button" class="k-dot" data-k-dot="{{ $i }}" aria-current="{{ $i === 0 ? 'true' : 'false' }}"
+                                    aria-label="{{ __('chome.hero_slide', ['index' => $i + 1, 'total' => $count, 'name' => $s['name']]) }}"><span><i></i></span></button>
+                        @endforeach
+                    </div>
+                    <div class="k-hctl__btns">
+                        <button type="button" data-k-prev aria-label="{{ __('chome.hero_prev') }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
+                        <button type="button" data-k-next aria-label="{{ __('chome.hero_next') }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+                        <button type="button" class="k-hctl__pause" data-k-pause aria-pressed="false" aria-label="{{ __('chome.hero_pause') }}"
+                                data-label-pause="{{ __('chome.hero_pause') }}" data-label-play="{{ __('chome.hero_play') }}">
+                            <svg class="k-i-pause" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg>
+                            <svg class="k-i-play" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5l11 6.5-11 6.5z"/></svg>
+                        </button>
+                    </div>
+                    <div class="c-sr" aria-live="polite" data-k-live data-template="{{ __('chome.hero_live', ['index' => ':index', 'total' => ':total', 'name' => ':name']) }}"></div>
+                </div>
+            @endif
         </div>
 
         {{-- Three tiles under the composition, each a concrete fact read

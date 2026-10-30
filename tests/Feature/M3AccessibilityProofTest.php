@@ -246,15 +246,25 @@ class M3AccessibilityProofTest extends TestCase
     }
 
     /**
-     * The hero's inactive slide dots are a control on white: 3:1 under
-     * SC 1.4.11. #93A1AE measured 2.64:1; the field-border grey is 3.66:1.
+     * The hero's inactive progress bars are a control on the controls band
+     * (#041F3B, 30 October 2026): 3:1 under SC 1.4.11. The card text and
+     * the eyebrow clear 4.5:1 on the CRASA blue card whatever the photograph.
      */
-    public function test_the_inactive_hero_dots_clear_three_to_one_on_white(): void
+    public function test_the_inactive_hero_dots_clear_three_to_one_on_their_band(): void
     {
-        preg_match('/\.k-dot span \{[^}]*background:\s*(#[0-9A-Fa-f]{6})/', file_get_contents(public_path('css/k.css')), $m);
+        $css = file_get_contents(public_path('css/k.css'));
+        preg_match('/\.k-dot span \{[^}]*background:\s*(#[0-9A-Fa-f]{6})/', $css, $m);
         $this->assertNotEmpty($m, 'No literal background on .k-dot span.');
-        $ratio = $this->ratio($m[1], '#FFFFFF');
-        $this->assertGreaterThanOrEqual(3.0, $ratio, sprintf('Inactive hero dot is %.2f:1 on white.', $ratio));
+        preg_match('/\.k-hctl \{[^}]*background:\s*(#[0-9A-Fa-f]{6})/', $css, $band);
+        $this->assertNotEmpty($band, 'No literal background on .k-hctl.');
+        $ratio = $this->ratio($m[1], $band[1]);
+        $this->assertGreaterThanOrEqual(3.0, $ratio, sprintf('Inactive hero bar is %.2f:1 on its band.', $ratio));
+
+        foreach (['/\.k-cap__lbl \{[^}]*color:\s*(#[0-9A-Fa-f]{6})/', '/\.k-cap__d \{[^}]*color:\s*(#[0-9A-Fa-f]{6})/', '/\.k-hero__figs dt \{[^}]*color:\s*(#[0-9A-Fa-f]{6})/'] as $re) {
+            preg_match($re, $css, $c);
+            $this->assertNotEmpty($c, $re);
+            $this->assertGreaterThanOrEqual(4.5, $this->ratio($c[1], '#052D53'), $re);
+        }
     }
 
     /**
