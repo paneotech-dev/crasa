@@ -187,4 +187,20 @@ class M3AuditLogDetailTest extends TestCase
         $this->actingAs($this->admin)->get('/fr/admin/audit')->assertOk()->assertSee('Avant')->assertSee('Après')->assertSee('Exporter en CSV');
         $this->actingAs($this->admin)->get('/pt/admin/audit')->assertOk()->assertSee('Antes')->assertSee('Depois')->assertSee('Exportar para CSV');
     }
+
+    public function test_a_secret_nested_inside_an_array_value_is_masked(): void
+    {
+        $text = \App\Support\AuditChanges::text([
+            'name' => 'Mail relay',
+            'smtp' => ['host' => 'mail.example.org', 'password' => 'hunter2-nested', 'auth' => ['api_token' => 'tok-123']],
+        ]);
+
+        $this->assertStringNotContainsString('hunter2-nested', $text);
+        $this->assertStringNotContainsString('tok-123', $text);
+        $this->assertStringContainsString('mail.example.org', $text);
+        $this->assertStringContainsString('"password":"[redacted]"', $text);
+
+        AuditLog::record(AuditLog::UPDATED, $this->committee(), ['settings' => ['from' => null, 'to' => ['smtp' => ['password' => 'hunter2-nested']]]], $this->admin);
+        $this->actingAs($this->admin)->get('/en/admin/audit')->assertOk()->assertDontSee('hunter2-nested');
+    }
 }
