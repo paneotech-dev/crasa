@@ -25,6 +25,8 @@ return [
             ['label' => 'chome.m.about_vmh', 'desc' => 'chome.m.about_vmh_d', 'path' => 'about#vision-mission-history'],
             ['label' => 'chome.m.about_governance', 'desc' => 'chome.m.about_governance_d', 'path' => 'about#governance'],
             ['label' => 'chome.m.about_exco', 'desc' => 'chome.m.about_exco_d', 'path' => 'about#executive-committee'],
+            // Day 3: themes
+            ['label' => 'd3_themes.menu', 'desc' => 'd3_themes.menu_d', 'path' => 'themes'],
             // A page record: listed only while it is published (HomeData).
             ['label' => 'd3_partner.menu', 'desc' => 'd3_partner.menu_d', 'path' => 'partner-with-us', 'page' => 'partner-with-us'],
         ],

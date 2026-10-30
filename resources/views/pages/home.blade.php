@@ -215,6 +215,7 @@
     </div>
 </section>
 @endif
+@include('partials.home.themes')
 
 {{-- ================= MISSION + WHAT WE DO (C7) ================= --}}
 @if ($pillars)

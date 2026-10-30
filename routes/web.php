@@ -123,6 +123,11 @@ Route::prefix('{locale}')
         Route::get('committees', [PageController::class, 'show'])->defaults('slug', 'committees')->name('committees');
         Route::get('committees/{committee}', [\App\Http\Controllers\CommitteePageController::class, 'show'])->name('committees.show');
         Route::get('members', [PageController::class, 'show'])->defaults('slug', 'members')->name('members');
+        // Day 3: themes
+        // CRASA's thematic areas: an index and one page per theme.
+        Route::get('themes', [\App\Http\Controllers\ThemeController::class, 'index'])->name('themes');
+        Route::get('themes/{theme}', [\App\Http\Controllers\ThemeController::class, 'show'])->where('theme', '[a-z0-9-]+')->name('themes.show');
+        // end Day 3: themes
 
         /*
          * The dropdown alternative to the map.
