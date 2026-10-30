@@ -73,6 +73,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', LocaleRedirectController::class)->name('locale.redirect');
 
+// Day 3: prodprep
+/*
+ * robots.txt and the sitemap, served by the application rather than as
+ * static files, so both follow CRASA_NOINDEX and name APP_URL's host.
+ */
+Route::get('robots.txt', [\App\Http\Controllers\SiteIndexController::class, 'robots'])->name('robots');
+Route::get('sitemap.xml', [\App\Http\Controllers\SiteIndexController::class, 'sitemap'])->name('sitemap');
+// end Day 3: prodprep
+
 Route::prefix('{locale}')
     ->whereIn('locale', Locales::SUPPORTED)
     ->middleware(SetLocale::class)

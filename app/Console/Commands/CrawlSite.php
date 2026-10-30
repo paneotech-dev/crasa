@@ -19,7 +19,7 @@ use Throwable;
  * styles, and lives in the separate Playwright audit (docs/QA_CRAWL.md).
  *
  *   php artisan qa:crawl
- *   php artisan qa:crawl --base=https://crasadev.paneo.tech --resolve=crasadev.paneo.tech:127.0.0.1 --insecure \
+ *   php artisan qa:crawl --base=https://crasa.africa --resolve=crasa.africa:127.0.0.1 --insecure \
  *       --accounts=/path/to/accounts.txt --json=storage/app/private/qa/latest.json
  *
  * The accounts file has one account per line: the address, the password as
