@@ -67,6 +67,10 @@ class UserAdminController extends Controller
             'preferred_locale' => ['required', 'in:'.implode(',', Locales::SUPPORTED)],
         ]);
 
+        // Inviting into any role but the default is granting a role, so it
+        // needs what "Change the role" needs (AssignRoles), else 403.
+        abort_unless($data['role'] === Role::Viewer->value || $this->mayAssignRoles($request->user()), 403);
+
         // No password is set here. The account is invited, and the holder
         // chooses their own password through the reset link. A password
         // typed by an administrator is a password two people know.
@@ -151,6 +155,12 @@ class UserAdminController extends Controller
         ], route('admin.users', ['locale' => app()->getLocale()]));
 
         return true;
+    }
+
+    /** The permission "Change the role" checks (UserPolicy::assignRole), without a subject. */
+    private function mayAssignRoles(User $inviter): bool
+    {
+        return $inviter->hasPermission(Permission::AssignRoles);
     }
 
     private function activeAdministrators(): int
@@ -388,9 +398,14 @@ class UserAdminController extends Controller
     {
         $this->authorize('create', User::class);
 
+        // Only the roles this inviter may assign: the default role alone
+        // without AssignRoles.
+        $all = $this->mayAssignRoles($request->user());
+
         return view('pages.admin.users.invite', [
-            'roles' => Role::cases(),
-            'roleOptions' => \App\Models\RoleDefinition::orderByDesc('is_built_in')->orderBy('id')->get(),
+            'roles' => $all ? Role::cases() : [Role::Viewer],
+            'roleOptions' => \App\Models\RoleDefinition::orderByDesc('is_built_in')->orderBy('id')
+                ->when(! $all, fn ($q) => $q->where('key', Role::Viewer->value))->get(),
             'countries' => Country::orderBy('name')->get(),
             'authorities' => Authority::with('country')->orderBy('acronym')->get(),
         ]);
