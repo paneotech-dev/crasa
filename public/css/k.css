@@ -597,3 +597,13 @@ p.s-post__head { margin: 0; font-weight: 600; }
   .k-hctl button, .k-hctl__pause { min-width: 44px; min-height: 44px; }
   .k-dot { min-width: 44px; min-height: 44px; }
 }
+@media (max-width: 768px) {
+  html body .k-langs a,
+  html body .k-ubar__soc a { min-height: 44px; min-width: 44px; }
+  html body .s-channel__link,
+  html body .cp-meeting__title a,
+  html body .cp-map__gate-actions a,
+  html body .s-post__gate-actions a,
+  html body .c-active__head a,
+  html body .c-active__chip { display: inline-flex; align-items: center; min-height: 44px; }
+}

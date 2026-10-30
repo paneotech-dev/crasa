@@ -2962,3 +2962,12 @@ body[data-surface="admin"] .e-dash__day { color: var(--a-date-ink); }
   body[data-surface="admin"] .a-side__link { display: flex; }
   .a-pills__item { min-width: 44px; justify-content: center; }
 }
+@media (max-width: 1023.98px) {
+  body .a-top__icon, body .a-top__avatar { min-width: 44px; min-height: 44px; }
+  body .mh-card__head a,
+  body .mh-notice__title a,
+  body .mc-card__title a,
+  body .a-panel__meta,
+  body .n-latest__link,
+  body main ol li > a:only-child { display: inline-flex; align-items: center; min-height: 44px; }
+}

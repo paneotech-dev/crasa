@@ -296,3 +296,6 @@ html:not(.has-js) .e-admin-dialog { display: none; }
 
 /* Day 3 (phones): the month grid scrolls sideways inside its own frame. */
 .e-month { overflow-x: auto; max-width: 100%; }
+@media (max-width: 768px) {
+  .e-grid .e-chip { display: flex; align-items: center; min-height: 44px; }
+}
