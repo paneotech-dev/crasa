@@ -25,7 +25,7 @@
             @endunless
 
             <div class="a-form__actions">
-                @can(\App\Enums\Permission::PublishContent->value)
+                @if ($post->isPublished() ? \Illuminate\Support\Facades\Gate::allows(\App\Enums\Permission::PublishContent->value) : \Illuminate\Support\Facades\Gate::allows('publish', $post))
                     <form method="POST" action="{{ route($post->isPublished() ? 'admin.social.unpublish' : 'admin.social.publish', ['post' => $post->id]) }}">
                         @csrf
                         @method('PUT')
@@ -33,7 +33,7 @@
                             {{ $post->isPublished() ? __('fb.unpublish') : __('fb.publish') }}
                         </button>
                     </form>
-                @endcan
+                @endif
                 <form method="POST" action="{{ route('admin.social.destroy', ['post' => $post->id]) }}"
                       onsubmit="return confirm('{{ __('fb.delete_confirm') }}')">
                     @csrf
@@ -42,6 +42,8 @@
                 </form>
             </div>
         </section>
+
+        @include('pages.admin.approvals._panel', ['record' => $post])
 
         <section class="a-card">
             <div class="a-card__head"><h2>{{ __('fb.preview') }}</h2></div>

@@ -289,6 +289,18 @@ class User extends Authenticatable implements HasLocalePreference
             return false;
         }
 
+        // Approval is held per content type (evening pass). "Approve
+        // content" asks whether any one of them is held.
+        if ($permission === Permission::ApproveContent) {
+            foreach (Permission::approveTypes() as $type) {
+                if ($this->grantFor($type)->allowsAnything()) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         return $this->grantFor($permission)->allowsAnything();
     }
 

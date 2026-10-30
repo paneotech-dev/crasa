@@ -36,9 +36,16 @@ class MeetingPolicy
         return $user->hasPermission(Permission::ManageMeetings);
     }
 
-    public function update(User $user, Meeting $meeting): bool
+    /** Open the editor. An item In review opens read only. */
+    public function edit(User $user, Meeting $meeting): bool
     {
         return $user->hasPermission(Permission::ManageMeetings);
+    }
+
+    /** Save a change. Refused while the item is In review (locked until approved or returned). */
+    public function update(User $user, Meeting $meeting): bool
+    {
+        return $user->hasPermission(Permission::ManageMeetings) && ! \App\Support\Approvals::isLocked($meeting);
     }
 
     public function delete(User $user, Meeting $meeting): bool

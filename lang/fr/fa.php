@@ -10,10 +10,12 @@ return [
     'type_news' => 'Actualité',
     'type_events' => 'Événement',
     'type_pages' => 'Page',
+    'type_social' => 'Publication sur les réseaux sociaux',
     'types_publications' => 'Publications',
     'types_news' => 'Actualités',
     'types_events' => 'Événements et réunions',
     'types_pages' => 'Pages',
+    'types_social' => 'Publications sur les réseaux sociaux',
 
     'panel_title' => 'Approbation',
     'panel_state' => 'État',
@@ -88,6 +90,7 @@ return [
     'notify_approval_submitted' => ':actor a envoyé « :subject » pour approbation',
     'notify_approval_approved' => ':actor a approuvé « :subject » ; il est en ligne',
     'notify_approval_returned' => ':actor a renvoyé « :subject » avec un commentaire',
+    'notify_approval_withdrawn' => ':actor a retiré « :subject » de la relecture ; il redevient un brouillon',
 
     'rules_title' => 'Règles d\'approbation',
     'rules_note' => 'Par type de contenu : un modérateur doit-il approuver avant la mise en ligne.',

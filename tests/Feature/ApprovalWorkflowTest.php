@@ -285,8 +285,8 @@ class ApprovalWorkflowTest extends TestCase
         $this->actingAs($this->admin)->get('/en/admin/approvals/rules')->assertOk();
 
         $this->actingAs($this->admin)->put('/en/admin/approvals/rules', ['mode' => [
-            'publications' => 'one', 'news' => 'none', 'events' => 'one', 'pages' => 'one',
-        ]])->assertRedirect();
+            'publications' => 'one', 'news' => 'none', 'events' => 'one', 'pages' => 'one', 'social' => 'one',
+        ]])->assertRedirect()->assertSessionHasNoErrors();
 
         $this->assertFalse(Approvals::requiresApproval('news'));
         $this->assertDatabaseHas('audit_log', ['action' => 'approval_rule_changed']);

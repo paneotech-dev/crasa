@@ -60,7 +60,7 @@ class PageAdminController extends Controller
 
     public function edit(Page $page): View
     {
-        Gate::authorize('update', $page);
+        Gate::authorize('edit', $page);
 
         $page->load(['translations', 'editableBlocks', 'blocks.translations', 'clientReviewer']);
 
@@ -75,6 +75,8 @@ class PageAdminController extends Controller
 
     public function update(Request $request, Page $page): RedirectResponse
     {
+        \App\Support\Approvals::refuseIfLocked($page);
+
         Gate::authorize('update', $page);
 
         $rules = [];
@@ -114,6 +116,8 @@ class PageAdminController extends Controller
      */
     public function updateStatus(Request $request, Page $page): RedirectResponse
     {
+        \App\Support\Approvals::refuseIfLocked($page);
+
         Gate::authorize('update', $page);
 
         $data = $request->validate([

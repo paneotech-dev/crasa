@@ -366,7 +366,57 @@ final class ResourceRegistry
                 ],
             ),
 
-            'indicator-values' => new Resource(
+            // S8 remainder (evening pass): the facts and milestones the
+            // public project page shows when they are filled in.
+            'projects' => new Resource(
+                key: 'projects',
+                model: \App\Models\Project::class,
+                columns: ['title', 'programme', 'state', 'status', 'starts_on'],
+                fields: [
+                    Field::select('state', ['current', 'past'], required: true),
+                    Field::select('status', ['draft', 'published'], required: true),
+                    Field::date('published_at'),
+                    Field::text('programme'),
+                    Field::belongsTo('sector_id', 'sector'),
+                    Field::belongsTo('lead_committee_id', 'leadCommittee'),
+                    Field::text('partner'),
+                    Field::text('funding_partner'),
+                    Field::text('countries'),
+                    Field::date('starts_on'),
+                    Field::date('ends_on'),
+                    Field::scoped('hero_image_path', fn () => \App\Models\MediaAsset::query()
+                        ->where('disk', 'public')
+                        ->where('mime_type', 'like', 'image/%')
+                        ->orderByDesc('id')
+                        ->limit(200)
+                        ->pluck('original_name', 'path')
+                        ->all()),
+                ],
+                rules: [
+                    'state' => ['required', 'in:current,past'],
+                    'status' => ['required', 'in:draft,published'],
+                    'published_at' => ['nullable', 'date'],
+                    'programme' => ['nullable', 'string', 'max:120'],
+                    'sector_id' => ['nullable', 'exists:sectors,id'],
+                    'lead_committee_id' => ['nullable', 'exists:committees,id'],
+                    'partner' => ['nullable', 'string', 'max:200'],
+                    'funding_partner' => ['nullable', 'string', 'max:200'],
+                    'countries' => ['nullable', 'string', 'max:500'],
+                    'starts_on' => ['nullable', 'date'],
+                    'ends_on' => ['nullable', 'date', 'after_or_equal:starts_on'],
+                    'hero_image_path' => ['nullable', 'string', Rule::exists('media_assets', 'path')->whereNull('deleted_at')],
+                ],
+                translatable: ['title', 'summary', 'body', 'milestones'],
+                searchable: ['slug', 'programme', 'partner'],
+                with: ['sector'],
+                orderBy: 'starts_on',
+                orderDirection: 'desc',
+                filters: [
+                    ['key' => 'state', 'column' => 'state', 'options' => ['current' => 'admin.option_current', 'past' => 'admin.option_past']],
+                ],
+            ),
+
+                        'indicator-values' => new Resource(
                 key: 'indicator-values',
                 model: IndicatorValue::class,
                 columns: ['indicator', 'country', 'period', 'value_numeric'],

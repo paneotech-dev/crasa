@@ -16,6 +16,10 @@
 @endsection
 
 @section('content')
+    @if ($page->slug === 'accessibility' && class_exists(\App\Http\Controllers\AccessibilityStatementController::class))
+        {{-- FIXES_FOR_STREAMS row 15: the public statement is not read from this record. --}}
+        <p class="a-notice a-notice--pending" data-statement-note>{{ __('evening.statement_not_this_record') }}</p>
+    @endif
     @include('pages.admin.approvals._panel', ['record' => $page])
 
     {{-- Workflow. The buttons are only what this account may actually do:

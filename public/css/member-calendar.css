@@ -1,0 +1,80 @@
+/* Member-area calendar (evening pass): the UI system's components with the
+   public calendar's committee colours and codes (App\Support\EventGroup).
+   Every colour carries its code in text, so colour is never the only signal. */
+.mc-badge {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  min-width: 34px; height: 22px; padding: 0 6px; border-radius: 4px;
+  background: var(--e-c, #25384A); color: #FFFFFF;
+  font: 700 12px/1 var(--u-sans); letter-spacing: .02em;
+}
+.u-chip[aria-current="true"] .mc-badge { box-shadow: 0 0 0 2px #FFFFFF; }
+
+.mc-filter { margin: 0 0 var(--u-4); }
+.mc-filter__legend { margin: 0 0 var(--u-2); font: 600 var(--u-t-14)/1.4 var(--u-sans); color: var(--u-muted); }
+.mc-filter__chips { display: flex; flex-wrap: wrap; gap: var(--u-2); margin: 0; padding: 0; list-style: none; }
+.mc-filter__chips .u-chip { min-height: 44px; }
+
+.mc-month { margin-bottom: var(--u-5); }
+.mc-month__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--u-3); margin-bottom: var(--u-4); }
+.mc-month__title { margin: 0; font: 600 var(--u-t-28)/1.2 var(--u-display); color: var(--u-green-deep); }
+.mc-month__count { margin: 4px 0 0; color: var(--u-muted); font-size: var(--u-t-14); }
+.mc-month__nav { display: flex; flex-wrap: wrap; gap: var(--u-2); }
+.mc-month .e-cal { padding: 0; }
+.mc-month .e-cal__cell { min-height: 96px; border-color: var(--u-line); border-radius: 8px; background: var(--u-white); }
+.mc-month .e-cal__cell.is-today { border: 2px solid var(--u-green); }
+.mc-month .e-cal__daynum { color: var(--u-muted); font-family: var(--u-sans); }
+
+.mc-chip {
+  display: block; min-width: 0; padding: 4px 6px; border: 1px solid var(--u-line);
+  border-left: 4px solid var(--e-c, #25384A); border-radius: 6px; background: var(--u-white);
+  color: var(--u-ink); font-size: 12.5px; line-height: 1.3; text-decoration: none; overflow: hidden;
+}
+.mc-chip:hover { background: var(--u-pale); border-color: var(--e-c, #25384A); }
+.mc-chip:focus-visible { outline: 2px solid var(--u-blue-ink); outline-offset: 2px; }
+.mc-chip__top { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+.mc-chip .mc-badge { min-width: 0; height: 18px; font-size: 11px; }
+.mc-chip .e-cal__kind { display: inline; color: var(--u-muted); font: 600 11px/1.2 var(--u-sans); text-transform: none; letter-spacing: 0; }
+.mc-chip__title { display: block; }
+/* The admin sheet's colour by meeting kind gives way to the committee colour. */
+.mc-chip[data-kind] { background: var(--u-white); }
+
+.mc-legend { display: flex; flex-wrap: wrap; gap: var(--u-2) var(--u-4); margin: var(--u-4) 0 0; padding: 0; list-style: none; font-size: var(--u-t-14); color: var(--u-ink); }
+.mc-legend li { display: inline-flex; align-items: center; gap: 8px; }
+
+.mc-export { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--u-3); margin-top: var(--u-4); padding: var(--u-4) 0 0; border-top: 1px solid var(--u-line); }
+.mc-export__title { margin: 0 0 4px; font: 600 var(--u-t-18)/1.3 var(--u-sans); color: var(--u-ink); }
+.mc-export p { margin: 0; }
+
+.mc-empty { padding: var(--u-4); border: 1px dashed var(--u-line); border-radius: 12px; background: var(--u-pale); }
+.mc-empty__title { margin: 0 0 4px; font-weight: 600; color: var(--u-ink); }
+.mc-empty p { margin: 0; }
+
+.mc-list { margin: 0 0 var(--u-5); }
+.mc-list__head { margin-bottom: var(--u-3); }
+.mc-list__title { margin: 0 0 4px; font: 600 var(--u-t-22)/1.3 var(--u-display); color: var(--u-green-deep); }
+.mc-list__head p { margin: 0; }
+.mc-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--u-3); margin: 0; padding: 0; list-style: none; }
+.mc-card { display: flex; flex-direction: row; gap: var(--u-3); align-items: flex-start; padding: var(--u-3); border-top: 4px solid var(--e-c, #25384A); }
+.mc-card__date { flex: none; }
+.mc-card__body { min-width: 0; }
+.mc-card__group { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font-size: var(--u-t-14); font-weight: 600; color: var(--u-muted); }
+.mc-card__title { margin: 0 0 6px; font: 600 var(--u-t-18)/1.35 var(--u-sans); }
+.mc-card__title a { color: var(--u-ink); text-decoration: none; }
+.mc-card__title a:hover { text-decoration: underline; }
+.mc-card__title a::after { content: ""; position: absolute; inset: 0; }
+.mc-card { position: relative; }
+.mc-card__title a:focus-visible { outline: none; }
+.mc-card:focus-within { outline: 2px solid var(--u-blue-ink); outline-offset: 2px; }
+.mc-card__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin: 0; font-size: var(--u-t-14); color: var(--u-muted); }
+
+@media (max-width: 640px) {
+  .mc-cards { grid-template-columns: minmax(0, 1fr); }
+  .mc-card { flex-direction: column; }
+  .mc-legend { display: none; }
+}
+@media print {
+  .mc-filter, .mc-month__nav, .mc-export { display: none !important; }
+}
+/* The back-office link colour must not reach the chips (axe, 4.5:1). */
+.mc-filter .u-chip { color: var(--u-ink); }
+.mc-filter .u-chip[aria-current="true"] { background: var(--u-green-deep, #0B5F3E); border-color: var(--u-green-deep, #0B5F3E); color: #FFFFFF; }

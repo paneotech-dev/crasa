@@ -15,9 +15,9 @@
     <meta name="crasa-pw-show" content="{{ __('auth.show_password') }}">
     <meta name="crasa-pw-hide" content="{{ __('auth.hide_password') }}">
     <script>document.documentElement.classList.add('has-js');</script>
-    <script>try{var a=JSON.parse(localStorage.getItem('crasa-a11y')||'{}'),h=document.documentElement;if(['smaller','larger','largest'].indexOf(a.size)>-1)h.classList.add('a11y-text-'+a.size);if(a.contrast===true)h.classList.add('a11y-contrast');if(a.underline===true)h.classList.add('a11y-underline');if(localStorage.getItem('crasa-translation-notice')==='closed')h.classList.add('translation-notice-closed');}catch(e){}</script>
+    <script>try{var a=JSON.parse(localStorage.getItem('crasa-a11y')||'{}'),h=document.documentElement;if(['smaller','larger','largest'].indexOf(a.size)>-1)h.classList.add('a11y-text-'+a.size);['contrast','underline','spacing','dyslexia','pause'].forEach(function(f){if(a[f]===true)h.classList.add('a11y-'+f);});if(localStorage.getItem('crasa-translation-notice')==='closed')h.classList.add('translation-notice-closed');}catch(e){}</script>
 
-    <title>@yield('title', __('site.acronym')) — {{ __('site.acronym') }}</title>
+    <title>@yield('title', __('site.acronym')) | {{ __('site.acronym') }}</title>
     @hasSection('description')
         <meta name="description" content="@yield('description')">
     @endif

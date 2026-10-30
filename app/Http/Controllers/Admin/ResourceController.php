@@ -177,6 +177,7 @@ class ResourceController extends Controller
     {
         $definition = $this->definition($resource);
         $record = $this->record($definition, $id);
+        \App\Support\Approvals::refuseIfLocked($record);
         $this->authorizeAction('update', $definition, $record);
 
         $data = $request->validate($this->rules($definition, $record, $request));

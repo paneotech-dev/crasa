@@ -53,7 +53,7 @@
                 @if (is_array($element))
                     @foreach ($element as $page => $url)
                         @if ($page == $paginator->currentPage())
-                            <span aria-current="page" aria-label="{{ __('pagination.current_page', ['page' => $page]) }}">{{ $page }}</span>
+                            <span aria-current="page"><span class="c-sr">{{ __('pagination.current_page', ['page' => $page]) }}</span><span aria-hidden="true">{{ $page }}</span></span>
                         @else
                             <a href="{{ $url }}" aria-label="{{ __('pagination.go_to_page', ['page' => $page]) }}">{{ $page }}</a>
                         @endif

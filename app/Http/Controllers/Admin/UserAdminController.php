@@ -105,8 +105,10 @@ class UserAdminController extends Controller
         }
 
         // AP-12: at least two active administrators remain.
+        // A suspended administrator is not one of the active two, so moving
+        // it to another role leaves the count where it is.
         if ($user->role === Role::Administrator && $user->custom_role_id === null && $builtIn !== Role::Administrator
-            && $this->activeAdministrators() <= 2) {
+            && $user->status === UserStatus::Active && $this->activeAdministrators() <= 2) {
             return back()->withErrors(['role' => __('fa.two_admins')]);
         }
 
