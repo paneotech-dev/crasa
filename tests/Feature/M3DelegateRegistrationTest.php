@@ -45,6 +45,8 @@ class M3DelegateRegistrationTest extends TestCase
         Storage::fake('local');
         Storage::fake('public');
         Mail::fake();
+        // Tests run in the console; the meeting-change mail is for edits made by a person.
+        config(['crasa.meeting_change_mail_from_console' => true]);
 
         $this->seed(CountrySeeder::class);
         $this->seed(SectorSeeder::class);
@@ -320,6 +322,30 @@ class M3DelegateRegistrationTest extends TestCase
             $label = __('m3_deleg.postponed_new_date', ['date' => $fresh->dateRange()], $locale);
             $this->get("/{$locale}/events/{$this->meeting->slug}")->assertOk()->assertSee($label);
         }
+    }
+
+    public function test_a_legacy_sync_a_console_save_and_a_sample_registration_send_nothing(): void
+    {
+        $this->row('Chipo Banda', 'mw');
+        $sample = $this->row('Sample Delegate', 'za');
+        $sample->update(['is_sample' => true]);
+
+        // The legacy sync sets synced_at on every run.
+        $this->meeting->update(['synced_at' => now()]);
+        $this->meeting->update(['status' => 'postponed', 'synced_at' => now()->addMinute()]);
+        Mail::assertNotQueued(MeetingChangedForDelegate::class);
+
+        // Any other console save, without the explicit setting.
+        config(['crasa.meeting_change_mail_from_console' => false]);
+        $this->meeting->update(['starts_on' => now()->addMonths(3)->toDateString()]);
+        Mail::assertNotQueued(MeetingChangedForDelegate::class);
+
+        // With the setting (as for an edit made by a person): the real delegate only.
+        config(['crasa.meeting_change_mail_from_console' => true]);
+        $this->meeting->update(['status' => 'cancelled']);
+        Mail::assertQueued(MeetingChangedForDelegate::class, 1);
+        Mail::assertQueued(MeetingChangedForDelegate::class, fn ($m) => $m->hasTo('chipo.banda@example.org'));
+        Mail::assertNotQueued(MeetingChangedForDelegate::class, fn ($m) => $m->hasTo('sample.delegate@example.org'));
     }
 
     public function test_an_edit_that_does_not_move_the_meeting_sends_nothing(): void

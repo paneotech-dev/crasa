@@ -138,9 +138,23 @@ final class AuditChanges
         return match (true) {
             $value === null, $value === '', $value === [] => null,
             is_bool($value) => __($value ? 'm3_retaud.audit_yes' : 'm3_retaud.audit_no'),
-            is_array($value) => json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            is_array($value) => json_encode(self::maskNested($value), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
             default => (string) $value,
         };
+    }
+
+    /** A nested value with every secret key, at any depth, replaced by [redacted]. */
+    private static function maskNested(array $value): array
+    {
+        foreach ($value as $key => $item) {
+            if (is_string($key) && self::isSecret($key)) {
+                $value[$key] = '[redacted]';
+            } elseif (is_array($item)) {
+                $value[$key] = self::maskNested($item);
+            }
+        }
+
+        return $value;
     }
 
     public static function short(string $value): string

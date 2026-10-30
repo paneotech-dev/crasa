@@ -173,4 +173,18 @@ class ModeratorScopeTest extends TestCase
         ])->assertForbidden();
         $this->assertFalse(ModeratorScope::isScoped($this->unscoped));
     }
+
+    public function test_the_submission_notice_reaches_only_moderators_whose_scope_covers_the_item(): void
+    {
+        $outside = User::factory()->moderator()->create();
+        ModeratorScope::set($outside, [$this->zambia->id], [], $this->admin);
+
+        $item = Publication::factory()->create(['is_public' => false, 'country_id' => $this->botswana->id]);
+        Approvals::submit($item, $this->editor);
+
+        $told = fn (User $user) => Notification::assertSentTo($user, \App\Notifications\ApprovalActivity::class);
+        $told($this->scoped);
+        $told($this->unscoped);
+        Notification::assertNotSentTo($outside, \App\Notifications\ApprovalActivity::class);
+    }
 }

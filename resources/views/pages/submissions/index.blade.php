@@ -10,7 +10,10 @@
 
 @php
     // 1f: a member state reading one period sees "Annual return, 2026, Zambia".
-    $ownCountry = auth()->user()?->country?->displayName();
+    // Only an account the country scope holds to one member state; an
+    // administrator or editor with a country set still reads every state's list.
+    $viewer = auth()->user();
+    $ownCountry = $viewer !== null && ! $viewer->seesAllCountries() ? $viewer->country?->displayName() : null;
     $heading = $period
         ? ($ownCountry ? __('m3_retaud.return_heading', ['period' => $period, 'country' => $ownCountry]) : __('d3_look.returns_for', ['period' => $period]))
         : __('submissions.title');

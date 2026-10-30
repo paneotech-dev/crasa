@@ -30,14 +30,15 @@ use Illuminate\Support\Facades\Gate;
  * listed at the top of this screen for review, each flagged as a machine
  * draft until an editor approves or rewrites it.
  *
- * MACHINE DRAFTS ARE NEVER CREATED HERE. Screen 05 draws the state because
- * the client may import copy that came from a machine, and the editor has
- * to be able to see which fields those are and approve or rewrite them.
- * Nothing in this platform sets is_machine_draft: no field is sent to a
- * translation service, and no English string is copied into a French or
- * Portuguese row to make a coverage bar look better. Screen 05 says it
- * plainly and it is the rule: "Machine drafts are never published as
- * approved copy for this client."
+ * MACHINE DRAFTS ARE MADE ON APPROVAL, NOT HERE. At the client's request
+ * (item 1b), approving an item queues its approved text for the configured
+ * translation service and stores the result for each other language with
+ * is_machine_draft set. The public page shows such a field with the
+ * "translated automatically" notice, and this screen lists it for review
+ * until an editor approves or rewrites it, which clears the flag. A
+ * translation a person wrote is never overwritten by a machine draft; only
+ * a row that is still a machine draft is drafted again when the source
+ * changes. Nothing on this screen sends text to the service.
  *
  * One import, on the platform owner's instruction (14 October 2026): the
  * French and Portuguese for every text that had only English, and English

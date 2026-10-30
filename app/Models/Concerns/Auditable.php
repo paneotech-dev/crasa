@@ -96,12 +96,16 @@ trait Auditable
 
     /**
      * A secret, by name or by pattern: a password, a token, a two-factor
-     * secret or recovery code (Day 3 morning, 1g).
+     * secret or recovery code (Day 3 morning, 1g). The pattern matches a
+     * whole name or its last underscore-separated word (api_token,
+     * two_factor_secret), never a word that merely contains one, so a
+     * column such as secretariat_email is kept. Redaction on write is
+     * permanent, so it must not catch harmless columns.
      */
     protected static function auditRedacts(string $key): bool
     {
         return in_array($key, static::$auditRedacted, true)
-            || (bool) preg_match('/password|token|secret|recovery_code/i', $key);
+            || (bool) preg_match('/(^|_)(password|token|secret|recovery_codes?)$/i', $key);
     }
 
     /**

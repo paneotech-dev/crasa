@@ -67,6 +67,16 @@ class M3AnnualReturnLabelsTest extends TestCase
         $this->actingAs($this->rep)->get('/pt/submissions')->assertOk()->assertSee('Submeter uma nova declaração');
     }
 
+    public function test_a_secretariat_account_with_a_country_set_does_not_see_its_country_in_the_heading(): void
+    {
+        $editor = User::factory()->administrator()->create(['country_id' => Country::where('iso_code', 'zm')->value('id')]);
+        Submission::create(['country_id' => $this->rep->country_id, 'submitted_by' => $this->rep->id, 'period' => '2025', 'status' => 'draft', 'is_sample' => false]);
+
+        $html = $this->actingAs($editor)->get('/en/submissions?period=2025')->assertOk()->getContent();
+        $this->assertStringNotContainsString('Annual return, 2025, Zambia', $html);
+        $this->assertStringContainsString(e(__('d3_look.returns_for', ['period' => '2025'])), $html);
+    }
+
     public function test_the_form_title_and_breadcrumb_read_annual_return(): void
     {
         $submission = Submission::create(['country_id' => $this->rep->country_id, 'submitted_by' => $this->rep->id, 'period' => '2025', 'status' => 'draft', 'is_sample' => false]);

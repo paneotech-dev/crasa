@@ -112,24 +112,70 @@ final class SocialEmbed
     }
 
     /**
-     * Only a twitter-tweet blockquote is kept. No script, no event handler,
-     * no other element at the top level.
+     * Only a twitter-tweet blockquote is kept, built from an allowlist: the
+     * cleaned markup is shown before cookie consent, so nothing in it may
+     * load anything. Allowed: <blockquote> (class, the widget's data-*
+     * attributes), <p> (lang, dir), <a> (an http or https href only) and
+     * <br>. Every other element is dropped (script, style and media with
+     * their content), every other attribute removed. Null when the markup
+     * is not a tweet blockquote or no text is left.
      */
     public static function cleanXHtml(string $html): ?string
     {
-        $html = trim(preg_replace('~<script\b[^>]*>.*?</script>~is', '', $html));
+        $html = trim((string) preg_replace(
+            '~<(script|style|svg|math|template|noscript|iframe|object|video|audio|picture|title|textarea|select)\b[^>]*>.*?</\1\s*>~is',
+            '', $html,
+        ));
 
         if (! preg_match('~^<blockquote class="twitter-tweet"[^>]*>.*</blockquote>$~is', $html)) {
             return null;
         }
 
-        if (preg_match('~\son[a-z]+\s*=|javascript:|<(iframe|object|embed|style|form)\b~i', $html)) {
+        $html = strip_tags($html, '<blockquote><p><a><br>');
+        $html = (string) preg_replace_callback('~<(/?)(blockquote|p|a|br)\b([^>]*)>~i', function (array $m): string {
+            $tag = strtolower($m[2]);
+
+            if ($m[1] === '/') {
+                return $tag === 'br' ? '' : '</'.$tag.'>';
+            }
+
+            return '<'.$tag.self::allowedAttributes($tag, $m[3]).'>';
+        }, $html);
+
+        if (! preg_match('~^<blockquote class="twitter-tweet"[^>]*>.*</blockquote>$~is', $html)
+            || preg_match('~\son[a-z]+\s*=|javascript:|<(iframe|object|embed|style|form)\b~i', $html)
+            || trim(html_entity_decode(strip_tags($html), ENT_QUOTES | ENT_HTML5)) === '') {
             return null;
         }
 
         // The separator X writes before the author is a long dash; the
         // house style has none, and the widget replaces the text anyway.
         return str_replace(['&mdash;', "\u{2014}"], '-', $html);
+    }
+
+    /** The attributes kept on one allowed element, escaped again. */
+    private static function allowedAttributes(string $tag, string $raw): string
+    {
+        preg_match_all('~([a-zA-Z][a-zA-Z0-9:_-]*)\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^\s"\'>]+))~', $raw, $found, PREG_SET_ORDER);
+        $kept = '';
+
+        foreach ($found as $attr) {
+            $name = strtolower($attr[1]);
+            $value = html_entity_decode($attr[2] !== '' ? $attr[2] : (($attr[3] ?? '') !== '' ? $attr[3] : ($attr[4] ?? '')), ENT_QUOTES | ENT_HTML5);
+
+            $allowed = match ($tag) {
+                'blockquote' => ($name === 'class' && $value === 'twitter-tweet') || preg_match('~^data-[a-z-]+$~', $name),
+                'p' => in_array($name, ['lang', 'dir'], true),
+                'a' => $name === 'href' && preg_match('~^https?://~i', $value),
+                default => false,
+            };
+
+            if ($allowed) {
+                $kept .= ' '.$name.'="'.htmlspecialchars($value, ENT_QUOTES | ENT_HTML5).'"';
+            }
+        }
+
+        return $kept;
     }
 
     /**
