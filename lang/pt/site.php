@@ -15,5 +15,5 @@ return [
     'fallback_title' => 'Esta página ainda não está disponível em :language',
     'fallback_body' => 'A interface está em :language. O texto abaixo é apresentado em inglês, a sua língua original.',
     'agency' => 'Uma agência especializada da SADC',
-    'mission' => 'Harmonizar a regulamentação das TIC e dos serviços postais na África Austral',
+    'mission' => 'Harmonizar a regulamentação das TIC, da radiodifusão e dos serviços postais na África Austral',
 ];
