@@ -57,7 +57,43 @@ class ConceptHomeTest extends TestCase
 
         $css = file_get_contents(public_path('css/k.css'));
         $this->assertStringContainsString('.k-hero__fig { position: absolute; inset: 0; margin: 0; opacity: 0; transition: opacity .6s ease; }', $css);
-        $this->assertMatchesRegularExpression('/\.k-hero__box \{[^}]*grid-template-columns: minmax\(0, 45fr\) minmax\(0, 55fr\)[^}]*height: 560px/', $css);
+        $this->assertMatchesRegularExpression('/\.k-hero__box \{[^}]*grid-template-areas: "photo photo" "text side"/', $css);
+        $this->assertMatchesRegularExpression('/\.k-hero__photo \{[^}]*aspect-ratio: 21 \/ 9/', $css);
+    }
+
+    /**
+     * Every slide shows the whole photograph across the full width of the
+     * hero (30 October 2026): drawn with object-fit: contain over a blurred
+     * copy of itself, never cropped, with the pale green card under it and
+     * a counter and one progress bar per slide in the controls.
+     */
+    public function test_the_hero_shows_each_photograph_whole_across_the_hero(): void
+    {
+        $css = file_get_contents(public_path('css/k.css'));
+        $this->assertMatchesRegularExpression('/\.k-hero__img \{[^}]*object-fit: contain/', $css);
+        $this->assertMatchesRegularExpression('/\.k-hero__bg \{[^}]*object-fit: cover[^}]*filter: blur\(/', $css);
+        $this->assertDoesNotMatchRegularExpression('/\.k-hero__img \{[^}]*object-fit: cover/', $css);
+        $this->assertMatchesRegularExpression('/\.k-hero__text \{[^}]*background: var\(--k-tint\)/', $css);
+        $this->assertMatchesRegularExpression('/\.k-cap__h \{[^}]*color: var\(--k-deep\)/', $css);
+
+        $js = file_get_contents(public_path('js/hero.js'));
+        $this->assertStringContainsString('[data-k-count]', $js);
+
+        foreach (['en', 'fr', 'pt'] as $locale) {
+            $html = $this->get('/'.$locale)->assertOk()->getContent();
+            $hero = substr($html, strpos($html, '<section class="k-hero"'));
+            $hero = substr($hero, 0, strpos($hero, '</section>'));
+
+            $this->assertSame(1, substr_count($hero, '<h1 class="k-cap__h">'), $locale);
+            $this->assertStringNotContainsString('object-position', $hero, $locale);
+            $slides = substr_count($hero, 'data-k-slide');
+            if ($slides > 1) {
+                $this->assertSame($slides - 1, substr_count($hero, 'class="k-cap__h" role="heading" aria-level="2"'), $locale);
+                $this->assertSame($slides, substr_count($hero, '<span><i></i></span></button>'), $locale);
+                $this->assertMatchesRegularExpression('~<span class="k-hctl__count" data-k-count aria-hidden="true"><b>01</b> / 0'.$slides.'</span>~', $hero);
+                $this->assertStringContainsString('data-k-pause aria-pressed="false"', $hero);
+            }
+        }
     }
 
     public function test_a_publication_without_a_file_or_link_is_not_listed(): void
