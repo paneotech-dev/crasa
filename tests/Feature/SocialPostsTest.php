@@ -196,6 +196,7 @@ class SocialPostsTest extends TestCase
 
         // Drawn on the page from a stored value: the text and link, no image.
         SocialPost::query()->update(['status' => 'draft']);
+        SocialPost::query()->where('url', self::X_URL)->delete();
         SocialPost::create([
             'network' => 'x', 'url' => self::X_URL, 'status' => 'published', 'posted_at' => now(),
             'embed_html' => '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Spectrum workshop opens.<img src="https://evil.example/x.png"></p><a href="'.self::X_URL.'">October 23, 2026</a></blockquote>',

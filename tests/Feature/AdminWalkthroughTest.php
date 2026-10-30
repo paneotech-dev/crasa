@@ -476,7 +476,8 @@ class AdminWalkthroughTest extends TestCase
         $this->get('/en/privacy')->assertOk()->assertSee('Changes are published on this page and dated.', false);
 
         // One blank fewer on the admin side.
-        $this->assertSame(6, count($page->fresh()->outstandingClientItems()));
+        // Eight drafting notes since the 30 October privacy notice (DEC-21), one now cleared.
+        $this->assertSame(7, count($page->fresh()->outstandingClientItems()));
 
         $this->admin()->put('/en/admin/pages/privacy/client-review', ['reviewed' => 1])->assertRedirect();
         $this->assertFalse($page->fresh()->awaitsClientReview());

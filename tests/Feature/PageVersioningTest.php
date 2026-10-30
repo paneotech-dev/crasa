@@ -135,7 +135,7 @@ class PageVersioningTest extends TestCase
         $this->actingAs($this->administrator)->get('/en/admin/pages')
             ->assertOk()
             ->assertSee(__('admin.col_review'))
-            ->assertSee(trans_choice('admin.review_outstanding_n', 7, ['n' => 7]));
+            ->assertSee(trans_choice('admin.review_outstanding_n', 8, ['n' => 8])); // eight drafting notes in the 30 October privacy notice (DEC-21)
 
         $this->actingAs($this->administrator)->get('/en/admin')
             ->assertOk()
