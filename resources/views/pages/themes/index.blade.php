@@ -32,7 +32,7 @@
         <ul class="th-grid" role="list">
             @foreach ($themes as $theme)
                 <li class="th-item">
-                    <span class="th-card__ico">{!! \App\Support\Themes::icon($theme['icon']) !!}</span>
+                    <span class="th-card__ico">{{ \App\Support\Themes::icon($theme['icon']) }}</span>
                     <div>
                         <h2><a href="{{ route('themes.show', ['locale' => $locale, 'theme' => $theme['slug']]) }}">{{ $theme['title'] }}</a></h2>
                         <p>{{ $theme['summary'] }}</p>
