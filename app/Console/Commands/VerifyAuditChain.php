@@ -35,6 +35,8 @@ class VerifyAuditChain extends Command
             'rows_checked' => $result['rows'],
             'first_broken_id' => $result['broken_id'],
             'reason' => $result['reason'],
+            // An outside copy of the anchor: the log keeps the last hash.
+            'last_row_hash' => $result['last_hash'],
             'connection' => $connection ?? config('database.default'),
         ];
 

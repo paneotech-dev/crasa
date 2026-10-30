@@ -54,7 +54,14 @@ class ArchiveAuditLog extends Command
         $to = $cutoff->copy()->subDay();
         $name = 'audit-'.$from->toDateString().'-'.$to->toDateString().'.jsonl.gz';
         $path = $dir.'/'.$name;
-        $gz = gzopen($path.'.part', 'wb9');
+        $gz = @gzopen($path.'.part', 'wb9');
+
+        if ($gz === false) {
+            $this->error('Cannot open '.$path.'.part for writing; nothing was archived.');
+
+            return self::FAILURE;
+        }
+
         $count = 0;
 
         DB::table('audit_log')

@@ -243,6 +243,36 @@ class AuditImmutabilityTest extends TestCase
         }
     }
 
+    public function test_archive_fails_clearly_when_the_file_cannot_be_written(): void
+    {
+        $dir = sys_get_temp_dir().'/auditlock-'.uniqid();
+        mkdir($dir);
+        config(['crasa.audit_archive_dir' => $dir]);
+        AuditLog::forceCreate(['action' => AuditLog::LOGIN, 'created_at' => now()->subMonths(14)]);
+
+        // A directory where the temporary file should go makes gzopen fail.
+        $from = now()->subMonths(14)->startOfDay()->toDateString();
+        $to = now()->startOfDay()->subMonthsNoOverflow(12)->subDay()->toDateString();
+        mkdir($dir.'/audit-'.$from.'-'.$to.'.jsonl.gz.part');
+
+        try {
+            $this->artisan('audit:archive')->expectsOutputToContain('nothing was archived')->assertExitCode(1);
+        } finally {
+            @rmdir($dir.'/audit-'.$from.'-'.$to.'.jsonl.gz.part');
+            @rmdir($dir);
+        }
+    }
+
+    public function test_the_verify_log_line_carries_the_last_row_hash(): void
+    {
+        $entry = AuditLog::record(AuditLog::LOGIN);
+        \Illuminate\Support\Facades\Log::spy();
+
+        $this->artisan('audit:verify-chain')->assertExitCode(0);
+
+        \Illuminate\Support\Facades\Log::shouldHaveReceived('info')->withArgs(fn ($m, $ctx) => $ctx['last_row_hash'] === $entry->row_hash)->once();
+    }
+
     /** The preview MariaDB connection, or a skip that says why. */
     private function mariadb(): \Illuminate\Database\Connection
     {
