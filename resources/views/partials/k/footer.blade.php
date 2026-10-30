@@ -1,7 +1,10 @@
 {{--
-    Compact footer (Concept 3): identity and one line, the contact card,
-    CRASA's own social accounts, then the legal row. Contact details come
-    from site settings (SiteContact), the accounts from SocialAccounts.
+    Compact footer (Concept 3): the logo and one line, the address card,
+    CRASA's own social accounts, then the legal row (terms, privacy, the
+    accessibility statement). The one Contact link is in the sitemap
+    band's Members column; "Back to top" floats (partials/float-controls).
+    Contact details come from site settings (SiteContact), the accounts
+    from SocialAccounts.
 --}}
 @php
     $nav = fn (string $path) => \App\Support\Navigation::url($path);
@@ -54,13 +57,11 @@
         <div class="k-fbar">
             <span>{{ __('footer.copyright', ['year' => now()->year]) }}</span>
             <nav aria-label="{{ __('footer.legal_label') }}">
-                <a href="{{ $nav('contact') }}">{{ __('chome.contact_us') }}</a>
                 <a href="{{ $nav('terms') }}">{{ __('footer.terms') }}</a>
                 <a href="{{ $nav('privacy') }}">{{ __('footer.privacy') }}</a>
                 @if ($a11yUrl)
                     <a href="{{ $a11yUrl }}">{{ __('footer.accessibility') }}</a>
                 @endif
-                <a href="#top">{{ __('chome.back_to_top') }}</a>
             </nav>
         </div>
     </div>

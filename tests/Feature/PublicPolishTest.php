@@ -137,9 +137,12 @@ class PublicPolishTest extends TestCase
         $column = $x->query('//nav[contains(@class, "k-smap")]//div[h2[normalize-space()="Members"]]/a');
         $labels = array_map(fn ($a) => trim($a->textContent), iterator_to_array($column));
 
+        // 30 October: the column also carries the member states, taken out
+        // of the Publications column so each link appears once.
+        $this->assertContains('Member states', $labels);
         $this->assertContains('Member directory', $labels);
         $this->assertContains('Contact', $labels);
-        $this->assertCount(3, $labels);
+        $this->assertCount(4, $labels);
         $this->assertSame(0, $x->query('//nav[contains(@class, "k-smap")]//a[normalize-space()="Back office"]')->length);
         $this->assertSame(0, $x->query('//nav[contains(@class, "k-smap")]//a[normalize-space()="Accessibility statement"]')->length);
         $this->assertSame(1, $x->query('//div[contains(@class, "k-fbar")]//a[normalize-space()="Accessibility statement"]')->length);

@@ -70,6 +70,9 @@
 
     @include('partials.site-header')
 
+    {{-- Back to top and the display options, floating in the bottom corner. --}}
+    @include('partials.float-controls')
+
     {{-- Breadcrumb and share row on every public page. A page may give its
          own trail with @section('breadcrumb'), or none with
          @section('no-breadcrumb', true). --}}
@@ -143,6 +146,7 @@
     <script src="{{ \App\Support\Assets::url('js/app.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/password.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/a11y.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/float.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/motion.js') }}" defer></script>
     @stack('scripts')
 <!--/email_off-->
