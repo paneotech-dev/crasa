@@ -20,6 +20,8 @@
                 <span class="a-hint">{{ __('admin.upload_hint', ['size' => (int) (\App\Services\MediaLibrary::MAX_BYTES / 1048576)]) }}</span>
             </div>
 
+            @include('pages.admin.media._slot', ['fileInput' => 'file', 'selected' => 'other'])
+
             <div class="a-rights">
                 <strong>{{ __('admin.upload_exif_title') }}</strong>
                 {{ __('admin.upload_exif_body') }}

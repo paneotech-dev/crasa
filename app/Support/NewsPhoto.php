@@ -31,6 +31,7 @@ final class NewsPhoto
     {
         $rules = [
             'photo_upload' => ['nullable', 'file', 'mimetypes:'.implode(',', self::ACCEPTED), 'max:'.self::MAX_KILOBYTES],
+            'photo_used_for' => ['nullable', 'string', \Illuminate\Validation\Rule::in(ImageSlots::keys())],
             'hero_focal_x' => ['nullable', 'integer', 'min:0', 'max:100', 'required_with:hero_focal_y'],
             'hero_focal_y' => ['nullable', 'integer', 'min:0', 'max:100', 'required_with:hero_focal_x'],
         ];
@@ -77,6 +78,13 @@ final class NewsPhoto
             }
 
             $data[$field->name] = $asset->path;
+
+            // Item 1i: a photograph smaller than its slot is saved, with a
+            // warning on the form it returns to.
+            $warning = ImageSlots::warning($asset, $request->input('photo_used_for', 'news'));
+            if ($warning !== null) {
+                session()->flash('m3_media_warning', $warning);
+            }
         }
 
         $x = $field->options['x'];

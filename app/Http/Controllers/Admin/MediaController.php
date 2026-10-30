@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\MediaAsset;
 use App\Services\MediaLibrary;
+use App\Support\ImageSlots;
 use App\Support\Locales;
 use App\Support\MediaUsage;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -85,13 +87,19 @@ class MediaController extends Controller
                 'mimetypes:'.implode(',', MediaLibrary::ACCEPTED),
                 'max:'.(int) (MediaLibrary::MAX_BYTES / 1024),
             ],
+            'used_for' => ['nullable', 'string', Rule::in(ImageSlots::keys())],
         ]);
 
         $asset = $this->library->store($request->file('file'), $request->user()->id);
 
+        // Item 1i: smaller than the slot it is meant for is a warning on
+        // the next screen, not a refusal.
+        $warning = ImageSlots::warning($asset, $request->input('used_for'));
+
         return redirect()
             ->route('admin.media.edit', ['locale' => app()->getLocale(), 'asset' => $asset->id])
-            ->with('status', __('admin.media_uploaded'));
+            ->with('status', __('admin.media_uploaded'))
+            ->with('m3_media_warning', $warning);
     }
 
     public function edit(MediaAsset $asset): View

@@ -9,6 +9,17 @@
 @endsection
 
 @section('content')
+    {{-- Item 1i: the size warning from the upload, then one for each slot
+         the image is in use in and is too small for. --}}
+    @php
+        $sizeWarnings = array_filter(array_merge(
+            [session('m3_media_warning')],
+            array_map(fn ($slot) => \App\Support\ImageSlots::warning($asset, $slot), \App\Support\ImageSlots::smallFor($asset, $usage)),
+        ));
+    @endphp
+    @foreach (array_unique($sizeWarnings) as $sizeWarning)
+        <p class="a-band" role="status" data-size-warning>{{ $sizeWarning }}</p>
+    @endforeach
     @if (! $asset->hasCompleteAlt())
         <div class="a-band a-band--error">
             <strong>{{ __('admin.media_blocked_title') }}</strong>
