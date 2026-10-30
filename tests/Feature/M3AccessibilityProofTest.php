@@ -246,6 +246,18 @@ class M3AccessibilityProofTest extends TestCase
     }
 
     /**
+     * The hero's inactive slide dots are a control on white: 3:1 under
+     * SC 1.4.11. #93A1AE measured 2.64:1; the field-border grey is 3.66:1.
+     */
+    public function test_the_inactive_hero_dots_clear_three_to_one_on_white(): void
+    {
+        preg_match('/\.k-dot span \{[^}]*background:\s*(#[0-9A-Fa-f]{6})/', file_get_contents(public_path('css/k.css')), $m);
+        $this->assertNotEmpty($m, 'No literal background on .k-dot span.');
+        $ratio = $this->ratio($m[1], '#FFFFFF');
+        $this->assertGreaterThanOrEqual(3.0, $ratio, sprintf('Inactive hero dot is %.2f:1 on white.', $ratio));
+    }
+
+    /**
      * While the consent banner shows, the floating controls sit above it and
      * the page scrolls focused content clear of it; the footer leaves room
      * for both floating squares so "Back to top" never covers a footer link.

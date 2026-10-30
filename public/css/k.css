@@ -304,7 +304,7 @@ html:not(.has-js) .k-share { display: none; }
 .k-hctl button:hover { background: var(--k-tint); }
 .k-hctl__dots { display: flex; align-items: center; }
 .k-hctl .k-dot { width: 24px; }
-.k-dot span { display: block; width: 8px; height: 8px; border-radius: 999px; background: #93A1AE; transition: width .3s var(--k-ease), background .15s; }
+.k-dot span { display: block; width: 8px; height: 8px; border-radius: 999px; background: #7B8794; transition: width .3s var(--k-ease), background .15s; }
 .k-dot[aria-current="true"] span { width: 18px; background: var(--k-green); }
 .k-hctl__pause .k-i-play, .k-hctl__pause[aria-pressed="true"] .k-i-pause { display: none; }
 .k-hctl__pause[aria-pressed="true"] .k-i-play { display: block; }
