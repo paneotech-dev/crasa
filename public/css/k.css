@@ -607,3 +607,8 @@ p.s-post__head { margin: 0; font-weight: 600; }
   html body .c-active__head a,
   html body .c-active__chip { display: inline-flex; align-items: center; min-height: 44px; }
 }
+@media (max-width: 768px) {
+  html body .cp-doc-langs__item a,
+  html body .e-map__caption a { display: inline-flex; align-items: center; min-height: 44px; }
+  html body .c-pw__toggle { min-width: 44px; min-height: 44px; }
+}

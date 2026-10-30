@@ -2971,3 +2971,8 @@ body[data-surface="admin"] .e-dash__day { color: var(--a-date-ink); }
   body .n-latest__link,
   body main ol li > a:only-child { display: inline-flex; align-items: center; min-height: 44px; }
 }
+@media (max-width: 1023.98px) {
+  body .a-bell__foot a,
+  body .mh-list__row span > a,
+  body .a-table__actions a { display: inline-flex; align-items: center; min-height: 44px; }
+}
