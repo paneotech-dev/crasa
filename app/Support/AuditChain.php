@@ -26,6 +26,9 @@ class AuditChain
     /** The prev_hash of the first row. */
     public const GENESIS = '0000000000000000000000000000000000000000000000000000000000000000';
 
+    /** The one-row table holding the latest row_hash, locked by each insert. */
+    public const HEAD = 'audit_chain_head';
+
     /** The columns covered by the hash, in a fixed order. */
     public const COLUMNS = ['action', 'auditable_type', 'auditable_id', 'changes', 'ip_address', 'created_at'];
 
@@ -53,14 +56,24 @@ class AuditChain
     /**
      * Walk the chain in id order.
      *
-     * @return array{rows: int, broken_id: int|null, reason: string|null}
+     * Runs in one transaction so that the rows and the head are read from
+     * the same snapshot. Finally the head must equal the last row's hash.
+     *
+     * @return array{rows: int, broken_id: int|null, reason: string|null, last_hash: string}
      */
     public static function verify(?string $connection = null): array
+    {
+        return DB::connection($connection)->transaction(fn () => self::walk($connection));
+    }
+
+    /** @return array{rows: int, broken_id: int|null, reason: string|null, last_hash: string} */
+    private static function walk(?string $connection): array
     {
         $prev = self::GENESIS;
         $rows = 0;
         $broken = null;
         $reason = null;
+        $lastId = null;
 
         DB::connection($connection)->table('audit_log')
             ->orderBy('id')
@@ -80,13 +93,22 @@ class AuditChain
                     }
 
                     $prev = $row->row_hash;
+                    $lastId = (int) $row->id;
                     $rows++;
                 }
 
                 return true;
             });
 
-        return ['rows' => $rows, 'broken_id' => $broken, 'reason' => $reason];
+        if ($broken === null) {
+            $head = DB::connection($connection)->table(self::HEAD)->where('id', 1)->value('hash');
+
+            if ($head !== null && $head !== $prev) {
+                [$broken, $reason] = [$lastId ?? 0, 'audit_chain_head does not match the last row'];
+            }
+        }
+
+        return ['rows' => $rows, 'broken_id' => $broken, 'reason' => $reason, 'last_hash' => $prev];
     }
 
     /** Whether the database enforces immutability with triggers (MySQL and MariaDB only). */

@@ -189,6 +189,60 @@ class AuditImmutabilityTest extends TestCase
         }
     }
 
+    public function test_the_head_moves_with_each_insert_and_a_wrong_head_is_reported(): void
+    {
+        $entry = AuditLog::record(AuditLog::LOGIN);
+        $this->assertSame($entry->row_hash, DB::table(AuditChain::HEAD)->where('id', 1)->value('hash'));
+
+        DB::table(AuditChain::HEAD)->where('id', 1)->update(['hash' => str_repeat('a', 64)]);
+        $this->assertSame('audit_chain_head does not match the last row', AuditChain::verify()['reason']);
+    }
+
+    public function test_the_predecessor_is_read_by_primary_key_not_by_a_gap_locking_scan(): void
+    {
+        $source = file_get_contents(app_path('Models/AuditLog.php'));
+        $this->assertStringNotContainsString("orderByDesc('id')->lockForUpdate()", $source);
+        $this->assertStringContainsString("table(AuditChain::HEAD)->where('id', 1)->lockForUpdate()", $source);
+    }
+
+    public function test_the_migration_can_run_again(): void
+    {
+        AuditLog::record(AuditLog::LOGIN);
+        $migration = require database_path('migrations/2026_10_30_083000_chain_and_lock_the_audit_log.php');
+
+        $migration->up();
+        $migration->up();
+
+        $this->assertNull(AuditChain::verify()['broken_id']);
+        $this->assertSame(1, DB::table(AuditChain::HEAD)->count());
+    }
+
+    public function test_two_connections_wait_on_the_chain_head_on_mariadb(): void
+    {
+        $a = $this->mariadb();
+        config(['database.connections.auditlock_mariadb_b' => config('database.connections.auditlock_mariadb')]);
+        $b = DB::connection('auditlock_mariadb_b');
+
+        $a->beginTransaction();
+        $b->beginTransaction();
+
+        try {
+            $a->table(AuditChain::HEAD)->where('id', 1)->lockForUpdate()->value('hash');
+            $b->statement('SET SESSION innodb_lock_wait_timeout = 1');
+
+            try {
+                $b->table(AuditChain::HEAD)->where('id', 1)->lockForUpdate()->value('hash');
+                $this->fail('The second connection read the head while the first held it.');
+            } catch (QueryException $e) {
+                // A lock wait (1205), not a deadlock (1213): the second insert waits its turn.
+                $this->assertStringContainsString('1205', $e->getMessage());
+            }
+        } finally {
+            $b->rollBack();
+            $a->rollBack();
+        }
+    }
+
     /** The preview MariaDB connection, or a skip that says why. */
     private function mariadb(): \Illuminate\Database\Connection
     {

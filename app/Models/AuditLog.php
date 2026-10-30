@@ -97,11 +97,12 @@ class AuditLog extends Model
             $entry->created_at ??= now();
         });
 
-        // The chain: the predecessor's hash is read under a row lock taken
-        // inside the insert's transaction (performInsert below), so two
-        // inserts cannot chain to the same row.
+        // The chain: the predecessor's hash is read from the one-row table
+        // audit_chain_head under a primary-key row lock (no gap lock, so two
+        // inserts wait for each other instead of deadlocking), inside the
+        // insert's transaction (performInsert below).
         static::creating(function (AuditLog $entry): void {
-            $prev = static::query()->orderByDesc('id')->lockForUpdate()->value('row_hash') ?? AuditChain::GENESIS;
+            $prev = $entry->getConnection()->table(AuditChain::HEAD)->where('id', 1)->lockForUpdate()->value('hash') ?? AuditChain::GENESIS;
 
             $entry->setAttribute('prev_hash', $prev);
             $entry->setAttribute('row_hash', AuditChain::hash($entry->getAttributes(), $prev));
@@ -109,13 +110,24 @@ class AuditLog extends Model
     }
 
     /**
-     * The insert runs in a transaction (a savepoint inside an outer one) so
-     * that the lock on the last row is held until the new row is written,
-     * and until the outer transaction commits when there is one.
+     * The insert and the move of the chain head run in one transaction (a
+     * savepoint inside an outer one), so the head's lock is held until the
+     * row is written and committed. At the top level a deadlock or a lock
+     * wait timeout is retried up to three times.
      */
     protected function performInsert(Builder $query)
     {
-        return $this->getConnection()->transaction(fn () => parent::performInsert($query));
+        return $this->getConnection()->transaction(function () use ($query) {
+            // A retry starts from scratch: no id or state from the attempt rolled back.
+            $this->exists = false;
+            unset($this->attributes[$this->getKeyName()]);
+
+            $saved = parent::performInsert($query);
+
+            $this->getConnection()->table(AuditChain::HEAD)->updateOrInsert(['id' => 1], ['hash' => $this->row_hash]);
+
+            return $saved;
+        }, 3);
     }
 
     /**
