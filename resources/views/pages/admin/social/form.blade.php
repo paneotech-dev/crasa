@@ -84,8 +84,14 @@
             @error('caption')<p class="a-hint a-hint--error" role="alert">{{ $message }}</p>@enderror
         </div>
 
+        @if (\App\Support\EditorFlow::applies(auth()->user(), 'social'))
+            @unless (! $isNew && \App\Support\Approvals::isLocked($post))
+                @include('pages.admin.approvals._editor_actions')
+            @endunless
+        @else
         <div class="a-form__actions">
             <button class="a-btn a-btn--primary" type="submit">{{ __('fb.save') }}</button>
         </div>
+        @endif
     </form>
 @endsection

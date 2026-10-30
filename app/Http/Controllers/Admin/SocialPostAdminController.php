@@ -39,6 +39,9 @@ class SocialPostAdminController extends Controller
     {
         Gate::authorize(Permission::ManageContent->value);
 
+        // Day 3: an editor reads the changes they hold for a published post.
+        \App\Support\EditorFlow::overlay($post, request()->user());
+
         return view('pages.admin.social.form', ['post' => $post]);
     }
 
@@ -60,9 +63,13 @@ class SocialPostAdminController extends Controller
             'author_id' => $request->user()->id,
         ]);
 
-        return redirect()
-            ->route('admin.social.edit', ['locale' => app()->getLocale(), 'post' => $post->id])
-            ->with('status', $this->savedMessage($post));
+        $redirect = redirect()->route('admin.social.edit', ['locale' => app()->getLocale(), 'post' => $post->id]);
+
+        if (\App\Support\EditorFlow::applies($request->user(), $post)) {
+            return $redirect->with('status', \App\Support\EditorFlow::afterSave($request, $post));
+        }
+
+        return $redirect->with('status', $this->savedMessage($post));
     }
 
     public function update(Request $request, SocialPost $post): RedirectResponse
@@ -83,7 +90,18 @@ class SocialPostAdminController extends Controller
             $changes += ['url' => $data['url']] + SocialEmbed::resolve($data['url']);
         }
 
+        // Day 3: a published post keeps its live text until the change is approved.
+        if (\App\Support\EditorFlow::holds($request->user(), $post)) {
+            $changes['posted_at'] = $changes['posted_at'] instanceof \DateTimeInterface ? $changes['posted_at']->format('Y-m-d H:i:s') : $changes['posted_at'];
+
+            return back()->with('status', \App\Support\EditorFlow::hold($request, $post, ['attributes' => $changes, 'translations' => []]));
+        }
+
         $post->update($changes);
+
+        if (\App\Support\EditorFlow::applies($request->user(), $post)) {
+            return back()->with('status', \App\Support\EditorFlow::afterSave($request, $post));
+        }
 
         return back()->with('status', $this->savedMessage($post));
     }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Committee;
 use App\Models\Document;
 use App\Models\Meeting;
+use App\Support\EditorFlow;
 use App\Support\EventGroup;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -46,6 +47,12 @@ class EventAdminController extends Controller
         Gate::authorize('create', Meeting::class);
 
         $data = $this->validated($request);
+        $flow = EditorFlow::applies($request->user(), 'events');
+
+        // Day 3: an editor's event is not public until a moderator approves it.
+        if ($flow && $data['clearance'] === Clearance::Public->value) {
+            $data['clearance'] = Clearance::Member->value;
+        }
 
         $meeting = DB::transaction(function () use ($data, $request) {
             $meeting = Meeting::create($data + [
@@ -59,14 +66,17 @@ class EventAdminController extends Controller
             return $meeting;
         });
 
-        return redirect()
-            ->route('admin.meetings.edit', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug])
-            ->with('status', __('e.admin_created'));
+        $redirect = redirect()->route('admin.meetings.edit', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug]);
+
+        return $redirect->with('status', $flow ? EditorFlow::afterSave($request, $meeting) : __('e.admin_created'));
     }
 
     public function edit(Meeting $meeting): View
     {
         Gate::authorize('edit', $meeting);
+
+        // Day 3: an editor reads the changes they hold for a public event.
+        EditorFlow::overlay($meeting, request()->user());
 
         return $this->form($meeting->load('documents'));
     }
@@ -78,6 +88,28 @@ class EventAdminController extends Controller
         Gate::authorize('update', $meeting);
 
         $data = $this->validated($request);
+        $flow = EditorFlow::applies($request->user(), 'events');
+        $redirect = redirect()->route('admin.meetings.edit', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug]);
+
+        /*
+         * Day 3. A public event edited by an editor stays as published until
+         * the change is approved. Its documents are not part of the held
+         * change, so adding or removing them waits for a moderator.
+         */
+        if ($flow && EditorFlow::holds($request->user(), $meeting)) {
+            if ($request->file('files') || $request->input('remove_documents')) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['files' => __('m3_edflow.event_files_held')]);
+            }
+
+            unset($data['clearance']);
+
+            return $redirect->with('status', EditorFlow::hold($request, $meeting, ['attributes' => $data + ['date_unknown' => false], 'translations' => []]));
+        }
+
+        // An editor does not make an event public; a posted "public" keeps the current clearance.
+        if ($flow && $data['clearance'] === Clearance::Public->value) {
+            $data['clearance'] = $meeting->clearance;
+        }
 
         DB::transaction(function () use ($data, $request, $meeting) {
             $meeting->update($data + ['date_unknown' => false]);
@@ -90,9 +122,7 @@ class EventAdminController extends Controller
             $this->attachFiles($request, $meeting);
         });
 
-        return redirect()
-            ->route('admin.meetings.edit', ['locale' => app()->getLocale(), 'meeting' => $meeting->slug])
-            ->with('status', __('e.admin_saved'));
+        return $redirect->with('status', $flow ? EditorFlow::afterSave($request, $meeting) : __('e.admin_saved'));
     }
 
     /** Cancel, postpone or restore. The public page shows the status. */

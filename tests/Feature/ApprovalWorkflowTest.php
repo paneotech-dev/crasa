@@ -201,7 +201,8 @@ class ApprovalWorkflowTest extends TestCase
             ->put("/en/admin/data/news/{$news->id}", [
                 'category' => 'news', 'status' => 'published', 'en' => ['title' => 'Spectrum workshop held in Lilongwe'],
             ])
-            ->assertSessionHasErrors('status');
+            // Day 3 (editor flow): an editor has no status field; a posted one is ignored.
+            ->assertSessionHasNoErrors();
 
         $this->assertSame('draft', $news->fresh()->status);
     }
@@ -210,8 +211,10 @@ class ApprovalWorkflowTest extends TestCase
     {
         $this->actingAs($this->editor)
             ->post('/en/admin/data/news', ['category' => 'news', 'status' => 'published', 'en' => ['title' => 'Straight to live']])
-            ->assertSessionHasErrors('status');
-        $this->assertSame(0, NewsItem::count());
+            ->assertSessionHasNoErrors();
+        // Day 3 (editor flow): the posted status is ignored; the item is a draft.
+        $this->assertSame(0, NewsItem::query()->withoutGlobalScopes()->where('status', 'published')->count());
+        $this->assertSame('draft', NewsItem::query()->withoutGlobalScopes()->latest('id')->first()->status);
     }
 
     public function test_editor_cannot_publish_a_page_directly(): void

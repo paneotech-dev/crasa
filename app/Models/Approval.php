@@ -23,9 +23,15 @@ class Approval extends Model
 
     public const WITHDRAWN = 'withdrawn';
 
+    /**
+     * Day 3: changes to a published item, saved by an editor and not yet
+     * sent. Not open, never in the inbox; the live row is untouched.
+     */
+    public const DRAFT = 'draft';
+
     protected $fillable = [
         'approvable_type', 'approvable_id', 'state', 'submitted_by', 'submitted_at',
-        'decided_by', 'decided_at', 'note', 'comment', 'snapshot',
+        'decided_by', 'decided_at', 'note', 'comment', 'snapshot', 'revision',
     ];
 
     protected function casts(): array
@@ -34,6 +40,7 @@ class Approval extends Model
             'submitted_at' => 'datetime',
             'decided_at' => 'datetime',
             'snapshot' => 'array',
+            'revision' => 'array',
         ];
     }
 

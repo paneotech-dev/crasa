@@ -31,6 +31,8 @@
 @endsection
 
 @section('content')
+    {{-- Day 3 (item 1a): what waits for this moderator's decision, first. --}}
+    @include('pages.admin.approvals._inbox_notice')
 
     {{-- 1. ALERTS, only when there is one.
 
