@@ -7,12 +7,17 @@
 
     @unless ($machineConfigured)
         <p class="a-notice" data-mt-unconfigured style="margin:var(--s-4)">
-            {{ __('m3_mt.not_configured') }}
-            @if (in_array($machineDriver, ['deepl', 'rafiki'], true) && $machineMissing !== [])
-                {{ __('d3_rafiki.missing_settings', ['driver' => $machineDriver, 'keys' => implode(', ', $machineMissing)]) }}
-            @elseif (! in_array($machineDriver, ['deepl', 'rafiki'], true))
-                {{ __('d3_rafiki.no_driver') }}
-            @endif
+            {{-- Setup wording only for those who may manage settings. --}}
+            @can(\App\Enums\Permission::ManageSettings->value)
+                {{ __('m3_mt.not_configured') }}
+                @if (in_array($machineDriver, ['deepl', 'rafiki'], true) && $machineMissing !== [])
+                    {{ __('d3_rafiki.missing_settings', ['driver' => $machineDriver, 'keys' => implode(', ', $machineMissing)]) }}
+                @elseif (! in_array($machineDriver, ['deepl', 'rafiki'], true))
+                    {{ __('d3_rafiki.no_driver') }}
+                @endif
+            @else
+                {{ __('d3_vfix.mt_unavailable') }}
+            @endcan
         </p>
     @endunless
 
