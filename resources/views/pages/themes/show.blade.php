@@ -26,7 +26,7 @@
 @section('content')
 <section class="u-hero cp-hero th-hero">
     <div class="u-container">
-        <span class="th-hero__ico">{!! \App\Support\Themes::icon($theme['icon']) !!}</span>
+        <span class="th-hero__ico">{{ \App\Support\Themes::icon($theme['icon']) }}</span>
         <p class="u-eyebrow">{{ __('d3_themes.show_eyebrow') }}</p>
         <h1 class="u-h1">{{ $theme['title'] }}</h1>
         <p class="u-lead">{{ $theme['summary'] }}</p>

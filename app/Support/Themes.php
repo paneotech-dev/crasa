@@ -78,13 +78,15 @@ class Themes
      * A Bootstrap Icon as inline SVG, hidden from assistive technology:
      * the text beside it names the theme.
      */
-    public static function icon(string $name): string
+    public static function icon(string $name): \Illuminate\Support\HtmlString
     {
+        // Read from a vendored file, never from stored content: safe to print
+        // with {{ }} as an HtmlString.
         if (! preg_match('/^[a-z0-9-]+$/', $name)) {
-            return '';
+            return new \Illuminate\Support\HtmlString('');
         }
 
-        return self::$svg[$name] ??= (function () use ($name) {
+        return new \Illuminate\Support\HtmlString(self::$svg[$name] ??= (function () use ($name) {
             $path = public_path("vendor/bootstrap-icons/icons/$name.svg");
             if (! is_file($path)) {
                 return '';
@@ -92,6 +94,6 @@ class Themes
             $svg = trim((string) file_get_contents($path));
 
             return preg_replace('/^<svg\b[^>]*>/', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false" class="th-svg">', $svg);
-        })();
+        })());
     }
 }

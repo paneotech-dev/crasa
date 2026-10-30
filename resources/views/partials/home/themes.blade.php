@@ -34,12 +34,12 @@
         <div class="th-track">
             <ul class="th-list" role="list">
                 @foreach ($homeThemes as $theme)
-                    <li><a class="th-card" href="{{ $themeUrl($theme['slug']) }}"><span class="th-card__ico">{!! \App\Support\Themes::icon($theme['icon']) !!}</span><span class="th-card__t">{{ $theme['title'] }}</span></a></li>
+                    <li><a class="th-card" href="{{ $themeUrl($theme['slug']) }}"><span class="th-card__ico">{{ \App\Support\Themes::icon($theme['icon']) }}</span><span class="th-card__t">{{ $theme['title'] }}</span></a></li>
                 @endforeach
             </ul>
             <ul class="th-list th-list--copy" role="list" aria-hidden="true">
                 @foreach ($homeThemes as $theme)
-                    <li><span class="th-card"><span class="th-card__ico">{!! \App\Support\Themes::icon($theme['icon']) !!}</span><span class="th-card__t">{{ $theme['title'] }}</span></span></li>
+                    <li><span class="th-card"><span class="th-card__ico">{{ \App\Support\Themes::icon($theme['icon']) }}</span><span class="th-card__t">{{ $theme['title'] }}</span></span></li>
                 @endforeach
             </ul>
         </div>
