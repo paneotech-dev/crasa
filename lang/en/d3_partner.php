@@ -6,4 +6,5 @@ return [
     'menu_d' => 'How organisations can work with CRASA',
     'contact' => 'Contact the Secretariat',
     'theme' => 'You are interested in: :theme',
+    'subject' => 'Partnership: :theme',
 ];

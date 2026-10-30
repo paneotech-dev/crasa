@@ -161,4 +161,17 @@ class PartnerPageTest extends TestCase
         }
         $this->get('/en/partner-with-us?theme[]=x')->assertOk()->assertDontSee('You are interested in');
     }
+
+    public function test_the_theme_is_carried_into_the_contact_subject(): void
+    {
+        $html = $this->get('/en/partner-with-us?theme=spectrum-management')->assertOk()->getContent();
+        $this->assertStringContainsString('subject=Partnership%3A+Spectrum+management', $html);
+
+        $this->get('/en/contact?subject='.urlencode('Partnership: Spectrum management'))
+            ->assertOk()
+            ->assertSee('value="Partnership: Spectrum management"', false);
+        $this->get('/en/contact?subject='.urlencode('<script>x</script>'))
+            ->assertOk()
+            ->assertDontSee('<script>x</script>', false);
+    }
 }

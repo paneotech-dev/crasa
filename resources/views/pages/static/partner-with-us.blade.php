@@ -58,6 +58,12 @@
         $themePage = \App\Models\Page::published()->where('slug', $themeSlug)->with('translations')->first();
         $themeName = $themePage?->translate('title')?->value ?: \Illuminate\Support\Str::ucfirst(str_replace('-', ' ', $themeSlug));
     }
+    // Carry the theme into the Contact form's subject.
+    if ($themeName) {
+        $withSubject = fn (?string $url) => $url ? $url.(str_contains($url, '?') ? '&' : '?').http_build_query(['subject' => __('d3_partner.subject', ['theme' => $themeName])]) : $url;
+        $contactUrl = $withSubject($contactUrl);
+        $ctaUrl = $withSubject($ctaUrl);
+    }
 @endphp
 
 @section('title', $title?->value ?? __('d3_partner.menu'))

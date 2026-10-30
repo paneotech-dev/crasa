@@ -6,4 +6,5 @@ return [
     'menu_d' => 'Comment les organisations peuvent collaborer avec la CRASA',
     'contact' => 'Contacter le Secrétariat',
     'theme' => 'Thème qui vous intéresse : :theme',
+    'subject' => 'Partenariat : :theme',
 ];

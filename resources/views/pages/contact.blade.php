@@ -95,7 +95,7 @@
 
                     <div @class(['u-field', 'u-field--error' => $errors->has('subject')])>
                         <label for="subject">{{ __('contact.field_subject') }} <span class="u-req">({{ __('cpages.required') }})</span></label>
-                        <input class="u-input" type="text" id="subject" name="subject" value="{{ old('subject') }}" required @error('subject') aria-invalid="true" @enderror @error('subject') aria-describedby="subject-error" @enderror>
+                        <input class="u-input" type="text" id="subject" name="subject" value="{{ old('subject', is_string(request()->query('subject')) ? \Illuminate\Support\Str::limit(request()->query('subject'), 150, '') : '') }}" required @error('subject') aria-invalid="true" @enderror @error('subject') aria-describedby="subject-error" @enderror>
                         @error('subject')<p class="u-error" id="subject-error">{{ $message }}</p>@enderror
                     </div>
 
