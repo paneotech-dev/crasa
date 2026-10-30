@@ -27,6 +27,7 @@ return [
     'action_reactivated' => 'Reactivated an account',
     'action_registration_resent' => 'Resent a delegate their registration copy',
     'action_registrations_exported' => 'Exported delegate registrations',
+    'action_audit_exported' => 'Exported the audit log',
     // Day 3: docs
     'action_document_added' => 'Added a file to a folder',
     'action_document_replaced' => 'Added a new version of a file',

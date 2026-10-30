@@ -821,6 +821,11 @@ Route::prefix('{locale}')
 
                 Route::get('audit', [AuditLogController::class, 'index'])->name('audit');
 
+                // Day 3: retaud
+                // The filtered audit log as CSV; ReadAuditLog, checked in the controller.
+                Route::get('audit/export.csv', [AuditLogController::class, 'export'])->name('audit.export');
+                // end Day 3: retaud
+
                 // Day 3: taxo
                 /*
                  * Content > Taxonomies: news categories, publication types,

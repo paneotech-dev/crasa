@@ -129,7 +129,10 @@ class CommitteeMandateTest extends TestCase
             ->latest('id')
             ->firstOrFail();
 
-        $this->assertSame(['mandate.en'], $entry->changes['translations']);
+        // Day 3 morning (1g): the field and language, with before and after.
+        $this->assertSame(['mandate.en'], array_keys($entry->changes));
+        $this->assertSame('Rewritten in English only.', $entry->changes['mandate.en']['to']);
+        $this->assertArrayHasKey('from', $entry->changes['mandate.en']);
 
         // And a save that changes nothing writes nothing.
         $before = AuditLog::where('auditable_type', Committee::class)->count();

@@ -62,7 +62,7 @@ trait Auditable
                 continue;
             }
 
-            $redacted = in_array($key, static::$auditRedacted, true);
+            $redacted = static::auditRedacts($key);
 
             $changes[$key] = [
                 'from' => $redacted ? '[redacted]' : $this->getOriginal($key),
@@ -86,12 +86,22 @@ trait Auditable
                 continue;
             }
 
-            if (in_array($key, static::$auditRedacted, true)) {
+            if (static::auditRedacts($key)) {
                 $attributes[$key] = '[redacted]';
             }
         }
 
         return $attributes;
+    }
+
+    /**
+     * A secret, by name or by pattern: a password, a token, a two-factor
+     * secret or recovery code (Day 3 morning, 1g).
+     */
+    protected static function auditRedacts(string $key): bool
+    {
+        return in_array($key, static::$auditRedacted, true)
+            || (bool) preg_match('/password|token|secret|recovery_code/i', $key);
     }
 
     /**
