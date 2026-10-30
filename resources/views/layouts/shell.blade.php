@@ -25,6 +25,8 @@
     <meta name="crasa-pw-show" content="{{ __('auth.show_password') }}">
     <meta name="crasa-pw-hide" content="{{ __('auth.hide_password') }}">
     <script>document.documentElement.classList.add('has-js');</script>
+    {{-- The display options a reader chose, on the public site or here. --}}
+    @include('partials.a11y-head')
 
     <title>@yield('title', $brand) | {{ $brand }}</title>
 
@@ -44,6 +46,11 @@
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/admin-tokens.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/admin.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/admin-workflow.css') }}">
+    {{-- The display options: the public sheet, then what the shell needs
+         on top of it (text size on the sidebar and content, high contrast
+         on the admin tokens). --}}
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/a11y.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/a11y-shell.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Assets::url('css/print.css') }}" media="print">
     @stack('styles')
 </head>
@@ -54,7 +61,7 @@
 <!--email_off-->
     <a class="c-skip" href="#content">{{ __('nav.skip') }}</a>
 
-    <div class="a-shell">
+    <div class="a-shell" id="top">
         @include('partials.shell-sidebar', ['groups' => $groups, 'brand' => $brand, 'home' => $home])
 
         {{-- The drawer's backdrop. Present with no script and inert:
@@ -63,6 +70,12 @@
 
         <div class="a-shell__body">
             @include('partials.shell-topbar', ['search' => $search ?? true])
+
+            {{-- Back to top and the display options, the same control as on
+                 the public site, in the bottom right corner. After the top
+                 bar in the source, so a keyboard reader meets it before the
+                 content. --}}
+            @include('partials.float-controls')
 
             <main id="content" class="a-main" tabindex="-1">
                 @hasSection('crumbs')
@@ -95,6 +108,8 @@
     <script src="{{ \App\Support\Assets::url('js/password.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/modal.js') }}" defer></script>
     <script src="{{ \App\Support\Assets::url('js/admin-workflow.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/a11y.js') }}" defer></script>
+    <script src="{{ \App\Support\Assets::url('js/float.js') }}" defer></script>
     @stack('scripts')
 <!--/email_off-->
 </body>
