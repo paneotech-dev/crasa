@@ -163,7 +163,7 @@ namespace Tests\Feature {
             $this->assertSame(0, $this->told($this->mzRep));
 
             $notice = $this->bwRep2->notifications()->sole();
-            $this->assertStringContainsString('was returned', $notice->data['title']);
+            $this->assertStringContainsString('returned with comments', $notice->data['title']);
             $this->actingAs($this->bwRep2)->get(parse_url($notice->data['url'], PHP_URL_PATH))->assertOk();
         }
 

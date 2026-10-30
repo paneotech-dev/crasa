@@ -1,14 +1,21 @@
 @extends('layouts.workspace')
 
 {{--
-    Data submission, redrawn on Day 3 (8c). The period picker filters the
+    The annual return list, redrawn on Day 3 (8c). The period picker filters the
     returns; a member state representative starts a return from the same
     card. The returns are a table from 760px wide and one card per return
     on a phone (member-home.css). The country scope on Submission decides
     which returns are listed: a member state sees its own.
 --}}
 
-@section('title', __('submissions.title'))
+@php
+    // 1f: a member state reading one period sees "Annual return, 2026, Zambia".
+    $ownCountry = auth()->user()?->country?->displayName();
+    $heading = $period
+        ? ($ownCountry ? __('m3_retaud.return_heading', ['period' => $period, 'country' => $ownCountry]) : __('d3_look.returns_for', ['period' => $period]))
+        : __('submissions.title');
+@endphp
+@section('title', $heading)
 @section('note', __('submissions.index_note'))
 
 @push('styles')
@@ -56,7 +63,7 @@
 
     <section class="mh-card" aria-labelledby="mh-returns-h">
         <div class="mh-card__head">
-            <h2 class="mh-card__title" id="mh-returns-h">{{ $period ? __('d3_look.returns_for', ['period' => $period]) : __('d3_look.returns') }}</h2>
+            <h2 class="mh-card__title" id="mh-returns-h">{{ $period ? $heading : __('d3_look.returns') }}</h2>
             <span class="mh-meta">{{ __('submissions.table_note') }}</span>
         </div>
 
@@ -67,7 +74,7 @@
             </div>
         @else
             <table class="mh-returns">
-                <caption class="c-sr">{{ __('submissions.title') }}</caption>
+                <caption class="c-sr">{{ $period ? $heading : __('d3_look.returns') }}</caption>
                 <thead>
                     <tr>
                         <th scope="col">{{ __('submissions.period') }}</th>

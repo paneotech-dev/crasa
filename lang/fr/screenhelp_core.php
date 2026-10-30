@@ -139,9 +139,9 @@ return [
         'title' => 'Journal d\'audit',
         'purpose' => 'La trace de qui a modifié quoi et quand : chaque publication, approbation, modification de compte et changement d\'état d\'un rapport.',
         'actions' => [
-            'Filtrez le journal par personne, action ou date.',
-            'Ouvrez une entrée pour voir la modification en détail.',
-            'Exportez le journal filtré si votre rôle le permet.',
+            'Filtrez le journal par utilisateur, objet, action ou date.',
+            'Lisez chaque modification : champ, valeur avant et valeur après.',
+            'Exportez le journal filtré en CSV.',
         ],
     ],
     'admin.announcements' => [
@@ -514,7 +514,7 @@ return [
         ],
     ],
     'admin.submissions' => [
-        'title' => 'Rapports',
+        'title' => 'Déclarations annuelles',
         'purpose' => 'Les rapports des États membres et leur état : brouillon, déposé, validé ou renvoyé.',
         'actions' => [
             'Filtrez les rapports par État membre, période ou état.',
@@ -733,21 +733,21 @@ return [
         ],
     ],
     'submissions' => [
-        'title' => 'Rapports',
-        'purpose' => 'Les rapports de votre État membre, période par période, et leur état.',
+        'title' => 'Déclaration annuelle',
+        'purpose' => 'Les déclarations annuelles de votre État membre, période par période, et leur état.',
         'actions' => [
-            'Commencez un rapport pour une période.',
-            'Ouvrez un rapport en brouillon ou renvoyé pour le compléter.',
-            'Exportez un rapport en CSV ou en JSON.',
+            'Soumettez une nouvelle déclaration pour une période.',
+            'Ouvrez une déclaration en brouillon ou renvoyée pour la compléter.',
+            'Exportez une déclaration en CSV ou en JSON.',
         ],
     ],
     'submissions.edit' => [
-        'title' => 'Rapport',
-        'purpose' => 'Un rapport, indicateur par indicateur, avec les éventuels commentaires du Secrétariat.',
+        'title' => 'Déclaration annuelle, période, État membre',
+        'purpose' => 'Une déclaration annuelle, indicateur par indicateur, avec les éventuels commentaires du Secrétariat.',
         'actions' => [
             'Saisissez ou corrigez chaque chiffre avec sa source.',
             'Lisez les commentaires du Secrétariat sur les champs renvoyés.',
-            'Soumettez le rapport pour validation.',
+            'Soumettez la déclaration pour validation.',
         ],
     ],
     'submissions.import' => [

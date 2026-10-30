@@ -123,7 +123,7 @@ class MemberAreaDay3Test extends TestCase
         ]);
 
         $html = $this->actingAs($this->rep)->get('/en/extranet/dashboard')->assertOk()->getContent();
-        $this->assertStringContainsString('Return 2025: Returned', $html);
+        $this->assertStringContainsString('Annual return, 2025: Returned', $html);
         $this->assertStringContainsString('Unread', $html);
     }
 
@@ -173,13 +173,13 @@ class MemberAreaDay3Test extends TestCase
         Submission::create(['country_id' => $this->rep->country_id, 'submitted_by' => $this->rep->id, 'period' => '2025', 'status' => 'draft', 'is_sample' => false]);
 
         $html = $this->actingAs($this->rep)->get('/en/submissions')->assertOk()->getContent();
-        foreach (['id="filter-period"', 'class="mh-returns"', 'data-label=', 'Return for 2024', 'Return for 2025'] as $needle) {
+        foreach (['id="filter-period"', 'class="mh-returns"', 'data-label=', 'Annual return, 2024', 'Annual return, 2025'] as $needle) {
             $this->assertStringContainsString($needle, $html, $needle);
         }
 
         $html = $this->actingAs($this->rep)->get('/en/submissions?period=2025')->assertOk()->getContent();
-        $this->assertStringContainsString('Return for 2025', $html);
-        $this->assertStringNotContainsString('Return for 2024', $html);
+        $this->assertStringContainsString('Annual return, 2025', $html);
+        $this->assertStringNotContainsString('Annual return, 2024', $html);
 
         $this->actingAs($this->rep)->get('/en/submissions?period=not-a-period')->assertOk();
     }
@@ -195,6 +195,6 @@ class MemberAreaDay3Test extends TestCase
         $mz = Country::where('iso_code', 'mz')->sole();
         Submission::withoutGlobalScopes()->create(['country_id' => $mz->id, 'period' => '2023', 'status' => 'draft', 'is_sample' => false]);
 
-        $this->actingAs($this->rep)->get('/en/submissions')->assertOk()->assertDontSee('Return for 2023');
+        $this->actingAs($this->rep)->get('/en/submissions')->assertOk()->assertDontSee('Annual return, 2023');
     }
 }

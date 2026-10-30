@@ -25,7 +25,7 @@ return [
     'language_title' => 'Responder na sua língua',
     'language_example' => 'Pergunte em francês ou em português sobre uma orientação que só existe em inglês; a resposta chega na sua língua, com a fonte citada.',
 
-    'return_title' => 'Ajudar na sua submissão de dados',
+    'return_title' => 'Ajudar na sua declaração anual',
     'return_example' => 'O que conta como uma assinatura ativa de banda larga móvel?',
 
     'how' => 'Como funcionaria',

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', __('submissions.form_title', ['period' => $submission->period]))
+@section('title', $submission->country ? __('m3_retaud.return_heading', ['period' => $submission->period, 'country' => $submission->country->displayName()]) : __('submissions.form_title', ['period' => $submission->period]))
 @section('note', $submission->country?->name)
 
 @section('actions')
