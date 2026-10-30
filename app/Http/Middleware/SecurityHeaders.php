@@ -94,6 +94,8 @@ class SecurityHeaders
             'Permissions-Policy' => 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
 
             'Cross-Origin-Opener-Policy' => 'same-origin',
+            // Our files are for our pages and our own subdomains (ZAP baseline, 30 October).
+            'Cross-Origin-Resource-Policy' => 'same-site',
         ];
 
         // Only over TLS, and only for the real host: an HSTS header served
